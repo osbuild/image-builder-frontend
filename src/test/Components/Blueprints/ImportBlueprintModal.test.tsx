@@ -36,7 +36,7 @@ const uploadFile = async (filename: string, content: string): Promise<void> => {
 
   if (fileInput) {
     const file = new File([content], filename, { type: 'application/json' });
-    await user.upload(fileInput, file);
+    user.upload(fileInput, file);
   }
 };
 
