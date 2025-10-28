@@ -6,9 +6,9 @@ import path from 'path';
 // the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
 // modules. These stubs are in the `src/test/mocks/cockpit` directory.
 // We also needed to create an alias in vitest to make this work.
-import TOML, { Section } from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
+import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Customizations } from './composerCloudApi';
@@ -699,27 +699,12 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               if (!updateWorkerConfigRequest) {
                 return prev;
               }
-
               const merged = {
                 ...TOML.parse(prev),
                 ...updateWorkerConfigRequest,
               } as WorkerConfigFile;
 
-              const contents: WorkerConfigFile = {};
-              Object.keys(merged).forEach((key: string) => {
-                // this check helps prevent saving empty objects
-                // into the osbuild-worker.toml config file.
-                if (merged[key] !== undefined) {
-                  contents[key] = Section({
-                    ...merged[key],
-                  });
-                }
-              });
-
-              return TOML.stringify(contents, {
-                newline: '\n',
-                newlineAround: 'document',
-              });
+              return TOML.stringify(merged);
             });
 
             const systemServices = [

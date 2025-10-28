@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 
-import TOML from '@ltd/j-toml';
 import { expect } from '@playwright/test';
+import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';

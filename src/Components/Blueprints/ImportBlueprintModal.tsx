@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { parse } from '@ltd/j-toml';
 import {
   Button,
   Checkbox,
@@ -22,6 +21,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
+import TOML from 'smol-toml';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
@@ -138,7 +138,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
           const isToml = filename.endsWith('.toml');
           const isJson = filename.endsWith('.json');
           if (isToml) {
-            const tomlBlueprint = parse(fileContent);
+            const tomlBlueprint = TOML.parse(fileContent);
             const blueprintFromFile = mapOnPremToHosted(
               tomlBlueprint as BlueprintItem,
             );
