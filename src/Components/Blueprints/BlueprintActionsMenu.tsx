@@ -8,8 +8,15 @@ import {
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import { EllipsisVIcon } from '@patternfly/react-icons';
+import TOML from 'smol-toml';
 
+// The hosted UI exports JSON, while the Cockpit plugin exports TOML.
+// Because the blueprint formats differ, using the 'backendApi'
+// abstraction would be misleading.  Import and handle each environment
+// separately.
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
+import { useLazyExportBlueprintCockpitQuery } from '../../store/cockpit/cockpitApi';
+import type { Blueprint as CockpitExportResponse } from '../../store/cockpit/composerCloudApi';
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintExportResponse,
@@ -30,6 +37,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   };
 
   const [trigger] = useLazyExportBlueprintQuery();
+  const [cockpitTrigger] = useLazyExportBlueprintCockpitQuery();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   if (selectedBlueprintId === undefined) {
     return null;
@@ -41,6 +49,15 @@ export const BlueprintActionsMenu: React.FunctionComponent<
         handleExportBlueprint(response.name, response);
       });
   };
+
+  const handleCockpitClick = () => {
+    cockpitTrigger({ id: selectedBlueprintId })
+      .unwrap()
+      .then((response: CockpitExportResponse) => {
+        handleExportBlueprint(response.name, response);
+      });
+  };
+
   return (
     <Dropdown
       isOpen={showBlueprintActionsMenu}
@@ -62,8 +79,10 @@ export const BlueprintActionsMenu: React.FunctionComponent<
       )}
     >
       <DropdownList>
-        <DropdownItem onClick={handleClick}>
-          Download blueprint (.json)
+        <DropdownItem
+          onClick={process.env.IS_ON_PREMISE ? handleCockpitClick : handleClick}
+        >
+          Download blueprint ({process.env.IS_ON_PREMISE ? '.toml' : '.json'})
         </DropdownItem>
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
@@ -75,15 +94,28 @@ export const BlueprintActionsMenu: React.FunctionComponent<
 
 async function handleExportBlueprint(
   blueprintName: string,
-  blueprint: BlueprintExportResponse,
+  blueprint: BlueprintExportResponse | CockpitExportResponse,
 ) {
-  const jsonData = JSON.stringify(blueprint, null, 2);
-  const blob = new Blob([jsonData], { type: 'application/json' });
+  const data = process.env.IS_ON_PREMISE
+    ? TOML.stringify(blueprint)
+    : JSON.stringify(blueprint, null, 2);
+  const mime = process.env.IS_ON_PREMISE
+    ? 'application/octet-stream'
+    : 'application/json';
+  const blob = new Blob([data], { type: mime });
 
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  // In cockpit we're running in an iframe, the current content-security policy
+  // (set in cockpit/public/manifest.json) only allows resources from the same origin as the
+  // document (which is unique to the iframe). So create the element in the parent document.
+  const link = process.env.IS_ON_PREMISE
+    ? window.parent.document.createElement('a')
+    : document.createElement('a');
   link.href = url;
-  link.download = blueprintName.replace(/\s/g, '_').toLowerCase() + '.json';
+  link.download =
+    blueprintName.replace(/\s/g, '_').toLowerCase() + process.env.IS_ON_PREMISE
+      ? '.toml'
+      : '.json';
   link.click();
   URL.revokeObjectURL(url);
 }
