@@ -11,7 +11,10 @@ import { fsinfo } from 'cockpit/fsinfo';
 import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Customizations } from './composerCloudApi';
+import type {
+  Blueprint as CloudApiBlueprint,
+  Customizations,
+} from './composerCloudApi';
 // We have to work around RTK query here, since it doesn't like splitting
 // out the same api into two separate apis. So, instead, we can just
 // inherit/import the `contentSourcesApi` and build on top of that.
@@ -45,6 +48,7 @@ import {
   DeleteBlueprintApiArg,
   DeleteBlueprintApiResponse,
   DistributionProfileItem,
+  ExportBlueprintApiArg,
   GetArchitecturesApiArg,
   GetArchitecturesApiResponse,
   GetBlueprintApiArg,
@@ -407,6 +411,23 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      exportBlueprintCockpit: builder.query<
+        CloudApiBlueprint,
+        ExportBlueprintApiArg
+      >({
+        queryFn: async ({ id }) => {
+          const blueprintsDir = await getBlueprintsPath();
+          const file = cockpit.file(path.join(blueprintsDir, id, `${id}.json`));
+          const contents = await file.read();
+          const blueprint = JSON.parse(
+            contents,
+          ) as CockpitCreateBlueprintRequest;
+          const onPrem = mapHostedToOnPrem(blueprint as CreateBlueprintRequest);
+          return {
+            data: onPrem,
+          };
+        },
+      }),
       getOscapProfiles: builder.query<
         GetOscapProfilesApiResponse,
         GetOscapProfilesApiArg
@@ -762,6 +783,8 @@ export const {
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
   useDeleteBlueprintMutation,
+  useExportBlueprintCockpitQuery,
+  useLazyExportBlueprintCockpitQuery,
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
