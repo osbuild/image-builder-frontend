@@ -1,7 +1,11 @@
+import * as fsPromises from 'fs/promises';
+import * as path from 'path';
+
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
+import { exportedFirewallBP } from '../fixtures/data/exportBlueprintContents';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
@@ -17,6 +21,7 @@ import {
   fillInImageOutputGuest,
   importBlueprint,
   registerLater,
+  verifyExportedBlueprint,
 } from '../helpers/wizardHelpers';
 
 test('Create a blueprint with Firewall customization', async ({
@@ -194,15 +199,28 @@ test('Create a blueprint with Firewall customization', async ({
       .click();
   });
 
-  // This is for hosted service only as these features are not available in cockpit plugin
-  await test.step('Export BP', async (step) => {
-    step.skip(!isHosted(), 'Exporting is not available in the plugin');
-    await exportBlueprint(page, blueprintName);
+  let exportedBP = '';
+  await test.step('Export BP', async () => {
+    exportedBP = await exportBlueprint(page);
+    await cleanup.add(async () => {
+      await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+    });
+  });
+
+  await test.step('Review exported BP', async (step) => {
+    step.skip(
+      isHosted(),
+      'Only verify the contents of the exported blueprint in cockpit',
+    );
+    await verifyExportedBlueprint(
+      exportedBP,
+      exportedFirewallBP(blueprintName),
+    );
   });
 
   await test.step('Import BP', async (step) => {
     step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, blueprintName);
+    await importBlueprint(page, exportedBP);
   });
 
   await test.step('Review imported BP', async (step) => {

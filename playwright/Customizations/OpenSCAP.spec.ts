@@ -1,3 +1,6 @@
+import * as fsPromises from 'fs/promises';
+import * as path from 'path';
+
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -228,13 +231,16 @@ test('Create a blueprint with OpenSCAP customization', async ({
       .click();
   });
 
-  // This is for hosted service only as these features are not available in cockpit plugin
+  let exportedBP = '';
   await test.step('Export BP', async () => {
-    await exportBlueprint(page, blueprintName);
+    exportedBP = await exportBlueprint(page);
+    await cleanup.add(async () => {
+      await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+    });
   });
 
   await test.step('Import BP', async () => {
-    await importBlueprint(page, blueprintName);
+    await importBlueprint(page, exportedBP);
   });
 
   await test.step('Review imported BP', async () => {
