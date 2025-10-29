@@ -1,3 +1,31 @@
+export const exportedDiskBP = (blueprintName: string): string => {
+  return `name = "${blueprintName}"
+
+[customizations]
+[[customizations.disk.partitions]]
+type = "plain"
+mountpoint = "/data"
+fs_type = "ext4"
+minsize = "50 GiB"
+
+[[customizations.disk.partitions]]
+type = "lvm"
+name = "mainvg"
+minsize = "20 GiB"
+
+[[customizations.disk.partitions.logical_volumes]]
+name = "rootlv"
+mountpoint = "/"
+fs_type = "ext4"
+minsize = "2 GiB"
+
+[customizations.timezone]
+timezone = "Etc/UTC"
+
+[customizations.locale]
+languages = [ "C.UTF-8" ]`;
+};
+
 export const exportedFilesystemBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
