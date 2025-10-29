@@ -122,16 +122,18 @@ const AdvancedPartitioning = () => {
       <VolumeGroups
         volumeGroups={diskPartitions.filter((p) => p.type === 'lvm')}
       />
-      <Content>
-        <Button
-          className='pf-v6-u-text-align-left'
-          variant='link'
-          icon={<PlusCircleIcon />}
-          onClick={handleAddVolumeGroup}
-        >
-          Add LVM volume group
-        </Button>
-      </Content>
+      {!diskPartitions.find((p) => p.type === 'lvm') && (
+        <Content>
+          <Button
+            className='pf-v6-u-text-align-left'
+            variant='link'
+            icon={<PlusCircleIcon />}
+            onClick={handleAddVolumeGroup}
+          >
+            Add LVM volume group
+          </Button>
+        </Content>
+      )}
     </>
   );
 };
