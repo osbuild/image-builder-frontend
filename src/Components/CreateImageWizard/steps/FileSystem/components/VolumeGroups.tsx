@@ -9,7 +9,6 @@ import {
   Flex,
   FlexItem,
   FormGroup,
-  TextInput,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,6 +24,8 @@ import {
   changeDiskPartitionName,
   removeDiskPartition,
 } from '../../../../../store/wizardSlice';
+import { useFilesystemValidation } from '../../../utilities/useValidation';
+import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { FscDiskPartition, FscDiskPartitionBase } from '../fscTypes';
 
 type VolumeGroupsType = {
@@ -33,6 +34,7 @@ type VolumeGroupsType = {
 
 const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
   const dispatch = useAppDispatch();
+  const stepValidation = useFilesystemValidation();
 
   const handleAddLogicalVolume = (vgId: string) => {
     const id = uuidv4();
@@ -67,15 +69,15 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
       />
       <CardBody>
         <FormGroup label='Volume group name'>
-          <TextInput
-            aria-label='Volume group name input'
+          <ValidatedInputAndTextArea
+            ariaLabel='Volume group name input'
             value={vg.name || ''}
-            type='text'
             onChange={(event, name) =>
               dispatch(changeDiskPartitionName({ id: vg.id, name: name }))
             }
             placeholder='Add volume group name'
-            className='pf-v6-u-w-25'
+            stepValidation={stepValidation}
+            fieldName={`name-${vg.id}`}
           />
         </FormGroup>
         <FormGroup label='Minimum volume group size'>

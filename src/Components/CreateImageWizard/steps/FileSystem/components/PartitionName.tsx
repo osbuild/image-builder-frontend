@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { TextInput } from '@patternfly/react-core';
-
 import { useAppDispatch } from '../../../../../store/hooks';
 import { VolumeGroup } from '../../../../../store/imageBuilderApi';
 import { changePartitionName } from '../../../../../store/wizardSlice';
+import { useFilesystemValidation } from '../../../utilities/useValidation';
+import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { FscDiskPartitionBase, LogicalVolumeWithBase } from '../fscTypes';
 
 type PartitionNamePropTypes = {
@@ -17,12 +17,12 @@ const PartitionName = ({
   customization,
 }: PartitionNamePropTypes) => {
   const dispatch = useAppDispatch();
+  const stepValidation = useFilesystemValidation();
 
   return (
-    <TextInput
-      aria-label='Partition name input'
+    <ValidatedInputAndTextArea
+      ariaLabel='Partition name input'
       value={partition.name || ''}
-      type='text'
       onChange={(event, name) => {
         dispatch(
           changePartitionName({
@@ -32,6 +32,8 @@ const PartitionName = ({
           }),
         );
       }}
+      stepValidation={stepValidation}
+      fieldName={`lvname-${partition.id}`}
     />
   );
 };
