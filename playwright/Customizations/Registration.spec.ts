@@ -1,3 +1,6 @@
+import * as fsPromises from 'fs/promises';
+import * as path from 'path';
+
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -353,15 +356,17 @@ registrationModes.forEach(
           .click();
       });
 
-      // This is for hosted service only as these features are not available in cockpit plugin
-      await test.step('Export blueprint', async (step) => {
-        step.skip(!isHosted(), 'Exporting is not available in the plugin');
-        await exportBlueprint(page, blueprintName);
+      let exportedBP = '';
+      await test.step('Export blueprint', async () => {
+        exportedBP = await exportBlueprint(page);
+        await cleanup.add(async () => {
+          await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+        });
       });
 
       await test.step('Import blueprint', async (step) => {
         step.skip(!isHosted(), 'Importing is not available in the plugin');
-        await importBlueprint(page, blueprintName);
+        await importBlueprint(page, exportedBP);
       });
 
       await test.step('Verify import does not change registration settings', async (step) => {
