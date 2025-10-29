@@ -22,6 +22,7 @@ import {
   selectBlueprintDescription,
   selectBlueprintId,
   selectBlueprintName,
+  selectDiskPartitions,
   selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
@@ -59,6 +60,7 @@ import {
   isKernelNameValid,
   isMountpointMinSizeValid,
   isNtpServerValid,
+  isPartitionNameValid,
   isPortValid,
   isServiceValid,
   isSnapshotValid,
@@ -302,6 +304,7 @@ export function useAAPValidation(): StepValidation {
 export function useFilesystemValidation(): StepValidation {
   const fscMode = useAppSelector(selectFscMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
+  const diskPartitions = useAppSelector(selectDiskPartitions);
   let disabledNext = false;
 
   const errors: { [key: string]: string } = {};
@@ -323,6 +326,27 @@ export function useFilesystemValidation(): StepValidation {
       disabledNext = true;
     }
   }
+
+  for (const partition of diskPartitions) {
+    if (
+      'name' in partition &&
+      partition.name &&
+      !isPartitionNameValid(partition.name)
+    ) {
+      errors[`name-${partition.id}`] = 'Partition name is invalid';
+      disabledNext = true;
+    }
+
+    if (partition.type === 'lvm' && partition.logical_volumes.length > 0) {
+      for (const lv of partition.logical_volumes) {
+        if (lv.name && !isPartitionNameValid(lv.name)) {
+          errors[`lvname-${lv.id}`] = 'Volume name is invalid';
+          disabledNext = true;
+        }
+      }
+    }
+  }
+
   return { errors, disabledNext };
 }
 
