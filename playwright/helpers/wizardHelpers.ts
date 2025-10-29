@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import * as fsPromises from 'fs/promises';
+import * as os from 'os';
 import * as path from 'path';
 
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
@@ -110,36 +112,58 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
 
 /**
  * Export the blueprint
- * This function executes only on the hosted service
- * @param page - the page object
+ * @param page - the page or frame object
  */
-export const exportBlueprint = async (page: Page, blueprintName: string) => {
-  if (isHosted()) {
-    await page.getByRole('button', { name: 'Menu toggle' }).click();
-    const downloadPromise = page.waitForEvent('download');
-    await page
-      .getByRole('menuitem', { name: 'Download blueprint (.json)' })
-      .click();
-    const download = await downloadPromise;
-    await download.saveAs('../../downloads/' + blueprintName + '.json');
-  }
+export const exportBlueprint = async (page: Page | FrameLocator): string => {
+  const frame = await ibFrame(page);
+  const downloadPromise = page.waitForEvent('download');
+  await frame.getByRole('button', { name: 'blueprint menu toggle' }).click();
+  await frame
+    .getByRole('menuitem', {
+      name: isHosted()
+        ? 'Download blueprint (.json)'
+        : 'Download blueprint (.toml)',
+    })
+    .click();
+  const download = await downloadPromise;
+
+  const tempDir = await fsPromises.mkdtemp(
+    path.join(os.tmpdir(), 'export-bp-'),
+  );
+  const filepath = path.join(tempDir, download.suggestedFilename());
+  await download.saveAs(filepath);
+  return filepath;
+};
+
+/**
+ * Verify the contents of a blueprint
+ * @param file - the path to exported blueprint
+ * @param expectedContent - the expected content of the exported blueprint file
+ */
+export const verifyExportedBlueprint = (
+  filepath: string,
+  expectedContent: string,
+) => {
+  const content = fs.readFileSync(filepath);
+  expect(content.toString()).toEqual(expectedContent);
 };
 
 /**
  * Import the blueprint
  * This function executes only on the hosted service
  * @param page - the page object
+ * @param blueprintPath - path to a blueprint
  */
 export const importBlueprint = async (
   page: Page | FrameLocator,
-  blueprintName: string,
+  blueprintPath: string,
 ) => {
   if (isHosted()) {
     await page.getByRole('button', { name: 'Import' }).click();
     const dragBoxSelector = page.getByRole('presentation').first();
     await dragBoxSelector
       .locator('input[type=file]')
-      .setInputFiles('../../downloads/' + blueprintName + '.json');
+      .setInputFiles(blueprintPath);
     await expect(
       page.getByRole('textbox', { name: 'File upload' }),
     ).not.toBeEmpty();
@@ -147,16 +171,11 @@ export const importBlueprint = async (
   }
 };
 
-export const saveBlueprintFileWithContents = async (
-  blueprintName: string,
-  content: string,
-) => {
-  const fixturesDir = path.join(__dirname, '../../../..', 'downloads');
-  const tmpFilePath = path.join(fixturesDir, blueprintName + '.json');
-
-  if (!fs.existsSync(fixturesDir)) {
-    fs.mkdirSync(fixturesDir, { recursive: true });
-  }
-
-  fs.writeFileSync(tmpFilePath, content);
+export const saveBlueprintFileWithContents = async (content: string) => {
+  const tempDir = await fsPromises.mkdtemp(
+    path.join(os.tmpdir(), 'export-bp-'),
+  );
+  const filepath = path.join(tempDir, 'blueprint.json');
+  fs.writeFileSync(filepath, content);
+  return filepath;
 };
