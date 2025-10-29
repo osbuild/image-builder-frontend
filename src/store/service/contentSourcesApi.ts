@@ -254,6 +254,8 @@ export type ErrorsErrorResponse = {
   errors?: ErrorsHandlerError[] | undefined;
 };
 export type ApiContentUnitSearchRequest = {
+  /** Optional date to search in dated snapshots of the listed repositories. */
+  date?: string | undefined;
   /** List of names to search using an exact match */
   exact_names?: string[] | undefined;
   /** Whether to include module information */
@@ -282,6 +284,8 @@ export type ApiSnapshotResponse = {
     | undefined;
   /** Datetime the snapshot was created */
   created_at?: string | undefined;
+  /** Release version of the repository (BaseOS) */
+  detected_os_version?: string | undefined;
   /** Count of each content type */
   removed_counts?:
     | {
