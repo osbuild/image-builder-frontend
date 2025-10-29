@@ -49,6 +49,10 @@ export const isMountpointMinSizeValid = (minSize: string) => {
   return /^\d+$/.test(minSize) && parseInt(minSize) > 0;
 };
 
+export const isPartitionNameValid = (name: string) => {
+  return /^[a-zA-Z0-9+_.-]+$/.test(name);
+};
+
 export const isBlueprintNameValid = (blueprintName: string) =>
   blueprintName.length >= 2 &&
   blueprintName.length <= 100 &&
