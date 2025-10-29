@@ -1023,7 +1023,7 @@ export type ClonesResponse = {
   data: ClonesResponseItem[];
 };
 export type CloneStatusResponse = {
-  compose_id?: string | undefined;
+  compose_id: string;
 } & UploadStatus;
 export type Package = {
   name: string;
