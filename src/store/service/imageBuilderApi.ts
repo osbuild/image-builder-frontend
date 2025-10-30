@@ -893,6 +893,7 @@ export type BlueprintLintItem = {
 };
 export type BlueprintLint = {
   errors: BlueprintLintItem[];
+  warnings: BlueprintLintItem[];
 };
 export type BlueprintResponse = {
   id: string;
