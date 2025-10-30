@@ -237,6 +237,7 @@ export const rhel9BlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['rhel9'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -254,6 +255,7 @@ export const rhel8BlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['rhel8'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -271,6 +273,7 @@ export const centos9BlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['centos9'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -292,6 +295,7 @@ export const x86_64BlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['x86_64'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -313,6 +317,7 @@ export const aarch64BlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['aarch64'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -340,6 +345,7 @@ export const awsBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['aws'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -367,6 +373,7 @@ export const gcpBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['gcp'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -397,6 +404,7 @@ export const azureBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['azure'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -415,6 +423,7 @@ export const registrationBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['registration'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -443,6 +452,7 @@ export const oscapBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['oscap'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -461,6 +471,7 @@ export const fscBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['fsc'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -479,6 +490,7 @@ export const diskBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['disk'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -498,6 +510,7 @@ export const snapshotBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['snapshot'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -517,6 +530,7 @@ export const repositoriesBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['repositories'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -536,6 +550,7 @@ export const packagesBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['packages'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -557,6 +572,7 @@ export const timezoneBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['timezone'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -582,6 +598,7 @@ export const usersBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['users'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -603,6 +620,7 @@ export const localeBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['locale'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -621,6 +639,7 @@ export const hostnameBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['hostname'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -642,6 +661,7 @@ export const kernelBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['kernel'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -674,6 +694,7 @@ export const firewallBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['firewall'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -692,6 +713,7 @@ export const servicesBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['services'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -711,6 +733,7 @@ export const firstBootBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['firstBoot'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -727,6 +750,7 @@ export const detailsBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['details'],
   lint: {
     errors: [],
+    warnings: [],
   },
 };
 
@@ -763,6 +787,7 @@ export const complianceBlueprintResponse: BlueprintResponse = {
         description: "some thingy isn't right",
       },
     ],
+    warnings: [],
   },
 };
 
