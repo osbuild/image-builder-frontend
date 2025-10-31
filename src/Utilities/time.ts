@@ -33,7 +33,7 @@ export const timestampToDisplayString = (ts?: string) => {
   return tsDisplay;
 };
 
-export const timestampToDisplayStringDetailed = (ts?: string) => {
+export const timestampToDisplayStringDetailed = (ts?: string, tz?: string) => {
   // Detailed representation including time and time zone
   if (!ts) {
     return '';
@@ -49,6 +49,7 @@ export const timestampToDisplayStringDetailed = (ts?: string) => {
     second: 'numeric',
     hour12: false,
     timeZoneName: 'short',
+    timeZone: tz,
   };
 
   const tsDisplay = new Intl.DateTimeFormat('en-US', options).format(ms);
