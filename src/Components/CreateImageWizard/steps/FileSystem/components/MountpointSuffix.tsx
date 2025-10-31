@@ -4,14 +4,18 @@ import { TextInput } from '@patternfly/react-core';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
-import { Partition } from '../fscTypes';
+import { FilesystemPartition } from '../fscTypes';
 import { getPrefix, getSuffix, normalizeSuffix } from '../fscUtilities';
 
 type MountpointSuffixPropTypes = {
-  partition: Partition;
+  partition: FilesystemPartition;
+  customization: 'disk' | 'fileSystem';
 };
 
-const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
+const MountpointSuffix = ({
+  partition,
+  customization,
+}: MountpointSuffixPropTypes) => {
   const dispatch = useAppDispatch();
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
@@ -26,6 +30,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
           changePartitionMountpoint({
             id: partition.id,
             mountpoint: mountpoint,
+            customization: customization,
           }),
         );
       }}

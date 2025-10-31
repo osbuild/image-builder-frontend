@@ -1,4 +1,4 @@
-import { Partition } from './steps/FileSystem/fscTypes';
+import { FilesystemPartition } from './steps/FileSystem/fscTypes';
 
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (
@@ -49,6 +49,10 @@ export const isMountpointMinSizeValid = (minSize: string) => {
   return /^\d+$/.test(minSize) && parseInt(minSize) > 0;
 };
 
+export const isPartitionNameValid = (name: string) => {
+  return /^[a-zA-Z0-9+_.-]+$/.test(name);
+};
+
 export const isBlueprintNameValid = (blueprintName: string) =>
   blueprintName.length >= 2 &&
   blueprintName.length <= 100 &&
@@ -61,7 +65,7 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
-export const isFileSystemConfigValid = (partitions: Partition[]) => {
+export const isFileSystemConfigValid = (partitions: FilesystemPartition[]) => {
   const duplicates = getDuplicateMountPoints(partitions);
   return duplicates.length === 0;
 };
@@ -96,7 +100,9 @@ export const isSshKeyValid = (sshKey: string) => {
   return isPatternValid;
 };
 
-export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
+export const getDuplicateMountPoints = (
+  partitions: FilesystemPartition[],
+): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
   if (partitions.length < 2) {
