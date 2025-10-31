@@ -1,3 +1,6 @@
+import * as fsPromises from 'fs/promises';
+import * as path from 'path';
+
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,11 +35,13 @@ test('Import a blueprint with invalid customization', async ({
   const frame = await ibFrame(page);
 
   await test.step('Import BP', async () => {
-    await saveBlueprintFileWithContents(
-      blueprintName,
+    const blueprintFile = await saveBlueprintFileWithContents(
       IMPORT_WITH_DUPLICATE_VALUES,
     );
-    await importBlueprint(page, blueprintName);
+    await cleanup.add(async () => {
+      await fsPromises.rm(path.dirname(blueprintFile), { recursive: true });
+    });
+    await importBlueprint(page, blueprintFile);
   });
 
   await test.step('Navigate to optional steps in Wizard', async () => {
