@@ -180,7 +180,7 @@ registrationModes.forEach(
           // Test enabling/disabling predictive analytics
           const insightsSwitch = frame.getByText('Enable predictive analytics');
           const insightsReviewStep = frame.getByText(
-            'Connect to Red Hat Insights',
+            'Connect to Red Hat Lightspeed',
           );
           // Test enabling/disabling remote remediations
           const rhcSwitch = frame.getByText('Enable remote remediations');
