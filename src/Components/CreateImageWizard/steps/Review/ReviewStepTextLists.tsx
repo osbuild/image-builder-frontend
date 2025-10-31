@@ -271,7 +271,7 @@ export const TargetEnvAWSList = () => {
 };
 
 export const TargetEnvGCPList = () => {
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
 
   const accountType = useAppSelector(selectGcpAccountType);
   const sharedMethod = useAppSelector(selectGcpShareMethod);
@@ -676,7 +676,7 @@ export const RegisterAapList = () => {
 };
 
 export const RegisterNowList = () => {
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
 
   const orgId = useAppSelector(selectOrgId);
   const activationKey = useAppSelector(selectActivationKey);

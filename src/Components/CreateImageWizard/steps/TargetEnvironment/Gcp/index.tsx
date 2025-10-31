@@ -31,7 +31,7 @@ export type GcpAccountType =
   | undefined;
 
 const Gcp = () => {
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
 
   const dispatch = useAppDispatch();
 

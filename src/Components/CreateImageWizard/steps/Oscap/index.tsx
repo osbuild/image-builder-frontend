@@ -53,7 +53,7 @@ import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenS
 const OscapContent = () => {
   const dispatch = useAppDispatch();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
   const fips = useAppSelector(selectFips);

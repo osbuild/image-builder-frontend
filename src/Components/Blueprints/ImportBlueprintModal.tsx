@@ -51,7 +51,7 @@ interface ImportBlueprintModalProps {
 export const ImportBlueprintModal: React.FunctionComponent<
   ImportBlueprintModalProps
 > = ({ setShowImportModal, isOpen }: ImportBlueprintModalProps) => {
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
 
   const onImportClose = () => {
     setShowImportModal(false);
