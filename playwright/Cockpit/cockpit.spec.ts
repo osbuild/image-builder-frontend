@@ -88,7 +88,9 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
 
   await test.step('Cockpit cloud upload', async () => {
     await frame.getByTestId('blueprints-create-button').click();
-    frame.getByRole('heading', { name: 'Image output' });
+    await expect(
+      frame.getByRole('heading', { name: 'Image output' }),
+    ).toBeVisible();
     // the first card should be the AWS card
     await frame.locator('.pf-v6-c-card').first().click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
@@ -96,7 +98,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'Back', exact: true }).click();
 
-    frame.getByRole('heading', { name: 'Details' });
+    await expect(frame.getByRole('heading', { name: 'Details' })).toBeVisible();
     await frame.getByTestId('blueprint').fill(blueprintName);
     await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
@@ -118,6 +120,6 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
       .getByTestId('images-table')
       .getByRole('button', { name: 'Details' })
       .click();
-    frame.getByText('Build Information');
+    await expect(frame.getByText('Build Information')).toBeVisible();
   });
 });
