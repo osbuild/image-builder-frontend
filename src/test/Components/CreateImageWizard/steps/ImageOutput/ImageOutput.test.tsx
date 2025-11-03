@@ -182,25 +182,25 @@ describe('Step Image output', () => {
     const awsTile = await screen.findByRole('button', {
       name: /Amazon Web Services/i,
     });
-    user.click(awsTile); // select
+    await waitFor(() => user.click(awsTile)); // select
     await waitFor(() => expect(nextButton).toBeEnabled());
-    user.click(awsTile); // deselect
+    await waitFor(() => user.click(awsTile)); // deselect
     await waitFor(() => expect(nextButton).toBeDisabled());
 
     const googleTile = await screen.findByRole('button', {
       name: /Google Cloud/i,
     });
-    user.click(googleTile); // select
+    await waitFor(() => user.click(googleTile)); // select
     await waitFor(() => expect(nextButton).toBeEnabled());
-    user.click(googleTile); // deselect
+    await waitFor(() => user.click(googleTile)); // deselect
     await waitFor(() => expect(nextButton).toBeDisabled());
 
     const azureTile = await screen.findByRole('button', {
       name: /Microsoft Azure/i,
     });
-    user.click(azureTile); // select
+    await waitFor(() => user.click(azureTile)); // select
     await waitFor(() => expect(nextButton).toBeEnabled());
-    user.click(azureTile); // deselect
+    await waitFor(() => user.click(azureTile)); // deselect
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
@@ -226,7 +226,7 @@ describe('Step Image output', () => {
     const showOptionsButton = await screen.findByRole('option', {
       name: 'Show options for further development of RHEL',
     });
-    user.click(showOptionsButton);
+    await waitFor(() => user.click(showOptionsButton));
 
     await screen.findByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
@@ -634,7 +634,7 @@ describe('Check step consistency', () => {
     const uploadGcpBtn = await screen.findByRole('button', {
       name: /Google Cloud/i,
     });
-    user.click(uploadGcpBtn);
+    await waitFor(() => user.click(uploadGcpBtn));
     await waitFor(() => expect(next).toBeEnabled());
 
     // change to aarch, GCP not being compatible and gets removed from targets
@@ -645,7 +645,7 @@ describe('Check step consistency', () => {
     const uploadAwsBtn = await screen.findByRole('button', {
       name: /Amazon Web Services/i,
     });
-    user.click(uploadAwsBtn);
+    await waitFor(() => user.click(uploadAwsBtn));
     await waitFor(() => expect(next).toBeEnabled());
 
     // and going back to x86_64 the Next button stays enabled
@@ -737,7 +737,7 @@ describe('Set target using query parameter', () => {
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable',
     );
-    user.click(targetExpandable);
+    await waitFor(() => user.click(targetExpandable));
     await screen.findByText('Bare metal - Installer (.iso)');
   });
 
@@ -754,7 +754,7 @@ describe('Set target using query parameter', () => {
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable',
     );
-    user.click(targetExpandable);
+    await waitFor(() => user.click(targetExpandable));
     await screen.findByText('Virtualization - Guest image (.qcow2)');
   });
 });

@@ -240,7 +240,7 @@ describe('GCP image type request generated correctly', () => {
       name: /Share image with Red Hat Insights only/i,
     });
 
-    user.click(shareWithInsightOption);
+    await waitFor(() => user.click(shareWithInsightOption));
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {});

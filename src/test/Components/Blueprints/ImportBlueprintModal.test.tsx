@@ -36,7 +36,7 @@ const uploadFile = async (filename: string, content: string): Promise<void> => {
 
   if (fileInput) {
     const file = new File([content], filename, { type: 'application/json' });
-    user.upload(fileInput, file);
+    await waitFor(() => user.upload(fileInput, file));
   }
 };
 
@@ -59,7 +59,7 @@ describe('Import modal', () => {
     const reviewButton = screen.getByRole('button', {
       name: /Review and finish/i,
     });
-    expect(reviewButton).toBeDisabled();
+    await waitFor(() => expect(reviewButton).toBeDisabled());
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i,
     );
@@ -72,7 +72,7 @@ describe('Import modal', () => {
     const reviewButton = screen.getByRole('button', {
       name: /Review and finish/i,
     });
-    expect(reviewButton).toBeDisabled();
+    await waitFor(() => expect(reviewButton).toBeDisabled());
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i,
     );
@@ -86,7 +86,7 @@ describe('Import modal', () => {
       name: /Review and finish/i,
     });
     await waitFor(() => expect(reviewButton).toBeEnabled());
-    user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     await waitFor(async () =>
       expect(
@@ -102,7 +102,7 @@ describe('Import modal', () => {
       name: /Review and finish/i,
     });
     await waitFor(() => expect(reviewButton).toBeEnabled());
-    user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     await waitFor(async () =>
       expect(
@@ -125,7 +125,7 @@ describe('Import modal', () => {
       name: /Review and finish/i,
     });
     await waitFor(() => expect(reviewButton).toBeEnabled());
-    user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     await waitFor(async () =>
       expect(
@@ -260,7 +260,7 @@ describe('Import modal', () => {
       name: /Review and finish/i,
     });
     await waitFor(() => expect(reviewButton).toBeEnabled());
-    user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     // Image output
     const guestImageCheckBox = await screen.findByRole('checkbox', {
@@ -449,7 +449,7 @@ describe('Partitioning import', () => {
       name: /Review and finish/i,
     });
     await waitFor(() => expect(reviewButton).toBeEnabled());
-    user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     // Image output
     const guestImageCheckBox = await screen.findByRole('checkbox', {
@@ -476,7 +476,7 @@ describe('Partitioning import', () => {
       name: /Review and finish/i,
     });
     await waitFor(() => expect(reviewButton).toBeEnabled());
-    user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     // Image output
     const guestImageCheckBox = await screen.findByRole('checkbox', {
@@ -502,7 +502,7 @@ describe('Partitioning import', () => {
     const reviewButton = screen.getByRole('button', {
       name: /Review and finish/i,
     });
-    expect(reviewButton).toBeDisabled();
+    await waitFor(() => expect(reviewButton).toBeDisabled());
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i,
     );

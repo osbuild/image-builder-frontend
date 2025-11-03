@@ -215,7 +215,7 @@ export const selectCustomRepo = async () => {
     name: /select row 0/i,
   });
 
-  user.click(customRepoCheckbox);
+  await waitFor(() => user.click(customRepoCheckbox));
   await clickNext();
 };
 

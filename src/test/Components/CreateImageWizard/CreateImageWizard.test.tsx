@@ -167,10 +167,12 @@ describe('Keyboard accessibility', () => {
 
   test('pressing Enter does not advance the wizard', async () => {
     await renderCreateMode();
-    user.click(
-      await screen.findByRole('button', { name: /Amazon Web Services/i }),
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /Amazon Web Services/i }),
+      ),
     );
-    user.keyboard('{enter}');
+    await waitFor(() => user.keyboard('{enter}'));
     await screen.findByRole('heading', {
       name: /image output/i,
     });

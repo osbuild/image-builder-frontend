@@ -93,7 +93,7 @@ const chooseSourcesOption = async () => {
   const sourceRadio = await screen.findByRole('radio', {
     name: /use an account configured from sources\./i,
   });
-  user.click(sourceRadio);
+  await waitFor(() => user.click(sourceRadio));
 };
 
 const getSourceDropdown = async () => {
@@ -201,7 +201,7 @@ describe('Step Upload to AWS', () => {
     const createBlueprintBtn = await screen.findByRole('button', {
       name: /Create blueprint/,
     });
-    user.click(createBlueprintBtn);
+    await waitFor(() => user.click(createBlueprintBtn));
   });
 
   test('revisit step button on Review works', async () => {
