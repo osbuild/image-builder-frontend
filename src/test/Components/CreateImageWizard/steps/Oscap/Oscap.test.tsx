@@ -158,7 +158,7 @@ describe('Step OpenSCAP', () => {
       name: /Additional packages/i,
     });
     const selected = await screen.findByText(/Selected/);
-    user.click(selected);
+    await waitFor(() => user.click(selected));
     await screen.findByText(/aide/i);
     await screen.findByText(/neovim/i);
   });
@@ -329,21 +329,21 @@ describe('OpenSCAP edit mode', () => {
     const fscBtns = await screen.findAllByRole('button', {
       name: /file system configuration/i,
     });
-    user.click(fscBtns[0]);
+    await waitFor(() => user.click(fscBtns[0]));
     await screen.findByRole('heading', { name: /file system configuration/i });
     await screen.findByText('/tmp');
     // check that the Packages contain neovim package
     const packagesNavBtn = await screen.findByRole('button', {
       name: /additional packages/i,
     });
-    user.click(packagesNavBtn);
+    await waitFor(() => user.click(packagesNavBtn));
     await screen.findByRole('heading', {
       name: /Additional packages/i,
     });
     const selectedBtn = await screen.findByRole('button', {
       name: /Selected/i,
     });
-    user.click(selectedBtn);
+    await waitFor(() => user.click(selectedBtn));
     await screen.findByText('neovim');
   });
 

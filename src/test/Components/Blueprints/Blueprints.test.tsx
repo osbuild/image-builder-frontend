@@ -72,7 +72,7 @@ describe('Blueprints', () => {
     });
     expect(emptyStateAction).toBeInTheDocument();
 
-    user.click(emptyStateAction);
+    await waitFor(() => user.click(emptyStateAction));
 
     const { router } = await view;
     await waitFor(() =>
@@ -118,14 +118,14 @@ describe('Blueprints', () => {
     });
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
-    user.click(buildImageDropDown);
+    await waitFor(() => user.click(buildImageDropDown));
 
     const awsCheckbox = await screen.findByRole('checkbox', {
       name: /amazon web services/i,
     });
     expect(awsCheckbox).toBeChecked();
 
-    user.click(awsCheckbox);
+    await waitFor(() => user.click(awsCheckbox));
     await waitFor(() => expect(awsCheckbox).not.toBeChecked());
 
     const buildSelectedBtn = await screen.findByRole('button', {
@@ -144,13 +144,13 @@ describe('Blueprints', () => {
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
 
-    user.click(buildImageDropDown);
+    await waitFor(() => user.click(buildImageDropDown));
     const awsCheckbox = await screen.findByRole('checkbox', {
       name: /amazon web services/i,
     });
     expect(awsCheckbox).toBeChecked();
 
-    user.click(awsCheckbox);
+    await waitFor(() => user.click(awsCheckbox));
     await waitFor(() => expect(awsCheckbox).not.toBeChecked());
     const buildSelectedBtn = await screen.findByRole('button', {
       name: /Build images/i,
@@ -203,7 +203,7 @@ describe('Blueprints', () => {
     const button = await screen.findByRole('button', {
       name: /fix errors automatically/i,
     });
-    user.click(button);
+    await waitFor(() => user.click(button));
     await waitFor(() => {
       expect(
         screen.queryByText('The selected blueprint has errors.'),
@@ -237,7 +237,7 @@ describe('Blueprints', () => {
       const blueprintDetails = await screen.findByTestId(
         'image-details-expandable',
       );
-      user.click(blueprintDetails);
+      await waitFor(() => user.click(blueprintDetails));
       await screen.findByText(editedBlueprintName);
     });
     test('redirect to index page when blueprint is invalid', async () => {
@@ -267,7 +267,7 @@ describe('Blueprints', () => {
         'Search by name or description',
       );
       searchInput.focus();
-      user.keyboard('Milk');
+      await waitFor(() => user.keyboard('Milk'));
 
       // wait for debounce
       await waitFor(
@@ -311,8 +311,8 @@ describe('Blueprints', () => {
         expect(button).toBeEnabled();
       });
 
-      user.click(button);
-      user.click(button);
+      await waitFor(() => user.click(button));
+      await waitFor(() => user.click(button));
 
       await waitFor(() => {
         expect(screen.getAllByTestId('blueprint-card')).toHaveLength(10);
@@ -339,9 +339,9 @@ describe('Blueprints', () => {
         within(screen.getByTestId('images-table')).getAllByRole('row'),
       ).toHaveLength(4);
 
-      user.click(composesVersionFilter);
+      await waitFor(() => user.click(composesVersionFilter));
       const option = await screen.findByRole('menuitem', { name: 'Newest' });
-      user.click(option);
+      await waitFor(() => user.click(option));
       await waitFor(() =>
         expect(
           within(screen.getByTestId('images-table')).getAllByRole('row'),

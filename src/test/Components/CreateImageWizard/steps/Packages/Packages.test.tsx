@@ -273,7 +273,7 @@ describe('Step Packages', () => {
     let firstPkgCheckbox = checkboxes[0] as HTMLInputElement;
 
     expect(firstPkgCheckbox.checked).toEqual(false);
-    user.click(firstPkgCheckbox);
+    await waitFor(() => user.click(firstPkgCheckbox));
     await waitFor(() => expect(firstPkgCheckbox.checked).toEqual(true));
     await clickNext();
     await clickBack();

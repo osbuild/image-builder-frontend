@@ -91,7 +91,7 @@ const toggleAll = async () => {
   const allButton = await screen.findByRole('button', {
     name: /all repositories/i,
   });
-  user.click(allButton);
+  await waitFor(() => user.click(allButton));
 };
 
 const searchForRepository = async (searchTerm: string) => {
@@ -116,7 +116,7 @@ describe('Step Custom repositories', () => {
     let firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
 
     expect(firstRepoCheckbox.checked).toEqual(false);
-    user.click(firstRepoCheckbox);
+    await waitFor(() => user.click(firstRepoCheckbox));
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
 
     await clickNext();
@@ -130,7 +130,7 @@ describe('Step Custom repositories', () => {
     await renderCreateMode();
     await goToRepositoriesStep();
     const select = await screen.findByTestId('bulk-select-toggle');
-    user.click(select);
+    await waitFor(() => user.click(select));
     await screen.findByText(/select page \(10 items\)/i);
   });
 
@@ -142,7 +142,7 @@ describe('Step Custom repositories', () => {
       (await getFirstRepoCheckbox()) as HTMLInputElement;
 
     expect(firstRepoCheckbox.checked).toEqual(false);
-    user.click(firstRepoCheckbox);
+    await waitFor(() => user.click(firstRepoCheckbox));
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
 
     await toggleSelected();
@@ -165,7 +165,7 @@ describe('Step Custom repositories', () => {
 
     expect(firstRepoCheckbox.checked).toEqual(false);
     expect(secondRepoCheckbox.checked).toEqual(false);
-    user.click(firstRepoCheckbox);
+    await waitFor(() => user.click(firstRepoCheckbox));
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
     expect(secondRepoCheckbox.checked).toEqual(false);
 
@@ -189,7 +189,7 @@ describe('Step Custom repositories', () => {
       (await getFirstRepoCheckbox()) as HTMLInputElement;
 
     expect(firstRepoCheckbox.checked).toEqual(false);
-    user.click(firstRepoCheckbox);
+    await waitFor(() => user.click(firstRepoCheckbox));
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
 
     await toggleSelected();
@@ -200,7 +200,7 @@ describe('Step Custom repositories', () => {
     await clickNext();
     await clickBack();
     expect(firstRepoCheckbox.checked).toEqual(true);
-    user.click(firstRepoCheckbox);
+    await waitFor(() => user.click(firstRepoCheckbox));
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(false));
   });
 
@@ -357,7 +357,7 @@ describe('Repositories edit mode', () => {
       name: /Custom repositories/,
     });
 
-    user.click(customRepositories);
+    await waitFor(() => user.click(customRepositories));
 
     await screen.findByText(
       /Removing previously added repositories may lead to issues with selected packages/i,
@@ -368,12 +368,12 @@ describe('Repositories edit mode', () => {
     const repoCheckbox = await getFirstRepoCheckbox();
     await waitFor(() => expect(repoCheckbox).toBeChecked());
 
-    user.click(repoCheckbox);
+    await waitFor(() => user.click(repoCheckbox));
     await screen.findByText(/Are you sure?/);
     const removeAnywayBtn = await screen.findByRole('button', {
       name: /Remove anyway/,
     });
-    user.click(removeAnywayBtn);
+    await waitFor(() => user.click(removeAnywayBtn));
 
     await waitFor(() =>
       expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument(),

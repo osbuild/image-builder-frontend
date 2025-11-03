@@ -173,7 +173,7 @@ describe('Step File system configuration', () => {
     const varButton = await screen.findByRole('option', {
       name: /\/var/i,
     });
-    user.click(varButton);
+    await waitFor(() => user.click(varButton));
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
     expect(await getNextButton()).toBeEnabled();
