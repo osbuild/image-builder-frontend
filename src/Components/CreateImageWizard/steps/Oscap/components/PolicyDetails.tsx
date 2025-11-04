@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import {
   Content,
@@ -10,61 +10,33 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { useGetComplianceCustomizationsQuery } from '../../../../../store/backendApi';
 import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeCompliance,
-  selectCompliancePolicyID,
-  selectDistribution,
-} from '../../../../../store/wizardSlice';
+import { useAppSelector } from '../../../../../store/hooks';
+import { selectCompliancePolicyID } from '../../../../../store/wizardSlice';
 
 const PolicyDetails = (): JSX.Element => {
-  const dispatch = useAppDispatch();
-  const release = useAppSelector(selectDistribution);
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
 
   const {
-    isFetching: isFetchingOscapPolicyInfo,
-    isSuccess: isSuccessOscapPolicyInfo,
+    data: policyInfo,
+    isFetching: isFetchingPolicyInfo,
+    isSuccess: isSuccessPolicyInfo,
     error: policyError,
-  } = useGetComplianceCustomizationsQuery(
+  } = usePolicyQuery(
     {
-      distribution: release,
-      policy: compliancePolicyID!,
+      policyId: compliancePolicyID || '',
     },
     {
-      skip: !compliancePolicyID || !!process.env.IS_ON_PREMISE,
+      skip: !compliancePolicyID,
     },
   );
 
-  const isPolicyDataLoading = compliancePolicyID
-    ? isFetchingOscapPolicyInfo
-    : false;
-  const isPolicyDataSuccess = compliancePolicyID
-    ? isSuccessOscapPolicyInfo
-    : true;
-  const isSuccessOscapData = isPolicyDataSuccess;
-  const hasCriticalError = compliancePolicyID && policyError;
-  const shouldShowData = isSuccessOscapData && !hasCriticalError;
+  const isPolicyDataLoading = !!compliancePolicyID && isFetchingPolicyInfo;
+  const shouldShowData =
+    !!compliancePolicyID && isSuccessPolicyInfo && !policyError;
+  const hasCriticalError = !!compliancePolicyID && !!policyError;
 
-  const { data: policyInfo, isSuccess: isSuccessPolicyInfo } = usePolicyQuery({
-    policyId: compliancePolicyID || '',
-  });
-
-  useEffect(() => {
-    if (!policyInfo || policyInfo.data === undefined) {
-      return;
-    }
-    const pol = policyInfo.data as PolicyRead;
-    dispatch(
-      changeCompliance({
-        policyID: pol.id,
-        profileID: pol.ref_id,
-        policyTitle: pol.title,
-      }),
-    );
-  }, [isSuccessPolicyInfo, dispatch, policyInfo]);
+  const policy = policyInfo?.data as PolicyRead | undefined;
 
   return (
     <>
@@ -74,25 +46,27 @@ const PolicyDetails = (): JSX.Element => {
           <DescriptionListGroup>
             <DescriptionListTerm>Policy type</DescriptionListTerm>
             <DescriptionListDescription>
-              {policyInfo?.data?.schema?.type || '—'}
+              {policy?.type ?? '—'}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Policy description</DescriptionListTerm>
             <DescriptionListDescription>
-              {policyInfo?.data?.schema?.description || '—'}
+              {policy?.description ?? '—'}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Business objective</DescriptionListTerm>
             <DescriptionListDescription>
-              {policyInfo?.data?.schema?.business_objective || '—'}
+              {policy?.business_objective ?? '—'}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Compliance threshold</DescriptionListTerm>
             <DescriptionListDescription>
-              {policyInfo?.data?.schema?.compliance_threshold || '—'}
+              {policy?.compliance_threshold !== undefined
+                ? `${policy.compliance_threshold}%`
+                : '—'}
             </DescriptionListDescription>
           </DescriptionListGroup>
         </DescriptionList>

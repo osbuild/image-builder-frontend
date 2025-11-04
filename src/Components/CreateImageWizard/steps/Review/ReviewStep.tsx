@@ -15,6 +15,7 @@ import { ArrowRightIcon } from '@patternfly/react-icons';
 
 import './ReviewStep.scss';
 import {
+  CompliancePolicyDetailsList,
   ContentList,
   DetailsList,
   FirewallList,
@@ -351,6 +352,7 @@ const Review = () => {
           data-testid='compliance-detail-expandable'
         >
           <OscapList />
+          <CompliancePolicyDetailsList />
         </ExpandableSection>
       )}
       {!hasWslTargetOnly && (

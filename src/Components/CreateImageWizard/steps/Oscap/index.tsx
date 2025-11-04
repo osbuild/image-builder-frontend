@@ -42,7 +42,6 @@ import {
 import { usePoliciesQuery } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  changeCompliance,
   changeComplianceType,
   changeDisabledServices,
   changeEnabledServices,
@@ -59,6 +58,8 @@ import {
   selectFips,
   selectImageTypes,
   selectServices,
+  setCompliancePolicy,
+  setOscapProfile,
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
@@ -104,12 +105,9 @@ const OscapContent = () => {
     // Avoid showing profile information when switching between types by
     // clearing the compliance data.
     dispatch(
-      changeCompliance({
-        profileID: undefined,
-        policyID: undefined,
-        policyTitle: undefined,
-      }),
+      setCompliancePolicy({ policyID: undefined, policyTitle: undefined }),
     );
+    dispatch(setOscapProfile(undefined));
 
     const pkgs = currentProfileData?.packages || [];
     for (const pkg of pkgs) {
