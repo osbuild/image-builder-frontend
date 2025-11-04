@@ -185,8 +185,8 @@ const convertDiskToFscDisk = (
   if ('logical_volumes' in disk) {
     return {
       id: id,
-      min_size: disk.minsize,
-      unit: unit as Units,
+      min_size: size,
+      unit: (unit || 'GiB') as Units,
       name: disk.name,
       type: disk.type,
       logical_volumes: disk.logical_volumes.map((lv) =>
@@ -198,7 +198,7 @@ const convertDiskToFscDisk = (
   if ('subvolumes' in disk) {
     return {
       id: id,
-      min_size: disk.minsize,
+      min_size: size,
       unit: unit as Units,
       type: disk.type,
       subvolumes: disk.subvolumes,
@@ -210,7 +210,7 @@ const convertDiskToFscDisk = (
     fs_type: disk.fs_type,
     mountpoint: disk.mountpoint,
     min_size: size,
-    unit: unit as Units,
+    unit: (unit || 'GiB') as Units,
     type: disk.type,
   };
 };
@@ -227,7 +227,7 @@ const convertLogicalVolume = (volume: LogicalVolume) => {
   return {
     id: id,
     min_size: size,
-    unit: unit as Units,
+    unit: (unit || 'GiB') as Units,
     name: volume.name,
     fs_type: volume.fs_type,
     mountpoint: volume.mountpoint,
@@ -883,7 +883,7 @@ const getDisk = (state: RootState): Disk | undefined => {
   const diskPartitions = partitions.map((partition) => {
     if (partition.type === 'lvm') {
       return {
-        minsize: partition.min_size ? partition.min_size : undefined,
+        minsize: partition.min_size + ' ' + partition.unit,
         name: partition.name,
         type: partition.type,
         logical_volumes: partition.logical_volumes.map((lv) => {
@@ -899,7 +899,7 @@ const getDisk = (state: RootState): Disk | undefined => {
 
     if (partition.type === 'btrfs') {
       return {
-        minsize: partition.min_size,
+        minsize: partition.min_size + ' ' + partition.unit,
         type: partition.type,
         subvolumes: partition.subvolumes,
       };

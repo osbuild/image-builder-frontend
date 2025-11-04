@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
@@ -16,9 +16,8 @@ import {
   removeDiskPartition,
   selectDiskPartitions,
 } from '../../../../../store/wizardSlice';
+import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { DiskPartition, FilesystemPartition } from '../fscTypes';
-
-export const FileSystemContext = React.createContext<boolean>(true);
 
 type DiskRowPropTypes = {
   partition: DiskPartition;
@@ -34,7 +33,8 @@ const DiskRow = ({
   onDrop,
 }: DiskRowPropTypes) => {
   const dispatch = useAppDispatch();
-  const partitions = useAppSelector(selectDiskPartitions);
+  const stepValidation = useFilesystemValidation();
+  const diskPartitions = useAppSelector(selectDiskPartitions);
 
   const customization = 'disk';
 
@@ -65,14 +65,25 @@ const DiskRow = ({
         </Td>
       )}
       <Td width={20}>
-        <MountpointPrefix
-          partition={partition as FilesystemPartition}
-          customization={customization}
-        />
+        {partition.mountpoint && (
+          <MountpointPrefix
+            partition={partition as FilesystemPartition}
+            customization={customization}
+          />
+        )}
+        {stepValidation.errors[`mountpoint-${partition.id}`] && (
+          <Alert
+            variant='danger'
+            isInline
+            isPlain
+            title={stepValidation.errors[`mountpoint-${partition.id}`]}
+          />
+        )}
       </Td>
-      {partition.mountpoint !== '/' &&
-      !partition.mountpoint?.startsWith('/boot') &&
-      !partition.mountpoint?.startsWith('/usr') ? (
+      {partition.mountpoint &&
+      partition.mountpoint !== '/' &&
+      !partition.mountpoint.startsWith('/boot') &&
+      !partition.mountpoint.startsWith('/usr') ? (
         <Td width={20}>
           <MountpointSuffix
             partition={partition as FilesystemPartition}
@@ -96,10 +107,12 @@ const DiskRow = ({
           variant='link'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          isDisabled={
-            partition.mountpoint === '/' &&
-            partitions.filter((p) => p.type === 'plain').length > 1
-          }
+          isDisabled={diskPartitions.some(
+            (vg) =>
+              vg.type === 'lvm' &&
+              vg.logical_volumes.length === 1 &&
+              vg.logical_volumes.some((lv) => lv.id === partition.id),
+          )}
         />
       </Td>
     </Tr>

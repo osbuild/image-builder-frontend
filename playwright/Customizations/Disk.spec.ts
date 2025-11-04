@@ -76,7 +76,7 @@ test('Create a blueprint with Disk customization', async ({
   await test.step('Fill in some partitions and add a volume group', async () => {
     await frame.getByRole('button', { name: 'Add plain partition' }).click();
     await frame.getByRole('button', { name: '/home' }).click();
-    await frame.getByRole('option', { name: '/tmp' }).click();
+    await frame.getByRole('option', { name: '/var' }).click();
 
     const removeRootButton = frame
       .getByRole('row')
@@ -175,7 +175,7 @@ test('Create a blueprint with Disk customization', async ({
       .getByPlaceholder('Define minimum size')
       .fill('5');
 
-    await secondRow.getByRole('button', { name: '/tmp' }).click();
+    await secondRow.getByRole('button', { name: '/var' }).click();
     await expect(
       secondRow.getByRole('textbox', { name: 'mountpoint suffix' }),
     ).toBeVisible();
