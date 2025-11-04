@@ -14,6 +14,7 @@ import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import { getPrefix, getSuffix } from '../fscUtilities';
 
 export const mountpointPrefixes = [
+  '/',
   '/app',
   '/boot',
   '/data',
@@ -62,7 +63,7 @@ const MountpointPrefix = ({
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isDisabled={prefix === '/'}
+      isDisabled={customization === 'fileSystem' && prefix === '/'}
       isFullWidth
     >
       {prefix}
@@ -79,13 +80,23 @@ const MountpointPrefix = ({
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {mountpointPrefixes.map((prefix, index) => {
-          return (
-            <SelectOption key={index} value={prefix}>
-              {prefix}
-            </SelectOption>
-          );
-        })}
+        {mountpointPrefixes
+          .filter((prefix) => {
+            if (customization === 'fileSystem' && prefix === '/') {
+              return false;
+            }
+            if ('name' in partition && prefix === '/boot') {
+              return false;
+            }
+            return true;
+          })
+          .map((prefix, index) => {
+            return (
+              <SelectOption key={index} value={prefix}>
+                {prefix}
+              </SelectOption>
+            );
+          })}
       </SelectList>
     </Select>
   );
