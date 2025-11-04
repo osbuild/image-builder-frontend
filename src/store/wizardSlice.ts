@@ -696,17 +696,18 @@ export const wizardSlice = createSlice({
     changeComplianceType: (state, action: PayloadAction<ComplianceType>) => {
       state.compliance.complianceType = action.payload;
     },
-    changeCompliance: (
+    setCompliancePolicy: (
       state,
       action: PayloadAction<{
         policyID: string | undefined;
-        profileID: string | undefined;
         policyTitle: string | undefined;
       }>,
     ) => {
       state.compliance.policyID = action.payload.policyID;
-      state.compliance.profileID = action.payload.profileID;
       state.compliance.policyTitle = action.payload.policyTitle;
+    },
+    setOscapProfile: (state, action: PayloadAction<string | undefined>) => {
+      state.compliance.profileID = action.payload;
     },
     changeFileSystemConfiguration: (
       state,
@@ -1234,7 +1235,8 @@ export const {
   changeRegistrationType,
   changeActivationKey,
   changeOrgId,
-  changeCompliance,
+  setCompliancePolicy,
+  setOscapProfile,
   changeComplianceType,
   changeFileSystemConfiguration,
   changeFscMode,

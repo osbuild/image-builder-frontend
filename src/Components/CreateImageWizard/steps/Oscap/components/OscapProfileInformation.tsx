@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import {
   CodeBlock,
@@ -8,50 +8,19 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import {
-  useGetComplianceCustomizationsQuery,
-  useGetOscapCustomizationsQuery,
-} from '../../../../../store/backendApi';
-import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
+import { useAppSelector } from '../../../../../store/hooks';
 import { OpenScapProfile } from '../../../../../store/imageBuilderApi';
 import {
-  changeCompliance,
-  selectCompliancePolicyID,
   selectComplianceProfileID,
-  selectComplianceType,
   selectDistribution,
   selectFips,
 } from '../../../../../store/wizardSlice';
 
-type OscapProfileInformationOptionPropType = {
-  allowChangingCompliancePolicy?: boolean;
-};
-
-export const OscapProfileInformation = ({
-  allowChangingCompliancePolicy = false,
-}: OscapProfileInformationOptionPropType): JSX.Element => {
-  const dispatch = useAppDispatch();
+export const OscapProfileInformation = (): JSX.Element => {
   const release = useAppSelector(selectDistribution);
-  const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
-  const complianceType = useAppSelector(selectComplianceType);
   const fips = useAppSelector(selectFips);
-
-  const {
-    data: oscapPolicyInfo,
-    isFetching: isFetchingOscapPolicyInfo,
-    isSuccess: isSuccessOscapPolicyInfo,
-    error: policyError,
-  } = useGetComplianceCustomizationsQuery(
-    {
-      distribution: release,
-      policy: compliancePolicyID!,
-    },
-    {
-      skip: !compliancePolicyID || !!process.env.IS_ON_PREMISE,
-    },
-  );
 
   const {
     data: oscapProfileInfo,
@@ -69,53 +38,18 @@ export const OscapProfileInformation = ({
     },
   );
 
-  const customizationData =
-    compliancePolicyID && oscapPolicyInfo ? oscapPolicyInfo : oscapProfileInfo;
+  const customizationData = oscapProfileInfo;
   const profileMetadata = oscapProfileInfo;
-  const isPolicyDataLoading = compliancePolicyID
-    ? isFetchingOscapPolicyInfo
-    : false;
-  const isFetchingOscapData = isPolicyDataLoading || isFetchingOscapProfileInfo;
-  const isPolicyDataSuccess = compliancePolicyID
-    ? isSuccessOscapPolicyInfo
-    : true;
-  const isSuccessOscapData = isPolicyDataSuccess && isSuccessOscapProfileInfo;
-  const hasCriticalError = profileError || (compliancePolicyID && policyError);
+  const isFetchingOscapData = isFetchingOscapProfileInfo;
+  const isSuccessOscapData = isSuccessOscapProfileInfo;
+  const hasCriticalError = profileError;
   const shouldShowData = isSuccessOscapData && !hasCriticalError;
-
-  const {
-    data: policyInfo,
-    isFetching: isFetchingPolicyInfo,
-    isSuccess: isSuccessPolicyInfo,
-  } = usePolicyQuery(
-    {
-      policyId: compliancePolicyID || '',
-    },
-    {
-      skip:
-        !allowChangingCompliancePolicy || complianceProfileID ? true : false,
-    },
-  );
-
-  useEffect(() => {
-    if (!policyInfo || policyInfo.data === undefined) {
-      return;
-    }
-    const pol = policyInfo.data as PolicyRead;
-    dispatch(
-      changeCompliance({
-        policyID: pol.id,
-        profileID: pol.ref_id,
-        policyTitle: pol.title,
-      }),
-    );
-  }, [isSuccessPolicyInfo, dispatch, policyInfo]);
 
   const oscapProfile = profileMetadata?.openscap as OpenScapProfile | undefined;
 
   return (
     <>
-      {(isFetchingOscapData || isFetchingPolicyInfo) && <Spinner size='lg' />}
+      {isFetchingOscapData && <Spinner size='lg' />}
       {hasCriticalError && (
         <Content component={ContentVariants.p} className='pf-v6-u-color-200'>
           Unable to load compliance information. Please try again.
@@ -128,9 +62,7 @@ export const OscapProfileInformation = ({
               component={ContentVariants.dt}
               className='pf-v6-u-min-width'
             >
-              {complianceType === 'compliance'
-                ? 'Policy description'
-                : 'Profile description'}
+              Profile description
             </Content>
             <Content component={ContentVariants.dd}>
               {oscapProfile?.profile_description}
@@ -213,50 +145,6 @@ export const OscapProfileInformation = ({
                   {fips.enabled ? 'Enabled' : 'Disabled'}
                 </CodeBlockCode>
               </CodeBlock>
-            </Content>
-          </Content>
-        </>
-      )}
-      {isSuccessPolicyInfo && (
-        <>
-          <Content>
-            <Content component={ContentVariants.dl} className='review-step-dl'>
-              <Content
-                component={ContentVariants.dt}
-                className='pf-v6-u-min-width'
-              >
-                Policy description:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.description}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className='pf-v6-u-min-width'
-              >
-                Business objective:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.business_objective}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className='pf-v6-u-min-width'
-              >
-                Policy type:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.type}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className='pf-v6-u-min-width'
-              >
-                Reference ID:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.id}
-              </Content>
             </Content>
           </Content>
         </>
