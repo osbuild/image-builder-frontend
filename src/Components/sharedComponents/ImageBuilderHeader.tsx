@@ -10,7 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import {
-  CREATING_IMAGES_WITH_IB_SERVICE_URL,
+  IB_DOCUMENTATION_URL,
   OSBUILD_SERVICE_ARCHITECTURE_URL,
 } from '../../constants';
 import { useBackendPrefetch } from '../../store/backendApi';
@@ -47,7 +47,7 @@ const AboutImageBuilderPopover = () => {
               icon={<ExternalLinkAltIcon />}
               iconPosition='right'
               isInline
-              href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
+              href={IB_DOCUMENTATION_URL}
             >
               Image builder for RPM-DNF documentation
             </Button>
