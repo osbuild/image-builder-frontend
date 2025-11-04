@@ -318,16 +318,37 @@ export function useFilesystemValidation(): StepValidation {
     return { errors, disabledNext: false };
   }
 
-  const duplicates = getDuplicateMountPoints(filesystemPartitions);
+  const fscDuplicates = getDuplicateMountPoints(filesystemPartitions);
   for (const partition of filesystemPartitions) {
-    if (partition.min_size === '') {
+    if (!partition.min_size || partition.min_size === '') {
       errors[`min-size-${partition.id}`] = 'Partition size is required';
       disabledNext = true;
-    } else if (!isMountpointMinSizeValid(partition.min_size)) {
+    }
+    if (partition.min_size && !isMountpointMinSizeValid(partition.min_size)) {
       errors[`min-size-${partition.id}`] = 'Must be larger than 0';
       disabledNext = true;
     }
-    if (duplicates.includes(partition.mountpoint)) {
+    if (fscDuplicates.includes(partition.mountpoint)) {
+      errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
+      disabledNext = true;
+    }
+  }
+
+  const diskDuplicates = getDuplicateMountPoints(diskPartitions);
+  for (const partition of diskPartitions) {
+    if (!partition.min_size || partition.min_size === '') {
+      errors[`min-size-${partition.id}`] = 'Partition size is required';
+      disabledNext = true;
+    }
+    if (partition.min_size && !isMountpointMinSizeValid(partition.min_size)) {
+      errors[`min-size-${partition.id}`] = 'Must be larger than 0';
+      disabledNext = true;
+    }
+    if (
+      'mountpoint' in partition &&
+      partition.mountpoint &&
+      diskDuplicates.includes(partition.mountpoint)
+    ) {
       errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
       disabledNext = true;
     }
@@ -347,6 +368,22 @@ export function useFilesystemValidation(): StepValidation {
       for (const lv of partition.logical_volumes) {
         if (lv.name && !isPartitionNameValid(lv.name)) {
           errors[`lvname-${lv.id}`] = 'Volume name is invalid';
+          disabledNext = true;
+        }
+        if (!lv.min_size || lv.min_size === '') {
+          errors[`min-size-${lv.id}`] = 'Partition size is required';
+          disabledNext = true;
+        }
+        if (lv.min_size && !isMountpointMinSizeValid(lv.min_size)) {
+          errors[`min-size-${lv.id}`] = 'Must be larger than 0';
+          disabledNext = true;
+        }
+        if (
+          'mountpoint' in lv &&
+          lv.mountpoint &&
+          diskDuplicates.includes(lv.mountpoint)
+        ) {
+          errors[`mountpoint-${lv.id}`] = 'Duplicate mount points';
           disabledNext = true;
         }
       }
