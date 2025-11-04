@@ -154,9 +154,9 @@ const OscapContent = () => {
         </Title>
         <Content>
           Select which {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
-          Compliance policy or OpenSCAP profile you want your image to be
+          compliance policy or OpenSCAP profile you want your image to be
           compliant-ready for.{' '}
-          {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'} Compliance
+          {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'} compliance
           allows the use of tailored policies, whereas OpenSCAP provides default
           versions. This step automatically helps monitor the adherence of your
           registered RHEL systems to a selected policy or profile.
@@ -191,7 +191,7 @@ const OscapContent = () => {
                 <Radio
                   id='security-type-compliance'
                   name='security-type'
-                  label='Use a custom Compliance policy'
+                  label='Use a custom compliance policy'
                   isChecked={complianceType === 'compliance'}
                   onChange={() => handleTypeChange('compliance')}
                 />
@@ -229,8 +229,9 @@ const OscapContent = () => {
                         url={COMPLIANCE_URL}
                         analyticsStepId='step-oscap'
                       >
-                        Manage {lightspeedEnabled ? 'Lightspeed' : 'Insights'}{' '}
-                        Compliance
+                        Manage{' '}
+                        {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
+                        compliance
                       </ManageButton>
                     </HelperTextItem>
                   </HelperText>
