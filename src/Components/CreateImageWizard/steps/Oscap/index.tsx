@@ -295,8 +295,8 @@ const OscapContent = () => {
                 To help you get started, select one of the default policies
                 below and we will create the policy for you. However, in order
                 to modify the policy or to create a new one, you must go through{' '}
-                {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}
-                Compliance.
+                {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
+                compliance.
               </p>
               <AlertActionLink
                 component='a'
