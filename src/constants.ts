@@ -32,14 +32,10 @@ export const ACTIVATION_KEYS_URL = !process.env.IS_ON_PREMISE
   : 'https://console.redhat.com/settings/connector/activation-keys';
 export const COMPLIANCE_AND_VULN_SCANNING_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
-export const CREATING_IMAGES_WITH_IB_URL =
-  'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
 export const MANAGING_WITH_DNF_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_software_with_the_dnf_tool/index';
-export const CREATING_IMAGES_WITH_IB_SERVICE_URL =
-  'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
-export const DOCUMENTATION_URL =
-  'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
+export const IB_DOCUMENTATION_URL =
+  'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
 export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
 export const GENERATING_SSH_KEY_PAIRS_URL =

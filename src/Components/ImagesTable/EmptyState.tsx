@@ -16,10 +16,7 @@ import {
   SearchIcon,
 } from '@patternfly/react-icons';
 
-import {
-  CREATING_IMAGES_WITH_IB_SERVICE_URL,
-  MANAGING_WITH_DNF_URL,
-} from '../../constants';
+import { IB_DOCUMENTATION_URL, MANAGING_WITH_DNF_URL } from '../../constants';
 import { BuildImagesButtonEmptyState } from '../Blueprints/BuildImagesButton';
 
 type ImagesEmptyStateProps = {
@@ -95,7 +92,7 @@ const EmptyImagesTable = () => {
                 icon={<ExternalLinkAltIcon />}
                 iconPosition='right'
                 isInline
-                href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
+                href={IB_DOCUMENTATION_URL}
                 className='pf-v6-u-pt-md'
               >
                 Image builder for RPM-DNF documentation
