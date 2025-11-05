@@ -23,6 +23,7 @@ import type {
   FilesystemPartition,
   FscDisk,
   FSType,
+  PartitioningCustomization,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import type {
@@ -805,7 +806,7 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{
         id: string;
         mountpoint: string;
-        customization: 'disk' | 'fileSystem';
+        customization: PartitioningCustomization;
       }>,
     ) => {
       const { id, mountpoint, customization } = action.payload;
@@ -839,7 +840,7 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{
         id: string;
         unit: Units;
-        customization: 'disk' | 'fileSystem';
+        customization: PartitioningCustomization;
       }>,
     ) => {
       const { id, unit, customization } = action.payload;
@@ -868,7 +869,7 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{
         id: string;
         min_size: string;
-        customization: 'disk' | 'fileSystem';
+        customization: PartitioningCustomization;
       }>,
     ) => {
       const { id, min_size, customization } = action.payload;
@@ -897,7 +898,7 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{
         id: string;
         fs_type: FSType;
-        customization: 'disk' | 'fileSystem';
+        customization: PartitioningCustomization;
       }>,
     ) => {
       const { id, fs_type, customization } = action.payload;
@@ -929,7 +930,7 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{
         id: string;
         name: string;
-        customization: 'disk' | 'fileSystem';
+        customization: PartitioningCustomization;
       }>,
     ) => {
       const { id, name, customization } = action.payload;

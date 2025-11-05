@@ -5,11 +5,15 @@ import { VolumeGroup } from '../../../../../store/imageBuilderApi';
 import { changePartitionName } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { DiskPartitionBase, LogicalVolumeWithBase } from '../fscTypes';
+import {
+  DiskPartitionBase,
+  LogicalVolumeWithBase,
+  PartitioningCustomization,
+} from '../fscTypes';
 
 type PartitionNamePropTypes = {
   partition: (VolumeGroup & DiskPartitionBase) | LogicalVolumeWithBase;
-  customization: 'disk' | 'fileSystem';
+  customization: PartitioningCustomization;
 };
 
 const PartitionName = ({
