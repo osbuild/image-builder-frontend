@@ -145,10 +145,10 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     setIsLintExp(isExpanded);
   };
 
-  const hasWarnings = (blueprintDetails?.lint?.errors?.length || 0) > 0;
+  const hasWarnings = (blueprintDetails?.lint.errors.length || 0) > 0;
 
   // Extract current warning messages for useWarningsManager
-  const currentWarnings = blueprintDetails?.lint?.errors?.map(
+  const currentWarnings = blueprintDetails?.lint.errors.map(
     (error) => `${error.name}: ${error.description}`,
   );
 
@@ -156,13 +156,13 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const getBlueprintCompliancePolicyId = (
     blueprint?: BlueprintResponse,
   ): string | undefined => {
-    const openscap = blueprint?.customizations?.openscap;
+    const openscap = blueprint?.customizations.openscap;
     // Check if this is OpenScapCompliance (has policy_id)
     return openscap && 'policy_id' in openscap ? openscap.policy_id : undefined;
   };
 
   const getBlueprintPackages = (blueprint?: BlueprintResponse): string[] => {
-    return blueprint?.customizations?.packages || [];
+    return blueprint?.customizations.packages || [];
   };
 
   const policyId = getBlueprintCompliancePolicyId(blueprintDetails);
@@ -249,8 +249,8 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               isExpanded={isLintExp}
             >
               <List isPlain>
-                {blueprintDetails?.lint?.errors
-                  ?.filter((error) => {
+                {blueprintDetails?.lint.errors
+                  .filter((error) => {
                     const warningText = `${error.name}: ${error.description}`;
                     return !ignoredWarnings[warningText];
                   })
