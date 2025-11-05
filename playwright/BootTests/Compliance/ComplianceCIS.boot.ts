@@ -84,8 +84,13 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   });
 
   await test.step('Select and fill the Compliance step', async () => {
-    await frame.getByRole('button', { name: 'Compliance' }).click();
-    await frame.getByRole('button', { name: 'Compliance policies' }).click();
+    await frame
+      .getByLabel('Wizard steps')
+      .getByRole('button', { name: 'Security' })
+      .click();
+    await frame
+      .getByRole('radio', { name: 'Use a custom compliance policy' })
+      .click();
     await frame.getByRole('button', { name: 'None' }).click();
     await frame.getByRole('option', { name: policyName }).click();
     await expect(frame.getByRole('button', { name: policyName })).toBeVisible(); // Wait for the policy to get selected
