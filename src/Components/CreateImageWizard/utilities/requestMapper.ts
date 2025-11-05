@@ -119,8 +119,8 @@ import {
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
 import {
+  DiskPartition,
   FilesystemPartition,
-  FscDiskPartition,
   Units,
 } from '../steps/FileSystem/fscTypes';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
@@ -173,7 +173,7 @@ const convertFilesystemToPartition = (
 
 const convertDiskToFscDisk = (
   disk: FilesystemTyped | VolumeGroup | BtrfsVolume,
-): FscDiskPartition => {
+): DiskPartition => {
   const id = uuidv4();
   let size;
   let unit;
