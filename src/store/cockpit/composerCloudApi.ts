@@ -150,6 +150,7 @@ export type ImageTypes =
   | "iot-simplified-installer"
   | "live-installer"
   | "minimal-raw"
+  | "network-installer"
   | "oci"
   | "pxe-tar-xz"
   | "vsphere"

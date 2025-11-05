@@ -16,12 +16,71 @@ export const createBlueprint = async (
   blueprintName: string,
 ) => {
   await page.getByRole('button', { name: 'Create blueprint' }).click();
-  await page.getByRole('button', { name: 'Close' }).first().click();
-  await page.getByRole('button', { name: 'Create blueprint' }).click();
-  await page.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
-  // the clickable blueprint cards are a bit awkward, so use the
-  // button's id instead
-  await page.locator(`button[id="${blueprintName}"]`).click();
+
+  // Primary success path: we should land on the blueprint details page where "Edit blueprint" is visible
+  const editBtn = page.getByRole('button', { name: 'Edit blueprint' });
+  try {
+    await expect(editBtn).toBeVisible({ timeout: 15_000 });
+    // Ensure we're on the details URL in hosted for stability
+    if (isHosted()) {
+      try {
+        await (page as Page).goto(
+          `/insights/image-builder/blueprints/${encodeURIComponent(blueprintName)}`,
+        );
+        await expect(editBtn).toBeVisible({ timeout: 10_000 });
+      } catch {
+        /* ignore */
+      }
+    }
+    return;
+  } catch {
+    // Not on details yet – try to close any completion modal if present
+    const closeBtn = page.getByRole('button', { name: 'Close' }).first();
+    if (await closeBtn.isVisible().catch(() => false)) {
+      await closeBtn.click();
+      // Wait a bit for navigation after closing modal
+
+      await page.waitForTimeout(1000);
+    }
+
+    // Give the UI another chance to render the details view
+    try {
+      await expect(editBtn).toBeVisible({ timeout: 10_000 });
+      return;
+    } catch {
+      // Fallback: navigate directly to details in hosted, else via list
+      if (isHosted()) {
+        await (page as Page).goto(
+          `/insights/image-builder/blueprints/${encodeURIComponent(blueprintName)}`,
+        );
+        await expect(editBtn).toBeVisible({ timeout: 10_000 });
+      } else {
+        // Wait for page to settle first
+        await page.waitForTimeout(2000);
+        const search = page.getByRole('textbox', { name: 'Search input' });
+        await expect(search).toBeVisible({ timeout: 10_000 });
+        await search.clear();
+        await search.fill(blueprintName);
+        await page.waitForTimeout(1000);
+        const bpButton = page.locator(`button[id="${blueprintName}"]`).first();
+        await expect(bpButton).toBeVisible({ timeout: 30000 });
+        for (let attempt = 0; attempt < 5; attempt++) {
+          try {
+            await bpButton.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(200);
+            await bpButton.click();
+            break;
+          } catch {
+            await page.waitForTimeout(200);
+            await expect(bpButton).toBeVisible({ timeout: 5000 });
+            if (attempt === 4)
+              throw new Error('Failed to click blueprint card after retries');
+          }
+        }
+        await expect(editBtn).toBeVisible({ timeout: 10_000 });
+      }
+    }
+  }
 };
 
 /**
@@ -97,12 +156,54 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
         // If the No BP heading was not found, it means the blueprint (possibly) was created -> continue with deletion
       }
 
-      // the clickable blueprint cards are a bit awkward, so use the
-      // button's id instead
-      await frame.locator(`button[id="${blueprintName}"]`).click();
-      await frame.getByRole('button', { name: 'Menu toggle' }).click();
-      await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
-      await frame.getByRole('button', { name: 'Delete' }).click();
+      if (isHosted()) {
+        await page.goto(
+          `/insights/image-builder/blueprints/${encodeURIComponent(blueprintName)}`,
+        );
+        await expect(
+          page.getByRole('button', { name: 'Edit blueprint' }),
+        ).toBeVisible({ timeout: 10_000 });
+      } else {
+        // the clickable blueprint cards are a bit awkward, so use the button's id instead
+        const bpButton = frame.locator(`button[id="${blueprintName}"]`).first();
+        await expect(bpButton).toBeVisible({ timeout: 30000 });
+        for (let attempt = 0; attempt < 5; attempt++) {
+          try {
+            await bpButton.scrollIntoViewIfNeeded();
+            // eslint-disable-next-line playwright/no-wait-for-timeout
+            await page.waitForTimeout(500);
+            await bpButton.click();
+            break;
+          } catch {
+            // eslint-disable-next-line playwright/no-wait-for-timeout
+            await page.waitForTimeout(500);
+            await expect(bpButton).toBeVisible({ timeout: 5000 });
+            if (attempt === 4)
+              throw new Error('Failed to click blueprint card after retries');
+          }
+        }
+      }
+      const kebab = frame.getByRole('button', { name: 'Menu toggle' });
+      await expect(kebab).toBeVisible({ timeout: 10000 });
+      await kebab.click();
+      const deleteItem = frame.getByRole('menuitem', {
+        name: 'Delete blueprint',
+      });
+      await expect(deleteItem).toBeVisible({ timeout: 10000 });
+      await deleteItem.click();
+      const confirmDelete = frame.getByRole('button', { name: 'Delete' });
+      await expect(confirmDelete).toBeVisible({ timeout: 10000 });
+      await confirmDelete.click();
+      // Wait until details page disappears or the card is gone from list
+      if (isHosted()) {
+        await expect(
+          page.getByRole('button', { name: 'Edit blueprint' }),
+        ).toBeHidden({ timeout: 10_000 });
+      } else {
+        await navigateToLandingPage(page);
+        const gone = frame.locator(`button[id="${blueprintName}"]`);
+        await expect(gone).toBeHidden({ timeout: 10_000 });
+      }
     },
     { box: true },
   );
