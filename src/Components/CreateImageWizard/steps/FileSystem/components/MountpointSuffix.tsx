@@ -4,12 +4,12 @@ import { TextInput } from '@patternfly/react-core';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
-import { FilesystemPartition } from '../fscTypes';
+import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import { getPrefix, getSuffix, normalizeSuffix } from '../fscUtilities';
 
 type MountpointSuffixPropTypes = {
   partition: FilesystemPartition;
-  customization: 'disk' | 'fileSystem';
+  customization: PartitioningCustomization;
 };
 
 const MountpointSuffix = ({

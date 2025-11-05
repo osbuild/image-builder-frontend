@@ -16,6 +16,7 @@ import {
 import {
   FilesystemPartition,
   LogicalVolumeWithBase,
+  PartitioningCustomization,
   Units,
   VolumeGroupWithExtendedLV,
 } from '../fscTypes';
@@ -27,7 +28,7 @@ type SizeUnitPropTypes = {
     | FilesystemPartition
     | LogicalVolumeWithBase
     | VolumeGroupWithExtendedLV;
-  customization: 'disk' | 'fileSystem';
+  customization: PartitioningCustomization;
 };
 
 const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
