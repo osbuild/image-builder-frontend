@@ -26,10 +26,10 @@ import {
 } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { FscDiskPartition, FscDiskPartitionBase } from '../fscTypes';
+import { DiskPartition, DiskPartitionBase } from '../fscTypes';
 
 type VolumeGroupsType = {
-  volumeGroups: Extract<FscDiskPartition, VolumeGroup & FscDiskPartitionBase>[];
+  volumeGroups: Extract<DiskPartition, VolumeGroup & DiskPartitionBase>[];
 };
 
 const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {

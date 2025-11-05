@@ -18,19 +18,19 @@ export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
 
 export type FscDisk = {
   minsize: string;
-  partitions: FscDiskPartition[];
+  partitions: DiskPartition[];
   type?: 'gpt' | 'dos' | undefined;
 };
 
-export type FscDiskPartitionBase = {
+export type DiskPartitionBase = {
   id: string;
   min_size: string | undefined;
   unit: Units | undefined;
 };
 
-export type LogicalVolumeWithBase = LogicalVolume & FscDiskPartitionBase;
+export type LogicalVolumeWithBase = LogicalVolume & DiskPartitionBase;
 
-export type VolumeGroupWithExtendedLV = FscDiskPartitionBase & {
+export type VolumeGroupWithExtendedLV = DiskPartitionBase & {
   type: 'lvm';
   part_type?: string | undefined;
   name?: string | undefined;
@@ -38,7 +38,7 @@ export type VolumeGroupWithExtendedLV = FscDiskPartitionBase & {
   logical_volumes: LogicalVolumeWithBase[];
 };
 
-export type FscDiskPartition =
-  | (FilesystemTyped & FscDiskPartitionBase)
+export type DiskPartition =
+  | (FilesystemTyped & DiskPartitionBase)
   | VolumeGroupWithExtendedLV
-  | (BtrfsVolume & FscDiskPartitionBase);
+  | (BtrfsVolume & DiskPartitionBase);

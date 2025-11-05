@@ -17,7 +17,7 @@ import Row from './Row';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionOrder } from '../../../../../store/wizardSlice';
-import { FilesystemPartition, FscDiskPartition } from '../fscTypes';
+import { DiskPartition, FilesystemPartition } from '../fscTypes';
 
 type FileSystemTableTypes =
   | {
@@ -25,7 +25,7 @@ type FileSystemTableTypes =
       mode: 'filesystem';
     }
   | {
-      partitions: FscDiskPartition[];
+      partitions: DiskPartition[];
       mode: 'disk-plain' | 'disk-lvm';
     };
 
@@ -162,7 +162,7 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   };
 
   const isFilesystemPartition = (
-    p: FilesystemPartition | FscDiskPartition,
+    p: FilesystemPartition | DiskPartition,
   ): p is FilesystemPartition => !('type' in p);
 
   const rootPartitionsCount = useMemo(
@@ -219,7 +219,7 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
                 onDragEnd={onDragEnd}
                 onDragStart={onDragStart}
                 key={partition.id}
-                partition={partition as FscDiskPartition}
+                partition={partition as DiskPartition}
               />
             ))}
       </Tbody>

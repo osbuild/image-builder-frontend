@@ -16,12 +16,12 @@ import {
   removeDiskPartition,
   selectDiskPartitions,
 } from '../../../../../store/wizardSlice';
-import { FilesystemPartition, FscDiskPartition } from '../fscTypes';
+import { DiskPartition, FilesystemPartition } from '../fscTypes';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
 type DiskRowPropTypes = {
-  partition: FscDiskPartition;
+  partition: DiskPartition;
   onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
