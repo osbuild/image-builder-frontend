@@ -5,10 +5,10 @@ import { VolumeGroup } from '../../../../../store/imageBuilderApi';
 import { changePartitionName } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { FscDiskPartitionBase, LogicalVolumeWithBase } from '../fscTypes';
+import { DiskPartitionBase, LogicalVolumeWithBase } from '../fscTypes';
 
 type PartitionNamePropTypes = {
-  partition: (VolumeGroup & FscDiskPartitionBase) | LogicalVolumeWithBase;
+  partition: (VolumeGroup & DiskPartitionBase) | LogicalVolumeWithBase;
   customization: 'disk' | 'fileSystem';
 };
 

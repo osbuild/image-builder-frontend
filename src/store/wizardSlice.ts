@@ -18,10 +18,10 @@ import type { ActivationKeys } from './rhsmApi';
 
 import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSystem';
 import type {
+  DiskPartition,
+  DiskPartitionBase,
   FilesystemPartition,
   FscDisk,
-  FscDiskPartition,
-  FscDiskPartitionBase,
   FSType,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
@@ -965,12 +965,12 @@ export const wizardSlice = createSlice({
     ) => {
       state.disk.type = action.payload;
     },
-    addDiskPartition: (state, action: PayloadAction<FscDiskPartition>) => {
+    addDiskPartition: (state, action: PayloadAction<DiskPartition>) => {
       state.disk.partitions.push(action.payload);
     },
     removeDiskPartition: (
       state,
-      action: PayloadAction<FscDiskPartition['id']>,
+      action: PayloadAction<DiskPartition['id']>,
     ) => {
       const index = state.disk.partitions.findIndex(
         (partition) => partition.id === action.payload,
@@ -1023,7 +1023,7 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<{
         vgId: string;
-        logicalVolume: LogicalVolume & FscDiskPartitionBase;
+        logicalVolume: LogicalVolume & DiskPartitionBase;
       }>,
     ) => {
       const { vgId, logicalVolume } = action.payload;
