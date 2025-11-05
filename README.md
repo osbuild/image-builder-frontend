@@ -362,6 +362,9 @@ OS_APPLICATION_CREDENTIAL_SECRET=<your_secret>
 OS_SSH_KEY_NAME="<name_of_your_ssh_key_entry_in_openstack>"
 ```
 
+> [!NOTE]
+> The OpenStack Client is required for boot tests to function properly.
+
 In order to be able to access RHOSP within the Boot tests, we need to generate credentials and create an entry with our public ssh key on the platform. Log into [RHOSP dashboard](https://api.rhos-01.prod.psi.rdu2.redhat.com/) using **Keystone credentials** and navigate to Identity -> Application Credentials. There you can create the credentials (you will get values for `OS_APPLICATION_CREDENTIAL_ID` and `OS_APPLICATION_CREDENTIAL_SECRET`). In order to create an entry for your SSH key, navigate to Project -> Compute -> Keys and add your public key there.
 
 By filling out these variables you should be able to run the Boot test locally successfully.
