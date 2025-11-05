@@ -5,6 +5,8 @@ import {
   Minsize,
 } from '../../../../store/imageBuilderApi';
 
+export type PartitioningCustomization = 'disk' | 'fileSystem';
+
 export type FilesystemPartition = {
   id: string;
   mountpoint: string;

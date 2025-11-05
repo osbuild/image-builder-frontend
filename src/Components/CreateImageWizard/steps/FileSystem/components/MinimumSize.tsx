@@ -10,6 +10,7 @@ import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import {
   FilesystemPartition,
   LogicalVolumeWithBase,
+  PartitioningCustomization,
   VolumeGroupWithExtendedLV,
 } from '../fscTypes';
 
@@ -18,7 +19,7 @@ type MinimumSizePropTypes = {
     | FilesystemPartition
     | LogicalVolumeWithBase
     | VolumeGroupWithExtendedLV;
-  customization: 'disk' | 'fileSystem';
+  customization: PartitioningCustomization;
 };
 
 const MinimumSize = ({ partition, customization }: MinimumSizePropTypes) => {

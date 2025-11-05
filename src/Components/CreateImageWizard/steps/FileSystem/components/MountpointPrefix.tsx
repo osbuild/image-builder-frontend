@@ -10,7 +10,7 @@ import {
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
-import { FilesystemPartition } from '../fscTypes';
+import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import { getPrefix, getSuffix } from '../fscUtilities';
 
 export const mountpointPrefixes = [
@@ -27,7 +27,7 @@ export const mountpointPrefixes = [
 
 type MountpointPrefixPropTypes = {
   partition: FilesystemPartition;
-  customization: 'disk' | 'fileSystem';
+  customization: PartitioningCustomization;
 };
 
 const MountpointPrefix = ({

@@ -10,13 +10,17 @@ import {
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionType } from '../../../../../store/wizardSlice';
-import { FSType, LogicalVolumeWithBase } from '../fscTypes';
+import {
+  FSType,
+  LogicalVolumeWithBase,
+  PartitioningCustomization,
+} from '../fscTypes';
 
 const fs_types = ['ext4', 'xfs', 'vfat', 'swap'];
 
 type PartitionTypePropTypes = {
   partition: LogicalVolumeWithBase;
-  customization: 'disk' | 'fileSystem';
+  customization: PartitioningCustomization;
 };
 
 const PartitionType = ({
