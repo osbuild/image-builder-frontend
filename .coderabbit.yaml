@@ -1,0 +1,189 @@
+language: en-US
+tone_instructions: ''
+early_access: false
+enable_free_tier: true
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: false
+  high_level_summary_placeholder: '@coderabbitai summary'
+  high_level_summary_in_walkthrough: false
+  auto_title_placeholder: '@coderabbitai'
+  auto_title_instructions: ''
+  review_status: false
+  commit_status: false
+  fail_commit_status: false
+  collapse_walkthrough: true
+  changed_files_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  labeling_instructions: []
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+  in_progress_fortune: false
+  poem: false
+  path_filters: []
+  path_instructions: []
+  abort_on_close: true
+  disable_cache: false
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    ignore_title_keywords: []
+    labels: []
+    drafts: false
+    base_branches: []
+    ignore_usernames:
+      - red-hat-konflux
+      - dependabot
+      - schutzbot
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+  pre_merge_checks:
+    docstrings:
+      mode: 'off'
+      threshold: 80
+    title:
+      mode: 'off'
+      requirements: ''
+    description:
+      mode: 'off'
+    issue_assessment:
+      mode: 'off'
+    custom_checks: []
+  tools:
+    ast-grep:
+      rule_dirs: []
+      util_dirs: []
+      essential_rules: true
+      packages: []
+    shellcheck:
+      enabled: true
+    ruff:
+      enabled: true
+    markdownlint:
+      enabled: true
+    github-checks:
+      enabled: true
+      timeout_ms: 90000
+    languagetool:
+      enabled: true
+      enabled_rules: []
+      disabled_rules: []
+      enabled_categories: []
+      disabled_categories: []
+      enabled_only: false
+      level: default
+    biome:
+      enabled: true
+    hadolint:
+      enabled: true
+    swiftlint:
+      enabled: true
+    phpstan:
+      enabled: true
+      level: default
+    phpmd:
+      enabled: true
+    phpcs:
+      enabled: true
+    golangci-lint:
+      enabled: true
+    yamllint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    checkov:
+      enabled: true
+    detekt:
+      enabled: true
+    eslint:
+      enabled: true
+    flake8:
+      enabled: true
+    rubocop:
+      enabled: true
+    buf:
+      enabled: true
+    regal:
+      enabled: true
+    actionlint:
+      enabled: true
+    pmd:
+      enabled: true
+    clang:
+      enabled: true
+    cppcheck:
+      enabled: true
+    semgrep:
+      enabled: true
+    circleci:
+      enabled: true
+    clippy:
+      enabled: true
+    sqlfluff:
+      enabled: true
+    prismaLint:
+      enabled: true
+    pylint:
+      enabled: true
+    oxc:
+      enabled: true
+    shopifyThemeCheck:
+      enabled: true
+    luacheck:
+      enabled: true
+    brakeman:
+      enabled: true
+    dotenvLint:
+      enabled: true
+    htmlhint:
+      enabled: true
+    checkmake:
+      enabled: true
+    osvScanner:
+      enabled: true
+chat:
+  art: false
+  auto_reply: false
+  integrations:
+    jira:
+      usage: disabled
+    linear:
+      usage: disabled
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: false
+  code_guidelines:
+    enabled: true
+    filePatterns: []
+  learnings:
+    scope: auto
+  issues:
+    scope: local
+  jira:
+    usage: disabled
+    project_keys: []
+  linear:
+    usage: disabled
+    team_keys: []
+  pull_requests:
+    scope: auto
+  mcp:
+    usage: disabled
+    disabled_servers: []
+code_generation:
+  docstrings:
+    language: en-US
+    path_instructions: []
+  unit_tests:
+    path_instructions: []
