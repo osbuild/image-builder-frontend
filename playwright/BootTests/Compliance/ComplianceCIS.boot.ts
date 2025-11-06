@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, type FrameLocator, type Page } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../../fixtures/customizations';
@@ -25,6 +25,49 @@ import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
 
 // Clear the login from global setup so we can use static user
 test.use({ storageState: { cookies: [], origins: [] } });
+
+// Helper to create a simple Compliance policy for the warning scenarios
+const createSimpleCompliancePolicy = async (page: Page, policyName: string) => {
+  await page.goto('/insights/compliance/scappolicies');
+  await page.getByRole('button', { name: 'Create new policy' }).click();
+  await page.getByRole('option', { name: 'RHEL 10' }).click();
+  await expect(page.getByRole('gridcell').first()).toBeVisible();
+  await page.getByRole('radio', { name: 'Select row 0' }).click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName);
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await page.getByRole('button', { name: 'Finish' }).click();
+  await page.getByRole('button', { name: 'Return to application' }).click();
+};
+
+// Helper to select the created Compliance policy in the wizard
+const selectCompliancePolicy = async (
+  frame: Page | FrameLocator,
+  policyName: string,
+) => {
+  await frame.getByRole('button', { name: 'Security' }).nth(1).click();
+  await frame
+    .getByRole('radio', { name: 'Use a custom compliance policy' })
+    .click();
+  await frame.getByRole('button', { name: 'None' }).click();
+  await frame.getByRole('option', { name: policyName }).click();
+  await expect(frame.getByRole('button', { name: policyName })).toBeVisible();
+};
+
+// Helper to (re-)open the blueprint view from landing page
+const openBlueprintFromLanding = async (page: Page, blueprintName: string) => {
+  await navigateToLandingPage(page);
+  const frame = (await ibFrame(page)) as Page | FrameLocator;
+  const searchInput = frame.getByRole('textbox', { name: 'Search input' });
+  await expect(searchInput).toBeVisible({ timeout: 10000 });
+  await searchInput.fill(blueprintName);
+  const blueprintButton = frame.locator(`button[id="${blueprintName}"]`);
+  await expect(blueprintButton).toBeVisible({ timeout: 10000 });
+  await blueprintButton.click();
+  return frame;
+};
 
 test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   test.skip(
@@ -197,4 +240,180 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     expect(exitCode).toBe(0);
     expect(output).toContain('0');
   });
+});
+
+test('Compliance warnings (HMS-9652): new warning appears after Ignore when new requirement introduced', async ({
+  page,
+  cleanup,
+}) => {
+  test.skip(
+    !isHosted(),
+    'Skipping test. Boot test run only on the hosted service.',
+  );
+
+  const blueprintName = 'hms9652-' + uuidv4();
+  const policyName = 'policy-' + uuidv4();
+
+  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  await cleanup.add(() => deleteCompliancePolicy(page, policyName));
+
+  await login(page, true);
+  await createSimpleCompliancePolicy(page, policyName);
+
+  await navigateToLandingPage(page);
+  const frame = await ibFrame(page);
+
+  await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+  await registerLater(frame);
+  await selectCompliancePolicy(frame, policyName);
+  await frame.getByRole('button', { name: 'Review and finish' }).click();
+  await fillInDetails(frame, blueprintName);
+  await createBlueprint(frame, blueprintName);
+
+  // Remove aide to create an initial warning
+  const editBtn = frame.getByRole('button', { name: 'Edit blueprint' });
+  await expect(editBtn).toBeVisible({ timeout: 30000 });
+  await editBtn.click();
+  await frame.getByRole('button', { name: 'Additional packages' }).click();
+  const packageSearch = frame.getByRole('textbox', { name: 'Search packages' });
+  await packageSearch.fill('aide');
+  await packageSearch.press('Enter');
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
+  try {
+    await frame.getByRole('button', { name: 'Add package' }).first().click({ timeout: 2000 });
+  } catch {}
+  await packageSearch.clear();
+  const aideRow = frame.getByRole('row').filter({ hasText: 'aide' });
+  await expect(aideRow).toBeVisible({ timeout: 10000 });
+  await aideRow.getByRole('button', { name: 'Remove package' }).click();
+  await frame.getByRole('button', { name: 'Review and finish' }).click();
+  const saveButton = frame.getByRole('button', { name: 'Save blueprint' });
+  await expect(saveButton).toBeVisible({ timeout: 10000 });
+  await expect(saveButton).toBeEnabled({ timeout: 5000 });
+  await saveButton.click();
+
+  // Ignore warnings, then introduce a different missing package (audit)
+  const f = await openBlueprintFromLanding(page, blueprintName);
+  await expect(f.getByText('The selected blueprint has warnings.')).toBeVisible();
+  await f.locator('#blueprint_ignore_warnings').click();
+  await expect(f.getByText('The selected blueprint has warnings.')).toBeHidden({ timeout: 10000 });
+
+  await f.getByRole('button', { name: 'Edit blueprint' }).click();
+  await f.getByRole('button', { name: 'Additional packages' }).click();
+  const pkgSearch2 = f.getByRole('textbox', { name: 'Search packages' });
+  await pkgSearch2.fill('audit');
+  await pkgSearch2.press('Enter');
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
+  try {
+    await f.getByRole('button', { name: 'Add package' }).first().click({ timeout: 2000 });
+  } catch {}
+  await pkgSearch2.clear();
+  const auditRow = f.getByRole('row').filter({ hasText: 'audit' });
+  if (await auditRow.count()) {
+    await auditRow.getByRole('button', { name: 'Remove package' }).click();
+  }
+  await f.getByRole('button', { name: 'Review and finish' }).click();
+  const saveButton2 = f.getByRole('button', { name: 'Save blueprint' });
+  await expect(saveButton2).toBeVisible({ timeout: 30000 });
+  await expect(saveButton2).toBeEnabled({ timeout: 10000 });
+  await saveButton2.click();
+
+  // Verify new warning is shown after ignore
+  const f2 = await openBlueprintFromLanding(page, blueprintName);
+  await expect(f2.getByText('The selected blueprint has warnings.')).toBeVisible();
+});
+
+test('Compliance warnings (HMS-9653): warning reappears after add → remove cycle', async ({
+  page,
+  cleanup,
+}) => {
+  test.skip(
+    !isHosted(),
+    'Skipping test. Boot test run only on the hosted service.',
+  );
+
+  const blueprintName = 'hms9653-' + uuidv4();
+  const policyName = 'policy-' + uuidv4();
+
+  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  await cleanup.add(() => deleteCompliancePolicy(page, policyName));
+
+  await login(page, true);
+  await createSimpleCompliancePolicy(page, policyName);
+
+  await navigateToLandingPage(page);
+  const frame = await ibFrame(page);
+
+  await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+  await registerLater(frame);
+  await selectCompliancePolicy(frame, policyName);
+  await frame.getByRole('button', { name: 'Review and finish' }).click();
+  await fillInDetails(frame, blueprintName);
+  await createBlueprint(frame, blueprintName);
+
+  // Create initial audit warning by removing audit
+  const editBtn = frame.getByRole('button', { name: 'Edit blueprint' });
+  await expect(editBtn).toBeVisible({ timeout: 30000 });
+  await editBtn.click();
+  await frame.getByRole('button', { name: 'Additional packages' }).click();
+  const packageSearch = frame.getByRole('textbox', { name: 'Search packages' });
+  await packageSearch.fill('audit');
+  await packageSearch.press('Enter');
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
+  try {
+    await frame.getByRole('button', { name: 'Add package' }).first().click({ timeout: 2000 });
+  } catch {}
+  await packageSearch.clear();
+  const auditRow = frame.getByRole('row').filter({ hasText: 'audit' });
+  await expect(auditRow).toBeVisible({ timeout: 10000 });
+  await auditRow.getByRole('button', { name: 'Remove package' }).click();
+  await frame.getByRole('button', { name: 'Review and finish' }).click();
+  const saveButton = frame.getByRole('button', { name: 'Save blueprint' });
+  await expect(saveButton).toBeVisible({ timeout: 10000 });
+  await expect(saveButton).toBeEnabled({ timeout: 5000 });
+  await saveButton.click();
+
+  // Ignore warnings, add audit to clear, then remove again
+  let f = await openBlueprintFromLanding(page, blueprintName);
+  await expect(f.getByText('The selected blueprint has warnings.')).toBeVisible();
+  await f.locator('#blueprint_ignore_warnings').click();
+  await expect(f.getByText('The selected blueprint has warnings.')).toBeHidden({ timeout: 10000 });
+
+  await f.getByRole('button', { name: 'Edit blueprint' }).click();
+  await f.getByRole('button', { name: 'Additional packages' }).click();
+  const pkgSearch2 = f.getByRole('textbox', { name: 'Search packages' });
+  await pkgSearch2.fill('audit');
+  await pkgSearch2.press('Enter');
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
+  await f.getByRole('button', { name: 'Add package' }).first().click();
+  await f.getByRole('button', { name: 'Review and finish' }).click();
+  const saveButton2 = f.getByRole('button', { name: 'Save blueprint' });
+  await expect(saveButton2).toBeVisible({ timeout: 10000 });
+  await expect(saveButton2).toBeEnabled({ timeout: 5000 });
+  await saveButton2.click();
+
+  // Verify no warning now
+  f = await openBlueprintFromLanding(page, blueprintName);
+  await expect(f.getByText('The selected blueprint has warnings.')).toBeHidden({ timeout: 10000 });
+
+  // Remove audit again -> warning should reappear
+  await f.getByRole('button', { name: 'Edit blueprint' }).click();
+  await f.getByRole('button', { name: 'Additional packages' }).click();
+  await pkgSearch2.clear();
+  const auditRow2 = f.getByRole('row').filter({ hasText: 'audit' });
+  await expect(auditRow2).toBeVisible({ timeout: 10000 });
+  await auditRow2.getByRole('button', { name: 'Remove package' }).click();
+  await f.getByRole('button', { name: 'Review and finish' }).click();
+  const saveButton3 = f.getByRole('button', { name: 'Save blueprint' });
+  await expect(saveButton3).toBeVisible({ timeout: 10000 });
+  await expect(saveButton3).toBeEnabled({ timeout: 5000 });
+  await saveButton3.click();
+
+  // Verify warning reappears
+  const f3 = await openBlueprintFromLanding(page, blueprintName);
+  await expect(f3.getByText('The selected blueprint has warnings.')).toBeVisible();
 });
