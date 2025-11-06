@@ -197,16 +197,16 @@ describe('Blueprints', () => {
 
     const id = mockBlueprintIds.compliance;
     await selectBlueprintByNameAndId('compliance', id);
-    await screen.findByText('The selected blueprint has errors.');
+    await screen.findByText('The selected blueprint has warnings.');
     await screen.findByText("compliance: some thingy isn't right");
 
     const button = await screen.findByRole('button', {
-      name: /fix errors automatically/i,
+      name: /fix warnings automatically/i,
     });
     await waitFor(() => user.click(button));
     await waitFor(() => {
       expect(
-        screen.queryByText('The selected blueprint has errors.'),
+        screen.queryByText('The selected blueprint has warnings.'),
       ).not.toBeInTheDocument();
     });
   });

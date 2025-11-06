@@ -172,15 +172,15 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                 '0 var(--pf6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
             }}
             isInline
-            title={`The selected blueprint has errors.`}
+            title={`The selected blueprint has warnings.`}
             actionLinks={
               <AlertActionLink
                 onClick={async () => {
                   await fixupBlueprint({ id: selectedBlueprintId! });
                 }}
-                id='blueprint_fix_errors_automatically'
+                id='blueprint_fix_warnings_automatically'
               >
-                Fix errors automatically (updates the blueprint)
+                Fix warnings automatically (updates the blueprint)
               </AlertActionLink>
             }
           >
