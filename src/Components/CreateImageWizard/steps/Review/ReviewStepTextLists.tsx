@@ -539,14 +539,14 @@ export const ContentList = () => {
                 component={ContentVariants.dt}
                 className='pf-v6-u-min-width'
               >
-                Custom repositories
+                Repositories
               </Content>
               <Content component={ContentVariants.dd}>
                 {customRepositories.length + recommendedRepositories.length >
                 0 ? (
                   <Popover
                     position='bottom'
-                    headerContent='Custom repositories'
+                    headerContent='Repositories'
                     hasAutoWidth
                     minWidth='30rem'
                     bodyContent={<RepositoriesTable />}

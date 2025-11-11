@@ -43,7 +43,7 @@ describe('EditImageWizard', () => {
       name: /repeatable build/i,
     });
     const repositoriesNavItem = within(navigation).getByRole('button', {
-      name: /custom repositories/i,
+      name: /repositories/i,
     });
     const packagesNavItem = within(navigation).getByRole('button', {
       name: /additional packages/i,
