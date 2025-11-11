@@ -22,9 +22,7 @@ const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
       headingLevel='h4'
       icon={RepositoryIcon}
       titleText={
-        hasFilterValue
-          ? 'No matching repositories found'
-          : 'No custom repositories'
+        hasFilterValue ? 'No matching repositories found' : 'No repositories'
       }
       variant={EmptyStateVariant.lg}
     >

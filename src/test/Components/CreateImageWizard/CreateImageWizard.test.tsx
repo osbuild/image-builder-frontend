@@ -80,7 +80,7 @@ describe('Create Image Wizard', () => {
       await screen.findByRole('button', { name: /Register/ });
       await screen.findByRole('button', { name: 'Security' });
       await screen.findByRole('button', { name: 'Repeatable build' });
-      await screen.findByRole('button', { name: 'Custom repositories' });
+      await screen.findByRole('button', { name: 'Repositories' });
       await screen.findByRole('button', {
         name: 'First boot script configuration',
       });
