@@ -38,16 +38,7 @@ const selectTimezone = async () => {
   const timezoneDropdown =
     await screen.findByPlaceholderText(/select a timezone/i);
   await waitFor(() => user.click(timezoneDropdown));
-
-  const clearButtons = screen.queryAllByRole('button', {
-    name: /clear input/i,
-  });
-  if (clearButtons.length > 0) {
-    const clearBtn = clearButtons[0] as HTMLButtonElement;
-    if (!clearBtn.disabled) {
-      await waitFor(() => user.click(clearBtn));
-    }
-  }
+  await waitFor(() => user.clear(timezoneDropdown));
   await waitFor(() => user.type(timezoneDropdown, 'Europe/Am'));
   const amsterdamTimezone = await screen.findByText('Europe/Amsterdam');
   await waitFor(() => user.click(amsterdamTimezone));
@@ -72,19 +63,14 @@ const addNtpServerViaAddButton = async (ntpServer: string) => {
   const user = userEvent.setup();
   const ntpServersInput =
     await screen.findByPlaceholderText(/add ntp servers/i);
-  const addServerBtn = await screen.findByRole('button', {
-    name: /add ntp server/i,
-  });
-  await waitFor(() => user.type(ntpServersInput, ntpServer));
-  await waitFor(() => user.click(addServerBtn));
+  await waitFor(() => user.type(ntpServersInput, ntpServer + '{enter}'));
 };
 
 const clearInput = async () => {
   const user = userEvent.setup();
-  const clearInputBtns = await screen.findAllByRole('button', {
-    name: /clear input/i,
-  });
-  await waitFor(() => user.click(clearInputBtns[clearInputBtns.length - 1]));
+  const ntpServersInput =
+    await screen.findByPlaceholderText(/add ntp servers/i);
+  await waitFor(() => user.clear(ntpServersInput));
 };
 
 const clickRevisitButton = async () => {
