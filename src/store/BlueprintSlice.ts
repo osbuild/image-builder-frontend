@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { BlueprintLintItem } from './imageBuilderApi';
+
 import type { RootState } from '.';
 
 export type versionFilterType = 'latest' | 'all';
@@ -10,6 +12,7 @@ type blueprintsState = {
   offset?: number;
   limit?: number;
   versionFilter?: versionFilterType;
+  warningsContent: Record<string, BlueprintLintItem[]>;
 };
 
 const initialState: blueprintsState = {
@@ -18,6 +21,7 @@ const initialState: blueprintsState = {
   offset: 0,
   limit: 10,
   versionFilter: 'all',
+  warningsContent: {},
 };
 
 export const selectSelectedBlueprintId = (state: RootState) =>
@@ -37,6 +41,18 @@ export const selectBlueprintVersionFilterAPI = (
     return -1;
   }
   return undefined;
+};
+
+export const selectWarningsContent = (
+  state: RootState,
+  blueprintId: string,
+): BlueprintLintItem[] => state.blueprints.warningsContent[blueprintId] ?? [];
+
+export const selectWarningsContentForSelectedBlueprint = (
+  state: RootState,
+): BlueprintLintItem[] => {
+  const blueprintId = state.blueprints.selectedBlueprintId;
+  return blueprintId ? selectWarningsContent(state, blueprintId) : [];
 };
 
 export const blueprintsSlice = createSlice({
@@ -64,6 +80,40 @@ export const blueprintsSlice = createSlice({
     ) => {
       state.versionFilter = action.payload;
     },
+    setWarningsContent: (
+      state,
+      action: PayloadAction<{
+        blueprintId: string;
+        warnings: BlueprintLintItem[];
+        preserveExisting?: boolean;
+      }>,
+    ) => {
+      if (action.payload.warnings.length > 0) {
+        if (action.payload.preserveExisting) {
+          const existingWarnings =
+            state.warningsContent[action.payload.blueprintId] ?? [];
+          const allWarnings = [...existingWarnings];
+
+          action.payload.warnings.forEach((newWarning) => {
+            const isDuplicate = allWarnings.some(
+              (existing) =>
+                existing.name === newWarning.name &&
+                existing.description === newWarning.description,
+            );
+            if (!isDuplicate) {
+              allWarnings.push(newWarning);
+            }
+          });
+
+          state.warningsContent[action.payload.blueprintId] = allWarnings;
+        } else {
+          state.warningsContent[action.payload.blueprintId] =
+            action.payload.warnings;
+        }
+      } else if (!action.payload.preserveExisting) {
+        state.warningsContent[action.payload.blueprintId] = [];
+      }
+    },
   },
 });
 
@@ -73,4 +123,5 @@ export const {
   setBlueprintsOffset,
   setBlueprintLimit,
   setBlueprintVersionFilter,
+  setWarningsContent,
 } = blueprintsSlice.actions;
