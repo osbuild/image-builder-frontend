@@ -66,6 +66,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.compliance.enabled':
         return true;
+      case 'image-builder.layered-repos.enabled':
+        return true;
       default:
         return false;
     }
