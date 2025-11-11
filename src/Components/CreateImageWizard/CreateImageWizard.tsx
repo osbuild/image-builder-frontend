@@ -565,7 +565,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <SnapshotStep />
               </WizardStep>,
               <WizardStep
-                name='Custom repositories'
+                name='Repositories'
                 id='wizard-custom-repositories'
                 key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}

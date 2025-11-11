@@ -18,11 +18,11 @@ const RepositoriesStep = () => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
-        Custom repositories
+        Repositories
       </Title>
       <Content>
-        Select the linked custom repositories from which you can add packages to
-        the image
+        Select the linked repositories from which you can add packages to the
+        image
         <Content>
           <ManageRepositoriesButton />
         </Content>

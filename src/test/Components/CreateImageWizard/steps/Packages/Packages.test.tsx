@@ -189,12 +189,12 @@ describe('Step Packages', () => {
     });
   });
 
-  test('clicking Back loads Custom repositories', async () => {
+  test('clicking Back loads Repositories', async () => {
     await renderCreateMode();
     await goToPackagesStep();
     await clickBack();
     await screen.findByRole('heading', {
-      name: 'Custom repositories',
+      name: 'Repositories',
     });
   });
 
@@ -400,7 +400,7 @@ describe('Step Packages', () => {
     await clickFirstPackageCheckbox();
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Custom repositories/ });
+    await screen.findByRole('heading', { name: /Repositories/ });
   });
 
   describe('Pagination', () => {
