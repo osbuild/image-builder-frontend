@@ -151,9 +151,14 @@ describe('Step Services', () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await goToServicesStep();
-    const clearInputButtons = await screen.findAllByRole('button', {
-      name: /clear input/i,
-    });
+    const enabledServiceInput = await screen.findByPlaceholderText(
+      'Add enabled service',
+    );
+    const disabledServiceInput = await screen.findByPlaceholderText(
+      'Add disabled service',
+    );
+    const maskedServiceInput =
+      await screen.findByPlaceholderText('Add masked service');
 
     // Enabled services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
@@ -161,7 +166,7 @@ describe('Step Services', () => {
     expect(
       await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
-    await waitFor(() => user.click(clearInputButtons[0]));
+    await waitFor(() => user.clear(enabledServiceInput));
 
     // Disabled services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
@@ -169,7 +174,7 @@ describe('Step Services', () => {
     expect(
       await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
-    await waitFor(() => user.click(clearInputButtons[1]));
+    await waitFor(() => user.clear(disabledServiceInput));
 
     // Masked services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
@@ -177,7 +182,7 @@ describe('Step Services', () => {
     expect(
       await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
-    await waitFor(() => user.click(clearInputButtons[2]));
+    await waitFor(() => user.clear(maskedServiceInput));
 
     // Enabled services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
@@ -185,7 +190,7 @@ describe('Step Services', () => {
     expect(
       await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
-    await waitFor(() => user.click(clearInputButtons[0]));
+    await waitFor(() => user.clear(enabledServiceInput));
   });
 
   test('services from OpenSCAP get added correctly and cannot be removed', async () => {

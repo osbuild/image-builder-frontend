@@ -93,10 +93,8 @@ const selectCustomKernelName = async (kernelName: string) => {
 
 const clearKernelName = async () => {
   const user = userEvent.setup();
-  const kernelNameClearBtn = await screen.findAllByRole('button', {
-    name: /clear input/i,
-  });
-  await waitFor(() => user.click(kernelNameClearBtn[0]));
+  const kernelNameDropdown = await getKernelNameOptions();
+  await waitFor(() => user.clear(kernelNameDropdown));
 };
 
 const addKernelAppend = async (kernelArg: string) => {
@@ -104,13 +102,7 @@ const addKernelAppend = async (kernelArg: string) => {
   const kernelAppendInput = await screen.findByPlaceholderText(
     'Add kernel argument',
   );
-  await waitFor(() => user.click(kernelAppendInput));
-  await waitFor(() => user.type(kernelAppendInput, kernelArg));
-
-  const addKernelArg = await screen.findByRole('button', {
-    name: /Add kernel argument/,
-  });
-  await waitFor(() => user.click(addKernelArg));
+  await waitFor(() => user.type(kernelAppendInput, `${kernelArg}{enter}`));
 };
 
 const removeKernelArg = async (kernelArg: string) => {

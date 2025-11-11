@@ -49,11 +49,11 @@ test('Create a blueprint with Kernel customization', async ({
     await frame.getByRole('button', { name: 'Menu toggle' }).click();
     await frame.getByRole('option', { name: 'kernel', exact: true }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('rootwait');
-    await frame.getByRole('button', { name: 'Add kernel argument' }).click();
+    await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await frame
       .getByPlaceholder('Add kernel argument')
       .fill('invalid$argument');
-    await frame.getByRole('button', { name: 'Add kernel argument' }).click();
+    await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await expect(
       frame.getByText(
         'Expected format: <kernel-argument>. Example: console=tty0',
@@ -66,7 +66,7 @@ test('Create a blueprint with Kernel customization', async ({
     await expect(
       frame.getByRole('heading', { name: 'Warning alert: Custom kernel' }),
     ).toBeVisible();
-    await frame.getByRole('button', { name: 'Clear input' }).first().click();
+    await frame.getByPlaceholder('Select kernel package').fill('');
     await frame.getByRole('button', { name: 'Menu toggle' }).click();
     await expect(
       frame.getByRole('option', { name: 'new-package' }),
@@ -78,13 +78,13 @@ test('Create a blueprint with Kernel customization', async ({
       }),
     ).toBeVisible();
     await frame.getByPlaceholder('Add kernel argument').fill('console=tty0');
-    await frame.getByRole('button', { name: 'Add kernel argument' }).click();
+    await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await frame.getByPlaceholder('Add kernel argument').fill('xxnosmp');
-    await frame.getByRole('button', { name: 'Add kernel argument' }).click();
+    await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await frame
       .getByPlaceholder('Add kernel argument')
       .fill('console=ttyS0,115200n8');
-    await frame.getByRole('button', { name: 'Add kernel argument' }).click();
+    await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
@@ -102,7 +102,7 @@ test('Create a blueprint with Kernel customization', async ({
     await frame.getByRole('button', { name: 'Menu toggle' }).click();
     await frame.getByRole('option', { name: 'kernel', exact: true }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('new=argument');
-    await frame.getByRole('button', { name: 'Add kernel argument' }).click();
+    await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await frame.getByRole('button', { name: 'Close xxnosmp' }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
