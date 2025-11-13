@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
-import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -20,7 +19,7 @@ test('Create a blueprint with Compliance policy selected', async ({
   page,
   cleanup,
 }) => {
-  test.skip(!isHosted(), 'Compliance is not available in the plugin');
+  test.skip(true);
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture

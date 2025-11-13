@@ -38,7 +38,7 @@ export const LandingPage = () => {
           >
             <Toolbar>
               <ToolbarContent>
-                <Title headingLevel='h2'>{'Blueprints'}</Title>
+                <Title headingLevel='h2'>{'Plans'}</Title>
               </ToolbarContent>
             </Toolbar>
             <SidebarContent hasPadding>
