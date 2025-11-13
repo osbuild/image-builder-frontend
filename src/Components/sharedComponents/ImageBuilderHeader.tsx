@@ -97,7 +97,6 @@ export const ImageBuilderHeader = ({
                 <Flex>
                   <Button
                     variant='primary'
-                    data-testid='blueprints-create-button'
                     onClick={() => navigate(resolveRelPath('imagewizard'))}
                     onMouseEnter={() =>
                       prefetchTargets({
