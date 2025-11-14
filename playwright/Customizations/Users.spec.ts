@@ -60,7 +60,7 @@ test('Create a blueprint with Users customization', async ({
       .getByRole('textbox', { name: 'blueprint user password' })
       .fill('AdminPass123');
     await frame.getByPlaceholder('Add user group').fill('wheel');
-    await frame.getByRole('button', { name: 'Add user group' }).click();
+    await frame.getByPlaceholder('Add user group').press('Enter');
 
     // Verify admin checkbox is automatically checked due to wheel group
     await expect(
@@ -321,7 +321,7 @@ test('Create a blueprint with Users customization', async ({
       .nth(2)
       .fill('AdminPass123');
     await frame.getByPlaceholder('Add user group').nth(2).fill('wheel');
-    await frame.getByRole('button', { name: 'Add user group' }).nth(2).click();
+    await frame.getByPlaceholder('Add user group').nth(2).press('Enter');
 
     // Verify admin checkbox is automatically checked due to wheel group
     await frame

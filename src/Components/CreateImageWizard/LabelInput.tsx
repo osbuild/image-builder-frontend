@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 
 import {
-  Button,
   HelperText,
   HelperTextItem,
-  Icon,
   Label,
   LabelGroup,
   TextInputGroup,
   TextInputGroupMain,
-  TextInputGroupUtilities,
 } from '@patternfly/react-core/dist/esm';
-import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { UnknownAction } from 'redux';
 
 import { StepValidation } from './utilities/useValidation';
@@ -32,7 +28,6 @@ type LabelInputProps = {
   removeAction: (value: string) => UnknownAction;
   stepValidation: StepValidation;
   fieldName: string;
-  hideUtilities?: boolean;
 };
 
 const LabelInput = ({
@@ -47,7 +42,6 @@ const LabelInput = ({
   removeAction,
   stepValidation,
   fieldName,
-  hideUtilities,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -128,17 +122,8 @@ const LabelInput = ({
     }
   };
 
-  const handleAddItem = (e: React.MouseEvent, value: string) => {
-    addItem(value);
-  };
-
   const handleRemoveItem = (e: React.MouseEvent, value: string) => {
     dispatch(removeAction(value));
-  };
-
-  const handleClear = () => {
-    setInputValue('');
-    setOnStepInputErrorText('');
   };
 
   const errors = [];
@@ -172,28 +157,6 @@ const LabelInput = ({
             </LabelGroup>
           )}
         </TextInputGroupMain>
-        {!hideUtilities && (
-          <TextInputGroupUtilities>
-            <Button
-              icon={
-                <Icon status='info'>
-                  <PlusCircleIcon />
-                </Icon>
-              }
-              variant='plain'
-              onClick={(e) => handleAddItem(e, inputValue)}
-              isDisabled={!inputValue}
-              aria-label={ariaLabel}
-            />
-            <Button
-              icon={<TimesIcon />}
-              variant='plain'
-              onClick={handleClear}
-              isDisabled={!inputValue}
-              aria-label='Clear input'
-            />
-          </TextInputGroupUtilities>
-        )}
       </TextInputGroup>
       {errors.length > 0 && (
         <HelperText>

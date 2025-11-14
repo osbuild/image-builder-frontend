@@ -33,7 +33,6 @@ const Services = () => {
           removeAction={removeEnabledFirewallService}
           stepValidation={stepValidation}
           fieldName='enabledServices'
-          hideUtilities
         />
       </FormGroup>
       <FormGroup label='Disabled services'>
@@ -47,7 +46,6 @@ const Services = () => {
           removeAction={removeDisabledFirewallService}
           stepValidation={stepValidation}
           fieldName='disabledServices'
-          hideUtilities
         />
       </FormGroup>
     </>

@@ -29,7 +29,6 @@ const PortsInput = () => {
         removeAction={removePort}
         stepValidation={stepValidation}
         fieldName='ports'
-        hideUtilities
       />
     </FormGroup>
   );

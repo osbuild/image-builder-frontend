@@ -48,28 +48,28 @@ test('Create a blueprint with Timezone customization', async ({
     await frame.getByRole('button', { name: 'Timezone' }).click();
     await frame.getByPlaceholder('Select a timezone').fill('Canada');
     await frame.getByRole('option', { name: 'Canada/Saskatchewan' }).click();
-    await frame.getByRole('button', { name: 'Clear input' }).first().click();
+    await frame.getByPlaceholder('Select a timezone').fill('');
     await frame.getByPlaceholder('Select a timezone').fill('Europe');
     await frame.getByRole('option', { name: 'Europe/Stockholm' }).click();
 
     await frame.getByPlaceholder('Add NTP servers').fill('0.nl.pool.ntp.org');
-    await frame.getByRole('button', { name: 'Add NTP server' }).click();
+    await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('0.nl.pool.ntp.org');
-    await frame.getByRole('button', { name: 'Add NTP server' }).click();
+    await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(frame.getByText('NTP server already exists.')).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('xxxx');
-    await frame.getByRole('button', { name: 'Add NTP server' }).click();
+    await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(
       frame
         .getByText('Expected format: <ntp-server>. Example: time.redhat.com')
         .nth(0),
     ).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('0.cz.pool.ntp.org');
-    await frame.getByRole('button', { name: 'Add NTP server' }).click();
+    await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('0.de.pool.ntp.org');
-    await frame.getByRole('button', { name: 'Add NTP server' }).click();
+    await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
     await frame
       .getByRole('button', { name: 'Close 0.cz.pool.ntp.org' })
