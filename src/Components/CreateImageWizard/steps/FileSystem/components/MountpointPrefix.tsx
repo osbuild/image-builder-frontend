@@ -10,7 +10,7 @@ import {
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
-import { Partition } from '../fscTypes';
+import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import { getPrefix, getSuffix } from '../fscUtilities';
 
 export const mountpointPrefixes = [
@@ -26,10 +26,14 @@ export const mountpointPrefixes = [
 ];
 
 type MountpointPrefixPropTypes = {
-  partition: Partition;
+  partition: FilesystemPartition;
+  customization: PartitioningCustomization;
 };
 
-const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
+const MountpointPrefix = ({
+  partition,
+  customization,
+}: MountpointPrefixPropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const prefix = getPrefix(partition.mountpoint);
@@ -40,7 +44,11 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
       setIsOpen(false);
       const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
       dispatch(
-        changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint }),
+        changePartitionMountpoint({
+          id: partition.id,
+          mountpoint: mountpoint,
+          customization: customization,
+        }),
       );
     }
   };

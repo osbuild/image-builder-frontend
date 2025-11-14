@@ -6,20 +6,21 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeFscMode,
+  changePartitioningMode,
   selectComplianceProfileID,
-  selectDiskPartitions,
   selectFscMode,
+  selectPartitioningMode,
 } from '../../../../../store/wizardSlice';
 
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fscMode = useAppSelector(selectFscMode);
+  const partitioningMode = useAppSelector(selectPartitioningMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
 
   const isAdvancedPartitioningEnabled = useFlag(
     'image-builder.advanced-partitioning.enabled',
   );
-  const hasDiskCustomization = useAppSelector(selectDiskPartitions).length > 0;
 
   if (hasOscapProfile) {
     return undefined;
@@ -47,7 +48,7 @@ const FileSystemPartition = () => {
       <Radio
         id='basic-partitioning-radio'
         label={
-          isAdvancedPartitioningEnabled && hasDiskCustomization
+          process.env.IS_ON_PREMISE || isAdvancedPartitioningEnabled
             ? 'Basic filesystem partitioning'
             : 'Manually configure partitions'
         }
@@ -58,7 +59,7 @@ const FileSystemPartition = () => {
           dispatch(changeFscMode('basic'));
         }}
       />
-      {isAdvancedPartitioningEnabled && hasDiskCustomization && (
+      {(process.env.IS_ON_PREMISE || isAdvancedPartitioningEnabled) && (
         <Radio
           id='advanced-partitioning-radio'
           label='Advanced disk partitioning'
@@ -68,6 +69,32 @@ const FileSystemPartition = () => {
           onChange={() => {
             dispatch(changeFscMode('advanced'));
           }}
+          body={
+            fscMode === 'advanced' && (
+              <>
+                <Radio
+                  id='raw-partitioning-mode-radio'
+                  label='Raw partitioning'
+                  name='raw-partitioning-mode-radio'
+                  description='Will not convert any partition to LVM or Btrfs'
+                  isChecked={partitioningMode === 'raw'}
+                  onChange={() => {
+                    dispatch(changePartitioningMode('raw'));
+                  }}
+                />
+                <Radio
+                  id='lvm-partitioning-mode-radio'
+                  label='LVM partitioning'
+                  name='lvm-partitioning-mode-radio'
+                  description='Converts the partition that contains the root mountpoint / to an LVM Volume Group and creates a root Logical Volume. Any extra mountpoints, except /boot, will be added to the Volume Group as new Logical Volumes'
+                  isChecked={partitioningMode === 'lvm'}
+                  onChange={() => {
+                    dispatch(changePartitioningMode('lvm'));
+                  }}
+                />
+              </>
+            )
+          }
         />
       )}
     </FormGroup>

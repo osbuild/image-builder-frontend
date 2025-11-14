@@ -66,7 +66,7 @@ test('Create a blueprint with Filesystem customization', async ({
     await newPageAutomatic.close();
 
     await frame
-      .getByRole('radio', { name: 'Manually configure partitions' })
+      .getByRole('radio', { name: 'Basic filesystem partitioning' })
       .click();
     const [newPageManual] = await Promise.all([
       page.context().waitForEvent('page'),
@@ -101,7 +101,7 @@ test('Create a blueprint with Filesystem customization', async ({
       .fill('/usb');
     await frame
       .getByRole('gridcell', { name: '1', exact: true })
-      .getByPlaceholder('File system')
+      .getByPlaceholder('Define minimum size')
       .fill('1000');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
     await frame.getByRole('option', { name: 'KiB' }).click();
@@ -152,11 +152,11 @@ test('Create a blueprint with Filesystem customization', async ({
 
     await frame
       .getByRole('gridcell', { name: '1000', exact: true })
-      .getByPlaceholder('File system')
+      .getByPlaceholder('Define minimum size')
       .click();
     await frame
       .getByRole('gridcell', { name: '1000', exact: true })
-      .getByPlaceholder('File system')
+      .getByPlaceholder('Define minimum size')
       .fill('1024');
 
     await frame.getByRole('button', { name: '/tmp' }).click();
@@ -237,7 +237,7 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const size = frame
       .getByRole('gridcell', { name: '1', exact: true })
-      .getByPlaceholder('File system');
+      .getByPlaceholder('Define minimum size');
     await expect(size).toHaveValue('1');
 
     const unitButton = frame.getByRole('button', { name: 'GiB' }).nth(1);

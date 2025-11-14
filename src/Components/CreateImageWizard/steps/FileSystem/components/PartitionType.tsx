@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   MenuToggle,
@@ -9,49 +9,33 @@ import {
 } from '@patternfly/react-core';
 
 import { useAppDispatch } from '../../../../../store/hooks';
+import { changePartitionType } from '../../../../../store/wizardSlice';
 import {
-  changePartitionMinSize,
-  changePartitionUnit,
-} from '../../../../../store/wizardSlice';
-import {
-  FilesystemPartition,
+  FSType,
   LogicalVolumeWithBase,
   PartitioningCustomization,
-  Units,
-  VolumeGroupWithExtendedLV,
 } from '../fscTypes';
 
-const units = ['GiB', 'MiB', 'KiB'];
+const fs_types = ['ext4', 'xfs', 'vfat', 'swap'];
 
-type SizeUnitPropTypes = {
-  partition:
-    | FilesystemPartition
-    | LogicalVolumeWithBase
-    | VolumeGroupWithExtendedLV;
+type PartitionTypePropTypes = {
+  partition: LogicalVolumeWithBase;
   customization: PartitioningCustomization;
 };
 
-const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
+const PartitionType = ({
+  partition,
+  customization,
+}: PartitionTypePropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  const initialValue = useRef(partition).current;
-
   const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
-    if (initialValue.unit === 'B' && selection === ('B' as Units)) {
-      dispatch(
-        changePartitionMinSize({
-          id: partition.id,
-          min_size: initialValue.min_size || '0',
-          customization: customization,
-        }),
-      );
-    }
     dispatch(
-      changePartitionUnit({
+      changePartitionType({
         id: partition.id,
-        unit: selection as Units,
+        fs_type: selection as FSType,
         customization: customization,
       }),
     );
@@ -64,33 +48,28 @@ const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-      {partition.unit}
+      {partition.fs_type}
     </MenuToggle>
   );
 
   return (
     <Select
       isOpen={isOpen}
-      selected={partition.unit}
+      selected={partition.fs_type}
       onSelect={onSelect}
       onOpenChange={(isOpen) => setIsOpen(isOpen)}
       toggle={toggle}
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {units.map((unit, index) => (
-          <SelectOption key={index} value={unit}>
-            {unit}
+        {fs_types.map((type, index) => (
+          <SelectOption key={index} value={type}>
+            {type}
           </SelectOption>
         ))}
-        <>
-          {initialValue.unit === 'B' && (
-            <SelectOption value={'B'}>B</SelectOption>
-          )}
-        </>
       </SelectList>
     </Select>
   );
 };
 
-export default SizeUnit;
+export default PartitionType;

@@ -11,16 +11,25 @@ import {
   TrProps,
 } from '@patternfly/react-table';
 
+import DiskRow from './DiskRow';
 import MinimumSizePopover from './MinimumSizePopover';
 import Row from './Row';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changePartitionOrder,
-  selectFilesystemPartitions,
-} from '../../../../../store/wizardSlice';
+import { useAppDispatch } from '../../../../../store/hooks';
+import { changePartitionOrder } from '../../../../../store/wizardSlice';
+import { DiskPartition, FilesystemPartition } from '../fscTypes';
 
-const FileSystemTable = () => {
+type FileSystemTableTypes =
+  | {
+      partitions: FilesystemPartition[];
+      mode: 'filesystem';
+    }
+  | {
+      partitions: DiskPartition[];
+      mode: 'disk-plain' | 'disk-lvm';
+    };
+
+const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [draggingToItemIndex, setDraggingToItemIndex] = useState<number | null>(
     null,
@@ -29,7 +38,6 @@ const FileSystemTable = () => {
   const [tempItemOrder, setTempItemOrder] = useState<string[]>([]);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
-  const partitions = useAppSelector(selectFilesystemPartitions);
   const itemOrder = partitions.map((partition) => partition.id);
   const dispatch = useAppDispatch();
   const isValidDrop = (
@@ -153,10 +161,18 @@ const FileSystemTable = () => {
     });
   };
 
+  const isFilesystemPartition = (
+    p: FilesystemPartition | DiskPartition,
+  ): p is FilesystemPartition => !('type' in p);
+
   const rootPartitionsCount = useMemo(
-    () => partitions.filter((p) => p.mountpoint === '/').length,
+    () =>
+      partitions
+        .filter(isFilesystemPartition)
+        .filter((p) => p.mountpoint === '/').length,
     [partitions],
   );
+
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
@@ -166,6 +182,7 @@ const FileSystemTable = () => {
       <Thead>
         <Tr>
           <Th aria-label='Drag mount point' />
+          {mode === 'disk-lvm' && <Th>Name</Th>}
           <Th>Mount point</Th>
           <Th aria-label='Suffix'>Suffix</Th>
           <Th>Type</Th>
@@ -183,19 +200,28 @@ const FileSystemTable = () => {
         onDragLeave={onDragLeave}
         ref={bodyRef}
       >
-        {partitions.length > 0 &&
-          partitions.map((partition) => (
-            <Row
-              onDrop={onDrop}
-              onDragEnd={onDragEnd}
-              onDragStart={onDragStart}
-              key={partition.id}
-              partition={partition}
-              isRemovingDisabled={
-                rootPartitionsCount === 1 && partition.mountpoint === '/'
-              }
-            />
-          ))}
+        {partitions.length > 0 && mode === 'filesystem'
+          ? partitions.map((partition) => (
+              <Row
+                onDrop={onDrop}
+                onDragEnd={onDragEnd}
+                onDragStart={onDragStart}
+                key={partition.id}
+                partition={partition as FilesystemPartition}
+                isRemovingDisabled={
+                  rootPartitionsCount === 1 && partition.mountpoint === '/'
+                }
+              />
+            ))
+          : partitions.map((partition) => (
+              <DiskRow
+                onDrop={onDrop}
+                onDragEnd={onDragEnd}
+                onDragStart={onDragStart}
+                key={partition.id}
+                partition={partition as DiskPartition}
+              />
+            ))}
       </Tbody>
     </Table>
   );

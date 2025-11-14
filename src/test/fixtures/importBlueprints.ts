@@ -280,19 +280,16 @@ export const BLUEPRINT_WITH_DISK_CUSTOMIZATION = `{
       "partitions": [
         {
           "fs_type": "ext4",
-          "label": "string",
           "minsize": "2 GiB",
-          "mountpoint": "string",
-          "part_type": "string",
+          "mountpoint": "/",
           "type": "plain"
         },
         {
           "minsize": "2 GiB",
-          "part_type": "string",
           "subvolumes": [
             {
-              "mountpoint": "string",
-              "name": "string"
+              "mountpoint": "/home",
+              "name": "homesv"
             }
           ],
           "type": "btrfs"
@@ -301,15 +298,13 @@ export const BLUEPRINT_WITH_DISK_CUSTOMIZATION = `{
           "logical_volumes": [
             {
               "fs_type": "ext4",
-              "label": "string",
               "minsize": "2 GiB",
-              "mountpoint": "string",
-              "name": "string"
+              "mountpoint": "/home",
+              "name": "homelv"
             }
           ],
           "minsize": "2 GiB",
-          "name": "string",
-          "part_type": "string",
+          "name": "mainvg",
           "type": "lvm"
         }
       ],
@@ -338,15 +333,12 @@ export const INVALID_BLUEPRINT_WITH_FILESYSTEM_AND_DISK = `{
       "partitions": [
         {
           "fs_type": "ext4",
-          "label": "string",
           "minsize": "2 GiB",
           "mountpoint": "string",
-          "part_type": "string",
           "type": "plain"
         },
         {
           "minsize": "2 GiB",
-          "part_type": "string",
           "subvolumes": [
             {
               "mountpoint": "string",
@@ -359,7 +351,6 @@ export const INVALID_BLUEPRINT_WITH_FILESYSTEM_AND_DISK = `{
           "logical_volumes": [
             {
               "fs_type": "ext4",
-              "label": "string",
               "minsize": "2 GiB",
               "mountpoint": "string",
               "name": "string"
@@ -367,11 +358,9 @@ export const INVALID_BLUEPRINT_WITH_FILESYSTEM_AND_DISK = `{
           ],
           "minsize": "2 GiB",
           "name": "string",
-          "part_type": "string",
           "type": "lvm"
         }
       ],
-      "type": "gpt"
     }
   },
   "description": "",
