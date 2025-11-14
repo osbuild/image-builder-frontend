@@ -55,6 +55,10 @@ test('Create a blueprint with Compliance policy selected', async ({
     });
     await policyOption.click();
 
+    await expect(
+      frame.getByRole('button', { name: 'placehollder' }),
+    ).toBeVisible();
+
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
@@ -71,16 +75,11 @@ test('Create a blueprint with Compliance policy selected', async ({
     await frame.getByRole('button', { name: 'Security' }).nth(1).click();
 
     await expect(
-      frame.getByRole('radio', { name: 'Use a custom Compliance policy' }),
+      frame.getByRole('radio', { name: 'Use a custom compliance policy' }),
     ).toBeChecked();
 
-    const toggle = frame.locator(
-      '[data-ouia-component-id="compliancePolicySelect"]',
-    );
-    await toggle.click();
-    const policyOption = frame.getByRole('option', {
-      name: /placehollder/i,
-    });
-    await expect(policyOption).toBeVisible();
+    await expect(
+      frame.getByRole('button', { name: 'placehollder' }),
+    ).toBeVisible();
   });
 });
