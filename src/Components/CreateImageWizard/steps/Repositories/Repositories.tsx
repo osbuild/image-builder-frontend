@@ -67,6 +67,7 @@ import {
   selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
+import { requiredRedHatRepos } from '../../../../Utilities/requiredRedHatRepos';
 import useDebounce from '../../../../Utilities/useDebounce';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
@@ -99,12 +100,14 @@ const Repositories = () => {
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
 
   const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
+  const isLayeredReposEnabled = useFlag('image-builder.layered-repos.enabled');
 
   const originParam = useMemo(() => {
     const origins = [ContentOrigin.CUSTOM];
     if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    if (isLayeredReposEnabled) origins.push(ContentOrigin.REDHAT);
     return origins.join(',');
-  }, [isSharedEPELEnabled]);
+  }, [isSharedEPELEnabled, isLayeredReposEnabled]);
 
   const debouncedFilterValue = useDebounce(filterValue);
 
@@ -179,6 +182,14 @@ const Repositories = () => {
     setIsTemplateSelected(templateUuid !== '');
   }, [templateUuid]);
 
+  const requiredRedHatRepoUUIDs = useMemo(() => {
+    const requiredUrls = requiredRedHatRepos(arch, version) || [];
+    return previousReposData
+      .filter((repo) => requiredUrls.includes(repo.url!))
+      .map((repo) => repo.uuid!)
+      .filter((uuid): uuid is string => !!uuid);
+  }, [arch, version, previousReposData]);
+
   const {
     data: { data: contentList = [], meta: { count } = { count: 0 } } = {},
     isError,
@@ -196,7 +207,7 @@ const Repositories = () => {
       search: debouncedFilterValue,
       uuid:
         toggleSelected === 'toggle-group-selected'
-          ? [...selected].join(',')
+          ? [...selected, ...requiredRedHatRepoUUIDs].join(',')
           : '',
     },
     {
@@ -397,6 +408,12 @@ const Repositories = () => {
     return epelUrls.includes(repoUrl);
   };
 
+  const isBaseOSOrAppStream = (repoUrl: string) => {
+    const requiredUrls = requiredRedHatRepos(arch, version);
+    if (!requiredUrls) return false;
+    return requiredUrls.includes(repoUrl);
+  };
+
   const isRepoDisabled = (
     repo: ApiRepositoryResponseRead,
     isSelected: boolean,
@@ -437,6 +454,13 @@ const Repositories = () => {
       return [
         true,
         `This repository doesn't have snapshots enabled, so it cannot be selected.`,
+      ];
+    }
+
+    if (isBaseOSOrAppStream(repo.url!)) {
+      return [
+        true,
+        'This repository is pre-selected for the chosen architecture and OS version.',
       ];
     }
 
@@ -587,7 +611,9 @@ const Repositories = () => {
             <ToolbarItem>
               <BulkSelect
                 selected={selected}
-                contentList={contentList}
+                contentList={contentList.filter(
+                  (r) => !isBaseOSOrAppStream(r.url!),
+                )}
                 deselectAll={clearSelected}
                 perPage={perPage}
                 handleAddRemove={handleAddRemove}
@@ -692,7 +718,8 @@ const Repositories = () => {
                       <Tr key={`${uuid}-${rowIndex}`}>
                         <Td
                           select={{
-                            isSelected: selected.has(uuid),
+                            isSelected:
+                              selected.has(uuid) || isBaseOSOrAppStream(url),
                             rowIndex: rowIndex,
                             onSelect: (_, isSelecting) =>
                               handleAddRemove(repo, isSelecting),

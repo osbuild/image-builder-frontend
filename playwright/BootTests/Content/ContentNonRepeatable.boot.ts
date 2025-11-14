@@ -82,7 +82,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
   });
 
   await test.step('Select the repository', async () => {
-    await frame.getByRole('button', { name: 'Custom repositories' }).click();
+    await frame.getByRole('button', { name: 'Repositories' }).click();
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
@@ -223,7 +223,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   });
 
   await test.step('Select the repository', async () => {
-    await frame.getByRole('button', { name: 'Custom repositories' }).click();
+    await frame.getByRole('button', { name: 'Repositories' }).click();
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
@@ -331,7 +331,7 @@ test('Content integration test - Non repeatable build - Community repository', a
   });
 
   await test.step('Select the repository', async () => {
-    await frame.getByRole('button', { name: 'Custom repositories' }).click();
+    await frame.getByRole('button', { name: 'Repositories' }).click();
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
