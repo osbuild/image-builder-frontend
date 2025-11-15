@@ -31,13 +31,13 @@ import {
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
 import {
-  changeCompliance,
   changeFips,
   changeFscMode,
   clearKernelAppend,
   selectComplianceProfileID,
   selectComplianceType,
   selectDistribution,
+  setOscapProfile,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
@@ -169,6 +169,13 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
     }
   }, [filterValue, profileDetails, isOpen]);
 
+  useEffect(() => {
+    if (!profileID) {
+      setInputValue('');
+      setFilterValue('');
+    }
+  }, [profileID]);
+
   const handleToggle = () => {
     if (!isOpen && complianceType === 'openscap') {
       refetch();
@@ -177,13 +184,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
   };
 
   const handleClear = () => {
-    dispatch(
-      changeCompliance({
-        profileID: undefined,
-        policyID: undefined,
-        policyTitle: undefined,
-      }),
-    );
+    dispatch(setOscapProfile(undefined));
     clearCompliancePackages(currentProfileData?.packages || []);
     dispatch(changeFscMode('automatic'));
     handleServices(undefined);
@@ -206,13 +207,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
     setFilterValue(value);
 
     if (value !== profileID) {
-      dispatch(
-        changeCompliance({
-          profileID: undefined,
-          policyID: undefined,
-          policyTitle: undefined,
-        }),
-      );
+      dispatch(setOscapProfile(undefined));
     }
   };
 
@@ -262,13 +257,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
           );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
-          dispatch(
-            changeCompliance({
-              profileID: selection.profileID,
-              policyID: undefined,
-              policyTitle: undefined,
-            }),
-          );
+          dispatch(setOscapProfile(selection.profileID));
           dispatch(changeFips(response.fips?.enabled || false));
         });
     }

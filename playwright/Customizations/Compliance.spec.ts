@@ -37,7 +37,7 @@ test('Create a blueprint with Compliance policy selected', async ({
     await registerLater(frame);
   });
 
-  await test.step('Select Compliance and choose a policy if available', async () => {
+  await test.step('Select Compliance and choose a mock policy', async () => {
     await frame.getByRole('button', { name: 'Security' }).nth(1).click();
 
     await frame

@@ -22,13 +22,14 @@ import {
 } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  changeCompliance,
   changeFips,
   changeFscMode,
   clearKernelAppend,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
   selectDistribution,
+  setCompliancePolicy,
+  setOscapProfile,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
@@ -38,29 +39,23 @@ type ComplianceSelectOptionPropType = {
 };
 
 type ComplianceSelectOptionValueType = {
-  policyID: string;
-  profileID: string;
-  title: string;
+  policyID?: string;
+  title?: string;
   toString: () => string;
 };
 
 const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
   const selectObj = (
     policyID: string,
-    profileID: string,
     title: string,
   ): ComplianceSelectOptionValueType => ({
     policyID,
-    profileID,
     title,
     toString: () => title || 'None',
   });
 
   return (
-    <SelectOption
-      key={policy.id}
-      value={selectObj(policy.id!, policy.ref_id!, policy.title!)}
-    >
+    <SelectOption key={policy.id} value={selectObj(policy.id!, policy.title!)}>
       {policy.title}
     </SelectOption>
   );
@@ -116,9 +111,8 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
         const pol = p as PolicyRead;
         if (pol.id === policyID) {
           dispatch(
-            changeCompliance({
+            setCompliancePolicy({
               policyID: pol.id,
-              profileID: pol.ref_id,
               policyTitle: pol.title,
             }),
           );
@@ -133,12 +127,12 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
 
   const handleClear = () => {
     dispatch(
-      changeCompliance({
-        profileID: undefined,
+      setCompliancePolicy({
         policyID: undefined,
         policyTitle: undefined,
       }),
     );
+    dispatch(setOscapProfile(undefined));
     clearCompliancePackages(currentProfileData?.packages || []);
     dispatch(changeFscMode('automatic'));
     handleServices(undefined);
@@ -151,6 +145,12 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       // handle user has selected 'None' case
       handleClear();
     } else {
+      dispatch(
+        setCompliancePolicy({
+          policyID: selection.policyID,
+          policyTitle: selection.title,
+        }),
+      );
       const oldOscapPackages = currentProfileData?.packages || [];
       trigger(
         {
@@ -171,13 +171,6 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
           );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
-          dispatch(
-            changeCompliance({
-              profileID: selection.profileID,
-              policyID: selection.policyID,
-              policyTitle: selection.title,
-            }),
-          );
           dispatch(changeFips(response?.fips?.enabled || false));
         });
     }
