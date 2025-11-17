@@ -184,7 +184,13 @@ const toCloudAPIComposeRequest = (
 
   return {
     distribution,
-    customizations,
+    customizations: {
+      ...customizations,
+      filesystem: customizations?.filesystem?.map(({ minsize, ...fs }) => ({
+        min_size: minsize,
+        ...fs,
+      })),
+    },
     image_requests: image_requests.map((ir) => ({
       architecture: ir.architecture,
       image_type: ir.image_type,

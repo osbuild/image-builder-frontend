@@ -36,7 +36,6 @@ import {
   CustomRepository,
 } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
-import { getErrorMessage } from '../../Utilities/getErrorMessage';
 import { resolveRelPath } from '../../Utilities/path';
 import {
   mapExportRequestToState,
@@ -139,7 +138,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
           const isJson = filename.endsWith('.json');
           if (isToml) {
             const tomlBlueprint = TOML.parse(fileContent);
-            const blueprintFromFile = mapOnPremToHosted(
+            const blueprintFromFile = await mapOnPremToHosted(
               tomlBlueprint as BlueprintItem,
             );
             const importBlueprintState = mapExportRequestToState(
@@ -194,7 +193,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               const blueprintFromFileMapped =
                 mapOnPremToHosted(blueprintFromFile);
               const importBlueprintState = mapExportRequestToState(
-                blueprintFromFileMapped,
+                await blueprintFromFileMapped,
                 [],
               );
               setIsOnPrem(true);
@@ -203,10 +202,11 @@ export const ImportBlueprintModal: React.FunctionComponent<
           }
         } catch (error) {
           setIsInvalidFormat(true);
+          const msg = error instanceof Error ? error.message : String(error);
           addNotification({
             variant: 'warning',
             title: 'File is not a valid blueprint',
-            description: getErrorMessage(error),
+            description: msg,
           });
         }
       };

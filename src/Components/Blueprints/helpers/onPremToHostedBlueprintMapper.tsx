@@ -1,3 +1,4 @@
+import { RHEL_10 } from '../../../constants';
 import { Blueprint as CloudApiBlueprint } from '../../../store/cockpit/composerCloudApi';
 import {
   BlueprintExportResponse,
@@ -16,6 +17,7 @@ import {
   Services,
   Timezone,
 } from '../../../store/imageBuilderApi';
+import { getHostDistro } from '../../../Utilities/getHostInfo';
 
 // Blueprint as defined by the osbuild-composer cloudapi's /compose
 // endpoint.
@@ -100,9 +102,9 @@ export type SshKeyOnPrem = {
   key: string;
 };
 
-export const mapOnPremToHosted = (
+export const mapOnPremToHosted = async (
   blueprint: BlueprintOnPrem,
-): BlueprintExportResponse => {
+): Promise<BlueprintExportResponse> => {
   const users = blueprint.customizations?.user?.map((u) => ({
     name: u.name,
     ssh_key: u.key,
@@ -121,10 +123,19 @@ export const mapOnPremToHosted = (
     blueprint.customizations?.groups !== undefined
       ? blueprint.customizations.groups.map((p) => `@${p.name}`)
       : undefined;
+  const distro = process.env.IS_ON_PREMISE
+    ? await getHostDistro()
+    : blueprint.distro || RHEL_10;
+  const filesystem = !blueprint.customizations?.filesystem
+    ? undefined
+    : blueprint.customizations.filesystem.map(({ minsize, ...fs }) => ({
+        min_size: minsize,
+        ...fs,
+      }));
   return {
     name: blueprint.name,
     description: blueprint.description || '',
-    distribution: blueprint.distro!,
+    distribution: distro,
     customizations: {
       ...blueprint.customizations,
       containers: blueprint.containers,
@@ -143,12 +154,7 @@ export const mapOnPremToHosted = (
           ? [...(users ? users : []), ...(user_keys ? user_keys : [])]
           : undefined,
       groups: blueprint.customizations?.groups,
-      filesystem: blueprint.customizations?.filesystem?.map(
-        ({ minsize, ...fs }) => ({
-          min_size: minsize,
-          ...fs,
-        }),
-      ),
+      filesystem,
       fips:
         blueprint.customizations?.fips !== undefined
           ? {
