@@ -37,7 +37,7 @@ const PartitionName = ({
         );
       }}
       stepValidation={stepValidation}
-      fieldName={`lvname-${partition.id}`}
+      fieldName={`name-${partition.id}`}
     />
   );
 };
