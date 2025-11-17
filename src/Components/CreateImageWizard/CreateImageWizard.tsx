@@ -38,7 +38,6 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
-import { getHostArch, getHostDistro } from './utilities/getHostInfo';
 import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
   useAAPValidation,
@@ -87,6 +86,7 @@ import {
   selectImageTypes,
   selectTimezone,
 } from '../../store/wizardSlice';
+import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
