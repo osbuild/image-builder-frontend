@@ -115,7 +115,7 @@ export const INVALID_ARCHITECTURE_JSON = `{
 }`;
 
 export const INVALID_JSON = `{
-  "name": "Blueprint test"
+  "name": "Blueprint test",
 }`;
 
 export const ONPREM_BLUEPRINT_TOML = `
