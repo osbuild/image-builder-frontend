@@ -510,7 +510,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             )) as string;
 
             const parsed = TOML.parse(result);
-            const blueprint = mapOnPremToHosted(parsed as BlueprintItem);
+            const blueprint = await mapOnPremToHosted(parsed as BlueprintItem);
 
             result = (await cockpit.spawn(
               [

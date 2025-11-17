@@ -14,5 +14,10 @@ export const getErrorMessage = (error: unknown) => {
   ) {
     return (error as any).data.error.message;
   }
+
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    return (error as any).message;
+  }
+
   return 'Unknown error';
 };

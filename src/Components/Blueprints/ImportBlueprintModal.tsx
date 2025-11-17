@@ -139,7 +139,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
           const isJson = filename.endsWith('.json');
           if (isToml) {
             const tomlBlueprint = TOML.parse(fileContent);
-            const blueprintFromFile = mapOnPremToHosted(
+            const blueprintFromFile = await mapOnPremToHosted(
               tomlBlueprint as BlueprintItem,
             );
             const importBlueprintState = mapExportRequestToState(
@@ -190,9 +190,19 @@ export const ImportBlueprintModal: React.FunctionComponent<
 
               setIsOnPrem(false);
               setImportedBlueprint(importBlueprintState);
-            } catch {
+            } catch (error) {
+              // If the error is actually due to an invalid architecture or image type,
+              // propagate it to label the blueprint as an invalid format,
+              // as the wizard will just not be able to deal with it.
+              if (
+                error instanceof Error &&
+                (error as Error).message.startsWith('image type:') &&
+                (error as Error).message.endsWith('has no implementation yet')
+              ) {
+                throw error;
+              }
               const blueprintFromFileMapped =
-                mapOnPremToHosted(blueprintFromFile);
+                await mapOnPremToHosted(blueprintFromFile);
               const importBlueprintState = mapExportRequestToState(
                 blueprintFromFileMapped,
                 [],
