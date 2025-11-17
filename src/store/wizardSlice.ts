@@ -751,7 +751,6 @@ export const wizardSlice = createSlice({
                 type: 'plain',
               },
             ];
-            state.partitioning_mode = 'raw';
             break;
         }
       }
