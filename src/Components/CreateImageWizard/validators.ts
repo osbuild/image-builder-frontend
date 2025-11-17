@@ -2,6 +2,7 @@ import {
   DiskPartition,
   FilesystemPartition,
   LogicalVolumeWithBase,
+  VolumeGroupWithExtendedLV,
 } from './steps/FileSystem/fscTypes';
 
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
@@ -146,6 +147,33 @@ export const getDuplicateMountPoints = (
       }
     }
   }
+  return duplicates;
+};
+
+export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
+  const nameSet: Set<string> = new Set();
+  const duplicates: string[] = [];
+
+  if (vg.name) {
+    nameSet.add(vg.name);
+  }
+
+  if (vg.logical_volumes.length < 1) {
+    return [];
+  }
+
+  for (const lv of vg.logical_volumes) {
+    if (!lv.name) {
+      continue;
+    }
+
+    if (nameSet.has(lv.name)) {
+      duplicates.push(lv.name);
+    } else {
+      nameSet.add(lv.name);
+    }
+  }
+
   return duplicates;
 };
 

@@ -51,6 +51,7 @@ import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText
 import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
+  getDuplicateNames,
   isAzureResourceGroupValid,
   isAzureSubscriptionIdValid,
   isAzureTenantGUIDValid,
@@ -318,7 +319,7 @@ export function useFilesystemValidation(): StepValidation {
     return { errors, disabledNext: false };
   }
 
-  const fscDuplicates = getDuplicateMountPoints(filesystemPartitions);
+  const fscMountpointDuplicates = getDuplicateMountPoints(filesystemPartitions);
   for (const partition of filesystemPartitions) {
     if (!partition.min_size || partition.min_size === '') {
       errors[`min-size-${partition.id}`] = 'Partition size is required';
@@ -328,13 +329,16 @@ export function useFilesystemValidation(): StepValidation {
       errors[`min-size-${partition.id}`] = 'Must be larger than 0';
       disabledNext = true;
     }
-    if (fscDuplicates.includes(partition.mountpoint)) {
+    if (fscMountpointDuplicates.includes(partition.mountpoint)) {
       errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
       disabledNext = true;
     }
   }
 
-  const diskDuplicates = getDuplicateMountPoints(diskPartitions);
+  const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
+  const diskMountpointDuplicates = getDuplicateMountPoints(diskPartitions);
+  const diskNameDuplicates =
+    volumeGroups.length > 0 ? getDuplicateNames(volumeGroups[0]) : [];
   for (const partition of diskPartitions) {
     if (!partition.min_size || partition.min_size === '') {
       errors[`min-size-${partition.id}`] = 'Partition size is required';
@@ -347,7 +351,7 @@ export function useFilesystemValidation(): StepValidation {
     if (
       'mountpoint' in partition &&
       partition.mountpoint &&
-      diskDuplicates.includes(partition.mountpoint)
+      diskMountpointDuplicates.includes(partition.mountpoint)
     ) {
       errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
       disabledNext = true;
@@ -363,11 +367,23 @@ export function useFilesystemValidation(): StepValidation {
       errors[`name-${partition.id}`] = 'Partition name is invalid';
       disabledNext = true;
     }
+    if (
+      'name' in partition &&
+      partition.name &&
+      diskNameDuplicates.includes(partition.name)
+    ) {
+      errors[`name-${partition.id}`] = 'Name is not unique';
+      disabledNext = true;
+    }
 
     if (partition.type === 'lvm' && partition.logical_volumes.length > 0) {
       for (const lv of partition.logical_volumes) {
         if (lv.name && !isPartitionNameValid(lv.name)) {
-          errors[`lvname-${lv.id}`] = 'Volume name is invalid';
+          errors[`name-${lv.id}`] = 'Volume name is invalid';
+          disabledNext = true;
+        }
+        if (lv.name && diskNameDuplicates.includes(lv.name)) {
+          errors[`name-${lv.id}`] = 'Name is not unique';
           disabledNext = true;
         }
         if (!lv.min_size || lv.min_size === '') {
@@ -381,7 +397,7 @@ export function useFilesystemValidation(): StepValidation {
         if (
           'mountpoint' in lv &&
           lv.mountpoint &&
-          diskDuplicates.includes(lv.mountpoint)
+          diskMountpointDuplicates.includes(lv.mountpoint)
         ) {
           errors[`mountpoint-${lv.id}`] = 'Duplicate mount points';
           disabledNext = true;
