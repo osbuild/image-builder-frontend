@@ -197,4 +197,13 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     expect(exitCode).toBe(0);
     expect(output).toContain('0');
   });
+
+  await test.step('Check system was registered to the policy', async () => {
+    await page.goto('/insights/compliance/scappolicies');
+    await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
+    await expect(page.getByRole('row', { name: policyName })).toBeVisible();
+    await page.getByRole('link', { name: policyName }).click();
+    await page.getByRole('tab', { name: 'Systems' }).click();
+    await expect(page.getByText('1 - 1').nth(2)).toBeVisible();
+  });
 });
