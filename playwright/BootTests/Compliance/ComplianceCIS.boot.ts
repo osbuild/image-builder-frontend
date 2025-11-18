@@ -60,7 +60,13 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
-    await registerLater(frame);
+  });
+
+  await test.step('Register system', async () => {
+    await page.getByRole('button', { name: 'Register' }).click();
+    await page
+      .getByRole('radio', { name: 'Automatically register to Red Hat' })
+      .click();
   });
 
   await test.step('Select and fill the Compliance step', async () => {
@@ -176,6 +182,22 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     );
     expect(exitCode).toBe(0);
     expect(output).toContain('0');
+  });
+
+  await test.step('Register system to insights client', async () => {
+    // System with compliance policy is by default not registered to Insights
+    const [exitCode] = await image.exec('sudo insights-client --register');
+    expect(exitCode).toBe(0);
+  });
+
+  await test.step('Check system was registered to the policy', async () => {
+    await page.goto('/insights/compliance/scappolicies');
+    await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
+    await expect(page.getByRole('row', { name: policyName })).toBeVisible();
+    await page.getByRole('link', { name: policyName }).click();
+    await page.getByRole('tab', { name: 'Systems' }).click();
+    // The system has a same name as the BP
+    await expect(page.getByRole('link', { name: blueprintName })).toBeVisible();
   });
 });
 
