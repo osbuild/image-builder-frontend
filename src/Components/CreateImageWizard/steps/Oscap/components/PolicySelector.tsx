@@ -73,6 +73,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
   const {
     clearCompliancePackages,
     handleKernelAppend,
@@ -145,12 +146,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       // handle user has selected 'None' case
       handleClear();
     } else {
-      dispatch(
-        setCompliancePolicy({
-          policyID: selection.policyID,
-          policyTitle: selection.title,
-        }),
-      );
+      setIsApplying(true);
       const oldOscapPackages = currentProfileData?.packages || [];
       trigger(
         {
@@ -172,7 +168,14 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
           dispatch(changeFips(response?.fips?.enabled || false));
-        });
+          dispatch(
+            setCompliancePolicy({
+              policyID: selection.policyID,
+              policyTitle: selection.title,
+            }),
+          );
+        })
+        .finally(() => setIsApplying(false));
     }
   };
 
@@ -223,11 +226,19 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={isDisabled || isFetchingPolicies || hasWslTargetOnly}
+      isDisabled={
+        isDisabled || isFetchingPolicies || hasWslTargetOnly || isApplying
+      }
       isFullWidth
       style={{ maxWidth: 'none' }}
     >
-      {policyTitle || 'None'}
+      {isApplying ? (
+        <>
+          <Spinner size='sm' /> Applying policy...
+        </>
+      ) : (
+        policyTitle || 'None'
+      )}
     </MenuToggle>
   );
 
