@@ -94,6 +94,14 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     await frame.getByRole('button', { name: 'None' }).click();
     await frame.getByRole('option', { name: policyName }).click();
     await expect(frame.getByRole('button', { name: policyName })).toBeVisible(); // Wait for the policy to get selected
+    await page.waitForTimeout(3000); // Slow down execution to let the policy customizations load
+    await frame
+      .getByLabel('Wizard steps')
+      .getByRole('button', { name: 'Additional packages' })
+      .click();
+    await expect(
+      frame.getByRole('button', { name: /selected \(\d+\)/i }),
+    ).toBeVisible();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
