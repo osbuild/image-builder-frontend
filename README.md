@@ -242,13 +242,15 @@ we're planning on using.
 ### Quick Reference
 | Directory                                                                                                            | Description                                |
 | ---------                                                                                                            | -----------                                |
-| [`/api`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/api)                                     | API schema and config files                |
-| [`/config`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/config)                               | webpack configuration                      |
-| [`/src`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src)                                     | source code                                |
-| [`/src/Components`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/Components)               | source code split by individual components |
-| [`/src/test`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test)                           | test utilities                             |
-| [`/src/test/mocks`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test/mocks)               | mock handlers and server config for MSW    |
-| [`/src/store`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/store)                         | Redux store                                |
+| [`/api`](api/)                                     | API schema and config files                |
+| [`/config`](config/)                               | webpack configuration                      |
+| [`/src`](src/)                                     | source code                                |
+| [`/src/Components`](src/Components/)               | source code split by individual components |
+| [`/playwright`](playwright/)                       | Playwright tests                           |
+| [`/playwright/BootTests`](playwright/BootTests/)   | Playwright boot tests                      |
+| [`/src/test`](src/test/)                           | vitest utilities                           |
+| [`/src/test/mocks`](src/test/mocks/)               | mock handlers and server config for MSW    |
+| [`/src/store`](src/store/)                         | Redux store                                |
 
 ## Style Guidelines
 
@@ -276,7 +278,7 @@ Any errors that can be fixed automatically, can be corrected by running:
 npm run lint:js:fix
 ```
 
-All the linting rules and configuration of ESLint can be found in [`eslint.config.js`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/eslint.config.js).
+All the linting rules and configuration of ESLint can be found in [`eslint.config.js`](eslint.config.js).
 
 ## Test Guidelines
 
