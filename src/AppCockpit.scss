@@ -69,6 +69,10 @@
   padding-inline: 0;
 }
 
+.pf-v6-c-wizard {
+  min-height: 80vh;
+}
+
 .pf-v6-c-card {
   &.pf-m-clickable::before,
   &.pf-m-selectable::before {
