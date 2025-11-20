@@ -65,6 +65,7 @@ import {
   GetOscapCustomizationsApiResponse,
   GetOscapProfilesApiArg,
   GetOscapProfilesApiResponse,
+  OpenScapProfile,
   UpdateBlueprintApiResponse,
 } from '../service/imageBuilderApi';
 
@@ -157,26 +158,39 @@ const getCloudConfigs = async () => {
   }
 };
 
-const toCloudAPIComposeRequest = (
+export const toCloudAPIComposeRequest = (
   blueprint: CockpitCreateBlueprintRequest,
   distribution: string,
   image_requests: CockpitImageRequest[],
 ) => {
-  // we need a customizations object rather than a blueprint
-  // since we need to set the `subscription` options for
-  // registering an image. This is not available with blueprint
-  // customizations
-  const customizations = mapHostedToOnPrem(blueprint as CreateBlueprintRequest)
-    .customizations as Customizations;
+  // subscription, users & openscap are the only options
+  // that aren't compatibile with the on-prem customizations,
+  // so we have to handle those separately
+  const { subscription, openscap, users, ...hostedCustomizations } =
+    blueprint.customizations;
 
-  if (blueprint.customizations?.filesystem) {
-    // use the blueprint fs customization since this has the same
-    // value for `min_size`. The on-prem bp uses `minsize` instead.
-    customizations!.filesystem = blueprint.customizations.filesystem;
+  const customizations: Customizations = {
+    ...hostedCustomizations,
+  };
+
+  if (openscap) {
+    customizations.openscap = {
+      // the casting here is fine since compliance isn't available on-prem
+      profile_id: (openscap as OpenScapProfile).profile_id,
+    };
   }
 
-  if (blueprint.customizations?.subscription) {
-    const { subscription } = blueprint.customizations;
+  if (users) {
+    customizations.users = users.map((user) => {
+      const { ssh_key, ...options } = user;
+      return {
+        ...options,
+        ...(ssh_key && { key: ssh_key }),
+      };
+    });
+  }
+
+  if (subscription) {
     customizations!.subscription = {
       organization: subscription.organization.toString(),
       activation_key: subscription['activation-key'],
