@@ -222,7 +222,7 @@ export const mapHostedToOnPrem = (
       (fs) => {
         return {
           mountpoint: fs.mountpoint,
-          minsize: fs.min_size,
+          min_size: fs.min_size,
         };
       },
     );

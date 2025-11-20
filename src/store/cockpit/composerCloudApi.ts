@@ -774,7 +774,7 @@ export type BlueprintCustomizations = {
   firewall?: BlueprintFirewall | undefined;
   services?: Services | undefined;
   /** List of filesystem mountpoints to create */
-  filesystem?: BlueprintFilesystem[] | undefined;
+  filesystem?: Filesystem[] | undefined;
   disk?: Disk | undefined;
   dnf?: Dnf | undefined;
   /** Name of the installation device, currently only useful for the edge-simplified-installer type
