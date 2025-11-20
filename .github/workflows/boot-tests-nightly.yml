@@ -98,7 +98,7 @@ jobs:
             echo "Skipping account setup for Playwright tests."
           fi
 
-          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
+          CURRENTS_PROJECT_ID=CNrla0 CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
 
       - name: Store front-end Test report
         uses: actions/upload-artifact@v4
