@@ -199,7 +199,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             </ExpandableSection>
           </Alert>
         )}
-        {itemCount > 0 && isBlueprintOutSync && (
+        {!process.env.IS_ON_PREMISE && itemCount > 0 && isBlueprintOutSync && (
           <Alert
             style={{
               margin:
