@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   Alert,
@@ -10,6 +10,7 @@ import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
+import { calculateTotalFilesystemSize } from '../fscUtilities';
 
 import {
   FILE_SYSTEM_CUSTOMIZATION_URL,
@@ -22,6 +23,7 @@ import {
   selectFilesystemPartitions,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
+import FilesystemSizeAlert from '../../../FilesystemSizeAlert';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 
 const FileSystemConfiguration = () => {
@@ -29,6 +31,11 @@ const FileSystemConfiguration = () => {
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
   const dispatch = useAppDispatch();
+
+  const totalSizeBytes = useMemo(
+    () => calculateTotalFilesystemSize(filesystemPartitions),
+    [filesystemPartitions],
+  );
 
   const handleAddPartition = () => {
     const id = uuidv4();
@@ -94,6 +101,7 @@ const FileSystemConfiguration = () => {
           )} images`}
         />
       )}
+      <FilesystemSizeAlert totalSizeBytes={totalSizeBytes} />
       <FileSystemTable partitions={filesystemPartitions} mode='filesystem' />
       <Content>
         <Button
