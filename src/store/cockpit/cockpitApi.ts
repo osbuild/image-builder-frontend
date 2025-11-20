@@ -169,6 +169,12 @@ const toCloudAPIComposeRequest = (
   const customizations = mapHostedToOnPrem(blueprint as CreateBlueprintRequest)
     .customizations as Customizations;
 
+  if (blueprint.customizations?.filesystem) {
+    // use the blueprint fs customization since this has the same
+    // value for `min_size`. The on-prem bp uses `minsize` instead.
+    customizations!.filesystem = blueprint.customizations.filesystem;
+  }
+
   if (blueprint.customizations?.subscription) {
     const { subscription } = blueprint.customizations;
     customizations!.subscription = {
