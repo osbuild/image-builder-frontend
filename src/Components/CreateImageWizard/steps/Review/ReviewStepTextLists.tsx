@@ -34,7 +34,6 @@ import {
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
-import { PolicyRead, usePolicyQuery } from '../../../../store/complianceApi';
 import {
   useGetTemplateQuery,
   useListSnapshotsByDateMutation,
@@ -58,7 +57,6 @@ import {
   selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintName,
-  selectCompliancePolicyID,
   selectCustomRepositories,
   selectDistribution,
   selectFilesystemPartitions,
@@ -91,7 +89,6 @@ import MinimumSizePopover from '../FileSystem/components/MinimumSizePopover';
 import { FilesystemPartition } from '../FileSystem/fscTypes';
 import { getConversionFactor } from '../FileSystem/fscUtilities';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
-import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
 
 const ExpirationWarning = () => {
   return (
@@ -783,61 +780,6 @@ export const DetailsList = () => {
             </Content>
           </>
         )}
-      </Content>
-    </Content>
-  );
-};
-
-export const OscapList = () => {
-  return <OscapProfileInformation />;
-};
-
-export const CompliancePolicyDetailsList = () => {
-  const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
-  const { data: policyInfo, isFetching } = usePolicyQuery(
-    {
-      policyId: compliancePolicyID || '',
-    },
-    { skip: !compliancePolicyID },
-  );
-
-  const policy = policyInfo?.data as PolicyRead | undefined;
-  let complianceThresholdText = '';
-  if (!isFetching) {
-    if (policy?.compliance_threshold !== undefined) {
-      complianceThresholdText = `${policy.compliance_threshold}%`;
-    } else {
-      complianceThresholdText = '—';
-    }
-  }
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Policy type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {isFetching ? '' : (policy?.type ?? '—')}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Policy description
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {isFetching ? '' : (policy?.description ?? '—')}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Business objective
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {isFetching ? '' : (policy?.business_objective ?? '—')}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Compliance threshold
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {complianceThresholdText}{' '}
-        </Content>
       </Content>
     </Content>
   );
