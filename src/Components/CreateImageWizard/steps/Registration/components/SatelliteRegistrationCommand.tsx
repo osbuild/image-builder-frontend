@@ -7,9 +7,12 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-import SatelliteDocumentationButton from './SatelliteDocumentationButton';
+import ManageButton from './ManageButton';
 
-import { SATELLITE_SERVICE } from '../../../../../constants';
+import {
+  REGISTRATION_DOCS_URL,
+  SATELLITE_SERVICE,
+} from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addEnabledService,
@@ -52,7 +55,12 @@ const SatelliteRegistrationCommand = () => {
         <HelperText>
           <HelperTextItem>
             To generate command from Satellite, follow the{' '}
-            <SatelliteDocumentationButton />
+            <ManageButton
+              url={REGISTRATION_DOCS_URL}
+              analyticsStepId='step-register'
+            >
+              documentation
+            </ManageButton>
           </HelperTextItem>
         </HelperText>
       </FormHelperText>
