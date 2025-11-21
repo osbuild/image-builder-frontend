@@ -13,6 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type {
   Blueprint as CloudApiBlueprint,
+  ComposeRequest as CloudApiComposeRequest,
+  ImageTypes as CloudApiImageTypes,
   Customizations,
 } from './composerCloudApi';
 // We have to work around RTK query here, since it doesn't like splitting
@@ -162,7 +164,7 @@ export const toCloudAPIComposeRequest = (
   blueprint: CockpitCreateBlueprintRequest,
   distribution: string,
   image_requests: CockpitImageRequest[],
-) => {
+): CloudApiComposeRequest => {
   // subscription, users & openscap are the only options
   // that aren't compatibile with the on-prem customizations,
   // so we have to handle those separately
@@ -182,9 +184,11 @@ export const toCloudAPIComposeRequest = (
 
   if (users) {
     customizations.users = users.map((user) => {
-      const { ssh_key, ...options } = user;
+      const { ssh_key, groups, password } = user;
       return {
-        ...options,
+        name: user.name,
+        ...(groups && { groups: groups }),
+        ...(password && { password: password }),
         ...(ssh_key && { key: ssh_key }),
       };
     });
@@ -207,7 +211,7 @@ export const toCloudAPIComposeRequest = (
     customizations,
     image_requests: image_requests.map((ir) => ({
       architecture: ir.architecture,
-      image_type: ir.image_type,
+      image_type: ir.image_type as CloudApiImageTypes,
       repositories: [],
       upload_targets: [
         {
