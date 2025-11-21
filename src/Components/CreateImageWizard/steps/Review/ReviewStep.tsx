@@ -15,7 +15,6 @@ import { ArrowRightIcon } from '@patternfly/react-icons';
 
 import './ReviewStep.scss';
 import {
-  CompliancePolicyDetailsList,
   ContentList,
   DetailsList,
   FirewallList,
@@ -25,7 +24,6 @@ import {
   ImageOutputList,
   KernelList,
   LocaleList,
-  OscapList,
   RegisterAapList,
   RegisterLaterList,
   RegisterNowList,
@@ -47,9 +45,6 @@ import {
   selectAapRegistration,
   selectBlueprintDescription,
   selectBlueprintName,
-  selectCompliancePolicyID,
-  selectComplianceProfileID,
-  selectComplianceType,
   selectDistribution,
   selectFirewall,
   selectHostname,
@@ -64,6 +59,7 @@ import {
   selectUsers,
 } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
+import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -73,9 +69,6 @@ const Review = () => {
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
   const environments = useAppSelector(selectImageTypes);
-  const complianceType = useAppSelector(selectComplianceType);
-  const complianceProfile = useAppSelector(selectComplianceProfileID);
-  const compliancePolicy = useAppSelector(selectCompliancePolicyID);
   const registrationType = useAppSelector(selectRegistrationType);
   const hostname = useAppSelector(selectHostname);
   const languages = useAppSelector(selectLanguages);
@@ -94,8 +87,7 @@ const Review = () => {
   const [isExpandedContent, setIsExpandedContent] = useState(true);
   const [isExpandedRegistration, setIsExpandedRegistration] = useState(true);
   const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(true);
-  const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(true);
-  const [isExpandedComplianceDetail, setIsExpandedComplianceDetail] =
+  const [isExpandedSecurityDetail, setIsExpandedSecurityDetail] =
     useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
@@ -120,10 +112,8 @@ const Review = () => {
     setIsExpandedRegistration(isExpandedRegistration);
   const onToggleImageDetail = (isExpandedImageDetail: boolean) =>
     setIsExpandedImageDetail(isExpandedImageDetail);
-  const onToggleOscapDetails = (isExpandedOscapDetail: boolean) =>
-    setIsExpandedOscapDetail(isExpandedOscapDetail);
-  const onToggleComplianceDetails = (isExpandedComplianceDetail: boolean) =>
-    setIsExpandedComplianceDetail(isExpandedComplianceDetail);
+  const onToggleSecurityDetails = (isExpandedSecurityDetail: boolean) =>
+    setIsExpandedSecurityDetail(isExpandedSecurityDetail);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
     setIsExpandedTimezone(isExpandedTimezone);
   const onToggleLocale = (isExpandedLocale: boolean) =>
@@ -320,41 +310,22 @@ const Review = () => {
           {registrationType.startsWith('register-now') && <RegisterNowList />}
         </ExpandableSection>
       )}
-      {complianceProfile && complianceType === 'openscap' && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Security',
-            'revisit-openscap',
-            'step-oscap',
-          )}
-          onToggle={(_event, isExpandedOscapDetail) =>
-            onToggleOscapDetails(isExpandedOscapDetail)
-          }
-          isExpanded={isExpandedOscapDetail}
-          isIndented
-          data-testid='oscap-detail-expandable'
-        >
-          <OscapList />
-        </ExpandableSection>
-      )}
-      {compliancePolicy && complianceType === 'compliance' && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Security',
-            'revisit-compliance',
-            'step-oscap',
-          )}
-          onToggle={(_event, isExpandedComplianceDetail) =>
-            onToggleComplianceDetails(isExpandedComplianceDetail)
-          }
-          isExpanded={isExpandedComplianceDetail}
-          isIndented
-          data-testid='compliance-detail-expandable'
-        >
-          <OscapList />
-          <CompliancePolicyDetailsList />
-        </ExpandableSection>
-      )}
+
+      <ExpandableSection
+        toggleContent={composeExpandable(
+          'Security',
+          'revisit-compliance',
+          'step-oscap',
+        )}
+        onToggle={(_event, isExpandedSecurityDetail) =>
+          onToggleSecurityDetails(isExpandedSecurityDetail)
+        }
+        isExpanded={isExpandedSecurityDetail}
+        isIndented
+        data-testid='compliance-detail-expandable'
+      >
+        <SecurityInformation />
+      </ExpandableSection>
       {!hasWslTargetOnly && (
         <ExpandableSection
           toggleContent={composeExpandable(
