@@ -15,7 +15,6 @@ import { ArrowRightIcon } from '@patternfly/react-icons';
 
 import './ReviewStep.scss';
 import {
-  CompliancePolicyDetailsList,
   ContentList,
   DetailsList,
   FirewallList,
@@ -25,7 +24,6 @@ import {
   ImageOutputList,
   KernelList,
   LocaleList,
-  OscapList,
   RegisterAapList,
   RegisterLaterList,
   RegisterNowList,
@@ -64,6 +62,7 @@ import {
   selectUsers,
 } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
+import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -334,7 +333,7 @@ const Review = () => {
           isIndented
           data-testid='oscap-detail-expandable'
         >
-          <OscapList />
+          <SecurityInformation />
         </ExpandableSection>
       )}
       {compliancePolicy && complianceType === 'compliance' && (
@@ -351,8 +350,7 @@ const Review = () => {
           isIndented
           data-testid='compliance-detail-expandable'
         >
-          <OscapList />
-          <CompliancePolicyDetailsList />
+          <SecurityInformation />
         </ExpandableSection>
       )}
       {!hasWslTargetOnly && (
