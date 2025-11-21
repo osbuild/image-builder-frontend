@@ -257,7 +257,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
       <ModalHeader
         title={
           <>
-            Import pipeline
+            Import blueprint files
             <Popover
               bodyContent={
                 <div>
