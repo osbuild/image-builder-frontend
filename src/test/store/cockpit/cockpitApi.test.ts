@@ -68,6 +68,7 @@ describe('toCloudAPIComposeRequest', () => {
               name: 'admin',
               groups: ['wheel'],
               ssh_key: 'ssh-rsa AAAAB3...',
+              hasPassword: false,
             },
           ],
         },
@@ -111,7 +112,7 @@ describe('toCloudAPIComposeRequest', () => {
 
       const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
 
-      expect(result.customizations.subscription).toEqual({
+      expect(result.customizations?.subscription).toEqual({
         organization: '12345', // converted to string
         activation_key: 'my-activation-key', // underscore instead of hyphen
         server_url: 'https://subscription.rhsm.redhat.com',
@@ -142,7 +143,7 @@ describe('toCloudAPIComposeRequest', () => {
 
       const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
 
-      expect(result.customizations.subscription).toEqual({
+      expect(result.customizations?.subscription).toEqual({
         organization: '67890',
         activation_key: 'key123',
         server_url: 'https://server.example.com',
@@ -177,9 +178,9 @@ describe('toCloudAPIComposeRequest', () => {
       expect(result.customizations).toHaveProperty('packages');
       expect(result.customizations).toHaveProperty('hostname');
       expect(result.customizations).toHaveProperty('subscription');
-      expect(result.customizations.packages).toEqual(['nginx']);
-      expect(result.customizations.hostname).toBe('webserver');
-      expect(result.customizations.subscription?.organization).toBe('11111');
+      expect(result.customizations?.packages).toEqual(['nginx']);
+      expect(result.customizations?.hostname).toBe('webserver');
+      expect(result.customizations?.subscription?.organization).toBe('11111');
     });
   });
 
@@ -211,14 +212,14 @@ describe('toCloudAPIComposeRequest', () => {
 
       const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
 
-      expect(result.customizations.users).toHaveLength(2);
-      expect(result.customizations.users?.[0]).toEqual({
+      expect(result.customizations?.users).toHaveLength(2);
+      expect(result.customizations?.users?.[0]).toEqual({
         name: 'testuser',
         groups: ['wheel', 'docker'],
         key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
         password: password,
       });
-      expect(result.customizations.users?.[1]).toEqual({
+      expect(result.customizations?.users?.[1]).toEqual({
         name: 'anotheruser',
         groups: ['users'],
       });
@@ -244,10 +245,10 @@ describe('toCloudAPIComposeRequest', () => {
 
       const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
 
-      expect(result.customizations.packages).toEqual(['htop']);
-      expect(result.customizations.hostname).toBe('server.example.com');
-      expect(result.customizations.users?.[0].key).toBe('ssh-rsa KEY123');
-      expect(result.customizations.users?.[0]).not.toHaveProperty('ssh_key');
+      expect(result.customizations?.packages).toEqual(['htop']);
+      expect(result.customizations?.hostname).toBe('server.example.com');
+      expect(result.customizations?.users?.[0].key).toBe('ssh-rsa KEY123');
+      expect(result.customizations?.users?.[0]).not.toHaveProperty('ssh_key');
     });
   });
 
@@ -269,7 +270,7 @@ describe('toCloudAPIComposeRequest', () => {
 
       const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
 
-      expect(result.customizations.openscap).toEqual({
+      expect(result.customizations?.openscap).toEqual({
         profile_id: 'xccdf_org.ssgproject.content_profile_cis',
       });
     });
@@ -291,8 +292,8 @@ describe('toCloudAPIComposeRequest', () => {
 
       const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
 
-      expect(result.customizations.packages).toEqual(['aide']);
-      expect(result.customizations.openscap).toEqual({
+      expect(result.customizations?.packages).toEqual(['aide']);
+      expect(result.customizations?.openscap).toEqual({
         profile_id: 'xccdf_org.ssgproject.content_profile_pci-dss',
       });
     });
@@ -328,7 +329,7 @@ describe('toCloudAPIComposeRequest', () => {
       );
 
       expect(result.image_requests).toHaveLength(1);
-      expect(result.image_requests[0]).toEqual({
+      expect(result.image_requests![0]).toEqual({
         architecture: 'x86_64',
         image_type: 'ami',
         repositories: [],
@@ -380,10 +381,10 @@ describe('toCloudAPIComposeRequest', () => {
       );
 
       expect(result.image_requests).toHaveLength(2);
-      expect(result.image_requests[0].architecture).toBe('x86_64');
-      expect(result.image_requests[1].architecture).toBe('aarch64');
-      expect(result.image_requests[0].image_type).toBe('guest-image');
-      expect(result.image_requests[1].image_type).toBe('ami');
+      expect(result.image_requests![0].architecture).toBe('x86_64');
+      expect(result.image_requests![1].architecture).toBe('aarch64');
+      expect(result.image_requests![0].image_type).toBe('guest-image');
+      expect(result.image_requests![1].image_type).toBe('ami');
     });
 
     it('should handle different upload request types', () => {
@@ -416,7 +417,7 @@ describe('toCloudAPIComposeRequest', () => {
         imageRequests,
       );
 
-      expect(result.image_requests[0].upload_targets[0]).toEqual({
+      expect(result.image_requests![0].upload_targets![0]).toEqual({
         type: 'azure',
         upload_options: {
           tenant_id: 'tenant-123',
@@ -452,7 +453,7 @@ describe('toCloudAPIComposeRequest', () => {
         imageRequests,
       );
 
-      expect(result.image_requests[0].repositories).toEqual([]);
+      expect(result.image_requests![0].repositories).toEqual([]);
     });
   });
 
@@ -547,19 +548,19 @@ describe('toCloudAPIComposeRequest', () => {
       );
 
       // Verify all customizations are present and correctly transformed
-      expect(result.customizations.packages).toEqual([
+      expect(result.customizations?.packages).toEqual([
         'firewalld',
         'aide',
         'audit',
       ]);
-      expect(result.customizations.hostname).toBe('secure.example.com');
-      expect(result.customizations.users).toHaveLength(1);
-      expect(result.customizations.users?.[0]).toEqual({
+      expect(result.customizations?.hostname).toBe('secure.example.com');
+      expect(result.customizations?.users).toHaveLength(1);
+      expect(result.customizations?.users?.[0]).toEqual({
         name: 'secadmin',
         groups: ['wheel'],
         key: 'ssh-rsa AAAAB3...', // ssh_key converted to key
       });
-      expect(result.customizations.subscription).toEqual({
+      expect(result.customizations?.subscription).toEqual({
         organization: '54321',
         activation_key: 'secure-key',
         server_url: 'https://subscription.rhsm.redhat.com',
@@ -567,7 +568,7 @@ describe('toCloudAPIComposeRequest', () => {
         insights: true,
         rhc: true,
       });
-      expect(result.customizations.openscap).toEqual({
+      expect(result.customizations?.openscap).toEqual({
         profile_id: 'xccdf_org.ssgproject.content_profile_stig',
       });
       expect(result.image_requests).toHaveLength(1);
