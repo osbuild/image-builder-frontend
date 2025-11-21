@@ -62,11 +62,30 @@ const PartitionType = ({
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {fs_types.map((type, index) => (
-          <SelectOption key={index} value={type}>
-            {type}
-          </SelectOption>
-        ))}
+        {fs_types
+          .filter((type) => {
+            if ('type' in partition && partition.type === 'plain') {
+              if (type === 'swap') {
+                return false;
+              }
+              if (partition.mountpoint === '/boot' && type === 'vfat') {
+                return false;
+              }
+              if (
+                partition.mountpoint === '/boot/efi' &&
+                (type === 'ext4' || type === 'xfs')
+              ) {
+                return false;
+              }
+              return true;
+            }
+            return true;
+          })
+          .map((type, index) => (
+            <SelectOption key={index} value={type}>
+              {type}
+            </SelectOption>
+          ))}
       </SelectList>
     </Select>
   );

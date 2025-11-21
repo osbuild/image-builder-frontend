@@ -99,15 +99,15 @@ export const expectedDisk: Disk = {
     {
       fs_type: 'ext4',
       minsize: '2 GiB',
-      mountpoint: 'string',
+      mountpoint: '/',
       type: 'plain',
     },
     {
       minsize: '2 GiB',
       subvolumes: [
         {
-          mountpoint: 'string',
-          name: 'string',
+          mountpoint: '/tmp',
+          name: 'sv',
         },
       ],
       type: 'btrfs',
@@ -117,12 +117,12 @@ export const expectedDisk: Disk = {
         {
           fs_type: 'ext4',
           minsize: '2 GiB',
-          mountpoint: 'string',
-          name: 'string',
+          mountpoint: '/home',
+          name: 'lv1',
         },
       ],
       minsize: '2 GiB',
-      name: 'string',
+      name: 'mainvg',
       type: 'lvm',
     },
   ],

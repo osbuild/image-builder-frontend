@@ -1,4 +1,9 @@
-import { FilesystemPartition } from './steps/FileSystem/fscTypes';
+import {
+  DiskPartition,
+  FilesystemPartition,
+  LogicalVolumeWithBase,
+  VolumeGroupWithExtendedLV,
+} from './steps/FileSystem/fscTypes';
 
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (
@@ -50,7 +55,7 @@ export const isMountpointMinSizeValid = (minSize: string) => {
 };
 
 export const isPartitionNameValid = (name: string) => {
-  return /^[a-zA-Z0-9+_.-]+$/.test(name);
+  return /^[a-zA-Z0-9+_.][a-zA-Z0-9+_.-]*$/.test(name);
 };
 
 export const isBlueprintNameValid = (blueprintName: string) =>
@@ -101,7 +106,7 @@ export const isSshKeyValid = (sshKey: string) => {
 };
 
 export const getDuplicateMountPoints = (
-  partitions: FilesystemPartition[],
+  partitions: FilesystemPartition[] | DiskPartition[] | LogicalVolumeWithBase[],
 ): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
@@ -109,13 +114,54 @@ export const getDuplicateMountPoints = (
     return [];
   }
   for (const partition of partitions) {
-    const mountPoint = partition.mountpoint;
-    if (mountPointSet.has(mountPoint)) {
-      duplicates.push(mountPoint);
-    } else {
-      mountPointSet.add(mountPoint);
+    if ('mountpoint' in partition && partition.mountpoint) {
+      const mountPoint = partition.mountpoint;
+      if (mountPointSet.has(mountPoint)) {
+        duplicates.push(mountPoint);
+      } else {
+        mountPointSet.add(mountPoint);
+      }
+    }
+    if ('type' in partition && partition.type === 'lvm') {
+      for (const lv of partition.logical_volumes) {
+        if ('mountpoint' in lv && lv.mountpoint) {
+          const mountPoint = lv.mountpoint;
+          if (mountPointSet.has(mountPoint)) {
+            duplicates.push(mountPoint);
+          } else {
+            mountPointSet.add(mountPoint);
+          }
+        }
+      }
     }
   }
+  return duplicates;
+};
+
+export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
+  const nameSet: Set<string> = new Set();
+  const duplicates: string[] = [];
+
+  if (vg.name) {
+    nameSet.add(vg.name);
+  }
+
+  if (!vg.logical_volumes || vg.logical_volumes.length < 1) {
+    return [];
+  }
+
+  for (const lv of vg.logical_volumes) {
+    if (!lv.name) {
+      continue;
+    }
+
+    if (nameSet.has(lv.name)) {
+      duplicates.push(lv.name);
+    } else {
+      nameSet.add(lv.name);
+    }
+  }
+
   return duplicates;
 };
 
