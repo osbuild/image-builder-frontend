@@ -11,9 +11,10 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-import SatelliteDocumentationButton from './SatelliteDocumentationButton';
+import ManageButton from './ManageButton';
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
+import { REGISTRATION_DOCS_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeSatelliteCaCertificate,
@@ -108,7 +109,12 @@ const SatelliteRegistration = () => {
               {(isRejected || validated !== 'success') && (
                 <HelperTextItem>
                   To find the certificate follow this{' '}
-                  <SatelliteDocumentationButton />
+                  <ManageButton
+                    url={REGISTRATION_DOCS_URL}
+                    analyticsStepId='step-register'
+                  >
+                    documentation
+                  </ManageButton>
                 </HelperTextItem>
               )}
             </HelperText>

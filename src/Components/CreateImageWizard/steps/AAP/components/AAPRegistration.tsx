@@ -10,6 +10,7 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import { AAP_DOCS_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAapCallbackUrl,
@@ -24,6 +25,7 @@ import {
 import { useAAPValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { validateMultipleCertificates } from '../../../validators';
+import ManageButton from '../../Registration/components/ManageButton';
 
 const AAPRegistration = () => {
   const dispatch = useAppDispatch();
@@ -93,6 +95,16 @@ const AAPRegistration = () => {
           stepValidation={stepValidation}
           fieldName='callbackUrl'
         />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              To generate a callback URL from the Ansible Controller, follow the{' '}
+              <ManageButton url={AAP_DOCS_URL} analyticsStepId='wizard-aap'>
+                documentation
+              </ManageButton>
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
 
       <FormGroup label='Host Config Key' isRequired>
@@ -104,6 +116,17 @@ const AAPRegistration = () => {
           stepValidation={stepValidation}
           fieldName='hostConfigKey'
         />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              To obtain a host config key from the Ansible Controller, follow
+              the{' '}
+              <ManageButton url={AAP_DOCS_URL} analyticsStepId='wizard-aap'>
+                documentation
+              </ManageButton>
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
 
       {shouldShowCaInput && (
@@ -147,6 +170,16 @@ const AAPRegistration = () => {
                     : validated === 'success'
                       ? 'Certificate was uploaded'
                       : 'Drag and drop a valid certificate file or upload one'}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>
+                To upload the certificate file, follow the{' '}
+                <ManageButton url={AAP_DOCS_URL} analyticsStepId='wizard-aap'>
+                  documentation
+                </ManageButton>
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
