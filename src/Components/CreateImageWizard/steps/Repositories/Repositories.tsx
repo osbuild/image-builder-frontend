@@ -68,6 +68,7 @@ import {
   selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
+import { requiredRedHatRepos } from '../../../../Utilities/requiredRedHatRepos';
 import {
   convertStringToDate,
   timestampToDisplayStringDetailed,
@@ -103,12 +104,14 @@ const Repositories = () => {
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
 
   const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
+  const isLayeredReposEnabled = useFlag('image-builder.layered-repos.enabled');
 
   const originParam = useMemo(() => {
     const origins = [ContentOrigin.CUSTOM];
     if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    if (isLayeredReposEnabled) origins.push(ContentOrigin.REDHAT);
     return origins.join(',');
-  }, [isSharedEPELEnabled]);
+  }, [isSharedEPELEnabled, isLayeredReposEnabled]);
 
   const debouncedFilterValue = useDebounce(filterValue);
 
@@ -174,7 +177,11 @@ const Repositories = () => {
   );
 
   useEffect(() => {
-    if (toggleSelected === 'toggle-group-selected' && !selected.size) {
+    if (
+      toggleSelected === 'toggle-group-selected' &&
+      !selected.size &&
+      !requiredRedHatRepoUUIDs.length
+    ) {
       setToggleSelected('toggle-group-all');
     }
   }, [selected, toggleSelected]);
@@ -182,6 +189,14 @@ const Repositories = () => {
   useEffect(() => {
     setIsTemplateSelected(templateUuid !== '');
   }, [templateUuid]);
+
+  const requiredRedHatRepoUUIDs = useMemo(() => {
+    const requiredUrls = requiredRedHatRepos(arch, version) || [];
+    return previousReposData
+      .filter((repo) => requiredUrls.includes(repo.url!))
+      .map((repo) => repo.uuid!)
+      .filter((uuid): uuid is string => !!uuid);
+  }, [arch, version, previousReposData]);
 
   const {
     data: { data: contentList = [], meta: { count } = { count: 0 } } = {},
@@ -200,7 +215,7 @@ const Repositories = () => {
       search: debouncedFilterValue,
       uuid:
         toggleSelected === 'toggle-group-selected'
-          ? [...selected].join(',')
+          ? [...selected, ...requiredRedHatRepoUUIDs].join(',')
           : '',
     },
     {
@@ -401,6 +416,12 @@ const Repositories = () => {
     return epelUrls.includes(repoUrl);
   };
 
+  const isBaseOSOrAppStream = (repoUrl: string) => {
+    const requiredUrls = requiredRedHatRepos(arch, version);
+    if (!requiredUrls) return false;
+    return requiredUrls.includes(repoUrl);
+  };
+
   const isRepoDisabled = (
     repo: ApiRepositoryResponseRead,
     isSelected: boolean,
@@ -441,6 +462,13 @@ const Repositories = () => {
       return [
         true,
         `This repository doesn't have snapshots enabled, so it cannot be selected.`,
+      ];
+    }
+
+    if (isBaseOSOrAppStream(repo.url!)) {
+      return [
+        true,
+        'This repository is pre-selected for the chosen architecture and OS version.',
       ];
     }
 
@@ -643,7 +671,9 @@ const Repositories = () => {
             <ToolbarItem>
               <BulkSelect
                 selected={selected}
-                contentList={contentList}
+                contentList={contentList.filter(
+                  (r) => !isBaseOSOrAppStream(r.url!),
+                )}
                 deselectAll={clearSelected}
                 perPage={perPage}
                 handleAddRemove={handleAddRemove}
@@ -690,7 +720,7 @@ const Repositories = () => {
                 />
                 <ToggleGroupItem
                   text='Selected'
-                  isDisabled={!selected.size}
+                  isDisabled={!selected.size && !requiredRedHatRepoUUIDs.length}
                   aria-label='Selected repositories'
                   buttonId='toggle-group-selected'
                   isSelected={toggleSelected === 'toggle-group-selected'}
@@ -763,7 +793,8 @@ const Repositories = () => {
                       <Tr key={`${uuid}-${rowIndex}`}>
                         <Td
                           select={{
-                            isSelected: selected.has(uuid),
+                            isSelected:
+                              selected.has(uuid) || isBaseOSOrAppStream(url),
                             rowIndex: rowIndex,
                             onSelect: (_, isSelecting) =>
                               handleAddRemove(repo, isSelecting),
