@@ -2,7 +2,12 @@ import { execSync } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import path from 'path';
 
-import { expect, type Locator, type Page } from '@playwright/test';
+import {
+  BrowserContext,
+  expect,
+  type Locator,
+  type Page,
+} from '@playwright/test';
 
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
@@ -119,4 +124,23 @@ export const uploadCertificateFile = async (
       unlinkSync(tempCertPath);
     }
   }
+};
+
+export const isServiceAvailable = async (
+  endpoint: string,
+  context: BrowserContext,
+  authToken: string | undefined,
+): Promise<boolean> => {
+  /* Checks if a service is available by sending GET request to endpoint belonging to the service.
+   * @param endpoint - The endpoint to check the status of
+   * @param context - The browser context
+   * @param authToken - The authentication token for consoledot
+   * @returns True if the service is available, false otherwise
+   */
+  const response = await context.request.get(endpoint, {
+    headers: {
+      Authorization: `${authToken}`,
+    },
+  });
+  return response.status() >= 200 && response.status() < 300;
 };
