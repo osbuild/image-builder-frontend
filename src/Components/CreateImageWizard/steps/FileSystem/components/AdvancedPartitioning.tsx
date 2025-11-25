@@ -27,6 +27,17 @@ const AdvancedPartitioning = () => {
   const minsize = useAppSelector(selectDiskMinsize);
   const diskPartitions = useAppSelector(selectDiskPartitions);
 
+  const bootPartitionExists = () => {
+    return (
+      diskPartitions.some((p) => p.type === 'plain' && p.mountpoint === '/') ||
+      diskPartitions.some(
+        (p) =>
+          p.type === 'lvm' &&
+          p.logical_volumes.some((lv) => lv.mountpoint === '/'),
+      )
+    );
+  };
+
   const handleAddPartition = () => {
     const id = uuidv4();
     dispatch(
@@ -36,7 +47,7 @@ const AdvancedPartitioning = () => {
         min_size: '1',
         unit: 'GiB',
         type: 'plain',
-        mountpoint: '/home',
+        mountpoint: bootPartitionExists() ? '/home' : '/',
       }),
     );
   };

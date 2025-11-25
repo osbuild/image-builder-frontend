@@ -60,7 +60,7 @@ test('Create a blueprint with Disk customization', async ({
     await expect(frame.getByRole('button', { name: '/' })).toBeDisabled();
     await expect(
       frame.getByRole('row').nth(1).getByRole('button').nth(4),
-    ).toBeEnabled();
+    ).toBeDisabled();
 
     await expect(
       frame.getByRole('button', {
@@ -98,6 +98,9 @@ test('Create a blueprint with Disk customization', async ({
     await expect(removeRootButton).toBeDisabled();
 
     await frame.getByRole('button', { name: 'Add LVM volume group' }).click();
+    await expect(
+      frame.getByRole('row').nth(1).getByRole('button').nth(4),
+    ).toBeEnabled();
 
     await frame
       .getByRole('textbox', { name: 'Volume group name input' })
@@ -156,7 +159,7 @@ test('Create a blueprint with Disk customization', async ({
       .nth(1)
       .getByRole('button')
       .nth(4);
-    await expect(removeRootButton).toBeDisabled();
+    await expect(removeRootButton).toBeEnabled();
 
     const secondRow = frame.getByRole('row').nth(2);
 
@@ -247,7 +250,7 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('button')
       .nth(4);
 
-    await expect(removeRootButton).toBeDisabled();
+    await expect(removeRootButton).toBeEnabled();
 
     const secondRow = frame.getByRole('row').nth(2);
 
