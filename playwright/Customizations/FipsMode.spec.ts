@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
-import { isHosted } from '../helpers/helpers';
+import { isHosted, isServiceAvailable } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -21,6 +21,19 @@ test('FIPS switch toggles and persists through save', async ({
   cleanup,
 }) => {
   test.skip(!isHosted(), 'FIPS mode is not available in the plugin');
+
+  await test.step('Check if Compliance service is available', async () => {
+    const complianceLandingPageEndpoint =
+      '/api/compliance/v2/policies?limit=1&offset=0';
+    test.skip(
+      !(await isServiceAvailable(
+        complianceLandingPageEndpoint,
+        page.context(),
+        process.env.TOKEN,
+      )),
+      `Endpoint ${complianceLandingPageEndpoint} is not available - service is most likely down.`,
+    );
+  });
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture
