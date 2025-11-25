@@ -63,7 +63,7 @@ const MountpointPrefix = ({
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isDisabled={customization === 'fileSystem' && prefix === '/'}
+      isDisabled={!('name' in partition) && prefix === '/'}
       isFullWidth
     >
       {prefix}
