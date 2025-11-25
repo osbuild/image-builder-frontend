@@ -337,8 +337,9 @@ export function useFilesystemValidation(): StepValidation {
 
   const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
   const diskMountpointDuplicates = getDuplicateMountPoints(diskPartitions);
-  const diskNameDuplicates =
-    volumeGroups.length > 0 ? getDuplicateNames(volumeGroups[0]) : [];
+  const diskNameDuplicates = volumeGroups.flatMap((vg) =>
+    getDuplicateNames(vg),
+  );
   for (const partition of diskPartitions) {
     if (!partition.min_size || partition.min_size === '') {
       errors[`min-size-${partition.id}`] = 'Partition size is required';
