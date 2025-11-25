@@ -75,9 +75,7 @@ export const ValidatedInputAndTextArea = ({
   };
 
   useEffect(() => {
-    if (!value) {
-      setIsPristine(true);
-    } else if (errorMessage) {
+    if (errorMessage) {
       setIsPristine(false);
     }
   }, [value, errorMessage]);

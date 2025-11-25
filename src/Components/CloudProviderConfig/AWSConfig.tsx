@@ -91,7 +91,9 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
         value={value || ''}
         validator={isAwsBucketValid}
         onChange={(_event, value) => onChange(value)}
-        helperText='Invalid AWS bucket name'
+        helperText={
+          !value ? 'AWS bucket name is required' : 'Invalid AWS bucket name'
+        }
       />
     </FormGroup>
   );
@@ -152,7 +154,11 @@ const AWSCredsPath = ({
         value={value || ''}
         validator={isAwsCredsPathValid}
         onChange={(_event, value) => onChange(value)}
-        helperText='Invalid filepath for AWS credentials'
+        helperText={
+          !value
+            ? 'Filepath for AWS credentials is required'
+            : 'Invalid filepath for AWS credentials'
+        }
       />
     </FormGroup>
   );

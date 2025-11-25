@@ -139,7 +139,11 @@ const Gcp = () => {
               value={gcpEmail || ''}
               validator={isGcpEmailValid}
               onChange={(_event, value) => dispatch(changeGcpEmail(value))}
-              helperText='Please enter a valid e-mail address.'
+              helperText={
+                !gcpEmail
+                  ? 'E-mail address is required'
+                  : 'Please enter a valid e-mail address'
+              }
             />
           </FormGroup>
         </>
