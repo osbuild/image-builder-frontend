@@ -71,7 +71,11 @@ const Azure = () => {
             value={tenantId || ''}
             validator={isAzureTenantGUIDValid}
             onChange={(_event, value) => dispatch(changeAzureTenantId(value))}
-            helperText='Please enter a valid tenant ID'
+            helperText={
+              !tenantId
+                ? 'Tenant ID is required'
+                : 'Please enter a valid tenant ID'
+            }
           />
         </FormGroup>
         <AzureAuthButton />
@@ -83,7 +87,11 @@ const Azure = () => {
             onChange={(_event, value) =>
               dispatch(changeAzureSubscriptionId(value))
             }
-            helperText='Please enter a valid subscription ID'
+            helperText={
+              !subscriptionId
+                ? 'Subscription ID is required'
+                : 'Please enter a valid subscription ID'
+            }
           />
         </FormGroup>
         <FormGroup label='Resource group' isRequired>
@@ -94,7 +102,11 @@ const Azure = () => {
             onChange={(_event, value) =>
               dispatch(changeAzureResourceGroup(value))
             }
-            helperText='Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
+            helperText={
+              !resourceGroup
+                ? 'Resource group is required'
+                : 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
+            }
           />
         </FormGroup>
       </>

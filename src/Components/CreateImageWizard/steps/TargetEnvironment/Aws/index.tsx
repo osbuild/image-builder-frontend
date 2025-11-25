@@ -192,7 +192,11 @@ const Aws = () => {
                 onChange={(_event, value) =>
                   dispatch(changeAwsAccountId(value))
                 }
-                helperText='Should be 12 characters long.'
+                helperText={
+                  !shareWithAccount
+                    ? 'AWS account ID is required'
+                    : 'Should be 12 characters long'
+                }
               />
             </FormGroup>
           )}

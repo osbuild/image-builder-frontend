@@ -195,46 +195,52 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType === 'register-satellite') {
     const errors = {};
+
     if (caCertificate === '') {
       Object.assign(errors, {
         certificate:
-          'Valid certificate must be present if you are registering Satellite.',
+          'Valid certificate must be present if you are registering Satellite',
       });
     }
+
     if (registrationCommand === '' || !registrationCommand) {
       Object.assign(errors, {
         command: 'No registration command for Satellite registration',
       });
     }
-    try {
-      const match = registrationCommand?.match(
-        /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/,
-      );
-      if (!match) {
-        Object.assign(errors, { command: 'Invalid or missing token' });
-      } else {
-        const token = match[1];
-        const decoded = jwtDecode(token);
-        if (decoded.exp) {
-          const currentTimeSeconds = Date.now() / 1000;
-          const dayInSeconds = 86400;
-          if (decoded.exp < currentTimeSeconds + dayInSeconds) {
-            const expirationDate = new Date(decoded.exp * 1000);
-            Object.assign(errors, {
-              expired:
-                'The token is already expired or will expire by next day. Expiration date: ' +
-                expirationDate,
-            });
-            return {
-              errors: errors,
-              disabledNext: caCertificate === undefined,
-            };
+
+    if (registrationCommand) {
+      try {
+        const match = registrationCommand?.match(
+          /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/,
+        );
+        if (!match) {
+          Object.assign(errors, { command: 'Invalid or missing token' });
+        } else {
+          const token = match[1];
+          const decoded = jwtDecode(token);
+          if (decoded.exp) {
+            const currentTimeSeconds = Date.now() / 1000;
+            const dayInSeconds = 86400;
+            if (decoded.exp < currentTimeSeconds + dayInSeconds) {
+              const expirationDate = new Date(decoded.exp * 1000);
+              Object.assign(errors, {
+                expired:
+                  'The token is already expired or will expire by next day. Expiration date: ' +
+                  expirationDate,
+              });
+              return {
+                errors: errors,
+                disabledNext: caCertificate === undefined,
+              };
+            }
           }
         }
+      } catch {
+        Object.assign(errors, { command: 'Invalid or missing token' });
       }
-    } catch {
-      Object.assign(errors, { command: 'Invalid or missing token' });
     }
+
     return {
       errors: errors,
       disabledNext:
