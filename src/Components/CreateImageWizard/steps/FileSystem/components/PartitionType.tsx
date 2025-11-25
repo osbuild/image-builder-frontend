@@ -9,7 +9,10 @@ import {
 } from '@patternfly/react-core';
 
 import { useAppDispatch } from '../../../../../store/hooks';
-import { changePartitionType } from '../../../../../store/wizardSlice';
+import {
+  changePartitionMountpoint,
+  changePartitionType,
+} from '../../../../../store/wizardSlice';
 import {
   FSType,
   LogicalVolumeWithBase,
@@ -32,6 +35,27 @@ const PartitionType = ({
 
   const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
+
+    if (selection === 'swap') {
+      dispatch(
+        changePartitionMountpoint({
+          id: partition.id,
+          mountpoint: '',
+          customization: customization,
+        }),
+      );
+    }
+
+    if (partition.mountpoint === '' && selection !== 'swap') {
+      dispatch(
+        changePartitionMountpoint({
+          id: partition.id,
+          mountpoint: '/home',
+          customization: customization,
+        }),
+      );
+    }
+
     dispatch(
       changePartitionType({
         id: partition.id,
