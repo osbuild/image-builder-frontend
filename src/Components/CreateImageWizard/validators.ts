@@ -1,7 +1,6 @@
 import {
   DiskPartition,
   FilesystemPartition,
-  LogicalVolumeWithBase,
   VolumeGroupWithExtendedLV,
 } from './steps/FileSystem/fscTypes';
 
@@ -118,13 +117,10 @@ export const isSshKeyValid = (sshKey: string) => {
 };
 
 export const getDuplicateMountPoints = (
-  partitions: FilesystemPartition[] | DiskPartition[] | LogicalVolumeWithBase[],
+  partitions: FilesystemPartition[] | DiskPartition[],
 ): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
-  if (partitions.length < 2) {
-    return [];
-  }
   for (const partition of partitions) {
     if ('mountpoint' in partition && partition.mountpoint) {
       const mountPoint = partition.mountpoint;
