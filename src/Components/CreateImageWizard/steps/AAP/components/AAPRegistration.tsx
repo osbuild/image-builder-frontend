@@ -22,10 +22,10 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
 } from '../../../../../store/wizardSlice';
+import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { useAAPValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { validateMultipleCertificates } from '../../../validators';
-import ManageButton from '../../Registration/components/ManageButton';
 
 const AAPRegistration = () => {
   const dispatch = useAppDispatch();
@@ -99,9 +99,12 @@ const AAPRegistration = () => {
           <HelperText>
             <HelperTextItem>
               To generate a callback URL from the Ansible Controller, follow the{' '}
-              <ManageButton url={AAP_DOCS_URL} analyticsStepId='wizard-aap'>
+              <ExternalLinkButton
+                url={AAP_DOCS_URL}
+                analyticsStepId='wizard-aap'
+              >
                 documentation
-              </ManageButton>
+              </ExternalLinkButton>
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -121,9 +124,12 @@ const AAPRegistration = () => {
             <HelperTextItem>
               To obtain a host config key from the Ansible Controller, follow
               the{' '}
-              <ManageButton url={AAP_DOCS_URL} analyticsStepId='wizard-aap'>
+              <ExternalLinkButton
+                url={AAP_DOCS_URL}
+                analyticsStepId='wizard-aap'
+              >
                 documentation
-              </ManageButton>
+              </ExternalLinkButton>
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -177,9 +183,12 @@ const AAPRegistration = () => {
             <HelperText>
               <HelperTextItem>
                 To upload the certificate file, follow the{' '}
-                <ManageButton url={AAP_DOCS_URL} analyticsStepId='wizard-aap'>
+                <ExternalLinkButton
+                  url={AAP_DOCS_URL}
+                  analyticsStepId='wizard-aap'
+                >
                   documentation
-                </ManageButton>
+                </ExternalLinkButton>
               </HelperTextItem>
             </HelperText>
           </FormHelperText>

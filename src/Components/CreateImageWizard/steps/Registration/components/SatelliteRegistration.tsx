@@ -11,7 +11,6 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-import ManageButton from './ManageButton';
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
 import { REGISTRATION_DOCS_URL } from '../../../../../constants';
@@ -20,6 +19,7 @@ import {
   changeSatelliteCaCertificate,
   selectSatelliteCaCertificate,
 } from '../../../../../store/wizardSlice';
+import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '../../../utilities/useValidation';
 
 const SatelliteRegistration = () => {
@@ -109,12 +109,12 @@ const SatelliteRegistration = () => {
               {(isRejected || validated !== 'success') && (
                 <HelperTextItem>
                   To find the certificate follow this{' '}
-                  <ManageButton
+                  <ExternalLinkButton
                     url={REGISTRATION_DOCS_URL}
                     analyticsStepId='step-register'
                   >
                     documentation
-                  </ManageButton>
+                  </ExternalLinkButton>
                 </HelperTextItem>
               )}
             </HelperText>

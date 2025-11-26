@@ -7,8 +7,6 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-import ManageButton from './ManageButton';
-
 import {
   REGISTRATION_DOCS_URL,
   SATELLITE_SERVICE,
@@ -20,6 +18,7 @@ import {
   removeEnabledService,
   selectSatelliteRegistrationCommand,
 } from '../../../../../store/wizardSlice';
+import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
@@ -55,12 +54,12 @@ const SatelliteRegistrationCommand = () => {
         <HelperText>
           <HelperTextItem>
             To generate command from Satellite, follow the{' '}
-            <ManageButton
+            <ExternalLinkButton
               url={REGISTRATION_DOCS_URL}
               analyticsStepId='step-register'
             >
               documentation
-            </ManageButton>
+            </ExternalLinkButton>
           </HelperTextItem>
         </HelperText>
       </FormHelperText>
