@@ -97,7 +97,7 @@ async function handleExportBlueprint(
   blueprint: BlueprintExportResponse | CockpitExportResponse,
 ) {
   const data = process.env.IS_ON_PREMISE
-    ? TOML.stringify(blueprint)
+    ? TOML.stringify(blueprint).trim()
     : JSON.stringify(blueprint, null, 2);
   const mime = process.env.IS_ON_PREMISE
     ? 'application/octet-stream'

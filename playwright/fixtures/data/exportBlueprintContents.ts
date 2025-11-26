@@ -1,7 +1,6 @@
 export const exportedDiskBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [[customizations.disk.partitions]]
 type = "plain"
 mountpoint = "/data"
@@ -29,7 +28,6 @@ languages = [ "C.UTF-8" ]`;
 export const exportedFilesystemBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [[customizations.filesystem]]
 mountpoint = "/"
 minsize = 10737418240
@@ -48,7 +46,6 @@ languages = [ "C.UTF-8" ]`;
 export const exportedFirewallBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [customizations.timezone]
 timezone = "Etc/UTC"
 
@@ -79,7 +76,6 @@ languages = [ "C.UTF-8" ]`;
 export const exportedKernelBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [customizations.kernel]
 name = "kernel"
 append = "rootwait console=tty0 console=ttyS0,115200n8 new=argument"
@@ -94,7 +90,6 @@ languages = [ "C.UTF-8" ]`;
 export const exportedLocaleBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [customizations.timezone]
 timezone = "Etc/UTC"
 
@@ -106,7 +101,6 @@ keyboard = "ANSI-dvorak"`;
 export const exportedSystemdBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [customizations.services]
 enabled = [ "enabled-service" ]
 masked = [ "masked-service" ]
@@ -122,7 +116,6 @@ languages = [ "C.UTF-8" ]`;
 export const exportedTimezoneBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [customizations.timezone]
 timezone = "Europe/Oslo"
 ntpservers = [ "0.nl.pool.ntp.org", "0.de.pool.ntp.org" ]
@@ -134,7 +127,6 @@ languages = [ "C.UTF-8" ]`;
 export const exportedUsersBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
 [[customizations.user]]
 name = "admin1"
 key = ""
