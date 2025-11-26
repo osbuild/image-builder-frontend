@@ -24,7 +24,6 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { v4 as uuidv4 } from 'uuid';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
-import ManageButton from './ManageButton';
 
 import {
   ACTIVATION_KEYS_URL,
@@ -46,6 +45,7 @@ import {
 import { getErrorMessage } from '../../../../../Utilities/getErrorMessage';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
+import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 
 const ActivationKeysList = () => {
   const dispatch = useAppDispatch();
@@ -313,12 +313,12 @@ const ActivationKeysList = () => {
             <HelperTextItem>
               Image Builder provides and defaults to a no-cost activation key if
               none exist.{' '}
-              <ManageButton
+              <ExternalLinkButton
                 url={ACTIVATION_KEYS_URL}
                 analyticsStepId='step-registration'
               >
                 Manage activation keys
-              </ManageButton>
+              </ExternalLinkButton>
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

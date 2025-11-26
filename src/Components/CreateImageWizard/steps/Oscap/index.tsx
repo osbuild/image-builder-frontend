@@ -63,7 +63,7 @@ import {
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
-import ManageButton from '../Registration/components/ManageButton';
+import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
@@ -223,14 +223,14 @@ const OscapContent = () => {
                 <FormHelperText>
                   <HelperText>
                     <HelperTextItem>
-                      <ManageButton
+                      <ExternalLinkButton
                         url={COMPLIANCE_URL}
                         analyticsStepId='step-oscap'
                       >
                         Manage{' '}
                         {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
                         compliance
-                      </ManageButton>
+                      </ExternalLinkButton>
                     </HelperTextItem>
                   </HelperText>
                 </FormHelperText>
@@ -271,9 +271,12 @@ const OscapContent = () => {
             <FormHelperText>
               <HelperText>
                 <HelperTextItem>
-                  <ManageButton url={OSCAP_URL} analyticsStepId='step-oscap'>
+                  <ExternalLinkButton
+                    url={OSCAP_URL}
+                    analyticsStepId='step-oscap'
+                  >
                     Manage with OpenSCAP
-                  </ManageButton>
+                  </ExternalLinkButton>
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>

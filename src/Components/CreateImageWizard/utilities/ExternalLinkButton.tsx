@@ -4,20 +4,20 @@ import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
-import { useGetUser } from '../../../../../Hooks';
+import { AMPLITUDE_MODULE_NAME } from '../../../constants';
+import { useGetUser } from '../../../Hooks';
 
-type ManageButtonProps = {
+type ExternalLinkButtonProps = {
   url: string;
   children?: React.ReactNode;
   analyticsStepId?: string;
 };
 
-const ManageButton = ({
+const ExternalLinkButton = ({
   url,
   children,
   analyticsStepId,
-}: ManageButtonProps) => {
+}: ExternalLinkButtonProps) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   return (
@@ -44,4 +44,4 @@ const ManageButton = ({
   );
 };
 
-export default ManageButton;
+export default ExternalLinkButton;
