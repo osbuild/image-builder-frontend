@@ -113,9 +113,8 @@ async function handleExportBlueprint(
     : document.createElement('a');
   link.href = url;
   link.download =
-    blueprintName.replace(/\s/g, '_').toLowerCase() + process.env.IS_ON_PREMISE
-      ? '.toml'
-      : '.json';
+    blueprintName.replace(/\s/g, '_').toLowerCase() +
+    (process.env.IS_ON_PREMISE ? '.toml' : '.json');
   link.click();
   URL.revokeObjectURL(url);
 }
