@@ -158,17 +158,15 @@ export const importBlueprint = async (
   page: Page | FrameLocator,
   blueprintPath: string,
 ) => {
-  if (isHosted()) {
-    await page.getByRole('button', { name: 'Import' }).click();
-    const dragBoxSelector = page.getByRole('presentation').first();
-    await dragBoxSelector
-      .locator('input[type=file]')
-      .setInputFiles(blueprintPath);
-    await expect(
-      page.getByRole('textbox', { name: 'File upload' }),
-    ).not.toBeEmpty();
-    await page.getByRole('button', { name: 'Review and Finish' }).click();
-  }
+  await page.getByRole('button', { name: 'Import' }).click();
+  const dragBoxSelector = page.getByRole('presentation').first();
+  await dragBoxSelector
+    .locator('input[type=file]')
+    .setInputFiles(blueprintPath);
+  await expect(
+    page.getByRole('textbox', { name: 'File upload' }),
+  ).not.toBeEmpty();
+  await page.getByRole('button', { name: 'Review and Finish' }).click();
 };
 
 export const saveBlueprintFileWithContents = async (content: string) => {

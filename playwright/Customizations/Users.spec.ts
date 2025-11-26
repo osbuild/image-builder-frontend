@@ -434,31 +434,28 @@ test('Create a blueprint with Users customization', async ({
     await verifyExportedBlueprint(exportedBP, exportedUsersBP(blueprintName));
   });
 
-  await test.step('Import blueprint', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import blueprint', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Verify imported users', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
-    await page.getByRole('button', { name: 'Users' }).click();
+  await test.step('Verify imported users', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Users' }).click();
 
-    const importFrame = await ibFrame(page);
     // Verify users are preserved
     await expect(
-      importFrame.getByRole('textbox', { name: 'blueprint user name' }).nth(0),
+      frame.getByRole('textbox', { name: 'blueprint user name' }).nth(0),
     ).toHaveValue('admin1');
     await expect(
-      importFrame.getByRole('textbox', { name: 'blueprint user name' }).nth(1),
+      frame.getByRole('textbox', { name: 'blueprint user name' }).nth(1),
     ).toHaveValue('sshuser');
     await expect(
-      importFrame.getByRole('textbox', { name: 'blueprint user name' }).nth(2),
+      frame.getByRole('textbox', { name: 'blueprint user name' }).nth(2),
     ).toHaveValue('admin2');
     await expect(
-      importFrame.getByRole('textbox', { name: 'blueprint user name' }).nth(3),
+      frame.getByRole('textbox', { name: 'blueprint user name' }).nth(3),
     ).toHaveValue('newuser');
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

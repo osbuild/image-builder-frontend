@@ -146,15 +146,13 @@ test('Create a blueprint with Locale customization', async ({
     await verifyExportedBlueprint(exportedBP, exportedLocaleBP(blueprintName));
   });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
-    await page.getByRole('button', { name: 'Locale' }).click();
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Locale' }).click();
     await expect(
       frame.getByRole('button', {
         name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
@@ -169,6 +167,6 @@ test('Create a blueprint with Locale customization', async ({
     await expect(frame.getByPlaceholder('Select a keyboard')).toHaveValue(
       'ANSI-dvorak',
     );
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

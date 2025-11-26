@@ -126,13 +126,11 @@ test('Create a blueprint with Kernel customization', async ({
     await verifyExportedBlueprint(exportedBP, exportedKernelBP(blueprintName));
   });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
+  await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Kernel' }).click();
     await expect(frame.getByPlaceholder('Select kernel package')).toHaveValue(
