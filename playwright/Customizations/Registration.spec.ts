@@ -364,26 +364,21 @@ registrationModes.forEach(
         });
       });
 
-      await test.step('Import blueprint', async (step) => {
-        step.skip(!isHosted(), 'Importing is not available in the plugin');
-        await importBlueprint(page, exportedBP);
+      await test.step('Import blueprint', async () => {
+        await importBlueprint(frame, exportedBP);
       });
 
-      await test.step('Verify import does not change registration settings', async (step) => {
-        step.skip(!isHosted(), 'Importing is not available in the plugin');
-        await fillInImageOutputGuest(page);
-        await page.getByRole('button', { name: 'Register' }).click();
-
-        const importFrame = await ibFrame(page);
-
+      await test.step('Verify import does not change registration settings', async () => {
+        await fillInImageOutputGuest(frame);
+        await frame.getByRole('button', { name: 'Register' }).click();
         // Verify registration settings are preserved based on mode
         await expect(
-          importFrame.getByRole('radio', {
+          frame.getByRole('radio', {
             name: 'Automatically register to Red Hat',
           }),
         ).toBeChecked();
 
-        await page.getByRole('button', { name: 'Cancel' }).click();
+        await frame.getByRole('button', { name: 'Cancel' }).click();
       });
     });
   },

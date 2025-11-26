@@ -218,15 +218,13 @@ test('Create a blueprint with Firewall customization', async ({
     );
   });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
-    await page.getByRole('button', { name: 'Firewall' }).click();
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Firewall' }).click();
 
     await expect(frame.getByText('90:tcp')).toBeVisible();
     await expect(frame.getByText('x').nth(0)).toBeVisible();
@@ -237,6 +235,6 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('telnet.socket')).toBeHidden();
     await expect(frame.getByText('cloud-init')).toBeHidden();
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

@@ -202,14 +202,12 @@ test('Create a blueprint with Filesystem customization', async ({
     );
   });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
     await frame
       .getByRole('button', { name: 'File system configuration' })
       .click();
@@ -243,6 +241,6 @@ test('Create a blueprint with Filesystem customization', async ({
     const unitButton = frame.getByRole('button', { name: 'GiB' }).nth(1);
     await expect(unitButton).toBeVisible();
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

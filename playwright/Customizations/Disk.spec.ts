@@ -5,7 +5,6 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/cleanup';
-import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -229,14 +228,12 @@ test('Create a blueprint with Disk customization', async ({
   //   await verifyExportedBlueprint(exportedBP, exportedDiskBP(blueprintName));
   // });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
     await frame
       .getByRole('button', { name: 'File system configuration' })
       .click();
@@ -268,6 +265,6 @@ test('Create a blueprint with Disk customization', async ({
     const unitButton = secondRow.getByRole('button', { name: 'MiB' });
     await expect(unitButton).toBeVisible();
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

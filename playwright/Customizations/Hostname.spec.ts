@@ -91,18 +91,16 @@ test('Create a blueprint with Hostname customization', async ({
     );
   });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
-    await page.getByRole('button', { name: 'Hostname' }).click();
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Hostname' }).click();
     await expect(
-      page.getByRole('textbox', { name: 'hostname input' }),
+      frame.getByRole('textbox', { name: 'hostname input' }),
     ).toHaveValue(hostname + 'edited');
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

@@ -148,15 +148,13 @@ test('Create a blueprint with Systemd customization', async ({
     await verifyExportedBlueprint(exportedBP, exportedSystemdBP(blueprintName));
   });
 
-  await test.step('Import BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await importBlueprint(page, exportedBP);
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
   });
 
-  await test.step('Review imported BP', async (step) => {
-    step.skip(!isHosted(), 'Importing is not available in the plugin');
-    await fillInImageOutputGuest(page);
-    await page.getByRole('button', { name: 'Systemd services' }).click();
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Systemd services' }).click();
 
     await expect(frame.getByText('enabled-service')).toBeVisible();
     await expect(frame.getByText('disabled-service')).toBeVisible();
@@ -166,6 +164,6 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(frame.getByText('systemd-dis.service')).toBeHidden();
     await expect(frame.getByText('systemd-m.service')).toBeHidden();
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

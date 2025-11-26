@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { IMPORT_WITH_DUPLICATE_VALUES } from '../fixtures/data/importFileContents';
-import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import { ibFrame, navigateToLandingPage } from '../helpers/navHelpers';
 import {
@@ -22,7 +21,6 @@ test('Import a blueprint with invalid customization', async ({
   page,
   cleanup,
 }) => {
-  test.skip(!isHosted(), 'Importing is not available in the plugin');
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture
@@ -41,12 +39,12 @@ test('Import a blueprint with invalid customization', async ({
     await cleanup.add(async () => {
       await fsPromises.rm(path.dirname(blueprintFile), { recursive: true });
     });
-    await importBlueprint(page, blueprintFile);
+    await importBlueprint(frame, blueprintFile);
   });
 
   await test.step('Navigate to optional steps in Wizard', async () => {
-    await page.getByRole('checkbox', { name: 'Virtualization' }).click();
-    await page.getByRole('button', { name: 'Next' }).click();
+    await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
+    await frame.getByRole('button', { name: 'Next' }).click();
     await registerLater(frame);
   });
 
