@@ -28,7 +28,7 @@
     "react-router-dom": "6.27.0",
     "redux": "5.0.1",
     "redux-promise-middleware": "6.2.0",
-    "smol-toml": "1.4.2"
+    "smol-toml": "1.5.2"
   },
   "devDependencies": {
     "@babel/core": "7.28.5",
