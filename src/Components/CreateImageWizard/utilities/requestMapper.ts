@@ -626,7 +626,10 @@ const getImageRequests = (
       type: uploadTypeByTargetEnv(type),
       options: getImageOptions(type, state),
     },
-    snapshot_date: !useLatest && !template ? snapshotDate : undefined,
+    // Only include snapshot_date when using snapshot mode (not latest or template)
+    // Convert empty strings to undefined
+    snapshot_date:
+      !useLatest && !template && snapshotDate ? snapshotDate : undefined,
     content_template: template || undefined,
     content_template_name: templateName || undefined,
   }));
