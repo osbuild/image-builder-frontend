@@ -1048,17 +1048,19 @@ export const wizardSlice = createSlice({
     },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.snapshotting.snapshotDate === '') {
-        state.snapshotting.snapshotDate = yyyyMMddFormat(new Date());
+        state.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
       }
 
       state.snapshotting.useLatest = action.payload;
     },
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
+      // Store DatePicker's YYYY-MM-DD format as RFC3339 e.g. "2025-11-26T00:00:00.000Z" in state
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
       if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
         state.snapshotting.snapshotDate = date.toISOString();
       } else {
+        // For empty strings or already-ISO formatted strings, store as-is
         state.snapshotting.snapshotDate = action.payload;
       }
     },
