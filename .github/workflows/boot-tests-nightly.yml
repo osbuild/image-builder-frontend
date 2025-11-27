@@ -132,11 +132,59 @@ jobs:
               ]
             }
 
+      - name: Notify Slack on success (Frontend)
+        uses: slackapi/slack-github-action@v2.1.1
+        if: ${{ success() && github.event_name == 'schedule' }}
+        with:
+          webhook: ${{ secrets.SLACK_FRONTEND_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "attachments": [
+                {
+                  "color": "#2EB67D",
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+
       - name: Notify Slack on failure
         uses: slackapi/slack-github-action@v2.1.1
         if: ${{ failure() && github.event_name == 'schedule' }}
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "attachments": [
+                {
+                  "color": "#d72839",
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Notify Slack on failure (Frontend)
+        uses: slackapi/slack-github-action@v2.1.1
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        with:
+          webhook: ${{ secrets.SLACK_FRONTEND_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
             {
