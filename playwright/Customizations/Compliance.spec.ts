@@ -1,7 +1,11 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { deleteCompliancePolicy } from '../BootTests/helpers/helpers';
+import {
+  createCompliancePolicy,
+  deleteCompliancePolicy,
+  removeCompliancePolicyRule,
+} from '../BootTests/helpers/helpers';
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
@@ -97,38 +101,7 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
 
   await ensureAuthenticated(page);
 
-  await test.step('Create a Compliance policy', async () => {
-    await page.goto('/insights/compliance/scappolicies');
-    await page.getByRole('button', { name: 'Create new policy' }).click();
-    await page.getByRole('option', { name: 'RHEL 9' }).click();
-    await expect(
-      page.getByRole('gridcell', { name: policyType }).first(),
-    ).toBeVisible();
-    await page.getByRole('textbox', { name: 'text input' }).fill(policyType);
-    await page
-      .getByRole('row')
-      .filter({ hasText: policyType })
-      .getByRole('radio')
-      .first()
-      .click();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName);
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await page
-      .getByRole('button', { name: 'Return to application' })
-      .click({ timeout: 2 * 60 * 1000 });
-  });
-
-  await test.step('Wait for policy to be available', async () => {
-    await page.goto('/insights/compliance/scappolicies');
-    await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
-    await expect(page.getByRole('row', { name: policyName })).toBeVisible({
-      timeout: 60000,
-    });
-  });
+  await createCompliancePolicy(page, policyName, policyType, 'RHEL 9');
 
   // Navigate directly to wizard with RHEL 9 query parameter (like renderCreateMode does)
   // This matches the pattern from unit tests: preparePathname({ release: 'rhel9' })
@@ -179,106 +152,12 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Edit compliance policy to remove firewall rule', async () => {
-    await page.goto('/insights/compliance/scappolicies');
-    await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
-    await expect(page.getByRole('row', { name: policyName })).toBeVisible();
-
-    await page.getByRole('link', { name: policyName }).click();
-
-    const rulesTab = page.getByRole('tab', {
-      name: /rules|Rules|tailoring|Tailoring/i,
-    });
-    await expect(rulesTab.first()).toBeVisible();
-    await rulesTab.first().click();
-
-    const editRulesButton = page.getByRole('button', {
-      name: /edit.*rules|Edit.*rules/i,
-    });
-    await expect(editRulesButton.first()).toBeVisible();
-    await editRulesButton.first().click();
-
-    const searchInput = page.getByPlaceholder(
-      /search|filter|type to filter|filter by name/i,
-    );
-    await expect(searchInput.first()).toBeVisible();
-    await expect(searchInput.first()).toBeEnabled();
-
-    // Wait for table to be fully loaded and stable before searching
-    const tableRows = page.getByRole('row');
-    await expect(tableRows.first()).toBeVisible();
-    await expect(tableRows.nth(1)).toBeVisible();
-    // Wait for table to stabilize - ensure multiple rows are visible
-    try {
-      await expect(tableRows.nth(2)).toBeVisible({ timeout: 10000 });
-    } catch {
-      // If there are only 2 rows, that's fine
-    }
-
-    // Wait for the search input to be ready and clear any existing value
-    await searchInput.first().clear();
-    // Wait for the input to be empty (ensures clear operation completed)
-    await expect(searchInput.first()).toHaveValue('', { timeout: 5000 });
-
-    // Fill the search input and wait for it to be set
-    await searchInput.first().fill('firewalld');
-    // Wait for the input value to be set (may take a moment due to debouncing)
-    await expect(searchInput.first()).toHaveValue('firewalld', {
-      timeout: 5000,
-    });
-
-    await expect(page.getByRole('row').first()).toBeVisible();
-    await expect(tableRows.nth(1)).toBeVisible();
-
-    // Perform search again after table loads to ensure it's applied
-    await searchInput.first().clear();
-    await expect(searchInput.first()).toHaveValue('', { timeout: 5000 });
-    await searchInput.first().fill('firewalld');
-    await expect(searchInput.first()).toHaveValue('firewalld', {
-      timeout: 5000,
-    });
-
-    // Wait for table to reload after second search
-    await expect(page.getByRole('row').first()).toBeVisible();
-    await expect(tableRows.nth(1)).toBeVisible();
-
-    await expect(page.getByText(/firewalld/i).first()).toBeVisible({
-      timeout: 15000,
-    });
-
-    await expect(
-      page.getByText(/Install firewalld Package/i).first(),
-    ).toBeVisible({ timeout: 15000 });
-
-    const firewalldRow = page
-      .getByRole('row')
-      .filter({ hasText: /Install firewalld Package/i })
-      .first();
-    await expect(firewalldRow).toBeVisible();
-
-    const checkbox = firewalldRow.getByRole('checkbox').first();
-    await expect(checkbox).toBeVisible();
-    await expect(checkbox).toBeChecked();
-
-    await checkbox.uncheck();
-    await expect(checkbox).not.toBeChecked({ timeout: 5000 });
-
-    const saveButton = page.getByRole('button', {
-      name: /save|Save|finish|Finish/i,
-    });
-    await expect(saveButton.first()).toBeVisible();
-    await expect(saveButton.first()).toBeEnabled();
-
-    await saveButton.first().click();
-
-    await expect(saveButton.first()).not.toBeVisible({ timeout: 10000 });
-
-    await expect(
-      page
-        .getByRole('tab', { name: /rules|Rules|tailoring|Tailoring/i })
-        .first(),
-    ).toBeVisible({ timeout: 20000 });
-  });
+  await removeCompliancePolicyRule(
+    page,
+    policyName,
+    'firewalld',
+    'Install firewalld Package',
+  );
 
   await test.step('Verify compliance warning appears in blueprint', async () => {
     await navigateToLandingPage(page);
@@ -297,6 +176,8 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
     await expect(blueprintButton).toBeVisible({ timeout: 10000 });
     await expect(blueprintButton).toBeEnabled();
 
+    // Best effort wait for lint API response to reduce flakiness
+    // If the response isn't intercepted, we continue anyway and rely on the UI assertion timeout
     const lintResponsePromise = page
       .waitForResponse(
         (response) =>
@@ -312,15 +193,12 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
       updatedFrame.getByRole('button', { name: 'Edit blueprint' }),
     ).toBeVisible({ timeout: 15000 });
 
+    // Wait for lint response if it was intercepted (best effort)
     await lintResponsePromise;
 
     const firewalldMessage = updatedFrame.getByText(
       /Compliance: package firewalld is no longer required by policy/i,
     );
     await expect(firewalldMessage).toBeVisible({ timeout: 15000 });
-  });
-
-  await test.step('Delete blueprint', async () => {
-    await deleteBlueprint(page, blueprintName);
   });
 });
