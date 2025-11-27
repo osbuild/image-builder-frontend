@@ -67,7 +67,9 @@ const MountpointPrefix = ({
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isDisabled={!('name' in partition) && prefix === '/'}
+      // disable root partition prefix for filesystem customization
+      // ensuring it will stay present
+      isDisabled={customization === 'fileSystem' && prefix === '/'}
       isFullWidth
     >
       {prefix}
