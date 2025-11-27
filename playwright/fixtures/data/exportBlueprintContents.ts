@@ -1,22 +1,37 @@
 export const exportedDiskBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[[customizations.disk.partitions]]
-type = "plain"
-mountpoint = "/data"
-fs_type = "ext4"
-minsize = "50 GiB"
+[customizations]
+partitioning_mode = "auto-lvm"
 
 [[customizations.disk.partitions]]
+minsize = "1 GiB"
+fs_type = "ext4"
+mountpoint = "/"
+type = "plain"
+
+[[customizations.disk.partitions]]
+minsize = "5 MiB"
+fs_type = "xfs"
+mountpoint = "/srv/data"
+type = "plain"
+
+[[customizations.disk.partitions]]
+minsize = "1 KiB"
+name = "vg-edited-name"
 type = "lvm"
-name = "mainvg"
-minsize = "20 GiB"
 
 [[customizations.disk.partitions.logical_volumes]]
-name = "rootlv"
-mountpoint = "/"
+minsize = "1 GiB"
+name = "lv1"
 fs_type = "ext4"
-minsize = "2 GiB"
+mountpoint = "/home"
+
+[[customizations.disk.partitions.logical_volumes]]
+minsize = "10 KiB"
+name = "lv2-edited"
+fs_type = "ext4"
+mountpoint = "/tmp/usb"
 
 [customizations.timezone]
 timezone = "Etc/UTC"

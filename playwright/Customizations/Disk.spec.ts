@@ -5,6 +5,8 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/cleanup';
+import { exportedDiskBP } from '../fixtures/data/exportBlueprintContents';
+import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -19,6 +21,7 @@ import {
   fillInImageOutputGuest,
   importBlueprint,
   registerLater,
+  verifyExportedBlueprint,
 } from '../helpers/wizardHelpers';
 
 test('Create a blueprint with Disk customization', async ({
@@ -49,12 +52,11 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('radio', { name: 'Advanced disk partitioning' })
       .click();
 
-    // Temporarily disabled - need to confirm if `auto-lvm` radio should be added
-    // const rawPartitioningRadio = frame.getByRole('radio', {
-    //   name: /raw partitioning/i,
-    // });
-    // await expect(rawPartitioningRadio).toBeVisible();
-    // await expect(rawPartitioningRadio).toBeChecked();
+    const partitioningModeCheckbox = frame.getByRole('checkbox', {
+      name: /Select partitioning mode/i,
+    });
+    await expect(partitioningModeCheckbox).toBeVisible();
+    await expect(partitioningModeCheckbox).not.toBeChecked();
 
     await expect(
       frame.getByRole('button', {
@@ -66,6 +68,33 @@ test('Create a blueprint with Disk customization', async ({
         name: /add lvm volume group/i,
       }),
     ).toBeVisible();
+  });
+
+  await test.step('Select partitioning mode', async () => {
+    const partitioningModeCheckbox = frame.getByRole('checkbox', {
+      name: /Select partitioning mode/i,
+    });
+    await partitioningModeCheckbox.click();
+
+    await expect(
+      frame.getByRole('radio', {
+        name: 'Auto-LVM partitioning',
+      }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('radio', {
+        name: 'Raw partitioning',
+      }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('radio', { name: 'LVM partitioning', exact: true }),
+    ).toBeVisible();
+
+    await frame
+      .getByRole('radio', {
+        name: 'Raw partitioning',
+      })
+      .click();
   });
 
   await test.step('Fill in some partitions and add a volume group', async () => {
@@ -138,6 +167,18 @@ test('Create a blueprint with Disk customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit File system configuration step').click();
 
+    await expect(
+      frame.getByRole('radio', {
+        name: 'Raw partitioning',
+      }),
+    ).toBeChecked();
+
+    await frame
+      .getByRole('radio', {
+        name: 'Auto-LVM partitioning',
+      })
+      .click();
+
     const removeRootButton = frame
       .getByRole('row')
       .nth(1)
@@ -154,10 +195,6 @@ test('Create a blueprint with Disk customization', async ({
       secondRow.getByRole('textbox', { name: 'mountpoint suffix' }),
     ).toHaveValue('/usb');
 
-    await secondRow
-      .getByRole('gridcell', { name: '10', exact: true })
-      .getByPlaceholder('Define minimum size')
-      .click();
     await secondRow
       .getByRole('gridcell', { name: '10', exact: true })
       .getByPlaceholder('Define minimum size')
@@ -188,7 +225,7 @@ test('Create a blueprint with Disk customization', async ({
     await frame
       .getByRole('textbox', { name: 'Partition name input' })
       .nth(1)
-      .fill('lv1-edited');
+      .fill('lv2-edited');
 
     await frame.getByRole('button', { name: 'ext4' }).nth(1).click();
     await frame.getByRole('option', { name: 'xfs' }).click();
@@ -207,14 +244,13 @@ test('Create a blueprint with Disk customization', async ({
     });
   });
 
-  // Temporarily commenting this out, needs to be addressed in a follow up
-  // await test.step('Review exported BP', async (step) => {
-  //   step.skip(
-  //     isHosted(),
-  //     'Only verify the contents of the exported blueprint in cockpit',
-  //   );
-  //   await verifyExportedBlueprint(exportedBP, exportedDiskBP(blueprintName));
-  // });
+  await test.step('Review exported BP', async (step) => {
+    step.skip(
+      isHosted(),
+      'Only verify the contents of the exported blueprint in cockpit',
+    );
+    await verifyExportedBlueprint(exportedBP, exportedDiskBP(blueprintName));
+  });
 
   await test.step('Import BP', async () => {
     await importBlueprint(frame, exportedBP);
@@ -225,6 +261,17 @@ test('Create a blueprint with Disk customization', async ({
     await frame
       .getByRole('button', { name: 'File system configuration' })
       .click();
+
+    await expect(
+      frame.getByRole('checkbox', {
+        name: /Select partitioning mode/i,
+      }),
+    ).toBeChecked();
+    await expect(
+      frame.getByRole('radio', {
+        name: 'Auto-LVM partitioning',
+      }),
+    ).toBeChecked();
 
     const removeRootButton = frame
       .getByRole('row')
