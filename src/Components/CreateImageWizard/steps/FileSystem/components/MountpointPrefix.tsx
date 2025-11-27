@@ -11,7 +11,11 @@ import {
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
 import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
-import { getPrefix, getSuffix } from '../fscUtilities';
+import {
+  getPrefix,
+  getSuffix,
+  isMountpointPrefixAvailable,
+} from '../fscUtilities';
 
 export const mountpointPrefixes = [
   '/',
@@ -81,15 +85,9 @@ const MountpointPrefix = ({
     >
       <SelectList>
         {mountpointPrefixes
-          .filter((prefix) => {
-            if (customization === 'fileSystem' && prefix === '/') {
-              return false;
-            }
-            if ('name' in partition && prefix === '/boot') {
-              return false;
-            }
-            return true;
-          })
+          .filter((prefix) =>
+            isMountpointPrefixAvailable(prefix, partition, customization),
+          )
           .map((prefix, index) => {
             return (
               <SelectOption key={index} value={prefix}>

@@ -18,8 +18,9 @@ import {
   LogicalVolumeWithBase,
   PartitioningCustomization,
 } from '../fscTypes';
+import { isPartitionTypeAvailable } from '../fscUtilities';
 
-const fs_types = ['ext4', 'xfs', 'vfat', 'swap'];
+const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
 type PartitionTypePropTypes = {
   partition: LogicalVolumeWithBase;
@@ -87,24 +88,7 @@ const PartitionType = ({
     >
       <SelectList>
         {fs_types
-          .filter((type) => {
-            if ('type' in partition && partition.type === 'plain') {
-              if (type === 'swap') {
-                return false;
-              }
-              if (partition.mountpoint === '/boot' && type === 'vfat') {
-                return false;
-              }
-              if (
-                partition.mountpoint === '/boot/efi' &&
-                (type === 'ext4' || type === 'xfs')
-              ) {
-                return false;
-              }
-              return true;
-            }
-            return true;
-          })
+          .filter((type) => isPartitionTypeAvailable(type, partition))
           .map((type, index) => (
             <SelectOption key={index} value={type}>
               {type}
