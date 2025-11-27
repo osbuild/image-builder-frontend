@@ -83,6 +83,120 @@ export const deleteRepository = async (
 };
 
 /**
+ * Edit compliance policy to remove a specific rule
+ * @param page - the page object
+ * @param policyName - the name of the compliance policy to edit
+ * @param ruleName - the name of the rule to remove (e.g., 'firewalld')
+ * @param ruleDisplayName - the display name pattern to look for (e.g., 'Install firewalld Package')
+ */
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export const removeCompliancePolicyRule = async (
+  page: Page,
+  policyName: string,
+  ruleName: string,
+  ruleDisplayName: string,
+) => {
+  await closePopupsIfExist(page);
+
+  await test.step(`Edit compliance policy '${policyName}' to remove ${ruleName} rule`, async () => {
+    // Navigate to compliance policies
+    await page.goto('/insights/compliance/scappolicies');
+    await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
+    await expect(page.getByRole('row', { name: policyName })).toBeVisible();
+    await page.getByRole('link', { name: policyName }).click();
+
+    // Navigate to rules tab
+    const rulesTab = page.getByRole('tab', {
+      name: /rules|Rules|tailoring|Tailoring/i,
+    });
+    await expect(rulesTab.first()).toBeVisible();
+    await rulesTab.first().click();
+
+    // Enter edit mode
+    const editRulesButton = page.getByRole('button', {
+      name: /edit.*rules|Edit.*rules/i,
+    });
+    await expect(editRulesButton.first()).toBeVisible();
+    await editRulesButton.first().click();
+
+    // Wait for the rules table to load and search for the specific rule
+    const searchInput = page.getByPlaceholder(
+      /search|filter|type to filter|filter by name/i,
+    );
+    await expect(searchInput.first()).toBeVisible();
+    await expect(searchInput.first()).toBeEnabled();
+
+    // Wait for table to be fully loaded and stable before searching
+    const tableRows = page.getByRole('row');
+    await expect(tableRows.first()).toBeVisible();
+    await expect(tableRows.nth(1)).toBeVisible();
+    // Wait for table to stabilize - ensure multiple rows are visible
+    try {
+      await expect(tableRows.nth(2)).toBeVisible({ timeout: 10000 });
+    } catch {
+      // If there are only 2 rows, that's fine
+    }
+
+    // Find and uncheck the rule
+    const ruleDisplayPattern = new RegExp(escapeRegExp(ruleDisplayName), 'i');
+
+    // Search for the rule - first attempt
+    await searchInput.first().clear();
+    await expect(searchInput.first()).toHaveValue('', { timeout: 5000 });
+    await searchInput.first().fill(ruleName);
+    await expect(searchInput.first()).toHaveValue(ruleName, { timeout: 5000 });
+
+    // Wait for table to reload after first search
+    await expect(tableRows.first()).toBeVisible();
+    await expect(tableRows.nth(1)).toBeVisible();
+
+    // Always perform search again after table loads to ensure it's applied
+    await searchInput.first().clear();
+    await expect(searchInput.first()).toHaveValue('', { timeout: 5000 });
+    await searchInput.first().fill(ruleName);
+    await expect(searchInput.first()).toHaveValue(ruleName, { timeout: 5000 });
+
+    // Wait for table to reload after second search
+    await expect(tableRows.first()).toBeVisible();
+    await expect(tableRows.nth(1)).toBeVisible();
+
+    // Wait for the rule to appear (with longer timeout after second search)
+    await expect(page.getByText(ruleDisplayPattern).first()).toBeVisible({
+      timeout: 15000,
+    });
+    const ruleRow = page
+      .getByRole('row')
+      .filter({ hasText: ruleDisplayPattern })
+      .first();
+    await expect(ruleRow).toBeVisible();
+
+    const checkbox = ruleRow.getByRole('checkbox').first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).toBeChecked();
+    await checkbox.uncheck();
+    await expect(checkbox).not.toBeChecked({ timeout: 5000 });
+
+    // Save changes
+    const saveButton = page.getByRole('button', {
+      name: /save|Save|finish|Finish/i,
+    });
+    await expect(saveButton.first()).toBeVisible();
+    await expect(saveButton.first()).toBeEnabled();
+    await saveButton.first().click();
+
+    // Wait for save to complete
+    await expect(saveButton.first()).not.toBeVisible({ timeout: 10000 });
+    await expect(
+      page
+        .getByRole('tab', { name: /rules|Rules|tailoring|Tailoring/i })
+        .first(),
+    ).toBeVisible({ timeout: 20000 });
+  });
+};
+
+/**
  * Navigate to the repositories page
  * @param page - the page object
  */
