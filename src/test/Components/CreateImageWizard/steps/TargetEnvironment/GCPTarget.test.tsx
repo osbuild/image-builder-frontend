@@ -28,6 +28,7 @@ import {
 } from '../../wizardTestUtils';
 
 const GCP_ACCOUNT = 'test@gmail.com';
+const GCP_DOMAIN = 'example.com';
 
 const goToReviewStep = async () => {
   await clickNext();
@@ -81,14 +82,17 @@ const deselectGcpAndSelectGuestImage = async () => {
   await waitFor(async () => user.click(guestImageCheckbox));
 };
 
-const selectGoogleAccount = async (optionId: string) => {
+const selectGoogleAccount = async (
+  optionId: string,
+  value: string = GCP_ACCOUNT,
+) => {
   const user = userEvent.setup();
   const googleAccountOption = await screen.findByRole('radio', {
     name: optionId,
   });
   await waitFor(() => user.click(googleAccountOption));
   const principalInput = await screen.findByTestId('principal');
-  await waitFor(() => user.type(principalInput, GCP_ACCOUNT));
+  await waitFor(() => user.type(principalInput, value));
 };
 
 let router: RemixRouter | undefined = undefined;
@@ -219,11 +223,12 @@ describe('GCP image type request generated correctly', () => {
     await clickGCPTarget();
     await selectGoogleAccount(
       'Google Workspace domain or Cloud Identity domain',
+      GCP_DOMAIN,
     );
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
-      share_with_accounts: [`domain:${GCP_ACCOUNT}`],
+      share_with_accounts: [`domain:${GCP_DOMAIN}`],
     });
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,

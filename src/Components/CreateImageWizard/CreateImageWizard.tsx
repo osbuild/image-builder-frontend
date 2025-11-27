@@ -55,7 +55,11 @@ import {
   useTimezoneValidation,
   useUsersValidation,
 } from './utilities/useValidation';
-import { isAwsAccountIdValid, isGcpEmailValid } from './validators';
+import {
+  isAwsAccountIdValid,
+  isGcpDomainValid,
+  isGcpEmailValid,
+} from './validators';
 
 import {
   AARCH64,
@@ -81,6 +85,7 @@ import {
   selectAzureSubscriptionId,
   selectAzureTenantId,
   selectDistribution,
+  selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
@@ -245,6 +250,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const awsSourceId = useAppSelector(selectAwsSourceId);
   // GCP
   const gcpShareMethod = useAppSelector(selectGcpShareMethod);
+  const gcpAccountType = useAppSelector(selectGcpAccountType);
   const gcpEmail = useAppSelector(selectGcpEmail);
   // AZURE
   const azureTenantId = useAppSelector(selectAzureTenantId);
@@ -443,7 +449,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={
                       gcpShareMethod === 'withGoogle' &&
-                      !isGcpEmailValid(gcpEmail)
+                      !(gcpAccountType === 'domain'
+                        ? isGcpDomainValid(gcpEmail)
+                        : isGcpEmailValid(gcpEmail))
                     }
                   />
                 }

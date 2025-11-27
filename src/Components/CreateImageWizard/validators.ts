@@ -37,11 +37,23 @@ export const isAzureResourceGroupValid = (
   );
 };
 
-export const isGcpEmailValid = (gcpShareWithAccount: string | undefined) => {
+export const isGcpEmailValid = (gcpEmail: string | undefined) => {
   return (
-    gcpShareWithAccount !== undefined &&
-    /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,12}$/i.test(gcpShareWithAccount) &&
-    gcpShareWithAccount.length <= 253
+    gcpEmail !== undefined &&
+    gcpEmail.length <= 253 &&
+    /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,12}$/i.test(gcpEmail)
+  );
+};
+
+export const isGcpDomainValid = (gcpDomain: string | undefined) => {
+  return (
+    gcpDomain !== undefined &&
+    gcpDomain.length <= 253 &&
+    // Validate domain: labels must start/end with alphanumeric, dashes allowed in middle
+    // No leading/trailing dots or dashes, no consecutive dots
+    /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,12}$/i.test(
+      gcpDomain,
+    )
   );
 };
 

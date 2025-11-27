@@ -20,7 +20,7 @@ import {
   selectGcpShareMethod,
 } from '../../../../../store/wizardSlice';
 import { ValidatedInput } from '../../../ValidatedInput';
-import { isGcpEmailValid } from '../../../validators';
+import { isGcpDomainValid, isGcpEmailValid } from '../../../validators';
 
 export type GcpShareMethod = 'withGoogle' | 'withInsights';
 export type GcpAccountType =
@@ -137,12 +137,18 @@ const Gcp = () => {
               ariaLabel='google principal'
               dataTestId='principal'
               value={gcpEmail || ''}
-              validator={isGcpEmailValid}
+              validator={
+                accountType === 'domain' ? isGcpDomainValid : isGcpEmailValid
+              }
               onChange={(_event, value) => dispatch(changeGcpEmail(value))}
               helperText={
                 !gcpEmail
-                  ? 'E-mail address is required'
-                  : 'Please enter a valid e-mail address'
+                  ? accountType === 'domain'
+                    ? 'Domain is required'
+                    : 'E-mail address is required'
+                  : accountType === 'domain'
+                    ? 'Please enter a valid domain'
+                    : 'Please enter a valid e-mail address'
               }
             />
           </FormGroup>
