@@ -5,6 +5,7 @@ import {
   Container,
   CreateBlueprintRequest,
   Directory,
+  Disk,
   Distributions,
   Fdo,
   File,
@@ -70,6 +71,7 @@ export type CustomizationsOnPrem = {
   repositories?: CustomRepositoryOnPrem[];
   openscap?: OpenScap;
   filesystem?: FileSystemOnPrem[];
+  disk?: Disk;
   services?: Services;
   sshkey?: SshKeyOnPrem[];
   hostname?: string;
@@ -156,6 +158,7 @@ export const mapOnPremToHosted = async (
           ...fs,
         }),
       ),
+      disk: blueprint.customizations?.disk || undefined,
       fips:
         blueprint.customizations?.fips !== undefined
           ? {
@@ -233,6 +236,10 @@ export const mapHostedToOnPrem = (
         };
       },
     );
+  }
+
+  if (blueprint.customizations.disk) {
+    result.customizations!.disk = blueprint.customizations.disk;
   }
 
   if (blueprint.customizations.users) {
