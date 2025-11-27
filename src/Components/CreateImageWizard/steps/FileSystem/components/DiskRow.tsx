@@ -107,16 +107,14 @@ const DiskRow = ({
           variant='link'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          isDisabled={
-            (!diskPartitions.some((p) => p.type === 'lvm') &&
-              partition.mountpoint === '/') ||
-            diskPartitions.some(
-              (vg) =>
-                vg.type === 'lvm' &&
-                vg.logical_volumes.length === 1 &&
-                vg.logical_volumes.some((lv) => lv.id === partition.id),
-            )
-          }
+          // there needs to be at least one logical volume in a volume group
+          // this disables the "remove partition" button until another volume is added
+          isDisabled={diskPartitions.some(
+            (vg) =>
+              vg.type === 'lvm' &&
+              vg.logical_volumes.length === 1 &&
+              vg.logical_volumes.some((lv) => lv.id === partition.id),
+          )}
         />
       </Td>
     </Tr>
