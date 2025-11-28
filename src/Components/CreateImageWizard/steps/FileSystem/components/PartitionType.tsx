@@ -9,14 +9,18 @@ import {
 } from '@patternfly/react-core';
 
 import { useAppDispatch } from '../../../../../store/hooks';
-import { changePartitionType } from '../../../../../store/wizardSlice';
+import {
+  changePartitionMountpoint,
+  changePartitionType,
+} from '../../../../../store/wizardSlice';
 import {
   FSType,
   LogicalVolumeWithBase,
   PartitioningCustomization,
 } from '../fscTypes';
+import { isPartitionTypeAvailable } from '../fscUtilities';
 
-const fs_types = ['ext4', 'xfs', 'vfat', 'swap'];
+const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
 type PartitionTypePropTypes = {
   partition: LogicalVolumeWithBase;
@@ -32,6 +36,27 @@ const PartitionType = ({
 
   const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
+
+    if (selection === 'swap') {
+      dispatch(
+        changePartitionMountpoint({
+          id: partition.id,
+          mountpoint: '',
+          customization: customization,
+        }),
+      );
+    }
+
+    if (partition.mountpoint === '' && selection !== 'swap') {
+      dispatch(
+        changePartitionMountpoint({
+          id: partition.id,
+          mountpoint: '/home',
+          customization: customization,
+        }),
+      );
+    }
+
     dispatch(
       changePartitionType({
         id: partition.id,
@@ -62,11 +87,13 @@ const PartitionType = ({
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {fs_types.map((type, index) => (
-          <SelectOption key={index} value={type}>
-            {type}
-          </SelectOption>
-        ))}
+        {fs_types
+          .filter((type) => isPartitionTypeAvailable(type, partition))
+          .map((type, index) => (
+            <SelectOption key={index} value={type}>
+              {type}
+            </SelectOption>
+          ))}
       </SelectList>
     </Select>
   );

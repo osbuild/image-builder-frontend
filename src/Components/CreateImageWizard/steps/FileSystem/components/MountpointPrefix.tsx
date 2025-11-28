@@ -11,9 +11,14 @@ import {
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
 import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
-import { getPrefix, getSuffix } from '../fscUtilities';
+import {
+  getPrefix,
+  getSuffix,
+  isMountpointPrefixAvailable,
+} from '../fscUtilities';
 
 export const mountpointPrefixes = [
+  '/',
   '/app',
   '/boot',
   '/data',
@@ -62,7 +67,9 @@ const MountpointPrefix = ({
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isDisabled={prefix === '/'}
+      // disable root partition prefix for filesystem customization
+      // ensuring it will stay present
+      isDisabled={customization === 'fileSystem' && prefix === '/'}
       isFullWidth
     >
       {prefix}
@@ -79,13 +86,17 @@ const MountpointPrefix = ({
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {mountpointPrefixes.map((prefix, index) => {
-          return (
-            <SelectOption key={index} value={prefix}>
-              {prefix}
-            </SelectOption>
-          );
-        })}
+        {mountpointPrefixes
+          .filter((prefix) =>
+            isMountpointPrefixAvailable(prefix, partition, customization),
+          )
+          .map((prefix, index) => {
+            return (
+              <SelectOption key={index} value={prefix}>
+                {prefix}
+              </SelectOption>
+            );
+          })}
       </SelectList>
     </Select>
   );

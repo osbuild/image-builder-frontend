@@ -30,6 +30,8 @@ export type DiskPartitionBase = {
   unit: Units | undefined;
 };
 
+export type PlainPartitionWithBase = FilesystemTyped & DiskPartitionBase;
+
 export type LogicalVolumeWithBase = LogicalVolume & DiskPartitionBase;
 
 export type VolumeGroupWithExtendedLV = DiskPartitionBase & {
@@ -41,6 +43,6 @@ export type VolumeGroupWithExtendedLV = DiskPartitionBase & {
 };
 
 export type DiskPartition =
-  | (FilesystemTyped & DiskPartitionBase)
+  | PlainPartitionWithBase
   | VolumeGroupWithExtendedLV
   | (BtrfsVolume & DiskPartitionBase);
