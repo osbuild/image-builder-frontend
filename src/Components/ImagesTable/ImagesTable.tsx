@@ -670,24 +670,38 @@ const defaultActions = (
 ) => {
   const name = `request-${compose.id}.json`;
 
+  const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    const data = JSON.stringify(compose.request, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+
+    const url = URL.createObjectURL(blob);
+    // In cockpit we're running in an iframe, the current content-security policy
+    // (set in cockpit/public/manifest.json) only allows resources from the same origin as the
+    // document (which is unique to the iframe). So create the element in the parent document.
+    const link = process.env.IS_ON_PREMISE
+      ? window.parent.document.createElement('a')
+      : document.createElement('a');
+    link.href = url;
+    link.download = name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+
+    if (!process.env.IS_ON_PREMISE) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - File Downloaded`, {
+        module: AMPLITUDE_MODULE_NAME,
+        link_name: name,
+        current_path: window.location.pathname,
+        account_id: account_id || 'Not found',
+      });
+    }
+  };
+
   return [
     {
       title: (
-        <a
-          className='ib-subdued-link'
-          href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-            JSON.stringify(compose.request, null, '  '),
-          )}`}
-          download={name}
-          onClick={() => {
-            analytics.track(`${AMPLITUDE_MODULE_NAME} - File Downloaded`, {
-              module: AMPLITUDE_MODULE_NAME,
-              link_name: name,
-              current_path: window.location.pathname,
-              account_id: account_id || 'Not found',
-            });
-          }}
-        >
+        <a className='ib-subdued-link' href='#' onClick={handleDownload}>
           Download compose request (.json)
         </a>
       ),

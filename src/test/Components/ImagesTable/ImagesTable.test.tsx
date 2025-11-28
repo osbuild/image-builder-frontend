@@ -69,8 +69,6 @@ describe('Images Table', () => {
     const { findAllByRole } = within(table);
     const rows = await findAllByRole('row');
 
-    const expectedRequest = mockComposes[0].request;
-
     // first row is header so look at index 1
     const actionsButton = await within(rows[1]).findByRole('button', {
       name: 'Kebab toggle',
@@ -81,24 +79,55 @@ describe('Images Table', () => {
       name: 'Download compose request (.json)',
     });
 
-    // No actual clicking because downloading is hard to test.
-    // Instead, we just check href and download properties of the <a> element.
-    const downloadLink: HTMLAnchorElement =
-      await within(downloadButton).findByRole('link');
-    expect(downloadLink.download).toBe(
-      'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json',
-    );
+    // Mock URL.createObjectURL and URL.revokeObjectURL
+    const mockCreateObjectURL = vi.fn(() => 'blob:mock-url');
+    const mockRevokeObjectURL = vi.fn();
+    const originalCreateObjectURL = globalThis.URL.createObjectURL;
+    const originalRevokeObjectURL = globalThis.URL.revokeObjectURL;
+    globalThis.URL.createObjectURL = mockCreateObjectURL;
+    globalThis.URL.revokeObjectURL = mockRevokeObjectURL;
 
-    const hrefParts = downloadLink.href.split(',');
-    expect(hrefParts.length).toBe(2);
-    const [header, encodedRequest] = hrefParts;
-    expect(header).toBe('data:text/plain;charset=utf-8');
+    // Mock document.createElement
+    const mockLink = {
+      href: '',
+      download: '',
+      click: vi.fn(),
+    } as unknown as HTMLAnchorElement;
+    const originalCreateElement = document.createElement.bind(document);
+    const createElementSpy = vi
+      .spyOn(document, 'createElement')
+      .mockImplementation((tagName) => {
+        if (tagName === 'a') {
+          return mockLink;
+        }
+        return originalCreateElement(tagName);
+      });
 
-    await waitFor(() =>
-      expect(encodedRequest).toBe(
-        encodeURIComponent(JSON.stringify(expectedRequest, null, '  ')),
-      ),
-    );
+    try {
+      // Click the download link
+      const downloadLink: HTMLAnchorElement =
+        await within(downloadButton).findByRole('link');
+      await user.click(downloadLink);
+
+      // Verify the download was triggered correctly
+      await waitFor(() => {
+        expect(mockCreateObjectURL).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'application/json',
+          }),
+        );
+        expect(mockLink.download).toBe(
+          'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json',
+        );
+        expect(mockLink.click).toHaveBeenCalled();
+        expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
+      });
+    } finally {
+      // Restore mocks
+      createElementSpy.mockRestore();
+      globalThis.URL.createObjectURL = originalCreateObjectURL;
+      globalThis.URL.revokeObjectURL = originalRevokeObjectURL;
+    }
   });
 
   test('check expandable row toggle', async () => {
