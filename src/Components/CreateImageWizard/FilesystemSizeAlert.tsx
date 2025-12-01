@@ -3,15 +3,24 @@ import React from 'react';
 import { Alert } from '@patternfly/react-core';
 
 import { UNIT_GIB } from '../../constants';
+import { ImageTypes } from '../../store/imageBuilderApi';
 
 type FilesystemSizeAlertProps = {
   totalSizeBytes: number;
+  imageTypes: ImageTypes[];
 };
 
-const FilesystemSizeAlert = ({ totalSizeBytes }: FilesystemSizeAlertProps) => {
+const FilesystemSizeAlert = ({
+  totalSizeBytes,
+  imageTypes,
+}: FilesystemSizeAlertProps) => {
   const threshold = 99 * UNIT_GIB;
 
-  if (totalSizeBytes <= threshold) {
+  // Only show alert for Azure and AWS targets
+  const targetTypes: ImageTypes[] = ['aws', 'ami', 'azure'];
+  const shouldShowAlert = imageTypes.some((type) => targetTypes.includes(type));
+
+  if (totalSizeBytes <= threshold || !shouldShowAlert) {
     return null;
   }
 
@@ -30,4 +39,3 @@ const FilesystemSizeAlert = ({ totalSizeBytes }: FilesystemSizeAlertProps) => {
 };
 
 export default FilesystemSizeAlert;
-

@@ -12,7 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
 import VolumeGroups from './VolumeGroups';
-import { calculateTotalDiskSize } from '../fscUtilities';
 
 import { PARTITIONING_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -21,13 +20,16 @@ import {
   changeDiskMinsize,
   selectDiskMinsize,
   selectDiskPartitions,
+  selectImageTypes,
 } from '../../../../../store/wizardSlice';
 import FilesystemSizeAlert from '../../../FilesystemSizeAlert';
+import { calculateTotalDiskSize } from '../fscUtilities';
 
 const AdvancedPartitioning = () => {
   const dispatch = useAppDispatch();
   const minsize = useAppSelector(selectDiskMinsize);
   const diskPartitions = useAppSelector(selectDiskPartitions);
+  const imageTypes = useAppSelector(selectImageTypes);
 
   const totalSizeBytes = useMemo(
     () => calculateTotalDiskSize(diskPartitions, minsize),
@@ -100,7 +102,10 @@ const AdvancedPartitioning = () => {
           </Button>
         </Content>
       </Content>
-      <FilesystemSizeAlert totalSizeBytes={totalSizeBytes} />
+      <FilesystemSizeAlert
+        totalSizeBytes={totalSizeBytes}
+        imageTypes={imageTypes}
+      />
       <FormGroup label='Minimum disk size'>
         <TextInput
           aria-label='Minimum disk size input'

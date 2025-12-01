@@ -10,7 +10,6 @@ import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
-import { calculateTotalFilesystemSize } from '../fscUtilities';
 
 import {
   FILE_SYSTEM_CUSTOMIZATION_URL,
@@ -25,6 +24,7 @@ import {
 } from '../../../../../store/wizardSlice';
 import FilesystemSizeAlert from '../../../FilesystemSizeAlert';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
+import { calculateTotalFilesystemSize } from '../fscUtilities';
 
 const FileSystemConfiguration = () => {
   const environments = useAppSelector(selectImageTypes);
@@ -101,7 +101,10 @@ const FileSystemConfiguration = () => {
           )} images`}
         />
       )}
-      <FilesystemSizeAlert totalSizeBytes={totalSizeBytes} />
+      <FilesystemSizeAlert
+        totalSizeBytes={totalSizeBytes}
+        imageTypes={environments}
+      />
       <FileSystemTable partitions={filesystemPartitions} mode='filesystem' />
       <Content>
         <Button

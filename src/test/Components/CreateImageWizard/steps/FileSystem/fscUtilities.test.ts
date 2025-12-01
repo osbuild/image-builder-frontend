@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../../constants';
+import {
+  DiskPartition,
+  FilesystemPartition,
+} from '../../../../../Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import {
   calculateTotalDiskSize,
   calculateTotalFilesystemSize,
   parseMinDiskSize,
 } from '../../../../../Components/CreateImageWizard/steps/FileSystem/fscUtilities';
-import {
-  DiskPartition,
-  FilesystemPartition,
-} from '../../../../../Components/CreateImageWizard/steps/FileSystem/fscTypes';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../../constants';
 
 describe('fscUtilities size calculation functions', () => {
   describe('calculateTotalFilesystemSize', () => {
@@ -94,8 +94,7 @@ describe('fscUtilities size calculation functions', () => {
         },
       ];
 
-      const expected =
-        10 * UNIT_GIB + 500 * UNIT_MIB + 1024 * UNIT_KIB + 2048;
+      const expected = 10 * UNIT_GIB + 500 * UNIT_MIB + 1024 * UNIT_KIB + 2048;
       expect(calculateTotalFilesystemSize(partitions)).toBe(expected);
     });
 
@@ -365,9 +364,7 @@ describe('fscUtilities size calculation functions', () => {
         },
       ];
 
-      expect(calculateTotalDiskSize(partitions, '10 GiB')).toBe(
-        100 * UNIT_GIB
-      );
+      expect(calculateTotalDiskSize(partitions, '10 GiB')).toBe(100 * UNIT_GIB);
     });
 
     it('should ignore minDiskSize when empty', () => {
@@ -462,9 +459,8 @@ describe('fscUtilities size calculation functions', () => {
     it('should return minDiskSize when partitions are empty', () => {
       const partitions: DiskPartition[] = [];
       expect(calculateTotalDiskSize(partitions, '100 GiB')).toBe(
-        100 * UNIT_GIB
+        100 * UNIT_GIB,
       );
     });
   });
 });
-

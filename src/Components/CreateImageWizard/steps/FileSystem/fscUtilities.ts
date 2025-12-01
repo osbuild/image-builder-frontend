@@ -90,8 +90,7 @@ export const calculateTotalDiskSize = (
       // For LVM, sum up all logical volumes
       const lvTotal = partition.logical_volumes.reduce((lvSum, lv) => {
         const sizeInBytes =
-          parseInt(lv.min_size || '0') *
-          getConversionFactor(lv.unit || 'GiB');
+          parseInt(lv.min_size || '0') * getConversionFactor(lv.unit || 'GiB');
         return lvSum + sizeInBytes;
       }, 0);
       return total + lvTotal;
