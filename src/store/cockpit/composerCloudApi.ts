@@ -42,6 +42,15 @@ export type ImageStatusValue =
   | "building"
   | "uploading"
   | "registering";
+export type SubProgress = {
+  /** Amount of completed steps in the build. */
+  done: number;
+  /** Total amount of steps in the build. */
+  total: number;
+};
+export type Progress = SubProgress & {
+  subprogress?: SubProgress | undefined;
+};
 export type UploadStatusValue = "success" | "failure" | "pending" | "running";
 export type UploadTypes =
   | "aws"
@@ -102,6 +111,7 @@ export type ComposeStatusError = {
 };
 export type ImageStatus = {
   status: ImageStatusValue;
+  progress?: Progress | undefined;
   upload_status?: UploadStatus | undefined;
   upload_statuses?: UploadStatus[] | undefined;
   error?: ComposeStatusError | undefined;
