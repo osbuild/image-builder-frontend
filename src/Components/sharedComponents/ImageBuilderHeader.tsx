@@ -85,9 +85,11 @@ export const ImageBuilderHeader = ({
           title={
             <>
               Images <AboutImageBuilderPopover />
-              <OpenSourceBadge
-                repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}
-              />
+              {!process.env.IS_ON_PREMISE && (
+                <OpenSourceBadge
+                  repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}
+                />
+              )}
             </>
           }
           actionsContent={
