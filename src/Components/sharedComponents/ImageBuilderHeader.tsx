@@ -49,7 +49,7 @@ const AboutImageBuilderPopover = () => {
               isInline
               href={IB_DOCUMENTATION_URL}
             >
-              Image builder for RPM-DNF documentation
+              Image builder documentation
             </Button>
           </Content>
         </Content>

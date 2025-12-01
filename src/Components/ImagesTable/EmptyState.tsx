@@ -95,7 +95,7 @@ const EmptyImagesTable = () => {
                 href={IB_DOCUMENTATION_URL}
                 className='pf-v6-u-pt-md'
               >
-                Image builder for RPM-DNF documentation
+                Image builder documentation
               </Button>
             </EmptyStateActions>
           </EmptyStateFooter>
