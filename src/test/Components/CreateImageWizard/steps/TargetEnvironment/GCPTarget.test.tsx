@@ -221,10 +221,7 @@ describe('GCP image type request generated correctly', () => {
   test('share image with domain', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount(
-      'Google Workspace domain or Cloud Identity domain',
-      GCP_DOMAIN,
-    );
+    await selectGoogleAccount('Google Workspace domain', GCP_DOMAIN);
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
@@ -259,9 +256,7 @@ describe('GCP image type request generated correctly', () => {
   test('after selecting and deselecting gcp', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount(
-      'Google Workspace domain or Cloud Identity domain',
-    );
+    await selectGoogleAccount('Google Workspace domain', GCP_DOMAIN);
     await clickBack();
     await deselectGcpAndSelectGuestImage();
     await goToReviewStep();
