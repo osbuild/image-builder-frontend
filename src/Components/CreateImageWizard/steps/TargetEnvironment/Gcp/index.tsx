@@ -127,9 +127,7 @@ const Gcp = () => {
           </FormGroup>
           <FormGroup
             label={
-              accountType === 'domain'
-                ? 'Domain'
-                : 'Principal (e.g. e-mail address)'
+              accountType === 'domain' ? 'Domain' : 'Principal (e-mail address)'
             }
             isRequired
           >
