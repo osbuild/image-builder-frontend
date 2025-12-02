@@ -954,6 +954,15 @@ export type ComposesResponse = {
   links: ListResponseLinks;
   data: ComposesResponseItem[];
 };
+export type SubProgress = {
+  /** Amount of completed steps in the build. */
+  done: number;
+  /** Total amount of steps in the build. */
+  total: number;
+};
+export type Progress = SubProgress & {
+  subprogress?: SubProgress | undefined;
+};
 export type AwsUploadStatus = {
   ami: string;
   region: string;
@@ -994,6 +1003,7 @@ export type ImageStatus = {
     | "building"
     | "uploading"
     | "registering";
+  progress?: Progress | undefined;
   upload_status?: UploadStatus | undefined;
   error?: ComposeStatusError | undefined;
 };
