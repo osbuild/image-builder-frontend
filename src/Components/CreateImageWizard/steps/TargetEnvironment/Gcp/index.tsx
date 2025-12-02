@@ -117,7 +117,7 @@ const Gcp = () => {
             />
             <Radio
               id='google-domain'
-              label='Google Workspace domain or Cloud Identity domain'
+              label='Google Workspace domain'
               name='radio-6'
               isChecked={accountType === 'domain'}
               onChange={() => {
