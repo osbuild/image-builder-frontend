@@ -98,10 +98,14 @@ const LabelInput = ({
         case 'enabledSystemdServices':
         case 'disabledSystemdServices':
         case 'maskedSystemdServices':
+          setOnStepInputErrorText(
+            'Expected format: <service-name>. Example: sshd',
+          );
+          break;
         case 'disabledServices':
         case 'enabledServices':
           setOnStepInputErrorText(
-            'Expected format: <service-name>. Example: sshd',
+            'Expected format: <firewalld-service-name>. Example: ssh.',
           );
           break;
         default:
