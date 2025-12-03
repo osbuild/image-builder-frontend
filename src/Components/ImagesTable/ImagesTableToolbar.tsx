@@ -60,11 +60,32 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
 }: imagesTableToolbarProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
+  const [isLintExp, setIsLintExp] = React.useState(true);
+  const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
+    setIsLintExp(isExpanded);
+  };
+  const [warningExpanded, setWarningExpanded] = useState(true);
+
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintVersionFilterAPI = useAppSelector(
     selectBlueprintVersionFilterAPI,
   );
+
+  const { data: blueprintDetails } = useGetBlueprintQuery(
+    { id: selectedBlueprintId! },
+    { skip: !selectedBlueprintId },
+  );
+
+  const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
+
+  const lintWarnings = React.useMemo(
+    () => blueprintDetails?.lint?.warnings ?? [],
+    [blueprintDetails],
+  );
+
+  const hasErrors = !!blueprintDetails?.lint?.errors?.length;
+  const hasWarnings = lintWarnings.length > 0;
 
   const searchParams: GetBlueprintComposesApiArg = {
     id: selectedBlueprintId as string,
@@ -129,19 +150,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     }
   };
 
-  const { data: blueprintDetails } = useGetBlueprintQuery(
-    { id: selectedBlueprintId! },
-    { skip: !selectedBlueprintId },
-  );
-
-  const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
-  const hasErrors =
-    blueprintDetails?.lint.errors && blueprintDetails.lint.errors.length > 0;
-  const [isLintExp, setIsLintExp] = React.useState(true);
-  const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
-    setIsLintExp(isExpanded);
-  };
-
   return (
     <>
       <DeleteBlueprintModal
@@ -167,22 +175,19 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
         {hasErrors && (
           <Alert
             variant='warning'
-            style={{
-              margin:
-                '0 var(--pf6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
-            }}
             isInline
-            title={`The selected blueprint has errors.`}
-            actionLinks={
+            title='The selected blueprint has compliance errors that can be automatically fixed, action required.'
+            actionLinks={[
               <AlertActionLink
+                key='fix'
                 onClick={async () => {
                   await fixupBlueprint({ id: selectedBlueprintId! });
                 }}
                 id='blueprint_fix_errors_automatically'
               >
                 Fix errors automatically (updates the blueprint)
-              </AlertActionLink>
-            }
+              </AlertActionLink>,
+            ]}
           >
             <ExpandableSection
               toggleText={isLintExp ? 'Show less' : 'Show more'}
@@ -193,6 +198,27 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                 {blueprintDetails.lint.errors.map((err) => (
                   <ListItem key={err.description}>
                     {err.name}: {err.description}
+                  </ListItem>
+                ))}
+              </List>
+            </ExpandableSection>
+          </Alert>
+        )}
+        {selectedBlueprintId && hasWarnings && (
+          <Alert
+            variant='info'
+            isInline
+            title='The selected blueprint has compliance warnings, no action required.'
+          >
+            <ExpandableSection
+              toggleText={warningExpanded ? 'Show less' : 'Show more'}
+              onToggle={(_, isExpanded) => setWarningExpanded(isExpanded)}
+              isExpanded={warningExpanded}
+            >
+              <List isPlain>
+                {lintWarnings.map((warning) => (
+                  <ListItem key={warning.name}>
+                    {warning.name}: {warning.description}
                   </ListItem>
                 ))}
               </List>
