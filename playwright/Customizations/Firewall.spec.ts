@@ -62,7 +62,7 @@ test('Create a blueprint with Firewall customization', async ({
 
   await test.step('Select and correctly fill the disabled services in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Enter service name')
+      .getByPlaceholder('Enter firewalld service')
       .nth(0)
       .fill('cloud-init');
     await page.keyboard.press('Enter');
@@ -71,7 +71,7 @@ test('Create a blueprint with Firewall customization', async ({
 
   await test.step('Select and correctly fill the enabled services in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Enter service name')
+      .getByPlaceholder('Enter firewalld service')
       .nth(1)
       .fill('telnet.socket');
     await page.keyboard.press('Enter');
@@ -86,7 +86,7 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('Port already exists.')).toBeVisible();
 
     await frame
-      .getByPlaceholder('Enter service name')
+      .getByPlaceholder('Enter firewalld service')
       .nth(0)
       .fill('cloud-init');
     await page.keyboard.press('Enter');
@@ -95,7 +95,7 @@ test('Create a blueprint with Firewall customization', async ({
     ).toBeVisible();
 
     await frame
-      .getByPlaceholder('Enter service name')
+      .getByPlaceholder('Enter firewalld service')
       .nth(1)
       .fill('telnet.socket');
     await page.keyboard.press('Enter');
@@ -119,21 +119,25 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   await test.step('Select and incorrectly fill the disabled services in Firewall step', async () => {
-    await frame.getByPlaceholder('Enter service name').nth(0).fill('1');
+    await frame.getByPlaceholder('Enter firewalld service').nth(0).fill('1');
     await page.keyboard.press('Enter');
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0),
+      frame
+        .getByText('Expected format: <firewalld-service-name>. Example: ssh.')
+        .nth(0),
     ).toBeVisible();
   });
 
   await test.step('Select and incorrectly fill the enabled services in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Enter service name')
+      .getByPlaceholder('Enter firewalld service')
       .nth(1)
       .fill('wrong--service');
     await page.keyboard.press('Enter');
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1),
+      frame
+        .getByText('Expected format: <firewalld-service-name>. Example: ssh.')
+        .nth(1),
     ).toBeVisible();
   });
 
@@ -174,9 +178,9 @@ test('Create a blueprint with Firewall customization', async ({
       .getByPlaceholder('Enter port (e.g., 8080/tcp, 443:udp)')
       .fill('90:tcp');
     await page.keyboard.press('Enter');
-    await frame.getByPlaceholder('Enter service name').nth(0).fill('x');
+    await frame.getByPlaceholder('Enter firewalld service').nth(0).fill('x');
     await page.keyboard.press('Enter');
-    await frame.getByPlaceholder('Enter service name').nth(1).fill('y');
+    await frame.getByPlaceholder('Enter firewalld service').nth(1).fill('y');
     await page.keyboard.press('Enter');
 
     await frame.getByRole('button', { name: 'Close 80:tcp' }).click();

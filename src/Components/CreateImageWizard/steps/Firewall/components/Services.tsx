@@ -25,7 +25,7 @@ const Services = () => {
       <FormGroup label='Enabled services'>
         <LabelInput
           ariaLabel='Add enabled service'
-          placeholder='Enter service name'
+          placeholder='Enter firewalld service'
           validator={isServiceValid}
           list={enabledServices}
           item='Enabled service'
@@ -38,7 +38,7 @@ const Services = () => {
       <FormGroup label='Disabled services'>
         <LabelInput
           ariaLabel='Add disabled service'
-          placeholder='Enter service name'
+          placeholder='Enter firewalld service'
           validator={isServiceValid}
           list={disabledServices}
           item='Disabled service'
