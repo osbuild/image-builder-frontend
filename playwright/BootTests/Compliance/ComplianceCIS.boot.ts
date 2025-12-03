@@ -15,7 +15,12 @@ import {
   fillInDetails,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import { deleteCompliancePolicy } from '../helpers/helpers';
+import {
+  createCompliancePolicy,
+  deleteCompliancePolicy,
+  navigateToCompliancePolicy,
+  removeCompliancePolicyRule,
+} from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
@@ -39,7 +44,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
 
   // Delete the blueprint compliance policy and Openstack resources after the run
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
-  await cleanup.add(() => deleteCompliancePolicy(page, policyName));
+  cleanup.add(() => deleteCompliancePolicy(page, policyName));
   await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
   await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
@@ -47,44 +52,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   // TODO: because of the empty state in Compliance service when new user has not registered a system yet
   await login(page, true);
 
-  await test.step('Create a Compliance policy', async () => {
-    await page.goto('/insights/compliance/scappolicies');
-    await page.getByRole('button', { name: 'Create new policy' }).click();
-    await page.getByRole('option', { name: 'RHEL 10' }).click();
-    await expect(
-      page.getByRole('gridcell', { name: 'ANSSI-BP-028 (enhanced)' }).first(),
-    ).toBeVisible(); // Wait for the policy type list to load
-    // Temporarily disabled - do not use filter, but manually find and select the policy
-    // await page.getByRole('textbox', { name: 'text input' }).fill(policyType);
-    // await expect(
-    //   page.getByRole('gridcell', { name: policyType }).first(),
-    // ).toBeVisible();
-    // await page.getByRole('radio', { name: 'Select row 0' }).click();
-    await page.getByRole('button', { name: 'Go to last page' }).click();
-    await expect(
-      page.getByRole('gridcell', { name: policyType }),
-    ).toBeVisible();
-    await page
-      .getByRole('row')
-      .filter({ hasText: policyType })
-      .getByRole('radio')
-      .first()
-      .click();
-
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName); // Get the policy name
-    await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Details"
-    await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Systems"
-    /** TODO: Currently broken
-    // Change rule to see if tailoring works correctly
-    await page.getByRole('textbox', { name: 'text input' }).fill('bluetooth');
-    await page.getByRole('checkbox', { name: 'Select row 0' }).click(); */
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await page
-      .getByRole('button', { name: 'Return to application' })
-      .click({ timeout: 2 * 60 * 1000 }); // Wait for the policy to be created
-  });
+  await createCompliancePolicy(page, policyName, policyType, 'RHEL 10');
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
@@ -208,5 +176,106 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     );
     expect(exitCode).toBe(0);
     expect(output).toContain('0');
+  });
+});
+
+test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
+  test.skip(!isHosted(), 'Compliance alerts are not available in the plugin');
+  const blueprintName = 'test-compliance-' + uuidv4();
+  const policyName = 'test-policy-' + uuidv4();
+  const policyType =
+    'Centro Criptológico Nacional (CCN) - STIC for Red Hat Enterprise Linux 9 - Intermediate';
+
+  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  await cleanup.add(() => deleteCompliancePolicy(page, policyName));
+
+  await login(page, true);
+
+  await createCompliancePolicy(page, policyName, policyType);
+
+  await test.step('Wait for policy to be available', async () => {
+    await navigateToCompliancePolicy(page, policyName);
+    // Wait a bit longer for the policy to be fully available after creation
+    await expect(page.getByRole('row', { name: policyName })).toBeVisible({
+      timeout: 60000,
+    });
+  });
+
+  await page.goto('/insights/image-builder/imagewizard?release=rhel9');
+  const frame = await ibFrame(page);
+
+  await test.step('Navigate to optional steps in Wizard', async () => {
+    await expect(frame.getByTestId('release_select')).toHaveText(
+      'Red Hat Enterprise Linux (RHEL) 9',
+    );
+    await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
+    await frame.getByRole('button', { name: 'Next' }).click();
+    await registerLater(frame);
+  });
+
+  await test.step('Select and fill the Compliance step', async () => {
+    await frame
+      .getByLabel('Wizard steps')
+      .getByRole('button', { name: 'Security' })
+      .click();
+    await frame
+      .getByRole('radio', { name: 'Use a custom compliance policy' })
+      .click();
+    await frame.getByRole('button', { name: 'None' }).click();
+    await expect(frame.getByRole('option').first()).toBeVisible();
+    const searchInput = frame.getByRole('textbox', { name: /filter/i });
+    await expect(searchInput).toBeVisible();
+    await searchInput.fill(policyName);
+    await expect(frame.getByRole('option', { name: policyName })).toBeVisible();
+    await frame.getByRole('option', { name: policyName }).click();
+    await expect(frame.getByRole('button', { name: policyName })).toBeVisible();
+    await frame.getByRole('button', { name: 'Review and finish' }).click();
+  });
+
+  await test.step('Fill the BP details', async () => {
+    await fillInDetails(frame, blueprintName);
+  });
+
+  await test.step('Create BP', async () => {
+    await createBlueprint(frame, blueprintName);
+  });
+
+  await removeCompliancePolicyRule(
+    page,
+    policyName,
+    'Install firewalld Package',
+  );
+
+  await test.step('Verify compliance warning appears in blueprint', async () => {
+    await navigateToLandingPage(page);
+    const updatedFrame = await ibFrame(page);
+
+    const searchInput = updatedFrame.getByRole('textbox', {
+      name: 'Search input',
+    });
+    await expect(searchInput).toBeVisible();
+    await searchInput.fill(blueprintName);
+    await expect(searchInput).toHaveValue(blueprintName);
+
+    const blueprintButton = updatedFrame.getByRole('button', {
+      name: blueprintName,
+    });
+    await expect(blueprintButton).toBeVisible();
+    await expect(blueprintButton).toBeEnabled();
+
+    await blueprintButton.click();
+
+    await expect(
+      updatedFrame.getByRole('button', { name: 'Edit blueprint' }),
+    ).toBeVisible({ timeout: 15000 });
+
+    const firewalldMessage = updatedFrame.getByText(
+      /Compliance: package firewalld is no longer required by policy/i,
+    );
+    // After rule removal, warning generation can lag; use polling with longer timeout
+    await expect
+      .poll(async () => await firewalldMessage.isVisible(), { timeout: 60000 })
+      .toBeTruthy();
+    await expect(firewalldMessage).toBeVisible();
   });
 });
