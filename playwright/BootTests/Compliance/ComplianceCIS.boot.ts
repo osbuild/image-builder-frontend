@@ -15,7 +15,10 @@ import {
   fillInDetails,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import { deleteCompliancePolicy } from '../helpers/helpers';
+import {
+  createCompliancePolicy,
+  deleteCompliancePolicy,
+} from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
@@ -47,41 +50,13 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   // TODO: because of the empty state in Compliance service when new user has not registered a system yet
   await login(page, true);
 
-  await test.step('Create a Compliance policy', async () => {
-    await page.goto('/insights/compliance/scappolicies');
-    await page.getByRole('button', { name: 'Create new policy' }).click();
-    await page.getByRole('option', { name: 'RHEL 10' }).click();
-    await expect(
-      page.getByRole('gridcell', { name: 'ANSSI-BP-028 (enhanced)' }).first(),
-    ).toBeVisible(); // Wait for the policy type list to load
-    // Temporarily disabled - do not use filter, but manually find and select the policy
-    // await page.getByRole('textbox', { name: 'text input' }).fill(policyType);
-    // await expect(
-    //   page.getByRole('gridcell', { name: policyType }).first(),
-    // ).toBeVisible();
-    // await page.getByRole('radio', { name: 'Select row 0' }).click();
-    await page.getByRole('button', { name: 'Go to next page' }).nth(1).click();
-    await page
-      .getByRole('row')
-      .filter({ hasText: policyType })
-      .getByRole('radio')
-      .first()
-      .click();
-
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName); // Get the policy name
-    await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Details"
-    await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Systems"
-    /** TODO: Currently broken
-    // Change rule to see if tailoring works correctly
-    await page.getByRole('textbox', { name: 'text input' }).fill('bluetooth');
-    await page.getByRole('checkbox', { name: 'Select row 0' }).click(); */
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await page
-      .getByRole('button', { name: 'Return to application' })
-      .click({ timeout: 2 * 60 * 1000 }); // Wait for the policy to be created
-  });
+  await createCompliancePolicy(
+    page,
+    policyName,
+    policyType,
+    'RHEL 10',
+    true, // goToNextPage: true - need to navigate to next page
+  );
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
