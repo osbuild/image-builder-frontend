@@ -87,6 +87,11 @@ type UserGroupPayload = {
   group: string;
 };
 
+export type UserGroup = {
+  name: string;
+  gid?: number;
+};
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -150,6 +155,7 @@ export type wizardState = {
     templateName: string;
   };
   users: UserWithAdditionalInfo[];
+  userGroups: UserGroup[];
   firstBoot: {
     script: string;
   };
@@ -306,6 +312,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  userGroups: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -514,6 +521,10 @@ export const selectServices = (state: RootState) => {
 
 export const selectUsers = (state: RootState) => {
   return state.wizard.users;
+};
+
+export const selectUserGroups = (state: RootState) => {
+  return state.wizard.userGroups;
 };
 
 export const selectKernel = (state: RootState) => {
@@ -1189,6 +1200,36 @@ export const wizardSlice = createSlice({
         state.groups.splice(index, 1);
       }
     },
+    addUserGroup: (state, action: PayloadAction<string>) => {
+      const existingGroupIndex = state.userGroups.findIndex(
+        (group) => group.name === action.payload,
+      );
+
+      if (existingGroupIndex === -1) {
+        const randomGid = Math.floor(Math.random() * (65534 - 1000 + 1)) + 1000;
+        const newUserGroup = {
+          name: action.payload,
+          gid: randomGid,
+        };
+        state.userGroups.push(newUserGroup);
+      }
+    },
+    removeUserGroup: (state, action: PayloadAction<string>) => {
+      const index = state.userGroups.findIndex(
+        (group) => group.name === action.payload,
+      );
+      if (index !== -1) {
+        state.userGroups.splice(index, 1);
+      }
+    },
+    updateUserGroupByIndex: (
+      state,
+      action: PayloadAction<{ index: number; name: string }>,
+    ) => {
+      if (state.userGroups[action.payload.index]) {
+        state.userGroups[action.payload.index].name = action.payload.name;
+      }
+    },
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
         state.locale.languages &&
@@ -1516,6 +1557,9 @@ export const {
   removeModule,
   addGroup,
   removeGroup,
+  addUserGroup,
+  removeUserGroup,
+  updateUserGroupByIndex,
   addLanguage,
   removeLanguage,
   clearLanguages,

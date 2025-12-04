@@ -27,6 +27,7 @@ import {
   selectFirewall,
   selectFirstBootScript,
   selectFscMode,
+  selectGroups,
   selectHostname,
   selectImageTypes,
   selectKernel,
@@ -42,12 +43,15 @@ import {
   selectTemplate,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
+  UserGroup,
   UserWithAdditionalInfo,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
 import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText';
+import { GroupWithRepositoryInfo } from '../steps/Packages/Packages';
 import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
@@ -86,6 +90,14 @@ export type UsersStepValidation = {
   disabledNext: boolean;
 };
 
+export type GroupsStepValidation = {
+  errors: {
+    [key: string]: { [key: string]: string };
+  };
+  disabledNext: boolean;
+  hasGroupWithoutName: boolean;
+};
+
 export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
@@ -99,6 +111,7 @@ export function useIsBlueprintValid(): boolean {
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
+  const groups = useGroupsValidation();
   const azureTarget = useAzureValidation();
   return (
     !registration.disabledNext &&
@@ -113,6 +126,7 @@ export function useIsBlueprintValid(): boolean {
     !firstBoot.disabledNext &&
     !details.disabledNext &&
     !users.disabledNext &&
+    !groups.disabledNext &&
     !azureTarget.disabledNext
   );
 }
@@ -1003,4 +1017,135 @@ export function useAzureValidation(): StepValidation {
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
+}
+
+const validateGroupName = (
+  groups: GroupWithRepositoryInfo[],
+  groupName: string,
+  currentIndex: number,
+): string => {
+  if (!groupName) {
+    return 'Required value';
+  }
+  if (!isUserGroupValid(groupName)) {
+    return 'Invalid group name';
+  }
+
+  // check for duplicate names
+  const count = groups.filter(
+    (group, index) => group.name === groupName && index !== currentIndex,
+  ).length;
+  if (count > 0) {
+    return 'Group name already exists';
+  }
+  return '';
+};
+
+export function useGroupsValidation(): GroupsStepValidation {
+  const groups = useAppSelector(selectGroups);
+  const errors: { [key: string]: { [key: string]: string } } = {};
+
+  if (groups.length === 0) {
+    return {
+      errors: {},
+      disabledNext: false,
+      hasGroupWithoutName: false,
+    };
+  }
+
+  for (let index = 0; index < groups.length; index++) {
+    const groupErrors: { [key: string]: string } = {};
+    const isGroupDefined =
+      !!groups[index].description || groups[index].package_list.length > 0;
+
+    if (groups[index].name || isGroupDefined) {
+      const groupNameError = validateGroupName(
+        groups,
+        groups[index].name,
+        index,
+      );
+      if (groupNameError) {
+        groupErrors.groupName = groupNameError;
+      }
+    }
+
+    if (Object.keys(groupErrors).length > 0) {
+      errors[index] = groupErrors;
+    }
+  }
+
+  const hasGroupWithoutName = Object.values(errors).some(
+    (groupErrors) => groupErrors.groupName === 'Required value',
+  );
+
+  return {
+    errors,
+    disabledNext: hasGroupWithoutName || Object.keys(errors).length > 0,
+    hasGroupWithoutName,
+  };
+}
+
+const validateUserGroupName = (
+  userGroups: UserGroup[],
+  groupName: string,
+  currentIndex: number,
+): string => {
+  if (!groupName) {
+    return 'Required value';
+  }
+  if (!isUserGroupValid(groupName)) {
+    return 'Invalid group name';
+  }
+  // check for duplicate names
+  const count = userGroups.filter(
+    (group, index) => group.name === groupName && index !== currentIndex,
+  ).length;
+  if (count > 0) {
+    return 'Group name already exists';
+  }
+  return '';
+};
+
+export function useUserGroupsValidation(): GroupsStepValidation {
+  const userGroups = useAppSelector(selectUserGroups);
+  const errors: { [key: string]: { [key: string]: string } } = {};
+
+  if (userGroups.length === 0) {
+    return {
+      errors: {},
+      disabledNext: false,
+      hasGroupWithoutName: false,
+    };
+  }
+
+  for (let index = 0; index < userGroups.length; index++) {
+    const groupErrors: { [key: string]: string } = {};
+
+    if (userGroups[index].name) {
+      const groupNameError = validateUserGroupName(
+        userGroups,
+        userGroups[index].name,
+        index,
+      );
+      if (groupNameError) {
+        groupErrors.groupName = groupNameError;
+      }
+    } else {
+      groupErrors.groupName = 'Required value';
+    }
+
+    if (Object.keys(groupErrors).length > 0) {
+      errors[index] = groupErrors;
+    }
+  }
+
+  const hasGroupWithoutName = Object.values(errors).some(
+    (groupErrors) => groupErrors.groupName === 'Required value',
+  );
+
+  return {
+    errors,
+    disabledNext: hasGroupWithoutName || Object.keys(errors).length > 0,
+    hasGroupWithoutName,
+  };
 }

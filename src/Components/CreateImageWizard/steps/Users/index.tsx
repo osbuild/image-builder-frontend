@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import GroupInfo from './components/GroupInfo';
 import UserInfo from './components/UserInfo';
 
 const UsersStep = () => {
@@ -15,6 +16,10 @@ const UsersStep = () => {
         usernames are not allowed.
       </Content>
       <UserInfo />
+      <Title headingLevel='h1' size='xl'>
+        Groups
+      </Title>
+      <GroupInfo />
     </Form>
   );
 };

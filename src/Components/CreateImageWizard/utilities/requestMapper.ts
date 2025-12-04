@@ -113,6 +113,7 @@ import {
   selectTemplateName,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
   UserWithAdditionalInfo,
   wizardState,
@@ -487,6 +488,11 @@ function commonRequestToState(
     fips: {
       enabled: request.customizations.fips?.enabled || false,
     },
+    userGroups:
+      request.customizations?.groups?.map((grp) => ({
+        name: grp.name,
+        ...(grp.gid !== undefined && { gid: grp.gid }),
+      })) || [],
   };
 }
 
@@ -795,7 +801,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
     kernel: getKernel(state),
-    groups: undefined,
+    groups: getUserGroups(state),
     timezone: getTimezone(state),
     locale: getLocale(state),
     firewall: getFirewall(state),
@@ -968,6 +974,17 @@ const getModules = (state: RootState) => {
     return modules;
   }
   return undefined;
+};
+
+const getUserGroups = (state: RootState) => {
+  const userGroups = selectUserGroups(state)
+    .filter((grp) => grp.name && grp.name.trim().length > 0)
+    .map((grp) => ({
+      name: grp.name,
+      ...(grp.gid !== undefined && { gid: grp.gid }),
+    }));
+
+  return userGroups.length > 0 ? userGroups : undefined;
 };
 
 const getTimezone = (state: RootState) => {
