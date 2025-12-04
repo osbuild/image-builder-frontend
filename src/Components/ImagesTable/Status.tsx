@@ -90,7 +90,8 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
         />
       );
     }
-
+    case 'building':
+      return <ProgressStatus status={data} />;
     default:
       return (
         <Status
@@ -124,6 +125,8 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
         />
       );
     }
+    case 'building':
+      return <ProgressStatus status={data} />;
     default:
       return (
         <Status
@@ -149,6 +152,8 @@ export const AzureStatus = ({ status }: AzureStatusPropTypes) => {
         />
       );
     }
+    case 'building':
+      return <ProgressStatus status={status} />;
     default:
       return (
         <Status
@@ -230,6 +235,8 @@ export const ExpiringStatus = ({
         error={composeStatus?.image_status.error || ''}
       />
     );
+  } else if (status === 'building') {
+    return <ProgressStatus status={composeStatus} />;
   }
 
   return <Status icon={statuses[status].icon} text={statuses[status].text} />;
@@ -258,6 +265,8 @@ export const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
         error={composeStatus?.image_status.error || ''}
       />
     );
+  } else if (status === 'building') {
+    return <ProgressStatus status={composeStatus} />;
   }
   return <Status icon={statuses[status].icon} text={statuses[status].text} />;
 };
@@ -453,6 +462,36 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
           <div className='failure-button'>{text}</div>
         </Button>
       </Popover>
+    </Flex>
+  );
+};
+
+type ProgressStatusPropTypes = {
+  status: ComposeStatus;
+};
+
+export const ProgressStatus = ({ status }: ProgressStatusPropTypes) => {
+  const icon = statuses[status.image_status.status].icon;
+  const text = statuses[status.image_status.status].text;
+  const progress = status.image_status.progress;
+
+  let progressText = '';
+  let subprogressText = '';
+  if (progress) {
+    progressText = `step ${progress.done} of ${progress.total}`;
+    if (progress.subprogress) {
+      subprogressText = `(substep ${progress.subprogress.done} of ${progress.subprogress.total})`;
+    }
+  }
+
+  return (
+    <Flex className='pf-v6-u-align-items-baseline pf-m-nowrap'>
+      <div className='pf-v6-u-mr-sm'>{icon}</div>
+      <p>
+        {text}
+        {progressText && <br />}
+        {progressText} {subprogressText}
+      </p>
     </Flex>
   );
 };
