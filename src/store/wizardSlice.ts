@@ -87,6 +87,11 @@ type UserGroupPayload = {
   group: string;
 };
 
+type GroupPayload = {
+  index: number;
+  name: string;
+};
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -1175,7 +1180,16 @@ export const wizardSlice = createSlice({
       if (existingGrpIndex !== -1) {
         state.groups[existingGrpIndex] = action.payload;
       } else {
-        state.groups.push(action.payload);
+        // Generate a random gid if not provided (between 1000 and 65534, valid Linux GID range)
+        // Note: gid is optional, the system will auto-generate if not provided
+        const randomGid =
+          action.payload.gid ??
+          Math.floor(Math.random() * (65534 - 1000 + 1)) + 1000;
+        const newGroup = {
+          ...action.payload,
+          gid: randomGid,
+        };
+        state.groups.push(newGroup);
       }
     },
     removeGroup: (
@@ -1187,6 +1201,11 @@ export const wizardSlice = createSlice({
       );
       if (index !== -1) {
         state.groups.splice(index, 1);
+      }
+    },
+    setGroupNameByIndex: (state, action: PayloadAction<GroupPayload>) => {
+      if (state.groups[action.payload.index]) {
+        state.groups[action.payload.index].name = action.payload.name;
       }
     },
     addLanguage: (state, action: PayloadAction<string>) => {
@@ -1516,6 +1535,7 @@ export const {
   removeModule,
   addGroup,
   removeGroup,
+  setGroupNameByIndex,
   addLanguage,
   removeLanguage,
   clearLanguages,

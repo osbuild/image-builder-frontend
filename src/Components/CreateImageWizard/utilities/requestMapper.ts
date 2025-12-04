@@ -449,15 +449,25 @@ function commonRequestToState(
           summary: '',
           repository: '' as PackageRepository,
         })) || [],
-    groups:
-      request.customizations?.packages
+    groups: [
+      // Package groups from packages array (with @ prefix)
+      ...(request.customizations?.packages
         ?.filter((grp) => grp.startsWith('@'))
         .map((grp) => ({
           name: grp.substr(1),
           description: '',
           repository: '' as PackageRepository,
           package_list: [],
-        })) || [],
+        })) || []),
+      // Groups from groups field
+      ...(request.customizations?.groups?.map((grp) => ({
+        name: grp.name,
+        description: '',
+        repository: 'custom' as PackageRepository,
+        package_list: [],
+        gid: grp.gid,
+      })) || []),
+    ],
     enabled_modules: request.customizations.enabled_modules || [],
     locale: {
       languages: request.customizations.locale?.languages || [],
@@ -795,7 +805,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
     kernel: getKernel(state),
-    groups: undefined,
+    groups: getGroups(state),
     timezone: getTimezone(state),
     locale: getLocale(state),
     firewall: getFirewall(state),
@@ -951,14 +961,18 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
 
 const getPackages = (state: RootState) => {
   const packages = selectPackages(state);
-  const groups = selectGroups(state);
+  // Get system groups to exclude them from package groups
+  const systemGroups = getGroups(state);
+  const systemGroupNames = systemGroups?.map((grp) => grp.name) || [];
 
-  if (packages.length > 0 || groups.length > 0) {
-    return packages
-      .map((pkg) => pkg.name)
-      .concat(groups.map((grp) => '@' + grp.name));
-  }
-  return undefined;
+  // Package groups: all groups except system groups
+  const packageGroups = selectGroups(state)
+    .filter((grp) => !systemGroupNames.includes(grp.name))
+    .map((grp) => '@' + grp.name);
+
+  const allPackages = [...packages.map((pkg) => pkg.name), ...packageGroups];
+
+  return allPackages.length > 0 ? allPackages : undefined;
 };
 
 const getModules = (state: RootState) => {
@@ -968,6 +982,25 @@ const getModules = (state: RootState) => {
     return modules;
   }
   return undefined;
+};
+
+const getGroups = (state: RootState) => {
+  const groups = selectGroups(state)
+    .filter(
+      (grp) =>
+        grp.repository === 'custom' &&
+        (!grp.description || grp.description.length === 0) &&
+        (!grp.package_list || grp.package_list.length === 0),
+    )
+    .map((grp) => {
+      const result: { name: string; gid?: number } = { name: grp.name };
+      if (grp.gid !== undefined && grp.gid !== null) {
+        result.gid = grp.gid;
+      }
+      return result;
+    });
+
+  return groups.length > 0 ? groups : undefined;
 };
 
 const getTimezone = (state: RootState) => {
