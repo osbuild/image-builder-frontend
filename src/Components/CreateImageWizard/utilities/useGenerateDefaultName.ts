@@ -11,7 +11,7 @@ export const generateDefaultName = (
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
 
-  const dateTimeString = `${month}${day}${year}-${hours}${minutes}`;
+  const dateTimeString = `${year}${month}${day}-${hours}${minutes}`;
 
   return `${distribution}-${arch}-${dateTimeString}`;
 };
