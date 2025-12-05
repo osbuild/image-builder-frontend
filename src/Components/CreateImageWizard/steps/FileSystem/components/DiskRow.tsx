@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { Alert, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
+import DiskMountpoint from './DiskMountpoint';
 import MinimumSize from './MinimumSize';
-import MountpointPrefix from './MountpointPrefix';
-import MountpointSuffix from './MountpointSuffix';
 import PartitionName from './PartitionName';
 import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
@@ -16,8 +15,7 @@ import {
   removeDiskPartition,
   selectDiskPartitions,
 } from '../../../../../store/wizardSlice';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { DiskPartition, FilesystemPartition } from '../fscTypes';
+import { DiskPartition } from '../fscTypes';
 
 type DiskRowPropTypes = {
   partition: DiskPartition;
@@ -33,7 +31,6 @@ const DiskRow = ({
   onDrop,
 }: DiskRowPropTypes) => {
   const dispatch = useAppDispatch();
-  const stepValidation = useFilesystemValidation();
   const diskPartitions = useAppSelector(selectDiskPartitions);
 
   const customization = 'disk';
@@ -65,34 +62,8 @@ const DiskRow = ({
         </Td>
       )}
       <Td width={20}>
-        {partition.mountpoint && (
-          <MountpointPrefix
-            partition={partition as FilesystemPartition}
-            customization={customization}
-          />
-        )}
-        {stepValidation.errors[`mountpoint-${partition.id}`] && (
-          <Alert
-            variant='danger'
-            isInline
-            isPlain
-            title={stepValidation.errors[`mountpoint-${partition.id}`]}
-          />
-        )}
+        <DiskMountpoint partition={partition} customization={customization} />
       </Td>
-      {partition.mountpoint &&
-      partition.mountpoint !== '/' &&
-      !partition.mountpoint.startsWith('/boot') &&
-      !partition.mountpoint.startsWith('/usr') ? (
-        <Td width={20}>
-          <MountpointSuffix
-            partition={partition as FilesystemPartition}
-            customization={customization}
-          />
-        </Td>
-      ) : (
-        <Td width={20} />
-      )}
       <Td width={20}>
         <PartitionType partition={partition} customization={customization} />
       </Td>
