@@ -18,6 +18,7 @@ type ValidatedTextInputPropTypes = TextInputProps & {
   validator: (value: string | undefined) => boolean;
   value: string;
   placeholder?: string;
+  isDisabled?: boolean;
 };
 
 type ValidationInputProp = TextInputProps &
@@ -36,6 +37,7 @@ type ValidationInputProp = TextInputProps &
     isRequired?: boolean;
     warning?: string;
     forceErrorDisplay?: boolean;
+    isDisabled?: boolean;
   };
 
 type ErrorMessageProps = {
@@ -54,6 +56,7 @@ export const ValidatedInputAndTextArea = ({
   ariaLabel,
   inputType = 'textInput',
   isRequired,
+  isDisabled = false,
   warning = undefined,
   forceErrorDisplay = false,
 }: ValidationInputProp) => {
@@ -78,7 +81,10 @@ export const ValidatedInputAndTextArea = ({
     if (errorMessage) {
       setIsPristine(false);
     }
-  }, [value, errorMessage]);
+    if (isDisabled) {
+      setIsPristine(true);
+    }
+  }, [value, errorMessage, isDisabled]);
 
   return (
     <>
@@ -91,6 +97,7 @@ export const ValidatedInputAndTextArea = ({
           placeholder={placeholder}
           aria-label={ariaLabel}
           data-testid={dataTestId}
+          isDisabled={isDisabled}
         />
       ) : (
         <TextInput
@@ -101,6 +108,7 @@ export const ValidatedInputAndTextArea = ({
           placeholder={placeholder || ''}
           aria-label={ariaLabel}
           data-testid={dataTestId}
+          isDisabled={isDisabled}
         />
       )}
       {warning !== undefined && warning !== '' && (
