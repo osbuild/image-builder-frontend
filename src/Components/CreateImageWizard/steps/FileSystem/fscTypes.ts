@@ -46,3 +46,12 @@ export type DiskPartition =
   | PlainPartitionWithBase
   | VolumeGroupWithExtendedLV
   | (BtrfsVolume & DiskPartitionBase);
+
+export type MountpointPolicyType = {
+  Deny?: boolean;
+  Exact?: boolean;
+};
+
+export type MountpointPoliciesType = {
+  [mountpoint: string]: MountpointPolicyType;
+};

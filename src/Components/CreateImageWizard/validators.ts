@@ -1,3 +1,4 @@
+import { MountpointPolicies } from './steps/FileSystem/fscPolicies';
 import {
   DiskPartition,
   FilesystemPartition,
@@ -171,6 +172,50 @@ export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
   }
 
   return duplicates;
+};
+
+export const isMountpointValid = (partition: DiskPartition) => {
+  if ('mountpoint' in partition && partition.mountpoint) {
+    for (const [mountpointPath, policy] of Object.entries(MountpointPolicies)) {
+      if (policy.Exact && partition.mountpoint.startsWith(mountpointPath)) {
+        return partition.mountpoint === mountpointPath;
+      }
+
+      if (
+        policy.Deny &&
+        partition.mountpoint.startsWith(`${mountpointPath}/`)
+      ) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
+export const getInvalidMountpoints = (partitions: DiskPartition[]) => {
+  const invalidMountpoints = [];
+
+  for (const partition of partitions) {
+    if (
+      'mountpoint' in partition &&
+      partition.mountpoint &&
+      !isMountpointValid(partition)
+    ) {
+      invalidMountpoints.push(partition.mountpoint);
+    }
+    if ('type' in partition && partition.type === 'lvm') {
+      for (const lv of partition.logical_volumes) {
+        if ('mountpoint' in lv && lv.mountpoint) {
+          if (!isMountpointValid(lv)) {
+            invalidMountpoints.push(lv.mountpoint);
+          }
+        }
+      }
+    }
+  }
+
+  return invalidMountpoints;
 };
 
 export const isNtpServerValid = (ntpServer: string) => {

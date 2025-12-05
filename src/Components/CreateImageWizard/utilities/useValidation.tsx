@@ -53,6 +53,7 @@ import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
   getDuplicateNames,
+  getInvalidMountpoints,
   isAzureResourceGroupValid,
   isAzureSubscriptionIdValid,
   isAzureTenantGUIDValid,
@@ -339,6 +340,7 @@ export function useFilesystemValidation(): StepValidation {
 
   const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
   const diskMountpointDuplicates = getDuplicateMountPoints(diskPartitions);
+  const diskInvalidMountpoints = getInvalidMountpoints(diskPartitions);
   const diskNameDuplicates = volumeGroups.flatMap((vg) =>
     getDuplicateNames(vg),
   );
@@ -351,13 +353,21 @@ export function useFilesystemValidation(): StepValidation {
       errors[`min-size-${partition.id}`] = 'Must be larger than 0';
       disabledNext = true;
     }
-    if (
-      'mountpoint' in partition &&
-      partition.mountpoint &&
-      diskMountpointDuplicates.includes(partition.mountpoint)
-    ) {
-      errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
-      disabledNext = true;
+    if ('mountpoint' in partition) {
+      if (!partition.mountpoint) {
+        errors[`mountpoint-${partition.id}`] = 'Undefined mount point';
+        disabledNext = true;
+      }
+      if (partition.mountpoint) {
+        if (diskMountpointDuplicates.includes(partition.mountpoint)) {
+          errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
+          disabledNext = true;
+        }
+        if (diskInvalidMountpoints.includes(partition.mountpoint)) {
+          errors[`mountpoint-${partition.id}`] = 'Invalid mount point';
+          disabledNext = true;
+        }
+      }
     }
   }
 
@@ -397,13 +407,21 @@ export function useFilesystemValidation(): StepValidation {
           errors[`min-size-${lv.id}`] = 'Must be larger than 0';
           disabledNext = true;
         }
-        if (
-          'mountpoint' in lv &&
-          lv.mountpoint &&
-          diskMountpointDuplicates.includes(lv.mountpoint)
-        ) {
-          errors[`mountpoint-${lv.id}`] = 'Duplicate mount points';
-          disabledNext = true;
+        if ('mountpoint' in lv) {
+          if (!lv.mountpoint && lv.fs_type !== 'swap') {
+            errors[`mountpoint-${lv.id}`] = 'Undefined mount point';
+            disabledNext = true;
+          }
+          if (lv.mountpoint) {
+            if (diskMountpointDuplicates.includes(lv.mountpoint)) {
+              errors[`mountpoint-${lv.id}`] = 'Duplicate mount points';
+              disabledNext = true;
+            }
+            if (diskInvalidMountpoints.includes(lv.mountpoint)) {
+              errors[`mountpoint-${lv.id}`] = 'Invalid mount point';
+              disabledNext = true;
+            }
+          }
         }
       }
     }
