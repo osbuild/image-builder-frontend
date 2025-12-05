@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   Alert,
@@ -22,13 +22,20 @@ import {
   selectFilesystemPartitions,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
+import FilesystemSizeAlert from '../../../FilesystemSizeAlert';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
+import { calculateTotalFilesystemSize } from '../fscUtilities';
 
 const FileSystemConfiguration = () => {
   const environments = useAppSelector(selectImageTypes);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
   const dispatch = useAppDispatch();
+
+  const totalSizeBytes = useMemo(
+    () => calculateTotalFilesystemSize(filesystemPartitions),
+    [filesystemPartitions],
+  );
 
   const handleAddPartition = () => {
     const id = uuidv4();
@@ -94,6 +101,10 @@ const FileSystemConfiguration = () => {
           )} images`}
         />
       )}
+      <FilesystemSizeAlert
+        totalSizeBytes={totalSizeBytes}
+        imageTypes={environments}
+      />
       <FileSystemTable partitions={filesystemPartitions} mode='filesystem' />
       <Content>
         <Button

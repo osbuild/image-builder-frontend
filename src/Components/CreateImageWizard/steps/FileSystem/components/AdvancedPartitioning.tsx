@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   Button,
@@ -20,12 +20,21 @@ import {
   changeDiskMinsize,
   selectDiskMinsize,
   selectDiskPartitions,
+  selectImageTypes,
 } from '../../../../../store/wizardSlice';
+import FilesystemSizeAlert from '../../../FilesystemSizeAlert';
+import { calculateTotalDiskSize } from '../fscUtilities';
 
 const AdvancedPartitioning = () => {
   const dispatch = useAppDispatch();
   const minsize = useAppSelector(selectDiskMinsize);
   const diskPartitions = useAppSelector(selectDiskPartitions);
+  const imageTypes = useAppSelector(selectImageTypes);
+
+  const totalSizeBytes = useMemo(
+    () => calculateTotalDiskSize(diskPartitions, minsize),
+    [diskPartitions, minsize],
+  );
 
   const handleAddPartition = () => {
     const id = uuidv4();
@@ -93,6 +102,10 @@ const AdvancedPartitioning = () => {
           </Button>
         </Content>
       </Content>
+      <FilesystemSizeAlert
+        totalSizeBytes={totalSizeBytes}
+        imageTypes={imageTypes}
+      />
       <FormGroup label='Minimum disk size'>
         <TextInput
           aria-label='Minimum disk size input'
