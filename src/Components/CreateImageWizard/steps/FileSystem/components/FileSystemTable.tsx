@@ -184,7 +184,7 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
           <Th aria-label='Drag mount point' />
           {mode === 'disk-lvm' && <Th>Name</Th>}
           <Th>Mount point</Th>
-          <Th aria-label='Suffix'>Suffix</Th>
+          {mode === 'filesystem' && <Th aria-label='Suffix'>Suffix</Th>}
           <Th>Type</Th>
           <Th>
             Minimum size <MinimumSizePopover />
