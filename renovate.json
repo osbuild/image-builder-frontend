@@ -14,5 +14,8 @@
         "matchManagers": ["npm"],
         "enabled": false
     }
-    ]
+    ],
+    "lockFileMaintenance": {
+        "enabled": false
+    }
 }
