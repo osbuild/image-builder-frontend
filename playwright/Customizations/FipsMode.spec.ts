@@ -56,7 +56,6 @@ test('FIPS switch toggles and persists through save', async ({
       .getByRole('option', {
         name: /Red Hat STIG for Red Hat Enterprise Linux 10/i,
       })
-      .nth(1)
       .click();
 
     const fipsInput = frame.locator('#fips-enabled-switch');
