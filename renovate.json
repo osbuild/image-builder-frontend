@@ -6,6 +6,13 @@
         "on Monday after 3am and before 10am"
     ],
     "ignorePaths": [
-      ".pre-commit-config.yaml"
+        ".pre-commit-config.yaml"
+    ],
+    "packageRules": [
+    {
+        "description": "Disable all npm dependency updates",
+        "matchManagers": ["npm"],
+        "enabled": false
+    }
     ]
 }
