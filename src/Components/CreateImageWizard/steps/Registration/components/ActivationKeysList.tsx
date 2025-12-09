@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Alert,
   Button,
   Flex,
   FlexItem,
@@ -46,8 +45,9 @@ import { getErrorMessage } from '../../../../../Utilities/getErrorMessage';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
+import { RegistrationProps } from '../registrationTypes';
 
-const ActivationKeysList = () => {
+const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const addNotification = useAddNotification();
 
@@ -68,6 +68,10 @@ const ActivationKeysList = () => {
     isError: isErrorActivationKeys,
     refetch,
   } = useListActivationKeysQuery();
+
+  useEffect(() => {
+    onErrorChange(isErrorActivationKeys);
+  }, [isErrorActivationKeys, onErrorChange]);
 
   const [createActivationKey, { isLoading: isLoadingActivationKey }] =
     useCreateActivationKeysMutation();
@@ -323,16 +327,6 @@ const ActivationKeysList = () => {
           </HelperText>
         </FormHelperText>
       </FormGroup>
-      {isErrorActivationKeys && (
-        <Alert
-          title='Activation keys unavailable'
-          variant='danger'
-          isPlain
-          isInline
-        >
-          Activation keys cannot be reached, try again later.
-        </Alert>
-      )}
     </>
   );
 };

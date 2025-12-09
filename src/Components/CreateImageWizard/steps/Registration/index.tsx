@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
+  Alert,
   ClipboardCopy,
   Content,
   Form,
@@ -19,6 +20,7 @@ import { useGetUser } from '../../../../Hooks';
 const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
+  const [showAlert, setShowAlert] = useState(false);
 
   return (
     <Form>
@@ -51,8 +53,13 @@ const RegistrationStep = () => {
             </FormGroup>
           )}
         </Content>
-        <Registration />
+        <Registration onErrorChange={setShowAlert} />
       </Content>
+      {showAlert && (
+        <Alert title='Activation keys unavailable' variant='danger' isInline>
+          Activation keys cannot be reached, try again later.
+        </Alert>
+      )}
     </Form>
   );
 };
