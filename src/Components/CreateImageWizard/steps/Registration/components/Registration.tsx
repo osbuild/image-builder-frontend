@@ -11,8 +11,9 @@ import {
   changeRegistrationType,
   selectRegistrationType,
 } from '../../../../../store/wizardSlice';
+import { RegistrationProps } from '../registrationTypes';
 
-const Registration = () => {
+const Registration = ({ onErrorChange }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
 
@@ -74,7 +75,7 @@ const Registration = () => {
               {!process.env.IS_ON_PREMISE &&
                 registrationType.startsWith('register-now') && (
                   <Content className='pf-v6-u-pb-sm'>
-                    <ActivationKeysList />
+                    <ActivationKeysList onErrorChange={onErrorChange} />
                   </Content>
                 )}
               {process.env.IS_ON_PREMISE &&
@@ -93,6 +94,7 @@ const Registration = () => {
           isChecked={registrationType === 'register-later'}
           onChange={() => {
             dispatch(changeRegistrationType('register-later'));
+            onErrorChange(false);
           }}
           id='register-later'
           name='register-later'
@@ -104,6 +106,7 @@ const Registration = () => {
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));
+            onErrorChange(false);
           }}
           id='register-satellite'
           name='register-satellite'
