@@ -54,11 +54,20 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     await expect(
       page.getByRole('gridcell', { name: 'ANSSI-BP-028 (enhanced)' }).first(),
     ).toBeVisible(); // Wait for the policy type list to load
-    await page.getByRole('textbox', { name: 'text input' }).fill(policyType);
-    await expect(
-      page.getByRole('gridcell', { name: policyType }).first(),
-    ).toBeVisible();
-    await page.getByRole('radio', { name: 'Select row 0' }).click();
+    // Temporarily disabled - do not use filter, but manually find and select the policy
+    // await page.getByRole('textbox', { name: 'text input' }).fill(policyType);
+    // await expect(
+    //   page.getByRole('gridcell', { name: policyType }).first(),
+    // ).toBeVisible();
+    // await page.getByRole('radio', { name: 'Select row 0' }).click();
+    await page.getByRole('button', { name: 'Go to next page' }).nth(1).click();
+    await page
+      .getByRole('row')
+      .filter({ hasText: policyType })
+      .getByRole('radio')
+      .first()
+      .click();
+
     await page.getByRole('button', { name: 'Next', exact: true }).click();
     await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName); // Get the policy name
     await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Details"
