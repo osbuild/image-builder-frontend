@@ -101,6 +101,7 @@ import {
   selectPackages,
   selectPartitioningMode,
   selectPayloadRepositories,
+  selectProxy,
   selectRecommendedRepositories,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -503,6 +504,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
+      proxy: request.customizations.subscription?.insights_client_proxy,
     },
     registration: {
       registrationType: getRegistrationType(request),
@@ -1006,6 +1008,7 @@ const getSubscription = (
     organization: Number(orgID),
     'server-url': selectServerUrl(state),
     'base-url': selectBaseUrl(state),
+    insights_client_proxy: selectProxy(state),
   };
 
   switch (registrationType) {

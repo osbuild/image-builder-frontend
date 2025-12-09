@@ -91,6 +91,7 @@ export type wizardState = {
   env: {
     serverUrl: string;
     baseUrl: string;
+    proxy: string | undefined;
   };
   blueprintId?: string;
   wizardMode: WizardModeOptions;
@@ -199,6 +200,7 @@ export const initialState: wizardState = {
   env: {
     serverUrl: '',
     baseUrl: '',
+    proxy: undefined,
   },
   wizardMode: 'create',
   architecture: X86_64,
@@ -320,6 +322,10 @@ export const selectBlueprintId = (state: RootState) => {
 
 export const selectBaseUrl = (state: RootState) => {
   return state.wizard.env.baseUrl;
+};
+
+export const selectProxy = (state: RootState) => {
+  return state.wizard.env.proxy;
 };
 
 export const selectArchitecture = (state: RootState) => {
@@ -574,6 +580,9 @@ export const wizardSlice = createSlice({
     },
     changeBaseUrl: (state, action: PayloadAction<string>) => {
       state.env.baseUrl = action.payload;
+    },
+    changeProxy: (state, action: PayloadAction<string | undefined>) => {
+      state.env.proxy = action.payload;
     },
     changeArchitecture: (
       state,
@@ -1446,6 +1455,7 @@ export const {
   initializeWizard,
   changeServerUrl,
   changeBaseUrl,
+  changeProxy,
   changeArchitecture,
   changeDistribution,
   addImageType,

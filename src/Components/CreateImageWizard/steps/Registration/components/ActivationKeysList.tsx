@@ -38,6 +38,7 @@ import {
 import {
   changeActivationKey,
   changeBaseUrl,
+  changeProxy,
   changeServerUrl,
   selectActivationKey,
   selectRegistrationType,
@@ -80,9 +81,11 @@ const ActivationKeysList = () => {
     if (isProd()) {
       dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
       dispatch(changeBaseUrl(CDN_PROD_URL));
+      dispatch(changeProxy(undefined));
     } else {
       dispatch(changeServerUrl('subscription.rhsm.stage.redhat.com'));
       dispatch(changeBaseUrl(CDN_STAGE_URL));
+      dispatch(changeProxy('squid.corp.redhat.com:3128'));
     }
   }, [dispatch, isProd]);
 
