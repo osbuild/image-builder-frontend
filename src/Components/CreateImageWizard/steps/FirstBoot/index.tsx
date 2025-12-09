@@ -18,6 +18,7 @@ import {
   addEnabledService,
   removeEnabledService,
   selectFirstBootScript,
+  selectRegistrationType,
   setFirstBootScript,
 } from '../../../../store/wizardSlice';
 import { useFirstBootValidation } from '../../utilities/useValidation';
@@ -48,6 +49,7 @@ const detectScriptType = (scriptString: string): Language => {
 const FirstBootStep = () => {
   const dispatch = useAppDispatch();
   const selectedScript = useAppSelector(selectFirstBootScript);
+  const registrationType = useAppSelector(selectRegistrationType);
   const language = detectScriptType(selectedScript);
   const { errors } = useFirstBootValidation();
 
@@ -59,7 +61,11 @@ const FirstBootStep = () => {
       <Content>
         Configure the image with a custom script that will execute on its first
         boot.
+        {registrationType !== 'register-later' && (
+          <> First boot script will run after registration is done.</>
+        )}
       </Content>
+
       <Alert
         variant='warning'
         isExpandable
