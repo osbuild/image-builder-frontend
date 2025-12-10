@@ -529,10 +529,17 @@ const Packages = () => {
                   icon={SearchIcon}
                   variant={EmptyStateVariant.sm}
                 >
-                  <EmptyStateBody>
-                    Adjust your search and try again, or search in other
-                    repositories (your repositories and popular repositories).
-                  </EmptyStateBody>
+                  {!process.env.IS_ON_PREMISE && (
+                    <EmptyStateBody>
+                      Adjust your search and try again, or search in other
+                      repositories (your repositories and popular repositories).
+                    </EmptyStateBody>
+                  )}
+                  {process.env.IS_ON_PREMISE && (
+                    <EmptyStateBody>
+                      Adjust your search and try again.
+                    </EmptyStateBody>
+                  )}
                   <EmptyStateFooter>
                     <EmptyStateActions>
                       {!process.env.IS_ON_PREMISE && (
@@ -544,20 +551,22 @@ const Packages = () => {
                         </Button>
                       )}
                     </EmptyStateActions>
-                    <EmptyStateActions>
-                      <Button
-                        className='pf-v6-u-pt-md'
-                        variant='link'
-                        isInline
-                        component='a'
-                        target='_blank'
-                        iconPosition='right'
-                        icon={<ExternalLinkAltIcon />}
-                        href={CONTENT_URL}
-                      >
-                        Manage your repositories and popular repositories
-                      </Button>
-                    </EmptyStateActions>
+                    {!process.env.IS_ON_PREMISE && (
+                      <EmptyStateActions>
+                        <Button
+                          className='pf-v6-u-pt-md'
+                          variant='link'
+                          isInline
+                          component='a'
+                          target='_blank'
+                          iconPosition='right'
+                          icon={<ExternalLinkAltIcon />}
+                          href={CONTENT_URL}
+                        >
+                          Manage your repositories and popular repositories
+                        </Button>
+                      </EmptyStateActions>
+                    )}
                   </EmptyStateFooter>
                 </EmptyState>
               </Bullseye>
