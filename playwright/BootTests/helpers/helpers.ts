@@ -53,7 +53,12 @@ export const deleteCompliancePolicy = async (
         return;
       }
 
-      await page.getByRole('menuitem', { name: 'Delete policy' }).click();
+      // Wait for the menu to open before clicking the menuitem
+      const deleteMenuItem = page.getByRole('menuitem', {
+        name: 'Delete policy',
+      });
+      await expect(deleteMenuItem).toBeVisible({ timeout: 10000 });
+      await deleteMenuItem.click();
       await page
         .getByRole('checkbox', { name: 'I understand this will delete' })
         .click();
@@ -92,7 +97,10 @@ export const deleteRepository = async (
       }
 
       await page.getByRole('button', { name: 'Kebab toggle' }).click();
-      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      // Wait for the menu to open before clicking the menuitem
+      const deleteMenuItem = page.getByRole('menuitem', { name: 'Delete' });
+      await expect(deleteMenuItem).toBeVisible({ timeout: 10000 });
+      await deleteMenuItem.click();
       // Wait until the repo is loaded in the delete modal
       await expect(page.getByRole('gridcell').first()).not.toBeEmpty();
       await page.getByRole('button', { name: 'Delete' }).click();
