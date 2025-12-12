@@ -20,6 +20,7 @@ import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useGetUser,
+  useIsOnPremise,
 } from '../../../../../Hooks';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
 import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
@@ -46,6 +47,7 @@ export const CreateSaveAndBuildBtn = ({
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const packages = useAppSelector(selectPackages);
 
@@ -58,7 +60,7 @@ export const CreateSaveAndBuildBtn = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE && requestBody) {
+    if (!isOnPremise && requestBody) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
@@ -103,6 +105,7 @@ export const CreateSaveButton = ({
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const packages = useAppSelector(selectPackages);
 
@@ -155,7 +158,7 @@ export const CreateSaveButton = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE && requestBody) {
+    if (!isOnPremise && requestBody) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,

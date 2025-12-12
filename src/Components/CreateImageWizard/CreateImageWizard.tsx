@@ -68,7 +68,7 @@ import {
   RHEL_8,
   RHEL_9,
 } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -113,6 +113,7 @@ export const CustomWizardFooter = ({
   const { goToNextStep, goToPrevStep, goToStepById, close, activeStep } =
     useWizardContext();
   const { analytics } = useChrome();
+  const isOnPremise = useIsOnPremise();
   const reviewAndFinishBtnID = 'wizard-review-and-finish-btn';
   const cancelBtnID = 'wizard-cancel-btn';
   return (
@@ -140,7 +141,7 @@ export const CustomWizardFooter = ({
           <Button
             variant='tertiary'
             onClick={() => {
-              if (!process.env.IS_ON_PREMISE) {
+              if (!isOnPremise) {
                 analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                   module: AMPLITUDE_MODULE_NAME,
                   button_id: reviewAndFinishBtnID,
@@ -157,7 +158,7 @@ export const CustomWizardFooter = ({
         <Button
           variant='link'
           onClick={() => {
-            if (!process.env.IS_ON_PREMISE) {
+            if (!isOnPremise) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                 module: AMPLITUDE_MODULE_NAME,
                 button_id: cancelBtnID,
@@ -181,6 +182,7 @@ type CreateImageWizardProps = {
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -220,11 +222,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       dispatch(changeArchitecture(arch));
     };
 
-    if (process.env.IS_ON_PREMISE) {
+    if (isOnPremise) {
       dispatch(changeAwsShareMethod('manual'));
     }
 
-    if (process.env.IS_ON_PREMISE && !isEdit) {
+    if (isOnPremise && !isEdit) {
       if (!searchParams.get('release')) {
         initializeHostDistro();
       }
@@ -344,7 +346,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     useEffect(() => {
       const currentStepId = activeStep.id as string | undefined;
       if (
-        !process.env.IS_ON_PREMISE &&
+        !isOnPremise &&
         currentStepId &&
         lastTrackedStepIdRef.current !== currentStepId
       ) {
@@ -429,7 +431,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                     disableNext={
                       // we don't need the account id for
                       // on-prem aws.
-                      process.env.IS_ON_PREMISE
+                      isOnPremise
                         ? false
                         : awsShareMethod === 'manual'
                           ? !isAwsAccountIdValid(awsAccountId)
@@ -554,7 +556,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-repository-snapshot'
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={isOnPremise}
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
@@ -569,7 +571,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-custom-repositories'
                 key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={isOnPremise}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
@@ -717,7 +719,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-first-boot'
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={isOnPremise}
                 footer={
                   <CustomWizardFooter
                     disableNext={firstBootValidation.disabledNext}

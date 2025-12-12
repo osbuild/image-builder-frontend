@@ -14,12 +14,14 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppSelector } from '../../../../../store/hooks';
 import { useShowActivationKeyQuery } from '../../../../../store/rhsmApi';
 import { selectActivationKey } from '../../../../../store/wizardSlice';
 
 const ActivationKeyInformation = (): JSX.Element => {
   const activationKey = useAppSelector(selectActivationKey);
+  const isOnPremise = useIsOnPremise();
 
   const {
     data: activationKeyInfo,
@@ -29,11 +31,11 @@ const ActivationKeyInformation = (): JSX.Element => {
   } = useShowActivationKeyQuery(
     { name: activationKey! },
     {
-      skip: !activationKey || !!process.env.IS_ON_PREMISE,
+      skip: !activationKey || isOnPremise,
     },
   );
 
-  if (process.env.IS_ON_PREMISE) {
+  if (isOnPremise) {
     return <Content component={ContentVariants.dd}>{activationKey}</Content>;
   }
 

@@ -17,7 +17,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import ClonesTable from './ClonesTable';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { extractProvisioningList } from '../../store/helpers';
 import {
@@ -114,6 +114,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   if (!isAwsUploadRequestOptions(options)) {
     throw TypeError(
@@ -135,7 +136,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
               clickTip='Copied'
               variant='inline-compact'
               onClick={() => {
-                if (!process.env.IS_ON_PREMISE) {
+                if (!isOnPremise) {
                   analytics.track(`${AMPLITUDE_MODULE_NAME} - Copy UUID`, {
                     module: AMPLITUDE_MODULE_NAME,
                     link_name: compose.id,
@@ -177,7 +178,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
                 // https://docs.aws.amazon.com/signin/latest/userguide/sign-in-urls-defined.html
                 href={`https://${options.share_with_accounts[0]}.signin.aws.amazon.com/console/`}
                 onClick={() => {
-                  if (!process.env.IS_ON_PREMISE) {
+                  if (!isOnPremise) {
                     analytics.track(`${AMPLITUDE_MODULE_NAME} - Link Clicked`, {
                       module: AMPLITUDE_MODULE_NAME,
 

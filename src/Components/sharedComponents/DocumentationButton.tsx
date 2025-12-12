@@ -5,11 +5,16 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import { useGetDocumentationUrl, useGetUser } from '../../Hooks';
+import {
+  useGetDocumentationUrl,
+  useGetUser,
+  useIsOnPremise,
+} from '../../Hooks';
 
 const DocumentationButton = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   const documentationURL = useGetDocumentationUrl();
 
   return (
@@ -21,7 +26,7 @@ const DocumentationButton = () => {
       iconPosition='right'
       isInline
       onClick={() => {
-        if (!process.env.IS_ON_PREMISE) {
+        if (!isOnPremise) {
           analytics.track(`${AMPLITUDE_MODULE_NAME} - Outside link clicked`, {
             account_id: userData?.identity.internal?.account_id || 'Not found',
             step_id: 'step-image-output',

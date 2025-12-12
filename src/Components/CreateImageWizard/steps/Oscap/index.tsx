@@ -34,7 +34,7 @@ import {
   FIRST_BOOT_SERVICE,
   OSCAP_URL,
 } from '../../../../constants';
-import { useGetUser } from '../../../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../../../Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
@@ -128,7 +128,8 @@ const OscapContent = () => {
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  if (!process.env.IS_ON_PREMISE) {
+  const isOnPremise = useIsOnPremise();
+  if (!isOnPremise) {
     if (complianceEnabled) {
       analytics.screen('ib-createimagewizard-step-security-compliance');
     } else {
@@ -303,7 +304,7 @@ const OscapContent = () => {
               <AlertActionLink
                 component='a'
                 onClick={() => {
-                  if (!process.env.IS_ON_PREMISE) {
+                  if (!isOnPremise) {
                     analytics.track(
                       `${AMPLITUDE_MODULE_NAME} - Outside link clicked`,
                       {

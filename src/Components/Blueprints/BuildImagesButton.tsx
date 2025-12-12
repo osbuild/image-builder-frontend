@@ -22,6 +22,7 @@ import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useGetUser,
+  useIsOnPremise,
 } from '../../Hooks';
 import { useGetBlueprintQuery } from '../../store/backendApi';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
@@ -40,6 +41,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
     useComposeBlueprintMutation();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {
@@ -51,7 +53,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
           ),
         },
       });
-      if (!process.env.IS_ON_PREMISE) {
+      if (!isOnPremise) {
         analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
           module: AMPLITUDE_MODULE_NAME,
           trigger: 'synchronize images',
