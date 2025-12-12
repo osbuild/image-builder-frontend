@@ -109,8 +109,16 @@ export const exportedLocaleBP = (blueprintName: string): string => {
 timezone = "Etc/UTC"
 
 [customizations.locale]
-languages = [ "C.UTF-8", "fy_DE.UTF-8", "aa_DJ.UTF-8", "aa_ER.UTF-8" ]
-keyboard = "ANSI-dvorak"`;
+languages = [ "C.UTF-8", "ru_RU.UTF-8", "en_US.UTF-8", "fy_DE.UTF-8", "en_GB.UTF-8" ]
+keyboard = "ANSI-dvorak"
+
+[[packages]]
+name = "langpacks-en"
+version = "*"
+
+[[packages]]
+name = "langpacks-ru"
+version = "*"`;
 };
 
 export const exportedSystemdBP = (blueprintName: string): string => {
