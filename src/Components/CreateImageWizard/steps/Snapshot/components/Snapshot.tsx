@@ -64,7 +64,7 @@ export default function Snapshot() {
       <FormGroup>
         <Radio
           id='use latest snapshot radio'
-          name='use-latest-snapshot'
+          name='snapshot-type'
           label='Disable repeatable build'
           description='Use the newest repository content available when building this image'
           isChecked={selectedOption === 'latest'}
@@ -72,7 +72,7 @@ export default function Snapshot() {
         />
         <Radio
           id='use snapshot date radio'
-          name='use-snapshot-date'
+          name='snapshot-type'
           label='Enable repeatable build'
           description='Build this image with the repository content of a selected date'
           isChecked={selectedOption === 'snapshotDate'}
@@ -82,7 +82,7 @@ export default function Snapshot() {
           <Radio
             id='use content template radio'
             ouiaId='use-content-template-radio'
-            name='use-content-template'
+            name='snapshot-type'
             label='Use a content template'
             description='Select a content template and build this image with repository snapshots included in that template'
             isChecked={selectedOption === 'template'}

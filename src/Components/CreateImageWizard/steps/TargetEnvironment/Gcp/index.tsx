@@ -52,7 +52,7 @@ const Gcp = () => {
         <Radio
           id='share-with-google'
           label='Share image with a Google account'
-          name='radio-1'
+          name='gcp-share-method-type'
           description={
             <Content component={ContentVariants.small}>
               Your image will be uploaded to GCP and shared with the account you
@@ -70,7 +70,7 @@ const Gcp = () => {
         <Radio
           id='share-with-insights'
           label={`Share image with Red Hat ${lightspeedEnabled ? 'Lightspeed' : 'Insights'} only`}
-          name='radio-2'
+          name='gcp-share-method-type'
           description={
             <Content component={ContentVariants.small}>
               Your image will be uploaded to GCP and shared with Red Hat{' '}
@@ -91,7 +91,7 @@ const Gcp = () => {
             <Radio
               id='google-account'
               label='Google account'
-              name='radio-3'
+              name='google-account-type'
               isChecked={accountType === 'user'}
               onChange={() => {
                 dispatch(changeGcpAccountType('user'));
@@ -100,7 +100,7 @@ const Gcp = () => {
             <Radio
               id='service-account'
               label='Service account'
-              name='radio-4'
+              name='google-account-type'
               isChecked={accountType === 'serviceAccount'}
               onChange={() => {
                 dispatch(changeGcpAccountType('serviceAccount'));
@@ -109,7 +109,7 @@ const Gcp = () => {
             <Radio
               id='google-group'
               label='Google group'
-              name='radio-5'
+              name='google-account-type'
               isChecked={accountType === 'group'}
               onChange={() => {
                 dispatch(changeGcpAccountType('group'));
@@ -118,7 +118,7 @@ const Gcp = () => {
             <Radio
               id='google-domain'
               label='Google Workspace domain'
-              name='radio-6'
+              name='google-account-type'
               isChecked={accountType === 'domain'}
               onChange={() => {
                 dispatch(changeGcpAccountType('domain'));
