@@ -13,7 +13,10 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 
-import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
+import {
+  useFixupBPWithNotification as useFixupBlueprintMutation,
+  useIsOnPremise,
+} from '../../Hooks';
 import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
@@ -58,6 +61,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   setPage,
   onPerPageSelect,
 }: imagesTableToolbarProps) => {
+  const isOnPremise = useIsOnPremise();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
   const [isLintExp, setIsLintExp] = React.useState(true);
@@ -225,7 +229,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             </ExpandableSection>
           </Alert>
         )}
-        {!process.env.IS_ON_PREMISE && itemCount > 0 && isBlueprintOutSync && (
+        {!isOnPremise && itemCount > 0 && isBlueprintOutSync && (
           <Alert
             style={{
               margin:

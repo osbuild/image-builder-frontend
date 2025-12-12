@@ -8,11 +8,12 @@ import {
   AMPLITUDE_MODULE_NAME,
   FILE_SYSTEM_CUSTOMIZATION_URL,
 } from '../../../../../constants';
-import { useGetUser } from '../../../../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../../../../Hooks';
 
 const FileSystemAutomaticPartition = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   return (
     <Content>
       <Content component={ContentVariants.h3}>Automatic partitioning</Content>
@@ -31,7 +32,7 @@ const FileSystemAutomaticPartition = () => {
           href={FILE_SYSTEM_CUSTOMIZATION_URL}
           className='pf-v6-u-pl-0'
           onClick={() => {
-            if (!process.env.IS_ON_PREMISE) {
+            if (!isOnPremise) {
               analytics.track(
                 `${AMPLITUDE_MODULE_NAME} - Outside link clicked`,
                 {

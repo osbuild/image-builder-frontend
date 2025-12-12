@@ -15,11 +15,12 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import Registration from './components/Registration';
 
-import { useGetUser } from '../../../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../../../Hooks';
 
 const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   const [showAlert, setShowAlert] = useState(false);
 
   return (
@@ -32,7 +33,7 @@ const RegistrationStep = () => {
           Configure registration settings for systems that will use this image.
         </Content>
         <Content className='pf-v6-u-pb-md'>
-          {!process.env.IS_ON_PREMISE && (
+          {!isOnPremise && (
             <FormGroup label='Organization ID'>
               <ClipboardCopy
                 hoverTip='Copy to clipboard'

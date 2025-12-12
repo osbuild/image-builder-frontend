@@ -28,7 +28,7 @@ import {
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
 } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../Hooks';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
@@ -62,6 +62,7 @@ type emptyBlueprintStateProps = {
 const BlueprintsSidebar = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -115,7 +116,7 @@ const BlueprintsSidebar = () => {
     dispatch(setBlueprintId(undefined));
   };
 
-  if (!process.env.IS_ON_PREMISE) {
+  if (!isOnPremise) {
     const orgId = userData?.identity.internal?.org_id;
 
     analytics.group(orgId, {

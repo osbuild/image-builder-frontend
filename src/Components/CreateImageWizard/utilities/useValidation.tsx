@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { getListOfDuplicates } from './getListOfDuplicates';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
+import { useIsOnPremise } from '../../../Hooks';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
@@ -136,6 +137,7 @@ export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
   const orgId = useAppSelector(selectOrgId);
+  const isOnPremise = useIsOnPremise();
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand,
   );
@@ -145,7 +147,7 @@ export function useRegistrationValidation(): StepValidation {
     useShowActivationKeyQuery(
       { name: activationKey! },
       {
-        skip: !activationKey || !!process.env.IS_ON_PREMISE,
+        skip: !activationKey || isOnPremise,
       },
     );
 
@@ -153,7 +155,7 @@ export function useRegistrationValidation(): StepValidation {
     return { errors: {}, disabledNext: false };
   }
 
-  if (process.env.IS_ON_PREMISE) {
+  if (isOnPremise) {
     const errors: Record<string, string> = {};
     let disabledNext = false;
 
@@ -186,7 +188,7 @@ export function useRegistrationValidation(): StepValidation {
     registrationType !== 'register-satellite' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo) &&
-    !process.env.IS_ON_PREMISE
+    !isOnPremise
   ) {
     return {
       errors: { activationKey: 'Invalid activation key' },

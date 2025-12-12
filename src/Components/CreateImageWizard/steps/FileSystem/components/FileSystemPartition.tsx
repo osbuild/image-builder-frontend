@@ -3,6 +3,7 @@ import React from 'react';
 import { FormGroup, Label, Radio } from '@patternfly/react-core';
 import { useFlag } from '@unleash/proxy-client-react';
 
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeFscMode,
@@ -14,6 +15,7 @@ const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fscMode = useAppSelector(selectFscMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
+  const isOnPremise = useIsOnPremise();
 
   const isAdvancedPartitioningEnabled = useFlag(
     'image-builder.advanced-partitioning.enabled',
@@ -45,7 +47,7 @@ const FileSystemPartition = () => {
       <Radio
         id='basic-partitioning-radio'
         label={
-          process.env.IS_ON_PREMISE || isAdvancedPartitioningEnabled
+          isOnPremise || isAdvancedPartitioningEnabled
             ? 'Basic filesystem partitioning'
             : 'Manually configure partitions'
         }
@@ -56,7 +58,7 @@ const FileSystemPartition = () => {
           dispatch(changeFscMode('basic'));
         }}
       />
-      {(process.env.IS_ON_PREMISE || isAdvancedPartitioningEnabled) && (
+      {(isOnPremise || isAdvancedPartitioningEnabled) && (
         <Radio
           id='advanced-partitioning-radio'
           label='Advanced disk partitioning'

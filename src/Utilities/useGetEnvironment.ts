@@ -1,6 +1,8 @@
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useFlag as useUnleashFlag } from '@unleash/proxy-client-react';
 
+import { useIsOnPremise } from '../Hooks';
+
 export const useGetEnvironment = process.env.IS_ON_PREMISE
   ? () => ({ isBeta: () => false, isProd: () => true })
   : () => {
@@ -25,8 +27,9 @@ export const useFlagWithEphemDefault = (
   ephemDefault: boolean = true,
 ): boolean => {
   const getFlag = useFlag(flag);
+  const isOnPremise = useIsOnPremise();
   const { getEnvironment } = useChrome();
-  if (process.env.IS_ON_PREMISE) {
+  if (isOnPremise) {
     return false;
   }
   return (getEnvironment() === 'qa' && ephemDefault) || getFlag;

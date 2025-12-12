@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 
 import { ARCHES } from '../../../../../constants';
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageRequest } from '../../../../../store/imageBuilderApi';
 import {
@@ -20,6 +21,7 @@ import {
 const ArchSelect = () => {
   const arch = useAppSelector(selectArchitecture);
   const dispatch = useAppDispatch();
+  const isOnPremise = useIsOnPremise();
   const [isOpen, setIsOpen] = useState(false);
 
   const setArch = (_event?: React.MouseEvent, selection?: string | number) => {
@@ -33,7 +35,7 @@ const ArchSelect = () => {
     const arches = ARCHES.filter((a) => {
       // we don't want to support cross-arch
       // builds for on-prem for now
-      if (process.env.IS_ON_PREMISE) {
+      if (isOnPremise) {
         return a === arch;
       }
       return true;

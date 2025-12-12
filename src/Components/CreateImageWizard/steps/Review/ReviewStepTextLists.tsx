@@ -33,6 +33,7 @@ import {
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
+import { useIsOnPremise } from '../../../../Hooks';
 import {
   useGetTemplateQuery,
   useListSnapshotsByDateMutation,
@@ -103,7 +104,8 @@ const ExpirationWarning = () => {
 export const ImageOutputList = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
-  const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
+  const isOnPremise = useIsOnPremise();
+  const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
   return (
     <Content>
@@ -402,6 +404,7 @@ export const TargetEnvOtherList = () => {
 };
 
 export const ContentList = () => {
+  const isOnPremise = useIsOnPremise();
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
@@ -478,7 +481,7 @@ export const ContentList = () => {
     <>
       <Content>
         <Content component={ContentVariants.dl} className='review-step-dl'>
-          {!process.env.IS_ON_PREMISE && (
+          {!isOnPremise && (
             <>
               <Content
                 component={ContentVariants.dt}
@@ -530,7 +533,7 @@ export const ContentList = () => {
               </Content>
             </>
           )}
-          {!process.env.IS_ON_PREMISE && (
+          {!isOnPremise && (
             <>
               <Content
                 component={ContentVariants.dt}
@@ -672,6 +675,8 @@ export const RegisterAapList = () => {
 };
 
 export const RegisterNowList = () => {
+  const isOnPremise = useIsOnPremise();
+
   const orgId = useAppSelector(selectOrgId);
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
@@ -680,7 +685,7 @@ export const RegisterNowList = () => {
     // @ts-ignore type of 'activationKey' might not be strictly compatible with the expected type for 'name'.
     { name: activationKey },
     {
-      skip: !activationKey || process.env.IS_ON_PREMISE,
+      skip: !activationKey || isOnPremise,
     },
   );
   return (
@@ -720,7 +725,7 @@ export const RegisterNowList = () => {
             Activation key
           </Content>
           <Content component={ContentVariants.dd}>{activationKey}</Content>
-          {process.env.IS_ON_PREMISE && (
+          {isOnPremise && (
             <>
               <Content component={ContentVariants.dt}>Organization ID</Content>
               <Content component={ContentVariants.dd}>{orgId}</Content>
