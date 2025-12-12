@@ -119,7 +119,7 @@ const CredsPathPopover = () => {
         icon={<HelpIcon />}
         variant='plain'
         aria-label='Credentials Path Info'
-        className='pf-v6-u-pl-sm header-button'
+        className='pf-v6-u-pl-sm'
       />
     </Popover>
   );
