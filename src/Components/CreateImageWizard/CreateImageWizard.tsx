@@ -68,7 +68,7 @@ import {
   RHEL_8,
   RHEL_9,
 } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -101,6 +101,7 @@ type CustomWizardFooterPropType = {
   disableNext: boolean;
   beforeNext?: () => boolean;
   optional?: boolean;
+  isOnPremise: boolean;
 };
 
 export const CustomWizardFooter = ({
@@ -108,6 +109,7 @@ export const CustomWizardFooter = ({
   disableNext: disableNext,
   beforeNext,
   optional: optional,
+  isOnPremise,
 }: CustomWizardFooterPropType) => {
   const { goToNextStep, goToPrevStep, goToStepById, close, activeStep } =
     useWizardContext();
@@ -139,7 +141,7 @@ export const CustomWizardFooter = ({
           <Button
             variant='tertiary'
             onClick={() => {
-              if (!process.env.IS_ON_PREMISE) {
+              if (!isOnPremise) {
                 analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                   module: AMPLITUDE_MODULE_NAME,
                   button_id: reviewAndFinishBtnID,
@@ -156,7 +158,7 @@ export const CustomWizardFooter = ({
         <Button
           variant='link'
           onClick={() => {
-            if (!process.env.IS_ON_PREMISE) {
+            if (!isOnPremise) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                 module: AMPLITUDE_MODULE_NAME,
                 button_id: cancelBtnID,
@@ -180,6 +182,7 @@ type CreateImageWizardProps = {
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -216,11 +219,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       dispatch(changeArchitecture(arch));
     };
 
-    if (process.env.IS_ON_PREMISE) {
+    if (isOnPremise) {
       dispatch(changeAwsShareMethod('manual'));
     }
 
-    if (process.env.IS_ON_PREMISE && !isEdit) {
+    if (isOnPremise && !isEdit) {
       if (!searchParams.get('release')) {
         initializeHostDistro();
       }
@@ -340,7 +343,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     useEffect(() => {
       const currentStepId = activeStep.id as string | undefined;
       if (
-        !process.env.IS_ON_PREMISE &&
+        !isOnPremise &&
         currentStepId &&
         lastTrackedStepIdRef.current !== currentStepId
       ) {
@@ -401,6 +404,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               <CustomWizardFooter
                 disableNext={targetEnvironments.length === 0}
                 disableBack={true}
+                isOnPremise={isOnPremise}
               />
             }
           >
@@ -425,12 +429,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                     disableNext={
                       // we don't need the account id for
                       // on-prem aws.
-                      process.env.IS_ON_PREMISE
+                      isOnPremise
                         ? false
                         : awsShareMethod === 'manual'
                           ? !isAwsAccountIdValid(awsAccountId)
                           : awsSourceId === undefined
                     }
+                    isOnPremise={isOnPremise}
                   />
                 }
                 isHidden={!targetEnvironments.includes('aws')}
@@ -449,6 +454,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                         ? isGcpDomainValid(gcpEmail)
                         : isGcpEmailValid(gcpEmail))
                     }
+                    isOnPremise={isOnPremise}
                   />
                 }
                 isHidden={!targetEnvironments.includes('gcp')}
@@ -468,6 +474,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                       azureTenantId === undefined ||
                       azureValidation.disabledNext
                     }
+                    isOnPremise={isOnPremise}
                   />
                 }
                 isHidden={!targetEnvironments.includes('azure')}
@@ -497,6 +504,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={registrationValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -508,7 +516,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='step-oscap'
                 navItem={CustomStatusNavItem}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={false}
+                    optional={true}
+                    isOnPremise={isOnPremise}
+                  />
                 }
               >
                 <OscapStep />
@@ -537,6 +549,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                       !filesystemPristine && fileSystemValidation.disabledNext
                     }
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -550,11 +563,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-repository-snapshot'
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={isOnPremise}
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -565,10 +579,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-custom-repositories'
                 key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={isOnPremise}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={false}
+                    optional={true}
+                    isOnPremise={isOnPremise}
+                  />
                 }
               >
                 <RepositoriesStep />
@@ -580,7 +598,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 navItem={CustomStatusNavItem}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={false}
+                    optional={true}
+                    isOnPremise={isOnPremise}
+                  />
                 }
               >
                 <PackagesStep />
@@ -595,6 +617,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={usersValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -610,6 +633,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={timezoneValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -625,6 +649,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={localeValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -640,6 +665,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={hostnameValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -656,6 +682,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={kernelValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -671,6 +698,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={firewallValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -686,6 +714,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={servicesValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -701,6 +730,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter
                     disableNext={aapValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -712,11 +742,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-first-boot'
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={isOnPremise}
                 footer={
                   <CustomWizardFooter
                     disableNext={firstBootValidation.disabledNext}
                     optional={true}
+                    isOnPremise={isOnPremise}
                   />
                 }
               >
@@ -732,6 +763,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             footer={
               <CustomWizardFooter
                 disableNext={detailsValidation.disabledNext}
+                isOnPremise={isOnPremise}
               />
             }
           >

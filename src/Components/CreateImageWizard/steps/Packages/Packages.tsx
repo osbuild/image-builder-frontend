@@ -65,6 +65,7 @@ import {
   ContentOrigin,
   EPEL_10_REPO_DEFINITION,
 } from '../../../../constants';
+import { useIsOnPremise } from '../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import {
   ApiRepositoryResponseRead,
@@ -138,6 +139,7 @@ export enum Repos {
 const Packages = () => {
   const dispatch = useDispatch();
 
+  const isOnPremise = useIsOnPremise();
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const customRepositories = useAppSelector(selectCustomRepositories);
@@ -270,7 +272,7 @@ const Packages = () => {
       return;
     }
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
-      if (process.env.IS_ON_PREMISE) {
+      if (isOnPremise) {
         searchDistroRpms({
           apiContentUnitSearchRequest: {
             packages: [debouncedSearchTerm],
@@ -516,7 +518,7 @@ const Packages = () => {
     );
   };
 
-  const NoResultsFound = () => {
+  const NoResultsFound = ({ isOnPremise }: { isOnPremise: boolean }) => {
     if (activeTabKey === Repos.INCLUDED) {
       return (
         <Tbody>
@@ -529,20 +531,20 @@ const Packages = () => {
                   icon={SearchIcon}
                   variant={EmptyStateVariant.sm}
                 >
-                  {!process.env.IS_ON_PREMISE && (
+                  {!isOnPremise && (
                     <EmptyStateBody>
                       Adjust your search and try again, or search in other
                       repositories (your repositories and popular repositories).
                     </EmptyStateBody>
                   )}
-                  {process.env.IS_ON_PREMISE && (
+                  {isOnPremise && (
                     <EmptyStateBody>
                       Adjust your search and try again.
                     </EmptyStateBody>
                   )}
                   <EmptyStateFooter>
                     <EmptyStateActions>
-                      {!process.env.IS_ON_PREMISE && (
+                      {!isOnPremise && (
                         <Button
                           variant='primary'
                           onClick={() => setActiveTabKey(Repos.OTHER)}
@@ -551,7 +553,7 @@ const Packages = () => {
                         </Button>
                       )}
                     </EmptyStateActions>
-                    {!process.env.IS_ON_PREMISE && (
+                    {!isOnPremise && (
                       <EmptyStateActions>
                         <Button
                           className='pf-v6-u-pt-md'
@@ -1440,7 +1442,7 @@ const Packages = () => {
         transformedPackages.length === 0 &&
         transformedGroups.length === 0 &&
         toggleSelected === 'toggle-available':
-        return <NoResultsFound />;
+        return <NoResultsFound isOnPremise={isOnPremise} />;
       case debouncedSearchTerm &&
         toggleSelected === 'toggle-selected' &&
         activeTabKey === Repos.OTHER &&
@@ -1585,7 +1587,7 @@ const Packages = () => {
           actions={<IncludedReposPopover />}
           aria-label='Included repositories'
         />
-        {!process.env.IS_ON_PREMISE && (
+        {!isOnPremise && (
           <Tab
             eventKey='other-repos'
             title={<TabTitleText>Other repos</TabTitleText>}

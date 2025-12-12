@@ -52,7 +52,7 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../Hooks';
 import {
   useGetBlueprintComposesQuery,
   useGetBlueprintsQuery,
@@ -103,6 +103,7 @@ const ImagesTable = () => {
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -190,7 +191,7 @@ const ImagesTable = () => {
   // we create query functions for the other endpoints. We're skipping
   // this check because the query request fails, since the `cockpitApi`
   // still doesn't know how to query the composes endpoint
-  if (!process.env.IS_ON_PREMISE && !isSuccess) {
+  if (!isOnPremise && !isSuccess) {
     if (isError) {
       return (
         <Alert variant='warning' title='Service unavailable'>
@@ -216,7 +217,7 @@ const ImagesTable = () => {
   }
   const itemCount = data?.meta.count || 0;
 
-  if (!process.env.IS_ON_PREMISE) {
+  if (!isOnPremise) {
     const orgId = userData?.identity.internal?.org_id;
 
     analytics.group(orgId, {
@@ -304,6 +305,7 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
   const lastTrackedStatusRef = useRef<string | null>(null);
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const { data: composeStatus } = useGetComposeStatusQuery(
     {
@@ -325,7 +327,7 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
 
   useEffect(() => {
     const currentStatus = composeStatus?.image_status.status;
-    if (!process.env.IS_ON_PREMISE && currentStatus) {
+    if (!isOnPremise && currentStatus) {
       if (lastTrackedStatusRef.current === null) {
         lastTrackedStatusRef.current = currentStatus;
         return;
@@ -504,6 +506,7 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const navigate = useNavigate();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const target = <AwsTarget compose={compose} />;
   const status = <CloudStatus compose={compose} />;
@@ -518,6 +521,7 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
         navigate,
         analytics,
         userData?.identity.internal?.account_id,
+        isOnPremise,
       )}
     />
   );
@@ -580,6 +584,7 @@ const Row = ({
 }: RowPropTypes) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
@@ -649,6 +654,7 @@ const Row = ({
                 compose,
                 analytics,
                 userData?.identity.internal?.account_id,
+                isOnPremise,
               )}
             />
           )}
@@ -667,6 +673,7 @@ const defaultActions = (
   compose: ComposesResponseItem,
   analytics: Analytics,
   account_id: string | undefined,
+  isOnPremise: boolean,
 ) => {
   const name = `request-${compose.id}.json`;
 
@@ -680,7 +687,7 @@ const defaultActions = (
     // In cockpit we're running in an iframe, the current content-security policy
     // (set in cockpit/public/manifest.json) only allows resources from the same origin as the
     // document (which is unique to the iframe). So create the element in the parent document.
-    const link = process.env.IS_ON_PREMISE
+    const link = isOnPremise
       ? window.parent.document.createElement('a')
       : document.createElement('a');
     link.href = url;
@@ -688,7 +695,7 @@ const defaultActions = (
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
 
-    if (!process.env.IS_ON_PREMISE) {
+    if (!isOnPremise) {
       analytics.track(`${AMPLITUDE_MODULE_NAME} - File Downloaded`, {
         module: AMPLITUDE_MODULE_NAME,
         link_name: name,
@@ -715,6 +722,7 @@ const awsActions = (
   navigate: NavigateFunction,
   analytics: Analytics,
   account_id: string | undefined,
+  isOnPremise: boolean,
 ) => {
   return [
     {
@@ -722,7 +730,7 @@ const awsActions = (
       onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
       isDisabled: status?.image_status.status === 'success' ? false : true,
     },
-    ...defaultActions(compose, analytics, account_id),
+    ...defaultActions(compose, analytics, account_id, isOnPremise),
   ];
 };
 

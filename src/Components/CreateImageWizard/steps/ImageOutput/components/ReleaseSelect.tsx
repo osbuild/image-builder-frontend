@@ -22,6 +22,7 @@ import {
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { Distributions } from '../../../../../store/imageBuilderApi';
 import {
@@ -40,8 +41,9 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
+  const isOnPremise = useIsOnPremise();
 
-  const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
+  const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
   const handleSelect = (
     _event?: React.MouseEvent,
@@ -64,7 +66,7 @@ const ReleaseSelect = () => {
   };
 
   const setDescription = (key: Distributions) => {
-    if (process.env.IS_ON_PREMISE) {
+    if (isOnPremise) {
       return '';
     }
 
@@ -95,7 +97,7 @@ const ReleaseSelect = () => {
     const options: ReactElement[] = [];
     const filteredRhel = new Map(
       [...releases].filter(([key]) => {
-        if (process.env.IS_ON_PREMISE) {
+        if (isOnPremise) {
           return key === distribution;
         }
 
@@ -157,7 +159,7 @@ const ReleaseSelect = () => {
           {!showDevelopmentOptions &&
             // Hide this for on-prem since the host
             // could be centos or fedora
-            !process.env.IS_ON_PREMISE && (
+            !isOnPremise && (
               <SelectOption
                 onClick={(ev) => {
                   // prevents setIsOpen{isOpen} from closing the Wizard

@@ -18,6 +18,7 @@ import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
 import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
+  useIsOnPremise,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { useAppSelector } from '../../../../../store/hooks';
@@ -35,6 +36,7 @@ const ReviewWizardFooter = () => {
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
+  const isOnPremise = useIsOnPremise();
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
@@ -54,7 +56,7 @@ const ReviewWizardFooter = () => {
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
 
   const getBlueprintPayload = async () => {
-    if (!process.env.IS_ON_PREMISE) {
+    if (!isOnPremise) {
       const userData = await auth.getUser();
       const orgId = userData?.identity?.internal?.org_id;
       const requestBody = orgId && mapRequestFromState(store, orgId);

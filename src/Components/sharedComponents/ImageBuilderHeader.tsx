@@ -10,7 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
-import { useGetDocumentationUrl } from '../../Hooks';
+import { useGetDocumentationUrl, useIsOnPremise } from '../../Hooks';
 import { useBackendPrefetch } from '../../store/backendApi';
 import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
@@ -67,6 +67,7 @@ export const ImageBuilderHeader = ({
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
+  const isOnPremise = useIsOnPremise();
 
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
@@ -83,7 +84,7 @@ export const ImageBuilderHeader = ({
           title={
             <>
               Images <AboutImageBuilderPopover />
-              {!process.env.IS_ON_PREMISE && (
+              {!isOnPremise && (
                 <OpenSourceBadge
                   repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}
                 />
@@ -112,7 +113,7 @@ export const ImageBuilderHeader = ({
                   >
                     Import
                   </Button>
-                  {process.env.IS_ON_PREMISE && (
+                  {isOnPremise && (
                     <Button
                       variant='secondary'
                       data-testid='cloud-env-configure-button'

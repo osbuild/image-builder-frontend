@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
@@ -53,6 +54,7 @@ const TargetEnvironmentCard = ({
   isClicked,
   isDisabled = false,
 }: TargetEnvironmentCardProps) => {
+  const isOnPremise = useIsOnPremise();
   return (
     <Card
       style={{ textAlign: 'center' } as React.CSSProperties}
@@ -72,7 +74,7 @@ const TargetEnvironmentCard = ({
         }}
       >
         <Flex direction={{ default: 'column' }}>
-          {!process.env.IS_ON_PREMISE && (
+          {!isOnPremise && (
             // the logos don't display in cockpit,
             // so we can just hide them
             <FlexItem>

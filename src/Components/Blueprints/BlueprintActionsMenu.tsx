@@ -14,6 +14,7 @@ import TOML from 'smol-toml';
 // Because the blueprint formats differ, using the 'backendApi'
 // abstraction would be misleading.  Import and handle each environment
 // separately.
+import { useIsOnPremise } from '../../Hooks';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useLazyExportBlueprintCockpitQuery } from '../../store/cockpit/cockpitApi';
 import type { Blueprint as CockpitExportResponse } from '../../store/cockpit/composerCloudApi';
@@ -30,6 +31,7 @@ interface BlueprintActionsMenuProps {
 export const BlueprintActionsMenu: React.FunctionComponent<
   BlueprintActionsMenuProps
 > = ({ setShowDeleteModal }: BlueprintActionsMenuProps) => {
+  const isOnPremise = useIsOnPremise();
   const [showBlueprintActionsMenu, setShowBlueprintActionsMenu] =
     useState(false);
   const onSelect = () => {
@@ -46,7 +48,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
     trigger({ id: selectedBlueprintId })
       .unwrap()
       .then((response: BlueprintExportResponse) => {
-        handleExportBlueprint(response.name, response);
+        handleExportBlueprint(response.name, response, isOnPremise);
       });
   };
 
@@ -54,7 +56,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
     cockpitTrigger({ id: selectedBlueprintId })
       .unwrap()
       .then((response: CockpitExportResponse) => {
-        handleExportBlueprint(response.name, response);
+        handleExportBlueprint(response.name, response, isOnPremise);
       });
   };
 
@@ -79,10 +81,8 @@ export const BlueprintActionsMenu: React.FunctionComponent<
       )}
     >
       <DropdownList>
-        <DropdownItem
-          onClick={process.env.IS_ON_PREMISE ? handleCockpitClick : handleClick}
-        >
-          Download blueprint ({process.env.IS_ON_PREMISE ? '.toml' : '.json'})
+        <DropdownItem onClick={isOnPremise ? handleCockpitClick : handleClick}>
+          Download blueprint ({isOnPremise ? '.toml' : '.json'})
         </DropdownItem>
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
@@ -95,26 +95,25 @@ export const BlueprintActionsMenu: React.FunctionComponent<
 async function handleExportBlueprint(
   blueprintName: string,
   blueprint: BlueprintExportResponse | CockpitExportResponse,
+  isOnPremise: boolean,
 ) {
-  const data = process.env.IS_ON_PREMISE
+  const data = isOnPremise
     ? TOML.stringify(blueprint).trim()
     : JSON.stringify(blueprint, null, 2);
-  const mime = process.env.IS_ON_PREMISE
-    ? 'application/octet-stream'
-    : 'application/json';
+  const mime = isOnPremise ? 'application/octet-stream' : 'application/json';
   const blob = new Blob([data], { type: mime });
 
   const url = URL.createObjectURL(blob);
   // In cockpit we're running in an iframe, the current content-security policy
   // (set in cockpit/public/manifest.json) only allows resources from the same origin as the
   // document (which is unique to the iframe). So create the element in the parent document.
-  const link = process.env.IS_ON_PREMISE
+  const link = isOnPremise
     ? window.parent.document.createElement('a')
     : document.createElement('a');
   link.href = url;
   link.download =
     blueprintName.replace(/\s/g, '_').toLowerCase() +
-    (process.env.IS_ON_PREMISE ? '.toml' : '.json');
+    (isOnPremise ? '.toml' : '.json');
   link.click();
   URL.revokeObjectURL(url);
 }

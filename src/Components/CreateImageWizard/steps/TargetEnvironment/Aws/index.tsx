@@ -23,6 +23,7 @@ import { AwsAccountId } from './AwsAccountId';
 import { AwsSourcesSelect } from './AwsSourcesSelect';
 
 import { AWS_REGIONS } from '../../../../../constants';
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAwsAccountId,
@@ -104,6 +105,7 @@ const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
 
 const Aws = () => {
   const dispatch = useAppDispatch();
+  const isOnPremise = useIsOnPremise();
 
   const shareMethod = useAppSelector(selectAwsShareMethod);
   const shareWithAccount = useAppSelector(selectAwsAccountId);
@@ -118,7 +120,7 @@ const Aws = () => {
         Your image will be uploaded to AWS and shared with the account you
         provide below.
       </Content>
-      {!process.env.IS_ON_PREMISE && (
+      {!isOnPremise && (
         <>
           <Content>
             <b>The shared image will expire within 14 days.</b> To permanently
@@ -149,7 +151,6 @@ const Aws = () => {
                 dispatch(changeAwsAccountId(''));
                 dispatch(changeAwsShareMethod('manual'));
               }}
-              autoFocus={!!process.env.IS_ON_PREMISE}
             />
           </FormGroup>
         </>
@@ -183,7 +184,7 @@ const Aws = () => {
       )}
       {shareMethod === 'manual' && (
         <>
-          {!process.env.IS_ON_PREMISE && (
+          {!isOnPremise && (
             <FormGroup label='AWS account ID' isRequired>
               <ValidatedInput
                 ariaLabel='aws account id'
@@ -201,7 +202,7 @@ const Aws = () => {
             </FormGroup>
           )}
           <FormGroup label='Default region' isRequired>
-            {!process.env.IS_ON_PREMISE && (
+            {!isOnPremise && (
               <TextInput
                 value={'us-east-1'}
                 type='text'
@@ -209,7 +210,7 @@ const Aws = () => {
                 readOnlyVariant='default'
               />
             )}
-            {process.env.IS_ON_PREMISE && (
+            {isOnPremise && (
               <AWSRegion
                 value={region || ''}
                 onChange={(v) => dispatch(changeAwsRegion(v))}

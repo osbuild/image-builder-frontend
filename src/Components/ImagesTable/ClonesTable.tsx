@@ -5,6 +5,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { AwsDetailsStatus, StatusClone } from './Status';
 
+import { useIsOnPremise } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import {
   CockpitAwsUploadRequestOptions,
@@ -106,11 +107,12 @@ type ComposeRowPropTypes = {
 };
 
 const ComposeRow = ({ compose }: ComposeRowPropTypes) => {
+  const isOnPremise = useIsOnPremise();
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
 
-  const region = !process.env.IS_ON_PREMISE
+  const region = !isOnPremise
     ? 'us-east-1'
     : // since this is on-premise, we know the type casting
       // is okay to do here.

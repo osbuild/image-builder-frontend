@@ -18,6 +18,7 @@ import {
 import {
   useDeleteBPWithNotification as useDeleteBlueprintMutation,
   useGetUser,
+  useIsOnPremise,
 } from '../../Hooks';
 import { backendApi, useGetBlueprintsQuery } from '../../store/backendApi';
 import {
@@ -45,6 +46,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const dispatch = useAppDispatch();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const searchParams: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -68,7 +70,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   });
   const handleDelete = async () => {
     if (selectedBlueprintId) {
-      if (!process.env.IS_ON_PREMISE) {
+      if (!isOnPremise) {
         analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Deleted`, {
           module: AMPLITUDE_MODULE_NAME,
           account_id: userData?.identity.internal?.account_id || 'Not found',
