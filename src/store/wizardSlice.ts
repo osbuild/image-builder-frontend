@@ -217,6 +217,7 @@ export type wizardState = {
   fips: {
     enabled: boolean;
   };
+  verifiedLocaleLangpacks: string[];
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -332,6 +333,7 @@ export const initialState: wizardState = {
     enabled: false,
   },
   firstBoot: { script: '' },
+  verifiedLocaleLangpacks: [],
   users: [],
   userGroups: [{ name: '' }],
 };
@@ -607,6 +609,42 @@ export const selectFirewall = (state: RootState) => {
 export const selectFips = (state: RootState) => {
   return state.wizard.fips;
 };
+
+export const selectVerifiedLocaleLangpacks = (state: RootState) => {
+  return state.wizard.verifiedLocaleLangpacks;
+};
+
+const extractLanguageCode = (locale: string): string | undefined => {
+  const [regionPart] = locale.split('.');
+  const [languageCode] = regionPart.split('_');
+  if (!languageCode) {
+    return undefined;
+  }
+  const lc = languageCode.toLowerCase();
+  if (lc === 'c') {
+    return undefined;
+  }
+  return lc;
+};
+
+const getLangpackNameForLocale = (locale: string): string | undefined => {
+  const code = extractLanguageCode(locale);
+  return code ? `langpacks-${code}` : undefined;
+};
+
+export const selectLocaleLangpackCandidates = createSelector(
+  [selectLanguages],
+  (languages) => {
+    const set = new Set<string>();
+    for (const lang of languages ?? []) {
+      const pkg = getLangpackNameForLocale(lang);
+      if (pkg) {
+        set.add(pkg);
+      }
+    }
+    return Array.from(set);
+  },
+);
 
 // Derived selector for checking if we're in image mode
 export const selectIsImageMode = createSelector(
@@ -1569,6 +1607,9 @@ export const wizardSlice = createSlice({
     changeFips: (state, action: PayloadAction<boolean>) => {
       state.fips.enabled = action.payload;
     },
+    setVerifiedLocaleLangpacks: (state, action: PayloadAction<string[]>) => {
+      state.verifiedLocaleLangpacks = action.payload;
+    },
   },
 });
 
@@ -1690,5 +1731,6 @@ export const {
   removeGroupFromUserByIndex,
   changeRedHatRepositories,
   changeFips,
+  setVerifiedLocaleLangpacks,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

@@ -124,6 +124,7 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
+  selectVerifiedLocaleLangpacks,
   UserWithAdditionalInfo,
   wizardState,
 } from '../../../store/wizardSlice';
@@ -440,6 +441,16 @@ function commonRequestToState(
     }
   }
 
+  const rawPackageNames =
+    request.customizations.packages?.filter((pkg) => !pkg.startsWith('@')) ??
+    [];
+  const localeLangpacks = rawPackageNames.filter((p) =>
+    /^langpacks-[a-z]+$/.test(p),
+  );
+  const otherPackageNames = rawPackageNames.filter(
+    (p) => !/^langpacks-[a-z]+$/.test(p),
+  );
+
   return {
     details: {
       blueprintName: request.name || '',
@@ -528,14 +539,12 @@ function commonRequestToState(
       recommendedRepositories: [],
       redHatRepositories: [],
     },
-    packages:
-      request.customizations.packages
-        ?.filter((pkg) => !pkg.startsWith('@'))
-        .map((pkg) => ({
-          name: pkg,
-          summary: '',
-          repository: '' as PackageRepository,
-        })) || [],
+    packages: otherPackageNames.map((pkg) => ({
+      name: pkg,
+      summary: '',
+      repository: '' as PackageRepository,
+    })),
+    verifiedLocaleLangpacks: localeLangpacks,
     groups:
       request.customizations.packages
         ?.filter((grp) => grp.startsWith('@'))
@@ -1097,11 +1106,15 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
 const getPackages = (state: RootState) => {
   const packages = selectPackages(state);
   const groups = selectGroups(state);
+  const verifiedLocaleLangpacks = selectVerifiedLocaleLangpacks(state);
+  const packageNames = new Set(packages.map((pkg) => pkg.name));
+  for (const pkg of verifiedLocaleLangpacks) {
+    packageNames.add(pkg);
+  }
+  const list = [...packageNames].concat(groups.map((grp) => '@' + grp.name));
 
-  if (packages.length > 0 || groups.length > 0) {
-    return packages
-      .map((pkg) => pkg.name)
-      .concat(groups.map((grp) => '@' + grp.name));
+  if (list.length > 0) {
+    return list;
   }
   return undefined;
 };

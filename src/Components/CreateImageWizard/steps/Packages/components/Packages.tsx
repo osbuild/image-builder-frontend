@@ -96,15 +96,6 @@ const Packages = () => {
       distribution: asDistribution(distribution),
     });
 
-  const epelRepoUrlByDistribution =
-    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
-
-  const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
-    useListRepositoriesQuery({
-      url: epelRepoUrlByDistribution,
-      origin: ContentOrigin.COMMUNITY,
-    });
-
   const distroUrls = useMemo(() => {
     return (
       distroRepositories
@@ -113,6 +104,15 @@ const Packages = () => {
         .map((repo) => repo.baseurl!) ?? []
     );
   }, [distroRepositories, arch]);
+
+  const epelRepoUrlByDistribution =
+    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
+
+  const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
+    useListRepositoriesQuery({
+      url: epelRepoUrlByDistribution,
+      origin: ContentOrigin.EXTERNAL,
+    });
 
   const [currentlyRemovedPackages, setCurrentlyRemovedPackages] = useState<
     IBPackageWithRepositoryInfo[]
