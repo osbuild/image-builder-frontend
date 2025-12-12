@@ -34,7 +34,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   const blueprintName = 'compliance-cis-test-' + uuidv4();
   const policyName = 'test-policy-' + uuidv4();
   const policyType =
-    'DRAFT - CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation';
+    'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation';
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
   // Delete the blueprint compliance policy and Openstack resources after the run
@@ -60,7 +60,10 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     //   page.getByRole('gridcell', { name: policyType }).first(),
     // ).toBeVisible();
     // await page.getByRole('radio', { name: 'Select row 0' }).click();
-    await page.getByRole('button', { name: 'Go to next page' }).nth(1).click();
+    await page.getByRole('button', { name: 'Go to last page' }).click();
+    await expect(
+      page.getByRole('gridcell', { name: policyType }),
+    ).toBeVisible();
     await page
       .getByRole('row')
       .filter({ hasText: policyType })
