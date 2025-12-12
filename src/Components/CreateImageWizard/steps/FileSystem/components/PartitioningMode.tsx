@@ -24,7 +24,7 @@ const PartitioningMode = () => {
             </Label>
           </>
         }
-        name='auto-lvm-partitioning-mode-radio'
+        name='partitioning-mode'
         description='Converts partitions to LVM only if new mountpoints are defined in the filesystem customization'
         isChecked={partitioningMode === 'auto-lvm'}
         onChange={() => {
@@ -34,7 +34,7 @@ const PartitioningMode = () => {
       <Radio
         id='raw-partitioning-mode-radio'
         label='Raw partitioning'
-        name='raw-partitioning-mode-radio'
+        name='partitioning-mode'
         description='Will not convert any partition to LVM or Btrfs'
         isChecked={partitioningMode === 'raw'}
         onChange={() => {
@@ -44,7 +44,7 @@ const PartitioningMode = () => {
       <Radio
         id='lvm-partitioning-mode-radio'
         label='LVM partitioning'
-        name='lvm-partitioning-mode-radio'
+        name='partitioning-mode'
         description='Converts the partition that contains the root mountpoint / to an LVM Volume Group and creates a root Logical Volume. Any extra mountpoints, except /boot, will be added to the Volume Group as new Logical Volumes'
         isChecked={partitioningMode === 'lvm'}
         onChange={() => {
