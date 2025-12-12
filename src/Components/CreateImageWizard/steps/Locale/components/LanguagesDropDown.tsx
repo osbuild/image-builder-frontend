@@ -22,10 +22,13 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addLanguage,
   removeLanguage,
+  removePackage,
   selectLanguages,
+  unsuppressLangpack,
 } from '../../../../../store/wizardSlice';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useLocaleValidation } from '../../../utilities/useValidation';
+import { getLangpackNameForLocale } from '../langpacks';
 import { languagesList } from '../languagesList';
 
 const parseLanguageOption = (language: string) => {
@@ -125,6 +128,19 @@ const LanguagesDropDown = () => {
 
   const handleRemoveLang = (_event: React.MouseEvent, value: string) => {
     dispatch(removeLanguage(value));
+    const removedLangpack = getLangpackNameForLocale(value);
+    if (removedLangpack && languages) {
+      const remaining = languages.filter((l) => l !== value);
+      const langpacks = remaining
+        .map(getLangpackNameForLocale)
+        .filter((pack): pack is string => pack !== undefined);
+
+      const stillNeeded = new Set(langpacks);
+      if (!stillNeeded.has(removedLangpack)) {
+        dispatch(removePackage(removedLangpack));
+        dispatch(unsuppressLangpack(removedLangpack));
+      }
+    }
     if (unknownLanguages.length > 0) {
       unknownLanguages.filter((lang) => lang !== value);
     }
