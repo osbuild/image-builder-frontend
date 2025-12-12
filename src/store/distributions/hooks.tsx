@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { ALL_CUSTOMIZATIONS } from './constants';
 import { distroDetailsApi as api } from './distributionDetailsApi';
@@ -11,15 +11,18 @@ import {
 
 import { simpleTargetNames } from '../../constants';
 import isRhel from '../../Utilities/isRhel';
+import { useSearchRpmMutation } from '../contentSourcesApi';
 import { selectIsOnPremise } from '../envSlice';
-import { useAppSelector } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
-import { isImageType } from '../typeGuards';
+import { asDistribution, isImageType } from '../typeGuards';
 import {
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
   selectIsImageMode,
+  selectLocaleLangpackCandidates,
+  setVerifiedLocaleLangpacks,
 } from '../wizardSlice';
 
 const extractImageTypes = ({
@@ -240,4 +243,63 @@ export const useImageTypeCustomizationSupport = (
     isOnPremise,
     isRhel: isRhel(distro),
   });
+};
+
+const extractPackageNames = (data: { package_name?: string }[]): string[] =>
+  Array.from(
+    new Set(data.flatMap((d) => (d.package_name ? [d.package_name] : []))),
+  );
+
+export const useSearchLanguagePacks = (distroUrls: string[]) => {
+  const dispatch = useAppDispatch();
+  const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const candidateLangpacks = useAppSelector(selectLocaleLangpackCandidates);
+  const [searchRpms, { isLoading: isSearchLoading }] = useSearchRpmMutation();
+
+  useEffect(() => {
+    if (candidateLangpacks.length === 0) {
+      dispatch(setVerifiedLocaleLangpacks([]));
+      return;
+    }
+    if (!process.env.IS_ON_PREMISE && distroUrls.length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+    const run = async () => {
+      const request = process.env.IS_ON_PREMISE
+        ? {
+            packages: candidateLangpacks,
+            architecture: arch,
+            distribution: asDistribution(distribution),
+          }
+        : { exact_names: candidateLangpacks, urls: distroUrls, limit: 500 };
+
+      try {
+        const data = await searchRpms({
+          apiContentUnitSearchRequest: request,
+        }).unwrap();
+        const verified = extractPackageNames(
+          data as { package_name?: string }[],
+        );
+        if (!cancelled) dispatch(setVerifiedLocaleLangpacks(verified));
+      } catch {
+        if (!cancelled) dispatch(setVerifiedLocaleLangpacks([]));
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    arch,
+    distribution,
+    distroUrls,
+    dispatch,
+    candidateLangpacks,
+    searchRpms,
+  ]);
+
+  return { isLoading: isSearchLoading };
 };
