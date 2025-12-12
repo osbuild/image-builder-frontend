@@ -16,7 +16,8 @@ import {
   SearchIcon,
 } from '@patternfly/react-icons';
 
-import { IB_DOCUMENTATION_URL, MANAGING_WITH_DNF_URL } from '../../constants';
+import { MANAGING_WITH_DNF_URL } from '../../constants';
+import { useGetDocumentationUrl } from '../../Hooks';
 import { BuildImagesButtonEmptyState } from '../Blueprints/BuildImagesButton';
 
 type ImagesEmptyStateProps = {
@@ -48,6 +49,7 @@ const EmptyBlueprintsImagesTable = () => (
 );
 
 const EmptyImagesTable = () => {
+  const documentationUrl = useGetDocumentationUrl();
   return (
     <Bullseye>
       <EmptyState
@@ -92,7 +94,7 @@ const EmptyImagesTable = () => {
                 icon={<ExternalLinkAltIcon />}
                 iconPosition='right'
                 isInline
-                href={IB_DOCUMENTATION_URL}
+                href={documentationUrl}
                 className='pf-v6-u-pt-md'
               >
                 Image builder documentation

@@ -9,10 +9,8 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  IB_DOCUMENTATION_URL,
-  OSBUILD_SERVICE_ARCHITECTURE_URL,
-} from '../../constants';
+import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
+import { useGetDocumentationUrl } from '../../Hooks';
 import { useBackendPrefetch } from '../../store/backendApi';
 import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
@@ -24,6 +22,7 @@ type ImageBuilderHeaderPropTypes = {
 };
 
 const AboutImageBuilderPopover = () => {
+  const documentationUrl = useGetDocumentationUrl();
   return (
     <Popover
       minWidth='35rem'
@@ -46,7 +45,7 @@ const AboutImageBuilderPopover = () => {
               icon={<ExternalLinkAltIcon />}
               iconPosition='right'
               isInline
-              href={IB_DOCUMENTATION_URL}
+              href={documentationUrl}
             >
               Image builder documentation
             </Button>

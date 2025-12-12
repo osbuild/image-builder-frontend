@@ -4,13 +4,13 @@ import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import { AMPLITUDE_MODULE_NAME, IB_DOCUMENTATION_URL } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { AMPLITUDE_MODULE_NAME } from '../../constants';
+import { useGetDocumentationUrl, useGetUser } from '../../Hooks';
 
 const DocumentationButton = () => {
-  const documentationURL = IB_DOCUMENTATION_URL;
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const documentationURL = useGetDocumentationUrl();
 
   return (
     <Button
