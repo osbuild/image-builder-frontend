@@ -176,7 +176,10 @@ test('Content integration test - Non repeatable build - Upload source', async ({
       ),
     ]);
     // Upload the package in order to create the repository
-    await page.getByRole('button', { name: 'Upload' }).first().click();
+    // Wait for the Upload button to be enabled (it may be disabled while processing)
+    const uploadButton = page.getByRole('button', { name: 'Upload' }).first();
+    await expect(uploadButton).toBeEnabled({ timeout: 30000 });
+    await uploadButton.click();
     // TODO: Playwright is too fast for the Upload dialog
     // this results in a unavaiable repository with 400 error
     // https://issues.redhat.com/browse/HMS-9551
