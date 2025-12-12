@@ -127,9 +127,9 @@ const Aws = () => {
           </Content>
           <FormGroup label='Share method:'>
             <Radio
-              id='radio-with-description'
+              id='share-with-source'
               label='Use an account configured from Sources.'
-              name='radio-7'
+              name='aws-share-method-type'
               description='Use a configured source to launch environments directly from the console.'
               isChecked={shareMethod === 'sources'}
               onChange={() => {
@@ -140,9 +140,9 @@ const Aws = () => {
               autoFocus
             />
             <Radio
-              id='radio'
+              id='share-with-account'
               label='Manually enter an account ID.'
-              name='radio-8'
+              name='aws-share-method-type'
               isChecked={shareMethod === 'manual'}
               onChange={() => {
                 dispatch(changeAwsSourceId(undefined));

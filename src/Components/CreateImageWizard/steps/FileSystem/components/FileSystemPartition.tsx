@@ -38,7 +38,7 @@ const FileSystemPartition = () => {
             Use automatic partitioning
           </>
         }
-        name='fsc-automatic-radio'
+        name='fsc-type'
         description='Automatically partition your image to what is best, depending on the target environment(s)'
         isChecked={fscMode === 'automatic'}
         onChange={() => {
@@ -52,7 +52,7 @@ const FileSystemPartition = () => {
             ? 'Basic filesystem partitioning'
             : 'Manually configure partitions'
         }
-        name='fsc-basic-radio'
+        name='fsc-type'
         description='Manually configure the file system of your image by adding, removing, and editing partitions'
         isChecked={fscMode === 'basic'}
         onChange={() => {
@@ -63,7 +63,7 @@ const FileSystemPartition = () => {
         <Radio
           id='advanced-partitioning-radio'
           label='Advanced disk partitioning'
-          name='fsc-advanced-radio'
+          name='fsc-type'
           description='Configure disk partitioning with advanced options'
           isChecked={fscMode === 'advanced'}
           onChange={() => {

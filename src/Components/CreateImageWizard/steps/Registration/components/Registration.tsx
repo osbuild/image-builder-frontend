@@ -33,7 +33,7 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
             }
           }}
           id='register-system-now'
-          name='register-system-now'
+          name='registration-type'
           autoFocus
           body={
             <>
@@ -97,7 +97,7 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
             onErrorChange(false);
           }}
           id='register-later'
-          name='register-later'
+          name='registration-type'
         />
       </Content>
       <Content className='pf-v6-u-pb-sm'>
@@ -109,7 +109,7 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
             onErrorChange(false);
           }}
           id='register-satellite'
-          name='register-satellite'
+          name='registration-type'
           body={
             registrationType === 'register-satellite' && (
               <SatelliteRegistration />
