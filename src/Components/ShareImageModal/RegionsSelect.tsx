@@ -223,7 +223,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
               icon={<HelpIcon />}
               variant='plain'
               aria-label='About regions'
-              className='pf-v6-u-pl-sm header-button'
+              className='pf-v6-u-pl-sm'
               isInline
             />
           </Popover>

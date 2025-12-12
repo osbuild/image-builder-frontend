@@ -17,7 +17,6 @@ import { useBackendPrefetch } from '../../store/backendApi';
 import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
-import './ImageBuilderHeader.scss';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
@@ -59,7 +58,7 @@ const AboutImageBuilderPopover = () => {
         icon={<HelpIcon />}
         variant='plain'
         aria-label='About image builder'
-        className='pf-v6-u-pl-sm header-button'
+        className='pf-v6-u-pl-sm'
       />
     </Popover>
   );
@@ -82,7 +81,6 @@ export const ImageBuilderHeader = ({
       />
       <PageHeader className='pf-m-sticky-top'>
         <PageHeaderTitle
-          className='title'
           title={
             <>
               Images <AboutImageBuilderPopover />
