@@ -61,6 +61,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     // ).toBeVisible();
     // await page.getByRole('radio', { name: 'Select row 0' }).click();
     await page.getByRole('button', { name: 'Go to next page' }).nth(1).click();
+    await expect(page.getByText(policyType)).toBeVisible();
     await page
       .getByRole('row')
       .filter({ hasText: policyType })
