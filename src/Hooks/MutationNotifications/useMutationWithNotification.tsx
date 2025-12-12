@@ -5,10 +5,11 @@ import {
 } from '@reduxjs/toolkit/dist/query/react';
 
 import { errorMessage } from '../../store/service/enhancedImageBuilderApi';
+import { useIsOnPremise } from '../Utilities';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getErrorDescription = (err: any) => {
-  if (process.env.IS_ON_PREMISE) {
+const getErrorDescription = (err: any, isOnPremise: boolean) => {
+  if (isOnPremise) {
     // If details are present, assume it's coming from composer
     if (err.body) {
       return `${err.message}: ${err.body.details}`;
@@ -59,6 +60,7 @@ export function useMutationWithNotification<
 ) {
   const [trigger, state] = mutationHook(options);
   const addNotification = useAddNotification();
+  const isOnPremise = useIsOnPremise();
 
   const handler = async (args: Arg): Promise<Result> => {
     try {
@@ -69,7 +71,7 @@ export function useMutationWithNotification<
       });
       return result;
     } catch (err) {
-      const description = getErrorDescription(err);
+      const description = getErrorDescription(err, isOnPremise);
       if (messages.error) {
         addNotification({
           variant: 'danger',

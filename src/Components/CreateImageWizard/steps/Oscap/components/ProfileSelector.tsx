@@ -18,6 +18,7 @@ import { TimesIcon } from '@patternfly/react-icons';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
+import { useIsOnPremise } from '../../../../../Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
@@ -52,6 +53,7 @@ type ProfileSelectorProps = {
 };
 
 const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
+  const isOnPremise = useIsOnPremise();
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
@@ -113,7 +115,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
   // prefetch the profiles customizations for on-prem
   // and save the results to the cache, since the request
   // is quite slow
-  if (process.env.IS_ON_PREMISE) {
+  if (isOnPremise) {
     profiles?.forEach((profile) => {
       prefetchProfile({
         distribution: release,

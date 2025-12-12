@@ -40,6 +40,7 @@ import {
 
 import isRhel from '../../../../../src/Utilities/isRhel';
 import { targetOptions } from '../../../../constants';
+import { useIsOnPremise } from '../../../../Hooks';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectAapRegistration,
@@ -63,6 +64,7 @@ import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
+  const isOnPremise = useIsOnPremise();
 
   const aapRegistration = useAppSelector(selectAapRegistration);
   const blueprintName = useAppSelector(selectBlueprintName);
@@ -493,7 +495,7 @@ const Review = () => {
           <RegisterAapList />
         </ExpandableSection>
       )}
-      {!process.env.IS_ON_PREMISE && (
+      {!isOnPremise && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'First boot',

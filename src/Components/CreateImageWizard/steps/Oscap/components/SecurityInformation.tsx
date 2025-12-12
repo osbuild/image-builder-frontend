@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 
+import { useIsOnPremise } from '../../../../../Hooks';
 import {
   useGetComplianceCustomizationsQuery,
   useGetOscapCustomizationsQuery,
@@ -35,6 +36,7 @@ export const SecurityInformation = (): JSX.Element => {
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const compliancePolicyTitle = useAppSelector(selectCompliancePolicyTitle);
   const fips = useAppSelector(selectFips);
+  const isOnPremise = useIsOnPremise();
 
   const {
     data: oscapProfileInfo,
@@ -62,7 +64,7 @@ export const SecurityInformation = (): JSX.Element => {
       policy: compliancePolicyID!,
     },
     {
-      skip: !compliancePolicyID || !!process.env.IS_ON_PREMISE,
+      skip: !compliancePolicyID || isOnPremise,
     },
   );
 

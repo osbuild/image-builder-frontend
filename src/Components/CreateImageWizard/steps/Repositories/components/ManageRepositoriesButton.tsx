@@ -5,11 +5,12 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME, CONTENT_URL } from '../../../../../constants';
-import { useGetUser } from '../../../../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../../../../Hooks';
 
 const ManageRepositoriesButton = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   return (
     <Button
       component='a'
@@ -19,7 +20,7 @@ const ManageRepositoriesButton = () => {
       isInline
       icon={<ExternalLinkAltIcon />}
       onClick={() => {
-        if (!process.env.IS_ON_PREMISE) {
+        if (!isOnPremise) {
           analytics.track(`${AMPLITUDE_MODULE_NAME} - Outside link clicked`, {
             step_id: 'step-repositories',
             account_id: userData?.identity.internal?.account_id || 'Not found',

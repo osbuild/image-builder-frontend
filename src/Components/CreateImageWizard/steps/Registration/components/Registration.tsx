@@ -6,6 +6,7 @@ import ActivationKeysList from './ActivationKeysList';
 import { ManualActivationKey } from './ManualActivationKey';
 import SatelliteRegistration from './SatelliteRegistration';
 
+import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeRegistrationType,
@@ -16,6 +17,7 @@ import { RegistrationProps } from '../registrationTypes';
 const Registration = ({ onErrorChange }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
+  const isOnPremise = useIsOnPremise();
 
   return (
     <FormGroup label='Registration method'>
@@ -72,18 +74,16 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
                   hasCheckIcon
                 />
               </Content>
-              {!process.env.IS_ON_PREMISE &&
-                registrationType.startsWith('register-now') && (
-                  <Content className='pf-v6-u-pb-sm'>
-                    <ActivationKeysList onErrorChange={onErrorChange} />
-                  </Content>
-                )}
-              {process.env.IS_ON_PREMISE &&
-                registrationType.startsWith('register-now') && (
-                  <Content className='pf-v6-u-pb-sm'>
-                    <ManualActivationKey />
-                  </Content>
-                )}
+              {!isOnPremise && registrationType.startsWith('register-now') && (
+                <Content className='pf-v6-u-pb-sm'>
+                  <ActivationKeysList onErrorChange={onErrorChange} />
+                </Content>
+              )}
+              {isOnPremise && registrationType.startsWith('register-now') && (
+                <Content className='pf-v6-u-pb-sm'>
+                  <ManualActivationKey />
+                </Content>
+              )}
             </>
           }
         />

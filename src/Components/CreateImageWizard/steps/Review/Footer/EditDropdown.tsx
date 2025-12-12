@@ -14,6 +14,7 @@ import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useGetUser,
+  useIsOnPremise,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
@@ -39,6 +40,7 @@ export const EditSaveAndBuildBtn = ({
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const { trigger: buildBlueprint } = useComposeBlueprintMutation();
   const packages = useAppSelector(selectPackages);
@@ -50,7 +52,7 @@ export const EditSaveAndBuildBtn = ({
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
 
-    if (!process.env.IS_ON_PREMISE && requestBody) {
+    if (!isOnPremise && requestBody) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
@@ -96,6 +98,7 @@ export const EditSaveButton = ({
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
 
   const packages = useAppSelector(selectPackages);
 
@@ -105,7 +108,7 @@ export const EditSaveButton = ({
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
 
-    if (!process.env.IS_ON_PREMISE && requestBody) {
+    if (!isOnPremise && requestBody) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,

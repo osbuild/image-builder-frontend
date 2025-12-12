@@ -5,7 +5,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../constants';
-import { useGetUser } from '../../../Hooks';
+import { useGetUser, useIsOnPremise } from '../../../Hooks';
 
 type ExternalLinkButtonProps = {
   url: string;
@@ -20,6 +20,7 @@ const ExternalLinkButton = ({
 }: ExternalLinkButtonProps) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
+  const isOnPremise = useIsOnPremise();
   return (
     <Button
       component='a'
@@ -30,7 +31,7 @@ const ExternalLinkButton = ({
       iconPosition='right'
       isInline
       onClick={() => {
-        if (!process.env.IS_ON_PREMISE) {
+        if (!isOnPremise) {
           analytics.track(`${AMPLITUDE_MODULE_NAME} - Outside link clicked`, {
             step_id: analyticsStepId,
             account_id: userData?.identity.internal?.account_id || 'Not found',

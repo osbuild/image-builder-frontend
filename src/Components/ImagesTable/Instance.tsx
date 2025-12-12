@@ -7,6 +7,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
+import { useIsOnPremise } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { LocalUploadStatus } from '../../store/cockpit/composerCloudApi';
 import { ComposesResponseItem, ImageTypes } from '../../store/imageBuilderApi';
@@ -22,6 +23,7 @@ export const AwsS3Instance = ({
   isExpired,
 }: AwsS3InstancePropTypes) => {
   const { analytics } = useChrome();
+  const isOnPremise = useIsOnPremise();
 
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
@@ -78,7 +80,7 @@ export const AwsS3Instance = ({
       href={options?.url}
       isDisabled={isExpired}
       onClick={() => {
-        if (!process.env.IS_ON_PREMISE) {
+        if (!isOnPremise) {
           analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Downloaded`, {
             module: AMPLITUDE_MODULE_NAME,
             blueprint_id: compose.blueprint_id,
