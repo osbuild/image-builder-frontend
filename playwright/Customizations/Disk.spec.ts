@@ -72,12 +72,10 @@ test('Create a blueprint with Disk customization', async ({
 
   await test.step('Fill in some partitions and add a volume group', async () => {
     await frame.getByRole('button', { name: 'Add plain partition' }).click();
-    await frame.getByRole('button', { name: '/home' }).click();
-    await frame.getByRole('option', { name: '/var' }).click();
-
     await frame
-      .getByRole('textbox', { name: 'mountpoint suffix' })
-      .fill('/usb');
+      .getByRole('gridcell', { name: '/home' })
+      .getByPlaceholder('Define mount point')
+      .fill('/var/usb');
 
     await frame.getByPlaceholder('Define minimum size').nth(1).fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
@@ -85,7 +83,7 @@ test('Create a blueprint with Disk customization', async ({
 
     await frame.getByRole('button', { name: 'Add LVM volume group' }).click();
     await expect(
-      frame.getByRole('row').nth(1).getByRole('button').nth(4),
+      frame.getByRole('row').nth(1).getByRole('button').nth(3),
     ).toBeEnabled();
 
     await frame
@@ -102,24 +100,21 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('textbox', { name: 'Partition name input' })
       .fill('lv1');
     await frame.getByRole('button', { name: 'Add logical volume' }).click();
-    await frame.getByRole('button', { name: '/home' }).nth(1).click();
-    await frame.getByRole('option', { name: '/tmp' }).click();
+    await frame
+      .getByRole('gridcell', { name: /\/home/ })
+      .getByPlaceholder('Define mount point')
+      .nth(1)
+      .fill('/tmp/usb');
 
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp xfs 1 GiB',
+        name: 'Draggable row draggable button /tmp/usb xfs 1 GiB',
       })
       .getByLabel('Partition name input')
       .fill('lv2');
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button lv2 /tmp xfs 1 GiB',
-      })
-      .getByLabel('mountpoint suffix')
-      .fill('/usb');
-    await frame
-      .getByRole('row', {
-        name: 'Draggable row draggable button lv2 /tmp /usb xfs 1 GiB',
+        name: 'Draggable row draggable button lv2 /tmp/usb xfs 1 GiB',
       })
       .getByPlaceholder('Define minimum size')
       .fill('10');
@@ -144,38 +139,29 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('row')
       .nth(1)
       .getByRole('button')
-      .nth(4);
+      .nth(3);
     await expect(removeRootButton).toBeEnabled();
 
     const secondRow = frame.getByRole('row').nth(2);
 
-    const removeTmpButton = secondRow.getByRole('button').nth(4);
+    const removeTmpButton = secondRow.getByRole('button').nth(3);
     await expect(removeTmpButton).toBeEnabled();
 
     await expect(
-      secondRow.getByRole('textbox', { name: 'mountpoint suffix' }),
-    ).toHaveValue('/usb');
+      secondRow
+        .getByRole('gridcell', { name: '/var/usb' })
+        .getByPlaceholder('Define mount point'),
+    ).toBeVisible();
 
     await secondRow
       .getByRole('gridcell', { name: '10', exact: true })
       .getByPlaceholder('Define minimum size')
       .fill('5');
 
-    await secondRow.getByRole('button', { name: '/var' }).click();
-    await expect(
-      secondRow.getByRole('textbox', { name: 'mountpoint suffix' }),
-    ).toBeVisible();
-    await frame.getByRole('option', { name: '/usr' }).click();
-    await expect(
-      secondRow.getByRole('textbox', { name: 'mountpoint suffix' }),
-    ).toBeHidden();
-
-    await secondRow.getByRole('button', { name: '/usr' }).click();
-    await frame.getByRole('option', { name: '/srv' }).click();
-
     await secondRow
-      .getByRole('textbox', { name: 'mountpoint suffix' })
-      .fill('/data');
+      .getByRole('gridcell', { name: '/var/usb' })
+      .getByPlaceholder('Define mount point')
+      .fill('/srv/data');
 
     await secondRow.getByRole('button', { name: 'KiB' }).click();
     await frame.getByRole('option', { name: 'MiB' }).click();
@@ -227,19 +213,20 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('row')
       .nth(1)
       .getByRole('button')
-      .nth(4);
+      .nth(3);
 
     await expect(removeRootButton).toBeEnabled();
 
     const secondRow = frame.getByRole('row').nth(2);
 
-    const removeTmpButton = secondRow.getByRole('button').nth(4);
+    const removeTmpButton = secondRow.getByRole('button').nth(3);
     await expect(removeTmpButton).toBeEnabled();
 
-    const dataTextbox = secondRow.getByRole('textbox', {
-      name: 'mountpoint suffix',
-    });
-    await expect(dataTextbox).toHaveValue('/data');
+    await expect(
+      secondRow
+        .getByRole('gridcell', { name: '/srv/data' })
+        .getByPlaceholder('Define mount point'),
+    ).toBeVisible();
 
     const size = secondRow.getByPlaceholder('Define minimum size');
     await expect(size).toHaveValue('5');
