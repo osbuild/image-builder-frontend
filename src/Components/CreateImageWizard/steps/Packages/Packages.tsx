@@ -128,6 +128,7 @@ export type GroupWithRepositoryInfo = {
   description: string;
   repository: PackageRepository;
   package_list: string[];
+  gid?: number;
 };
 
 export enum Repos {
