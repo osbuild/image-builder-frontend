@@ -47,7 +47,7 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
           mountpoint: '/home',
           min_size: '1',
           unit: 'GiB',
-          fs_type: 'ext4',
+          fs_type: 'xfs',
         },
       }),
     );

@@ -3,13 +3,13 @@ export const exportedDiskBP = (blueprintName: string): string => {
 
 [[customizations.disk.partitions]]
 minsize = "1 GiB"
-fs_type = "ext4"
+fs_type = "xfs"
 mountpoint = "/"
 type = "plain"
 
 [[customizations.disk.partitions]]
 minsize = "5 MiB"
-fs_type = "xfs"
+fs_type = "ext4"
 mountpoint = "/srv/data"
 type = "plain"
 
@@ -21,13 +21,13 @@ type = "lvm"
 [[customizations.disk.partitions.logical_volumes]]
 minsize = "1 GiB"
 name = "lv1"
-fs_type = "ext4"
+fs_type = "xfs"
 mountpoint = "/home"
 
 [[customizations.disk.partitions.logical_volumes]]
 minsize = "10 KiB"
 name = "lv2-edited"
-fs_type = "ext4"
+fs_type = "xfs"
 mountpoint = "/tmp/usb"
 
 [customizations.timezone]

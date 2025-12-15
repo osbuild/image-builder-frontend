@@ -755,7 +755,7 @@ export const wizardSlice = createSlice({
               {
                 id: uuidv4(),
                 mountpoint: '/',
-                fs_type: 'ext4',
+                fs_type: 'xfs',
                 min_size: '1',
                 unit: 'GiB',
                 type: 'plain',

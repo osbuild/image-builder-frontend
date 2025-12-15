@@ -97,7 +97,7 @@ export const expectedDisk: Disk = {
   minsize: '2 GiB',
   partitions: [
     {
-      fs_type: 'ext4',
+      fs_type: 'xfs',
       minsize: '2 GiB',
       mountpoint: '/',
       type: 'plain',
@@ -115,7 +115,7 @@ export const expectedDisk: Disk = {
     {
       logical_volumes: [
         {
-          fs_type: 'ext4',
+          fs_type: 'xfs',
           minsize: '2 GiB',
           mountpoint: '/home',
           name: 'lv1',
