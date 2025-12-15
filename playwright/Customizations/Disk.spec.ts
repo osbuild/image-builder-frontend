@@ -107,19 +107,19 @@ test('Create a blueprint with Disk customization', async ({
 
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp ext4 1 GiB',
+        name: 'Draggable row draggable button /tmp xfs 1 GiB',
       })
       .getByLabel('Partition name input')
       .fill('lv2');
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button lv2 /tmp ext4 1 GiB',
+        name: 'Draggable row draggable button lv2 /tmp xfs 1 GiB',
       })
       .getByLabel('mountpoint suffix')
       .fill('/usb');
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button lv2 /tmp /usb ext4 1 GiB',
+        name: 'Draggable row draggable button lv2 /tmp /usb xfs 1 GiB',
       })
       .getByPlaceholder('Define minimum size')
       .fill('10');
@@ -188,8 +188,8 @@ test('Create a blueprint with Disk customization', async ({
       .nth(1)
       .fill('lv2-edited');
 
-    await frame.getByRole('button', { name: 'ext4' }).nth(1).click();
-    await frame.getByRole('option', { name: 'xfs' }).click();
+    await frame.getByRole('button', { name: 'xfs' }).nth(1).click();
+    await frame.getByRole('option', { name: 'ext4' }).click();
 
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
@@ -244,7 +244,7 @@ test('Create a blueprint with Disk customization', async ({
     const size = secondRow.getByPlaceholder('Define minimum size');
     await expect(size).toHaveValue('5');
 
-    const typeButton = secondRow.getByRole('button', { name: 'xfs' });
+    const typeButton = secondRow.getByRole('button', { name: 'ext4' });
     await expect(typeButton).toBeVisible();
 
     const unitButton = secondRow.getByRole('button', { name: 'MiB' });

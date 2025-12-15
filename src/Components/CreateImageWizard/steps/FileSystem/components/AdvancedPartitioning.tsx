@@ -32,7 +32,7 @@ const AdvancedPartitioning = () => {
     dispatch(
       addDiskPartition({
         id,
-        fs_type: 'ext4',
+        fs_type: 'xfs',
         min_size: '1',
         unit: 'GiB',
         type: 'plain',
@@ -58,7 +58,7 @@ const AdvancedPartitioning = () => {
             mountpoint: '/home',
             min_size: '1',
             unit: 'GiB',
-            fs_type: 'ext4',
+            fs_type: 'xfs',
           },
         ],
       }),
