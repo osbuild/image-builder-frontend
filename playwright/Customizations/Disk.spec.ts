@@ -52,11 +52,11 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('radio', { name: 'Advanced disk partitioning' })
       .click();
 
-    const partitioningModeCheckbox = frame.getByRole('checkbox', {
-      name: /Select partitioning mode/i,
-    });
-    await expect(partitioningModeCheckbox).toBeVisible();
-    await expect(partitioningModeCheckbox).not.toBeChecked();
+    await expect(
+      frame.getByRole('checkbox', {
+        name: /Select partitioning mode/i,
+      }),
+    ).toBeHidden();
 
     await expect(
       frame.getByRole('button', {
@@ -68,33 +68,6 @@ test('Create a blueprint with Disk customization', async ({
         name: /add lvm volume group/i,
       }),
     ).toBeVisible();
-  });
-
-  await test.step('Select partitioning mode', async () => {
-    const partitioningModeCheckbox = frame.getByRole('checkbox', {
-      name: /Select partitioning mode/i,
-    });
-    await partitioningModeCheckbox.click();
-
-    await expect(
-      frame.getByRole('radio', {
-        name: 'Auto-LVM partitioning',
-      }),
-    ).toBeVisible();
-    await expect(
-      frame.getByRole('radio', {
-        name: 'Raw partitioning',
-      }),
-    ).toBeVisible();
-    await expect(
-      frame.getByRole('radio', { name: 'LVM partitioning', exact: true }),
-    ).toBeVisible();
-
-    await frame
-      .getByRole('radio', {
-        name: 'Raw partitioning',
-      })
-      .click();
   });
 
   await test.step('Fill in some partitions and add a volume group', async () => {
@@ -166,18 +139,6 @@ test('Create a blueprint with Disk customization', async ({
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit File system configuration step').click();
-
-    await expect(
-      frame.getByRole('radio', {
-        name: 'Raw partitioning',
-      }),
-    ).toBeChecked();
-
-    await frame
-      .getByRole('radio', {
-        name: 'Auto-LVM partitioning',
-      })
-      .click();
 
     const removeRootButton = frame
       .getByRole('row')
@@ -261,17 +222,6 @@ test('Create a blueprint with Disk customization', async ({
     await frame
       .getByRole('button', { name: 'File system configuration' })
       .click();
-
-    await expect(
-      frame.getByRole('checkbox', {
-        name: /Select partitioning mode/i,
-      }),
-    ).toBeChecked();
-    await expect(
-      frame.getByRole('radio', {
-        name: 'Auto-LVM partitioning',
-      }),
-    ).toBeChecked();
 
     const removeRootButton = frame
       .getByRole('row')

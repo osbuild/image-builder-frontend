@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   Button,
-  Checkbox,
   Content,
   ContentVariants,
   FormGroup,
@@ -12,7 +11,6 @@ import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
-import PartitioningMode from './PartitioningMode';
 import VolumeGroups from './VolumeGroups';
 
 import { PARTITIONING_URL } from '../../../../../constants';
@@ -20,17 +18,14 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addDiskPartition,
   changeDiskMinsize,
-  changePartitioningMode,
   selectDiskMinsize,
   selectDiskPartitions,
-  selectPartitioningMode,
 } from '../../../../../store/wizardSlice';
 
 const AdvancedPartitioning = () => {
   const dispatch = useAppDispatch();
   const minsize = useAppSelector(selectDiskMinsize);
   const diskPartitions = useAppSelector(selectDiskPartitions);
-  const partitioningMode = useAppSelector(selectPartitioningMode);
 
   const handleAddPartition = () => {
     const id = uuidv4();
@@ -98,21 +93,6 @@ const AdvancedPartitioning = () => {
           </Button>
         </Content>
       </Content>
-      <Checkbox
-        label='Select partitioning mode'
-        isChecked={partitioningMode !== undefined}
-        onChange={(_event, checked) => {
-          if (checked) {
-            dispatch(changePartitioningMode('auto-lvm'));
-          } else {
-            dispatch(changePartitioningMode(undefined));
-          }
-        }}
-        aria-label='Select partitioning mode checkbox'
-        id='select-partitioning-mode-switch'
-        name='select-partitioning-mode-switch'
-        body={partitioningMode !== undefined && <PartitioningMode />}
-      />
       <FormGroup label='Minimum disk size'>
         <TextInput
           aria-label='Minimum disk size input'

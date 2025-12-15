@@ -1,9 +1,6 @@
 export const exportedDiskBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
-[customizations]
-partitioning_mode = "auto-lvm"
-
 [[customizations.disk.partitions]]
 minsize = "1 GiB"
 fs_type = "ext4"
@@ -42,6 +39,9 @@ languages = [ "C.UTF-8" ]`;
 
 export const exportedFilesystemBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
+
+[customizations]
+partitioning_mode = "auto-lvm"
 
 [[customizations.filesystem]]
 mountpoint = "/"
