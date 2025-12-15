@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Label, Radio } from '@patternfly/react-core';
+import { Radio } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -16,14 +16,7 @@ const PartitioningMode = () => {
     <>
       <Radio
         id='auto-lvm-partitioning-mode-radio'
-        label={
-          <>
-            Auto-LVM partitioning{' '}
-            <Label isCompact color='grey'>
-              Default
-            </Label>
-          </>
-        }
+        label='Auto-LVM partitioning'
         name='partitioning-mode'
         description='Converts partitions to LVM only if new mountpoints are defined in the filesystem customization'
         isChecked={partitioningMode === 'auto-lvm'}
