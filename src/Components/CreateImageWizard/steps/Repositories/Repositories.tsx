@@ -451,10 +451,16 @@ const Repositories = () => {
       ];
     }
 
-    if (repo.status !== 'Valid') {
+    if (repo.status === 'Invalid' || repo.status === 'Unavailable') {
       return [
         true,
         `Repository can't be selected. The status is still '${repo.status}'.`,
+      ];
+    }
+    if (!repo.last_introspection_time) {
+      return [
+        true,
+        `Repository can't be selected, we are still learning about it.`,
       ];
     }
 
