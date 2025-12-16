@@ -88,6 +88,11 @@ module.exports = {
         host: `http://localhost:${process.env.CONFIG_PORT}`,
       },
     }),
+    ...(process.env.LOCAL_IMAGE_BUILDER_API && {
+      '/api/image-builder': {
+        host: process.env.LOCAL_IMAGE_BUILDER_API,
+      },
+    }),
     ...(process.env.LOCAL_API && {
       ...(process.env.LOCAL_API.split(',') || []).reduce((acc, curr) => {
         const [appName, appConfig] = (curr || '').split(':');
