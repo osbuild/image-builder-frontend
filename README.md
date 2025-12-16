@@ -4,10 +4,10 @@ Frontend code for Image Builder.
 
 ## Project
 
-* **Website**: https://www.osbuild.org
-* **Bug Tracker**: https://github.com/osbuild/image-builder-frontend/issues
-* **Discussions**: https://github.com/orgs/osbuild/discussions
-* **Matrix**: #image-builder on [fedoraproject.org](https://matrix.to/#/#image-builder:fedoraproject.org)
+- **Website**: https://www.osbuild.org
+- **Bug Tracker**: https://github.com/osbuild/image-builder-frontend/issues
+- **Discussions**: https://github.com/orgs/osbuild/discussions
+- **Matrix**: #image-builder on [fedoraproject.org](https://matrix.to/#/#image-builder:fedoraproject.org)
 
 ## Principles
 
@@ -17,6 +17,7 @@ Frontend code for Image Builder.
 4. This is an [Insights application](https://github.com/RedHatInsights/), so it abides by some rules and standards of Insights.
 
 ## Table of Contents
+
 1. [How to build and run image-builder-frontend](#frontend-development)
    1. [Frontend Development](#frontend-development)
    2. [Image builder as Cockpit plugin](#image-builder-as-cockpit-plugin)
@@ -69,7 +70,7 @@ echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 
 4. open browser at `https://prod.foo.redhat.com:1337/beta/insights/image-builder`
 
-#### Webpack proxy (staging) -- *Runs with image-builder's stage deployment*
+#### Webpack proxy (staging) -- _Runs with image-builder's stage deployment_
 
 1. run `npm clean-install`
 
@@ -89,9 +90,11 @@ echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
 > Issues marked with [cockpit-image-builder](https://github.com/osbuild/image-builder-frontend/issues?q=is%3Aissue%20state%3Aopen%20label%3Acockpit-image-builder) label are reproducible in image builder plugin and can be worked on by external contributors without connection to the Red Hat VPN.
 
 #### Cockpit setup
+
 To install and setup Cockpit follow guide at: https://cockpit-project.org/running.html
 
 #### On-premises image builder installation and configuration
+
 To install and configure `osbuild-composer` on your local machine follow our documentation: https://osbuild.org/docs/on-premises/installation/
 
 #### Scripts for local development of image builder plugin
@@ -123,16 +126,31 @@ make cockpit/devel-uninstall
 
 For convenience, you can run the following to combine all three steps:
 
-
 ```bash
 make cockpit/devel
 ```
 
 ### Backend Development
 
+#### Full stack
+
 To develop both the frontend and the backend you can again use the proxy to run both the
 frontend and backend locally against the chrome at cloud.redhat.com. For instructions
 see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-getting-started).
+
+#### image-builder-crc only
+
+In cases where you only want to run the frontend against image-builder-crc, you can follow the
+[instructions](https://github.com/osbuild/image-builder-crc/blob/main/HACKING.md)
+for setting that up first. Then we can point to this using an environment variable:
+
+```bash
+LOCAL_IMAGE_BUILDER_API=http://localhost:8086 npm run start
+```
+
+> [!NOTE]
+> You will not be able to build images without composer running too. Depending on your
+> container network, you may need to use `http://host.docker.internal` rather than `http://localhost`
 
 ## API endpoints
 
@@ -147,7 +165,7 @@ slice which are stored in `/src/store`.
 For a hypothetical API called foobar
 
 1. Create a new "empty" API file under `src/store/emptyFoobarApi.ts` that has following
-content:
+   content:
 
 ```typescript
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
@@ -165,7 +183,7 @@ export const emptyFoobarApi = createApi({
 2. Declare new constant `FOOBAR_API` with the API url in `src/constants.ts`
 
 ```typescript
-export const FOOBAR_API = 'api/foobar/v1'
+export const FOOBAR_API = 'api/foobar/v1';
 ```
 
 3. Create the config file for code generation in `api/config/foobar.ts` containing:
@@ -213,8 +231,9 @@ same as this MR in internal gitlab https://gitlab.cee.redhat.com/service/app-int
 you can ask on the slack channel https://redhat-internal.slack.com/archives/C023YSA47A4 for a merge if your MR stays unchecked for a little while.
 
 Then connect to the following platforms:
-* https://insights-stage.unleash.devshift.net/ for stage
-* https://insights.unleash.devshift.net prod
+
+- https://insights-stage.unleash.devshift.net/ for stage
+- https://insights.unleash.devshift.net prod
 
 Once you have a toggle to work with, on the frontend code there's just need to
 import the `useFlag` hook and to use it. You can get some inspiration from
@@ -231,7 +250,6 @@ If the two possible code path accessible via the toggles are defined in the code
 base, then it's good practice to test the two of them. If not, only test what's
 actually owned by the frontend project.
 
-
 ### Cleaning the flags
 
 Unleash toggles are expected to live for a limited amount of time, documentation
@@ -239,22 +257,25 @@ specify 40 days for a release, we should keep that in mind for each toggle
 we're planning on using.
 
 ## File Structure
+
 ### Quick Reference
-| Directory                                                                                                            | Description                                |
-| ---------                                                                                                            | -----------                                |
-| [`/api`](api/)                                     | API schema and config files                |
-| [`/config`](config/)                               | webpack configuration                      |
-| [`/src`](src/)                                     | source code                                |
-| [`/src/Components`](src/Components/)               | source code split by individual components |
-| [`/playwright`](playwright/)                       | Playwright tests                           |
-| [`/playwright/BootTests`](playwright/BootTests/)   | Playwright boot tests                      |
-| [`/src/test`](src/test/)                           | vitest utilities                           |
-| [`/src/test/mocks`](src/test/mocks/)               | mock handlers and server config for MSW    |
-| [`/src/store`](src/store/)                         | Redux store                                |
+
+| Directory                                        | Description                                |
+| ------------------------------------------------ | ------------------------------------------ |
+| [`/api`](api/)                                   | API schema and config files                |
+| [`/config`](config/)                             | webpack configuration                      |
+| [`/src`](src/)                                   | source code                                |
+| [`/src/Components`](src/Components/)             | source code split by individual components |
+| [`/playwright`](playwright/)                     | Playwright tests                           |
+| [`/playwright/BootTests`](playwright/BootTests/) | Playwright boot tests                      |
+| [`/src/test`](src/test/)                         | vitest utilities                           |
+| [`/src/test/mocks`](src/test/mocks/)             | mock handlers and server config for MSW    |
+| [`/src/store`](src/store/)                       | Redux store                                |
 
 ## Style Guidelines
 
 This project uses recommended rule sets rom several plugins:
+
 - `@eslint/js`
 - `typescript-eslint`
 - `eslint-plugin-react`
@@ -269,11 +290,13 @@ This project uses recommended rule sets rom several plugins:
 - `@redhat-cloud-services/eslint-config-redhat-cloud-services`
 
 To run the linter, use:
+
 ```bash
 npm run lint
 ```
 
 Any errors that can be fixed automatically, can be corrected by running:
+
 ```bash
 npm run lint:js:fix
 ```
@@ -289,6 +312,7 @@ All UI contributions must also include a new test or update an existing test in 
 ### Running the tests
 
 To run the unit tests, the linter, and the code coverage check run:
+
 ```bash
 npm run test
 ```
@@ -296,6 +320,7 @@ npm run test
 These tests will also be run in our CI when a PR is opened.
 
 Note that `testing-library` DOM printout is currently disabled for all tests by the following configuration in `src/test/setup.ts`:
+
 ```typescript
 configure({
   getElementError: (message: string) => {
@@ -306,6 +331,7 @@ configure({
   },
 });
 ```
+
 If you'd like to see the stack printed out you can either temporarily disable the configuration or generate a [Testing Playground](https://testing-playground.com/) link by adding `screen.logTestingPlaygroundURL()` to your test.
 
 ## Running hosted service Playwright tests
@@ -317,43 +343,52 @@ The tests are located in the [playwright/](playwright/) directory and are identi
 
 1. Copy the [example env file](playwright_example.env) content and create a file named `.env` in the root directory of the project. Paste the example file content into it.
    For local development fill in the:
-    * `BASE_URL` - `https://stage.foo.redhat.com:1337` is required, which is already set in the example config
-    * `PLAYWRIGHT_USER` - your consoledot stage username
-    * `PLAYWRIGHT_PASSWORD` - your consoledot stage password
+   - `BASE_URL` - `https://stage.foo.redhat.com:1337` is required, which is already set in the example config
+   - `PLAYWRIGHT_USER` - your consoledot stage username
+   - `PLAYWRIGHT_PASSWORD` - your consoledot stage password
 
 2. Make sure Playwright is installed as a dev dependency
+
    ```bash
    npm clean-install
    ```
 
 3. Download the Playwright browsers with
+
    ```bash
    npx playwright install
    ```
 
 4. Start the local development stage server by running
+
    ```bash
    npm run start:stage
    ```
 
 5. Now you have two options of how to run the tests:
-   * (Preferred) Use VS Code and the [Playwright Test module for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright). But other editors do have similar plugins for ease of use, if so desired
-   * Using terminal - `npx playwright test` will run the playwright test suite. `npx playwright test --headed` will run the suite in a vnc-like browser so you can watch it's interactions.
+   - (Preferred) Use VS Code and the [Playwright Test module for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright). But other editors do have similar plugins for ease of use, if so desired
+   - Using terminal - `npx playwright test` will run the playwright test suite. `npx playwright test --headed` will run the suite in a vnc-like browser so you can watch it's interactions.
 
 ### Dynamic vs static users
+
 This applies to the **stage** environment only. By default we generate a new user for each CI run for the hosted tests, however there is an option to use static user as well. You can set credentials for said static user like this:
+
 ```.env
 PLAYWRIGHT_STATIC_USER="<your_static_user_username>"
 PLAYWRIGHT_STATIC_PASSWORD="<your_static_user_password>"
 ```
+
 For local development purposes, you can use the same credentials as for `PLAYWRIGHT_USER` and `PLAYWRIGHT_PASSWORD` if you are using your stage account for those.
+
 ## Playwright Boot tests
+
 This section describes what Playwright Boot tests are, how they work and how to run them locally.
 
 Boot tests provide end to end coverage for Image Builder and they are used to test mainly integrations with other services. Their main advantage is that they build an image, upload it and **launch it on RHOSP** (RedHat OpenStack Platform). This way we can test images and their customizations through remotely executed commands on an actual running VM booted from the image.
 Boot tests are located in the [playwright/BootTests](playwright/BootTests) directory and are identified by the `*.boot.ts` file extension.
 
 ### Local development setup
+
 In order to run the Boot tests locally, we need to set up few things first on top of what we did in the [Running hosted service Playwright tests](#running-hosted-service-playwright-tests) section.
 
 We need additional fields in the .env file, some of them are already set and don't need to be changed in the [example env file](playwright_example.env)), but some of them have to be set manually, specifically following:
@@ -372,11 +407,18 @@ In order to be able to access RHOSP within the Boot tests, we need to generate c
 By filling out these variables you should be able to run the Boot test locally successfully.
 
 ### CI setup
+
 Boot tests run as a scheduled nightly Github Action with a custom runner in AWS Codebuild, but there is an option to run them manually on a PR as well.
+
 #### Automated run
+
 Boot tests run automatically on PRs when they contain changes inside the [playwright/BootTests](playwright/BootTests) directory.
+
 #### Manual run
+
 In order to run the Boot tests on a PR, you can open the `Boot tests` workflow in Github Actions and type in the number of PR into a `Pull Request number to run tests against` field. The action will then pull the code from a PR of that number and execute as usual.
 
 #### Where can I see results?
-You can find artifacts and link to a Currents report directly in the workflow run detail, but Currents will also link the report back to the PR when the workflow finishes as a *check*.
+
+You can find artifacts and link to a Currents report directly in the workflow run detail, but Currents will also link the report back to the PR when the workflow finishes as a _check_.
+
