@@ -13,7 +13,7 @@ import AddCircleOIcon from '@patternfly/react-icons/dist/esm/icons/add-circle-o-
 import { useAppDispatch } from '../../../../../store/hooks';
 import {
   addUserGroup,
-  removeUserGroup,
+  removeUserGroupByIndex,
   updateUserGroupByIndex,
 } from '../../../../../store/wizardSlice';
 import { useUserGroupsValidation } from '../../../utilities/useValidation';
@@ -52,7 +52,7 @@ const GroupRow = ({
   };
 
   const onRemoveGroup = () => {
-    dispatch(removeUserGroup(groupName));
+    dispatch(removeUserGroupByIndex(index));
   };
 
   const handleGroupNameChange = (
@@ -66,18 +66,18 @@ const GroupRow = ({
     const trimmedValue = value.trim();
 
     if (!trimmedValue) {
-      dispatch(removeUserGroup(groupName));
+      dispatch(removeUserGroupByIndex(index));
       return;
     }
 
     // If value is valid and group doesn't have gid yet, recreate it to get a gid
     if (isUserGroupValid(trimmedValue) && !groupId) {
-      dispatch(removeUserGroup(groupName));
+      dispatch(removeUserGroupByIndex(index));
       dispatch(addUserGroup(trimmedValue));
       return;
     }
 
-    dispatch(updateUserGroupByIndex({ index, name: value }));
+    dispatch(updateUserGroupByIndex({ index, name: trimmedValue }));
   };
 
   const trimmedName = groupName.trim();

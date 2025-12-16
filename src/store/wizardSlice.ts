@@ -1178,7 +1178,10 @@ export const wizardSlice = createSlice({
         state.enabled_modules.splice(index, 1);
       }
     },
-    addGroup: (state, action: PayloadAction<GroupWithRepositoryInfo>) => {
+    addPackageGroup: (
+      state,
+      action: PayloadAction<GroupWithRepositoryInfo>,
+    ) => {
       const existingGrpIndex = state.groups.findIndex(
         (grp) => grp.name === action.payload.name,
       );
@@ -1189,7 +1192,7 @@ export const wizardSlice = createSlice({
         state.groups.push(action.payload);
       }
     },
-    removeGroup: (
+    removePackageGroup: (
       state,
       action: PayloadAction<GroupWithRepositoryInfo['name']>,
     ) => {
@@ -1214,20 +1217,18 @@ export const wizardSlice = createSlice({
         state.userGroups.push(newUserGroup);
       }
     },
-    removeUserGroup: (state, action: PayloadAction<string>) => {
-      const index = state.userGroups.findIndex(
-        (group) => group.name === action.payload,
-      );
-      if (index !== -1) {
-        state.userGroups.splice(index, 1);
-      }
-    },
     updateUserGroupByIndex: (
       state,
       action: PayloadAction<{ index: number; name: string }>,
     ) => {
       if (state.userGroups[action.payload.index]) {
         state.userGroups[action.payload.index].name = action.payload.name;
+      }
+    },
+    removeUserGroupByIndex: (state, action: PayloadAction<number>) => {
+      const index = action.payload;
+      if (index >= 0 && index < state.userGroups.length) {
+        state.userGroups.splice(index, 1);
       }
     },
     addLanguage: (state, action: PayloadAction<string>) => {
@@ -1458,7 +1459,10 @@ export const wizardSlice = createSlice({
         user.groups = user.groups.filter((group) => group !== 'wheel');
       }
     },
-    addUserGroupByIndex: (state, action: PayloadAction<UserGroupPayload>) => {
+    assignGroupToUserByIndex: (
+      state,
+      action: PayloadAction<UserGroupPayload>,
+    ) => {
       const { index, group } = action.payload;
       if (
         !state.users[index].groups.some(
@@ -1472,7 +1476,7 @@ export const wizardSlice = createSlice({
         }
       }
     },
-    removeUserGroupByIndex: (
+    removeGroupFromUserByIndex: (
       state,
       action: PayloadAction<UserGroupPayload>,
     ) => {
@@ -1555,10 +1559,9 @@ export const {
   removePackage,
   addModule,
   removeModule,
-  addGroup,
-  removeGroup,
+  addPackageGroup,
+  removePackageGroup,
   addUserGroup,
-  removeUserGroup,
   updateUserGroupByIndex,
   addLanguage,
   removeLanguage,
@@ -1604,7 +1607,8 @@ export const {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
-  addUserGroupByIndex,
+  assignGroupToUserByIndex,
+  removeGroupFromUserByIndex,
   removeUserGroupByIndex,
   changeRedHatRepositories,
   changeFips,
