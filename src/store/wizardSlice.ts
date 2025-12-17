@@ -1167,7 +1167,10 @@ export const wizardSlice = createSlice({
         state.enabled_modules.splice(index, 1);
       }
     },
-    addGroup: (state, action: PayloadAction<GroupWithRepositoryInfo>) => {
+    addPackageGroup: (
+      state,
+      action: PayloadAction<GroupWithRepositoryInfo>,
+    ) => {
       const existingGrpIndex = state.groups.findIndex(
         (grp) => grp.name === action.payload.name,
       );
@@ -1178,7 +1181,7 @@ export const wizardSlice = createSlice({
         state.groups.push(action.payload);
       }
     },
-    removeGroup: (
+    removePackageGroup: (
       state,
       action: PayloadAction<GroupWithRepositoryInfo['name']>,
     ) => {
@@ -1417,7 +1420,10 @@ export const wizardSlice = createSlice({
         user.groups = user.groups.filter((group) => group !== 'wheel');
       }
     },
-    addUserGroupByIndex: (state, action: PayloadAction<UserGroupPayload>) => {
+    addGroupToUserByUserIndex: (
+      state,
+      action: PayloadAction<UserGroupPayload>,
+    ) => {
       const { index, group } = action.payload;
       if (
         !state.users[index].groups.some(
@@ -1431,7 +1437,7 @@ export const wizardSlice = createSlice({
         }
       }
     },
-    removeUserGroupByIndex: (
+    removeGroupFromUserByIndex: (
       state,
       action: PayloadAction<UserGroupPayload>,
     ) => {
@@ -1514,8 +1520,8 @@ export const {
   removePackage,
   addModule,
   removeModule,
-  addGroup,
-  removeGroup,
+  addPackageGroup,
+  removePackageGroup,
   addLanguage,
   removeLanguage,
   clearLanguages,
@@ -1560,8 +1566,8 @@ export const {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
-  addUserGroupByIndex,
-  removeUserGroupByIndex,
+  addGroupToUserByUserIndex,
+  removeGroupFromUserByIndex,
   changeRedHatRepositories,
   changeFips,
 } = wizardSlice.actions;

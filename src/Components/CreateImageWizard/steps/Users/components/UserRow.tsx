@@ -18,10 +18,10 @@ import RemoveUserModal from './RemoveUserModal';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import {
+  addGroupToUserByUserIndex,
   addUser,
-  addUserGroupByIndex,
+  removeGroupFromUserByIndex,
   removeUser,
-  removeUserGroupByIndex,
   setUserAdministratorByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
@@ -199,10 +199,10 @@ const UserRow = ({
               list={user.groups}
               item='Group'
               addAction={(value) =>
-                addUserGroupByIndex({ index: index, group: value })
+                addGroupToUserByUserIndex({ index: index, group: value })
               }
               removeAction={(value) =>
-                removeUserGroupByIndex({ index: index, group: value })
+                removeGroupFromUserByIndex({ index: index, group: value })
               }
               stepValidation={getValidationByIndex(index)}
               fieldName='groups'
