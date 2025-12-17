@@ -19,7 +19,6 @@ import {
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
-import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
 import TOML from 'smol-toml';
 
@@ -51,8 +50,6 @@ interface ImportBlueprintModalProps {
 export const ImportBlueprintModal: React.FunctionComponent<
   ImportBlueprintModalProps
 > = ({ setShowImportModal, isOpen }: ImportBlueprintModalProps) => {
-  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
-
   const onImportClose = () => {
     setShowImportModal(false);
     setFilename('');
@@ -272,9 +269,8 @@ export const ImportBlueprintModal: React.FunctionComponent<
               bodyContent={
                 <div>
                   You can import the blueprints you created by using the Red Hat
-                  image builder into{' '}
-                  {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'} images
-                  to create customized images.
+                  image builder into Red Hat Lightspeed images to create
+                  customized images.
                 </div>
               }
             >
