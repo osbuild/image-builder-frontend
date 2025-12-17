@@ -8,7 +8,6 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { ContentOrigin } from '../../../../constants';
 import {
@@ -34,13 +33,11 @@ type repoPropType = {
 };
 
 const RepoName = ({ repoUuid }: repoPropType) => {
-  const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
-
   const originParam = useMemo(() => {
     const origins = [ContentOrigin.ALL];
-    if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    origins.push(ContentOrigin.COMMUNITY);
     return origins.join(',');
-  }, [isSharedEPELEnabled]);
+  }, []);
 
   const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery(
     {
@@ -144,13 +141,11 @@ export const SnapshotTable = ({
     { refetchOnMountOrArgChange: true, skip: template === '' },
   );
 
-  const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
-
   const originParam = useMemo(() => {
     const origins = [ContentOrigin.REDHAT + ',' + ContentOrigin.CUSTOM];
-    if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    origins.push(ContentOrigin.COMMUNITY);
     return origins.join(',');
-  }, [isSharedEPELEnabled]);
+  }, []);
 
   const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
     uuid:

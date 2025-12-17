@@ -103,15 +103,14 @@ const Repositories = () => {
   const [isTemplateSelected, setIsTemplateSelected] = useState(false);
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
 
-  const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
   const isLayeredReposEnabled = useFlag('image-builder.layered-repos.enabled');
 
   const originParam = useMemo(() => {
     const origins = [ContentOrigin.CUSTOM];
-    if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    origins.push(ContentOrigin.COMMUNITY);
     if (isLayeredReposEnabled) origins.push(ContentOrigin.REDHAT);
     return origins.join(',');
-  }, [isSharedEPELEnabled, isLayeredReposEnabled]);
+  }, [isLayeredReposEnabled]);
 
   const debouncedFilterValue = useDebounce(filterValue);
 
@@ -815,7 +814,6 @@ const Repositories = () => {
                           ) : origin === ContentOrigin.COMMUNITY ? (
                             <CommunityRepositoryLabel />
                           ) : (
-                            isSharedEPELEnabled &&
                             isEPELUrl(url) && <CustomEpelWarning />
                           )}
                         </Td>
