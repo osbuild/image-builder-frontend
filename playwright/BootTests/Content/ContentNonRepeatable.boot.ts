@@ -43,10 +43,10 @@ test('Content integration test - Non repeatable build - URL source', async ({
   await deleteRepository(page, repositoryUrl);
 
   // Delete the blueprint, repository and Openstack resources after the run
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
-  await cleanup.add(() => deleteRepository(page, repositoryName));
-  await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteRepository(page, repositoryName));
+  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
@@ -67,7 +67,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
@@ -154,10 +154,10 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   const dependencyPackageName = 'wolf';
 
   // Delete the blueprint, repository and Openstack resources after the run
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
-  await cleanup.add(() => deleteRepository(page, repositoryName));
-  await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteRepository(page, repositoryName));
+  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
@@ -208,7 +208,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
@@ -308,15 +308,15 @@ test('Content integration test - Non repeatable build - Community repository', a
   const packageName = 'aha';
 
   // Delete the blueprint and Openstack resources after the run
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');

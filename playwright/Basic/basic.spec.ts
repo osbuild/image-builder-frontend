@@ -18,11 +18,11 @@ import {
 
 test('Basic create/build/delete test', async ({ page, cleanup }) => {
   const blueprintName = uuidv4();
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to review step in Wizard', async () => {
     await fillInImageOutput(frame);

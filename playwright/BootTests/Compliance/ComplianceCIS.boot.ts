@@ -43,10 +43,10 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
   // Delete the blueprint compliance policy and Openstack resources after the run
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteCompliancePolicy(page, policyName));
-  await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   // TODO: This test requires a static user for now,
   // TODO: because of the empty state in Compliance service when new user has not registered a system yet
@@ -56,7 +56,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
@@ -186,8 +186,8 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
   const policyType =
     'Centro Criptológico Nacional (CCN) - STIC for Red Hat Enterprise Linux 9 - Intermediate';
 
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
-  await cleanup.add(() => deleteCompliancePolicy(page, policyName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteCompliancePolicy(page, policyName));
 
   await login(page, true);
 
@@ -202,7 +202,7 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
   });
 
   await page.goto('/insights/image-builder/imagewizard?release=rhel9');
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await expect(frame.getByTestId('release_select')).toHaveText(
@@ -248,7 +248,7 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
 
   await test.step('Verify compliance warning appears in blueprint', async () => {
     await navigateToLandingPage(page);
-    const updatedFrame = await ibFrame(page);
+    const updatedFrame = ibFrame(page);
 
     const searchInput = updatedFrame.getByRole('textbox', {
       name: 'Search input',

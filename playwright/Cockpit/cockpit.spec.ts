@@ -15,7 +15,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
 
   await ensureAuthenticated(page);
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Cockpit worker config', async () => {
     const header = frame.getByText('Configure AWS Uploads');
@@ -84,7 +84,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
   });
 
   const blueprintName = uuidv4();
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await test.step('Cockpit cloud upload', async () => {
     await frame.getByTestId('blueprints-create-button').click();
