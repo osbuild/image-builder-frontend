@@ -61,13 +61,11 @@ import {
   setCompliancePolicy,
   setOscapProfile,
 } from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
-  const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
   const policyID = useAppSelector(selectCompliancePolicyID);
   const profileID = useAppSelector(selectComplianceProfileID);
@@ -128,18 +126,14 @@ const OscapContent = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   if (!process.env.IS_ON_PREMISE) {
-    if (complianceEnabled) {
-      analytics.screen('ib-createimagewizard-step-security-compliance');
-    } else {
-      analytics.screen('ib-createimagewizard-step-security-openscap');
-    }
+    analytics.screen('ib-createimagewizard-step-security');
   }
   const { data: policies } = usePoliciesQuery(
     {
       filter: `os_major_version=${majorVersion}`,
     },
     {
-      skip: !complianceEnabled || complianceType === 'openscap',
+      skip: complianceType === 'openscap',
     },
   );
 
@@ -181,58 +175,54 @@ const OscapContent = () => {
         )}
 
         <FormGroup>
-          {complianceEnabled && (
-            <>
-              <Content className='pf-v6-u-pb-sm'>
-                <Radio
-                  id='security-type-compliance'
-                  name='security-type'
-                  label='Use a custom compliance policy'
-                  isChecked={complianceType === 'compliance'}
-                  onChange={() => handleTypeChange('compliance')}
-                />
-              </Content>
-              <Content className='pf-v6-u-pl-lg pf-v6-u-pb-md'>
-                <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                  <FlexItem className='pf-v6-u-w-50'>
-                    <PolicySelector
-                      isDisabled={complianceType !== 'compliance'}
-                    />
-                  </FlexItem>
-                  <FlexItem>
-                    <Popover
-                      headerContent='Details'
-                      bodyContent={<PolicyDetails />}
-                      minWidth='30'
+          <>
+            <Content className='pf-v6-u-pb-sm'>
+              <Radio
+                id='security-type-compliance'
+                name='security-type'
+                label='Use a custom compliance policy'
+                isChecked={complianceType === 'compliance'}
+                onChange={() => handleTypeChange('compliance')}
+              />
+            </Content>
+            <Content className='pf-v6-u-pl-lg pf-v6-u-pb-md'>
+              <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+                <FlexItem className='pf-v6-u-w-50'>
+                  <PolicySelector
+                    isDisabled={complianceType !== 'compliance'}
+                  />
+                </FlexItem>
+                <FlexItem>
+                  <Popover
+                    headerContent='Details'
+                    bodyContent={<PolicyDetails />}
+                    minWidth='30'
+                  >
+                    <Button
+                      variant='secondary'
+                      icon={<InfoCircleIcon />}
+                      iconPosition='left'
+                      isDisabled={complianceType !== 'compliance' || !policyID}
                     >
-                      <Button
-                        variant='secondary'
-                        icon={<InfoCircleIcon />}
-                        iconPosition='left'
-                        isDisabled={
-                          complianceType !== 'compliance' || !policyID
-                        }
-                      >
-                        View details
-                      </Button>
-                    </Popover>
-                  </FlexItem>
-                </Flex>
-                <FormHelperText>
-                  <HelperText>
-                    <HelperTextItem>
-                      <ExternalLinkButton
-                        url={COMPLIANCE_URL}
-                        analyticsStepId='step-oscap'
-                      >
-                        Manage Red Hat Lightspeed compliance
-                      </ExternalLinkButton>
-                    </HelperTextItem>
-                  </HelperText>
-                </FormHelperText>
-              </Content>
-            </>
-          )}
+                      View details
+                    </Button>
+                  </Popover>
+                </FlexItem>
+              </Flex>
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem>
+                    <ExternalLinkButton
+                      url={COMPLIANCE_URL}
+                      analyticsStepId='step-oscap'
+                    >
+                      Manage Red Hat Lightspeed compliance
+                    </ExternalLinkButton>
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </Content>
+          </>
           <Content className='pf-v6-u-pb-sm'>
             <Radio
               id='security-type-openscap'
@@ -279,8 +269,7 @@ const OscapContent = () => {
           </Content>
         </FormGroup>
 
-        {complianceEnabled &&
-          Array.isArray(policies?.data) &&
+        {Array.isArray(policies?.data) &&
           policies.data.length === 0 &&
           complianceType === 'compliance' && (
             <Alert
