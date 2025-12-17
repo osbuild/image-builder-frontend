@@ -27,13 +27,13 @@ test('Create a blueprint with OpenSCAP customization', async ({
 
   const blueprintName = 'test-' + uuidv4();
   // Delete the blueprint after the run fixture
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('WSL only disables selector', async () => {
     await frame.getByRole('button', { name: 'Create image blueprint' }).click();
@@ -234,7 +234,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
   let exportedBP = '';
   await test.step('Export BP', async () => {
     exportedBP = await exportBlueprint(page);
-    await cleanup.add(async () => {
+    cleanup.add(async () => {
       await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
     });
   });

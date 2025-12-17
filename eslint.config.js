@@ -168,7 +168,9 @@ module.exports = defineConfig([
         {
           'allowConditional': true
         }
-      ]
+      ],
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
     },
   },
 

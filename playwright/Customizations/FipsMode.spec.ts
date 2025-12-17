@@ -24,13 +24,13 @@ test('FIPS switch toggles and persists through save', async ({
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to Security step and toggle FIPS on', async () => {
     await fillInImageOutput(frame);

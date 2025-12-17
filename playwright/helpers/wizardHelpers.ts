@@ -84,7 +84,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
     async () => {
       // Locate back to the Image Builder page every time because the test can fail at any stage
       await navigateToLandingPage(page);
-      const frame = await ibFrame(page);
+      const frame = ibFrame(page);
       await frame
         .getByRole('textbox', { name: 'Search input' })
         .fill(blueprintName);
@@ -114,8 +114,8 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
  * Export the blueprint
  * @param page - the page or frame object
  */
-export const exportBlueprint = async (page: Page | FrameLocator): string => {
-  const frame = await ibFrame(page);
+export const exportBlueprint = async (page: Page): Promise<string> => {
+  const frame = ibFrame(page);
   const downloadPromise = page.waitForEvent('download');
   await frame.getByRole('button', { name: 'blueprint menu toggle' }).click();
   await frame

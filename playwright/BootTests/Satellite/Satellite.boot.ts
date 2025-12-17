@@ -37,13 +37,13 @@ test('Satellite registration boot integration test', async ({
   const blueprintName = 'satellite-test-' + uuidv4();
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
+  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');

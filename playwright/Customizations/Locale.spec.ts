@@ -31,13 +31,13 @@ test('Create a blueprint with Locale customization', async ({
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame);
@@ -133,7 +133,7 @@ test('Create a blueprint with Locale customization', async ({
   let exportedBP = '';
   await test.step('Export BP', async () => {
     exportedBP = await exportBlueprint(page);
-    await cleanup.add(async () => {
+    cleanup.add(async () => {
       await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
     });
   });
@@ -143,7 +143,7 @@ test('Create a blueprint with Locale customization', async ({
       isHosted(),
       'Only verify the contents of the exported blueprint in cockpit',
     );
-    await verifyExportedBlueprint(exportedBP, exportedLocaleBP(blueprintName));
+    verifyExportedBlueprint(exportedBP, exportedLocaleBP(blueprintName));
   });
 
   await test.step('Import BP', async () => {

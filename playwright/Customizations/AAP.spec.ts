@@ -61,12 +61,12 @@ test('Create a blueprint with AAP registration customization', async ({
   test.skip(!isHosted(), 'AAP customization is not available in the plugin');
 
   // Delete the blueprint after the run fixture
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
   await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame);
@@ -192,7 +192,7 @@ test('Create a blueprint with AAP registration customization', async ({
   await test.step('Export BP', async (step) => {
     step.skip(!isHosted(), 'Exporting is not available in the plugin');
     exportedBP = await exportBlueprint(page);
-    await cleanup.add(async () => {
+    cleanup.add(async () => {
       await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
     });
   });

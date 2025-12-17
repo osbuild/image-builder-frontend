@@ -150,13 +150,13 @@ registrationModes.forEach(
       const blueprintName = `test-${name}-${uuidv4()}`;
 
       // Delete the blueprint after the run fixture
-      await cleanup.add(() => deleteBlueprint(page, blueprintName));
+      cleanup.add(() => deleteBlueprint(page, blueprintName));
 
       await ensureAuthenticated(page);
 
       // Navigate to IB landing page and get the frame
       await navigateToLandingPage(page);
-      const frame = await ibFrame(page);
+      const frame = ibFrame(page);
 
       await test.step('Navigate to Registration step', async () => {
         await fillInImageOutput(frame);
@@ -173,7 +173,7 @@ registrationModes.forEach(
             frame.getByRole('button', { name: 'View details' }),
           ).toBeVisible();
           await expect(frame.getByText('activation-key-')).toBeHidden();
-          frame.getByRole('button', { name: 'View details' }).click();
+          await frame.getByRole('button', { name: 'View details' }).click();
           await expect(
             frame.getByRole('button', { name: 'View details' }),
           ).toBeVisible();
@@ -359,7 +359,7 @@ registrationModes.forEach(
       let exportedBP = '';
       await test.step('Export blueprint', async () => {
         exportedBP = await exportBlueprint(page);
-        await cleanup.add(async () => {
+        cleanup.add(async () => {
           await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
         });
       });

@@ -24,19 +24,19 @@ test('Import a blueprint with invalid customization', async ({
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture
-  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
-  const frame = await ibFrame(page);
+  const frame = ibFrame(page);
 
   await test.step('Import BP', async () => {
     const blueprintFile = await saveBlueprintFileWithContents(
       IMPORT_WITH_DUPLICATE_VALUES,
     );
-    await cleanup.add(async () => {
+    cleanup.add(async () => {
       await fsPromises.rm(path.dirname(blueprintFile), { recursive: true });
     });
     await importBlueprint(frame, blueprintFile);
