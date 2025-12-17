@@ -94,7 +94,6 @@ import {
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
-import { useFlag } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -184,9 +183,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
-
-  // Feature flags
-  const isAAPRegistrationEnabled = useFlag('image-builder.aap.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -698,7 +694,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               <WizardStep
                 name='Ansible Automation Platform'
                 id='wizard-aap'
-                isHidden={!isAAPRegistrationEnabled}
                 key='wizard-aap'
                 navItem={CustomStatusNavItem}
                 status={aapValidation.disabledNext ? 'error' : 'default'}
