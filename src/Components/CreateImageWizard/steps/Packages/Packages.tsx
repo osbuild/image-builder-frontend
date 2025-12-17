@@ -78,13 +78,13 @@ import {
 import { useAppSelector } from '../../../../store/hooks';
 import { Package } from '../../../../store/imageBuilderApi';
 import {
-  addGroup,
   addModule,
   addPackage,
+  addPackageGroup,
   addRecommendedRepository,
-  removeGroup,
   removeModule,
   removePackage,
+  removePackageGroup,
   removeRecommendedRepository,
   selectArchitecture,
   selectCustomRepositories,
@@ -945,10 +945,10 @@ const Packages = () => {
         setIsRepoModalOpen(true);
         setIsSelectingGroup(grp);
       } else {
-        dispatch(addGroup(grp));
+        dispatch(addPackageGroup(grp));
       }
     } else {
-      dispatch(removeGroup(grp.name));
+      dispatch(removePackageGroup(grp.name));
       if (
         isSuccessEpelRepo &&
         epelRepo?.data &&
@@ -1028,7 +1028,7 @@ const Packages = () => {
       dispatch(addPackage(isSelectingPackage!));
     }
     if (isSelectingGroup) {
-      dispatch(addGroup(isSelectingGroup!));
+      dispatch(addPackageGroup(isSelectingGroup!));
     }
     setIsRepoModalOpen(!isRepoModalOpen);
   };
