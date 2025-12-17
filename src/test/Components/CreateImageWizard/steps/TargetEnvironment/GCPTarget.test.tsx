@@ -234,12 +234,12 @@ describe('GCP image type request generated correctly', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
-  test('share image with red hat insight only', async () => {
+  test('share image with Red Hat Lightspeed only', async () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await clickGCPTarget();
     const shareWithInsightOption = await screen.findByRole('radio', {
-      name: /Share image with Red Hat Insights only/i,
+      name: /Share image with Red Hat Lightspeed only/i,
     });
 
     await waitFor(() => user.click(shareWithInsightOption));

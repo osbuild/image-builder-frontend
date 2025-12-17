@@ -68,7 +68,6 @@ import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 const OscapContent = () => {
   const dispatch = useAppDispatch();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
-  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
   const complianceType = useAppSelector(selectComplianceType);
   const policyID = useAppSelector(selectCompliancePolicyID);
   const profileID = useAppSelector(selectComplianceProfileID);
@@ -151,13 +150,12 @@ const OscapContent = () => {
           Security
         </Title>
         <Content>
-          Select which {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
-          compliance policy or OpenSCAP profile you want your image to be
-          compliant-ready for.{' '}
-          {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'} compliance
-          allows the use of tailored policies, whereas OpenSCAP provides default
-          versions. This step automatically helps monitor the adherence of your
-          registered RHEL systems to a selected policy or profile.
+          Select which Red Hat Lightspeed compliance policy or OpenSCAP profile
+          you want your image to be compliant-ready for. Red Hat Lightspeed
+          compliance allows the use of tailored policies, whereas OpenSCAP
+          provides default versions. This step automatically helps monitor the
+          adherence of your registered RHEL systems to a selected policy or
+          profile.
         </Content>
         <FormGroup>
           <Switch
@@ -227,9 +225,7 @@ const OscapContent = () => {
                         url={COMPLIANCE_URL}
                         analyticsStepId='step-oscap'
                       >
-                        Manage{' '}
-                        {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
-                        compliance
+                        Manage Red Hat Lightspeed compliance
                       </ExternalLinkButton>
                     </HelperTextItem>
                   </HelperText>
@@ -296,9 +292,8 @@ const OscapContent = () => {
                 Currently there are no compliance policies in your environment.
                 To help you get started, select one of the default policies
                 below and we will create the policy for you. However, in order
-                to modify the policy or to create a new one, you must go through{' '}
-                {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
-                compliance.
+                to modify the policy or to create a new one, you must go through
+                Red Hat Lightspeed compliance.
               </p>
               <AlertActionLink
                 component='a'
@@ -317,9 +312,7 @@ const OscapContent = () => {
                 }}
                 href={COMPLIANCE_URL}
               >
-                Save blueprint and navigate to{' '}
-                {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}{' '}
-                compliance
+                Save blueprint and navigate to Red Hat Lightspeed compliance
               </AlertActionLink>
             </Alert>
           )}

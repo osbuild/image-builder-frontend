@@ -8,7 +8,6 @@ import {
   Radio,
   Title,
 } from '@patternfly/react-core';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -31,8 +30,6 @@ export type GcpAccountType =
   | undefined;
 
 const Gcp = () => {
-  const lightspeedEnabled = useFlag('platform.lightspeed-rebrand');
-
   const dispatch = useAppDispatch();
 
   const accountType = useAppSelector(selectGcpAccountType);
@@ -69,12 +66,12 @@ const Gcp = () => {
         />
         <Radio
           id='share-with-insights'
-          label={`Share image with Red Hat ${lightspeedEnabled ? 'Lightspeed' : 'Insights'} only`}
+          label={`Share image with Red Hat Lightspeed only`}
           name='gcp-share-method-type'
           description={
             <Content component={ContentVariants.small}>
-              Your image will be uploaded to GCP and shared with Red Hat{' '}
-              {lightspeedEnabled ? 'Lightspeed' : 'Insights'}.
+              Your image will be uploaded to GCP and shared with Red Hat
+              Lightspeed.
               <b> The image expires in 14 days.</b> You cannot access or
               recreate this image in your GCP project.
             </Content>
