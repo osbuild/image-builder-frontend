@@ -11,7 +11,7 @@ export const buildImage = async (page: Page) => {
 
   let timeSpentBuilding = 0;
   console.log('Starting the build');
-  // eslint-disable-next-line disable-autofix/@typescript-eslint/no-unnecessary-condition
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (true) {
     if (
       (await page.getByText('Ready').isVisible()) ||
