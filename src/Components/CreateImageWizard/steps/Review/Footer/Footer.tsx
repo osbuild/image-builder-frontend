@@ -58,7 +58,7 @@ const ReviewWizardFooter = () => {
   const getBlueprintPayload = async () => {
     if (!isOnPremise) {
       const userData = await auth.getUser();
-      const orgId = userData?.identity?.internal?.org_id;
+      const orgId = userData?.identity.internal?.org_id;
       const requestBody = orgId && mapRequestFromState(store, orgId);
       return requestBody;
     }

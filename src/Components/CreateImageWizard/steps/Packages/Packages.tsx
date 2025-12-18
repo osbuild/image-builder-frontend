@@ -287,7 +287,7 @@ const Packages = () => {
             urls:
               template === ''
                 ? distroRepositories
-                    ?.filter((archItem) => {
+                    .filter((archItem) => {
                       return archItem.arch === arch;
                     })[0]
                     .repositories.flatMap((repo) => {
@@ -363,7 +363,7 @@ const Packages = () => {
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substring(1),
           urls: distroRepositories
-            ?.filter((archItem) => {
+            .filter((archItem) => {
               return archItem.arch === arch;
             })[0]
             .repositories.flatMap((repo) => {
@@ -656,7 +656,7 @@ const Packages = () => {
             <Tbody>
               <Tr>
                 {isSelectingPackage ? (
-                  <Td>{isSelectingPackage?.name}</Td>
+                  <Td>{isSelectingPackage.name}</Td>
                 ) : (
                   <Td>{isSelectingGroup?.name}</Td>
                 )}
@@ -893,7 +893,7 @@ const Packages = () => {
     if (isSelecting) {
       if (
         isSuccessEpelRepo &&
-        epelRepo?.data &&
+        epelRepo.data &&
         pkg.repository === 'recommended' &&
         !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
       ) {
@@ -922,7 +922,7 @@ const Packages = () => {
       setCurrentlyRemovedPackages((last) => [...last, pkg]);
       if (
         isSuccessEpelRepo &&
-        epelRepo?.data &&
+        epelRepo.data &&
         packages.filter((pkg) => pkg.repository === 'recommended').length ===
           1 &&
         groups.filter((grp) => grp.repository === 'recommended').length === 0
@@ -940,7 +940,7 @@ const Packages = () => {
     if (isSelecting) {
       if (
         isSuccessEpelRepo &&
-        epelRepo?.data &&
+        epelRepo.data &&
         grp.repository === 'recommended' &&
         !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
       ) {
@@ -953,7 +953,7 @@ const Packages = () => {
       dispatch(removePackageGroup(grp.name));
       if (
         isSuccessEpelRepo &&
-        epelRepo?.data &&
+        epelRepo.data &&
         groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
         packages.filter((pkg) => pkg.repository === 'recommended').length === 0
       ) {
@@ -969,7 +969,7 @@ const Packages = () => {
       | React.MouseEvent<HTMLElement, MouseEvent>,
     _selected: boolean,
   ) => {
-    const id = (event.currentTarget as HTMLElement).id ?? '';
+    const id = (event.currentTarget as HTMLElement).id;
     setCurrentlyRemovedPackages([]);
     setPage(1);
     setToggleSelected(id);
@@ -1049,7 +1049,7 @@ const Packages = () => {
 
   const getPackageUniqueKey = (pkg: IBPackageWithRepositoryInfo): string => {
     try {
-      if (!pkg || !pkg.name) {
+      if (!pkg.name) {
         return `invalid_${Date.now()}`;
       }
       return `${pkg.name}_${pkg.stream || 'none'}_${pkg.module_name || 'none'}_${pkg.repository || 'unknown'}`;
@@ -1097,7 +1097,7 @@ const Packages = () => {
   >('asc');
 
   const sortedPackages = useMemo(() => {
-    if (!transformedPackages || !Array.isArray(transformedPackages)) {
+    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
       return [];
     }
 
@@ -1289,12 +1289,12 @@ const Packages = () => {
                     bodyContent={
                       <div
                         style={
-                          grp.package_list?.length > 0
+                          grp.package_list.length > 0
                             ? { height: '40em', overflow: 'scroll' }
                             : {}
                         }
                       >
-                        {grp.package_list?.length > 0 ? (
+                        {grp.package_list.length > 0 ? (
                           <Table
                             variant='compact'
                             data-testid='group-included-packages-table'

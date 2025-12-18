@@ -84,7 +84,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
 
   const lintWarnings = React.useMemo(
-    () => blueprintDetails?.lint?.warnings ?? [],
+    () => blueprintDetails?.lint.warnings ?? [],
     [blueprintDetails],
   );
 
@@ -148,7 +148,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const isBlueprintDistroCentos8 = () => {
     if (isSuccessBlueprintsCompose) {
       return (
-        blueprintsComposes?.data[0].request.distribution ===
+        blueprintsComposes.data[0].request.distribution ===
         ('centos-8' as Distributions)
       );
     }

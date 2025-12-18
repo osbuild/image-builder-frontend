@@ -126,7 +126,7 @@ const readComposes = async (bpID: string) => {
       superuser: 'try',
     },
   );
-  const bpEntries = Object.entries(bpInfo?.entries || {});
+  const bpEntries = Object.entries(bpInfo.entries || {});
   for (const entry of bpEntries) {
     if (entry[0] === `${bpID}.json`) {
       continue;
@@ -309,7 +309,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               superuser: 'try',
             });
 
-            const entries = Object.entries(info?.entries || {});
+            const entries = Object.entries(info.entries || {});
             let blueprints: BlueprintItem[] = await Promise.all(
               entries.map(async ([filename]) => {
                 const file = cockpit.file(
@@ -620,7 +620,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               superuser: 'try',
             });
             let composes: ComposesResponseItem[] = [];
-            const entries = Object.entries(info?.entries || {});
+            const entries = Object.entries(info.entries || {});
             for (const entry of entries) {
               composes = composes.concat(await readComposes(entry[0]));
             }
@@ -681,7 +681,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const info = await fsinfo(blueprintsDir, ['entries'], {
               superuser: 'try',
             });
-            const entries = Object.entries(info?.entries || {});
+            const entries = Object.entries(info.entries || {});
             for (const bpEntry of entries) {
               const request = await cockpit
                 .file(path.join(blueprintsDir, bpEntry[0], queryArg.composeId))

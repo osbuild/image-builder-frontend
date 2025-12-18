@@ -31,8 +31,8 @@ export const useCheckRepositoriesAvailability = () => {
   });
 
   const skip =
-    firstRequest?.data?.meta?.count === undefined ||
-    firstRequest?.data?.meta?.count <= 100;
+    firstRequest.data?.meta?.count === undefined ||
+    firstRequest.data.meta.count <= 100;
 
   // Fetch *all* repositories if there are more than 100
   const followupRequest = useListRepositoriesQuery(
@@ -41,7 +41,7 @@ export const useCheckRepositoriesAvailability = () => {
       availableForVersion: version,
       contentType: 'rpm',
       origin: ContentOrigin.EXTERNAL,
-      limit: firstRequest?.data?.meta?.count || PAGINATION_LIMIT,
+      limit: firstRequest.data?.meta?.count || PAGINATION_LIMIT,
       offset: 0,
     },
     {
@@ -50,8 +50,8 @@ export const useCheckRepositoriesAvailability = () => {
   );
 
   const { data: freshRepos, isSuccess } = useMemo(() => {
-    if (firstRequest?.data?.meta?.count) {
-      if (firstRequest?.data?.meta?.count > 100) {
+    if (firstRequest.data?.meta?.count) {
+      if (firstRequest.data.meta.count > 100) {
         return { ...followupRequest };
       }
     }
@@ -60,11 +60,11 @@ export const useCheckRepositoriesAvailability = () => {
 
   const customRepositories = useAppSelector(selectCustomRepositories);
   // customRepositories existing === we came here from Recreate
-  if (isSuccess && customRepositories) {
+  if (isSuccess && customRepositories.length > 0) {
     // Transform the fresh repos array into a Set to access its elements in O(1)
     // complexity later in the for loop.
     const freshReposUrls = new Set(
-      freshRepos?.data?.map((freshRepo) => freshRepo.url),
+      freshRepos.data?.map((freshRepo) => freshRepo.url),
     );
     for (const customRepo of customRepositories) {
       if (customRepo.baseurl && !freshReposUrls.has(customRepo.baseurl[0])) {

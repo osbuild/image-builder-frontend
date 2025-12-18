@@ -39,16 +39,16 @@ const AAPRegistration = () => {
   const stepValidation = useAAPValidation();
 
   const isHttpsUrl = callbackUrl?.toLowerCase().startsWith('https://') || false;
-  const shouldShowCaInput = !isHttpsUrl || (isHttpsUrl && !tlsConfirmation);
+  const shouldShowCaInput = !isHttpsUrl || !tlsConfirmation;
 
-  const validated = stepValidation.errors['certificate']
-    ? 'error'
-    : stepValidation.errors['certificate'] === undefined &&
-        tlsCertificateAuthority &&
-        validateMultipleCertificates(tlsCertificateAuthority).validCertificates
-          .length > 0
-      ? 'success'
-      : 'default';
+  const validated =
+    'certificate' in stepValidation.errors
+      ? 'error'
+      : tlsCertificateAuthority &&
+          validateMultipleCertificates(tlsCertificateAuthority)
+            .validCertificates.length > 0
+        ? 'success'
+        : 'default';
 
   const handleCallbackUrlChange = (value: string) => {
     dispatch(changeAapCallbackUrl(value));

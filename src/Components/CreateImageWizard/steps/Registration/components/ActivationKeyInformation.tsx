@@ -50,7 +50,7 @@ const ActivationKeyInformation = (): JSX.Element => {
               {activationKey}
             </DescriptionListDescription>
           </DescriptionListGroup>
-          {activationKeyInfo?.body?.description && (
+          {activationKeyInfo.body?.description && (
             <DescriptionListGroup>
               <DescriptionListTerm>Description</DescriptionListTerm>
               <DescriptionListDescription>
@@ -61,25 +61,25 @@ const ActivationKeyInformation = (): JSX.Element => {
           <DescriptionListGroup>
             <DescriptionListTerm>Role</DescriptionListTerm>
             <DescriptionListDescription>
-              {activationKeyInfo?.body?.role || 'Not defined'}
+              {activationKeyInfo.body?.role || 'Not defined'}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>SLA</DescriptionListTerm>
             <DescriptionListDescription>
-              {activationKeyInfo?.body?.serviceLevel || 'Not defined'}
+              {activationKeyInfo.body?.serviceLevel || 'Not defined'}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Usage</DescriptionListTerm>
             <DescriptionListDescription>
-              {activationKeyInfo?.body?.usage || 'Not defined'}
+              {activationKeyInfo.body?.usage || 'Not defined'}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Additional repositories</DescriptionListTerm>
             <DescriptionListDescription>
-              {activationKeyInfo?.body?.additionalRepositories &&
+              {activationKeyInfo.body?.additionalRepositories &&
               activationKeyInfo.body.additionalRepositories.length > 0 ? (
                 <Popover
                   position='right'

@@ -343,7 +343,7 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
         const uploadType =
           compose.request.image_requests[0]?.upload_request?.type;
         const isError = currentStatus === 'failure';
-        const error = composeStatus?.image_status.error;
+        const error = composeStatus.image_status.error;
         analytics.track(
           `${AMPLITUDE_MODULE_NAME} - Image Creation - ${isError ? 'Failure' : 'Success'}`,
           {
