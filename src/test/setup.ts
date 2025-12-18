@@ -9,7 +9,7 @@ window.HTMLElement.prototype.scrollTo = function () {};
 
 // provide a fallback *only* when window.getComputedStyle is missing
 window.getComputedStyle =
-  // eslint-disable-next-line disable-autofix/@typescript-eslint/no-unnecessary-condition
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   window.getComputedStyle ||
   (() => ({
     getPropertyValue: () => '',
