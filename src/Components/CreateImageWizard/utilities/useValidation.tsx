@@ -834,7 +834,16 @@ export function useUsersValidation(): UsersStepValidation {
     }
 
     const duplicateGroups = getListOfDuplicates(users[index].groups);
-    if (invalidGroups.length > 0 || duplicateGroups.length > 0) {
+    const groupMatchingUsername =
+      users[index].name && users[index].groups.includes(users[index].name)
+        ? users[index].name
+        : '';
+
+    if (
+      invalidGroups.length > 0 ||
+      duplicateGroups.length > 0 ||
+      groupMatchingUsername
+    ) {
       const groupsErrors = [];
       if (invalidGroups.length > 0) {
         groupsErrors.push(`Invalid user groups: ${invalidGroups.join(', ')}`);
@@ -842,6 +851,11 @@ export function useUsersValidation(): UsersStepValidation {
       if (duplicateGroups.length > 0) {
         groupsErrors.push(
           `Includes duplicate groups: ${duplicateGroups.join(', ')}`,
+        );
+      }
+      if (groupMatchingUsername) {
+        groupsErrors.push(
+          `Group cannot match username: ${groupMatchingUsername}`,
         );
       }
       userErrors.groups = groupsErrors.join(' | ');
