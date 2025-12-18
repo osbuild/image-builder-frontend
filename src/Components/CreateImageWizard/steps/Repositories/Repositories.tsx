@@ -244,7 +244,7 @@ const Repositories = () => {
   ) => {
     let reposToAdd: ApiRepositoryResponseRead[] = [];
     // Check if array of items
-    if ((repo as ApiRepositoryResponseRead[])?.length) {
+    if ((repo as ApiRepositoryResponseRead[]).length) {
       reposToAdd = (repo as ApiRepositoryResponseRead[]).filter(
         (r) =>
           r.uuid &&
@@ -255,7 +255,7 @@ const Repositories = () => {
       // Then it should be a single item
       const singleRepo = repo as ApiRepositoryResponseRead;
       if (
-        singleRepo?.uuid &&
+        singleRepo.uuid &&
         !isRepoDisabled(singleRepo, selected.has(singleRepo.uuid))[0] &&
         !selected.has(singleRepo.uuid)
       ) {
@@ -306,7 +306,7 @@ const Repositories = () => {
   const removeSelected = (
     repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
   ) => {
-    if ((repo as ApiRepositoryResponseRead[])?.length) {
+    if ((repo as ApiRepositoryResponseRead[]).length) {
       const itemsToRemove = new Set(
         (repo as ApiRepositoryResponseRead[]).map(({ uuid }) => uuid),
       );
@@ -326,7 +326,7 @@ const Repositories = () => {
       return;
     }
 
-    const uuidToRemove = (repo as ApiRepositoryResponseRead)?.uuid;
+    const uuidToRemove = (repo as ApiRepositoryResponseRead).uuid;
     if (uuidToRemove) {
       dispatch(
         changeCustomRepositories(
@@ -346,7 +346,7 @@ const Repositories = () => {
     selected: boolean,
   ) => {
     if (selected) return addSelected(repo);
-    if ((repo as ApiRepositoryResponseRead[])?.length) {
+    if ((repo as ApiRepositoryResponseRead[]).length) {
       const initiallySelectedItems = (repo as ApiRepositoryResponseRead[]).map(
         ({ uuid }) => uuid,
       );
@@ -548,7 +548,7 @@ const Repositories = () => {
       offset: perPage * (page - 1),
       uuid:
         selectedTemplateData && selectedTemplateData.repository_uuids
-          ? selectedTemplateData.repository_uuids?.join(',')
+          ? selectedTemplateData.repository_uuids.join(',')
           : '',
     },
     { refetchOnMountOrArgChange: true, skip: !isTemplateSelected },
@@ -560,7 +560,6 @@ const Repositories = () => {
       data: snapshotsByDate,
       isError: isSnapshotsError,
       isLoading: isSnapshotsLoading,
-      isUninitialized: isSnapshotsUninitilized,
     },
   ] = useListSnapshotsByDateMutation();
 
@@ -637,8 +636,7 @@ const Repositories = () => {
     isLoading ||
     isTemplateLoading ||
     isReposInTemplateLoading ||
-    isReposInTemplateFetching ||
-    (isSnapshotsLoading && isSnapshotsUninitilized)
+    isReposInTemplateFetching
   ) {
     return <Loading />;
   }
@@ -851,7 +849,7 @@ const Repositories = () => {
                             </Td>
                             <Td dataLabel={'Packages'}>
                               {!isSnapshotsLoading ? (
-                                packages && snapshot?.match?.uuid ? (
+                                packages && snapshot.match?.uuid ? (
                                   <Button
                                     component='a'
                                     target='_blank'

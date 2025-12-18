@@ -33,6 +33,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
 
     // introduce a wait time, since it takes some time to load the
     // worker config file.
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1000);
 
     // If this test fails for any reason, the config should already be loaded
@@ -65,6 +66,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
 
     // introduce a wait time, since it takes some time to load the
     // worker config file.
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1500);
 
     await expect(frame.locator('#aws-config-switch')).toBeChecked();

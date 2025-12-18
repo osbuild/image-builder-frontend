@@ -35,7 +35,7 @@ export const AWSLaunchModal = ({ compose }: LaunchProps) => {
     return <Skeleton />;
   }
 
-  const options = data?.image_status.upload_status?.options;
+  const options = data.image_status.upload_status?.options;
 
   if (options && !isAwsUploadRequestOptions(options)) {
     throw TypeError(
@@ -44,7 +44,7 @@ export const AWSLaunchModal = ({ compose }: LaunchProps) => {
   }
 
   const amiId =
-    data?.image_status.status === 'success' &&
+    data.image_status.status === 'success' &&
     data.image_status.upload_status?.options &&
     'ami' in data.image_status.upload_status.options
       ? data.image_status.upload_status.options.ami
@@ -59,7 +59,7 @@ export const AWSLaunchModal = ({ compose }: LaunchProps) => {
       <Button
         variant='link'
         isInline
-        isDisabled={data?.image_status.status !== 'success'}
+        isDisabled={data.image_status.status !== 'success'}
         onClick={handleModalToggle}
       >
         Launch

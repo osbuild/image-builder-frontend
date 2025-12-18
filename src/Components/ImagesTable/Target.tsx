@@ -34,6 +34,6 @@ export const AwsTarget = process.env.IS_ON_PREMISE
         return <Skeleton />;
       }
 
-      const text = `${targetOptions.aws} (${(data?.data.length ?? 0) + 1})`;
+      const text = `${targetOptions.aws} (${data.data.length + 1})`;
       return <>{text}</>;
     };

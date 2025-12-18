@@ -59,7 +59,7 @@ const PackageRecommendations = () => {
       offset: 0,
     });
 
-  if (isSuccessDistroRepositories && distroRepositories?.data) {
+  if (isSuccessDistroRepositories && distroRepositories.data) {
     distroRepoUrls = distroRepositories.data.map((repo) => repo.url || '');
   }
 
@@ -112,7 +112,7 @@ const PackageRecommendations = () => {
     if (isSuccess && data.packages && data.packages.length > 0) {
       fetchRecommendationDescriptions({
         apiContentUnitSearchRequest: {
-          exact_names: data?.packages,
+          exact_names: data.packages,
           urls: distroRepoUrls,
         },
       });
@@ -120,7 +120,7 @@ const PackageRecommendations = () => {
   }, [fetchRecommendationDescriptions, isSuccess, data?.packages]);
 
   const addAllPackages = () => {
-    if (data?.packages?.length) {
+    if (data?.packages.length) {
       data.packages.forEach((pkg) =>
         dispatch(
           addPackage({
@@ -144,7 +144,7 @@ const PackageRecommendations = () => {
   };
 
   const isRecommendedPackageSelected = (recPkg: string) => {
-    const foundInPackages = packages?.some((pkg) => recPkg === pkg.name);
+    const foundInPackages = packages.some((pkg) => recPkg === pkg.name);
     return foundInPackages;
   };
 

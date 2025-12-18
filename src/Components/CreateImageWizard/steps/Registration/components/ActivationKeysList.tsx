@@ -125,7 +125,7 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
     const isActivationKeysEmpty =
       isSuccessActivationKeys &&
       !isLoadingActivationKey &&
-      activationKeys?.body?.length === 0;
+      activationKeys.body?.length === 0;
 
     const handleCreateActivationKey = async () => {
       try {
@@ -158,15 +158,11 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
     if (!activationKey && isSuccessActivationKeys) {
       if (
         recentActivationKey &&
-        activationKeys?.body?.find((key) => key.name === recentActivationKey)
+        activationKeys.body?.find((key) => key.name === recentActivationKey)
       ) {
         dispatch(changeActivationKey(recentActivationKey));
-      } else if (
-        activationKeys &&
-        activationKeys.body &&
-        activationKeys.body.length > 0
-      ) {
-        dispatch(changeActivationKey(activationKeys?.body[0].name));
+      } else if (activationKeys.body && activationKeys.body.length > 0) {
+        dispatch(changeActivationKey(activationKeys.body[0].name));
       }
     }
   }, [isSuccessActivationKeys]);

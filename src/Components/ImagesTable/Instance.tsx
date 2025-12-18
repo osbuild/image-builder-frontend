@@ -53,8 +53,8 @@ export const AwsS3Instance = ({
     'network-installer': '',
   };
 
-  const status = composeStatus?.image_status.status;
-  const options = composeStatus?.image_status.upload_status?.options;
+  const status = composeStatus.image_status.status;
+  const options = composeStatus.image_status.upload_status?.options;
 
   if (options && !isAwss3UploadStatus(options)) {
     throw TypeError(
@@ -107,8 +107,8 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <Skeleton />;
   }
 
-  const status = composeStatus?.image_status.status;
-  const options = composeStatus?.image_status.upload_status
+  const status = composeStatus.image_status.status;
+  const options = composeStatus.image_status.upload_status
     ?.options as unknown as LocalUploadStatus;
 
   if (status !== 'success') {
