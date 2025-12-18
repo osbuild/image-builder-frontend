@@ -1,6 +1,6 @@
 # Image Builder Frontend
 
-Frontend code for Image Builder.
+The frontend code for Image Builder.
 
 ## Project
 
