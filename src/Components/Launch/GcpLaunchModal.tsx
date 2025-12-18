@@ -84,7 +84,7 @@ export const GcpLaunchModal = ({ compose }: LaunchProps) => {
       <Button
         variant='link'
         isInline
-        isDisabled={data?.image_status.status !== 'success'}
+        isDisabled={data.image_status.status !== 'success'}
         onClick={handleModalToggle}
       >
         Launch

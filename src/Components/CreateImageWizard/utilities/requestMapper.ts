@@ -27,6 +27,7 @@ import {
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   BlueprintExportResponse,
+  BlueprintMetadata,
   BlueprintResponse,
   BtrfsVolume,
   CreateBlueprintRequest,
@@ -254,11 +255,24 @@ const getLatestRelease = (distribution: Distributions) => {
 };
 
 const azureTargetOptions = (options: AzureUploadRequestOptions) => {
+  // there is a mismatch between API type and real data
+  // this check allows removing optional chaining from the rest of the code
+  // and disabling ESLint rule only in one place
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!options) {
+    return {
+      tenantId: undefined,
+      subscriptionId: undefined,
+      resourceGroup: undefined,
+      hyperVGeneration: 'V1' as const,
+    };
+  }
+
   const resourceGroupIsDefined =
-    options?.resource_group && options.resource_group !== '';
+    options.resource_group && options.resource_group !== '';
   const subscriptionIdIsDefined =
-    options?.subscription_id && options.subscription_id !== '';
-  const tenandIdIsDefined = options?.tenant_id && options.tenant_id !== '';
+    options.subscription_id && options.subscription_id !== '';
+  const tenandIdIsDefined = options.tenant_id && options.tenant_id !== '';
 
   const isAnyDefined =
     resourceGroupIsDefined || subscriptionIdIsDefined || tenandIdIsDefined;
@@ -267,19 +281,73 @@ const azureTargetOptions = (options: AzureUploadRequestOptions) => {
     // Edge case but if one field is selected, that means that azure was chosen at some point,
     // and we should show an error for other missing fields
     return {
-      tenantId: options?.tenant_id || '',
-      subscriptionId: options?.subscription_id || '',
-      resourceGroup: options?.resource_group || '',
-      hyperVGeneration: options?.hyper_v_generation || 'V1',
+      tenantId: options.tenant_id || '',
+      subscriptionId: options.subscription_id || '',
+      resourceGroup: options.resource_group || '',
+      hyperVGeneration: options.hyper_v_generation || 'V1',
     };
   } else {
     return {
       tenantId: undefined,
       subscriptionId: undefined,
       resourceGroup: undefined,
-      hyperVGeneration: options?.hyper_v_generation || 'V1',
+      hyperVGeneration: options.hyper_v_generation || 'V1',
     };
   }
+};
+
+const gcpTargetOptions = (options: GcpUploadRequestOptions) => {
+  if (
+    // there is a mismatch between API type and real data
+    // this check allows removing optional chaining from the rest of the code
+    // and disabling ESLint rule only in one place
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    !options ||
+    !options.share_with_accounts ||
+    options.share_with_accounts.length === 0
+  ) {
+    return {
+      shareMethod: 'withInsights' as GcpShareMethod,
+      accountType: undefined as GcpAccountType | undefined,
+      email: '',
+    };
+  }
+
+  const [accountType, email] = options.share_with_accounts[0].split(':');
+
+  return {
+    shareMethod: 'withGoogle' as GcpShareMethod,
+    accountType: accountType as GcpAccountType,
+    email: email || '',
+  };
+};
+
+const awsTargetOptions = (
+  options: AwsUploadRequestOptions | CockpitAwsUploadRequestOptions,
+) => {
+  // there is a mismatch between API type and real data
+  // this check allows removing optional chaining from the rest of the code
+  // and disabling ESLint rule only in one place
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!options) {
+    return {
+      accountId: '',
+      shareMethod: 'manual' as AwsShareMethod,
+      source: { id: undefined },
+      sourceId: undefined,
+      region: undefined,
+    };
+  }
+
+  return {
+    accountId: options.share_with_accounts?.[0] || '',
+    shareMethod: (options.share_with_sources
+      ? 'sources'
+      : 'manual') as AwsShareMethod,
+    source: { id: options.share_with_sources?.[0] },
+    sourceId: options.share_with_sources?.[0],
+    region: 'region' in options ? options.region : undefined,
+  };
 };
 
 function commonRequestToState(
@@ -323,20 +391,20 @@ function commonRequestToState(
     .options as AzureUploadRequestOptions;
 
   const arch =
-    request.image_requests[0]?.architecture || initialState.architecture;
-  if (arch !== 'x86_64' && arch !== 'aarch64') {
+    request.image_requests[0]?.architecture ?? initialState.architecture;
+  if (!['x86_64', 'aarch64'].includes(arch)) {
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
 
   let oscapProfile = undefined;
   let compliancePolicyID = undefined;
-  if (request.customizations?.openscap) {
-    const oscapAsProfile = request.customizations?.openscap as OpenScapProfile;
+  if (request.customizations.openscap) {
+    const oscapAsProfile = request.customizations.openscap as OpenScapProfile;
     if (oscapAsProfile.profile_id !== '') {
       oscapProfile = oscapAsProfile.profile_id as DistributionProfileItem;
     }
     const oscapAsCompliance = request.customizations
-      ?.openscap as OpenScapCompliance;
+      .openscap as OpenScapCompliance;
     if (oscapAsCompliance.policy_id !== '') {
       compliancePolicyID = oscapAsCompliance.policy_id;
     }
@@ -373,7 +441,7 @@ function commonRequestToState(
               policyTitle: undefined,
             }
           : initialState.compliance,
-    firstBoot: request.customizations
+    firstBoot: request.customizations.files
       ? {
           script: getFirstBootScript(request.customizations.files),
         }
@@ -396,9 +464,9 @@ function commonRequestToState(
           partitions: [],
           type: undefined,
         },
-    fileSystem: request.customizations?.filesystem
+    fileSystem: request.customizations.filesystem
       ? {
-          partitions: request.customizations?.filesystem.map((fs) =>
+          partitions: request.customizations.filesystem.map((fs) =>
             convertFilesystemToPartition(fs),
           ),
         }
@@ -407,30 +475,13 @@ function commonRequestToState(
         },
     partitioning_mode: request.customizations.partitioning_mode,
     architecture: arch,
-    distribution:
-      getLatestRelease(request.distribution) || initialState.distribution,
+    distribution: getLatestRelease(request.distribution),
     // @ts-ignore API needs to be updated first
     imageSource: request.bootc?.reference || '',
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: azureTargetOptions(azureUploadOptions),
-    gcp: {
-      shareMethod: (gcpUploadOptions?.share_with_accounts
-        ? 'withGoogle'
-        : 'withInsights') as GcpShareMethod,
-      accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
-        ':',
-      )[0] as GcpAccountType,
-      email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
-    },
-    aws: {
-      accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
-      shareMethod: (awsUploadOptions?.share_with_sources
-        ? 'sources'
-        : 'manual') as AwsShareMethod,
-      source: { id: awsUploadOptions?.share_with_sources?.[0] },
-      sourceId: awsUploadOptions?.share_with_sources?.[0],
-      region: awsUploadOptions?.region,
-    },
+    gcp: gcpTargetOptions(gcpUploadOptions),
+    aws: awsTargetOptions(awsUploadOptions),
     snapshotting: {
       useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
       snapshotDate: snapshot_date,
@@ -438,13 +489,13 @@ function commonRequestToState(
       templateName: request.image_requests[0]?.content_template_name || '',
     },
     repositories: {
-      customRepositories: request.customizations?.custom_repositories || [],
-      payloadRepositories: request.customizations?.payload_repositories || [],
+      customRepositories: request.customizations.custom_repositories || [],
+      payloadRepositories: request.customizations.payload_repositories || [],
       recommendedRepositories: [],
       redHatRepositories: [],
     },
     packages:
-      request.customizations?.packages
+      request.customizations.packages
         ?.filter((pkg) => !pkg.startsWith('@'))
         .map((pkg) => ({
           name: pkg,
@@ -452,7 +503,7 @@ function commonRequestToState(
           repository: '' as PackageRepository,
         })) || [],
     groups:
-      request.customizations?.packages
+      request.customizations.packages
         ?.filter((grp) => grp.startsWith('@'))
         .map((grp) => ({
           name: grp.substr(1),
@@ -466,13 +517,13 @@ function commonRequestToState(
       keyboard: request.customizations.locale?.keyboard || '',
     },
     services: {
-      enabled: request.customizations?.services?.enabled || [],
-      masked: request.customizations?.services?.masked || [],
-      disabled: request.customizations?.services?.disabled || [],
+      enabled: request.customizations.services?.enabled || [],
+      masked: request.customizations.services?.masked || [],
+      disabled: request.customizations.services?.disabled || [],
     },
     kernel: {
       name: request.customizations.kernel?.name || '',
-      append: request.customizations?.kernel?.append?.split(' ') || [],
+      append: request.customizations.kernel?.append?.split(' ') || [],
     },
     timezone: {
       timezone: request.customizations.timezone?.timezone || '',
@@ -502,6 +553,8 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const wizardMode = 'edit';
   return {
     wizardMode,
+    // API needs to be updated first
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     blueprintMode: request.distribution ? 'package' : 'image',
     blueprintId: request.id,
     env: {
@@ -524,12 +577,12 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     },
     aapRegistration: {
       callbackUrl:
-        request.customizations?.aap_registration?.ansible_callback_url,
-      hostConfigKey: request.customizations?.aap_registration?.host_config_key,
+        request.customizations.aap_registration?.ansible_callback_url,
+      hostConfigKey: request.customizations.aap_registration?.host_config_key,
       tlsCertificateAuthority:
-        request.customizations?.aap_registration?.tls_certificate_authority,
+        request.customizations.aap_registration?.tls_certificate_authority,
       skipTlsVerification:
-        request.customizations?.aap_registration?.skip_tls_verification,
+        request.customizations.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(request),
   };
@@ -553,6 +606,26 @@ export function mapToCustomRepositories(
   ];
 }
 
+const getMetadata = (metadata: BlueprintMetadata) => {
+  // there is a mismatch between API type and real data
+  // this check allows removing optional chaining from the rest of the code
+  // and disabling ESLint rule only in one place
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!metadata) {
+    return {
+      parent_id: null,
+      exported_at: '',
+      is_on_prem: false,
+    };
+  }
+
+  return {
+    parent_id: metadata.parent_id || null,
+    exported_at: metadata.exported_at || '',
+    is_on_prem: metadata.is_on_prem || false,
+  };
+};
+
 /**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintExportResponse
@@ -573,22 +646,20 @@ export const mapExportRequestToState = (
 
   return {
     wizardMode,
+    // API needs to be updated first
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     blueprintMode: request.distribution ? 'package' : 'image',
-    metadata: {
-      parent_id: request.metadata?.parent_id || null,
-      exported_at: request.metadata?.exported_at || '',
-      is_on_prem: request.metadata?.is_on_prem || false,
-    },
+    metadata: getMetadata(request.metadata),
     env: initialState.env,
     registration: initialState.registration,
     aapRegistration: {
       callbackUrl:
-        request.customizations?.aap_registration?.ansible_callback_url,
-      hostConfigKey: request.customizations?.aap_registration?.host_config_key,
+        request.customizations.aap_registration?.ansible_callback_url,
+      hostConfigKey: request.customizations.aap_registration?.host_config_key,
       tlsCertificateAuthority:
-        request.customizations?.aap_registration?.tls_certificate_authority,
+        request.customizations.aap_registration?.tls_certificate_authority,
       skipTlsVerification:
-        request.customizations?.aap_registration?.skip_tls_verification,
+        request.customizations.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(blueprintResponse),
   };
@@ -820,7 +891,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
 
 const getServices = (state: RootState): Services | undefined => {
   const services = selectServices(state);
-  const enabledSvcs = services.enabled || [];
+  const enabledSvcs = services.enabled;
   if (
     enabledSvcs.length === 0 &&
     services.masked.length === 0 &&

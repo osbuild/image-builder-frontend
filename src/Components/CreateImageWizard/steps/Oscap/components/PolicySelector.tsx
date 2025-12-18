@@ -167,7 +167,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
           );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
-          dispatch(changeFips(response?.fips?.enabled || false));
+          dispatch(changeFips(response.fips?.enabled || false));
           dispatch(
             setCompliancePolicy({
               policyID: selection.policyID,
