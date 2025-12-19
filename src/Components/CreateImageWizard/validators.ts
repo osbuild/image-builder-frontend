@@ -183,7 +183,8 @@ export const isMountpointValid = (partition: DiskPartition) => {
 
       if (
         policy.Deny &&
-        partition.mountpoint.startsWith(`${mountpointPath}/`)
+        (partition.mountpoint === mountpointPath ||
+          partition.mountpoint.startsWith(`${mountpointPath}/`))
       ) {
         return false;
       }
