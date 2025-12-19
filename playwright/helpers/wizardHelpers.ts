@@ -61,6 +61,44 @@ export const registerLater = async (page: Page | FrameLocator) => {
 };
 
 /**
+ * Register with an activation key in the wizard
+ * This function executes only on the hosted service
+ * Selects "Automatically register to Red Hat" and picks an activation key from the dropdown
+ * Ensures "Enable predictive analytics" and "Enable remote remediations" are enabled
+ * @param page - the page object (frame)
+ */
+export const registerWithActivationKey = async (page: Page | FrameLocator) => {
+  if (isHosted()) {
+    await page.getByRole('button', { name: 'Register' }).click();
+
+    // Ensure "Automatically register to Red Hat" is selected (should be default)
+    await expect(
+      page.getByRole('radio', { name: 'Automatically register to Red Hat' }),
+    ).toBeChecked();
+
+    // Select an activation key from the dropdown
+    await page.getByRole('button', { name: 'Menu toggle' }).click();
+    await page.getByRole('option', { name: 'activation-key-' }).click();
+
+    // Ensure Enable predictive analytics is checked
+    const insightsSwitch = page.getByRole('switch', {
+      name: 'Enable predictive analytics',
+    });
+    if (!(await insightsSwitch.isChecked())) {
+      await insightsSwitch.click();
+    }
+
+    // Ensure Enable remote remediations is checked
+    const rhcSwitch = page.getByRole('switch', {
+      name: 'Enable remote remediations',
+    });
+    if (!(await rhcSwitch.isChecked())) {
+      await rhcSwitch.click();
+    }
+  }
+};
+
+/**
  * Fill in the image output step in the wizard by selecting the Guest Image
  * @param page - the page object
  */
