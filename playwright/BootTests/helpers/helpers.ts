@@ -269,3 +269,157 @@ export const navigateToRepositories = async (page: Page) => {
     await page.getByRole('button', { name: 'Add repositories now' }).click();
   }
 };
+
+/**
+ * Navigate to the templates page in Content Sources
+ * @param page - the page object
+ */
+export const navigateToTemplates = async (page: Page) => {
+  await page.goto('/insights/content/templates');
+
+  const templateText = page.getByText(
+    'View all content templates within your organization.',
+  );
+
+  await templateText.waitFor({ state: 'visible', timeout: 30000 });
+};
+
+/**
+ * Delete a template by name
+ * Will navigate to the Templates page and search for the template first
+ * If the template is not found, it will fail gracefully
+ * @param page - the page object
+ * @param templateName - the name of the template to delete
+ */
+export const deleteTemplate = async (page: Page, templateName: string) => {
+  await closePopupsIfExist(page);
+  await test.step(
+    'Delete the template with name: ' + templateName,
+    async () => {
+      try {
+        await navigateToTemplates(page);
+        await page
+          .getByRole('searchbox', { name: 'Filter by name/url' })
+          .fill(templateName);
+        // Wait for the template row to appear
+        await expect(
+          page.getByRole('row').filter({ hasText: templateName }),
+        ).toBeVisible({ timeout: 10000 });
+      } catch {
+        // No template of given name was found -> fail gracefully and do not raise error
+        return;
+      }
+
+      await page
+        .getByRole('row')
+        .filter({ hasText: templateName })
+        .getByLabel('Kebab toggle')
+        .click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await expect(page.getByText('Delete template?')).toBeVisible();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    },
+    { box: true },
+  );
+};
+
+/**
+ * Helper function for sleeping
+ * @param ms - milliseconds to sleep
+ */
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Poll the API to check if a system with the given hostname is attached to a template.
+ * @param page - Playwright Page object
+ * @param hostname - The display name of the system to check
+ * @param expectedTemplateName - The expected template name (optional, if provided will verify it matches)
+ * @param delayMs - Delay between polling attempts in milliseconds (default: 10000ms / 10s)
+ * @param maxAttempts - Number of times to poll (default: 30)
+ * @returns Promise<boolean> - true if system is attached to template, false otherwise
+ */
+export const pollForSystemTemplateAttachment = async (
+  page: Page,
+  hostname: string,
+  expectedTemplateName?: string,
+  delayMs: number = 10_000,
+  maxAttempts: number = 30,
+): Promise<boolean> => {
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    attempts++;
+    let shouldRetry = false;
+
+    try {
+      // Query the systems API with search filter for the hostname
+      const response = await page.request.get(
+        `/api/patch/v3/systems?search=${encodeURIComponent(hostname)}&limit=100`,
+      );
+
+      if (response.status() !== 200) {
+        console.log(
+          `API request failed with status ${response.status()}, attempt ${attempts}/${maxAttempts}`,
+        );
+        shouldRetry = true;
+      } else {
+        const body = await response.json();
+
+        if (!body.data || !Array.isArray(body.data)) {
+          console.log(
+            `Invalid response format, attempt ${attempts}/${maxAttempts}`,
+          );
+          shouldRetry = true;
+        } else {
+          // Find the system with matching hostname
+          const system = body.data.find(
+            (sys: { attributes: { display_name: string } }) =>
+              sys.attributes.display_name === hostname,
+          );
+
+          if (!system) {
+            console.log(
+              `System '${hostname}' not found in inventory, attempt ${attempts}/${maxAttempts}`,
+            );
+            shouldRetry = true;
+          } else {
+            // Check if system has a template_uuid assigned
+            const hasTemplate = !!system.attributes?.template_uuid;
+
+            if (hasTemplate) {
+              const templateName = system.attributes.template_name;
+              if (expectedTemplateName && templateName !== expectedTemplateName) {
+                console.log(
+                  `System '${hostname}' is attached to template '${templateName}' but expected '${expectedTemplateName}', attempt ${attempts}/${maxAttempts}`,
+                );
+                shouldRetry = true;
+              } else {
+                console.log(
+                  `System '${hostname}' is attached to template: ${templateName}`,
+                );
+                return true;
+              }
+            } else {
+              console.log(
+                `System '${hostname}' is not attached to any template, attempt ${attempts}/${maxAttempts}`,
+              );
+              shouldRetry = true;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log(
+        `Error checking system template attachment: ${error}, attempt ${attempts}/${maxAttempts}`,
+      );
+      shouldRetry = true;
+    }
+
+    // Check if we should retry with delay
+    if (shouldRetry && attempts < maxAttempts) {
+      await sleep(delayMs);
+    }
+  }
+
+  return false;
+};
