@@ -269,3 +269,278 @@ export const navigateToRepositories = async (page: Page) => {
     await page.getByRole('button', { name: 'Add repositories now' }).click();
   }
 };
+
+/**
+ * Navigate to the templates page in Content Sources
+ * @param page - the page object
+ */
+export const navigateToTemplates = async (page: Page) => {
+  await page.goto('/insights/content/templates');
+
+  const templateText = page.getByText(
+    'View all content templates within your organization.',
+  );
+
+  await templateText.waitFor({ state: 'visible', timeout: 30000 });
+};
+
+/**
+ * Delete a template by name
+ * Will navigate to the Templates page and search for the template first
+ * If the template is not found, it will fail gracefully
+ * @param page - the page object
+ * @param templateName - the name of the template to delete
+ */
+export const deleteTemplate = async (page: Page, templateName: string) => {
+  await closePopupsIfExist(page);
+  await test.step(
+    'Delete the template with name: ' + templateName,
+    async () => {
+      await navigateToTemplates(page);
+      await page
+        .getByRole('searchbox', { name: 'Filter by name' })
+        .fill(templateName);
+
+      const templateRow = page
+        .getByRole('row')
+        .filter({ hasText: templateName });
+
+      try {
+        await templateRow.waitFor({ state: 'visible', timeout: 10000 });
+      } catch {
+        // Template not found - exit gracefully (cleanup for non-existent resource)
+        return;
+      }
+
+      await templateRow.getByLabel('Kebab toggle').click();
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await expect(page.getByText('Delete template?')).toBeVisible();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    },
+    { box: true },
+  );
+};
+
+/**
+ * Helper function for sleeping
+ * @param ms - milliseconds to sleep
+ */
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Extract Authorization header from browser cookies
+ * @param page - Playwright Page object
+ * @returns Headers object with Authorization if cs_jwt cookie is found
+ */
+const getAuthHeaders = async (page: Page): Promise<Record<string, string>> => {
+  const cookies = await page.context().cookies();
+  const jwtCookie = cookies.find((c) => c.name === 'cs_jwt');
+  if (jwtCookie) {
+    return { Authorization: `Bearer ${jwtCookie.value}` };
+  }
+  return {};
+};
+
+/**
+ * Poll the API to check if a system with the given hostname is attached to a template.
+ * @param page - Playwright Page object
+ * @param hostname - The display name of the system to check
+ * @param expectedTemplateName - The expected template name (optional, if provided will verify it matches)
+ * @param delayMs - Delay between polling attempts in milliseconds (default: 10000ms / 10s)
+ * @param maxAttempts - Number of times to poll (default: 30)
+ * @returns Promise<boolean> - true if system is attached to template, false otherwise
+ */
+interface PatchSystemAttributes {
+  display_name: string;
+  template_uuid?: string;
+  template_name?: string;
+}
+
+interface PatchSystem {
+  id: string;
+  attributes: PatchSystemAttributes;
+}
+
+export const pollForSystemTemplateAttachment = async (
+  page: Page,
+  hostname: string,
+  expectedTemplateName?: string,
+  delayMs: number = 10_000,
+  maxAttempts: number = 30,
+): Promise<boolean> => {
+  /* eslint-disable no-console */
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      // Query the systems API with search filter for the hostname
+      const headers = await getAuthHeaders(page);
+      const response = await page.request.get(
+        `/api/patch/v3/systems?search=${encodeURIComponent(hostname)}&limit=100`,
+        { headers },
+      );
+
+      if (response.status() !== 200) {
+        console.log(
+          `API request failed with status ${response.status()}, attempt ${attempt}/${maxAttempts}`,
+        );
+      } else {
+        const body = await response.json();
+
+        if (!body.data || !Array.isArray(body.data)) {
+          console.log(
+            `Invalid response format, attempt ${attempt}/${maxAttempts}`,
+          );
+        } else {
+          const systems: PatchSystem[] = body.data;
+
+          // Log all returned systems for debugging
+          if (systems.length > 0) {
+            console.log(
+              `Patch API returned ${systems.length} system(s):`,
+              systems.map((s) => ({
+                id: s.id,
+                display_name: s.attributes.display_name,
+              })),
+            );
+          }
+
+          // Find the system with matching hostname (exact match or starts with)
+          const system = systems.find(
+            (sys) =>
+              sys.attributes.display_name === hostname ||
+              sys.attributes.display_name.startsWith(hostname),
+          );
+
+          if (!system) {
+            console.log(
+              `System '${hostname}' not found in Patch results, attempt ${attempt}/${maxAttempts}`,
+            );
+          } else if (!system.attributes.template_uuid) {
+            console.log(
+              `System '${hostname}' is not attached to any template, attempt ${attempt}/${maxAttempts}`,
+            );
+          } else if (
+            expectedTemplateName &&
+            system.attributes.template_name !== expectedTemplateName
+          ) {
+            console.log(
+              `System '${hostname}' is attached to template '${system.attributes.template_name}' but expected '${expectedTemplateName}', attempt ${attempt}/${maxAttempts}`,
+            );
+          } else {
+            console.log(
+              `System '${hostname}' is attached to template: ${system.attributes.template_name}`,
+            );
+            return true;
+          }
+        }
+      }
+    } catch (error) {
+      console.log(
+        `Error checking system template attachment: ${error}, attempt ${attempt}/${maxAttempts}`,
+      );
+    }
+
+    // Wait before next attempt (unless this is the last attempt)
+    if (attempt < maxAttempts) {
+      await sleep(delayMs);
+    }
+  }
+  /* eslint-enable no-console */
+
+  return false;
+};
+
+/**
+ * Poll the Inventory API to check if a system with the given hostname exists.
+ * @param page - Playwright Page object
+ * @param hostname - The hostname of the system to check
+ * @param delayMs - Delay between polling attempts in milliseconds (default: 10000ms / 10s)
+ * @param maxAttempts - Number of times to poll (default: 30)
+ * @returns Promise<{ found: boolean; inventoryId?: string }> - found status and inventory ID if found
+ */
+export const pollForSystemInInventory = async (
+  page: Page,
+  hostname: string,
+  delayMs: number = 20_000,
+  maxAttempts: number = 30,
+): Promise<{ found: boolean; inventoryId?: string }> => {
+  /* eslint-disable no-console */
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    attempts++;
+
+    try {
+      // Query the Inventory API with display_name parameter
+      // Extract auth token from cookies for API authentication
+      const headers = await getAuthHeaders(page);
+      const response = await page.request.get(
+        `/api/inventory/v1/hosts?display_name=${encodeURIComponent(hostname)}`,
+        { headers },
+      );
+
+      if (response.status() !== 200) {
+        console.log(
+          `Inventory API request failed with status ${response.status()}, attempt ${attempts}/${maxAttempts}`,
+        );
+      } else {
+        const body = await response.json();
+
+        if (!body.results || !Array.isArray(body.results)) {
+          console.log(
+            `Invalid Inventory response format, attempt ${attempts}/${maxAttempts}`,
+          );
+        } else if (body.results.length === 0) {
+          console.log(
+            `System '${hostname}' not found in Inventory, attempt ${attempts}/${maxAttempts}`,
+          );
+        } else {
+          // Log all returned systems for debugging
+          console.log(
+            `Inventory API returned ${body.results.length} system(s):`,
+            body.results.map(
+              (s: { id: string; display_name?: string; fqdn?: string }) => ({
+                id: s.id,
+                display_name: s.display_name,
+                fqdn: s.fqdn,
+              }),
+            ),
+          );
+
+          // Find the system with matching hostname (exact match or starts with)
+          const system = body.results.find(
+            (sys: { display_name?: string; fqdn?: string }) =>
+              sys.display_name === hostname ||
+              sys.fqdn === hostname ||
+              sys.display_name?.startsWith(hostname) ||
+              sys.fqdn?.startsWith(hostname),
+          );
+
+          if (system) {
+            console.log(
+              `System '${hostname}' found in Inventory with ID: ${system.id}`,
+            );
+            return { found: true, inventoryId: system.id };
+          } else {
+            console.log(
+              `System '${hostname}' not found in Inventory results, attempt ${attempts}/${maxAttempts}`,
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.log(
+        `Error checking system in Inventory: ${error}, attempt ${attempts}/${maxAttempts}`,
+      );
+    }
+
+    // Wait before next attempt
+    if (attempts < maxAttempts) {
+      await sleep(delayMs);
+    }
+  }
+  /* eslint-enable no-console */
+
+  return { found: false };
+};
