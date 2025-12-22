@@ -183,6 +183,16 @@ export const ExpiringStatus = ({
     return <Skeleton />;
   }
 
+  if (!composeStatus?.image_status.status) {
+    return (
+      <ErrorStatus
+        icon={statuses['failure'].icon}
+        text={statuses['failure'].text}
+        error={composeStatus?.image_status.error || ''}
+      />
+    );
+  }
+
   const status = composeStatus!.image_status.status;
   const remainingHours = AWS_S3_EXPIRATION_TIME_IN_HOURS - timeToExpiration;
   const remainingDays = OCI_STORAGE_EXPIRATION_TIME_IN_DAYS - timeToExpiration;
@@ -235,7 +245,9 @@ export const ExpiringStatus = ({
         error={composeStatus?.image_status.error || ''}
       />
     );
-  } else if (status === 'building') {
+  }
+
+  if (status === 'building') {
     return <ProgressStatus status={composeStatus} />;
   }
 
@@ -255,19 +267,31 @@ export const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
     return <Skeleton />;
   }
 
-  const status = composeStatus?.image_status.status || 'failure';
+  if (!composeStatus?.image_status.status) {
+    return (
+      <ErrorStatus
+        icon={statuses['failure'].icon}
+        text={statuses['failure'].text}
+        error={composeStatus?.image_status.error || ''}
+      />
+    );
+  }
 
+  const status = composeStatus.image_status.status;
   if (status === 'failure') {
     return (
       <ErrorStatus
         icon={statuses[status].icon}
         text={statuses[status].text}
-        error={composeStatus?.image_status.error || ''}
+        error={composeStatus.image_status.error || ''}
       />
     );
-  } else if (status === 'building') {
+  }
+
+  if (status === 'building') {
     return <ProgressStatus status={composeStatus} />;
   }
+
   return <Status icon={statuses[status].icon} text={statuses[status].text} />;
 };
 
