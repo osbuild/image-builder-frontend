@@ -235,6 +235,9 @@ test('Content integration test - Content Template', async ({
 
   // Step 5: Verify system is attached to template (registration happens automatically at boot)
   await test.step('Verify system is attached to content template', async () => {
+    // Re-authenticate to refresh cookies (session may have expired during long build)
+    await ensureAuthenticated(page);
+
     // Hostname was set in the wizard, so we know it without needing to SSH in
     console.log(`Looking for system with hostname: ${hostname}`);
 

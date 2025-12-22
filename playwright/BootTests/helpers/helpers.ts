@@ -353,8 +353,14 @@ export const pollForSystemTemplateAttachment = async (
 
     try {
       // Query the systems API with search filter for the hostname
+      // Include Authorization header if TOKEN is available (set during login)
+      const headers: Record<string, string> = {};
+      if (process.env.TOKEN) {
+        headers['Authorization'] = process.env.TOKEN;
+      }
       const response = await page.request.get(
         `/api/patch/v3/systems?search=${encodeURIComponent(hostname)}&limit=100`,
+        { headers },
       );
 
       if (response.status() !== 200) {
