@@ -84,10 +84,14 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
 
   const lintWarnings = React.useMemo(
-    () => blueprintDetails?.lint.warnings ?? [],
+    // there is a mismatch between API type and real data
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    () => blueprintDetails?.lint?.warnings ?? [],
     [blueprintDetails],
   );
 
+  // there is a mismatch between API type and real data
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const hasErrors = !!blueprintDetails?.lint?.errors?.length;
   const hasWarnings = lintWarnings.length > 0;
 
