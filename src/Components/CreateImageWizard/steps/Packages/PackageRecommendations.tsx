@@ -86,12 +86,9 @@ const PackageRecommendations = () => {
           },
         });
 
-        if (
-          response &&
-          response.data &&
-          response.data.packages &&
-          response.data.packages.length > 0
-        ) {
+        // there is a mismatch between API type and real data
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (response?.data?.packages && response.data.packages.length > 0) {
           analytics.track(
             `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
             {
@@ -109,7 +106,9 @@ const PackageRecommendations = () => {
   }, [fetchRecommendedPackages, packages, isExpanded]);
 
   useEffect(() => {
-    if (isSuccess && data.packages && data.packages.length > 0) {
+    // there is a mismatch between API type and real data
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (isSuccess && data.packages?.length > 0) {
       fetchRecommendationDescriptions({
         apiContentUnitSearchRequest: {
           exact_names: data.packages,
@@ -206,85 +205,92 @@ const PackageRecommendations = () => {
                 again by changing your selected packages.
               </Alert>
             )}
-            {isSuccess && !data?.packages?.length && packages.length > 0 && (
-              <>No recommendations found for the set of selected packages</>
-            )}
-            {isSuccess && data && data?.packages && (
-              <>
-                <Content>
+            {
+              // there is a mismatch between API type and real data
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+              isSuccess && !data?.packages?.length && packages.length > 0 && (
+                <>No recommendations found for the set of selected packages</>
+              )
+            }
+            {
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+              isSuccess && data?.packages && (
+                <>
                   <Content>
-                    The recommended packages are optional suggestions based on
-                    what other users add in similar setups. Dependencies for
-                    your selected packages will be automatically included in the
-                    blueprint.
+                    <Content>
+                      The recommended packages are optional suggestions based on
+                      what other users add in similar setups. Dependencies for
+                      your selected packages will be automatically included in
+                      the blueprint.
+                    </Content>
                   </Content>
-                </Content>
-                <Table variant='compact'>
-                  <Thead>
-                    <Tr>
-                      <Th width={35}>Package name</Th>
-                      <Th width={45}>Description</Th>
-                      <Th width={20}>
-                        <Button
-                          variant='link'
-                          component='a'
-                          onClick={() => addAllPackages()}
-                          isInline
-                        >
-                          Add all packages
-                        </Button>
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {data.packages.map((pkg) => (
-                      <Tr key={pkg}>
-                        <Td>{pkg}</Td>
-                        {isLoadingDescriptions && (
-                          <Td>
-                            <Spinner size='md' />
-                          </Td>
-                        )}
-                        {isSuccessDescriptions && (
-                          <Td>
-                            {dataDescriptions
-                              .filter((p) => p.package_name === pkg)
-                              .map((p) => p.summary)}
-                          </Td>
-                        )}
-                        <Td>
+                  <Table variant='compact'>
+                    <Thead>
+                      <Tr>
+                        <Th width={35}>Package name</Th>
+                        <Th width={45}>Description</Th>
+                        <Th width={20}>
                           <Button
                             variant='link'
                             component='a'
-                            onClick={() => {
-                              analytics.track(
-                                `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
-                                {
-                                  module: AMPLITUDE_MODULE_NAME,
-                                  isPreview: isBeta(),
-                                  packageName: pkg,
-                                  selectedPackages: packages.map(
-                                    (pkg) => pkg.name,
-                                  ),
-                                  shownRecommendations: data.packages,
-                                  distribution: distribution.replace('-', ''),
-                                  modelVersion: data.modelVersion,
-                                },
-                              );
-                              addRecommendedPackage(pkg);
-                            }}
+                            onClick={() => addAllPackages()}
                             isInline
-                            isDisabled={isRecommendedPackageSelected(pkg)}
                           >
-                            Add package
+                            Add all packages
                           </Button>
-                        </Td>
+                        </Th>
                       </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </>
-            )}
+                    </Thead>
+                    <Tbody>
+                      {data.packages.map((pkg) => (
+                        <Tr key={pkg}>
+                          <Td>{pkg}</Td>
+                          {isLoadingDescriptions && (
+                            <Td>
+                              <Spinner size='md' />
+                            </Td>
+                          )}
+                          {isSuccessDescriptions && (
+                            <Td>
+                              {dataDescriptions
+                                .filter((p) => p.package_name === pkg)
+                                .map((p) => p.summary)}
+                            </Td>
+                          )}
+                          <Td>
+                            <Button
+                              variant='link'
+                              component='a'
+                              onClick={() => {
+                                analytics.track(
+                                  `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
+                                  {
+                                    module: AMPLITUDE_MODULE_NAME,
+                                    isPreview: isBeta(),
+                                    packageName: pkg,
+                                    selectedPackages: packages.map(
+                                      (pkg) => pkg.name,
+                                    ),
+                                    shownRecommendations: data.packages,
+                                    distribution: distribution.replace('-', ''),
+                                    modelVersion: data.modelVersion,
+                                  },
+                                );
+                                addRecommendedPackage(pkg);
+                              }}
+                              isInline
+                              isDisabled={isRecommendedPackageSelected(pkg)}
+                            >
+                              Add package
+                            </Button>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </>
+              )
+            }
           </ExpandableSection>
         </PanelMainBody>
       </PanelMain>

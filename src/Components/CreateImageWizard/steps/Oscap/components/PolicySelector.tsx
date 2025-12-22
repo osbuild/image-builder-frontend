@@ -211,6 +211,8 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       </SelectOption>,
     ];
     for (const p of policies.data) {
+      // there is a mismatch between API type and real data
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (p === undefined) {
         continue;
       }
