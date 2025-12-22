@@ -487,6 +487,12 @@ function commonRequestToState(
     fips: {
       enabled: request.customizations.fips?.enabled || false,
     },
+    userGroups:
+      request.customizations?.groups?.map((grp) => ({
+        id: uuidv4(),
+        name: grp.name,
+        ...(grp.gid !== undefined && { gid: grp.gid }),
+      })) || [],
   };
 }
 
