@@ -1,9 +1,7 @@
 import React from 'react';
 
 import { FormGroup, Label, Radio } from '@patternfly/react-core';
-import { useFlag } from '@unleash/proxy-client-react';
 
-import { useIsOnPremise } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeFscMode,
@@ -15,11 +13,6 @@ const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fscMode = useAppSelector(selectFscMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
-  const isOnPremise = useIsOnPremise();
-
-  const isAdvancedPartitioningEnabled = useFlag(
-    'image-builder.advanced-partitioning.enabled',
-  );
 
   if (hasOscapProfile) {
     return undefined;
@@ -46,30 +39,24 @@ const FileSystemPartition = () => {
       />
       <Radio
         id='basic-partitioning-radio'
-        label={
-          isOnPremise || isAdvancedPartitioningEnabled
-            ? 'Basic filesystem partitioning'
-            : 'Manually configure partitions'
-        }
+        label='Basic filesystem partitioning'
         name='fsc-type'
-        description='Manually configure the file system of your image by adding, removing, and editing partitions'
+        description='Configure the file system of your image by adding, removing, and editing partitions'
         isChecked={fscMode === 'basic'}
         onChange={() => {
           dispatch(changeFscMode('basic'));
         }}
       />
-      {(isOnPremise || isAdvancedPartitioningEnabled) && (
-        <Radio
-          id='advanced-partitioning-radio'
-          label='Advanced disk partitioning'
-          name='fsc-type'
-          description='Configure disk partitioning with advanced options'
-          isChecked={fscMode === 'advanced'}
-          onChange={() => {
-            dispatch(changeFscMode('advanced'));
-          }}
-        />
-      )}
+      <Radio
+        id='advanced-partitioning-radio'
+        label='Advanced disk partitioning'
+        name='fsc-type'
+        description='Configure disk partitioning with advanced options'
+        isChecked={fscMode === 'advanced'}
+        onChange={() => {
+          dispatch(changeFscMode('advanced'));
+        }}
+      />
     </FormGroup>
   );
 };
