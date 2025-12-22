@@ -345,6 +345,7 @@ export const pollForSystemTemplateAttachment = async (
   delayMs: number = 10_000,
   maxAttempts: number = 30,
 ): Promise<boolean> => {
+  /* eslint-disable no-console */
   let attempts = 0;
 
   while (attempts < maxAttempts) {
@@ -426,6 +427,7 @@ export const pollForSystemTemplateAttachment = async (
       await sleep(delayMs);
     }
   }
+  /* eslint-enable no-console */
 
   return false;
 };

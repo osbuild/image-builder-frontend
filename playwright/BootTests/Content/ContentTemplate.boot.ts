@@ -239,6 +239,7 @@ test('Content integration test - Content Template', async ({
     await ensureAuthenticated(page);
 
     // Hostname was set in the wizard, so we know it without needing to SSH in
+    // eslint-disable-next-line no-console
     console.log(`Looking for system with hostname: ${hostname}`);
 
     const isAttached = await pollForSystemTemplateAttachment(
