@@ -8,6 +8,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "types": [
+      "node",
       "vitest/globals",
       "@testing-library/jest-dom"
     ],
