@@ -189,6 +189,7 @@ export type wizardState = {
   fips: {
     enabled: boolean;
   };
+  localeSuppressedLangpacks?: string[];
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -306,6 +307,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  localeSuppressedLangpacks: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -566,6 +568,10 @@ export const selectFirewall = (state: RootState) => {
 
 export const selectFips = (state: RootState) => {
   return state.wizard.fips;
+};
+
+export const selectLocaleSuppressedLangpacks = (state: RootState) => {
+  return state.wizard.localeSuppressedLangpacks || [];
 };
 
 export const wizardSlice = createSlice({
@@ -1454,6 +1460,20 @@ export const wizardSlice = createSlice({
     changeFips: (state, action: PayloadAction<boolean>) => {
       state.fips.enabled = action.payload;
     },
+    suppressLangpack: (state, action: PayloadAction<string>) => {
+      const name = action.payload;
+      if (!state.localeSuppressedLangpacks) {
+        state.localeSuppressedLangpacks = [];
+      }
+      if (!state.localeSuppressedLangpacks.includes(name)) {
+        state.localeSuppressedLangpacks.push(name);
+      }
+    },
+    unsuppressLangpack: (state, action: PayloadAction<string>) => {
+      state.localeSuppressedLangpacks = (
+        state.localeSuppressedLangpacks || []
+      ).filter((n) => n !== action.payload);
+    },
   },
 });
 
@@ -1570,5 +1590,7 @@ export const {
   removeGroupFromUserByIndex,
   changeRedHatRepositories,
   changeFips,
+  suppressLangpack,
+  unsuppressLangpack,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
