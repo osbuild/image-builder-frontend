@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -16,12 +16,21 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import Registration from './components/Registration';
 
 import { useGetUser, useIsOnPremise } from '../../../../Hooks';
+import { useAppDispatch } from '../../../../store/hooks';
+import { changeOrgId } from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
+  const dispatch = useAppDispatch();
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
   const isOnPremise = useIsOnPremise();
   const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    if (!isOnPremise && orgId) {
+      dispatch(changeOrgId(orgId));
+    }
+  }, [isOnPremise, orgId, dispatch]);
 
   return (
     <Form>
