@@ -7,11 +7,6 @@
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node",
-    "types": [
-      "node",
-      "vitest/globals",
-      "@testing-library/jest-dom"
-    ],
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -30,5 +25,5 @@
     }
   },
   "include": ["./src"],
-  "exclude": ["./playwright"]
+  "exclude": ["./playwright", "./src/**/*.test.ts", "./src/**/*.test.tsx", "./src/test"]
 }
