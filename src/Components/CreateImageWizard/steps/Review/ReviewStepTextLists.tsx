@@ -11,7 +11,10 @@ import {
   Icon,
   Popover,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from '@patternfly/react-icons';
 
 import {
   FSReviewTable,
@@ -688,13 +691,12 @@ export const RegisterNowList = () => {
       skip: !activationKey || isOnPremise,
     },
   );
+
   return (
     <>
-      <Content>
+      <Content className='pf-v6-u-pb-sm'>
         <Content component={ContentVariants.dl} className='review-step-dl'>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Registration type
-          </Content>
+          <Content component={ContentVariants.dt}>Registration method</Content>
           <Content
             component={ContentVariants.dd}
             data-testid='review-registration'
@@ -702,6 +704,9 @@ export const RegisterNowList = () => {
             <Content component='ul' isPlainList>
               {registrationType.startsWith('register-now') && (
                 <Content component='li'>
+                  <Icon status='success'>
+                    <CheckCircleIcon />
+                  </Icon>{' '}
                   Register with Red Hat Subscription Manager (RHSM)
                   <br />
                 </Content>
@@ -709,35 +714,34 @@ export const RegisterNowList = () => {
               {(registrationType === 'register-now-insights' ||
                 registrationType === 'register-now-rhc') && (
                 <Content component='li'>
+                  <Icon status='success'>
+                    <CheckCircleIcon />
+                  </Icon>{' '}
                   Connect to Red Hat Lightspeed
                   <br />
                 </Content>
               )}
               {registrationType === 'register-now-rhc' && (
                 <Content component='li'>
+                  <Icon status='success'>
+                    <CheckCircleIcon />
+                  </Icon>{' '}
                   Use remote host configuration (rhc) utility
                   <br />
                 </Content>
               )}
             </Content>
           </Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Activation key
-          </Content>
+          <Content component={ContentVariants.dt}>Organization ID</Content>
+          <Content component={ContentVariants.dd}>{orgId}</Content>
+          <Content component={ContentVariants.dt}>Activation key</Content>
           <Content component={ContentVariants.dd}>{activationKey}</Content>
-          {isOnPremise && (
-            <>
-              <Content component={ContentVariants.dt}>Organization ID</Content>
-              <Content component={ContentVariants.dd}>{orgId}</Content>
-            </>
-          )}
         </Content>
       </Content>
       {isError && (
         <Alert
           title='Information about the activation key unavailable'
           variant='danger'
-          isPlain
           isInline
         >
           Information about the activation key cannot be loaded. Please check
