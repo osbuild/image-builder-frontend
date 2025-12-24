@@ -8,6 +8,9 @@ const config = {
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    typecheck: {
+      tsconfig: './tsconfig.vitest.json',
+    },
     coverage: {
       provider: 'v8',
     },

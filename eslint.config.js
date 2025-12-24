@@ -32,7 +32,7 @@ module.exports = defineConfig([
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: ['./tsconfig.json', './playwright/tsconfig.json']
+        project: ['./tsconfig.json', './tsconfig.vitest.json', './playwright/tsconfig.json']
       },
       globals: {
         ...globals.browser,

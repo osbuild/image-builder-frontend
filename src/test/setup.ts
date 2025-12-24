@@ -16,11 +16,14 @@ window.getComputedStyle =
   }));
 
 // ResizeObserver is not defined and needs to be mocked and stubbed
-const MockResizeObserver = vi.fn(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+const MockResizeObserver = vi.fn(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+});
+
 vi.stubGlobal('ResizeObserver', MockResizeObserver);
 
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({

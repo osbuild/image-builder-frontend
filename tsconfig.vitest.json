@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "node",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": ["./src/**/*.test.ts", "./src/**/*.test.tsx", "./src/test"],
+  "exclude": ["./playwright"]
+}
