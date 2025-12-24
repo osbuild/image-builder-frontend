@@ -124,8 +124,8 @@ export const mapOnPremToHosted = async (
       ? blueprint.packages.map((p) => p.name)
       : undefined;
   const groups =
-    blueprint.customizations?.groups !== undefined
-      ? blueprint.customizations.groups.map((p) => `@${p.name}`)
+    blueprint.groups !== undefined
+      ? blueprint.groups.map((p) => `@${p.name}`)
       : undefined;
   const distro = process.env.IS_ON_PREMISE
     ? await getHostDistro()
@@ -151,7 +151,21 @@ export const mapOnPremToHosted = async (
         users !== undefined || user_keys !== undefined
           ? [...(users ? users : []), ...(user_keys ? user_keys : [])]
           : undefined,
-      groups: blueprint.customizations?.groups,
+      // Ensure groups are in the correct format: { name: string, gid?: number }[]
+      // Handle both 'group' (TOML format) and 'groups' (existing format) fields
+      groups: (() => {
+        const customizations = blueprint.customizations;
+        if (!customizations) {
+          return undefined;
+        }
+        const groupsArray =
+          customizations.groups ||
+          (customizations as { group?: GroupOnPrem[] }).group;
+        return groupsArray?.map((grp: GroupOnPrem) => ({
+          name: grp.name,
+          ...(grp.gid !== undefined && { gid: grp.gid }),
+        }));
+      })(),
       filesystem: blueprint.customizations?.filesystem?.map(
         ({ minsize, size, ...fs }) => ({
           min_size: minsize || size,
@@ -207,12 +221,32 @@ export const mapHostedToOnPrem = (
   };
 
   if (blueprint.customizations.packages) {
-    result.packages = blueprint.customizations.packages.map((pkg) => {
-      return {
-        name: pkg,
-        version: '*',
-      };
-    });
+    // Separate package groups (starting with @) from regular packages
+    const regularPackages = blueprint.customizations.packages.filter(
+      (pkg) => !pkg.startsWith('@'),
+    );
+    const packageGroups = blueprint.customizations.packages.filter((pkg) =>
+      pkg.startsWith('@'),
+    );
+
+    // Add regular packages
+    if (regularPackages.length > 0) {
+      result.packages = regularPackages.map((pkg) => {
+        return {
+          name: pkg,
+          version: '*',
+        };
+      });
+    }
+
+    // Add package groups (remove @ prefix)
+    if (packageGroups.length > 0) {
+      result.groups = packageGroups.map((grp) => {
+        return {
+          name: grp.substring(1), // Remove @ prefix
+        };
+      });
+    }
   }
 
   if (blueprint.customizations.containers) {
@@ -251,6 +285,10 @@ export const mapHostedToOnPrem = (
         password: u.password || '',
       };
     });
+  }
+
+  if (blueprint.customizations.groups) {
+    result.customizations!.group = blueprint.customizations.groups;
   }
 
   if (blueprint.customizations.services) {

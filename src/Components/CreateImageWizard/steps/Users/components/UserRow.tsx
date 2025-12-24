@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  Alert,
   Button,
   Checkbox,
   FormGroup,
@@ -207,6 +208,16 @@ const UserRow = ({
               stepValidation={getValidationByIndex(index)}
               fieldName='groups'
             />
+            {validation.errors.undefinedGroups && (
+              <Alert
+                variant='warning'
+                isInline
+                title='Custom groups referenced'
+                className='pf-v6-u-mt-sm'
+              >
+                {validation.errors.undefinedGroups}
+              </Alert>
+            )}
           </FormGroup>
         </GridItem>
         <GridItem span={1}>

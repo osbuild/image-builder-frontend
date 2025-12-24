@@ -43,7 +43,9 @@ import {
   selectTemplate,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
+  UserGroup,
   UserWithAdditionalInfo,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
@@ -88,6 +90,14 @@ export type UsersStepValidation = {
   disabledNext: boolean;
 };
 
+export type GroupsStepValidation = {
+  errors: {
+    [key: string]: { [key: string]: string };
+  };
+  disabledNext: boolean;
+  hasGroupWithoutName: boolean;
+};
+
 export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
@@ -101,6 +111,7 @@ export function useIsBlueprintValid(): boolean {
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
+  const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
   return (
     !registration.disabledNext &&
@@ -115,6 +126,7 @@ export function useIsBlueprintValid(): boolean {
     !firstBoot.disabledNext &&
     !details.disabledNext &&
     !users.disabledNext &&
+    !userGroups.disabledNext &&
     !azureTarget.disabledNext
   );
 }
@@ -789,6 +801,7 @@ const validateSshKey = (userSshKey: string): string => {
 export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
   const users = useAppSelector(selectUsers);
+  const definedGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   if (users.length === 0) {
@@ -839,6 +852,16 @@ export function useUsersValidation(): UsersStepValidation {
         ? users[index].name
         : '';
 
+    // Check for groups that are assigned to users but not defined in Groups section
+    const definedGroupNames = definedGroups.map((group) => group.name);
+    const systemGroups = ['wheel', 'sudo'];
+    const undefinedGroups = users[index].groups.filter(
+      (groupName) =>
+        !definedGroupNames.includes(groupName) &&
+        !systemGroups.includes(groupName) &&
+        isUserGroupValid(groupName),
+    );
+
     if (
       invalidGroups.length > 0 ||
       duplicateGroups.length > 0 ||
@@ -861,16 +884,31 @@ export function useUsersValidation(): UsersStepValidation {
       userErrors.groups = groupsErrors.join(' | ');
     }
 
+    // Add warning for undefined groups (doesn't block progression)
+    if (undefinedGroups.length > 0) {
+      userErrors.undefinedGroups =
+        "You've assigned user to a custom group that is not defined in 'Groups', make sure it will exist on the system";
+    }
+
     if (Object.keys(userErrors).length > 0) {
       errors[index] = userErrors;
     }
   }
 
+  // Check if there are any actual errors (not just warnings)
+  const hasBlockingErrors = Object.values(errors).some((userErrors) => {
+    // Count errors but exclude undefinedGroups warnings
+    const blockingErrors = Object.keys(userErrors).filter(
+      (key) => key !== 'undefinedGroups',
+    );
+    return blockingErrors.length > 0;
+  });
+
   const canProceed =
     // Case 1: there is no users
     users.length === 0 ||
-    // Case 2: all users are valid
-    Object.keys(errors).length === 0;
+    // Case 2: no blocking errors (warnings are OK)
+    !hasBlockingErrors;
 
   return {
     errors,
@@ -1037,4 +1075,71 @@ export function useAzureValidation(): StepValidation {
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
+}
+
+const validateUserGroupName = (
+  userGroups: UserGroup[],
+  groupName: string,
+  currentIndex: number,
+): string => {
+  if (!groupName) {
+    return 'Required value';
+  }
+  if (!isUserGroupValid(groupName)) {
+    return 'Invalid group name';
+  }
+  const count = userGroups.filter(
+    (group, index) => group.name === groupName && index !== currentIndex,
+  ).length;
+  if (count > 0) {
+    return 'Group name already exists';
+  }
+  return '';
+};
+
+export function useUserGroupsValidation(): GroupsStepValidation {
+  const userGroups = useAppSelector(selectUserGroups);
+  const errors: { [key: string]: { [key: string]: string } } = {};
+
+  if (userGroups.length === 0) {
+    return {
+      errors: {},
+      disabledNext: false,
+      hasGroupWithoutName: false,
+    };
+  }
+
+  for (let index = 0; index < userGroups.length; index++) {
+    const groupErrors: { [key: string]: string } = {};
+    const isLastGroup = index === userGroups.length - 1;
+
+    if (userGroups[index].name) {
+      const groupNameError = validateUserGroupName(
+        userGroups,
+        userGroups[index].name,
+        index,
+      );
+      if (groupNameError) {
+        groupErrors.groupName = groupNameError;
+      }
+    } else if (!isLastGroup) {
+      // Only show "Required value" error if it's not the last (empty) group
+      // This prevents showing error immediately when "Add group" is clicked
+      groupErrors.groupName = 'Required value';
+    }
+
+    if (Object.keys(groupErrors).length > 0) {
+      errors[index] = groupErrors;
+    }
+  }
+
+  const hasGroupWithoutName = userGroups.some(
+    (group, index) => !group.name && index !== userGroups.length - 1,
+  );
+
+  return {
+    errors,
+    disabledNext: hasGroupWithoutName || Object.keys(errors).length > 0,
+    hasGroupWithoutName,
+  };
 }
