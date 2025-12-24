@@ -62,7 +62,6 @@
     "copy-webpack-plugin": "13.0.1",
     "css-loader": "7.1.2",
     "eslint": "9.39.2",
-    "eslint-plugin-disable-autofix": "5.0.1",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jest-dom": "5.5.0",
     "eslint-plugin-jsx-a11y": "6.10.2",

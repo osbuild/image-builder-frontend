@@ -80,7 +80,7 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
     return <></>;
   }
 
-  switch (data?.image_status.status) {
+  switch (data.image_status.status) {
     case 'failure': {
       return (
         <ErrorStatus
@@ -115,7 +115,7 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
     return <Skeleton />;
   }
 
-  switch (data?.image_status.status) {
+  switch (data.image_status.status) {
     case 'failure': {
       return (
         <ErrorStatus
@@ -232,7 +232,7 @@ export const ExpiringStatus = ({
       <ErrorStatus
         icon={statuses[status].icon}
         text={statuses[status].text}
-        error={composeStatus?.image_status.error || ''}
+        error={composeStatus.image_status.error || ''}
       />
     );
   } else if (status === 'building') {
@@ -255,14 +255,14 @@ export const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
     return <Skeleton />;
   }
 
-  const status = composeStatus?.image_status.status || 'failure';
+  const status = composeStatus.image_status.status;
 
   if (status === 'failure') {
     return (
       <ErrorStatus
         icon={statuses[status].icon}
         text={statuses[status].text}
-        error={composeStatus?.image_status.error || ''}
+        error={composeStatus.image_status.error || ''}
       />
     );
   } else if (status === 'building') {

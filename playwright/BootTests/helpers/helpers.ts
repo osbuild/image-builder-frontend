@@ -261,7 +261,7 @@ export const navigateToRepositories = async (page: Page) => {
     ]);
   } catch (error) {
     throw new Error(
-      `Neither repositories list nor zero state appeared: ${(error as Error)?.message}`,
+      `Neither repositories list nor zero state appeared: ${(error as Error).message}`,
     );
   }
 

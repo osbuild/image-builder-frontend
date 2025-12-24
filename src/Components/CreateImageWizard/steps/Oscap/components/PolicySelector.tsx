@@ -167,7 +167,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
           );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
-          dispatch(changeFips(response?.fips?.enabled || false));
+          dispatch(changeFips(response.fips?.enabled || false));
           dispatch(
             setCompliancePolicy({
               policyID: selection.policyID,
@@ -211,6 +211,8 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       </SelectOption>,
     ];
     for (const p of policies.data) {
+      // there is a mismatch between API type and real data
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (p === undefined) {
         continue;
       }

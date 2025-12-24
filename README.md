@@ -283,7 +283,6 @@ This project uses recommended rule sets rom several plugins:
 - `eslint-plugin-react-redux`
 - `eslint-plugin-import`
 - `eslint-plugin-jsx-a11y`
-- `eslint-plugin-disable-autofix`
 - `eslint-plugin-jest-dom`
 - `eslint-plugin-testing-library`
 - `eslint-plugin-playwright`

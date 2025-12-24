@@ -25,29 +25,29 @@ export const isAwsUploadRequestOptions = (
 export const isAzureUploadRequestOptions = (
   options: UploadRequest['options'],
 ): options is AzureUploadRequestOptions => {
-  return (options as AzureUploadRequestOptions).resource_group !== undefined;
+  return 'resource_group' in options;
 };
 
 export const isGcpUploadStatus = (
   status: UploadStatus['options'],
 ): status is GcpUploadStatus => {
-  return (status as GcpUploadStatus).project_id !== undefined;
+  return 'project_id' in status;
 };
 
 export const isOciUploadStatus = (
   status: UploadStatus['options'],
 ): status is OciUploadStatus => {
-  return (status as OciUploadStatus).url !== undefined;
+  return 'url' in status;
 };
 
 export const isAwss3UploadStatus = (
   status: UploadStatus['options'],
 ): status is Awss3UploadStatus => {
-  return (status as Awss3UploadStatus).url !== undefined;
+  return 'url' in status;
 };
 
 export const isAzureUploadStatus = (
   status: UploadStatus['options'],
 ): status is AzureUploadStatus => {
-  return (status as AzureUploadStatus).image_name !== undefined;
+  return 'image_name' in status;
 };
