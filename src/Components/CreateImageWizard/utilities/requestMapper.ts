@@ -489,8 +489,10 @@ function commonRequestToState(
       enabled: request.customizations.fips?.enabled || false,
     },
     userGroups:
-      request.customizations?.groups?.map((grp) => ({
-        id: uuidv4(),
+      request.customizations?.groups?.map((grp, index) => ({
+        // Generate deterministic ID based on name and index to avoid unnecessary re-renders
+        // when loading the same blueprint multiple times
+        id: `${grp.name}-${index}`,
         name: grp.name,
         ...(grp.gid !== undefined && { gid: grp.gid }),
       })) || [],
