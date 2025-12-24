@@ -61,6 +61,7 @@ const Row = ({
             isInline
             isPlain
             title={stepValidation.errors[`mountpoint-${partition.id}`]}
+            className='pf-v6-u-pt-sm'
           />
         )}
       </Td>
