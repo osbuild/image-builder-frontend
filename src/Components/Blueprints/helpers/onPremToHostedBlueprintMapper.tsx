@@ -65,7 +65,8 @@ export type CustomRepositoryOnPrem = {
   module_hotfixes?: boolean;
 };
 
-export type CustomizationsOnPrem = {
+// Base customizations without groups to avoid dual field conflict
+export type CustomizationsOnPremBase = {
   directories?: Directory[];
   files?: File[];
   repositories?: CustomRepositoryOnPrem[];
@@ -77,7 +78,6 @@ export type CustomizationsOnPrem = {
   hostname?: string;
   kernel?: Kernel;
   user?: UserOnPrem[];
-  groups?: GroupOnPrem[];
   timezone?: Timezone;
   locale?: Locale;
   firewall?: FirewallCustomization;
@@ -88,6 +88,23 @@ export type CustomizationsOnPrem = {
   fips?: boolean;
   installer?: Installer;
 };
+
+// TOML format uses singular 'group' for array of groups: [[customizations.group]]
+export type CustomizationsOnPremToml = CustomizationsOnPremBase & {
+  group?: GroupOnPrem[];
+  groups?: never;
+};
+
+// Hosted format uses plural 'groups'
+export type CustomizationsOnPremHosted = CustomizationsOnPremBase & {
+  group?: never;
+  groups?: GroupOnPrem[];
+};
+
+// Union type for dual format support during transition
+export type CustomizationsOnPrem =
+  | CustomizationsOnPremToml
+  | CustomizationsOnPremHosted;
 
 export type UserOnPrem = {
   name: string;
@@ -104,6 +121,19 @@ export type GroupOnPrem = {
 export type SshKeyOnPrem = {
   user: string;
   key: string;
+};
+
+// Utility function to extract groups from either TOML or hosted format
+export const getGroupsFromCustomizations = (
+  customizations?: CustomizationsOnPrem,
+): GroupOnPrem[] | undefined => {
+  if (!customizations) return undefined;
+  // Type-safe access to either groups (hosted) or group (TOML) field
+  return 'groups' in customizations
+    ? customizations.groups
+    : 'group' in customizations
+      ? customizations.group
+      : undefined;
 };
 
 export const mapOnPremToHosted = async (
@@ -124,8 +154,8 @@ export const mapOnPremToHosted = async (
       ? blueprint.packages.map((p) => p.name)
       : undefined;
   const groups =
-    blueprint.customizations?.groups !== undefined
-      ? blueprint.customizations.groups.map((p) => `@${p.name}`)
+    blueprint.groups !== undefined
+      ? blueprint.groups.map((p) => `@${p.name}`)
       : undefined;
   const distro = process.env.IS_ON_PREMISE
     ? await getHostDistro()
@@ -151,7 +181,13 @@ export const mapOnPremToHosted = async (
         users !== undefined || user_keys !== undefined
           ? [...(users ? users : []), ...(user_keys ? user_keys : [])]
           : undefined,
-      groups: blueprint.customizations?.groups,
+      // Handle both 'group' (TOML format) and 'groups' (existing format) fields
+      groups: getGroupsFromCustomizations(blueprint.customizations)?.map(
+        (grp: GroupOnPrem) => ({
+          name: grp.name,
+          ...(grp.gid !== undefined && { gid: grp.gid }),
+        }),
+      ),
       filesystem: blueprint.customizations?.filesystem?.map(
         ({ minsize, size, ...fs }) => ({
           min_size: minsize || size,
@@ -251,6 +287,10 @@ export const mapHostedToOnPrem = (
         password: u.password || '',
       };
     });
+  }
+
+  if (blueprint.customizations.groups) {
+    result.customizations!.group = blueprint.customizations.groups;
   }
 
   if (blueprint.customizations.services) {
