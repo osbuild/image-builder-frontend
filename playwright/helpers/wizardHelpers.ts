@@ -136,6 +136,18 @@ export const exportBlueprint = async (page: Page): Promise<string> => {
 };
 
 /**
+ * Normalize GID values in blueprint content by replacing them with a placeholder
+ * This allows comparison of blueprints with auto-generated GIDs (starting from 1000)
+ * @param content - the blueprint content string
+ * @returns normalized content with GID placeholders
+ */
+const normalizeGids = (content: string): string => {
+  // Replace gid = <number> with gid = <GID_PLACEHOLDER>
+  // Handle various whitespace patterns: "gid = 1000", "gid=1001", "gid =1002", etc.
+  return content.replace(/gid\s*=\s*\d+/gm, 'gid = <GID_PLACEHOLDER>');
+};
+
+/**
  * Verify the contents of a blueprint
  * @param file - the path to exported blueprint
  * @param expectedContent - the expected content of the exported blueprint file
@@ -145,7 +157,9 @@ export const verifyExportedBlueprint = (
   expectedContent: string,
 ) => {
   const content = fs.readFileSync(filepath);
-  expect(content.toString()).toEqual(expectedContent);
+  const normalizedContent = normalizeGids(content.toString());
+  const normalizedExpected = normalizeGids(expectedContent);
+  expect(normalizedContent).toEqual(normalizedExpected);
 };
 
 /**

@@ -1257,7 +1257,7 @@ export const wizardSlice = createSlice({
       if (index !== -1) {
         const trimmedName = action.payload.name.trim();
 
-        // Always update the name to allow user typing and paste operations
+        // Always update the name to allow user typing and provide responsive UI feedback
         // This ensures the UI remains responsive even when duplicates exist
         state.userGroups[index].name = trimmedName;
 
@@ -1280,6 +1280,7 @@ export const wizardSlice = createSlice({
           state.userGroups[index].gid = allocateUniqueGid(state.userGroups);
         } else if (hasDuplicate && state.userGroups[index].gid) {
           // Clear GID if duplicate is detected (to prevent inconsistent state)
+          // Validation will prevent progression with duplicate names
           delete state.userGroups[index].gid;
         }
       }
