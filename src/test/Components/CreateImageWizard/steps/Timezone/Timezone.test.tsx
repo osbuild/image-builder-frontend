@@ -96,11 +96,11 @@ describe('Step Timezone', () => {
     });
   });
 
-  test('clicking Back loads Users', async () => {
+  test('clicking Back loads Users and groups', async () => {
     await renderCreateMode();
     await goToTimezoneStep();
     await clickBack();
-    await screen.findByRole('heading', { name: 'Users' });
+    await screen.findByRole('heading', { name: 'Users and groups' });
   });
 
   test('clicking Cancel loads landing page', async () => {

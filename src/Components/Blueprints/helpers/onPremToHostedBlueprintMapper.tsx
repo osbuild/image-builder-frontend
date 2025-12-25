@@ -123,9 +123,11 @@ export const mapOnPremToHosted = async (
     blueprint.packages !== undefined
       ? blueprint.packages.map((p) => p.name)
       : undefined;
-  const groups =
-    blueprint.customizations?.groups !== undefined
-      ? blueprint.customizations.groups.map((p) => `@${p.name}`)
+  // Note: blueprint.groups refers to package groups (e.g., @development-tools),
+  // not user groups. User groups are in customizations.groups (see below).
+  const packageGroups =
+    blueprint.groups !== undefined
+      ? blueprint.groups.map((p) => `@${p.name}`)
       : undefined;
   const distro = process.env.IS_ON_PREMISE
     ? await getHostDistro()
@@ -144,14 +146,31 @@ export const mapOnPremToHosted = async (
         }),
       ),
       packages:
-        packages !== undefined || groups !== undefined
-          ? [...(packages ? packages : []), ...(groups ? groups : [])]
+        packages !== undefined || packageGroups !== undefined
+          ? [
+              ...(packages ? packages : []),
+              ...(packageGroups ? packageGroups : []),
+            ]
           : undefined,
       users:
         users !== undefined || user_keys !== undefined
           ? [...(users ? users : []), ...(user_keys ? user_keys : [])]
           : undefined,
-      groups: blueprint.customizations?.groups,
+      // Ensure groups are in the correct format: { name: string, gid?: number }[]
+      // Handle both 'group' (TOML format) and 'groups' (existing format) fields
+      groups: (() => {
+        const customizations = blueprint.customizations;
+        if (!customizations) {
+          return undefined;
+        }
+        const groupsArray =
+          customizations.groups ||
+          (customizations as { group?: GroupOnPrem[] }).group;
+        return groupsArray?.map((grp: GroupOnPrem) => ({
+          name: grp.name,
+          ...(grp.gid !== undefined && { gid: grp.gid }),
+        }));
+      })(),
       filesystem: blueprint.customizations?.filesystem?.map(
         ({ minsize, size, ...fs }) => ({
           min_size: minsize || size,
@@ -207,28 +226,52 @@ export const mapHostedToOnPrem = (
   };
 
   if (blueprint.customizations.packages) {
-    result.packages = blueprint.customizations.packages.map((pkg) => {
-      return {
-        name: pkg,
-        version: '*',
-      };
-    });
+    // Separate package groups (starting with @) from regular packages
+    const regularPackages = blueprint.customizations.packages.filter(
+      (pkg) => !pkg.startsWith('@'),
+    );
+    const packageGroups = blueprint.customizations.packages.filter((pkg) =>
+      pkg.startsWith('@'),
+    );
+
+    // Add regular packages
+    if (regularPackages.length > 0) {
+      result.packages = regularPackages.map((pkg) => {
+        return {
+          name: pkg,
+          version: '*',
+        };
+      });
+    }
+
+    // Add package groups (remove @ prefix)
+    if (packageGroups.length > 0) {
+      result.groups = packageGroups.map((grp) => {
+        return {
+          name: grp.substring(1), // Remove @ prefix
+        };
+      });
+    }
   }
 
   if (blueprint.customizations.containers) {
     result.containers = blueprint.customizations.containers;
   }
 
+  // Build customizations object with groups before users to match UI order
+  // (groups are prerequisite for user assignment)
+  const customizations: typeof result.customizations = {};
+
   if (blueprint.customizations.directories) {
-    result.customizations!.directories = blueprint.customizations.directories;
+    customizations.directories = blueprint.customizations.directories;
   }
 
   if (blueprint.customizations.files) {
-    result.customizations!.files = blueprint.customizations.files;
+    customizations.files = blueprint.customizations.files;
   }
 
   if (blueprint.customizations.filesystem) {
-    result.customizations!.filesystem = blueprint.customizations.filesystem.map(
+    customizations.filesystem = blueprint.customizations.filesystem.map(
       (fs) => {
         return {
           mountpoint: fs.mountpoint,
@@ -239,11 +282,16 @@ export const mapHostedToOnPrem = (
   }
 
   if (blueprint.customizations.disk) {
-    result.customizations!.disk = blueprint.customizations.disk;
+    customizations.disk = blueprint.customizations.disk;
+  }
+
+  // Set groups before users to match UI order (groups are prerequisite for user assignment)
+  if (blueprint.customizations.groups) {
+    customizations.group = blueprint.customizations.groups;
   }
 
   if (blueprint.customizations.users) {
-    result.customizations!.user = blueprint.customizations.users.map((u) => {
+    customizations.user = blueprint.customizations.users.map((u) => {
       return {
         name: u.name,
         key: u.ssh_key || '',
@@ -254,55 +302,56 @@ export const mapHostedToOnPrem = (
   }
 
   if (blueprint.customizations.services) {
-    result.customizations!.services = blueprint.customizations.services;
+    customizations.services = blueprint.customizations.services;
   }
 
   if (blueprint.customizations.hostname) {
-    result.customizations!.hostname = blueprint.customizations.hostname;
+    customizations.hostname = blueprint.customizations.hostname;
   }
 
   if (blueprint.customizations.kernel) {
-    result.customizations!.kernel = blueprint.customizations.kernel;
+    customizations.kernel = blueprint.customizations.kernel;
   }
 
   if (blueprint.customizations.timezone) {
-    result.customizations!.timezone = blueprint.customizations.timezone;
+    customizations.timezone = blueprint.customizations.timezone;
   }
 
   if (blueprint.customizations.locale) {
-    result.customizations!.locale = blueprint.customizations.locale;
+    customizations.locale = blueprint.customizations.locale;
   }
 
   if (blueprint.customizations.firewall) {
-    result.customizations!.firewall = blueprint.customizations.firewall;
+    customizations.firewall = blueprint.customizations.firewall;
   }
 
   if (blueprint.customizations.installation_device) {
-    result.customizations!.installation_device =
+    customizations.installation_device =
       blueprint.customizations.installation_device;
   }
 
   if (blueprint.customizations.fdo) {
-    result.customizations!.fdo = blueprint.customizations.fdo;
+    customizations.fdo = blueprint.customizations.fdo;
   }
 
   if (blueprint.customizations.ignition) {
-    result.customizations!.ignition = blueprint.customizations.ignition;
+    customizations.ignition = blueprint.customizations.ignition;
   }
 
   if (blueprint.customizations.partitioning_mode) {
-    result.customizations!.partitioning_mode =
+    customizations.partitioning_mode =
       blueprint.customizations.partitioning_mode;
   }
 
   if (blueprint.customizations.fips) {
-    result.customizations!.fips =
-      blueprint.customizations.fips.enabled || false;
+    customizations.fips = blueprint.customizations.fips.enabled || false;
   }
 
   if (blueprint.customizations.installer) {
-    result.customizations!.installer = blueprint.customizations.installer;
+    customizations.installer = blueprint.customizations.installer;
   }
+
+  result.customizations = customizations;
 
   return result;
 };
