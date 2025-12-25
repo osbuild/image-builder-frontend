@@ -186,6 +186,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
+  const flushUsersGroupInputsRef = useRef<(() => void) | null>(null);
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -618,10 +619,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                     disableNext={usersValidation.disabledNext}
                     optional={true}
                     isOnPremise={isOnPremise}
+                    beforeNext={() => {
+                      flushUsersGroupInputsRef.current?.();
+                      return true;
+                    }}
                   />
                 }
               >
-                <UsersStep />
+                <UsersStep
+                  onFlushReady={(flushFn) => {
+                    flushUsersGroupInputsRef.current = flushFn;
+                  }}
+                />
               </WizardStep>,
               <WizardStep
                 name='Timezone'

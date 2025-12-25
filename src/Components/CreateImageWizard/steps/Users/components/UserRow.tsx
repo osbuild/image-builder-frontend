@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import {
   Button,
@@ -14,6 +14,7 @@ import {
 } from '@patternfly/react-icons';
 import AddCircleOIcon from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 
+import { useGroupInputContext } from './GroupInputContext';
 import RemoveUserModal from './RemoveUserModal';
 
 import { useAppDispatch } from '../../../../../store/hooks';
@@ -28,7 +29,7 @@ import {
   setUserSshKeyByIndex,
   UserWithAdditionalInfo,
 } from '../../../../../store/wizardSlice';
-import LabelInput from '../../../LabelInput';
+import LabelInput, { LabelInputRef } from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
 import { useUsersValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
@@ -50,6 +51,26 @@ const UserRow = ({
   const dispatch = useAppDispatch();
   const stepValidation = useUsersValidation();
   const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
+  const groupInputRef = useRef<LabelInputRef | null>(null);
+  const groupInputContext = useGroupInputContext();
+
+  // Register/unregister ref using callback ref pattern for proper cleanup
+  const setGroupInputRef = React.useCallback(
+    (ref: LabelInputRef | null) => {
+      const previousRef = groupInputRef.current;
+      if (previousRef) {
+        groupInputContext.unregisterRef(previousRef);
+      }
+      // Update ref using mutable ref object pattern
+      (groupInputRef as React.MutableRefObject<LabelInputRef | null>).current =
+        ref;
+      if (ref) {
+        groupInputContext.registerRef(ref);
+      }
+    },
+    [groupInputContext],
+  );
+
   const getValidationByIndex = (idx: number) => {
     const errors =
       idx in stepValidation.errors ? stepValidation.errors[idx] : {};
@@ -60,6 +81,10 @@ const UserRow = ({
   };
 
   const onAddUserClick = () => {
+    // Flush any pending group input before adding a new user
+    if (groupInputRef.current) {
+      groupInputRef.current.flushInput();
+    }
     dispatch(addUser());
   };
 
@@ -193,6 +218,7 @@ const UserRow = ({
             }
           >
             <LabelInput
+              ref={setGroupInputRef}
               ariaLabel='Add user group'
               placeholder='Add user group'
               validator={isUserGroupValid}
