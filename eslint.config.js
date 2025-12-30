@@ -6,7 +6,6 @@ const pluginReactRedux = require('eslint-plugin-react-redux');
 const pluginImport = require('eslint-plugin-import');
 const fecConfig = require('@redhat-cloud-services/eslint-config-redhat-cloud-services');
 const pluginJsxA11y = require('eslint-plugin-jsx-a11y');
-const disableAutofix = require('eslint-plugin-disable-autofix');
 const pluginPrettier = require('eslint-plugin-prettier');
 const jestDom = require('eslint-plugin-jest-dom');
 const pluginTestingLibrary = require('eslint-plugin-testing-library');
@@ -61,7 +60,6 @@ module.exports = defineConfig([
       'react-redux': pluginReactRedux,
       import: pluginImport,
       jsxA11y: pluginJsxA11y,
-      'disable-autofix': disableAutofix,
       prettier: pluginPrettier,
     },
     rules: {
@@ -110,7 +108,7 @@ module.exports = defineConfig([
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unsafe-function-type': 'error',
       '@typescript-eslint/no-require-imports': 'error',
-      'disable-autofix/@typescript-eslint/no-unnecessary-condition': 'warn',
+      '@typescript-eslint/no-unnecessary-condition': 'error',
       'no-unused-vars': 'off', // disable js rule in favor of @typescript-eslint's rule
       '@typescript-eslint/no-unused-vars': [
         'error',

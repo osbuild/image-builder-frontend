@@ -152,7 +152,7 @@ export default function Snapshot() {
             </Content>
           </Grid>
         </>
-      ) : isTemplatesEnabled && selectedOption === 'template' ? (
+      ) : isTemplatesEnabled ? (
         <>
           <Title headingLevel='h1' size='xl'>
             Use a content template

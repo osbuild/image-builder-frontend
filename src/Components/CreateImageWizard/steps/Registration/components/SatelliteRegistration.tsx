@@ -27,11 +27,13 @@ const SatelliteRegistration = () => {
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
   const [isRejected, setIsRejected] = React.useState(false);
   const stepValidation = useRegistrationValidation();
-  const validated = stepValidation.errors['certificate']
-    ? 'error'
-    : stepValidation.errors['certificate'] === undefined && caCertificate
-      ? 'success'
-      : 'default';
+
+  const validated =
+    'certificate' in stepValidation.errors
+      ? 'error'
+      : caCertificate
+        ? 'success'
+        : 'default';
 
   const handleClear = () => {
     dispatch(changeSatelliteCaCertificate(''));

@@ -92,7 +92,7 @@ startAppListening({
           distribution: distribution,
         })(state as serviceState);
 
-    const allowedImageTypes = architecturesResponse?.data?.find(
+    const allowedImageTypes = architecturesResponse.data?.find(
       (elem) => elem.arch === architecture,
     )?.image_types;
 

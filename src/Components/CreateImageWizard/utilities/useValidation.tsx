@@ -215,7 +215,7 @@ export function useRegistrationValidation(): StepValidation {
 
     if (registrationCommand) {
       try {
-        const match = registrationCommand?.match(
+        const match = registrationCommand.match(
           /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/,
         );
         if (!match) {
@@ -967,7 +967,7 @@ export function useDetailsValidation(): StepValidation {
             .unwrap()
             .then((response: BlueprintsResponse) => {
               if (
-                response?.meta?.count > 0 &&
+                response.meta.count > 0 &&
                 response.data[0].id !== blueprintId
               ) {
                 setUniqueName(false);
