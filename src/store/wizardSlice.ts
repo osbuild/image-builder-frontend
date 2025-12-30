@@ -37,10 +37,26 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
+import { isUserGroupValid } from '../Components/CreateImageWizard/validators';
 import { RHEL_10, X86_64 } from '../constants';
 import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
+
+// Helper function to generate unique GID in range 1000-65534
+const allocateUniqueGid = (existingGroups: { gid?: number }[]): number => {
+  const existingGids = new Set(
+    existingGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
+  );
+
+  for (let gid = 1000; gid <= 65534; gid++) {
+    if (!existingGids.has(gid)) {
+      return gid;
+    }
+  }
+
+  throw new Error('All GIDs in range 1000-65534 are exhausted');
+};
 
 type WizardModeOptions = 'create' | 'edit';
 
@@ -85,6 +101,12 @@ type UserAdministratorPayload = {
 type UserGroupPayload = {
   index: number;
   group: string;
+};
+
+export type UserGroup = {
+  id: string;
+  name: string;
+  gid?: number;
 };
 
 export type wizardState = {
@@ -150,6 +172,7 @@ export type wizardState = {
     templateName: string;
   };
   users: UserWithAdditionalInfo[];
+  userGroups: UserGroup[];
   firstBoot: {
     script: string;
   };
@@ -306,6 +329,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  userGroups: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -514,6 +538,10 @@ export const selectServices = (state: RootState) => {
 
 export const selectUsers = (state: RootState) => {
   return state.wizard.users;
+};
+
+export const selectUserGroups = (state: RootState) => {
+  return state.wizard.userGroups;
 };
 
 export const selectKernel = (state: RootState) => {
@@ -1192,6 +1220,79 @@ export const wizardSlice = createSlice({
         state.groups.splice(index, 1);
       }
     },
+    addUserGroup: (state, action: PayloadAction<string>) => {
+      const trimmedName = action.payload.trim();
+      const existingGroupIndex = state.userGroups.findIndex(
+        (group) => group.name === trimmedName,
+      );
+
+      if (existingGroupIndex === -1) {
+        const baseGroup = {
+          id: uuidv4(),
+          name: trimmedName,
+        };
+
+        // Only generate GID if name is immediately valid
+        if (isUserGroupValid(trimmedName)) {
+          const gid = allocateUniqueGid(state.userGroups);
+          state.userGroups.push({ ...baseGroup, gid });
+        } else {
+          state.userGroups.push(baseGroup);
+        }
+      }
+    },
+    removeUserGroupByIndex: (state, action: PayloadAction<number>) => {
+      const index = action.payload;
+      if (index >= 0 && index < state.userGroups.length) {
+        state.userGroups.splice(index, 1);
+      }
+    },
+    updateUserGroupById: (
+      state,
+      action: PayloadAction<{ id: string; name: string; gid?: number }>,
+    ) => {
+      const index = state.userGroups.findIndex(
+        (group) => group.id === action.payload.id,
+      );
+      if (index !== -1) {
+        const trimmedName = action.payload.name.trim();
+
+        // Always update the name to allow user typing and provide responsive UI feedback
+        // This ensures the UI remains responsive even when duplicates exist
+        state.userGroups[index].name = trimmedName;
+
+        // Check for duplicate name in other groups (excluding current group)
+        const duplicateIndex = state.userGroups.findIndex(
+          (group) =>
+            group.name === trimmedName && group.id !== action.payload.id,
+        );
+
+        const hasDuplicate = duplicateIndex !== -1;
+
+        if (action.payload.gid !== undefined) {
+          state.userGroups[index].gid = action.payload.gid;
+        } else if (
+          !hasDuplicate &&
+          isUserGroupValid(trimmedName) &&
+          !state.userGroups[index].gid
+        ) {
+          // Generate unique GID only if no duplicate and name is valid
+          state.userGroups[index].gid = allocateUniqueGid(state.userGroups);
+        } else if (hasDuplicate && state.userGroups[index].gid) {
+          // Clear GID if duplicate is detected (to prevent inconsistent state)
+          // Validation will prevent progression with duplicate names
+          delete state.userGroups[index].gid;
+        }
+      }
+    },
+    removeUserGroupById: (state, action: PayloadAction<string>) => {
+      const index = state.userGroups.findIndex(
+        (group) => group.id === action.payload,
+      );
+      if (index !== -1) {
+        state.userGroups.splice(index, 1);
+      }
+    },
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
         state.locale.languages &&
@@ -1522,6 +1623,9 @@ export const {
   removeModule,
   addPackageGroup,
   removePackageGroup,
+  addUserGroup,
+  updateUserGroupById,
+  removeUserGroupById,
   addLanguage,
   removeLanguage,
   clearLanguages,
@@ -1568,6 +1672,7 @@ export const {
   setUserAdministratorByIndex,
   addGroupToUserByUserIndex,
   removeGroupFromUserByIndex,
+  removeUserGroupByIndex,
   changeRedHatRepositories,
   changeFips,
 } = wizardSlice.actions;
