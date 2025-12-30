@@ -63,12 +63,17 @@ const LabelInput = ({
   };
 
   const addItem = (value: string) => {
-    if (list?.includes(value) || requiredList?.includes(value)) {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      return;
+    }
+
+    if (list?.includes(trimmedValue) || requiredList?.includes(trimmedValue)) {
       setOnStepInputErrorText(`${item} already exists.`);
       return;
     }
 
-    if (!validator(value)) {
+    if (!validator(trimmedValue)) {
       switch (fieldName) {
         case 'ports':
           setOnStepInputErrorText(
@@ -114,7 +119,7 @@ const LabelInput = ({
       return;
     }
 
-    dispatch(addAction(value));
+    dispatch(addAction(trimmedValue));
     setInputValue('');
     setOnStepInputErrorText('');
   };
@@ -123,6 +128,12 @@ const LabelInput = ({
     if (e.key === 'Enter') {
       e.preventDefault();
       addItem(value);
+    }
+  };
+
+  const handleBlur = () => {
+    if (inputValue.trim()) {
+      addItem(inputValue);
     }
   };
 
@@ -144,6 +155,7 @@ const LabelInput = ({
           onChange={onTextInputChange}
           value={inputValue}
           onKeyDown={(e) => handleKeyDown(e, inputValue)}
+          onBlur={handleBlur}
         >
           {list && list.length > 0 && (
             <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
