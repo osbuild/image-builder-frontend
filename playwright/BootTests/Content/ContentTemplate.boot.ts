@@ -234,9 +234,10 @@ test('Content integration test - Content Template', async ({
   });
 
   // Step 5: Verify Image Content
+  // Note that the repo will be disabled, so we need to use --all to see it
   await test.step('Test repository is on the system', async () => {
     const [exitCode, output] = await image.exec(
-      `dnf repolist | grep "${repositoryName}"`,
+      `dnf repolist --all | grep ${repositoryName}`,
     );
     expect(exitCode).toBe(0);
     expect(output).toContain(repositoryName);
