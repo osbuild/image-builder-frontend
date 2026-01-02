@@ -20,7 +20,7 @@ import {
   deleteTemplate,
   navigateToRepositories,
   navigateToTemplates,
-  pollForSystemTemplateAttachment,
+  //pollForSystemTemplateAttachment,
 } from '../helpers/helpers';
 import {
   buildImage,
@@ -234,6 +234,12 @@ test('Content integration test - Content Template', async ({
   });
 
   // Step 5: Verify Image Content
+  await test.step('Test package was installed', async () => {
+    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
+    expect(exitCode).toBe(0);
+    expect(output).toContain(packageName);
+  });
+
   // Note that the repo will be disabled, so we need to use --all to see it
   await test.step('Test repository is on the system', async () => {
     const [exitCode, output] = await image.exec(
@@ -243,31 +249,25 @@ test('Content integration test - Content Template', async ({
     expect(output).toContain(repositoryName);
   });
 
-  await test.step('Test package was installed', async () => {
-    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
-    expect(exitCode).toBe(0);
-    expect(output).toContain(packageName);
-  });
-
   // Step 5: Verify system is attached to template (registration happens automatically at boot)
-//  await test.step('Verify system is attached to content template', async () => {
-//    // Re-authenticate to refresh cookies (session may have expired during long build)
-//    await ensureAuthenticated(page);
-//
-//    // Hostname was set in the wizard, so we know it without needing to SSH in
-//    // eslint-disable-next-line no-console
-//    console.log(`Looking for system with hostname: ${hostname}`);
-//
-//    const isAttached = await pollForSystemTemplateAttachment(
-//      page,
-//      hostname,
-//      templateName,
-//      10_000, // 10 second delay
-//      30, // 30 attempts = 5 minutes max
-//    );
-//    expect(
-//      isAttached,
-//      `System '${hostname}' should be attached to template '${templateName}'`,
-//    ).toBe(true);
-//  });
+  //  await test.step('Verify system is attached to content template', async () => {
+  //    // Re-authenticate to refresh cookies (session may have expired during long build)
+  //    await ensureAuthenticated(page);
+  //
+  //    // Hostname was set in the wizard, so we know it without needing to SSH in
+  //    // eslint-disable-next-line no-console
+  //    console.log(`Looking for system with hostname: ${hostname}`);
+  //
+  //    const isAttached = await pollForSystemTemplateAttachment(
+  //      page,
+  //      hostname,
+  //      templateName,
+  //      10_000, // 10 second delay
+  //      30, // 30 attempts = 5 minutes max
+  //    );
+  //    expect(
+  //      isAttached,
+  //      `System '${hostname}' should be attached to template '${templateName}'`,
+  //    ).toBe(true);
+  //  });
 });
