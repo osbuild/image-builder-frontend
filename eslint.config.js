@@ -1,20 +1,20 @@
-const js = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const pluginReact = require('eslint-plugin-react');
-const pluginReactHooks = require('eslint-plugin-react-hooks');
-const pluginReactRedux = require('eslint-plugin-react-redux');
-const pluginImport = require('eslint-plugin-import');
-const fecConfig = require('@redhat-cloud-services/eslint-config-redhat-cloud-services');
-const pluginJsxA11y = require('eslint-plugin-jsx-a11y');
-const disableAutofix = require('eslint-plugin-disable-autofix');
-const pluginPrettier = require('eslint-plugin-prettier');
-const jestDom = require('eslint-plugin-jest-dom');
-const pluginTestingLibrary = require('eslint-plugin-testing-library');
-const pluginPlaywright = require('eslint-plugin-playwright');
-const { defineConfig } = require('eslint/config');
-const globals = require('globals');
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
+import pluginReactRedux from 'eslint-plugin-react-redux';
+import pluginImport from 'eslint-plugin-import';
+import fecConfig from '@redhat-cloud-services/eslint-config-redhat-cloud-services';
+import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
+import disableAutofix from 'eslint-plugin-disable-autofix';
+import pluginPrettier from 'eslint-plugin-prettier';
+import jestDom from 'eslint-plugin-jest-dom';
+import pluginTestingLibrary from 'eslint-plugin-testing-library';
+import pluginPlaywright from 'eslint-plugin-playwright';
+import { defineConfig } from 'eslint/config';
+import globals from 'globals';
 
-module.exports = defineConfig([
+export default defineConfig([
   { // Ignore programatically generated files
     ignores: [
       '**/mockServiceWorker.js',
