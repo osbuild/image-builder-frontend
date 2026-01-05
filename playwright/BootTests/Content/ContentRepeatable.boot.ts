@@ -125,7 +125,9 @@ test('Content integration test - Repeatable build - URL source', async ({
 
     await frame.getByRole('button', { name: 'Toggle date picker' }).click();
     await frame
-      .getByRole('button', { name: `${dayOfMonth} ${monthName}` })
+      .getByRole('button', {
+        name: new RegExp(`^${dayOfMonth}\\s+${monthName}(\\s+\\d{4})?$`, 'i'),
+      })
       .click();
   });
 
