@@ -4,6 +4,7 @@
     "module": "esnext",
     "target": "es2021",
     "jsx": "react-jsx",
+    "types": ["node", "vitest/globals"],
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node",
@@ -25,5 +26,5 @@
     }
   },
   "include": ["./src"],
-  "exclude": ["./playwright", "./src/**/*.test.ts", "./src/**/*.test.tsx", "./src/test"]
+  "exclude": ["./playwright"]
 }
