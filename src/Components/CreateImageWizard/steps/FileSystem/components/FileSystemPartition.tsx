@@ -22,7 +22,7 @@ const FileSystemPartition = () => {
     <FormGroup>
       <Content className='pf-v6-u-pb-sm'>
         <Radio
-          id='automatic file system config radio'
+          id='automatic-partitioning-radio'
           label='Use automatic partitioning'
           name='fsc-type'
           description='Automatically partition your image to what is best, depending on the target environment(s)'
