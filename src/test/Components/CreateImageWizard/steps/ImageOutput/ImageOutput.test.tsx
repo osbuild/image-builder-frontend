@@ -59,7 +59,7 @@ const selectRhel8 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
   const rhel8 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
+    name: /red hat enterprise linux \(rhel\) 8/i,
   });
   await waitFor(() => user.click(rhel8));
 };
@@ -68,7 +68,7 @@ const selectRhel10 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
   const rhel10 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 10 full support ends: may 2030 \| maintenance support ends: may 2035/i,
+    name: /red hat enterprise linux \(rhel\) 10/i,
   });
   await waitFor(() => user.click(rhel10));
 };
