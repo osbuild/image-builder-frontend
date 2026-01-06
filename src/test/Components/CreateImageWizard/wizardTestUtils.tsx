@@ -119,7 +119,7 @@ export const selectRhel9 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
   const rhel9 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
+    name: /red hat enterprise linux \(rhel\) 9/i,
   });
   await waitFor(() => user.click(rhel9));
 };
