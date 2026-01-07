@@ -21,6 +21,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExclamationIcon } from '@patternfly/react-icons';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
 import { AWSConfig } from './AWSConfig';
 import { isAwsStepValid } from './validators';
@@ -77,6 +78,7 @@ export const CloudProviderConfig = ({
   isOpen,
 }: CloudProviderConfigProps) => {
   const dispatch = useAppDispatch();
+  const addNotification = useAddNotification();
   const config = useAppSelector(selectAWSConfig);
   const [enabled, setEnabled] = useState<boolean>(true);
 
@@ -133,7 +135,12 @@ export const CloudProviderConfig = ({
   };
 
   return (
-    <Modal variant={ModalVariant.medium} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      variant={ModalVariant.medium}
+      isOpen={isOpen}
+      onClose={onClose}
+      aria-label='Configure cloud providers modal'
+    >
       <ModalHeader title='Configure cloud providers' />
       <ModalBody>{composeModalContent()}</ModalBody>
       {!error && (
@@ -141,11 +148,18 @@ export const CloudProviderConfig = ({
           <Button
             type='button'
             isDisabled={!isAwsStepValid(config)}
-            onClick={() => {
-              updateConfig({
-                updateWorkerConfigRequest: { aws: config },
-              });
-              setShowCloudConfigModal(false);
+            onClick={async () => {
+              try {
+                await updateConfig({
+                  updateWorkerConfigRequest: { aws: config },
+                });
+                setShowCloudConfigModal(false);
+              } catch {
+                addNotification({
+                  variant: 'danger',
+                  title: 'Cloud provider config update failed',
+                });
+              }
             }}
           >
             Submit

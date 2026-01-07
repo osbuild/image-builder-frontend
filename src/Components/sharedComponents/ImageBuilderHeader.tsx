@@ -82,7 +82,7 @@ export const ImageBuilderHeader = ({
         setShowImportModal={setShowImportModal}
         isOpen={showImportModal}
       />
-      {isOnPremise && (
+      {isOnPremise && showCloudConfigModal && (
         <CloudProviderConfig
           setShowCloudConfigModal={setShowCloudConfigModal}
           isOpen={showCloudConfigModal}
