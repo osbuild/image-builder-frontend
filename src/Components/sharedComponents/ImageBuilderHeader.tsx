@@ -92,7 +92,7 @@ export const ImageBuilderHeader = ({
         <PageHeaderTitle
           title={
             <>
-              Images <AboutImageBuilderPopover />
+              Image builder <AboutImageBuilderPopover />
               {!isOnPremise && (
                 <OpenSourceBadge
                   repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}

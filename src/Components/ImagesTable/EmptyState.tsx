@@ -68,22 +68,6 @@ const EmptyImagesTable = () => {
               it eliminates the specific configurations required for each output
               type.
             </Content>
-            <Content>
-              There are no images yet. Create a blueprint to create images.
-            </Content>
-            <Content>
-              <Button
-                component='a'
-                target='_blank'
-                variant='link'
-                icon={<ExternalLinkAltIcon />}
-                iconPosition='right'
-                isInline
-                href={MANAGING_WITH_DNF_URL}
-              >
-                Learn more about managing images with DNF
-              </Button>
-            </Content>
           </EmptyStateBody>
           <EmptyStateFooter>
             <EmptyStateActions>
@@ -93,9 +77,22 @@ const EmptyImagesTable = () => {
                 variant='link'
                 icon={<ExternalLinkAltIcon />}
                 iconPosition='right'
-                isInline
+                isBlock
+                href={MANAGING_WITH_DNF_URL}
+                rel='noopener noreferrer'
+              >
+                Learn more about managing images with DNF
+              </Button>
+              <Button
+                component='a'
+                target='_blank'
+                variant='link'
+                icon={<ExternalLinkAltIcon />}
+                iconPosition='right'
+                isBlock
                 href={documentationUrl}
                 className='pf-v6-u-pt-md'
+                rel='noopener noreferrer'
               >
                 Image builder documentation
               </Button>

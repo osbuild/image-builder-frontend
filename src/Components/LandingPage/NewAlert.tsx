@@ -40,36 +40,18 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
       <Alert
         isExpandable
         style={{ margin: '0 0 16px 0' }}
-        title='New in Images: more customizations'
-        actionClose={<AlertActionCloseButton onClose={dismissAlert} />}
-        actionLinks={
-          <>
-            <Flex>
-              {/*
-              <FlexItem>
-                Optional quickstarts link
-                  <AlertActionLink
-                    onClick={activateQuickstart(
-                      'insights-creating-blueprint-images'
-                    )}
-                  >
-                    Get started with blueprints
-                  </AlertActionLink>
-              </FlexItem>
-              */}
-              <FlexItem>
-                <AlertActionLink onClick={() => setShowAlert(false)}>
-                  Not now
-                </AlertActionLink>
-              </FlexItem>
-
-              <FlexItem align={{ default: 'alignRight' }}>
-                <AlertActionLink onClick={dismissAlert}>
-                  Don&apos;t show me this again
-                </AlertActionLink>
-              </FlexItem>
-            </Flex>
-          </>
+        title='New in image builder: more customizations'
+        actionClose={
+          <Flex>
+            <FlexItem>
+              <AlertActionLink onClick={dismissAlert}>
+                Don&apos;t show me this again
+              </AlertActionLink>
+            </FlexItem>
+            <FlexItem>
+              <AlertActionCloseButton onClose={() => setShowAlert(false)} />
+            </FlexItem>
+          </Flex>
         }
       >
         <Content>

@@ -60,7 +60,7 @@ describe('Create Image Wizard', () => {
     await renderCreateMode();
 
     // check heading
-    await screen.findByRole('heading', { name: /Images/ });
+    await screen.findByRole('heading', { name: /Image builder/ });
 
     // check navigation
     await screen.findByRole('button', { name: 'Image output' });
