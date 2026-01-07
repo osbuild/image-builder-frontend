@@ -56,7 +56,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setShowImportModal(false);
     setFilename('');
     setFileContent('');
-    setIsOnPrem(false);
+    setIsOnPremBlueprint(false);
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
@@ -68,7 +68,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [filename, setFilename] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [isRejected, setIsRejected] = React.useState(false);
-  const [isOnPrem, setIsOnPrem] = React.useState(false);
+  const [isOnPremBlueprint, setIsOnPremBlueprint] = React.useState(false);
   const [isCheckedImportRepos, setIsCheckedImportRepos] = React.useState(true);
   const addNotification = useAddNotification();
   const [importRepositories] = useBulkImportRepositoriesMutation();
@@ -146,7 +146,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               blueprintFromFile,
               [],
             );
-            setIsOnPrem(true);
+            setIsOnPremBlueprint(true);
             setImportedBlueprint(importBlueprintState);
           } else if (isJson) {
             const blueprintFromFile = JSON.parse(fileContent);
@@ -188,7 +188,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 blueprintFromFile.image_requests || [],
               );
 
-              setIsOnPrem(false);
+              setIsOnPremBlueprint(false);
               setImportedBlueprint(importBlueprintState);
             } catch (error) {
               // If the error is actually due to an invalid architecture or image type,
@@ -207,7 +207,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 blueprintFromFileMapped,
                 [],
               );
-              setIsOnPrem(true);
+              setIsOnPremBlueprint(true);
               setImportedBlueprint(importBlueprintState);
             }
           }
@@ -227,7 +227,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const handleClear = () => {
     setFilename('');
     setFileContent('');
-    setIsOnPrem(false);
+    setIsOnPremBlueprint(false);
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
@@ -236,7 +236,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   };
   const handleFileRejected = () => {
     setIsRejected(true);
-    setIsOnPrem(false);
+    setIsOnPremBlueprint(false);
     setFileContent('');
     setFilename('');
   };
@@ -252,7 +252,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
     switch (true) {
       case isRejected || isInvalidFormat:
         return 'error';
-      case isOnPrem:
+      case isOnPremBlueprint:
         return 'warning';
       default:
         return 'default';
@@ -329,7 +329,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                     ? 'Must be a valid Blueprint JSON/TOML file no larger than 512 KB'
                     : isInvalidFormat
                       ? 'Not compatible with the blueprints format.'
-                      : isOnPrem
+                      : isOnPremBlueprint
                         ? 'Importing on-premises blueprints is currently in beta. Results may vary.'
                         : 'Upload your blueprint file. Supported formats: JSON, TOML.'}
                 </HelperTextItem>
