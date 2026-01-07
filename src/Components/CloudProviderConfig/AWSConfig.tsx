@@ -107,10 +107,9 @@ const CredsPathPopover = () => {
       headerContent={'What is the AWS credentials path?'}
       bodyContent={
         <Content component={ContentVariants.p}>
-          This is the path to your AWS credentials file which contains your aws
-          access key id and secret access key. This path to the file is normally
-          in the home directory in the credentials file in the .aws directory,
-          e.g. /home/USERNAME/.aws/credentials
+          This is the path to your AWS credentials file which contains your AWS
+          access key ID and secret access key. The file is typically located at
+          the .aws directory (e.g. /home/USERNAME/.aws/credentials).
         </Content>
       }
     >
