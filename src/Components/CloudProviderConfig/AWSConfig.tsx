@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Button,
   Content,
+  ContentVariants,
   Form,
   FormGroup,
   Popover,
@@ -44,7 +45,7 @@ const AWSConfigToggle = ({ value, onChange }: ToggleGroupProps) => {
   };
 
   return (
-    <FormGroup label='Configure AWS Uploads'>
+    <FormGroup label='Configure AWS uploads'>
       <Switch
         id='aws-config-switch'
         ouiaId='aws-config-switch'
@@ -75,7 +76,7 @@ const DisabledInputGroup = ({
 };
 
 const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
-  const label = 'AWS Bucket';
+  const label = 'AWS bucket';
 
   if (isDisabled) {
     return (
@@ -84,7 +85,7 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   }
 
   return (
-    <FormGroup label={label}>
+    <FormGroup label={label} isRequired>
       <ValidatedInput
         placeholder='AWS bucket'
         ariaLabel='aws-bucket'
@@ -103,23 +104,21 @@ const CredsPathPopover = () => {
   return (
     <Popover
       minWidth='35rem'
-      headerContent={'What is the AWS Credentials Path?'}
+      headerContent={'What is the AWS credentials path?'}
       bodyContent={
-        <Content>
-          <Content>
-            This is the path to your AWS credentials file which contains your
-            aws access key id and secret access key. This path to the file is
-            normally in the home directory in the credentials file in the .aws
-            directory, <br /> i.e. /home/USERNAME/.aws/credentials
-          </Content>
+        <Content component={ContentVariants.p}>
+          This is the path to your AWS credentials file which contains your aws
+          access key id and secret access key. This path to the file is normally
+          in the home directory in the credentials file in the .aws directory,
+          e.g. /home/USERNAME/.aws/credentials
         </Content>
       }
     >
       <Button
         icon={<HelpIcon />}
         variant='plain'
-        aria-label='Credentials Path Info'
-        className='pf-v6-u-pl-sm'
+        size='sm'
+        aria-label='Credentials path info'
       />
     </Popover>
   );
@@ -132,7 +131,7 @@ const AWSCredsPath = ({
 }: FormGroupProps<string>) => {
   const label = (
     <>
-      AWS Credentials Filepath <CredsPathPopover />
+      AWS credentials filepath <CredsPathPopover />
     </>
   );
 
@@ -147,7 +146,7 @@ const AWSCredsPath = ({
   }
 
   return (
-    <FormGroup label={label}>
+    <FormGroup label={label} isRequired>
       <ValidatedInput
         placeholder='Path to AWS credentials'
         ariaLabel='aws-creds-path'
