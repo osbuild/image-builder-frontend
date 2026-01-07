@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Button,
   Checkbox,
+  Content,
   FileUpload,
   Form,
   FormGroup,
@@ -262,27 +263,26 @@ export const ImportBlueprintModal: React.FunctionComponent<
       onClose={onImportClose}
     >
       <ModalHeader
-        title={
-          <>
-            Import blueprint files
-            <Popover
-              bodyContent={
-                <div>
-                  You can import the blueprints you created by using the Red Hat
-                  image builder into Red Hat Lightspeed images to create
-                  customized images.
-                </div>
-              }
-            >
-              <Button
-                icon={<HelpIcon />}
-                variant='plain'
-                aria-label='About import'
-                className='pf-v6-u-pl-sm'
-                isInline
-              />
-            </Popover>
-          </>
+        title='Import blueprint files'
+        help={
+          <Popover
+            maxWidth='30rem'
+            position='right'
+            bodyContent={
+              <Content>
+                You can import the blueprints you created by using the Red Hat
+                image builder into Red Hat Lightspeed images to create
+                customized images.
+              </Content>
+            }
+          >
+            <Button
+              icon={<HelpIcon />}
+              variant='plain'
+              aria-label='About import'
+              isInline
+            />
+          </Popover>
         }
       />
       <ModalBody>
