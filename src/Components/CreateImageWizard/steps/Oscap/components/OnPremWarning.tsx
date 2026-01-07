@@ -14,7 +14,7 @@ const OscapOnPremWarning = () => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
-        OpenSCAP profile
+        Security
       </Title>
       <FormGroup>
         <Alert

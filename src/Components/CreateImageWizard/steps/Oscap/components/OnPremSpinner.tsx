@@ -6,7 +6,7 @@ const OscapOnPremSpinner = () => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
-        OpenSCAP profile
+        Security
       </Title>
       <FormGroup>
         <Spinner size='xl' />
