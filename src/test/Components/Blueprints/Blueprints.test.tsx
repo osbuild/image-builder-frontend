@@ -66,9 +66,9 @@ describe('Blueprints', () => {
     );
 
     const view = renderCustomRoutesWithReduxRouter();
-    await screen.findByText('No blueprints yet');
+    await screen.findByText('No blueprints');
     const emptyStateAction = screen.getByRole('link', {
-      name: /Add blueprint/i,
+      name: /Create image blueprint/i,
     });
     expect(emptyStateAction).toBeInTheDocument();
 
@@ -255,7 +255,7 @@ describe('Blueprints', () => {
         {},
         routes,
       );
-      await screen.findByRole('heading', { name: /Images/i, level: 1 });
+      await screen.findByRole('heading', { name: /Image builder/i, level: 1 });
     });
   });
 

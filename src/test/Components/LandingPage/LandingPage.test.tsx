@@ -15,7 +15,7 @@ describe('Landing Page', () => {
     renderCustomRoutesWithReduxRouter();
 
     // check heading
-    const heading = await screen.findByText('Images');
+    const heading = await screen.findByText('Image builder');
     expect(heading).toHaveRole('heading');
   });
 

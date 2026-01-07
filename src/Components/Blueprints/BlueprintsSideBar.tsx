@@ -104,9 +104,11 @@ const BlueprintsSidebar = () => {
     return (
       <EmptyBlueprintState
         icon={PlusCircleIcon}
-        action={<Link to={resolveRelPath('imagewizard')}>Add blueprint</Link>}
-        titleText='No blueprints yet'
-        bodyText='Add a blueprint and optionally build related images.'
+        action={
+          <Link to={resolveRelPath('imagewizard')}>Create image blueprint</Link>
+        }
+        titleText='No blueprints'
+        bodyText='Create a blueprint and optionally build related images.'
       />
     );
   }
