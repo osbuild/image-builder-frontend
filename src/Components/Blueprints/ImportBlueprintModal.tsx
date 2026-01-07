@@ -25,6 +25,7 @@ import TOML from 'smol-toml';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
+import { useIsOnPremise } from '../../Hooks';
 import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
@@ -59,6 +60,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
+  const isOnPremise = useIsOnPremise();
   const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
     React.useState<wizardState>();
@@ -271,7 +273,8 @@ export const ImportBlueprintModal: React.FunctionComponent<
             bodyContent={
               <Content>
                 You can import the blueprints you created by using the Red Hat
-                image builder into Red Hat Lightspeed images to create
+                image builder{' '}
+                {!isOnPremise && 'into Red Hat Lightspeed images '}to create
                 customized images.
               </Content>
             }
