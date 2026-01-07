@@ -16,6 +16,7 @@ import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
+import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
 
 type ImageBuilderHeaderPropTypes = {
   inWizard?: boolean;
@@ -73,12 +74,20 @@ export const ImageBuilderHeader = ({
   const prefetchTargets = useBackendPrefetch('getArchitectures');
 
   const [showImportModal, setShowImportModal] = useState(false);
+  const [showCloudConfigModal, setShowCloudConfigModal] = useState(false);
+
   return (
     <>
       <ImportBlueprintModal
         setShowImportModal={setShowImportModal}
         isOpen={showImportModal}
       />
+      {isOnPremise && (
+        <CloudProviderConfig
+          setShowCloudConfigModal={setShowCloudConfigModal}
+          isOpen={showCloudConfigModal}
+        />
+      )}
       <PageHeader className='pf-m-sticky-top'>
         <PageHeaderTitle
           title={
@@ -116,13 +125,9 @@ export const ImageBuilderHeader = ({
                   {isOnPremise && (
                     <Button
                       variant='secondary'
-                      data-testid='cloud-env-configure-button'
-                      ouiaId='cloud-env-configure-button'
-                      onClick={() =>
-                        navigate(resolveRelPath('cloud-provider-config'))
-                      }
+                      onClick={() => setShowCloudConfigModal(true)}
                     >
-                      Configure Cloud Providers
+                      Configure cloud providers
                     </Button>
                   )}
                 </Flex>

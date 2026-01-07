@@ -12,14 +12,15 @@ import {
   EmptyStateBody,
   EmptyStateFooter,
   EmptyStateVariant,
-  PageSection,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
   Skeleton,
   Title,
-  Wizard,
-  WizardStep,
 } from '@patternfly/react-core';
 import { ExclamationIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router-dom';
 
 import { AWSConfig } from './AWSConfig';
 import { isAwsStepValid } from './validators';
@@ -36,8 +37,6 @@ import {
 } from '../../store/cockpit/cockpitApi';
 import { AWSWorkerConfig } from '../../store/cockpit/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { resolveRelPath } from '../../Utilities/path';
-import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 const ConfigError = ({
   onClose,
@@ -68,12 +67,18 @@ const ConfigError = ({
   );
 };
 
-export const CloudProviderConfig = () => {
-  const navigate = useNavigate();
+type CloudProviderConfigProps = {
+  setShowCloudConfigModal: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean;
+};
+
+export const CloudProviderConfig = ({
+  setShowCloudConfigModal,
+  isOpen,
+}: CloudProviderConfigProps) => {
   const dispatch = useAppDispatch();
   const config = useAppSelector(selectAWSConfig);
-  const handleClose = () => navigate(resolveRelPath(''));
-  const [enabled, setEnabled] = useState<boolean>(false);
+  const [enabled, setEnabled] = useState<boolean>(true);
 
   const [updateConfig] = useUpdateWorkerConfigMutation();
   const { data, error, refetch, isLoading } = useGetWorkerConfigQuery({});
@@ -100,47 +105,56 @@ export const CloudProviderConfig = () => {
     [dispatch, setEnabled],
   );
 
+  const onClose = () => {
+    setShowCloudConfigModal(false);
+  };
+
   useEffect(() => {
     initAWSConfig(data?.aws);
   }, [data, initAWSConfig]);
 
-  if (isLoading) {
-    return <Skeleton />;
-  }
+  const composeModalContent = () => {
+    if (isLoading) {
+      return <Skeleton />;
+    }
 
-  if (error) {
-    return <ConfigError onClose={handleClose} />;
-  }
+    if (error) {
+      return <ConfigError onClose={onClose} />;
+    }
+
+    return (
+      <AWSConfig
+        refetch={refetch}
+        reinit={initAWSConfig}
+        enabled={enabled}
+        setEnabled={setEnabled}
+      />
+    );
+  };
 
   return (
-    <>
-      <ImageBuilderHeader inWizard={true} />
-      <PageSection>
-        <Wizard onClose={handleClose}>
-          <WizardStep
-            name='AWS Config'
-            id='aws-config'
-            footer={{
-              nextButtonText: 'Submit',
-              isNextDisabled: !isAwsStepValid(config),
-              isBackDisabled: true,
-              onNext: () => {
-                updateConfig({
-                  updateWorkerConfigRequest: { aws: config },
-                });
-                navigate(resolveRelPath(''));
-              },
+    <Modal variant={ModalVariant.medium} isOpen={isOpen} onClose={onClose}>
+      <ModalHeader title='Configure cloud providers' />
+      <ModalBody>{composeModalContent()}</ModalBody>
+      {!error && (
+        <ModalFooter>
+          <Button
+            type='button'
+            isDisabled={!isAwsStepValid(config)}
+            onClick={() => {
+              updateConfig({
+                updateWorkerConfigRequest: { aws: config },
+              });
+              setShowCloudConfigModal(false);
             }}
           >
-            <AWSConfig
-              refetch={refetch}
-              reinit={initAWSConfig}
-              enabled={enabled}
-              setEnabled={setEnabled}
-            />
-          </WizardStep>
-        </Wizard>
-      </PageSection>
-    </>
+            Submit
+          </Button>
+          <Button variant='link' type='button' onClick={onClose}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      )}
+    </Modal>
   );
 };
