@@ -44,6 +44,8 @@ import type { RootState } from '.';
 
 type WizardModeOptions = 'create' | 'edit';
 
+type BlueprintModeOptions = 'image' | 'package';
+
 export type RegistrationType =
   | 'register-later'
   | 'register-now'
@@ -95,6 +97,7 @@ export type wizardState = {
   };
   blueprintId?: string;
   wizardMode: WizardModeOptions;
+  blueprintMode: BlueprintModeOptions;
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
@@ -203,6 +206,7 @@ export const initialState: wizardState = {
     proxy: undefined,
   },
   wizardMode: 'create',
+  blueprintMode: 'package',
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
@@ -314,6 +318,10 @@ export const selectServerUrl = (state: RootState) => {
 
 export const selectWizardMode = (state: RootState) => {
   return state.wizard.wizardMode;
+};
+
+export const selectBlueprintMode = (state: RootState) => {
+  return state.wizard.blueprintMode;
 };
 
 export const selectBlueprintId = (state: RootState) => {
@@ -583,6 +591,12 @@ export const wizardSlice = createSlice({
     },
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
       state.env.proxy = action.payload;
+    },
+    changeBlueprintMode: (
+      state,
+      action: PayloadAction<BlueprintModeOptions>,
+    ) => {
+      state.blueprintMode = action.payload;
     },
     changeArchitecture: (
       state,
@@ -1462,6 +1476,7 @@ export const {
   changeServerUrl,
   changeBaseUrl,
   changeProxy,
+  changeBlueprintMode,
   changeArchitecture,
   changeDistribution,
   addImageType,
