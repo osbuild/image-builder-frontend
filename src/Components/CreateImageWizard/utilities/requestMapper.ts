@@ -500,6 +500,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const wizardMode = 'edit';
   return {
     wizardMode,
+    blueprintMode: request.distribution ? 'package' : 'image',
     blueprintId: request.id,
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
@@ -570,6 +571,7 @@ export const mapExportRequestToState = (
 
   return {
     wizardMode,
+    blueprintMode: request.distribution ? 'package' : 'image',
     metadata: {
       parent_id: request.metadata?.parent_id || null,
       exported_at: request.metadata?.exported_at || '',

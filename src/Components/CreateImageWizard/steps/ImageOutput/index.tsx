@@ -3,15 +3,18 @@ import React, { useEffect } from 'react';
 import { Content, Form, Title } from '@patternfly/react-core';
 
 import ArchSelect from './components/ArchSelect';
+import BlueprintMode from './components/BlueprintMode';
 import CentOSAcknowledgement from './components/CentOSAcknowledgement';
 import ReleaseLifecycle from './components/ReleaseLifecycle';
 import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
 
+import { useIsOnPremise } from '../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintName,
   selectArchitecture,
+  selectBlueprintMode,
   selectBlueprintName,
   selectDistribution,
   selectIsCustomName,
@@ -20,7 +23,9 @@ import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
+  const isOnPremise = useIsOnPremise();
   const dispatch = useAppDispatch();
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const blueprintName = useAppSelector(selectBlueprintName);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
@@ -44,9 +49,17 @@ const ImageOutputStep = () => {
         <br />
         <DocumentationButton />
       </Content>
-      <ReleaseSelect />
-      {distribution.match('centos-*') && <CentOSAcknowledgement />}
-      <ReleaseLifecycle />
+      {
+        // TODO !isFedora
+        isOnPremise && <BlueprintMode />
+      }
+      {blueprintMode === 'package' && (
+        <>
+          <ReleaseSelect />
+          {distribution.match('centos-*') && <CentOSAcknowledgement />}
+          <ReleaseLifecycle />
+        </>
+      )}
       <ArchSelect />
       <TargetEnvironment />
     </Form>
