@@ -98,6 +98,7 @@ export type wizardState = {
   blueprintId?: string;
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
+  imageSource: string;
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
@@ -207,6 +208,7 @@ export const initialState: wizardState = {
   },
   wizardMode: 'create',
   blueprintMode: 'package',
+  imageSource: 'dummy-rhel-10-image',
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
@@ -322,6 +324,10 @@ export const selectWizardMode = (state: RootState) => {
 
 export const selectBlueprintMode = (state: RootState) => {
   return state.wizard.blueprintMode;
+};
+
+export const selectImageSource = (state: RootState) => {
+  return state.wizard.imageSource;
 };
 
 export const selectBlueprintId = (state: RootState) => {
@@ -597,6 +603,9 @@ export const wizardSlice = createSlice({
       action: PayloadAction<BlueprintModeOptions>,
     ) => {
       state.blueprintMode = action.payload;
+    },
+    changeImageSource: (state, action: PayloadAction<string>) => {
+      state.imageSource = action.payload;
     },
     changeArchitecture: (
       state,
@@ -1477,6 +1486,7 @@ export const {
   changeBaseUrl,
   changeProxy,
   changeBlueprintMode,
+  changeImageSource,
   changeArchitecture,
   changeDistribution,
   addImageType,

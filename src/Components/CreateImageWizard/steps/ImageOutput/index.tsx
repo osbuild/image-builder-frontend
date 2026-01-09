@@ -5,6 +5,7 @@ import { Content, Form, Title } from '@patternfly/react-core';
 import ArchSelect from './components/ArchSelect';
 import BlueprintMode from './components/BlueprintMode';
 import CentOSAcknowledgement from './components/CentOSAcknowledgement';
+import ImageSourceSelect from './components/ImageSourceSelect';
 import ReleaseLifecycle from './components/ReleaseLifecycle';
 import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
@@ -49,10 +50,8 @@ const ImageOutputStep = () => {
         <br />
         <DocumentationButton />
       </Content>
-      {
-        // TODO !isFedora
-        isOnPremise && <BlueprintMode />
-      }
+      {isOnPremise && !distribution.startsWith('fedora') && <BlueprintMode />}
+      {blueprintMode === 'image' && <ImageSourceSelect />}
       {blueprintMode === 'package' && (
         <>
           <ReleaseSelect />

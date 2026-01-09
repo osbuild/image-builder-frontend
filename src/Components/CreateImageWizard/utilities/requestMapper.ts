@@ -409,6 +409,8 @@ function commonRequestToState(
     architecture: arch,
     distribution:
       getLatestRelease(request.distribution) || initialState.distribution,
+    // @ts-ignore API needs to be updated first
+    imageSource: request.bootc?.reference || '',
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: azureTargetOptions(azureUploadOptions),
     gcp: {
