@@ -111,7 +111,7 @@ export const isSshKeyValid = (sshKey: string) => {
   // 2. Base64-encoded key material.
   // 3. Optional comment at the end.
   const isPatternValid =
-    /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+/=]+(\s+\S+)?$/.test(
+    /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+/=]+(\s+\S.*)?$/.test(
       sshKey,
     );
   return isPatternValid;
