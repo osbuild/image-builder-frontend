@@ -10,7 +10,7 @@ const App = () => {
   const { hideGlobalFilter, updateDocumentTitle } = useChrome();
 
   useEffect(() => {
-    updateDocumentTitle('Images');
+    updateDocumentTitle('Image builder');
     hideGlobalFilter(true);
   }, [hideGlobalFilter, updateDocumentTitle]);
 
