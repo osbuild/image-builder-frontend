@@ -149,7 +149,7 @@ const ReleaseSelect = () => {
       <Select
         isOpen={isOpen}
         onOpenChange={(isOpen) => setIsOpen(isOpen)}
-        selected={releases.get(distribution)}
+        selected={distribution}
         onSelect={handleSelect}
         toggle={toggle}
         shouldFocusToggleOnSelect
