@@ -37,7 +37,7 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
-import { RHEL_10, X86_64 } from '../constants';
+import { RHEL_10, RHEL_10_IMAGE_MODE, X86_64 } from '../constants';
 import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
@@ -45,6 +45,11 @@ import type { RootState } from '.';
 type WizardModeOptions = 'create' | 'edit';
 
 type BlueprintModeOptions = 'image' | 'package';
+
+export type ImageSource = {
+  name: string;
+  image: string;
+};
 
 export type RegistrationType =
   | 'register-later'
@@ -98,7 +103,7 @@ export type wizardState = {
   blueprintId?: string;
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
-  imageSource: string;
+  imageSource: ImageSource;
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
@@ -208,7 +213,7 @@ export const initialState: wizardState = {
   },
   wizardMode: 'create',
   blueprintMode: 'package',
-  imageSource: 'dummy-rhel-10-image',
+  imageSource: RHEL_10_IMAGE_MODE,
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
@@ -604,7 +609,7 @@ export const wizardSlice = createSlice({
     ) => {
       state.blueprintMode = action.payload;
     },
-    changeImageSource: (state, action: PayloadAction<string>) => {
+    changeImageSource: (state, action: PayloadAction<ImageSource>) => {
       state.imageSource = action.payload;
     },
     changeArchitecture: (
