@@ -7,6 +7,7 @@ import KernelName from './components/KernelName';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectImageTypes } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 
 const KernelStep = () => {
   const environments = useAppSelector(selectImageTypes);
@@ -17,6 +18,7 @@ const KernelStep = () => {
         Kernel
       </Title>
       <Content>Customize kernel name and kernel arguments.</Content>
+      <NetworkInstallerAlert />
       {environments.includes('wsl') && (
         <Alert
           variant='warning'

@@ -10,6 +10,7 @@ import {
   selectPackages,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 
 const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
@@ -27,6 +28,7 @@ const RepositoriesStep = () => {
           <ManageRepositoriesButton />
         </Content>
       </Content>
+      <NetworkInstallerAlert />
       {packages.length && recommendedRepos.length ? (
         <Alert
           title="Why can't I remove a selected repository?"
