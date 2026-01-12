@@ -15,6 +15,28 @@ export type Params = Record<string, any>;
 export type Method = 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH'; // We can add more if we need
 export type Headers = { [name: string]: string };
 
+export type ProcessError = {
+  exit_status: number | null;
+  message: string;
+};
+
+// this function serves as a type guard for the ProcessError that
+// can occur in a `cockpit.spawn` command. The cockpit `ProcessError`
+// has a specific structure and we may need to check the exit_status.
+// This function helps narrow the types down so that we are sure the
+// `exit_status` item exist.
+export const isProcessError = (error: unknown): error is ProcessError => {
+  const err = error as ProcessError; // cast this here just for readability
+  return (
+    error !== null &&
+    typeof error === 'object' &&
+    'exit_status' in error &&
+    (typeof err.exit_status === 'number' || err.exit_status === null) &&
+    'message' in error &&
+    typeof err.message === 'string'
+  );
+};
+
 export type SearchRpmApiArg = {
   apiContentUnitSearchRequest: {
     architecture?: string | undefined;
@@ -104,3 +126,9 @@ export type CockpitComposesResponseItem = Omit<
     image_requests: CockpitImageRequest[];
   };
 };
+
+export type PodmanImageExistsArg = {
+  image: string;
+};
+
+export type PodmanImageExistsResponse = boolean;
