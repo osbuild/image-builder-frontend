@@ -109,6 +109,7 @@ export const ON_PREM_RELEASES = new Map([
   [FEDORA_42, 'Fedora Linux 42'],
   [FEDORA_43, 'Fedora Linux 43'],
   [FEDORA_44, 'Fedora Linux 44'],
+  [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 
