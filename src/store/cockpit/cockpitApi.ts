@@ -24,14 +24,17 @@ import type {
 // the same unix socket. This allows us to split out the code a little
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
-import type {
-  CockpitCreateBlueprintApiArg,
-  CockpitCreateBlueprintRequest,
-  CockpitImageRequest,
-  CockpitUpdateBlueprintApiArg,
-  UpdateWorkerConfigApiArg,
-  WorkerConfigFile,
-  WorkerConfigResponse,
+import {
+  type CockpitCreateBlueprintApiArg,
+  type CockpitCreateBlueprintRequest,
+  type CockpitImageRequest,
+  type CockpitUpdateBlueprintApiArg,
+  isProcessError,
+  type PodmanImageExistsArg,
+  type PodmanImageExistsResponse,
+  type UpdateWorkerConfigApiArg,
+  type WorkerConfigFile,
+  type WorkerConfigResponse,
 } from './types';
 
 import {
@@ -791,6 +794,42 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      podmanImageExists: builder.query<
+        PodmanImageExistsResponse,
+        PodmanImageExistsArg
+      >({
+        queryFn: async ({ image }) => {
+          try {
+            await cockpit.spawn(['podman', 'image', 'exists', image], {
+              superuser: 'require',
+            });
+
+            // if we got this far it means that the command
+            // exit code is 0 and so the container image exists
+            return {
+              data: true,
+            };
+          } catch (error: unknown) {
+            if (!isProcessError(error)) {
+              return {
+                error: error instanceof Error ? error.message : String(error),
+              };
+            }
+
+            // this means that the command ran okay, but
+            // the image is not available locally
+            if (error.exit_status === 1) {
+              return {
+                data: false,
+              };
+            }
+
+            return {
+              error: error.message,
+            };
+          }
+        },
+      }),
     };
   },
   // since we are inheriting some endpoints,
@@ -818,4 +857,6 @@ export const {
   useGetComposeStatusQuery,
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
+  usePodmanImageExistsQuery,
+  useLazyPodmanImageExistsQuery,
 } = cockpitApi;
