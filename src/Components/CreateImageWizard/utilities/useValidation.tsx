@@ -91,6 +91,7 @@ export type UsersStepValidation = {
 };
 
 export function useIsBlueprintValid(): boolean {
+  const imageTypes = useAppSelector(selectImageTypes);
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
@@ -104,6 +105,15 @@ export function useIsBlueprintValid(): boolean {
   const details = useDetailsValidation();
   const users = useUsersValidation();
   const azureTarget = useAzureValidation();
+
+  const hasNetworkInstallerOnly =
+    imageTypes.length === 1 && imageTypes.includes('network-installer');
+
+  // Network-installer has no customizations for the first step, so it's always valid
+  if (hasNetworkInstallerOnly) {
+    return true;
+  }
+
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&

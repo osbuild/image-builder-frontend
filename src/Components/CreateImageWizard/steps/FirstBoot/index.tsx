@@ -21,6 +21,7 @@ import {
   selectRegistrationType,
   setFirstBootScript,
 } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 import { useFirstBootValidation } from '../../utilities/useValidation';
 
 const detectScriptType = (scriptString: string): Language => {
@@ -65,7 +66,7 @@ const FirstBootStep = () => {
           <> First boot script will run after registration is done.</>
         )}
       </Content>
-
+      <NetworkInstallerAlert />
       <Alert
         variant='warning'
         isExpandable

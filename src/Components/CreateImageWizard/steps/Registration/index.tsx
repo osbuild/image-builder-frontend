@@ -18,6 +18,7 @@ import Registration from './components/Registration';
 import { useGetUser, useIsOnPremise } from '../../../../Hooks';
 import { useAppDispatch } from '../../../../store/hooks';
 import { changeOrgId } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 
 const RegistrationStep = () => {
   const dispatch = useAppDispatch();
@@ -38,9 +39,10 @@ const RegistrationStep = () => {
         <Title headingLevel='h1' size='xl'>
           Register
         </Title>
-        <Content className='pf-v6-u-pb-md'>
-          Configure registration settings for systems that will use this image.
-        </Content>
+        Configure registration settings for systems that will use this image.
+      </Content>
+      <NetworkInstallerAlert />
+      <Content>
         <Content className='pf-v6-u-pb-md'>
           {!isOnPremise && (
             <FormGroup label='Organization ID'>

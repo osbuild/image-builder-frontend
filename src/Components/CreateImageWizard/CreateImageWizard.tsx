@@ -38,6 +38,7 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
+import { useHasNetworkInstallerOnly } from './utilities/hasNetworkInstaller';
 import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
   useAAPValidation,
@@ -297,6 +298,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }, [usersValidation.disabledNext, usersStepAttemptedNext]);
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
+  const hasNetworkInstallerOnly = useHasNetworkInstallerOnly();
 
   let startIndex = 1; // default index
   const JUMP_TO_REVIEW_STEP = 24;
@@ -307,7 +309,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
   const [wasUsersVisited, setWasUsersVisited] = useState(false);
-  const lastTrackedStepIdRef = useRef<string | undefined>();
+  const lastStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
     if (isEdit) {
@@ -324,6 +326,51 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     }
   }, [distribution, targetEnvironments, isEdit, dispatch]);
 
+  const handleWizardStepChange = React.useCallback(
+    (
+      _event: React.MouseEvent<HTMLButtonElement>,
+      newStep: WizardStepType,
+      prevStep: WizardStepType,
+    ) => {
+      const newStepId = newStep.id as string | undefined;
+      const prevStepId = prevStep.id as string | undefined;
+
+      if (!isOnPremise && newStepId && lastStepIdRef.current !== newStepId) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
+          module: AMPLITUDE_MODULE_NAME,
+          step_id: newStepId,
+          account_id: userData?.identity.internal?.account_id || 'Not found',
+          from_step_id: prevStepId,
+        });
+        lastStepIdRef.current = newStepId;
+      }
+
+      if (!wasRegisterVisited) {
+        const relevantStepId = isRhel(distribution)
+          ? 'step-register'
+          : 'step-oscap';
+        const isOnOptionalStep =
+          'parentId' in newStep && newStep.parentId === 'step-optional-steps';
+
+        if (newStepId === relevantStepId || isOnOptionalStep) {
+          setWasRegisterVisited(true);
+        }
+      }
+
+      if (!wasUsersVisited && newStepId === 'wizard-users') {
+        setWasUsersVisited(true);
+      }
+    },
+    [
+      analytics,
+      distribution,
+      isOnPremise,
+      userData,
+      wasRegisterVisited,
+      wasUsersVisited,
+    ],
+  );
+
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
   // for original code see https://github.com/patternfly/patternfly-react/blob/184c55f8d10e1d94ffd72e09212db56c15387c5e/packages/react-core/src/components/Wizard/WizardNavInternal.tsx#L128
   const CustomStatusNavItem = (
@@ -335,17 +382,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     const isVisitOptional =
       'parentId' in step && step.parentId === 'step-optional-steps';
 
-    useEffect(() => {
-      if (!isRhel(distribution)) {
-        if (step.id === 'step-oscap' && step.isVisited) {
-          setWasRegisterVisited(true);
-        }
-      } else if (step.id === 'step-register' && step.isVisited) {
-        setWasRegisterVisited(true);
-      } else if (step.id === 'wizard-users' && step.isVisited) {
-        setWasUsersVisited(true);
-      }
-    }, [step.id, step.isVisited]);
+    const isOptionalStepsParent = step.id === 'step-optional-steps';
+
+    const isCurrentlyOnOptionalStep =
+      'parentId' in activeStep && activeStep.parentId === 'step-optional-steps';
 
     const hasVisitedNextStep = steps.some(
       (s) => s.index > step.index && s.isVisited,
@@ -353,22 +393,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
     const status = (step.id !== activeStep.id && step.status) || 'default';
 
-    useEffect(() => {
-      const currentStepId = activeStep.id as string | undefined;
-      if (
-        !isOnPremise &&
-        currentStepId &&
-        lastTrackedStepIdRef.current !== currentStepId
-      ) {
-        analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
-          module: AMPLITUDE_MODULE_NAME,
-          step_id: currentStepId,
-          account_id: userData?.identity.internal?.account_id || 'Not found',
-          from_step_id: lastTrackedStepIdRef.current,
-        });
-        lastTrackedStepIdRef.current = currentStepId;
-      }
-    }, [activeStep.id]);
+    const shouldEnableOptionalSteps =
+      wasRegisterVisited || isCurrentlyOnOptionalStep;
 
     return (
       <WizardNavItem
@@ -380,7 +406,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           step.isDisabled ||
           (!step.isVisited &&
             !hasVisitedNextStep &&
-            !(isVisitOptional && wasRegisterVisited))
+            !(
+              (isVisitOptional || isOptionalStepsParent) &&
+              shouldEnableOptionalSteps
+            ))
         }
         isVisited={step.isVisited || false}
         stepIndex={step.index}
@@ -418,6 +447,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         <Wizard
           startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}
+          onStepChange={handleWizardStepChange}
           isVisitRequired
         >
           <WizardStep
@@ -531,12 +561,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name='Optional steps'
             id='step-optional-steps'
+            isHidden={hasNetworkInstallerOnly}
             steps={[
               <WizardStep
                 name='Register'
                 id='step-register'
                 key='step-register'
-                isHidden={!isRhel(distribution)}
+                isHidden={!isRhel(distribution) || hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={
                   wasRegisterVisited
@@ -559,7 +590,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Security'
                 id='step-oscap'
                 key='step-oscap'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter
@@ -576,7 +607,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='step-file-system'
                 key='step-file-system'
                 navItem={CustomStatusNavItem}
-                isHidden={hasWslTargetOnly}
+                isHidden={hasWslTargetOnly || hasNetworkInstallerOnly}
                 status={
                   !filesystemPristine && fileSystemValidation.disabledNext
                     ? 'error'
@@ -609,7 +640,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-repository-snapshot'
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
-                isHidden={isOnPremise || isImageMode}
+                isHidden={isOnPremise || hasNetworkInstallerOnly}
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
@@ -625,7 +656,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-custom-repositories'
                 key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}
-                isHidden={isOnPremise || isImageMode}
+                isHidden={isOnPremise || hasNetworkInstallerOnly}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter
@@ -641,7 +672,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Additional packages'
                 id='wizard-additional-packages'
                 key='wizard-additional-packages'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
@@ -658,7 +689,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Users'
                 id='wizard-users-optional'
                 key='wizard-users-optional'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={usersValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -684,7 +715,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Timezone'
                 id='wizard-timezone'
                 key='wizard-timezone'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={timezoneValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -701,7 +732,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Locale'
                 id='wizard-locale'
                 key='wizard-locale'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={localeValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -718,7 +749,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Hostname'
                 id='wizard-hostname'
                 key='wizard-hostname'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={hostnameValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -736,7 +767,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-kernel'
                 key='wizard-kernel'
                 navItem={CustomStatusNavItem}
-                isHidden={hasWslTargetOnly || isImageMode}
+                isHidden={hasWslTargetOnly || hasNetworkInstallerOnly}
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -752,7 +783,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Firewall'
                 id='wizard-firewall'
                 key='wizard-firewall'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={firewallValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -769,7 +800,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Systemd services'
                 id='wizard-services'
                 key='wizard-services'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={servicesValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -786,7 +817,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Ansible Automation Platform'
                 id='wizard-aap'
                 key='wizard-aap'
-                isHidden={isImageMode}
+                isHidden={hasNetworkInstallerOnly}
                 navItem={CustomStatusNavItem}
                 status={aapValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -805,7 +836,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-first-boot'
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                isHidden={isOnPremise || isImageMode}
+                isHidden={isOnPremise || hasNetworkInstallerOnly}
                 footer={
                   <CustomWizardFooter
                     disableNext={firstBootValidation.disabledNext}

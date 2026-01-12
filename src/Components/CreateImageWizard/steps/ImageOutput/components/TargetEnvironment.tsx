@@ -17,6 +17,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { useIsOnPremise } from '../../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
@@ -96,6 +97,7 @@ const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
+  const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
 
   // NOTE: We're using 'image-mode' as a dummy distribution for the
   // on-prem frontend, this is one of the few cases where we
@@ -342,6 +344,45 @@ const TargetEnvironment = () => {
             name='Bare metal installer'
           />
         )}
+        {supportedEnvironments?.includes('network-installer') &&
+          isNetworkInstallerEnabled && (
+            <Checkbox
+              label={
+                <>
+                  Network - Installer (.iso)
+                  <Popover
+                    maxWidth='30rem'
+                    position='right'
+                    bodyContent={
+                      <Content>
+                        <Content>
+                          This is a lightweight image that differs from a
+                          standard “full” ISO by requiring an active network
+                          connection to pull the latest software directly from
+                          RHEL repositories, as no OS packages are stored
+                          locally on the image.
+                        </Content>
+                      </Content>
+                    }
+                  >
+                    <Button
+                      icon={<HelpIcon />}
+                      className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
+                      variant='plain'
+                      aria-label='About Network installer'
+                      isInline
+                    />
+                  </Popover>
+                </>
+              }
+              isChecked={environments.includes('network-installer')}
+              onChange={() => {
+                handleToggleEnvironment('network-installer');
+              }}
+              id='checkbox-network-installer'
+              name='Network installer'
+            />
+          )}
         {supportedEnvironments?.includes('wsl') && (
           <Checkbox
             label={
