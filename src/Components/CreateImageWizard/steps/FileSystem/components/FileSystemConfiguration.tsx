@@ -8,7 +8,6 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
@@ -30,10 +29,6 @@ import {
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 
 const FileSystemConfiguration = () => {
-  const isPartitioningModeEnabled = useFlag(
-    'image-builder.partitioning-mode.enabled',
-  );
-
   const environments = useAppSelector(selectImageTypes);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const partitioningMode = useAppSelector(selectPartitioningMode);
@@ -104,23 +99,21 @@ const FileSystemConfiguration = () => {
           )} images`}
         />
       )}
-      {(process.env.IS_ON_PREMISE || isPartitioningModeEnabled) && (
-        <Checkbox
-          label='Select partitioning mode'
-          isChecked={partitioningMode !== undefined}
-          onChange={(_event, checked) => {
-            if (checked) {
-              dispatch(changePartitioningMode('auto-lvm'));
-            } else {
-              dispatch(changePartitioningMode(undefined));
-            }
-          }}
-          aria-label='Select partitioning mode checkbox'
-          id='select-partitioning-mode-switch'
-          name='select-partitioning-mode-switch'
-          body={partitioningMode !== undefined && <PartitioningMode />}
-        />
-      )}
+      <Checkbox
+        label='Select partitioning mode'
+        isChecked={partitioningMode !== undefined}
+        onChange={(_event, checked) => {
+          if (checked) {
+            dispatch(changePartitioningMode('auto-lvm'));
+          } else {
+            dispatch(changePartitioningMode(undefined));
+          }
+        }}
+        aria-label='Select partitioning mode checkbox'
+        id='select-partitioning-mode-switch'
+        name='select-partitioning-mode-switch'
+        body={partitioningMode !== undefined && <PartitioningMode />}
+      />
       <FileSystemTable partitions={filesystemPartitions} mode='filesystem' />
       <Content>
         <Button
