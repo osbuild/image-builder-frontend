@@ -6,6 +6,7 @@ import UserInfo from './components/UserInfo';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectBlueprintMode } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 
 type UsersStepProps = {
   attemptedNext?: boolean | undefined;
@@ -29,6 +30,7 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
           log in.
         </Content>
       )}
+      <NetworkInstallerAlert />
       <UserInfo attemptedNext={attemptedNext} />
     </Form>
   );

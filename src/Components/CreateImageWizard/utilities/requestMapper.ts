@@ -787,6 +787,8 @@ const uploadTypeByTargetEnv = (
       return 'aws.s3';
     case 'image-installer':
       return 'aws.s3';
+    case 'network-installer':
+      return 'aws.s3';
     case 'vsphere':
       return 'aws.s3';
     case 'vsphere-ova':
@@ -853,6 +855,42 @@ const getImageOptions = (
 };
 
 const getCustomizations = (state: RootState, orgID: string): Customizations => {
+  const imageTypes = selectImageTypes(state);
+  const hasNetworkInstallerOnly =
+    imageTypes.length === 1 && imageTypes.includes('network-installer');
+
+  // Network-installer has no customizations for the first step
+  if (hasNetworkInstallerOnly) {
+    return {
+      containers: undefined,
+      directories: undefined,
+      files: undefined,
+      subscription: undefined,
+      packages: undefined,
+      enabled_modules: undefined,
+      payload_repositories: undefined,
+      custom_repositories: undefined,
+      openscap: undefined,
+      disk: undefined,
+      filesystem: undefined,
+      users: undefined,
+      services: undefined,
+      hostname: undefined,
+      kernel: undefined,
+      groups: undefined,
+      timezone: undefined,
+      locale: undefined,
+      firewall: undefined,
+      installation_device: undefined,
+      fdo: undefined,
+      ignition: undefined,
+      partitioning_mode: undefined,
+      fips: undefined,
+      cacerts: undefined,
+      aap_registration: undefined,
+    };
+  }
+
   const satCert = selectSatelliteCaCertificate(state);
   const files: File[] = [];
   if (selectFirstBootScript(state)) {

@@ -9,6 +9,7 @@ import FileSystemPartition from './components/FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectFscMode } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 
 export type FscModeType = 'automatic' | 'basic' | 'advanced';
@@ -23,6 +24,7 @@ const FileSystemStep = () => {
         File system configuration
       </Title>
       <Content>Define the partitioning of the image.</Content>
+      <NetworkInstallerAlert />
       {hasIsoTargetOnly ? (
         <FileSystemAutomaticPartition />
       ) : fscMode === 'automatic' ? (

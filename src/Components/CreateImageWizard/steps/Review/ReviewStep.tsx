@@ -61,6 +61,7 @@ import {
   selectTimezone,
   selectUsers,
 } from '../../../../store/wizardSlice';
+import { useHasNetworkInstallerOnly } from '../../utilities/hasNetworkInstaller';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
 
@@ -137,6 +138,7 @@ const Review = () => {
     setIsExpandedUsers(isExpandedUsers);
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
+  const hasNetworkInstallerOnly = useHasNetworkInstallerOnly();
 
   type RevisitStepButtonProps = {
     ariaLabel: string;
@@ -300,9 +302,19 @@ const Review = () => {
               </Content>
             </StackItem>
           )}
+          {environments.includes('network-installer') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['network-installer']} (.iso)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
         </Stack>
       </ExpandableSection>
-      {isRhel(distribution) && (
+      {!hasNetworkInstallerOnly && isRhel(distribution) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Registration',
@@ -324,7 +336,7 @@ const Review = () => {
         </ExpandableSection>
       )}
 
-      {isPackageMode && (
+      {isPackageMode && !hasNetworkInstallerOnly && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Security',
@@ -341,7 +353,7 @@ const Review = () => {
           <SecurityInformation />
         </ExpandableSection>
       )}
-      {!hasWslTargetOnly && (
+      {!hasNetworkInstallerOnly && !hasWslTargetOnly && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'File system configuration',
@@ -356,7 +368,7 @@ const Review = () => {
           <FSCList />
         </ExpandableSection>
       )}
-      {isPackageMode && (
+      {isPackageMode && !hasNetworkInstallerOnly && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Content',
@@ -373,7 +385,7 @@ const Review = () => {
           <ContentList />
         </ExpandableSection>
       )}
-      {users.length > 0 && (
+      {!hasNetworkInstallerOnly && users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Users',
@@ -388,24 +400,27 @@ const Review = () => {
           <UsersList />
         </ExpandableSection>
       )}
-      {isPackageMode && (timezone || (ntpServers && ntpServers.length > 0)) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Timezone',
-            'revisit-timezone',
-            'wizard-timezone',
-          )}
-          onToggle={(_event, isExpandedTimezone) =>
-            onToggleTimezone(isExpandedTimezone)
-          }
-          isExpanded={isExpandedTimezone}
-          isIndented
-          data-testid='timezone-expandable'
-        >
-          <TimezoneList />
-        </ExpandableSection>
-      )}
       {isPackageMode &&
+        !hasNetworkInstallerOnly &&
+        (timezone || (ntpServers && ntpServers.length > 0)) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Timezone',
+              'revisit-timezone',
+              'wizard-timezone',
+            )}
+            onToggle={(_event, isExpandedTimezone) =>
+              onToggleTimezone(isExpandedTimezone)
+            }
+            isExpanded={isExpandedTimezone}
+            isIndented
+            data-testid='timezone-expandable'
+          >
+            <TimezoneList />
+          </ExpandableSection>
+        )}
+      {isPackageMode &&
+        !hasNetworkInstallerOnly &&
         ((languages && languages.length > 0) ||
           (keyboard && keyboard.length > 0)) && (
           <ExpandableSection
@@ -424,7 +439,7 @@ const Review = () => {
             <LocaleList />
           </ExpandableSection>
         )}
-      {hostname && (
+      {!hasNetworkInstallerOnly && hostname && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Hostname',
@@ -441,62 +456,65 @@ const Review = () => {
           <HostnameList />
         </ExpandableSection>
       )}
-      {(kernel.name || kernel.append.length > 0) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Kernel',
-            'revisit-kernel',
-            'wizard-kernel',
-          )}
-          onToggle={(_event, isExpandedKernel) =>
-            onToggleKernel(isExpandedKernel)
-          }
-          isExpanded={isExpandedKernel}
-          isIndented
-          data-testid='kernel-expandable'
-        >
-          <KernelList />
-        </ExpandableSection>
-      )}
-      {(firewall.ports.length > 0 ||
-        firewall.services.disabled.length > 0 ||
-        firewall.services.enabled.length > 0) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Firewall',
-            'revisit-firewall',
-            'wizard-firewall',
-          )}
-          onToggle={(_event, isExpandedFirewall) =>
-            onToggleFirewall(isExpandedFirewall)
-          }
-          isExpanded={isExpandedFirewall}
-          isIndented
-          data-testid='firewall-expandable'
-        >
-          <FirewallList />
-        </ExpandableSection>
-      )}
-      {(services.enabled.length > 0 ||
-        services.disabled.length > 0 ||
-        services.masked.length > 0) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Systemd services',
-            'revisit-services',
-            'wizard-services',
-          )}
-          onToggle={(_event, isExpandedServices) =>
-            onToggleServices(isExpandedServices)
-          }
-          isExpanded={isExpandedServices}
-          isIndented
-          data-testid='services-expandable'
-        >
-          <ServicesList />
-        </ExpandableSection>
-      )}
-      {aapRegistration.callbackUrl && (
+      {!hasNetworkInstallerOnly &&
+        (kernel.name || kernel.append.length > 0) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Kernel',
+              'revisit-kernel',
+              'wizard-kernel',
+            )}
+            onToggle={(_event, isExpandedKernel) =>
+              onToggleKernel(isExpandedKernel)
+            }
+            isExpanded={isExpandedKernel}
+            isIndented
+            data-testid='kernel-expandable'
+          >
+            <KernelList />
+          </ExpandableSection>
+        )}
+      {!hasNetworkInstallerOnly &&
+        (firewall.ports.length > 0 ||
+          firewall.services.disabled.length > 0 ||
+          firewall.services.enabled.length > 0) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Firewall',
+              'revisit-firewall',
+              'wizard-firewall',
+            )}
+            onToggle={(_event, isExpandedFirewall) =>
+              onToggleFirewall(isExpandedFirewall)
+            }
+            isExpanded={isExpandedFirewall}
+            isIndented
+            data-testid='firewall-expandable'
+          >
+            <FirewallList />
+          </ExpandableSection>
+        )}
+      {!hasNetworkInstallerOnly &&
+        (services.enabled.length > 0 ||
+          services.disabled.length > 0 ||
+          services.masked.length > 0) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Systemd services',
+              'revisit-services',
+              'wizard-services',
+            )}
+            onToggle={(_event, isExpandedServices) =>
+              onToggleServices(isExpandedServices)
+            }
+            isExpanded={isExpandedServices}
+            isIndented
+            data-testid='services-expandable'
+          >
+            <ServicesList />
+          </ExpandableSection>
+        )}
+      {!hasNetworkInstallerOnly && aapRegistration.callbackUrl && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Ansible Automation Platform',
@@ -511,7 +529,7 @@ const Review = () => {
           <RegisterAapList />
         </ExpandableSection>
       )}
-      {!isOnPremise && (
+      {!hasNetworkInstallerOnly && !isOnPremise && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'First boot',
