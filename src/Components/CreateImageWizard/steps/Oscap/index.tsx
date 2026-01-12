@@ -65,6 +65,7 @@ import {
   setOscapProfile,
 } from '../../../../store/wizardSlice';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
@@ -158,6 +159,7 @@ const OscapContent = () => {
           adherence of your registered RHEL systems to a selected policy or
           profile.
         </Content>
+        <NetworkInstallerAlert />
         {registrationType.startsWith('register-now') && (
           <Alert
             title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat

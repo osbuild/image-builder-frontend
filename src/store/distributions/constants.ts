@@ -12,6 +12,7 @@ export const ALL_CUSTOMIZATIONS = [
   'hostname',
   'firstBoot',
   'openscap',
+  'registration',
   'users',
   'fips',
   'aap',
@@ -40,7 +41,6 @@ export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {
   'image-installer': {
     name: 'image-installer',
     supported_blueprint_options: [
-      // image-installer has everything but filesystem
       ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem'),
     ],
   },

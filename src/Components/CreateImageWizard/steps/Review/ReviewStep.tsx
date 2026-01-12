@@ -299,9 +299,19 @@ const Review = () => {
               </Content>
             </StackItem>
           )}
+          {environments.includes('network-installer') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['network-installer']} (.iso)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
         </Stack>
       </ExpandableSection>
-      {isRhel(distribution) && (
+      {isRhel(distribution) && !restrictions.registration.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Registration',
