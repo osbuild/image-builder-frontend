@@ -5,6 +5,8 @@ import {
   Flex,
   FlexItem,
   FormGroup,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -13,9 +15,11 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
+import { IMAGE_MODE_RELEASES } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeImageSource,
+  ImageSource,
   selectImageSource,
 } from '../../../../../store/wizardSlice';
 
@@ -24,13 +28,14 @@ const ImageSourceSelect = () => {
   const imageSource = useAppSelector(selectImageSource);
   const [isOpen, setIsOpen] = useState(false);
 
-  const setImageSource = (_event?: React.MouseEvent, selection?: string) => {
+  const setImageSource = (
+    _event?: React.MouseEvent,
+    selection?: ImageSource,
+  ) => {
     if (selection === undefined) return;
     dispatch(changeImageSource(selection));
     setIsOpen(false);
   };
-
-  const dummyOptions = ['dummy-rhel-10-image', 'dummy-rhel-9-image'];
 
   const refreshImageSources = () => {
     // TODO
@@ -42,7 +47,7 @@ const ImageSourceSelect = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-      {imageSource}
+      {imageSource.name}
     </MenuToggle>
   );
 
@@ -59,13 +64,20 @@ const ImageSourceSelect = () => {
             shouldFocusToggleOnSelect
           >
             <SelectList>
-              {dummyOptions.map((option) => (
-                <SelectOption key={option} value={option}>
-                  {option}
+              {[...IMAGE_MODE_RELEASES].map(([_, option]) => (
+                <SelectOption key={option.image} value={option}>
+                  {option.name}
                 </SelectOption>
               ))}
             </SelectList>
           </Select>
+          <HelperText className='pf-v6-u-mt-sm'>
+            <HelperTextItem>
+              <span className='pf-v6-u-text-color-subtle'>
+                FROM: {imageSource.image}
+              </span>
+            </HelperTextItem>
+          </HelperText>
         </FlexItem>
         <FlexItem>
           <Button

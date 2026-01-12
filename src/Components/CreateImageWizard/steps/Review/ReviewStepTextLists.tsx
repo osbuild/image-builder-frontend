@@ -148,7 +148,7 @@ export const ImageOutputList = () => {
         <Content component={ContentVariants.dd}>
           {blueprintMode === 'package'
             ? releases.get(distribution)
-            : imageSource}
+            : imageSource.name}
         </Content>
         <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Architecture
