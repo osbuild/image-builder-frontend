@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { Content, FormGroup, Radio } from '@patternfly/react-core';
+import {
+  Content,
+  FormGroup,
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@patternfly/react-core';
+import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -14,29 +20,36 @@ const BlueprintMode = () => {
 
   return (
     <FormGroup label='Image type' isRequired>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
-          id='package-mode-radio'
-          label='Package mode'
-          name='blueprint-mode'
-          description='RHEL in package mode is a system managed by individually installing and updating software packages'
-          isChecked={blueprintMode === 'package'}
+      <ToggleGroup aria-label='Blueprint mode toggle group'>
+        <ToggleGroupItem
+          icon={<RepositoryIcon />}
+          text='Package mode'
+          buttonId='blueprint-mode-package'
+          isSelected={blueprintMode === 'package'}
           onChange={() => {
             dispatch(changeBlueprintMode('package'));
           }}
+          aria-describedby='blueprint-mode-description'
         />
-      </Content>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
-          id='image-mode-radio'
-          label='Image mode'
-          name='blueprint-mode'
-          description='RHEL image mode treats the entire operating system as a single, immutable container image that is updated atomically'
-          isChecked={blueprintMode === 'image'}
+        <ToggleGroupItem
+          icon={<BuildIcon />}
+          text='Image mode'
+          buttonId='blueprint-mode-image'
+          isSelected={blueprintMode === 'image'}
           onChange={() => {
             dispatch(changeBlueprintMode('image'));
           }}
+          aria-describedby='blueprint-mode-description'
         />
+      </ToggleGroup>
+      <Content
+        id='blueprint-mode-description'
+        className='pf-v6-u-pt-sm pf-v6-u-text-color-subtle'
+      >
+        {blueprintMode === 'package' &&
+          'RHEL in package mode is a system managed by individually installing and updating software packages'}
+        {blueprintMode === 'image' &&
+          'RHEL image mode treats the entire operating system as a single, immutable container image that is updated atomically'}
       </Content>
     </FormGroup>
   );
