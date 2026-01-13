@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   MenuToggle,
@@ -35,7 +35,7 @@ const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  const initialValue = useRef(partition).current;
+  const [initialValue] = useState(partition);
 
   const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
