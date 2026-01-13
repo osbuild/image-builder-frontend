@@ -696,7 +696,9 @@ export const RegisterNowList = () => {
     <>
       <Content className='pf-v6-u-pb-sm'>
         <Content component={ContentVariants.dl} className='review-step-dl'>
-          <Content component={ContentVariants.dt}>Registration method</Content>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            Registration method
+          </Content>
           <Content
             component={ContentVariants.dd}
             data-testid='review-registration'
@@ -732,9 +734,13 @@ export const RegisterNowList = () => {
               )}
             </Content>
           </Content>
-          <Content component={ContentVariants.dt}>Organization ID</Content>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            Organization ID
+          </Content>
           <Content component={ContentVariants.dd}>{orgId}</Content>
-          <Content component={ContentVariants.dt}>Activation key</Content>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            Activation key
+          </Content>
           <Content component={ContentVariants.dd}>{activationKey}</Content>
         </Content>
       </Content>
