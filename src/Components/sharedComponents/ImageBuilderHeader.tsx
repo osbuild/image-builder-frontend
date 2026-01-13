@@ -38,6 +38,7 @@ const AboutImageBuilderPopover = () => {
             eliminates the specific configurations required for each output
             type.
           </Content>
+
           <Content>
             <Button
               component='a'

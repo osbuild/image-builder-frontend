@@ -83,6 +83,7 @@ const EmptyImagesTable = () => {
               >
                 Learn more about managing images with DNF
               </Button>
+
               <Button
                 component='a'
                 target='_blank'

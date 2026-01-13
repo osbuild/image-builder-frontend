@@ -1,21 +1,47 @@
+import { useEffect, useState } from 'react';
+
 import { useIsOnPremise } from './useIsOnPremise';
 
 import {
-  IB_DOCUMENTATION_URL,
-  IB_ON_PREMISE_DOCUMENTATION_URL,
+  IB_HOSTED_LIGHTSPEED_DOCUMENTATION_URL,
+  IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL,
+  IB_ON_PREMISE_RHEL10_DOCUMENTATION_URL,
+  IB_ON_PREMISE_RHEL9_DOCUMENTATION_URL,
 } from '../../constants';
-import { useAppSelector } from '../../store/hooks';
-import { selectDistribution } from '../../store/wizardSlice';
+import { getHostDistro } from '../../Utilities/getHostInfo';
 
 export const useGetDocumentationUrl = () => {
-  const distro = useAppSelector(selectDistribution);
   const isOnPremise = useIsOnPremise();
+  const [hostDistro, setHostDistro] = useState<string | null>(null);
 
-  // NOTE: we can turn `distro.startsWith('fedora-')`
-  // if we feel like it's necessary. For the scope of
-  // this PR, it's probably a little bit too much.
-  const distroId = typeof distro === 'string' ? distro : '';
-  return isOnPremise && distroId.startsWith('fedora-')
-    ? IB_ON_PREMISE_DOCUMENTATION_URL
-    : IB_DOCUMENTATION_URL;
+  useEffect(() => {
+    if (!isOnPremise) return;
+
+    async function runDetection() {
+      const detected = await getHostDistro();
+      setHostDistro(detected);
+    }
+    runDetection();
+  }, []);
+
+  // Hosted service (console) -> Lightspeed docs
+  if (!isOnPremise) return IB_HOSTED_LIGHTSPEED_DOCUMENTATION_URL;
+  // On-prem (cockpit): wait for host distro detection to avoid incorrect initial link
+  if (hostDistro === null) {
+    return IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL;
+  }
+  const effectiveDistro = hostDistro || '';
+  // Fedora -> upstream/osbuild
+  if (effectiveDistro.startsWith('fedora-')) {
+    return IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL;
+  }
+  // RHEL by major version
+  if (effectiveDistro.startsWith('rhel-9')) {
+    return IB_ON_PREMISE_RHEL9_DOCUMENTATION_URL;
+  }
+  if (effectiveDistro.startsWith('rhel-10')) {
+    return IB_ON_PREMISE_RHEL10_DOCUMENTATION_URL;
+  }
+  // Unknown -> upstream/osbuild
+  return IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL;
 };
