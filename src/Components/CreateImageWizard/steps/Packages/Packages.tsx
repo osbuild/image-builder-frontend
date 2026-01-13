@@ -96,6 +96,8 @@ import {
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
+  suppressLangpack,
+  unsuppressLangpack,
 } from '../../../../store/wizardSlice';
 import {
   getEpelDefinitionForDistribution,
@@ -104,6 +106,7 @@ import {
 } from '../../../../Utilities/epel';
 import { convertStringToDate } from '../../../../Utilities/time';
 import useDebounce from '../../../../Utilities/useDebounce';
+import { getDistroRepoUrlsForArch } from '../../utilities/repositories';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 
@@ -286,16 +289,7 @@ const Packages = () => {
             search: debouncedSearchTerm,
             urls:
               template === ''
-                ? distroRepositories
-                    ?.filter((archItem) => {
-                      return archItem.arch === arch;
-                    })[0]
-                    .repositories.flatMap((repo) => {
-                      if (!repo.baseurl) {
-                        throw new Error(`Repository ${repo} missing baseurl`);
-                      }
-                      return repo.baseurl;
-                    })
+                ? getDistroRepoUrlsForArch(distroRepositories, arch)
                 : reposInTemplate
                     .filter((r) => r.org_id === '-1' && !!r.url)
                     .flatMap((r) =>
@@ -362,16 +356,7 @@ const Packages = () => {
       searchDistroGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substring(1),
-          urls: distroRepositories
-            ?.filter((archItem) => {
-              return archItem.arch === arch;
-            })[0]
-            .repositories.flatMap((repo) => {
-              if (!repo.baseurl) {
-                throw new Error(`Repository ${repo} missing baseurl`);
-              }
-              return repo.baseurl;
-            }),
+          urls: getDistroRepoUrlsForArch(distroRepositories, arch),
           date: snapshotDate
             ? new Date(convertStringToDate(snapshotDate)).toISOString()
             : undefined,
@@ -901,6 +886,9 @@ const Packages = () => {
         setIsSelectingPackage(pkg);
       } else {
         dispatch(addPackage(pkg));
+        if (/^langpacks-[a-z]+$/.test(pkg.name)) {
+          dispatch(unsuppressLangpack(pkg.name));
+        }
         if (pkg.type === 'module') {
           setActiveStream(pkg.stream || '');
           dispatch(
@@ -916,6 +904,9 @@ const Packages = () => {
       }
     } else {
       dispatch(removePackage(pkg.name));
+      if (/^langpacks-[a-z]+$/.test(pkg.name)) {
+        dispatch(suppressLangpack(pkg.name));
+      }
       if (pkg.type === 'module' && pkg.module_name) {
         dispatch(removeModule(pkg.module_name));
       }

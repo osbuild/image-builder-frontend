@@ -44,6 +44,35 @@ test('Create a blueprint with Locale customization', async ({
     await registerLater(frame);
   });
 
+  await test.step('Check the Locale setting and remove the additional langpack', async () => {
+    // Select a locale
+    await frame.getByRole('button', { name: 'Locale' }).click();
+    await frame.getByPlaceholder('Select a language').click();
+    await frame.getByPlaceholder('Select a language').fill('ru_RU');
+    await frame.getByRole('option', { name: /ru_RU\.UTF-8/i }).click();
+
+    // Note should appear and list the verified langpack
+    await expect(
+      frame.getByText(
+        'The following packages will be added based on your preferred locale:',
+      ),
+    ).toBeVisible();
+    await expect(frame.getByText('langpacks-ru')).toBeVisible();
+
+    // Remove the langpack in Additional packages and verify suppression
+    await frame.getByRole('button', { name: 'Additional packages' }).click();
+    await frame
+      .getByRole('textbox', { name: 'Search packages' })
+      .fill('langpacks-ru');
+    const rowCheckbox = frame.getByRole('checkbox', { name: 'Select row 0' });
+    await rowCheckbox.isChecked();
+    await rowCheckbox.click();
+
+    // Back to Locale; the preview should no longer show the suppressed package
+    await frame.getByRole('button', { name: 'Locale' }).click();
+    await expect(frame.getByText('langpacks-ru')).toHaveCount(0);
+  });
+
   await test.step('Select and fill the Locale step', async () => {
     await frame.getByRole('button', { name: 'Locale' }).click();
     await frame.getByPlaceholder('Select a language').fill('fy');
