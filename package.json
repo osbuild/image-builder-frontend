@@ -69,7 +69,7 @@
     "eslint-plugin-playwright": "2.5.0",
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-react-redux": "4.2.2",
     "eslint-plugin-testing-library": "7.15.4",
     "git-revision-webpack-plugin": "5.0.0",

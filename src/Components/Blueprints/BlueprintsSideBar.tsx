@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import {
   Bullseye,
@@ -181,19 +181,25 @@ const BlueprintsSidebar = () => {
 const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const dispatch = useAppDispatch();
-  const debouncedSearch = useCallback(
-    debounce((filter) => {
-      dispatch(setBlueprintsOffset(0));
-      dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
-      dispatch(setBlueprintSearchInput(filter.length > 0 ? filter : undefined));
-    }, DEBOUNCED_SEARCH_WAIT_TIME),
-    [],
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((filter) => {
+        dispatch(setBlueprintsOffset(0));
+        dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
+        dispatch(
+          setBlueprintSearchInput(filter.length > 0 ? filter : undefined),
+        );
+      }, DEBOUNCED_SEARCH_WAIT_TIME),
+    [dispatch],
   );
-  React.useEffect(() => {
+
+  useEffect(() => {
     return () => {
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
+
   const onChange = (value: string) => {
     if (value.length === 0) {
       dispatch(setBlueprintSearchInput(undefined));

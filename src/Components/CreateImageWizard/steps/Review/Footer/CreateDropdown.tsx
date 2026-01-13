@@ -98,6 +98,37 @@ export const CreateSaveAndBuildBtn = ({
   );
 };
 
+type SaveAndBuildImagesModalProps = {
+  showModal: boolean;
+  handleClose: () => void;
+};
+
+const SaveAndBuildImagesModal = ({
+  showModal,
+  handleClose,
+}: SaveAndBuildImagesModalProps) => {
+  return (
+    <Modal isOpen={showModal} onClose={handleClose} width='50%'>
+      <ModalHeader title='Save time by building images' />
+      <ModalBody>
+        Building blueprints and images doesn&apos;t need to be a two step
+        process. To build images simultaneously, use the dropdown arrow to the
+        right side of this button.
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          key='back'
+          variant='primary'
+          data-testid='close-button-saveandbuild-modal'
+          onClick={handleClose}
+        >
+          Close
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
 export const CreateSaveButton = ({
   setIsOpen,
   getBlueprintPayload,
@@ -118,31 +149,8 @@ export const CreateSaveButton = ({
     'imageBuilder.saveAndBuildModalSeen',
   );
 
-  const SaveAndBuildImagesModal = () => {
-    const handleClose = () => {
-      setShowModal(false);
-    };
-
-    return (
-      <Modal isOpen={showModal} onClose={handleClose} width='50%'>
-        <ModalHeader title='Save time by building images' />
-        <ModalBody>
-          Building blueprints and images doesn&apos;t need to be a two step
-          process. To build images simultaneously, use the dropdown arrow to the
-          right side of this button.
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            key='back'
-            variant='primary'
-            data-testid='close-button-saveandbuild-modal'
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
+  const handleClose = () => {
+    setShowModal(false);
   };
 
   const onClick = () => {
@@ -180,7 +188,10 @@ export const CreateSaveButton = ({
 
   return (
     <>
-      {showModal && <SaveAndBuildImagesModal />}
+      <SaveAndBuildImagesModal
+        showModal={showModal}
+        handleClose={handleClose}
+      />
       <MenuToggleAction
         onClick={onClick}
         id='wizard-create-save-btn'
