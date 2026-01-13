@@ -36,9 +36,13 @@ export const COMPLIANCE_AND_VULN_SCANNING_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
 export const MANAGING_WITH_DNF_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_software_with_the_dnf_tool/index';
-export const IB_DOCUMENTATION_URL =
+export const IB_HOSTED_LIGHTSPEED_DOCUMENTATION_URL =
   'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
-export const IB_ON_PREMISE_DOCUMENTATION_URL =
+export const IB_ON_PREMISE_RHEL9_DOCUMENTATION_URL =
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/composing_a_customized_rhel_system_image/index';
+export const IB_ON_PREMISE_RHEL10_DOCUMENTATION_URL =
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/composing_a_customized_rhel_system_image/image-builder-description';
+export const IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL =
   'https://osbuild.org/docs/user-guide/introduction/';
 export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
