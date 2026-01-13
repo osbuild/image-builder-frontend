@@ -57,6 +57,7 @@ import {
   selectDistribution,
   selectFips,
   selectImageTypes,
+  selectRegistrationType,
   selectServices,
   setCompliancePolicy,
   setOscapProfile,
@@ -66,6 +67,7 @@ import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
+  const registrationType = useAppSelector(selectRegistrationType);
   const complianceType = useAppSelector(selectComplianceType);
   const policyID = useAppSelector(selectCompliancePolicyID);
   const profileID = useAppSelector(selectComplianceProfileID);
@@ -152,6 +154,14 @@ const OscapContent = () => {
           adherence of your registered RHEL systems to a selected policy or
           profile.
         </Content>
+        {registrationType.startsWith('register-now') && (
+          <Alert
+            title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
+            Lightspeed by default.'
+            variant='info'
+            isInline
+          />
+        )}
         <FormGroup>
           <Switch
             id='fips-enabled-switch'
