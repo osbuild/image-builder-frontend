@@ -59,6 +59,7 @@ import {
   selectAzureSubscriptionId,
   selectAzureTenantId,
   selectBlueprintDescription,
+  selectBlueprintMode,
   selectBlueprintName,
   selectCustomRepositories,
   selectDistribution,
@@ -71,6 +72,7 @@ import {
   selectGcpShareMethod,
   selectGroups,
   selectHostname,
+  selectImageSource,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -105,43 +107,48 @@ const ExpirationWarning = () => {
 };
 
 export const ImageOutputList = () => {
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const distribution = useAppSelector(selectDistribution);
+  const imageSource = useAppSelector(selectImageSource);
   const arch = useAppSelector(selectArchitecture);
   const isOnPremise = useIsOnPremise();
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
   return (
     <Content>
-      {(distribution === RHEL_8 || distribution === RHEL_9) && (
-        <>
-          <Content component='p' className='pf-v6-u-font-size-sm'>
-            {RELEASES.get(distribution)} will be supported through{' '}
-            {toMonthAndYear(
-              distribution === RHEL_8
-                ? RHEL_8_FULL_SUPPORT[1]
-                : RHEL_9_FULL_SUPPORT[1],
-            )}
-            , with optional ELS support through{' '}
-            {toMonthAndYear(
-              distribution === RHEL_8
-                ? RHEL_8_MAINTENANCE_SUPPORT[1]
-                : RHEL_9_MAINTENANCE_SUPPORT[1],
-            )}
-            . Consider building an image with {RELEASES.get(RHEL_10)} to extend
-            the support period.
-          </Content>
-          <FormGroup label='Release lifecycle'>
-            <MajorReleasesLifecyclesChart />
-          </FormGroup>
-          <br />
-        </>
-      )}
+      {blueprintMode === 'package' &&
+        (distribution === RHEL_8 || distribution === RHEL_9) && (
+          <>
+            <Content component='p' className='pf-v6-u-font-size-sm'>
+              {RELEASES.get(distribution)} will be supported through{' '}
+              {toMonthAndYear(
+                distribution === RHEL_8
+                  ? RHEL_8_FULL_SUPPORT[1]
+                  : RHEL_9_FULL_SUPPORT[1],
+              )}
+              , with optional ELS support through{' '}
+              {toMonthAndYear(
+                distribution === RHEL_8
+                  ? RHEL_8_MAINTENANCE_SUPPORT[1]
+                  : RHEL_9_MAINTENANCE_SUPPORT[1],
+              )}
+              . Consider building an image with {RELEASES.get(RHEL_10)} to
+              extend the support period.
+            </Content>
+            <FormGroup label='Release lifecycle'>
+              <MajorReleasesLifecyclesChart />
+            </FormGroup>
+            <br />
+          </>
+        )}
       <Content component={ContentVariants.dl} className='review-step-dl'>
         <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Release
+          {blueprintMode === 'package' ? 'Release' : 'Container image'}
         </Content>
         <Content component={ContentVariants.dd}>
-          {releases.get(distribution)}
+          {blueprintMode === 'package'
+            ? releases.get(distribution)
+            : imageSource}
         </Content>
         <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Architecture
