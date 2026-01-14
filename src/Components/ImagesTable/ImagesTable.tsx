@@ -46,6 +46,7 @@ import { AwsTarget, Target } from './Target';
 import {
   AMPLITUDE_MODULE_NAME,
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
+  AWS_S3_EXPIRATION_TIME_IN_HOURS_LEGACY,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
@@ -82,6 +83,7 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import { AWSLaunchModal } from '../Launch/AWSLaunchModal';
 import { AzureLaunchModal } from '../Launch/AzureLaunchModal';
 import { GcpLaunchModal } from '../Launch/GcpLaunchModal';
@@ -472,8 +474,12 @@ type AwsS3RowPropTypes = {
 };
 
 const AwsS3Row = ({ compose, rowIndex }: AwsS3RowPropTypes) => {
+  const s3ExpirationFlag = useFlag('image-builder.s3-expiration');
   const hoursToExpiration = computeHoursToExpiration(compose.created_at);
-  const isExpired = hoursToExpiration >= AWS_S3_EXPIRATION_TIME_IN_HOURS;
+  const awsS3ExpirationTime = s3ExpirationFlag
+    ? AWS_S3_EXPIRATION_TIME_IN_HOURS
+    : AWS_S3_EXPIRATION_TIME_IN_HOURS_LEGACY;
+  const isExpired = hoursToExpiration >= awsS3ExpirationTime;
 
   const details = <AwsS3Details compose={compose} />;
   const instance = <AwsS3Instance compose={compose} isExpired={isExpired} />;
