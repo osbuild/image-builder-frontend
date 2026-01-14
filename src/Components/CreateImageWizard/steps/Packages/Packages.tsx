@@ -96,6 +96,7 @@ import {
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
+  selectWizardMode,
 } from '../../../../store/wizardSlice';
 import {
   getEpelDefinitionForDistribution,
@@ -149,6 +150,7 @@ const Packages = () => {
   const modules = useAppSelector(selectModules);
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
+  const wizardMode = useAppSelector(selectWizardMode);
 
   const { data: templateData } = useGetTemplateQuery({
     uuid: template,
@@ -1145,6 +1147,10 @@ const Packages = () => {
   });
 
   const isPackageSelected = (pkg: IBPackageWithRepositoryInfo) => {
+    if (wizardMode === 'edit' && packages.some((p) => p.name === pkg.name)) {
+      return true;
+    }
+
     let isSelected = false;
 
     if (!pkg.type || pkg.type === 'package') {
@@ -1180,6 +1186,10 @@ const Packages = () => {
    * @returns Package (or group) is / is not selected
    */
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
+    if (wizardMode === 'edit') {
+      return false;
+    }
+
     const isModuleDisabledByPackage =
       pkg.type === 'module' &&
       packages.some(
