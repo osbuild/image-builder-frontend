@@ -236,7 +236,7 @@ export const AWS_REGIONS = [
   },
 ];
 
-export const AWS_S3_EXPIRATION_TIME_IN_HOURS = 6;
+export const AWS_S3_EXPIRATION_TIME_IN_HOURS = 168;
 export const OCI_STORAGE_EXPIRATION_TIME_IN_DAYS = 7;
 
 // Anchor element for all modals that we display so that they play nice with top-most components like Quickstarts

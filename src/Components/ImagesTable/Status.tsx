@@ -207,9 +207,15 @@ export const ExpiringStatus = ({
   }
 
   if (imageType === 'aws.s3' && status === 'success') {
-    const text = `Expires in ${remainingHours} ${
-      remainingHours > 1 ? 'hours' : 'hour'
-    }`;
+    const remainingDaysForAws = Math.floor(remainingHours / 24);
+    const text =
+      remainingHours >= 24
+        ? `Expires in ${remainingDaysForAws} ${
+            remainingDaysForAws > 1 ? 'days' : 'day'
+          }`
+        : `Expires in ${remainingHours} ${
+            remainingHours > 1 ? 'hours' : 'hour'
+          }`;
     return (
       <Status
         icon={statuses['expiring'].icon}
