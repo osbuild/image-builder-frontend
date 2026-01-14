@@ -475,7 +475,10 @@ function commonRequestToState(
         },
     partitioning_mode: request.customizations.partitioning_mode,
     architecture: arch,
-    distribution: getLatestRelease(request.distribution),
+    distribution:
+      // API needs to be updated first (distribution will become optional)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      request.distribution && getLatestRelease(request.distribution),
     // @ts-ignore API needs to be updated first
     imageSource: request.bootc?.reference || '',
     imageTypes: request.image_requests.map((image) => image.image_type),
