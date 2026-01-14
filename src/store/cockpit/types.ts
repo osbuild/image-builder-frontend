@@ -31,6 +31,8 @@ export const isProcessError = (error: unknown): error is ProcessError => {
     error !== null &&
     typeof error === 'object' &&
     'exit_status' in error &&
+    // TODO resolve linter error
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     (typeof err.exit_status === 'number' || err.exit_status === null) &&
     'message' in error &&
     typeof err.message === 'string'
