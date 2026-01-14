@@ -143,6 +143,7 @@ export function useRegistrationValidation(): StepValidation {
     selectSatelliteRegistrationCommand,
   );
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
+  const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
@@ -224,7 +225,6 @@ export function useRegistrationValidation(): StepValidation {
           const token = match[1];
           const decoded = jwtDecode(token);
           if (decoded.exp) {
-            const currentTimeSeconds = Date.now() / 1000;
             const dayInSeconds = 86400;
             if (decoded.exp < currentTimeSeconds + dayInSeconds) {
               const expirationDate = new Date(decoded.exp * 1000);
