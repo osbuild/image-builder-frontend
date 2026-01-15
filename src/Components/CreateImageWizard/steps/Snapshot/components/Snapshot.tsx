@@ -23,7 +23,6 @@ import {
   selectUseLatest,
 } from '../../../../../store/wizardSlice';
 import { yyyyMMddFormat } from '../../../../../Utilities/time';
-import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 import { isSnapshotDateValid } from '../../../validators';
 
 export default function Snapshot() {
@@ -35,8 +34,6 @@ export default function Snapshot() {
   const [selectedOption, setSelectedOption] = useState<
     'latest' | 'snapshotDate' | 'template'
   >(useLatest ? 'latest' : templateUuid ? 'template' : 'snapshotDate');
-
-  const isTemplatesEnabled = useFlag('image-builder.templates.enabled');
 
   const handleOptionChange = (
     option: 'latest' | 'snapshotDate' | 'template',
@@ -78,19 +75,15 @@ export default function Snapshot() {
           isChecked={selectedOption === 'snapshotDate'}
           onChange={() => handleOptionChange('snapshotDate')}
         />
-        {isTemplatesEnabled ? (
-          <Radio
-            id='use content template radio'
-            ouiaId='use-content-template-radio'
-            name='snapshot-type'
-            label='Use a content template'
-            description='Select a content template and build this image with repository snapshots included in that template'
-            isChecked={selectedOption === 'template'}
-            onChange={() => handleOptionChange('template')}
-          />
-        ) : (
-          <></>
-        )}
+        <Radio
+          id='use content template radio'
+          ouiaId='use-content-template-radio'
+          name='snapshot-type'
+          label='Use a content template'
+          description='Select a content template and build this image with repository snapshots included in that template'
+          isChecked={selectedOption === 'template'}
+          onChange={() => handleOptionChange('template')}
+        />
       </FormGroup>
 
       {selectedOption === 'latest' ? (
@@ -152,15 +145,13 @@ export default function Snapshot() {
             </Content>
           </Grid>
         </>
-      ) : isTemplatesEnabled ? (
+      ) : (
         <>
           <Title headingLevel='h1' size='xl'>
             Use a content template
           </Title>
           <Templates />
         </>
-      ) : (
-        <></>
       )}
     </>
   );
