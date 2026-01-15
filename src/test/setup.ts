@@ -61,8 +61,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
   useFlag: vi.fn((flag) => {
     switch (flag) {
-      case 'image-builder.templates.enabled':
-        return true;
       case 'image-builder.layered-repos.enabled':
         return true;
       default:
