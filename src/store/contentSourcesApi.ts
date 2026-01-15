@@ -12,6 +12,7 @@ export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
 export const {
   useListFeaturesQuery,
   useSearchPackageGroupMutation,
+  useSearchRepositoryModuleStreamsMutation,
   useListRepositoriesQuery,
   useCreateRepositoryMutation,
   useBulkImportRepositoriesMutation,

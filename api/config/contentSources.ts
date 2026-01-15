@@ -20,6 +20,7 @@ const config: ConfigFile = {
     'bulkImportRepositories',
     'listTemplates',
     'getTemplate',
+    'searchRepositoryModuleStreams',
   ],
 };
 
