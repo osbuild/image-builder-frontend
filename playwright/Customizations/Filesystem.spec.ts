@@ -132,13 +132,13 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame
       .getByRole('gridcell', { name: '1', exact: true })
       .getByPlaceholder('Define minimum size')
-      .fill('1000');
+      .fill('15');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
-    await frame.getByRole('option', { name: 'KiB' }).click();
+    await frame.getByRole('option', { name: 'MiB' }).click();
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp /usb xfs 1000 KiB',
+        name: 'Draggable row draggable button /tmp /usb xfs 15 MiB',
       })
       .getByRole('button')
       .nth(3);
@@ -181,7 +181,7 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp /usb xfs 1000 KiB',
+        name: 'Draggable row draggable button /tmp /usb xfs 15 MiB',
       })
       .getByRole('button')
       .nth(3);
@@ -193,13 +193,13 @@ test('Create a blueprint with Filesystem customization', async ({
     await expect(usbTextbox).toHaveValue('/usb');
 
     await frame
-      .getByRole('gridcell', { name: '1000', exact: true })
+      .getByRole('gridcell', { name: '15', exact: true })
       .getByPlaceholder('Define minimum size')
       .click();
     await frame
-      .getByRole('gridcell', { name: '1000', exact: true })
+      .getByRole('gridcell', { name: '15', exact: true })
       .getByPlaceholder('Define minimum size')
-      .fill('1024');
+      .fill('20');
 
     await frame.getByRole('button', { name: '/tmp' }).click();
     await frame.getByRole('option', { name: '/usr' }).click();
@@ -216,8 +216,8 @@ test('Create a blueprint with Filesystem customization', async ({
       .getByRole('textbox', { name: 'mountpoint suffix' })
       .fill('/data');
 
-    await frame.getByRole('button', { name: 'KiB' }).click();
-    await frame.getByRole('option', { name: 'MiB' }).click();
+    await frame.getByRole('button', { name: 'MiB' }).click();
+    await frame.getByRole('option', { name: 'GiB' }).click();
 
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
@@ -273,7 +273,7 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /srv /data xfs 1 GiB',
+        name: 'Draggable row draggable button /srv /data xfs 20 GiB',
       })
       .getByRole('button')
       .nth(3);
@@ -285,9 +285,9 @@ test('Create a blueprint with Filesystem customization', async ({
     await expect(dataTextbox).toHaveValue('/data');
 
     const size = frame
-      .getByRole('gridcell', { name: '1', exact: true })
+      .getByRole('gridcell', { name: '20', exact: true })
       .getByPlaceholder('Define minimum size');
-    await expect(size).toHaveValue('1');
+    await expect(size).toHaveValue('20');
 
     const unitButton = frame.getByRole('button', { name: 'GiB' }).nth(1);
     await expect(unitButton).toBeVisible();

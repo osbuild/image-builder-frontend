@@ -49,7 +49,7 @@ minsize = 10737418240
 
 [[customizations.filesystem]]
 mountpoint = "/srv/data"
-minsize = 1073741824
+minsize = 21474836480
 
 [customizations.timezone]
 timezone = "Etc/UTC"
