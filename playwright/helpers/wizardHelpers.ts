@@ -117,6 +117,7 @@ export const fillInImageOutputGuest = async (page: Page | FrameLocator) => {
 export const deleteBlueprint = async (page: Page, blueprintName: string) => {
   // Since new browser is opened during the BP cleanup, we need to call the popup closer again
   await closePopupsIfExist(page);
+
   await test.step(
     'Delete the blueprint with name: ' + blueprintName,
     async () => {

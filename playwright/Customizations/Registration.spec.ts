@@ -357,6 +357,7 @@ registrationModes.forEach(
       });
 
       let exportedBP = '';
+
       await test.step('Export blueprint', async () => {
         exportedBP = await exportBlueprint(page);
         cleanup.add(async () => {

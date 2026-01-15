@@ -188,6 +188,7 @@ test('Create a blueprint with AAP registration customization', async ({
   });
 
   let exportedBP = '';
+
   // This is for hosted service only as these features are not available in cockpit plugin
   await test.step('Export BP', async (step) => {
     step.skip(!isHosted(), 'Exporting is not available in the plugin');
