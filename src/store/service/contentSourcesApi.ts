@@ -4,6 +4,16 @@ const injectedRtkApi = api.injectEndpoints({
     listFeatures: build.query<ListFeaturesApiResponse, ListFeaturesApiArg>({
       query: () => ({ url: `/features/` }),
     }),
+    searchRepositoryModuleStreams: build.mutation<
+      SearchRepositoryModuleStreamsApiResponse,
+      SearchRepositoryModuleStreamsApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/module_streams/search`,
+        method: "POST",
+        body: queryArg.apiSearchModuleStreamsRequest,
+      }),
+    }),
     searchPackageGroup: build.mutation<
       SearchPackageGroupApiResponse,
       SearchPackageGroupApiArg
@@ -119,6 +129,12 @@ const injectedRtkApi = api.injectEndpoints({
 export { injectedRtkApi as contentSourcesApi };
 export type ListFeaturesApiResponse = /** status 200 OK */ ApiFeatureSet;
 export type ListFeaturesApiArg = void;
+export type SearchRepositoryModuleStreamsApiResponse =
+  /** status 200 OK */ ApiSearchModuleStreams[];
+export type SearchRepositoryModuleStreamsApiArg = {
+  /** request body */
+  apiSearchModuleStreamsRequest: ApiSearchModuleStreamsRequest;
+};
 export type SearchPackageGroupApiResponse =
   /** status 200 OK */ ApiSearchPackageGroupResponse[];
 export type SearchPackageGroupApiArg = {
@@ -232,15 +248,33 @@ export type ApiFeature = {
 export type ApiFeatureSet = {
   [key: string]: ApiFeature;
 };
-export type ApiSearchPackageGroupResponse = {
-  /** Description of the package group found */
+export type ApiStream = {
+  /** The Architecture of the rpm */
+  arch?: string | undefined;
+  /** Context of the module */
+  context?: string | undefined;
+  /** Module description */
   description?: string | undefined;
-  /** Package group ID */
-  id?: string | undefined;
-  /** Name of package group found */
-  package_group_name?: string | undefined;
-  /** Package list of the package group found */
-  package_list?: string[] | undefined;
+  /** Name of the module */
+  name?: string | undefined;
+  /** List of package names in the module stream */
+  package_names?: string[] | undefined;
+  /** Module profile data */
+  profiles?:
+    | {
+        [key: string]: string[];
+      }
+    | undefined;
+  /** Module stream version */
+  stream?: string | undefined;
+  /** The version of the rpm */
+  version?: string | undefined;
+};
+export type ApiSearchModuleStreams = {
+  /** Module name */
+  module_name?: string | undefined;
+  /** A list of stream related information for the module */
+  streams?: ApiStream[] | undefined;
 };
 export type ErrorsHandlerError = {
   /** An explanation specific to the problem */
@@ -252,6 +286,28 @@ export type ErrorsHandlerError = {
 };
 export type ErrorsErrorResponse = {
   errors?: ErrorsHandlerError[] | undefined;
+};
+export type ApiSearchModuleStreamsRequest = {
+  /** List of rpm names to search */
+  rpm_names: string[];
+  /** Search string to search rpm names */
+  search?: string | undefined;
+  /** SortBy sets the sort order of the result */
+  sort_by?: string | undefined;
+  /** List of repository URLs to search */
+  urls: string[];
+  /** List of repository UUIDs to search */
+  uuids: string[];
+};
+export type ApiSearchPackageGroupResponse = {
+  /** Description of the package group found */
+  description?: string | undefined;
+  /** Package group ID */
+  id?: string | undefined;
+  /** Name of package group found */
+  package_group_name?: string | undefined;
+  /** Package list of the package group found */
+  package_list?: string[] | undefined;
 };
 export type ApiContentUnitSearchRequest = {
   /** Optional date to search in dated snapshots of the listed repositories. */
@@ -823,6 +879,7 @@ export type ApiTemplateCollectionResponseRead = {
 };
 export const {
   useListFeaturesQuery,
+  useSearchRepositoryModuleStreamsMutation,
   useSearchPackageGroupMutation,
   useListRepositoriesQuery,
   useCreateRepositoryMutation,
