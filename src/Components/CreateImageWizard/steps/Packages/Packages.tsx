@@ -184,6 +184,15 @@ const Packages = () => {
       origin: ContentOrigin.EXTERNAL,
     });
 
+  const distroUrls = useMemo(() => {
+    return (
+      distroRepositories
+        ?.find((archItem) => archItem.arch === arch)
+        ?.repositories.filter((repo) => !!repo.baseurl)
+        .map((repo) => repo.baseurl!) ?? []
+    );
+  }, [distroRepositories, arch]);
+
   const [currentlyRemovedPackages, setCurrentlyRemovedPackages] = useState<
     IBPackageWithRepositoryInfo[]
   >([]);
@@ -294,16 +303,7 @@ const Packages = () => {
             search: debouncedSearchTerm,
             urls:
               template === ''
-                ? distroRepositories
-                    .filter((archItem) => {
-                      return archItem.arch === arch;
-                    })[0]
-                    .repositories.flatMap((repo) => {
-                      if (!repo.baseurl) {
-                        throw new Error(`Repository ${repo} missing baseurl`);
-                      }
-                      return repo.baseurl;
-                    })
+                ? distroUrls
                 : reposInTemplate
                     .filter((r) => r.org_id === '-1' && !!r.url)
                     .flatMap((r) =>
@@ -360,6 +360,7 @@ const Packages = () => {
     distribution,
     debouncedSearchTermIsGroup,
     snapshotDate,
+    distroUrls,
   ]);
 
   useEffect(() => {
@@ -370,16 +371,7 @@ const Packages = () => {
       searchDistroGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substring(1),
-          urls: distroRepositories
-            .filter((archItem) => {
-              return archItem.arch === arch;
-            })[0]
-            .repositories.flatMap((repo) => {
-              if (!repo.baseurl) {
-                throw new Error(`Repository ${repo} missing baseurl`);
-              }
-              return repo.baseurl;
-            }),
+          urls: distroUrls,
           date: snapshotDate
             ? new Date(convertStringToDate(snapshotDate)).toISOString()
             : undefined,
@@ -423,21 +415,15 @@ const Packages = () => {
     isSuccessDistroRepositories,
     isSuccessEpelRepo,
     snapshotDate,
+    distroUrls,
   ]);
 
   useEffect(() => {
-    if (wizardMode !== 'create' && isSuccessDistroRepositories) {
-      const distroUrls = distroRepositories
-        .filter((archItem) => {
-          return archItem.arch === arch;
-        })[0]
-        .repositories.flatMap((repo) => {
-          if (!repo.baseurl) {
-            throw new Error(`Repository ${repo} missing baseurl`);
-          }
-          return repo.baseurl;
-        });
-
+    if (
+      wizardMode !== 'create' &&
+      isSuccessDistroRepositories &&
+      modules.length > 0
+    ) {
       searchModulesInfo({
         apiSearchModuleStreamsRequest: {
           rpm_names: modules.map((module) => module.name),
@@ -446,7 +432,7 @@ const Packages = () => {
         },
       });
     }
-  }, [isSuccessDistroRepositories]);
+  }, [isSuccessDistroRepositories, modules, distroUrls]);
 
   useEffect(() => {
     if (!isSuccessModulesInfo) return;
