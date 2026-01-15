@@ -34,6 +34,7 @@ test('FIPS switch toggles and persists through save', async ({
       `Endpoint ${complianceLandingPageEndpoint} is not available - service is most likely down.`,
     );
   });
+
   const blueprintName = 'test-' + uuidv4();
 
   // Delete the blueprint after the run fixture

@@ -204,6 +204,7 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   let exportedBP = '';
+
   await test.step('Export BP', async () => {
     exportedBP = await exportBlueprint(page);
     cleanup.add(async () => {

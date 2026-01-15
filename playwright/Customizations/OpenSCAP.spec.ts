@@ -232,6 +232,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
   });
 
   let exportedBP = '';
+
   await test.step('Export BP', async () => {
     exportedBP = await exportBlueprint(page);
     cleanup.add(async () => {

@@ -43,6 +43,7 @@ export const deleteCompliancePolicy = async (
 ) => {
   // Since new browser is opened during the Compliance policy cleanup, we need to call the popup closer again
   await closePopupsIfExist(page);
+
   await test.step(
     'Delete the compliance policy with name: ' + policyName,
     async () => {
@@ -77,6 +78,7 @@ export const deleteRepository = async (
   repositoryNameOrUrl: string,
 ) => {
   await closePopupsIfExist(page);
+
   await test.step(
     'Delete the repository with name: ' + repositoryNameOrUrl,
     async () => {
@@ -293,6 +295,7 @@ export const navigateToTemplates = async (page: Page) => {
  */
 export const deleteTemplate = async (page: Page, templateName: string) => {
   await closePopupsIfExist(page);
+
   await test.step(
     'Delete the template with name: ' + templateName,
     async () => {
