@@ -74,6 +74,7 @@ import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
+  useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
@@ -96,6 +97,7 @@ import {
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
+  selectWizardMode,
 } from '../../../../store/wizardSlice';
 import {
   getEpelDefinitionForDistribution,
@@ -149,6 +151,7 @@ const Packages = () => {
   const modules = useAppSelector(selectModules);
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
+  const wizardMode = useAppSelector(selectWizardMode);
 
   const { data: templateData } = useGetTemplateQuery({
     uuid: template,
@@ -263,6 +266,11 @@ const Packages = () => {
       isLoading: isLoadingRecommendedGroups,
     },
   ] = useSearchPackageGroupMutation();
+
+  const [
+    searchModulesInfo,
+    { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
+  ] = useSearchRepositoryModuleStreamsMutation();
 
   const [createRepository, { isLoading: createLoading }] =
     useCreateRepositoryMutation();
@@ -416,6 +424,56 @@ const Packages = () => {
     isSuccessEpelRepo,
     snapshotDate,
   ]);
+
+  useEffect(() => {
+    if (wizardMode !== 'create' && isSuccessDistroRepositories) {
+      const distroUrls = distroRepositories
+        .filter((archItem) => {
+          return archItem.arch === arch;
+        })[0]
+        .repositories.flatMap((repo) => {
+          if (!repo.baseurl) {
+            throw new Error(`Repository ${repo} missing baseurl`);
+          }
+          return repo.baseurl;
+        });
+
+      searchModulesInfo({
+        apiSearchModuleStreamsRequest: {
+          rpm_names: modules.map((module) => module.name),
+          urls: [...distroUrls, epelRepoUrlByDistribution],
+          uuids: [],
+        },
+      });
+    }
+  }, [isSuccessDistroRepositories]);
+
+  useEffect(() => {
+    if (!isSuccessModulesInfo) return;
+
+    dataModulesInfo.forEach((module) => {
+      const enabledModule = modules.find((m) => m.name === module.module_name);
+
+      module.streams
+        ?.find((stream) => stream.stream === enabledModule?.stream)
+        ?.package_names?.forEach((packageName) => {
+          const existingPackage = packages.find(
+            (pkg) => pkg.name === packageName,
+          );
+
+          if (existingPackage && module.module_name && enabledModule) {
+            dispatch(
+              addPackage({
+                ...existingPackage,
+                type: 'module',
+                module_name: module.module_name,
+                stream: enabledModule.stream,
+              }),
+            );
+          }
+        });
+    });
+  }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
 
   const EmptySearch = () => {
     return (
