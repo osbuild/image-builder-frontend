@@ -20,7 +20,9 @@ export const createBlueprint = async (
   await page.getByRole('button', { name: 'Create blueprint' }).click();
   await page.getByRole('button', { name: 'Close' }).first().click();
   await page.getByRole('button', { name: 'Create blueprint' }).click();
-  await page.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+  const searchInput = page.getByRole('textbox', { name: 'Search input' });
+  await expect(searchInput).toBeEditable();
+  await searchInput.fill(blueprintName);
   // the clickable blueprint cards are a bit awkward, so use the
   // button's id instead
   await page.locator(`button[id="${blueprintName}"]`).click();
