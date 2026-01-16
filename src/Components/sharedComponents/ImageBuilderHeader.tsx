@@ -77,6 +77,12 @@ export const ImageBuilderHeader = ({
   const [showImportModal, setShowImportModal] = useState(false);
   const [showCloudConfigModal, setShowCloudConfigModal] = useState(false);
 
+  const pageHeaderProps: React.ComponentProps<typeof PageHeader> &
+    React.ComponentPropsWithoutRef<'section'> = {
+    className: 'pf-m-sticky-top',
+    style: { boxShadow: 'none' },
+  };
+
   return (
     <>
       <ImportBlueprintModal
@@ -89,7 +95,7 @@ export const ImageBuilderHeader = ({
           isOpen={showCloudConfigModal}
         />
       )}
-      <PageHeader className='pf-m-sticky-top'>
+      <PageHeader {...pageHeaderProps}>
         <PageHeaderTitle
           title={
             <>
