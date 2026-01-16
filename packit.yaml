@@ -33,6 +33,8 @@ jobs:
       - centos-stream-10
       - centos-stream-10-aarch64
       - fedora-all
+      - rhel-10
+      - rhel-10-aarch64
 
   - job: copr_build
     trigger: commit
