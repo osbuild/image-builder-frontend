@@ -39,8 +39,12 @@ export const login = async (page: Page, staticUser: boolean = false) => {
 /**
  * Checks if the user is already authenticated, if not, logs them in
  * @param page - the page object
+ * @param staticUser - if true, use the static user instead of dynamically created one
  */
-export const ensureAuthenticated = async (page: Page) => {
+export const ensureAuthenticated = async (
+  page: Page,
+  staticUser: boolean = false,
+) => {
   // Navigate to the target page
   if (isHosted()) {
     await page.goto('/insights/image-builder/landing');
@@ -64,7 +68,7 @@ export const ensureAuthenticated = async (page: Page) => {
 
   if (!isAuthenticated) {
     // Not authenticated, need to login
-    await login(page);
+    await login(page, staticUser);
   }
 };
 

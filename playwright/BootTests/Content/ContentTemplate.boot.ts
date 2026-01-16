@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
-import { ensureAuthenticated } from '../../helpers/login';
+import { ensureAuthenticated, login } from '../../helpers/login';
 import {
   fillInImageOutput,
   ibFrame,
@@ -31,6 +31,9 @@ import {
 } from '../helpers/imageBuilding';
 import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
 
+// Clear the login from global setup so we can use static user
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test('Content integration test - Content Template', async ({
   page,
   cleanup,
@@ -46,11 +49,8 @@ test('Content integration test - Content Template', async ({
   const templateName = 'content-template-test-' + uuidv4().slice(0, 8);
   const hostname = 'content-template-test-' + uuidv4().slice(0, 8); // Short unique hostname for system identification
   const repositoryUrl =
-    'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata/';
+    'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata-multi/2/';
   const packageName = 'cockateel';
-
-  // Ensure repository URL is not already in use
-  await deleteRepository(page, repositoryUrl);
 
   // Register cleanup functions
   cleanup.add(() => deleteBlueprint(page, blueprintName));
@@ -59,7 +59,11 @@ test('Content integration test - Content Template', async ({
   cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
   cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
-  await ensureAuthenticated(page);
+  // Use static user because of activation key
+  await login(page, true);
+
+  // Ensure repository URL is not already in use
+  await deleteRepository(page, repositoryUrl);
 
   await test.step('Create a custom repository with snapshotting', async () => {
     await navigateToRepositories(page);
@@ -261,7 +265,7 @@ test('Content integration test - Content Template', async ({
 
   await test.step('Verify system appears in Inventory', async () => {
     // Re-authenticate to refresh cookies (session may have expired during long build)
-    await ensureAuthenticated(page);
+    await ensureAuthenticated(page, true);
 
     const result = await pollForSystemInInventory(
       page,
@@ -276,7 +280,7 @@ test('Content integration test - Content Template', async ({
   });
 
   await test.step('Verify system is attached to content template', async () => {
-    await ensureAuthenticated(page);
+    await ensureAuthenticated(page, true);
 
     const isAttached = await pollForSystemTemplateAttachment(
       page,
