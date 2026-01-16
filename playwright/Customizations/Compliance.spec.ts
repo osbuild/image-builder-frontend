@@ -9,7 +9,7 @@ import {
 } from '../BootTests/helpers/helpers';
 import { test } from '../fixtures/customizations';
 import { isHosted, isServiceAvailable } from '../helpers/helpers';
-import { ensureAuthenticated, login } from '../helpers/login';
+import { login } from '../helpers/login';
 import {
   fillInImageOutput,
   ibFrame,
@@ -21,6 +21,9 @@ import {
   fillInDetails,
   registerLater,
 } from '../helpers/wizardHelpers';
+
+// Clear the login from global setup so we can use static user
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Create a blueprint with Compliance policy selected', async ({
   page,
@@ -46,7 +49,7 @@ test('Create a blueprint with Compliance policy selected', async ({
   // Delete the blueprint after the run fixture
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
-  await ensureAuthenticated(page);
+  await login(page, true);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
@@ -103,9 +106,6 @@ test('Create a blueprint with Compliance policy selected', async ({
     ).toBeVisible();
   });
 });
-
-// Clear the login from global setup so we can use static user
-test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
   test.skip(!isHosted(), 'Compliance alerts are not available in the plugin');

@@ -11,7 +11,7 @@ import {
   isHosted,
   uploadCertificateFile,
 } from '../helpers/helpers';
-import { ensureAuthenticated } from '../helpers/login';
+import { ensureAuthenticated, login } from '../helpers/login';
 import {
   fillInImageOutput,
   ibFrame,
@@ -136,250 +136,283 @@ const registrationModes = [
 // Parameterize tests for each registration mode
 registrationModes.forEach(
   ({ name, setup, expectedReviewText, expectedHiddenText }) => {
-    test(`Registration ${name} mode - Create, Edit, and Import`, async ({
-      page,
-      cleanup,
-    }) => {
-      if (!isHosted() && !isRhel(getHostDistroName())) {
-        test.skip(
-          true,
-          'Registration is only available for RHEL distributions on-premise',
-        );
+    test.describe(`Registration ${name} mode`, () => {
+      // Only clear storage state for automatic mode (needs static user for activation keys)
+      if (name === 'automatic') {
+        test.use({ storageState: { cookies: [], origins: [] } });
       }
 
-      const blueprintName = `test-${name}-${uuidv4()}`;
-
-      // Delete the blueprint after the run fixture
-      cleanup.add(() => deleteBlueprint(page, blueprintName));
-
-      await ensureAuthenticated(page);
-
-      // Navigate to IB landing page and get the frame
-      await navigateToLandingPage(page);
-      const frame = ibFrame(page);
-
-      await test.step('Navigate to Registration step', async () => {
-        await fillInImageOutput(frame);
-        await frame.getByRole('button', { name: 'Register' }).click();
-      });
-
-      await test.step(`Setup ${name} registration mode`, async () => {
-        await setup(frame);
-      });
-
-      await test.step('Test registration options toggles', async () => {
-        if (name === 'automatic') {
-          await expect(
-            frame.getByRole('button', { name: 'View details' }),
-          ).toBeVisible();
-          await expect(frame.getByText('activation-key-')).toBeHidden();
-          await frame.getByRole('button', { name: 'View details' }).click();
-          await expect(
-            frame.getByRole('button', { name: 'View details' }),
-          ).toBeVisible();
-          await expect(frame.getByText('activation-key-')).toBeVisible();
-          await frame.getByRole('button', { name: 'Close' }).click();
-
-          // Test enabling/disabling predictive analytics
-          const insightsSwitch = frame.getByText('Enable predictive analytics');
-          const insightsReviewStep = frame.getByText(
-            'Connect to Red Hat Lightspeed',
+      test('Create, Edit, and Import', async ({ page, cleanup }) => {
+        if (!isHosted() && !isRhel(getHostDistroName())) {
+          test.skip(
+            true,
+            'Registration is only available for RHEL distributions on-premise',
           );
-          // Test enabling/disabling remote remediations
-          const rhcSwitch = frame.getByText('Enable remote remediations');
-          const rhcReviewStep = frame.getByText(
-            'Use remote host configuration',
-          );
-
-          // insights on, rhc off
-          await rhcSwitch.click();
-          await expect(rhcSwitch).not.toBeChecked();
-          await expect(insightsSwitch).toBeChecked(); // does not influence insights toggle
-          await frame
-            .getByRole('button', { name: 'Review and finish' })
-            .click();
-          await expect(
-            frame.getByText('Register the system later'),
-          ).toBeHidden();
-          await expect(frame.getByText('Register with Red Hat')).toBeVisible();
-          // Check activation key display based on environment
-          if (isHosted()) {
-            await expect(frame.getByText('activation-key-')).toBeVisible();
-          } else if (isRhel(getHostDistroName())) {
-            await expect(frame.getByText('test-activation-key')).toBeVisible();
-            await expect(frame.getByText('12345')).toBeVisible(); // organization id
-          }
-          await expect(insightsReviewStep).toBeVisible();
-          await expect(rhcReviewStep).toBeHidden();
-          await frame.getByRole('button', { name: 'Register' }).click();
-          // check if the state is the same after returning from review step
-          await expect(rhcSwitch).not.toBeChecked();
-          await expect(insightsSwitch).toBeChecked();
-
-          // insights off => rhc off
-          await rhcSwitch.click();
-          await insightsSwitch.click();
-          await expect(insightsSwitch).not.toBeChecked();
-          await expect(rhcSwitch).not.toBeChecked(); // to use rhc, insights must be enabled
-          await frame
-            .getByRole('button', { name: 'Review and finish' })
-            .click();
-          await expect(
-            frame.getByText('Register the system later'),
-          ).toBeHidden();
-          await expect(frame.getByText('Register with Red Hat')).toBeVisible();
-          // Check activation key display based on environment
-          if (isHosted()) {
-            await expect(frame.getByText('activation-key-')).toBeVisible();
-          } else {
-            await expect(frame.getByText('test-activation-key')).toBeVisible();
-          }
-          await expect(insightsReviewStep).toBeHidden();
-          await expect(rhcReviewStep).toBeHidden();
-          await frame.getByRole('button', { name: 'Register' }).click();
-          // check if the state is the same after returning from review step
-          await expect(insightsSwitch).not.toBeChecked();
-          await expect(rhcSwitch).not.toBeChecked();
-
-          // rhc on => insights on
-          await rhcSwitch.click();
-          await expect(rhcSwitch).toBeChecked();
-          await expect(insightsSwitch).toBeChecked(); // turning on rhc turns on insights
-          await frame
-            .getByRole('button', { name: 'Review and finish' })
-            .click();
-          await expect(
-            frame.getByText('Register the system later'),
-          ).toBeHidden();
-          await expect(frame.getByText('Register with Red Hat')).toBeVisible();
-          // Check activation key display based on environment
-          if (isHosted()) {
-            await expect(frame.getByText('activation-key-')).toBeVisible();
-          } else if (isRhel(getHostDistroName())) {
-            await expect(frame.getByText('test-activation-key')).toBeVisible();
-            await expect(frame.getByText('12345')).toBeVisible(); // organization id
-          }
-          await expect(insightsReviewStep).toBeVisible();
-          await expect(rhcReviewStep).toBeVisible();
-          await frame.getByRole('button', { name: 'Register' }).click();
-          // check if the state is the same after returning from review step
-          await expect(rhcSwitch).toBeChecked();
-          await expect(insightsSwitch).toBeChecked();
-        } else if (name === 'satellite') {
-          // Test satellite registration command validation
-          const registrationCommandInput = frame.getByRole('textbox', {
-            name: 'registration command',
-          });
-
-          // Test invalid command
-          await registrationCommandInput.fill('invalid-command');
-          await expect(
-            frame.getByText('Invalid or missing token:'),
-          ).toBeVisible();
-          await expect(
-            frame.getByRole('button', { name: 'Review and finish' }),
-          ).toBeDisabled();
-
-          // Test expired token command
-          await registrationCommandInput.fill(SATELLITE_COMMAND_EXPIRED_TOKEN);
-          await expect(
-            frame.getByText(
-              'The token is already expired or will expire by next day.',
-            ),
-          ).toBeVisible();
-          await expect(
-            frame.getByRole('button', { name: 'Review and finish' }),
-          ).toBeEnabled();
-
-          // Test valid command with no expiration
-          await registrationCommandInput.fill(SATELLITE_COMMAND_NO_EXPIRATION);
-          await expect(
-            frame.getByText('Invalid or missing token:'),
-          ).toBeHidden();
-          await expect(
-            frame.getByText(
-              'The token is already expired or will expire by next day.',
-            ),
-          ).toBeHidden();
-
-          // Test valid command with standard token
-          await registrationCommandInput.fill(SATELLITE_COMMAND);
-          await expect(
-            frame.getByText('Invalid or missing token:'),
-          ).toBeHidden();
-
-          await frame.getByRole('button', { name: 'Systemd services' }).click();
-          await expect(frame.getByText('register-satellite')).toBeVisible();
         }
-      });
 
-      await test.step('Fill the BP details', async () => {
-        await frame.getByRole('button', { name: 'Review and finish' }).click();
-        await fillInDetails(frame, blueprintName);
-      });
+        const blueprintName = `test-${name}-${uuidv4()}`;
 
-      await test.step('Verify Review step shows correct registration details', async () => {
-        await expect(frame.getByText(expectedReviewText)).toBeVisible();
-        await expect(frame.getByText(expectedHiddenText)).toBeHidden();
-      });
+        // Delete the blueprint after the run fixture
+        cleanup.add(() => deleteBlueprint(page, blueprintName));
 
-      await test.step('Create and save blueprint', async () => {
-        await createBlueprint(frame, blueprintName);
-      });
-
-      await test.step('Edit blueprint and verify registration persisted', async () => {
-        await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-        await frame.getByTestId('revisit-registration').click();
-
-        // Verify the original registration mode is still selected
+        // Use static user only for automatic mode (needs pre-existing activation keys)
         if (name === 'automatic') {
+          await login(page, true);
+        } else {
+          await ensureAuthenticated(page);
+        }
+
+        // Navigate to IB landing page and get the frame
+        await navigateToLandingPage(page);
+        const frame = ibFrame(page);
+
+        await test.step('Navigate to Registration step', async () => {
+          await fillInImageOutput(frame);
+          await frame.getByRole('button', { name: 'Register' }).click();
+        });
+
+        await test.step(`Setup ${name} registration mode`, async () => {
+          await setup(frame);
+        });
+
+        await test.step('Test registration options toggles', async () => {
+          if (name === 'automatic') {
+            await expect(
+              frame.getByRole('button', { name: 'View details' }),
+            ).toBeVisible();
+            await expect(frame.getByText('activation-key-')).toBeHidden();
+            await frame.getByRole('button', { name: 'View details' }).click();
+            await expect(
+              frame.getByRole('button', { name: 'View details' }),
+            ).toBeVisible();
+            await expect(frame.getByText('activation-key-')).toBeVisible();
+            await frame.getByRole('button', { name: 'Close' }).click();
+
+            // Test enabling/disabling predictive analytics
+            const insightsSwitch = frame.getByText(
+              'Enable predictive analytics',
+            );
+            const insightsReviewStep = frame.getByText(
+              'Connect to Red Hat Lightspeed',
+            );
+            // Test enabling/disabling remote remediations
+            const rhcSwitch = frame.getByText('Enable remote remediations');
+            const rhcReviewStep = frame.getByText(
+              'Use remote host configuration',
+            );
+
+            // insights on, rhc off
+            await rhcSwitch.click();
+            await expect(rhcSwitch).not.toBeChecked();
+            await expect(insightsSwitch).toBeChecked(); // does not influence insights toggle
+            await frame
+              .getByRole('button', { name: 'Review and finish' })
+              .click();
+            await expect(
+              frame.getByText('Register the system later'),
+            ).toBeHidden();
+            await expect(
+              frame.getByText('Register with Red Hat'),
+            ).toBeVisible();
+            // Check activation key display based on environment
+            if (isHosted()) {
+              await expect(frame.getByText('activation-key-')).toBeVisible();
+            } else if (isRhel(getHostDistroName())) {
+              await expect(
+                frame.getByText('test-activation-key'),
+              ).toBeVisible();
+              await expect(frame.getByText('12345')).toBeVisible(); // organization id
+            }
+            await expect(insightsReviewStep).toBeVisible();
+            await expect(rhcReviewStep).toBeHidden();
+            await frame.getByRole('button', { name: 'Register' }).click();
+            // check if the state is the same after returning from review step
+            await expect(rhcSwitch).not.toBeChecked();
+            await expect(insightsSwitch).toBeChecked();
+
+            // insights off => rhc off
+            await rhcSwitch.click();
+            await insightsSwitch.click();
+            await expect(insightsSwitch).not.toBeChecked();
+            await expect(rhcSwitch).not.toBeChecked(); // to use rhc, insights must be enabled
+            await frame
+              .getByRole('button', { name: 'Review and finish' })
+              .click();
+            await expect(
+              frame.getByText('Register the system later'),
+            ).toBeHidden();
+            await expect(
+              frame.getByText('Register with Red Hat'),
+            ).toBeVisible();
+            // Check activation key display based on environment
+            if (isHosted()) {
+              await expect(frame.getByText('activation-key-')).toBeVisible();
+            } else {
+              await expect(
+                frame.getByText('test-activation-key'),
+              ).toBeVisible();
+            }
+            await expect(insightsReviewStep).toBeHidden();
+            await expect(rhcReviewStep).toBeHidden();
+            await frame.getByRole('button', { name: 'Register' }).click();
+            // check if the state is the same after returning from review step
+            await expect(insightsSwitch).not.toBeChecked();
+            await expect(rhcSwitch).not.toBeChecked();
+
+            // rhc on => insights on
+            await rhcSwitch.click();
+            await expect(rhcSwitch).toBeChecked();
+            await expect(insightsSwitch).toBeChecked(); // turning on rhc turns on insights
+            await frame
+              .getByRole('button', { name: 'Review and finish' })
+              .click();
+            await expect(
+              frame.getByText('Register the system later'),
+            ).toBeHidden();
+            await expect(
+              frame.getByText('Register with Red Hat'),
+            ).toBeVisible();
+            // Check activation key display based on environment
+            if (isHosted()) {
+              await expect(frame.getByText('activation-key-')).toBeVisible();
+            } else if (isRhel(getHostDistroName())) {
+              await expect(
+                frame.getByText('test-activation-key'),
+              ).toBeVisible();
+              await expect(frame.getByText('12345')).toBeVisible(); // organization id
+            }
+            await expect(insightsReviewStep).toBeVisible();
+            await expect(rhcReviewStep).toBeVisible();
+            await frame.getByRole('button', { name: 'Register' }).click();
+            // check if the state is the same after returning from review step
+            await expect(rhcSwitch).toBeChecked();
+            await expect(insightsSwitch).toBeChecked();
+          } else if (name === 'satellite') {
+            // Test satellite registration command validation
+            const registrationCommandInput = frame.getByRole('textbox', {
+              name: 'registration command',
+            });
+
+            // Test invalid command
+            await registrationCommandInput.fill('invalid-command');
+            await expect(
+              frame.getByText('Invalid or missing token:'),
+            ).toBeVisible();
+            await expect(
+              frame.getByRole('button', { name: 'Review and finish' }),
+            ).toBeDisabled();
+
+            // Test expired token command
+            await registrationCommandInput.fill(
+              SATELLITE_COMMAND_EXPIRED_TOKEN,
+            );
+            await expect(
+              frame.getByText(
+                'The token is already expired or will expire by next day.',
+              ),
+            ).toBeVisible();
+            await expect(
+              frame.getByRole('button', { name: 'Review and finish' }),
+            ).toBeEnabled();
+
+            // Test valid command with no expiration
+            await registrationCommandInput.fill(
+              SATELLITE_COMMAND_NO_EXPIRATION,
+            );
+            await expect(
+              frame.getByText('Invalid or missing token:'),
+            ).toBeHidden();
+            await expect(
+              frame.getByText(
+                'The token is already expired or will expire by next day.',
+              ),
+            ).toBeHidden();
+
+            // Test valid command with standard token
+            await registrationCommandInput.fill(SATELLITE_COMMAND);
+            await expect(
+              frame.getByText('Invalid or missing token:'),
+            ).toBeHidden();
+
+            await frame
+              .getByRole('button', { name: 'Systemd services' })
+              .click();
+            await expect(frame.getByText('register-satellite')).toBeVisible();
+          }
+        });
+
+        await test.step('Fill the BP details', async () => {
+          await frame
+            .getByRole('button', { name: 'Review and finish' })
+            .click();
+          await fillInDetails(frame, blueprintName);
+        });
+
+        await test.step('Verify Review step shows correct registration details', async () => {
+          await expect(frame.getByText(expectedReviewText)).toBeVisible();
+          await expect(frame.getByText(expectedHiddenText)).toBeHidden();
+        });
+
+        await test.step('Create and save blueprint', async () => {
+          await createBlueprint(frame, blueprintName);
+        });
+
+        await test.step('Edit blueprint and verify registration persisted', async () => {
+          await frame.getByRole('button', { name: 'Edit blueprint' }).click();
+          await frame.getByTestId('revisit-registration').click();
+
+          // Verify the original registration mode is still selected
+          if (name === 'automatic') {
+            await expect(
+              frame.getByRole('radio', {
+                name: 'Automatically register to Red Hat',
+              }),
+            ).toBeChecked();
+          } else if (name === 'register-later') {
+            await expect(
+              frame.getByRole('radio', { name: 'Register later' }),
+            ).toBeChecked();
+          } else if (name === 'satellite') {
+            await expect(
+              frame.getByRole('radio', {
+                name: 'Register to a Satellite or Capsule',
+              }),
+            ).toBeChecked();
+          }
+
+          await frame
+            .getByRole('button', { name: 'Review and finish' })
+            .click();
+          await frame
+            .getByRole('button', { name: 'Save changes to blueprint' })
+            .click();
+        });
+
+        let exportedBP = '';
+
+        await test.step('Export blueprint', async () => {
+          exportedBP = await exportBlueprint(page);
+          cleanup.add(async () => {
+            await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+          });
+        });
+
+        await test.step('Import blueprint', async () => {
+          await importBlueprint(frame, exportedBP);
+        });
+
+        await test.step('Verify import does not change registration settings', async () => {
+          await fillInImageOutputGuest(frame);
+          await frame.getByRole('button', { name: 'Register' }).click();
+          // Verify registration settings are preserved based on mode
           await expect(
             frame.getByRole('radio', {
               name: 'Automatically register to Red Hat',
             }),
           ).toBeChecked();
-        } else if (name === 'register-later') {
-          await expect(
-            frame.getByRole('radio', { name: 'Register later' }),
-          ).toBeChecked();
-        } else if (name === 'satellite') {
-          await expect(
-            frame.getByRole('radio', {
-              name: 'Register to a Satellite or Capsule',
-            }),
-          ).toBeChecked();
-        }
 
-        await frame.getByRole('button', { name: 'Review and finish' }).click();
-        await frame
-          .getByRole('button', { name: 'Save changes to blueprint' })
-          .click();
-      });
-
-      let exportedBP = '';
-
-      await test.step('Export blueprint', async () => {
-        exportedBP = await exportBlueprint(page);
-        cleanup.add(async () => {
-          await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+          await frame.getByRole('button', { name: 'Cancel' }).click();
         });
-      });
-
-      await test.step('Import blueprint', async () => {
-        await importBlueprint(frame, exportedBP);
-      });
-
-      await test.step('Verify import does not change registration settings', async () => {
-        await fillInImageOutputGuest(frame);
-        await frame.getByRole('button', { name: 'Register' }).click();
-        // Verify registration settings are preserved based on mode
-        await expect(
-          frame.getByRole('radio', {
-            name: 'Automatically register to Red Hat',
-          }),
-        ).toBeChecked();
-
-        await frame.getByRole('button', { name: 'Cancel' }).click();
       });
     });
   },
