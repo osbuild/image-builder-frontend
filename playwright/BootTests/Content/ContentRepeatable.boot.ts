@@ -35,7 +35,7 @@ test('Content integration test - Repeatable build - URL source', async ({
   const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName = 'content-repeatable-test-' + uuidv4().slice(0, 8);
   const initialRepositoryUrl =
-    'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata/';
+    'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata-multi/1/';
   const updatedRepositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/empty/';
   const packageName = 'cockateel';
@@ -69,6 +69,9 @@ test('Content integration test - Repeatable build - URL source', async ({
     await page
       .getByRole('textbox', { name: 'Name/URL filter' })
       .fill(repositoryName);
+    await expect(
+      page.getByRole('button', { name: '- 1 of 1' }).first(),
+    ).toBeVisible();
     await expect(page.getByRole('gridcell', { name: 'Valid' })).toBeVisible({
       timeout: 180000,
     });
@@ -97,6 +100,9 @@ test('Content integration test - Repeatable build - URL source', async ({
     await page
       .getByRole('textbox', { name: 'Name/URL filter' })
       .fill(repositoryName);
+    await expect(
+      page.getByRole('button', { name: '- 1 of 1' }).first(),
+    ).toBeVisible();
     await expect(
       page.getByRole('gridcell', { name: 'Valid' }).first(),
     ).toBeVisible({
