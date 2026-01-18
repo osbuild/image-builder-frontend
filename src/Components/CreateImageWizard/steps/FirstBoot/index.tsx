@@ -81,9 +81,8 @@ const FirstBootStep = () => {
       </Alert>
       <FormGroup>
         <CodeEditor
-          isUploadEnabled
-          isDownloadEnabled
           isCopyEnabled
+          isDownloadEnabled
           isLanguageLabelVisible
           language={language}
           onCodeChange={(code) => {
@@ -97,7 +96,6 @@ const FirstBootStep = () => {
           }}
           code={selectedScript}
           height='35vh'
-          emptyStateButton='Browse'
           emptyStateLink='Start from scratch'
         />
         {errors.script && (
