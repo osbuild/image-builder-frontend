@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-  FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
@@ -41,23 +40,21 @@ export const PasswordValidatedInput = ({
   const { ruleLength, ruleCharacters } = validationState;
 
   return (
-    <FormGroup label='Password' className='pf-v6-u-pb-md'>
-      <>
-        <InputGroup>
-          <InputGroupItem isFill>
-            <TextInput
-              isRequired
-              type={isPasswordVisible ? 'text' : 'password'}
-              onFocus={() => setIsPasswordVisible(true)}
-              onBlur={() => setIsPasswordVisible(false)}
-              value={value}
-              onChange={onChange}
-              aria-label={ariaLabel}
-              placeholder={hasPassword ? '●'.repeat(8) : placeholder}
-            />
-          </InputGroupItem>
-        </InputGroup>
-      </>
+    <>
+      <InputGroup>
+        <InputGroupItem isFill>
+          <TextInput
+            isRequired
+            type={isPasswordVisible ? 'text' : 'password'}
+            onFocus={() => setIsPasswordVisible(true)}
+            onBlur={() => setIsPasswordVisible(false)}
+            value={value}
+            onChange={onChange}
+            aria-label={ariaLabel}
+            placeholder={hasPassword ? '●'.repeat(8) : placeholder}
+          />
+        </InputGroupItem>
+      </InputGroup>
       <FormHelperText>
         <HelperText component='ul'>
           <HelperTextItem variant={ruleLength} component='li'>
@@ -71,6 +68,6 @@ export const PasswordValidatedInput = ({
           )}
         </HelperText>
       </FormHelperText>
-    </FormGroup>
+    </>
   );
 };
