@@ -86,7 +86,7 @@ export type StepValidation = {
 
 export type UsersStepValidation = {
   errors: {
-    [key: string]: { [key: string]: string };
+    [key: string]: { [key: string]: string } | undefined;
   };
   disabledNext: boolean;
 };

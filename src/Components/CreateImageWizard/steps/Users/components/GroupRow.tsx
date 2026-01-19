@@ -23,8 +23,7 @@ const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useUserGroupsValidation();
   const getValidationByIndex = (idx: number) => {
-    const errors =
-      idx in stepValidation.errors ? stepValidation.errors[idx] : {};
+    const errors = stepValidation.errors[idx] ?? {};
     return {
       errors,
       disabledNext: stepValidation.disabledNext,

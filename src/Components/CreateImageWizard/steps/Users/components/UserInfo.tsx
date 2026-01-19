@@ -36,6 +36,9 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const showAlert = attemptedNext && hasErrors;
 
   const onAddUserClick = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     dispatch(addUser());
   };
   return (
@@ -74,6 +77,7 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
         <Button
           variant='link'
           onClick={onAddUserClick}
+          onMouseDown={(e) => e.preventDefault()}
           icon={<AddCircleOIcon />}
           isDisabled={!!stepValidation.disabledNext || users.length < 1}
         >
