@@ -564,7 +564,9 @@ test('Create a blueprint with Groups customization', async ({
 
   await test.step('Add groups', async () => {
     await frame.getByPlaceholder('Set group name').fill('developers');
-    await expect(frame.getByPlaceholder('Set group ID')).toBeVisible();
+    await expect(frame.getByRole('textbox', { name: 'Group ID' })).toHaveValue(
+      '1000',
+    );
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('qa-team');

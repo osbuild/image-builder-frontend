@@ -97,7 +97,7 @@ export type StepValidation = {
 
 export type UsersStepValidation = {
   errors: {
-    [key: string]: { [key: string]: string };
+    [key: string]: { [key: string]: string } | undefined;
   };
   warnings: {
     [key: string]: { [key: string]: string };
@@ -814,11 +814,12 @@ const validateSshKey = (userSshKey: string): string => {
   return '';
 };
 
-export function useUsersValidation(): UsersStepValidation {
-  const environments = useAppSelector(selectImageTypes);
-  const blueprintMode = useAppSelector(selectBlueprintMode);
-  const users = useAppSelector(selectUsers);
-  const userGroups = useAppSelector(selectUserGroups);
+export function computeUsersValidation(
+  users: UserWithAdditionalInfo[],
+  userGroups: { name: string }[],
+  blueprintMode: string,
+  environments: string[],
+): UsersStepValidation {
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   if (
@@ -898,6 +899,16 @@ export function useUsersValidation(): UsersStepValidation {
         !SYSTEM_GROUPS.includes(groupName) &&
         isUserGroupValid(groupName),
     );
+    // Check for pending group input that wasn't committed (invalid or duplicate)
+    const pendingGroup = users[index].pendingGroupInput?.trim();
+    if (pendingGroup) {
+      if (!isUserGroupValid(pendingGroup)) {
+        invalidGroups.push(pendingGroup);
+      } else if (users[index].groups.includes(pendingGroup)) {
+        duplicateGroups.push(pendingGroup);
+      }
+    }
+
     if (
       invalidGroups.length > 0 ||
       duplicateGroups.length > 0 ||
@@ -950,8 +961,17 @@ export function useUsersValidation(): UsersStepValidation {
   };
 }
 
-export function useUserGroupsValidation(): UsersStepValidation {
+export function useUsersValidation(): UsersStepValidation {
+  const environments = useAppSelector(selectImageTypes);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
+  return computeUsersValidation(users, userGroups, blueprintMode, environments);
+}
+
+export function computeUserGroupsValidation(
+  userGroups: { name: string; gid?: number }[],
+): UsersStepValidation {
   const errors: { [key: string]: { [key: string]: string } } = {};
   const warnings: { [key: string]: { [key: string]: string } } = {};
 
@@ -1001,6 +1021,11 @@ export function useUserGroupsValidation(): UsersStepValidation {
     warnings,
     disabledNext: !canProceed,
   };
+}
+
+export function useUserGroupsValidation(): UsersStepValidation {
+  const userGroups = useAppSelector(selectUserGroups);
+  return computeUserGroupsValidation(userGroups);
 }
 
 export const checkPasswordValidity = (

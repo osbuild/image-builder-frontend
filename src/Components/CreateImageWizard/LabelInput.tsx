@@ -18,7 +18,17 @@ import { useAppDispatch } from '../../store/hooks';
 const DEFAULT_TRUNCATE_LENGTH = 20;
 const CHIP_COLLAPSE_THRESHOLD = 4;
 
-type LabelInputProps = {
+type ControlledProps = {
+  currentInputValue: string;
+  onInputValueChange: (value: string) => UnknownAction;
+};
+
+type UncontrolledProps = {
+  currentInputValue?: never;
+  onInputValueChange?: never;
+};
+
+type LabelInputProps = (ControlledProps | UncontrolledProps) & {
   ariaLabel: string;
   placeholder: string;
   validator: (value: string) => boolean;
@@ -32,6 +42,8 @@ type LabelInputProps = {
   fieldName: string;
   truncateLength?: number;
   isCompact?: boolean;
+  inlineChips?: boolean;
+  addOnBlur?: boolean;
 };
 
 const LabelInput = ({
@@ -48,33 +60,48 @@ const LabelInput = ({
   fieldName,
   truncateLength = DEFAULT_TRUNCATE_LENGTH,
   isCompact = false,
+  inlineChips = false,
+  currentInputValue,
+  onInputValueChange,
+  addOnBlur = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
-  const [inputValue, setInputValue] = useState('');
-  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
-  let [invalidImports, duplicateImports] = ['', ''];
+  const isReduxControlled = currentInputValue !== undefined;
+  const [localInputValue, setLocalInputValue] = useState('');
+  const inputValue = isReduxControlled ? currentInputValue : localInputValue;
 
-  if (stepValidation.errors[fieldName]) {
-    [invalidImports, duplicateImports] =
-      stepValidation.errors[fieldName].split('|');
-  }
+  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
+
+  const validationErrorText = stepValidation.errors[fieldName] ?? '';
+  const validationErrors = validationErrorText
+    ? validationErrorText.split(/\s*\|\s*/).filter((e) => e.trim())
+    : [];
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    setInputValue(value);
+    if (isReduxControlled) {
+      dispatch(onInputValueChange(value));
+    } else {
+      setLocalInputValue(value);
+    }
     setOnStepInputErrorText('');
   };
 
   const addItem = (value: string) => {
-    if (list?.includes(value) || requiredList?.includes(value)) {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      return;
+    }
+
+    if (list?.includes(trimmedValue) || requiredList?.includes(trimmedValue)) {
       setOnStepInputErrorText(`${item} already exists.`);
       return;
     }
 
-    if (!validator(value)) {
+    if (!validator(trimmedValue)) {
       switch (fieldName) {
         case 'ports':
           setOnStepInputErrorText(
@@ -120,8 +147,12 @@ const LabelInput = ({
       return;
     }
 
-    dispatch(addAction(value));
-    setInputValue('');
+    dispatch(addAction(trimmedValue));
+    if (isReduxControlled) {
+      dispatch(onInputValueChange(''));
+    } else {
+      setLocalInputValue('');
+    }
     setOnStepInputErrorText('');
   };
 
@@ -132,56 +163,115 @@ const LabelInput = ({
     }
   };
 
+  const handleBlur = (e: React.FocusEvent) => {
+    if (!addOnBlur) return;
+    // For controlled inputs, if focus is moving to a button (e.g. "Add user",
+    // "Next"), skip adding here. The button's click handler will commit
+    // the pending value via commitAllPendingGroupInputs instead. Adding here
+    // would insert a warning that shifts the DOM before the click fires.
+    if (isReduxControlled) {
+      const target = e.relatedTarget as HTMLElement | null;
+      if (target?.closest('button, a, [role="button"]')) return;
+    }
+    if (inputValue.trim()) {
+      addItem(inputValue);
+    }
+  };
+
   const handleRemoveItem = (e: React.MouseEvent, value: string) => {
     dispatch(removeAction(value));
   };
 
   const errors = [];
   if (onStepInputErrorText) errors.push(onStepInputErrorText);
-  if (invalidImports) errors.push(invalidImports);
-  if (duplicateImports) errors.push(duplicateImports);
+  errors.push(...validationErrors);
+
+  const chipsInInput = inlineChips && list && list.length > 0 && (
+    <LabelGroup
+      isCompact={isCompact}
+      numLabels={CHIP_COLLAPSE_THRESHOLD}
+      expandedText='Show less'
+      collapsedText={
+        list.length > CHIP_COLLAPSE_THRESHOLD
+          ? `${list.length - CHIP_COLLAPSE_THRESHOLD} more`
+          : undefined
+      }
+    >
+      {list.map((group) => (
+        <Label
+          key={group}
+          color='blue'
+          isCompact={isCompact}
+          onClose={(e) => handleRemoveItem(e, group)}
+        >
+          {group.length > truncateLength
+            ? `${group.slice(0, truncateLength)}...`
+            : group}
+        </Label>
+      ))}
+    </LabelGroup>
+  );
+
+  const inputWithInlineChips = inlineChips && (
+    <TextInputGroup>
+      <TextInputGroupMain
+        aria-label={ariaLabel}
+        placeholder={placeholder}
+        onChange={onTextInputChange}
+        value={inputValue}
+        onKeyDown={(e) => handleKeyDown(e, inputValue)}
+        onBlur={handleBlur}
+      >
+        {chipsInInput}
+      </TextInputGroupMain>
+    </TextInputGroup>
+  );
 
   const warning = stepValidation.errors[UNDEFINED_GROUPS_WARNING_KEY];
 
   return (
     <>
-      <TextInputGroup>
-        <TextInputGroupMain
-          aria-label={ariaLabel}
-          placeholder={placeholder}
-          onChange={onTextInputChange}
-          value={inputValue}
-          onKeyDown={(e) => handleKeyDown(e, inputValue)}
-        >
-          {list && list.length > 0 && (
-            <LabelGroup
-              isCompact={isCompact}
-              numLabels={CHIP_COLLAPSE_THRESHOLD}
-              expandedText='Show less'
-              collapsedText={
-                list.length > CHIP_COLLAPSE_THRESHOLD
-                  ? `${list.length - CHIP_COLLAPSE_THRESHOLD} more`
-                  : undefined
-              }
-              className='pf-v6-u-mr-sm'
-            >
-              {list.map((labelItem) => (
-                <Label
-                  key={labelItem}
-                  color='blue'
-                  isCompact={isCompact}
-                  onClose={(e) => handleRemoveItem(e, labelItem)}
-                >
-                  {labelItem.length > truncateLength
-                    ? `${labelItem.slice(0, truncateLength)}...`
-                    : labelItem}
-                </Label>
-              ))}
-            </LabelGroup>
-          )}
-        </TextInputGroupMain>
-      </TextInputGroup>
-
+      {inlineChips ? (
+        inputWithInlineChips
+      ) : (
+        <TextInputGroup>
+          <TextInputGroupMain
+            aria-label={ariaLabel}
+            placeholder={placeholder}
+            onChange={onTextInputChange}
+            value={inputValue}
+            onKeyDown={(e) => handleKeyDown(e, inputValue)}
+            onBlur={handleBlur}
+          >
+            {list && list.length > 0 && (
+              <LabelGroup
+                isCompact={isCompact}
+                numLabels={CHIP_COLLAPSE_THRESHOLD}
+                expandedText='Show less'
+                collapsedText={
+                  list.length > CHIP_COLLAPSE_THRESHOLD
+                    ? `${list.length - CHIP_COLLAPSE_THRESHOLD} more`
+                    : undefined
+                }
+                className='pf-v6-u-mr-sm'
+              >
+                {list.map((labelItem) => (
+                  <Label
+                    key={labelItem}
+                    color='blue'
+                    isCompact={isCompact}
+                    onClose={(e) => handleRemoveItem(e, labelItem)}
+                  >
+                    {labelItem.length > truncateLength
+                      ? `${labelItem.slice(0, truncateLength)}...`
+                      : labelItem}
+                  </Label>
+                ))}
+              </LabelGroup>
+            )}
+          </TextInputGroupMain>
+        </TextInputGroup>
+      )}
       {errors.length > 0 && (
         <HelperText>
           {errors.map((error, index) => (

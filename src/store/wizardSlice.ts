@@ -38,6 +38,7 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
+import { isUserGroupValid } from '../Components/CreateImageWizard/validators';
 import { RHEL_10, X86_64 } from '../constants';
 import isRhel from '../Utilities/isRhel';
 import { yyyyMMddFormat } from '../Utilities/time';
@@ -70,6 +71,7 @@ export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
 } & {
   isAdministrator: boolean;
+  pendingGroupInput?: string;
 };
 
 type UserPayload = {
@@ -1549,6 +1551,51 @@ export const wizardSlice = createSlice({
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
+    setPendingGroupInputByIndex: (
+      state,
+      action: PayloadAction<{ index: number; value: string }>,
+    ) => {
+      const { index, value } = action.payload;
+      // When no users exist yet (fake user row), create a real user first.
+      // This matches the pattern in other field handlers (name, password, etc.)
+      // which dispatch addUser() before setting their field value.
+      if (state.users.length === 0 && index === 0) {
+        state.users.push({
+          name: '',
+          password: '',
+          ssh_key: '',
+          groups: [],
+          isAdministrator: false,
+          hasPassword: false,
+          pendingGroupInput: value,
+        });
+        return;
+      }
+      if (state.users[index]) {
+        state.users[index].pendingGroupInput = value;
+      }
+    },
+    commitAllPendingGroupInputs: (state) => {
+      for (const user of state.users) {
+        const pending = user.pendingGroupInput?.trim();
+        if (!pending) {
+          user.pendingGroupInput = '';
+          continue;
+        }
+
+        const isDuplicate = user.groups.includes(pending);
+        const isValid = isUserGroupValid(pending);
+
+        if (isValid && !isDuplicate) {
+          user.groups.push(pending);
+          if (pending === 'wheel') {
+            user.isAdministrator = true;
+          }
+          user.pendingGroupInput = '';
+        }
+        // Keep pending input when invalid or duplicate so validation can flag it
+      }
+    },
     addUserGroup: (state) => {
       const existingGids = new Set(
         state.userGroups
@@ -1729,6 +1776,8 @@ export const {
   setUserAdministratorByIndex,
   addGroupToUserByUserIndex,
   removeGroupFromUserByIndex,
+  setPendingGroupInputByIndex,
+  commitAllPendingGroupInputs,
   changeRedHatRepositories,
   changeFips,
   setVerifiedLocaleLangpacks,
