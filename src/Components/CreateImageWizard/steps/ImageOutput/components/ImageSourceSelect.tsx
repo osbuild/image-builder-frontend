@@ -102,9 +102,7 @@ const ImageSourceSelect = () => {
             registry and pull the image using Podman as root, as rootless images
             are not accessible by image builder at build time:
           </p>
-          <p className='pf-v6-u-mt-sm'>
-            <CopyInlineCompact text={`sudo podman pull ${imageSource.image}`} />
-          </p>
+          <CopyInlineCompact text={`sudo podman pull ${imageSource.image}`} />
         </Alert>
       )}
       <Flex>
