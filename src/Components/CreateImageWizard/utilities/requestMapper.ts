@@ -418,12 +418,14 @@ function commonRequestToState(
     },
     users:
       request.customizations.users?.map((user) => ({
+        id: uuidv4(),
         name: user.name,
         password: '', // The image-builder API does not return the password.
         ssh_key: user.ssh_key || '',
         groups: user.groups || [],
         isAdministrator: user.groups?.includes('wheel') || false,
         hasPassword: user.hasPassword || false,
+        currentGroupInput: '',
       })) || [],
     compliance:
       compliancePolicyID !== undefined

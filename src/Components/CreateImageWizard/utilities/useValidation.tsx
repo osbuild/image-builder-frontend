@@ -83,7 +83,7 @@ export type StepValidation = {
 
 export type UsersStepValidation = {
   errors: {
-    [key: string]: { [key: string]: string };
+    [key: string]: { [key: string]: string } | undefined;
   };
   disabledNext: boolean;
 };
@@ -800,15 +800,12 @@ export function useUsersValidation(): UsersStepValidation {
 
   for (let index = 0; index < users.length; index++) {
     const userErrors: { [key: string]: string } = {};
-    const isUserDefined =
-      !!users[index].password ||
-      !!users[index].ssh_key ||
-      users[index].groups.length > 0;
-    if (users[index].name || isUserDefined) {
-      const userNameError = validateUserName(users, users[index].name, index);
-      if (userNameError) {
-        userErrors.userName = userNameError;
-      }
+
+    // If user exists in the list, userName is always required
+    // (either user has a name, or user is defined with other fields, or user is completely empty)
+    const userNameError = validateUserName(users, users[index].name, index);
+    if (userNameError) {
+      userErrors.userName = userNameError;
     }
 
     const isPasswordValid = checkPasswordValidity(
@@ -839,10 +836,22 @@ export function useUsersValidation(): UsersStepValidation {
         ? users[index].name
         : '';
 
+    // Validate current group input (not yet submitted)
+    const currentInput = users[index].currentGroupInput.trim();
+    const hasInvalidCurrentInput =
+      currentInput && !isUserGroupValid(currentInput);
+    const currentInputAlreadyInGroups =
+      currentInput && users[index].groups.includes(currentInput);
+    const currentInputMatchesUsername =
+      currentInput && currentInput === users[index].name;
+
     if (
       invalidGroups.length > 0 ||
       duplicateGroups.length > 0 ||
-      groupMatchingUsername
+      groupMatchingUsername ||
+      hasInvalidCurrentInput ||
+      currentInputAlreadyInGroups ||
+      currentInputMatchesUsername
     ) {
       const groupsErrors = [];
       if (invalidGroups.length > 0) {
@@ -857,6 +866,15 @@ export function useUsersValidation(): UsersStepValidation {
         groupsErrors.push(
           `Group cannot match username: ${groupMatchingUsername}`,
         );
+      }
+      if (hasInvalidCurrentInput) {
+        groupsErrors.push(`Invalid format in current input`);
+      }
+      if (currentInputAlreadyInGroups) {
+        groupsErrors.push(`Group already exists`);
+      }
+      if (currentInputMatchesUsername) {
+        groupsErrors.push(`Group cannot match username: ${currentInput}`);
       }
       userErrors.groups = groupsErrors.join(' | ');
     }

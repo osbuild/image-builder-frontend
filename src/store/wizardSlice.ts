@@ -12,7 +12,6 @@ import type {
   Module,
   Repository,
   Timezone,
-  User,
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
 
@@ -64,9 +63,14 @@ export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
 export type ComplianceType = 'openscap' | 'compliance';
 
 export type UserWithAdditionalInfo = {
-  [K in keyof User]-?: NonNullable<User[K]>;
-} & {
+  id: string;
+  name: string;
+  groups: string[];
+  ssh_key: string;
+  password: string;
+  hasPassword: boolean;
   isAdministrator: boolean;
+  currentGroupInput: string;
 };
 
 type UserPayload = {
@@ -92,6 +96,11 @@ type UserAdministratorPayload = {
 type UserGroupPayload = {
   index: number;
   group: string;
+};
+
+type UserCurrentGroupInputPayload = {
+  index: number;
+  input: string;
 };
 
 export type wizardState = {
@@ -1396,12 +1405,14 @@ export const wizardSlice = createSlice({
     },
     addUser: (state) => {
       const newUser = {
+        id: uuidv4(),
         name: '',
         password: '',
         ssh_key: '',
         groups: [],
         isAdministrator: false,
         hasPassword: false,
+        currentGroupInput: '',
       };
 
       state.users.push(newUser);
@@ -1464,6 +1475,19 @@ export const wizardSlice = createSlice({
           state.users[index].isAdministrator = true;
         }
       }
+    },
+    setCurrentGroupInputByIndex: (
+      state,
+      action: PayloadAction<UserCurrentGroupInputPayload>,
+    ) => {
+      if (
+        action.payload.index < 0 ||
+        action.payload.index >= state.users.length
+      ) {
+        return;
+      }
+      state.users[action.payload.index].currentGroupInput =
+        action.payload.input;
     },
     removeGroupFromUserByIndex: (
       state,
@@ -1597,6 +1621,7 @@ export const {
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
   addGroupToUserByUserIndex,
+  setCurrentGroupInputByIndex,
   removeGroupFromUserByIndex,
   changeRedHatRepositories,
   changeFips,
