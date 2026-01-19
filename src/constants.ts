@@ -133,6 +133,11 @@ export const IMAGE_MODE_RELEASES = new Map([
   [RHEL_9, RHEL_9_IMAGE_MODE],
 ]);
 
+export const IMAGE_MODE_SUPPORTED_TARGETS: ImageTypes[] = [
+  'aws',
+  'guest-image',
+];
+
 export const RHEL_10_FULL_SUPPORT = ['2025-05-13', '2030-05-31'];
 export const RHEL_9_FULL_SUPPORT = ['2022-05-18', '2027-05-31'];
 export const RHEL_8_FULL_SUPPORT = ['2019-05-07', '2024-05-31'];
