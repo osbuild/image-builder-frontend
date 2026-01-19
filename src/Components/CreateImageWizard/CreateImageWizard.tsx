@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { useStore } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import AAPStep from './steps/AAP';
@@ -39,6 +40,8 @@ import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
 import {
+  computeUserGroupsValidation,
+  computeUsersValidation,
   useAAPValidation,
   useAzureValidation,
   useDetailsValidation,
@@ -70,6 +73,7 @@ import {
   RHEL_9,
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
+import type { RootState } from '../../store';
 import { useCustomizationRestrictions } from '../../store/distributions';
 import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -79,6 +83,7 @@ import {
   changeArchitecture,
   changeDistribution,
   changeTimezone,
+  commitAllPendingGroupInputs,
   initializeWizard,
   selectAwsAccountId,
   selectAwsShareMethod,
@@ -86,6 +91,7 @@ import {
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
+  selectBlueprintMode,
   selectDistribution,
   selectGcpAccountType,
   selectGcpEmail,
@@ -94,6 +100,8 @@ import {
   selectImageTypes,
   selectIsImageMode,
   selectTimezone,
+  selectUserGroups,
+  selectUsers,
 } from '../../store/wizardSlice';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import isRhel from '../../Utilities/isRhel';
@@ -189,6 +197,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const resolvePath = useAppSelector(selectPathResolver);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const store = useStore();
   const imageTypes = useAppSelector(selectImageTypes);
   const [searchParams] = useSearchParams();
 
@@ -310,6 +319,31 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     usersStepAttemptedNext,
   ]);
 
+  // Commit any pending group input and validate the users step from fresh state
+  const commitAndValidateUsersStep = useCallback(() => {
+    dispatch(commitAllPendingGroupInputs());
+    const state = store.getState() as RootState;
+    const users = selectUsers(state);
+    const userGroups = selectUserGroups(state);
+    const blueprintMode = selectBlueprintMode(state);
+    const environments = selectImageTypes(state);
+    const freshUsersValidation = computeUsersValidation(
+      users,
+      userGroups,
+      blueprintMode,
+      environments,
+    );
+    const freshGroupsValidation = computeUserGroupsValidation(userGroups);
+    if (
+      freshUsersValidation.disabledNext ||
+      freshGroupsValidation.disabledNext
+    ) {
+      setUsersStepAttemptedNext(true);
+      return false;
+    }
+    return true;
+  }, [dispatch, store]);
+
   let startIndex = 1; // default index
   const JUMP_TO_REVIEW_STEP = 24;
 
@@ -318,7 +352,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
-  const [wasUsersVisited, setWasUsersVisited] = useState(false);
   const lastTrackedStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
@@ -354,8 +387,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         }
       } else if (step.id === 'step-register' && step.isVisited) {
         setWasRegisterVisited(true);
-      } else if (step.id === 'wizard-users' && step.isVisited) {
-        setWasUsersVisited(true);
       }
     }, [step.id, step.isVisited]);
 
@@ -527,25 +558,15 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             isHidden={!restrictions.users.required}
             navItem={CustomStatusNavItem}
             status={
-              wasUsersVisited
-                ? usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
-                  ? 'error'
-                  : 'default'
+              usersStepAttemptedNext &&
+              (usersValidation.disabledNext ||
+                userGroupsValidation.disabledNext)
+                ? 'error'
                 : 'default'
             }
             footer={
               <CustomWizardFooter
-                beforeNext={() => {
-                  if (
-                    usersValidation.disabledNext ||
-                    userGroupsValidation.disabledNext
-                  ) {
-                    setUsersStepAttemptedNext(true);
-                    return false;
-                  }
-                  return true;
-                }}
+                beforeNext={commitAndValidateUsersStep}
                 disableNext={
                   usersValidation.disabledNext ||
                   userGroupsValidation.disabledNext
@@ -697,28 +718,20 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
                 navItem={CustomStatusNavItem}
                 status={
-                  usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
+                  usersStepAttemptedNext &&
+                  (usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext)
                     ? 'error'
                     : 'default'
                 }
                 footer={
                   <CustomWizardFooter
+                    beforeNext={commitAndValidateUsersStep}
                     disableNext={
                       usersStepAttemptedNext &&
                       (usersValidation.disabledNext ||
                         userGroupsValidation.disabledNext)
                     }
-                    beforeNext={() => {
-                      if (
-                        usersValidation.disabledNext ||
-                        userGroupsValidation.disabledNext
-                      ) {
-                        setUsersStepAttemptedNext(true);
-                        return false;
-                      }
-                      return true;
-                    }}
                     optional={true}
                     isOnPremise={isOnPremise}
                   />

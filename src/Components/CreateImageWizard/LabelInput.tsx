@@ -17,7 +17,17 @@ import { useAppDispatch } from '../../store/hooks';
 
 const FIREWALL_LABEL_TRUNCATE_DEFAULT = 20;
 
-type LabelInputProps = {
+type ControlledProps = {
+  currentInputValue: string;
+  onInputValueChange: (value: string) => UnknownAction;
+};
+
+type UncontrolledProps = {
+  currentInputValue?: never;
+  onInputValueChange?: never;
+};
+
+type LabelInputProps = (ControlledProps | UncontrolledProps) & {
   ariaLabel: string;
   placeholder: string;
   validator: (value: string) => boolean;
@@ -31,6 +41,31 @@ type LabelInputProps = {
   fieldName: string;
   truncateLength?: number;
   inlineChips?: boolean;
+  addOnBlur?: boolean;
+};
+
+const getErrorMessage = (fieldName: string): string => {
+  switch (fieldName) {
+    case 'ports':
+      return 'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp';
+    case 'kernelAppend':
+      return 'Expected format: <kernel-argument>. Example: console=tty0';
+    case 'kernelName':
+      return 'Expected format: <kernel-name>. Example: kernel-5.14.0-284.11.1.el9_2.x86_64';
+    case 'groups':
+      return 'Expected format: <group-name>. Example: admin';
+    case 'ntpServers':
+      return 'Expected format: <ntp-server>. Example: time.redhat.com';
+    case 'enabledSystemdServices':
+    case 'disabledSystemdServices':
+    case 'maskedSystemdServices':
+      return 'Expected format: <service-name>. Example: sshd';
+    case 'disabledServices':
+    case 'enabledServices':
+      return 'Expected format: <firewalld-service-name>. Example: ssh.';
+    default:
+      return 'Invalid format.';
+  }
 };
 
 const LabelInput = ({
@@ -47,80 +82,57 @@ const LabelInput = ({
   fieldName,
   truncateLength = FIREWALL_LABEL_TRUNCATE_DEFAULT,
   inlineChips = false,
+  currentInputValue,
+  onInputValueChange,
+  addOnBlur = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
-  const [inputValue, setInputValue] = useState('');
-  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
-  let [invalidImports, duplicateImports] = ['', ''];
+  const isReduxControlled = currentInputValue !== undefined;
+  const [localInputValue, setLocalInputValue] = useState('');
+  const inputValue = isReduxControlled ? currentInputValue : localInputValue;
 
-  if (stepValidation.errors[fieldName]) {
-    [invalidImports, duplicateImports] =
-      stepValidation.errors[fieldName].split('|');
-  }
+  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
+
+  const validationErrorText = stepValidation.errors[fieldName] ?? '';
+  const validationErrors = validationErrorText
+    ? validationErrorText.split(/\s*\|\s*/).filter((e) => e.trim())
+    : [];
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    setInputValue(value);
+    if (isReduxControlled) {
+      dispatch(onInputValueChange(value));
+    } else {
+      setLocalInputValue(value);
+    }
     setOnStepInputErrorText('');
   };
 
   const addItem = (value: string) => {
-    if (list?.includes(value) || requiredList?.includes(value)) {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      return;
+    }
+
+    if (list?.includes(trimmedValue) || requiredList?.includes(trimmedValue)) {
       setOnStepInputErrorText(`${item} already exists.`);
       return;
     }
 
-    if (!validator(value)) {
-      switch (fieldName) {
-        case 'ports':
-          setOnStepInputErrorText(
-            'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
-          );
-          break;
-        case 'kernelAppend':
-          setOnStepInputErrorText(
-            'Expected format: <kernel-argument>. Example: console=tty0',
-          );
-          break;
-        case 'kernelName':
-          setOnStepInputErrorText(
-            'Expected format: <kernel-name>. Example: kernel-5.14.0-284.11.1.el9_2.x86_64',
-          );
-          break;
-        case 'groups':
-          setOnStepInputErrorText(
-            'Expected format: <group-name>. Example: admin',
-          );
-          break;
-        case 'ntpServers':
-          setOnStepInputErrorText(
-            'Expected format: <ntp-server>. Example: time.redhat.com',
-          );
-          break;
-        case 'enabledSystemdServices':
-        case 'disabledSystemdServices':
-        case 'maskedSystemdServices':
-          setOnStepInputErrorText(
-            'Expected format: <service-name>. Example: sshd',
-          );
-          break;
-        case 'disabledServices':
-        case 'enabledServices':
-          setOnStepInputErrorText(
-            'Expected format: <firewalld-service-name>. Example: ssh.',
-          );
-          break;
-        default:
-          setOnStepInputErrorText('Invalid format.');
-      }
+    if (!validator(trimmedValue)) {
+      setOnStepInputErrorText(getErrorMessage(fieldName));
       return;
     }
 
-    dispatch(addAction(value));
-    setInputValue('');
+    dispatch(addAction(trimmedValue));
+    if (isReduxControlled) {
+      dispatch(onInputValueChange(''));
+    } else {
+      setLocalInputValue('');
+    }
     setOnStepInputErrorText('');
   };
 
@@ -131,14 +143,28 @@ const LabelInput = ({
     }
   };
 
+  const handleBlur = (e: React.FocusEvent) => {
+    if (!addOnBlur) return;
+    // For controlled inputs, if focus is moving to a button (e.g. "Add user",
+    // "Next"), skip adding here. The button's click handler will commit
+    // the pending value via commitAllPendingGroupInputs instead. Adding here
+    // would insert a warning that shifts the DOM before the click fires.
+    if (isReduxControlled) {
+      const target = e.relatedTarget as HTMLElement | null;
+      if (target?.closest('button, a, [role="button"]')) return;
+    }
+    if (inputValue.trim()) {
+      addItem(inputValue);
+    }
+  };
+
   const handleRemoveItem = (e: React.MouseEvent, value: string) => {
     dispatch(removeAction(value));
   };
 
   const errors = [];
   if (onStepInputErrorText) errors.push(onStepInputErrorText);
-  if (invalidImports) errors.push(invalidImports);
-  if (duplicateImports) errors.push(duplicateImports);
+  errors.push(...validationErrors);
 
   const chipsInInput = inlineChips && list && list.length > 0 && (
     <LabelGroup
@@ -170,6 +196,7 @@ const LabelInput = ({
         onChange={onTextInputChange}
         value={inputValue}
         onKeyDown={(e) => handleKeyDown(e, inputValue)}
+        onBlur={handleBlur}
       >
         {chipsInInput}
       </TextInputGroupMain>
@@ -190,6 +217,7 @@ const LabelInput = ({
             onChange={onTextInputChange}
             value={inputValue}
             onKeyDown={(e) => handleKeyDown(e, inputValue)}
+            onBlur={handleBlur}
           >
             {list && list.length > 0 && (
               <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
@@ -209,7 +237,6 @@ const LabelInput = ({
           </TextInputGroupMain>
         </TextInputGroup>
       )}
-
       {errors.length > 0 && (
         <HelperText>
           {errors.map((error, index) => (
