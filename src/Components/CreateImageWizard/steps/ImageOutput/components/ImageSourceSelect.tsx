@@ -18,7 +18,10 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
-import { IMAGE_MODE_RELEASES } from '../../../../../constants';
+import {
+  IMAGE_MODE_RELEASE_LOOKUP,
+  IMAGE_MODE_RELEASES,
+} from '../../../../../constants';
 import { useLazyPodmanImageExistsQuery } from '../../../../../store/cockpit/cockpitApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -50,11 +53,15 @@ const ImageSourceSelect = () => {
   ] = useLazyPodmanImageExistsQuery();
 
   useEffect(() => {
-    trigger({ image: imageSource.image });
-  }, [trigger, imageSource.image]);
+    if (imageSource) {
+      trigger({ image: imageSource });
+    }
+  }, [trigger, imageSource]);
 
   const refreshImageSources = () => {
-    trigger({ image: imageSource.image });
+    if (imageSource) {
+      trigger({ image: imageSource });
+    }
   };
 
   const setImageSource = (
@@ -70,11 +77,19 @@ const ImageSourceSelect = () => {
     setIsOpen(!isOpen);
   };
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-      {imageSource.name}
-    </MenuToggle>
-  );
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => {
+    // NOTE: Although this shouldn't be undefined and the default should be RHEL-10,
+    // let's set the name to 'Unknown' if it is actually defined. If the lookup
+    // fails, let's just fallback to the full image reference
+    const name = !imageSource
+      ? 'Unknown Image'
+      : IMAGE_MODE_RELEASE_LOOKUP[imageSource] || imageSource;
+    return (
+      <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+        {name}
+      </MenuToggle>
+    );
+  };
 
   return (
     <FormGroup label='Image source' isRequired>
@@ -102,7 +117,7 @@ const ImageSourceSelect = () => {
             registry and pull the image using Podman as root, as rootless images
             are not accessible by image builder at build time:
           </p>
-          <CopyInlineCompact text={`sudo podman pull ${imageSource.image}`} />
+          <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
         </Alert>
       )}
       <Flex>
@@ -116,9 +131,9 @@ const ImageSourceSelect = () => {
             shouldFocusToggleOnSelect
           >
             <SelectList>
-              {[...IMAGE_MODE_RELEASES].map(([_, option]) => (
-                <SelectOption key={option.image} value={option}>
-                  {option.name}
+              {[...IMAGE_MODE_RELEASES].map(([_, options]) => (
+                <SelectOption key={options.reference} value={options.reference}>
+                  {options.name}
                 </SelectOption>
               ))}
             </SelectList>
@@ -133,7 +148,7 @@ const ImageSourceSelect = () => {
           <HelperText className='pf-v6-u-mt-sm'>
             <HelperTextItem>
               <span className='pf-v6-u-text-color-subtle'>
-                FROM: {imageSource.image}
+                FROM: {imageSource}
               </span>
             </HelperTextItem>
           </HelperText>
