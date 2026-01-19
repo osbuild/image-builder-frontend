@@ -45,6 +45,7 @@ import { useAppSelector } from '../../../../store/hooks';
 import {
   selectAapRegistration,
   selectBlueprintDescription,
+  selectBlueprintMode,
   selectBlueprintName,
   selectDistribution,
   selectFirewall,
@@ -66,6 +67,7 @@ const Review = () => {
   const { goToStepById } = useWizardContext();
   const isOnPremise = useIsOnPremise();
 
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const aapRegistration = useAppSelector(selectAapRegistration);
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
@@ -187,6 +189,9 @@ const Review = () => {
       </Split>
     );
   };
+
+  const wizardStepId =
+    blueprintMode === 'image' ? 'wizard-users' : 'wizard-users-optional';
 
   return (
     <>
@@ -363,7 +368,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Users',
             'revisit-users',
-            'wizard-users',
+            wizardStepId,
           )}
           onToggle={(_event, isExpandedUsers) => onToggleUsers(isExpandedUsers)}
           isExpanded={isExpandedUsers}

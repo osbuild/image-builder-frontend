@@ -299,7 +299,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
   let startIndex = 1; // default index
-  const JUMP_TO_REVIEW_STEP = 23;
+  const JUMP_TO_REVIEW_STEP = 24;
 
   if (isEdit) {
     startIndex = JUMP_TO_REVIEW_STEP;
@@ -496,6 +496,22 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             ]}
           />
           <WizardStep
+            name='Users'
+            id='wizard-users'
+            key='wizard-users'
+            isHidden={!isImageMode}
+            navItem={CustomStatusNavItem}
+            status={usersValidation.disabledNext ? 'error' : 'default'}
+            footer={
+              <CustomWizardFooter
+                disableNext={usersValidation.disabledNext}
+                isOnPremise={isOnPremise}
+              />
+            }
+          >
+            <UsersStep />
+          </WizardStep>
+          <WizardStep
             name='Optional steps'
             id='step-optional-steps'
             steps={[
@@ -623,8 +639,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               </WizardStep>,
               <WizardStep
                 name='Users'
-                id='wizard-users'
-                key='wizard-users'
+                id='wizard-users-optional'
+                key='wizard-users-optional'
+                isHidden={isImageMode}
                 navItem={CustomStatusNavItem}
                 status={usersValidation.disabledNext ? 'error' : 'default'}
                 footer={
