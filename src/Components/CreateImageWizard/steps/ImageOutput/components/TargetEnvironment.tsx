@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
+import { IMAGE_MODE_SUPPORTED_TARGETS } from '../../../../../constants';
 import { useIsOnPremise } from '../../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -31,6 +32,7 @@ import {
   reinitializeGcp,
   removeImageType,
   selectArchitecture,
+  selectBlueprintMode,
   selectDistribution,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
@@ -93,6 +95,7 @@ const TargetEnvironmentCard = ({
 };
 
 const TargetEnvironment = () => {
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
@@ -112,9 +115,13 @@ const TargetEnvironment = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const supportedEnvironments = data?.find(
+  let supportedEnvironments = data?.find(
     (elem) => elem.arch === arch,
   )?.image_types;
+
+  if (blueprintMode === 'image') {
+    supportedEnvironments = IMAGE_MODE_SUPPORTED_TARGETS;
+  }
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
