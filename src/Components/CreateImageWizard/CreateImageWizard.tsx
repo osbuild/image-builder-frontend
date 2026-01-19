@@ -287,14 +287,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const detailsValidation = useDetailsValidation();
   // Users
   const usersValidation = useUsersValidation();
-  const [usersStepAttemptedNext, setUsersStepAttemptedNext] = useState(false);
+  const [usersPristine, setUsersPristine] = useState(true);
 
-  // Reset attemptedNext when errors are fixed
+  // Reset usersPristine when errors are fixed
   useEffect(() => {
-    if (!usersValidation.disabledNext && usersStepAttemptedNext) {
-      setUsersStepAttemptedNext(false);
+    if (!usersValidation.disabledNext && !usersPristine) {
+      setUsersPristine(true);
     }
-  }, [usersValidation.disabledNext, usersStepAttemptedNext]);
+  }, [usersValidation.disabledNext, usersPristine]);
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
@@ -306,7 +306,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
-  const [wasUsersVisited, setWasUsersVisited] = useState(false);
   const lastTrackedStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
@@ -342,8 +341,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         }
       } else if (step.id === 'step-register' && step.isVisited) {
         setWasRegisterVisited(true);
-      } else if (step.id === 'wizard-users' && step.isVisited) {
-        setWasUsersVisited(true);
       }
     }, [step.id, step.isVisited]);
 
@@ -513,20 +510,25 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             isHidden={!isImageMode}
             navItem={CustomStatusNavItem}
             status={
-              wasUsersVisited
-                ? usersValidation.disabledNext
-                  ? 'error'
-                  : 'default'
+              !usersPristine && usersValidation.disabledNext
+                ? 'error'
                 : 'default'
             }
             footer={
               <CustomWizardFooter
-                disableNext={usersValidation.disabledNext}
+                beforeNext={() => {
+                  if (usersValidation.disabledNext) {
+                    setUsersPristine(false);
+                    return false;
+                  }
+                  return true;
+                }}
+                disableNext={!usersPristine && usersValidation.disabledNext}
                 isOnPremise={isOnPremise}
               />
             }
           >
-            <UsersStep />
+            <UsersStep attemptedNext={!usersPristine} />
           </WizardStep>
           <WizardStep
             name='Optional steps'
@@ -660,25 +662,27 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-users-optional'
                 isHidden={isImageMode}
                 navItem={CustomStatusNavItem}
-                status={usersValidation.disabledNext ? 'error' : 'default'}
+                status={
+                  !usersPristine && usersValidation.disabledNext
+                    ? 'error'
+                    : 'default'
+                }
                 footer={
                   <CustomWizardFooter
-                    disableNext={
-                      usersStepAttemptedNext && usersValidation.disabledNext
-                    }
                     beforeNext={() => {
                       if (usersValidation.disabledNext) {
-                        setUsersStepAttemptedNext(true);
+                        setUsersPristine(false);
                         return false;
                       }
                       return true;
                     }}
+                    disableNext={!usersPristine && usersValidation.disabledNext}
                     optional={true}
                     isOnPremise={isOnPremise}
                   />
                 }
               >
-                <UsersStep attemptedNext={usersStepAttemptedNext} />
+                <UsersStep attemptedNext={!usersPristine} />
               </WizardStep>,
               <WizardStep
                 name='Timezone'
