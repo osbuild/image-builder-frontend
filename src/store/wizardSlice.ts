@@ -46,10 +46,7 @@ type WizardModeOptions = 'create' | 'edit';
 
 type BlueprintModeOptions = 'image' | 'package';
 
-export type ImageSource = {
-  name: string;
-  image: string;
-};
+export type ImageSource = string;
 
 export type RegistrationType =
   | 'register-later'
@@ -213,7 +210,7 @@ export const initialState: wizardState = {
   },
   wizardMode: 'create',
   blueprintMode: 'package',
-  imageSource: RHEL_10_IMAGE_MODE,
+  imageSource: RHEL_10_IMAGE_MODE.reference,
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
