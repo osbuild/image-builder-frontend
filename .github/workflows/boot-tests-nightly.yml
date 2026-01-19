@@ -80,7 +80,7 @@ jobs:
         run: |
           echo "DYNAMIC_USER: $DYNAMIC_USER"
           export PLAYWRIGHT_USER=image-builder-playwright-$RANDOM
-          export PLAYWRIGHT_PASSWORD=image-builder-playwright-$(uuidgen)
+          export PLAYWRIGHT_PASSWORD=Image-builder-playwright-$(uuidgen)
           if [[ "$DYNAMIC_USER" == "true" ]]; then
             echo "Setting up account for Playwright tests..."
             # Step 1: Create a new empty account
