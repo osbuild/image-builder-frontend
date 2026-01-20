@@ -142,6 +142,18 @@ languages = [ "C.UTF-8" ]`;
 export const exportedUsersBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
+[[customizations.group]]
+name = "developers"
+gid = <GID_PLACEHOLDER>
+
+[[customizations.group]]
+name = "managers"
+gid = <GID_PLACEHOLDER>
+
+[[customizations.group]]
+name = "operators"
+gid = <GID_PLACEHOLDER>
+
 [[customizations.user]]
 name = "admin1"
 key = ""

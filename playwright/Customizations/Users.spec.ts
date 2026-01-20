@@ -1,7 +1,7 @@
 import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
-import { expect } from '@playwright/test';
+import { expect, type FrameLocator, type Page } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
@@ -29,6 +29,34 @@ const validRSAKey =
 const validECDSAKey =
   'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICKKKnEKnBMp5OGSW8R/zJJGNUcBV8LJ+VqnHB8uK9qx test@example.com';
 
+/**
+ * Helper function to verify groups in the Groups section
+ * @param frame - the frame locator or page
+ * @param expectedGroups - array of expected group names
+ */
+async function verifyGroups(
+  frame: FrameLocator | Page,
+  expectedGroups: string[],
+) {
+  await frame
+    .getByRole('heading', { name: 'Groups' })
+    .first()
+    .scrollIntoViewIfNeeded();
+  const groupNameInputs = frame.getByPlaceholder('Set group name');
+  await expect(groupNameInputs.first()).toBeVisible();
+  await expect(groupNameInputs).toHaveCount(expectedGroups.length);
+
+  const groupCount = await groupNameInputs.count();
+  const groupValues = await Promise.all(
+    Array.from({ length: groupCount }, (_, i) =>
+      groupNameInputs.nth(i).inputValue(),
+    ),
+  );
+  for (const group of expectedGroups) {
+    expect(groupValues).toContain(group);
+  }
+}
+
 test('Create a blueprint with Users customization', async ({
   page,
   cleanup,
@@ -44,9 +72,102 @@ test('Create a blueprint with Users customization', async ({
   await navigateToLandingPage(page);
   const frame = ibFrame(page);
 
-  await test.step('Navigate to Users step', async () => {
+  await test.step('Navigate to Groups and users step', async () => {
     await fillInImageOutput(frame);
     await registerLater(frame);
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
+  });
+
+  await test.step('Create initial valid groups', async () => {
+    await frame
+      .getByRole('heading', { name: 'Groups' })
+      .first()
+      .scrollIntoViewIfNeeded();
+
+    const firstGroupInput = frame.getByPlaceholder('Set group name').first();
+    await expect(firstGroupInput).toBeVisible();
+    await expect(firstGroupInput).toBeEnabled();
+    await firstGroupInput.fill('developers');
+    await expect(firstGroupInput).toHaveValue('developers');
+    await expect(frame.getByText('Required value')).toBeHidden();
+
+    const addGroupButton = frame.getByRole('button', { name: 'Add group' });
+    await expect(addGroupButton).toBeVisible();
+    await expect(addGroupButton).toBeEnabled();
+    await expect(
+      frame.getByPlaceholder('Auto-generated').first(),
+    ).toBeVisible();
+    await expect(
+      frame.getByText(
+        'Each group will automatically be assigned an ID number.',
+      ),
+    ).toBeVisible();
+
+    await addGroupButton.click();
+    const groupNameInputsAfterAdd = frame.getByPlaceholder('Set group name');
+    await expect(groupNameInputsAfterAdd.nth(1)).toBeVisible();
+    await expect(groupNameInputsAfterAdd.nth(1)).toBeEnabled();
+    await groupNameInputsAfterAdd.nth(1).fill('admins');
+    await expect(groupNameInputsAfterAdd.nth(1)).toHaveValue('admins');
+    await expect(frame.getByText('Required value')).toBeHidden();
+    await expect(groupNameInputsAfterAdd.nth(0)).toHaveValue('developers');
+    await expect(groupNameInputsAfterAdd.nth(1)).toHaveValue('admins');
+
+    // Verify GIDs are generated for valid groups (numeric values)
+    const gidInputs = frame.getByPlaceholder('Auto-generated');
+    await expect(gidInputs.nth(0)).toHaveValue(/^\d+$/);
+    await expect(gidInputs.nth(1)).toHaveValue(/^\d+$/);
+  });
+
+  await test.step('Test group validation errors', async () => {
+    const groupNameInputs = frame.getByPlaceholder('Set group name');
+    const addGroupButton = frame.getByRole('button', { name: 'Add group' });
+    await expect(addGroupButton).toBeVisible();
+    await expect(addGroupButton).toBeEnabled();
+    await addGroupButton.click();
+
+    const newGroupInput1 = groupNameInputs.nth(2);
+    await expect(newGroupInput1).toBeVisible();
+    await expect(newGroupInput1).toBeEnabled();
+
+    await expect(frame.getByText('Invalid group name')).toBeHidden();
+    await newGroupInput1.fill('@invalid');
+    await expect(newGroupInput1).toHaveValue('@invalid');
+    await expect(frame.getByText('Invalid group name')).toBeVisible();
+
+    const addGroupButtons = frame.getByRole('button', { name: 'Add group' });
+    await expect(addGroupButtons.last()).toBeDisabled();
+
+    await newGroupInput1.clear();
+    await expect(frame.getByText('Invalid group name')).toBeHidden();
+    await expect(newGroupInput1).toHaveValue('');
+    await newGroupInput1.fill('develop');
+    await expect(newGroupInput1).toHaveValue('develop');
+    await expect(frame.getByText('Invalid group name')).toBeHidden();
+    await expect(addGroupButtons.last()).toBeEnabled();
+
+    await newGroupInput1.clear();
+    await expect(newGroupInput1).toHaveValue('');
+    await newGroupInput1.fill('admins');
+    await expect(newGroupInput1).toHaveValue('admins');
+    await expect(
+      frame.getByText('Group name already exists').first(),
+    ).toBeVisible();
+    await expect(addGroupButtons.last()).toBeDisabled();
+
+    const removeGroupButtons = frame.getByRole('button', {
+      name: 'Remove group',
+    });
+    const currentCount = await removeGroupButtons.count();
+
+    await removeGroupButtons.nth(currentCount - 1).click();
+    await expect(groupNameInputs.nth(2)).toBeHidden();
+
+    const remainingGroupInputs = frame.getByPlaceholder('Set group name');
+    const remainingCount = await remainingGroupInputs.count();
+    expect(remainingCount).toBe(2);
+    await expect(remainingGroupInputs.nth(0)).toHaveValue('developers');
+    await expect(remainingGroupInputs.nth(1)).toHaveValue('admins');
   });
 
   await test.step('Create initial valid users', async () => {
@@ -74,7 +195,7 @@ test('Create a blueprint with Users customization', async ({
       ),
     ).toBeVisible();
 
-    // Add second user with SSH key and custom group
+    // Add second user with SSH key and custom group (developers exists now)
     await frame.getByRole('button', { name: 'Add user', exact: true }).click();
 
     const usernameInputs = frame.getByRole('textbox', {
@@ -93,6 +214,26 @@ test('Create a blueprint with Users customization', async ({
       name: 'Administrator',
     });
     await expect(adminCheckboxes.nth(1)).not.toBeChecked();
+  });
+
+  await test.step('Verify undefined group warning', async () => {
+    const groupInputs = frame.getByPlaceholder('Add user group');
+    await groupInputs.first().fill('customgroup');
+    await groupInputs.first().press('Enter');
+
+    const warningMessage = frame
+      .getByText(
+        "User assigned to undefined group(s). Ensure these groups exist on the system or define them in the 'Groups' section.",
+      )
+      .first();
+    await expect(warningMessage).toBeVisible();
+
+    const closeButton = frame
+      .getByRole('button', { name: 'Close customgroup' })
+      .first();
+    await expect(closeButton).toBeVisible();
+    await closeButton.click();
+    await expect(warningMessage).toBeHidden();
   });
 
   await test.step('Test error scenarios', async () => {
@@ -134,11 +275,13 @@ test('Create a blueprint with Users customization', async ({
 
     // Test 3: Duplicate username error
     await expect(
-      frame.getByText('Username already exists').first(),
+      frame.getByText('User name already exists').first(),
     ).toBeHidden();
     await usernameInputs.nth(3).fill('admin1');
+    // Trigger validation by blurring the input
+    await usernameInputs.nth(3).blur();
     await expect(
-      frame.getByText('Username already exists').first(),
+      frame.getByText('User name already exists').first(),
     ).toBeVisible();
 
     // Test 4: Empty username with password filled
@@ -324,10 +467,9 @@ test('Create a blueprint with Users customization', async ({
     await frame.getByPlaceholder('Add user group').nth(2).press('Enter');
 
     // Verify admin checkbox is automatically checked due to wheel group
-    await frame
-      .getByRole('checkbox', { name: 'Administrator' })
-      .nth(2)
-      .isChecked();
+    await expect(
+      frame.getByRole('checkbox', { name: 'Administrator' }).nth(2),
+    ).toBeChecked();
     await expect(frame.getByText('wheel').nth(1)).toBeVisible(); // Group was added
     // Verify password validation passes
     await expect(
@@ -356,12 +498,82 @@ test('Create a blueprint with Users customization', async ({
     await expect(frame.getByText('True').first()).toBeVisible(); // Admin status
   });
 
+  await test.step('Test group add and remove functionality', async () => {
+    await frame.getByTestId('revisit-users').click();
+    await frame
+      .getByRole('heading', { name: 'Groups' })
+      .first()
+      .scrollIntoViewIfNeeded();
+
+    const remainingGroupInputs = frame.getByPlaceholder('Set group name');
+    const remainingCount = await remainingGroupInputs.count();
+    expect(remainingCount).toBe(2);
+    await expect(remainingGroupInputs.nth(0)).toHaveValue('developers');
+    await expect(remainingGroupInputs.nth(1)).toHaveValue('admins');
+
+    const removeGroupButtons = frame.getByRole('button', {
+      name: 'Remove group',
+    });
+    await removeGroupButtons.first().click();
+
+    const lastRemoveButton = frame
+      .getByRole('button', {
+        name: 'Remove group',
+      })
+      .first();
+    await expect(lastRemoveButton).toBeDisabled();
+
+    const groupNameInput = frame.getByPlaceholder('Set group name').first();
+    await groupNameInput.fill('developers');
+    await expect(groupNameInput).toHaveValue('developers');
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    const newGroupInput = frame.getByPlaceholder('Set group name').nth(1);
+    await expect(newGroupInput).toBeVisible();
+    await newGroupInput.fill('testers');
+    await expect(newGroupInput).toHaveValue('testers');
+
+    const groupNameInputsAfterModify = frame.getByPlaceholder('Set group name');
+    const groupCountAfterModify = await groupNameInputsAfterModify.count();
+    expect(groupCountAfterModify).toBe(2);
+
+    const removeButtons = frame.getByRole('button', {
+      name: 'Remove group',
+    });
+    await expect(removeButtons.first()).toBeEnabled();
+    await expect(removeButtons.nth(1)).toBeEnabled();
+  });
+
+  await test.step('Test group keyboard navigation', async () => {
+    const groupNameInput = frame.getByPlaceholder('Set group name').first();
+    await groupNameInput.focus();
+    await expect(groupNameInput).toBeFocused();
+
+    await groupNameInput.press('Tab');
+    const removeButton = frame
+      .getByRole('button', {
+        name: 'Remove group',
+      })
+      .first();
+    await expect(removeButton).toBeFocused();
+
+    const groupNameInputs = frame.getByPlaceholder('Set group name');
+    const groupCount = await groupNameInputs.count();
+    if (groupCount > 1) {
+      await removeButton.press('Tab');
+      const secondGroupInput = groupNameInputs.nth(1);
+      await expect(secondGroupInput).toBeFocused();
+
+      await secondGroupInput.press('Shift+Tab');
+      await expect(removeButton).toBeFocused();
+    }
+  });
+
   await test.step('Create and save blueprint', async () => {
     await fillInDetails(frame, blueprintName);
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Edit blueprint and modify users', async () => {
+  await test.step('Edit blueprint and modify groups and users', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByTestId('revisit-users').click();
 
@@ -382,6 +594,20 @@ test('Create a blueprint with Users customization', async ({
       name: 'blueprint user password',
     });
     await newPasswordInputs.last().fill('NewUserPass123');
+
+    await frame
+      .getByRole('heading', { name: 'Groups' })
+      .first()
+      .scrollIntoViewIfNeeded();
+    const groupNameInputs = frame.getByPlaceholder('Set group name');
+    const lastGroupIndex = (await groupNameInputs.count()) - 1;
+    await groupNameInputs.nth(lastGroupIndex).fill('managers');
+    await expect(groupNameInputs.nth(lastGroupIndex)).toHaveValue('managers');
+
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    const newGroupInput = frame.getByPlaceholder('Set group name').last();
+    await newGroupInput.fill('operators');
+    await expect(newGroupInput).toHaveValue('operators');
 
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
@@ -412,6 +638,8 @@ test('Create a blueprint with Users customization', async ({
     await expect(passwordInputs.nth(2)).toHaveValue('');
     await expect(passwordInputs.nth(3)).toHaveValue('');
 
+    await verifyGroups(frame, ['developers', 'managers', 'operators']);
+
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
@@ -437,11 +665,18 @@ test('Create a blueprint with Users customization', async ({
 
   await test.step('Import blueprint', async () => {
     await importBlueprint(frame, exportedBP);
+    await expect(
+      frame.getByRole('heading', { name: 'Image output' }).first(),
+    ).toBeVisible();
   });
 
-  await test.step('Verify imported users', async () => {
+  await test.step('Verify imported groups and users', async () => {
     await fillInImageOutputGuest(frame);
-    await frame.getByRole('button', { name: 'Users' }).click();
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
+
+    await expect(
+      frame.getByRole('heading', { name: 'Groups' }).first(),
+    ).toBeVisible();
 
     // Verify users are preserved
     await expect(
@@ -456,6 +691,8 @@ test('Create a blueprint with Users customization', async ({
     await expect(
       frame.getByRole('textbox', { name: 'blueprint user name' }).nth(3),
     ).toHaveValue('newuser');
+
+    await verifyGroups(frame, ['developers', 'managers', 'operators']);
 
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
