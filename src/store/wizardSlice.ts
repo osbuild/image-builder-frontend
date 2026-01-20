@@ -91,6 +91,16 @@ type UserGroupPayload = {
   group: string;
 };
 
+type UserGroupNamePayload = {
+  index: number;
+  name: string;
+};
+
+export type UserGroup = {
+  name: string;
+  gid?: number;
+};
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -156,6 +166,7 @@ export type wizardState = {
     templateName: string;
   };
   users: UserWithAdditionalInfo[];
+  userGroups: UserGroup[];
   firstBoot: {
     script: string;
   };
@@ -314,6 +325,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  userGroups: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -530,6 +542,10 @@ export const selectServices = (state: RootState) => {
 
 export const selectUsers = (state: RootState) => {
   return state.wizard.users;
+};
+
+export const selectUserGroups = (state: RootState) => {
+  return state.wizard.userGroups;
 };
 
 export const selectKernel = (state: RootState) => {
@@ -1479,6 +1495,48 @@ export const wizardSlice = createSlice({
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
+    addUserGroup: (state) => {
+      const existingGids = new Set(
+        state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
+      );
+      let nextGid = 1000;
+      while (existingGids.has(nextGid) && nextGid <= 65534) {
+        nextGid++;
+      }
+
+      const newGroup: UserGroup = { name: '' };
+      if (nextGid <= 65534) {
+        newGroup.gid = nextGid;
+      }
+      state.userGroups.push(newGroup);
+    },
+    setUserGroupNameByIndex: (
+      state,
+      action: PayloadAction<UserGroupNamePayload>,
+    ) => {
+      const { index, name } = action.payload;
+      state.userGroups[index].name = name.trim();
+      if (name.trim() === '') {
+        delete state.userGroups[index].gid;
+      } else if (state.userGroups[index].gid === undefined) {
+        // Re-assign gid if the group now has a valid name but no gid
+        const existingGids = new Set(
+          state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
+        );
+        let nextGid = 1000;
+        while (existingGids.has(nextGid) && nextGid <= 65534) {
+          nextGid++;
+        }
+        if (nextGid <= 65534) {
+          state.userGroups[index].gid = nextGid;
+        }
+      }
+    },
+    removeUserGroup: (state, action: PayloadAction<number>) => {
+      state.userGroups = state.userGroups.filter(
+        (_, index) => index !== action.payload,
+      );
+    },
     changeFips: (state, action: PayloadAction<boolean>) => {
       state.fips.enabled = action.payload;
     },
@@ -1552,6 +1610,9 @@ export const {
   removeModule,
   addPackageGroup,
   removePackageGroup,
+  addUserGroup,
+  setUserGroupNameByIndex,
+  removeUserGroup,
   addLanguage,
   removeLanguage,
   clearLanguages,
