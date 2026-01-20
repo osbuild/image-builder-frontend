@@ -42,6 +42,12 @@ import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
 
+// Group ID constants based on Linux LOGIN.DEFS(5) defaults
+// GID_MIN: minimum group ID for regular groups (default: 1000)
+// GID_MAX: maximum group ID for regular groups (default: 60000)
+const MIN_GROUP_ID = 1000;
+const MAX_GROUP_ID = 60000;
+
 type WizardModeOptions = 'create' | 'edit';
 
 export type BlueprintModeOptions = 'image' | 'package';
@@ -89,6 +95,16 @@ type UserAdministratorPayload = {
 type UserGroupPayload = {
   index: number;
   group: string;
+};
+
+type UserGroupNamePayload = {
+  index: number;
+  name: string;
+};
+
+export type UserGroup = {
+  name: string;
+  gid?: number;
 };
 
 export type wizardState = {
@@ -156,6 +172,7 @@ export type wizardState = {
     templateName: string;
   };
   users: UserWithAdditionalInfo[];
+  userGroups: UserGroup[];
   firstBoot: {
     script: string;
   };
@@ -314,6 +331,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  userGroups: [{ name: '' }],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -530,6 +548,10 @@ export const selectServices = (state: RootState) => {
 
 export const selectUsers = (state: RootState) => {
   return state.wizard.users;
+};
+
+export const selectUserGroups = (state: RootState) => {
+  return state.wizard.userGroups;
 };
 
 export const selectKernel = (state: RootState) => {
@@ -1479,6 +1501,48 @@ export const wizardSlice = createSlice({
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
+    addUserGroup: (state) => {
+      const existingGids = new Set(
+        state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
+      );
+      let nextGid = MIN_GROUP_ID;
+      while (existingGids.has(nextGid) && nextGid <= MAX_GROUP_ID) {
+        nextGid++;
+      }
+
+      const newGroup: UserGroup = { name: '' };
+      if (nextGid <= MAX_GROUP_ID) {
+        newGroup.gid = nextGid;
+      }
+      state.userGroups.push(newGroup);
+    },
+    setUserGroupNameByIndex: (
+      state,
+      action: PayloadAction<UserGroupNamePayload>,
+    ) => {
+      const { index, name } = action.payload;
+      state.userGroups[index].name = name.trim();
+      if (name.trim() === '') {
+        delete state.userGroups[index].gid;
+      } else if (state.userGroups[index].gid === undefined) {
+        // Re-assign gid if the group now has a valid name but no gid
+        const existingGids = new Set(
+          state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
+        );
+        let nextGid = MIN_GROUP_ID;
+        while (existingGids.has(nextGid) && nextGid <= MAX_GROUP_ID) {
+          nextGid++;
+        }
+        if (nextGid <= MAX_GROUP_ID) {
+          state.userGroups[index].gid = nextGid;
+        }
+      }
+    },
+    removeUserGroup: (state, action: PayloadAction<number>) => {
+      state.userGroups = state.userGroups.filter(
+        (_, index) => index !== action.payload,
+      );
+    },
     changeFips: (state, action: PayloadAction<boolean>) => {
       state.fips.enabled = action.payload;
     },
@@ -1552,6 +1616,9 @@ export const {
   removeModule,
   addPackageGroup,
   removePackageGroup,
+  addUserGroup,
+  setUserGroupNameByIndex,
+  removeUserGroup,
   addLanguage,
   removeLanguage,
   clearLanguages,

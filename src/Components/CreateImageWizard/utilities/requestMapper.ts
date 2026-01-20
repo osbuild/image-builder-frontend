@@ -42,6 +42,7 @@ import {
   Filesystem,
   FilesystemTyped,
   GcpUploadRequestOptions,
+  Group,
   ImageRequest,
   ImageTypes,
   LogicalVolume,
@@ -119,6 +120,7 @@ import {
   selectTemplateName,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
   UserWithAdditionalInfo,
   wizardState,
@@ -451,6 +453,19 @@ function commonRequestToState(
         isAdministrator: user.groups?.includes('wheel') || false,
         hasPassword: user.hasPassword || false,
       })) || [],
+    userGroups:
+      request.customizations.groups?.map((group) => {
+        const userGroup: {
+          name: string;
+          gid?: number;
+        } = {
+          name: group.name,
+        };
+        if (group.gid !== undefined) {
+          userGroup.gid = group.gid;
+        }
+        return userGroup;
+      }) || [],
     compliance:
       compliancePolicyID !== undefined
         ? {
@@ -902,7 +917,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
     kernel: getKernel(state),
-    groups: undefined,
+    groups: getUserGroups(state),
     timezone: getTimezone(state),
     locale: getLocale(state),
     firewall: getFirewall(state),
@@ -983,6 +998,28 @@ const getUsers = (state: RootState): User[] | undefined => {
     });
 
   return arrayUsers.length > 0 ? arrayUsers : undefined;
+};
+
+const getUserGroups = (state: RootState): Group[] | undefined => {
+  const userGroups = selectUserGroups(state);
+
+  if (userGroups.length === 0) {
+    return undefined;
+  }
+
+  const arrayGroups = userGroups
+    .filter((group) => group.name && group.name.trim() !== '')
+    .map((group) => {
+      const result: Group = {
+        name: group.name,
+      };
+      if (group.gid !== undefined) {
+        result.gid = group.gid;
+      }
+      return result;
+    });
+
+  return arrayGroups.length > 0 ? arrayGroups : undefined;
 };
 
 const getDisk = (state: RootState): Disk | undefined => {

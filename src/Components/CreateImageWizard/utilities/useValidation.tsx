@@ -44,6 +44,7 @@ import {
   selectTemplate,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
   UserWithAdditionalInfo,
 } from '../../../store/wizardSlice';
@@ -103,6 +104,7 @@ export function useIsBlueprintValid(): boolean {
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
+  const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
   return (
     !registration.disabledNext &&
@@ -117,6 +119,7 @@ export function useIsBlueprintValid(): boolean {
     !firstBoot.disabledNext &&
     !details.disabledNext &&
     !users.disabledNext &&
+    !userGroups.disabledNext &&
     !azureTarget.disabledNext
   );
 }
@@ -800,6 +803,7 @@ export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const users = useAppSelector(selectUsers);
+  const userGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   if (
@@ -831,6 +835,13 @@ export function useUsersValidation(): UsersStepValidation {
       const userNameError = validateUserName(users, users[index].name, index);
       if (userNameError) {
         userErrors.userName = userNameError;
+      }
+
+      if (
+        users[index].name &&
+        userGroups.find((group) => group.name === users[index].name)
+      ) {
+        userErrors.userName = 'Username cannot match an existing group name';
       }
     }
 
@@ -894,6 +905,41 @@ export function useUsersValidation(): UsersStepValidation {
     users.length === 0 ||
     // Case 2: all users are valid
     Object.keys(errors).length === 0;
+
+  return {
+    errors,
+    disabledNext: !canProceed,
+  };
+}
+
+export function useUserGroupsValidation(): UsersStepValidation {
+  const userGroups = useAppSelector(selectUserGroups);
+  const errors: { [key: string]: { [key: string]: string } } = {};
+
+  for (let index = 0; index < userGroups.length; index++) {
+    const groupErrors: { [key: string]: string } = {};
+    const group = userGroups[index];
+
+    if (group.name) {
+      if (!isUserGroupValid(group.name)) {
+        groupErrors.groupName = 'Invalid group name';
+      } else {
+        const duplicates = userGroups.filter(
+          (g, idx) => idx !== index && g.name === group.name,
+        );
+        if (duplicates.length > 0) {
+          groupErrors.groupName = 'Group name must be unique';
+        }
+      }
+    }
+
+    if (Object.keys(groupErrors).length > 0) {
+      errors[index] = groupErrors;
+    }
+  }
+
+  // All groups are either empty or valid (no errors)
+  const canProceed = Object.keys(errors).length === 0;
 
   return {
     errors,
