@@ -50,12 +50,12 @@ const UserInfo = () => {
       <Table variant='compact' borders={false}>
         <Thead>
           <Tr>
-            <Th>Username</Th>
-            <Th>Password</Th>
-            <Th>SSH key</Th>
-            <Th>Groups</Th>
+            <Th width={20}>Username</Th>
+            <Th width={20}>Password</Th>
+            <Th width={20}>SSH key</Th>
+            <Th width={20}>Groups</Th>
             <Th width={10}>Admin</Th>
-            <Th aria-label='Remove user' />
+            <Th width={10} aria-label='Remove user' />
           </Tr>
         </Thead>
         <Tbody>
