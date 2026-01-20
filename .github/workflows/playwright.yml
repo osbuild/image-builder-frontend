@@ -71,16 +71,16 @@ jobs:
           if [[ "$DYNAMIC_USER" == "true" ]]; then
             echo "Setting up account for Playwright tests..."
             # Step 1: Create a new empty account
-            curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/new -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/new -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
             # Step 2: Attach subscriptions to the new account
-            curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/attach \
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/attach \
               -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\", \"sku\":[\"RH00003\"],\"quantity\": 1}"
             # Step 3: Activate the new account by accepting Terms and Conditions
-            curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/activate -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/activate -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
             # Step 4: Refresh account to update subscription pools
-            curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/refresh -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/refresh -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
             # Step 5: View account to check account status
-            curl -k -X GET "https://account-manager-stage.app.eng.rdu2.redhat.com/account/get?username=$PLAYWRIGHT_USER&password=$PLAYWRIGHT_PASSWORD"
+            curl -k -X GET "https://ethel.rhsm.redhat.com/account/get?username=$PLAYWRIGHT_USER&password=$PLAYWRIGHT_PASSWORD"
           else
             echo "Skipping account setup for Playwright tests."
           fi
