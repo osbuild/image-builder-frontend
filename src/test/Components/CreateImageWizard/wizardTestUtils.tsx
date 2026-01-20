@@ -111,7 +111,7 @@ export const renderEditMode = async (id: string) => {
 
 export const openReleaseMenu = async () => {
   const user = userEvent.setup();
-  const releaseMenu = screen.getByTestId('release_select');
+  const releaseMenu = await screen.findByTestId('release_select');
   await waitFor(() => user.click(releaseMenu));
 };
 

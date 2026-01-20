@@ -85,7 +85,7 @@ const selectCentos9 = async () => {
 
 const openArchitectureMenu = async () => {
   const user = userEvent.setup();
-  const archMenu = screen.getByTestId('arch_select');
+  const archMenu = await screen.findByTestId('arch_select');
   await waitFor(() => user.click(archMenu));
 };
 
@@ -116,10 +116,10 @@ const selectGuestImageTarget = async () => {
 };
 
 const verifyNameInReviewStep = async (name: string) => {
-  const region = screen.getByRole('region', {
+  const region = await screen.findByRole('region', {
     name: /details revisit step/i,
   });
-  const definition = within(region).getByRole('definition');
+  const definition = await within(region).findByRole('definition');
   expect(definition).toHaveTextContent(name);
 };
 
