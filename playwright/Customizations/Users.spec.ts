@@ -99,7 +99,7 @@ test('Create a blueprint with Users customization', async ({
     ).toBeVisible();
     await expect(
       frame.getByText(
-        'Each group will automatically be assigned an ID number.',
+        'Define groups before assigning users to them. Each group will be created on systems using this image. Each group will automatically be assigned an ID number.',
       ),
     ).toBeVisible();
 
@@ -117,9 +117,18 @@ test('Create a blueprint with Users customization', async ({
     const gidInputs = frame.getByPlaceholder('Auto-generated');
     await expect(gidInputs.nth(0)).toHaveValue(/^\d+$/);
     await expect(gidInputs.nth(1)).toHaveValue(/^\d+$/);
+    // Verify GID inputs are disabled (read-only)
+    await expect(gidInputs.nth(0)).toBeDisabled();
+    await expect(gidInputs.nth(1)).toBeDisabled();
   });
 
   await test.step('Test group validation errors', async () => {
+    // Get Groups section container for scoped assertions
+    const groupsSection = frame
+      .getByRole('heading', { name: 'Groups' })
+      .first()
+      .locator('..');
+
     const groupNameInputs = frame.getByPlaceholder('Set group name');
     const addGroupButton = frame.getByRole('button', { name: 'Add group' });
     await expect(addGroupButton).toBeVisible();
@@ -130,20 +139,20 @@ test('Create a blueprint with Users customization', async ({
     await expect(newGroupInput1).toBeVisible();
     await expect(newGroupInput1).toBeEnabled();
 
-    await expect(frame.getByText('Invalid group name')).toBeHidden();
+    await expect(groupsSection.getByText('Invalid group name')).toBeHidden();
     await newGroupInput1.fill('@invalid');
     await expect(newGroupInput1).toHaveValue('@invalid');
-    await expect(frame.getByText('Invalid group name')).toBeVisible();
+    await expect(groupsSection.getByText('Invalid group name')).toBeVisible();
 
     const addGroupButtons = frame.getByRole('button', { name: 'Add group' });
     await expect(addGroupButtons.last()).toBeDisabled();
 
     await newGroupInput1.clear();
-    await expect(frame.getByText('Invalid group name')).toBeHidden();
+    await expect(groupsSection.getByText('Invalid group name')).toBeHidden();
     await expect(newGroupInput1).toHaveValue('');
     await newGroupInput1.fill('develop');
     await expect(newGroupInput1).toHaveValue('develop');
-    await expect(frame.getByText('Invalid group name')).toBeHidden();
+    await expect(groupsSection.getByText('Invalid group name')).toBeHidden();
     await expect(addGroupButtons.last()).toBeEnabled();
 
     await newGroupInput1.clear();
@@ -151,7 +160,7 @@ test('Create a blueprint with Users customization', async ({
     await newGroupInput1.fill('admins');
     await expect(newGroupInput1).toHaveValue('admins');
     await expect(
-      frame.getByText('Group name already exists').first(),
+      groupsSection.getByText('Group name already exists').first(),
     ).toBeVisible();
     await expect(addGroupButtons.last()).toBeDisabled();
 
@@ -228,11 +237,14 @@ test('Create a blueprint with Users customization', async ({
       .first();
     await expect(warningMessage).toBeVisible();
 
-    const closeButton = frame
+    // Remove customgroup
+    const customgroupCloseButton = frame
       .getByRole('button', { name: 'Close customgroup' })
       .first();
-    await expect(closeButton).toBeVisible();
-    await closeButton.click();
+    await expect(customgroupCloseButton).toBeVisible();
+    await customgroupCloseButton.click();
+
+    // Warning should be hidden now because 'wheel' is a system group and not considered undefined
     await expect(warningMessage).toBeHidden();
   });
 
