@@ -100,6 +100,7 @@ export const isUserNameValid = (userName: string) => {
 export const isUserGroupValid = (group: string) => {
   // see `man groupadd` for the exact specification
   return (
+    group.length >= 1 &&
     group.length <= 32 &&
     /^[a-zA-Z0-9_][a-zA-Z0-9_-]*(\$)?$/.test(group) &&
     /[a-zA-Z]+/.test(group) // contains at least one letter

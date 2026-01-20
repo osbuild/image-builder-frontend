@@ -114,6 +114,7 @@ import {
   selectTemplateName,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
   UserWithAdditionalInfo,
   wizardState,
@@ -418,6 +419,7 @@ function commonRequestToState(
     },
     users:
       request.customizations.users?.map((user) => ({
+        id: uuidv4(),
         name: user.name,
         password: '', // The image-builder API does not return the password.
         ssh_key: user.ssh_key || '',
@@ -540,6 +542,22 @@ function commonRequestToState(
     fips: {
       enabled: request.customizations.fips?.enabled || false,
     },
+    userGroups:
+      // Support both 'groups' (hosted/current) and 'group' (on-prem/legacy) formats
+      (
+        request.customizations.groups ||
+        (
+          request.customizations as {
+            group?: Array<{ name: string; gid?: number }>;
+          }
+        ).group
+      )?.map((grp) => ({
+        // Generate deterministic ID based on name with namespace prefix
+        // across reorderings and multiple loads of the same blueprint
+        id: `group-${grp.name}`,
+        name: grp.name,
+        ...(grp.gid !== undefined && { gid: grp.gid }),
+      })) || [],
   };
 }
 
@@ -870,7 +888,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
     kernel: getKernel(state),
-    groups: undefined,
+    groups: getUserGroups(state),
     timezone: getTimezone(state),
     locale: getLocale(state),
     firewall: getFirewall(state),
@@ -1043,6 +1061,17 @@ const getModules = (state: RootState) => {
     return modules;
   }
   return undefined;
+};
+
+const getUserGroups = (state: RootState) => {
+  const userGroups = selectUserGroups(state)
+    .filter((grp) => grp.name && grp.name.trim().length > 0)
+    .map((grp) => ({
+      name: grp.name,
+      ...(grp.gid !== undefined && { gid: grp.gid }),
+    }));
+
+  return userGroups.length > 0 ? userGroups : undefined;
 };
 
 const getTimezone = (state: RootState) => {

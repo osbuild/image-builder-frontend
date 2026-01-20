@@ -53,6 +53,7 @@ import {
   useServicesValidation,
   useSnapshotValidation,
   useTimezoneValidation,
+  useUserGroupsValidation,
   useUsersValidation,
 } from './utilities/useValidation';
 import {
@@ -285,6 +286,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const detailsValidation = useDetailsValidation();
   // Users
   const usersValidation = useUsersValidation();
+  // Groups
+  const groupsValidation = useUserGroupsValidation();
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
@@ -608,14 +611,21 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <PackagesStep />
               </WizardStep>,
               <WizardStep
-                name='Users'
+                name='Groups and users'
                 id='wizard-users'
                 key='wizard-users'
                 navItem={CustomStatusNavItem}
-                status={usersValidation.disabledNext ? 'error' : 'default'}
+                status={
+                  usersValidation.disabledNext || groupsValidation.disabledNext
+                    ? 'error'
+                    : 'default'
+                }
                 footer={
                   <CustomWizardFooter
-                    disableNext={usersValidation.disabledNext}
+                    disableNext={
+                      usersValidation.disabledNext ||
+                      groupsValidation.disabledNext
+                    }
                     optional={true}
                     isOnPremise={isOnPremise}
                   />

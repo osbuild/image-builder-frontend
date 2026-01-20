@@ -37,6 +37,7 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
+import { isUserGroupValid } from '../Components/CreateImageWizard/validators';
 import { RHEL_10, RHEL_10_IMAGE_MODE, X86_64 } from '../constants';
 import { yyyyMMddFormat } from '../Utilities/time';
 
@@ -66,6 +67,7 @@ export type ComplianceType = 'openscap' | 'compliance';
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
 } & {
+  id: string;
   isAdministrator: boolean;
 };
 
@@ -92,6 +94,12 @@ type UserAdministratorPayload = {
 type UserGroupPayload = {
   index: number;
   group: string;
+};
+
+export type UserGroup = {
+  id: string;
+  name: string;
+  gid?: number;
 };
 
 export type wizardState = {
@@ -159,6 +167,7 @@ export type wizardState = {
     templateName: string;
   };
   users: UserWithAdditionalInfo[];
+  userGroups: UserGroup[];
   firstBoot: {
     script: string;
   };
@@ -317,6 +326,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  userGroups: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -533,6 +543,10 @@ export const selectServices = (state: RootState) => {
 
 export const selectUsers = (state: RootState) => {
   return state.wizard.users;
+};
+
+export const selectUserGroups = (state: RootState) => {
+  return state.wizard.userGroups;
 };
 
 export const selectKernel = (state: RootState) => {
@@ -1220,6 +1234,37 @@ export const wizardSlice = createSlice({
         state.groups.splice(index, 1);
       }
     },
+    addUserGroup: (state) => {
+      state.userGroups.push({
+        id: uuidv4(),
+        name: '',
+      });
+    },
+    setUserGroupNameByIndex: (
+      state,
+      action: PayloadAction<{ index: number; name: string }>,
+    ) => {
+      const { index, name } = action.payload;
+      const trimmedName = name.trim();
+      state.userGroups[index].name = trimmedName;
+
+      // Generate GID if name becomes valid and GID doesn't exist yet
+      if (isUserGroupValid(trimmedName) && !state.userGroups[index].gid) {
+        const existingGids = new Set(
+          state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
+        );
+        let nextGid = 1000;
+        while (existingGids.has(nextGid) && nextGid <= 65534) {
+          nextGid++;
+        }
+        if (nextGid <= 65534) {
+          state.userGroups[index].gid = nextGid;
+        }
+      }
+    },
+    removeUserGroup: (state, action: PayloadAction<number>) => {
+      state.userGroups.splice(action.payload, 1);
+    },
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
         state.locale.languages &&
@@ -1396,6 +1441,7 @@ export const wizardSlice = createSlice({
     },
     addUser: (state) => {
       const newUser = {
+        id: uuidv4(),
         name: '',
         password: '',
         ssh_key: '',
@@ -1552,6 +1598,9 @@ export const {
   removeModule,
   addPackageGroup,
   removePackageGroup,
+  addUserGroup,
+  setUserGroupNameByIndex,
+  removeUserGroup,
   addLanguage,
   removeLanguage,
   clearLanguages,
