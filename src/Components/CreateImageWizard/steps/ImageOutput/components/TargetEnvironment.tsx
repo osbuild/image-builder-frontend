@@ -21,6 +21,7 @@ import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { IMAGE_MODE_SUPPORTED_TARGETS } from '../../../../../constants';
 import { useIsOnPremise } from '../../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
+import { selectAWSConfig } from '../../../../../store/cloudProviderConfigSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../../store/provisioningApi';
@@ -44,7 +45,7 @@ type TargetEnvironmentCardProps = {
   isClicked: boolean;
   isDisabled?: boolean;
   handleOnClick: () => void;
-  onMouseEnter?: MouseEventHandler<HTMLElement>;
+  onMouseEnter?: MouseEventHandler<HTMLElement> | undefined;
 };
 
 const TargetEnvironmentCard = ({
@@ -95,10 +96,13 @@ const TargetEnvironmentCard = ({
 };
 
 const TargetEnvironment = () => {
+  const isOnPremise = useIsOnPremise();
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
+  const config = useAppSelector(selectAWSConfig);
+  const hasNoCloudProvidersConfig = isOnPremise && !config;
 
   const { data, isFetching, isError } = useGetArchitecturesQuery({
     distribution: distribution,
@@ -120,7 +124,9 @@ const TargetEnvironment = () => {
   )?.image_types;
 
   if (blueprintMode === 'image') {
-    supportedEnvironments = IMAGE_MODE_SUPPORTED_TARGETS;
+    supportedEnvironments = !hasNoCloudProvidersConfig
+      ? IMAGE_MODE_SUPPORTED_TARGETS
+      : IMAGE_MODE_SUPPORTED_TARGETS.filter((target) => target !== 'aws');
   }
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
