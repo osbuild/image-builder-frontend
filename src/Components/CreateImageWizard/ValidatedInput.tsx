@@ -84,6 +84,9 @@ export const ValidatedInputAndTextArea = ({
     if (isDisabled) {
       setIsPristine(true);
     }
+    if (value === '' && !errorMessage) {
+      setIsPristine(true);
+    }
   }, [value, errorMessage, isDisabled]);
 
   return (
