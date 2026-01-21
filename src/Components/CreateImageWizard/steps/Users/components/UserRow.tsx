@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 
-import { Button, Checkbox } from '@patternfly/react-core';
+import {
+  Button,
+  Checkbox,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
@@ -42,6 +47,8 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
       disabledNext: stepValidation.disabledNext,
     };
   };
+
+  const validation = getValidationByIndex(index);
 
   const onRemove = () => {
     if (
@@ -148,6 +155,13 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             stepValidation={getValidationByIndex(index)}
             fieldName='groups'
           />
+          {validation.errors.undefinedGroups && (
+            <HelperText>
+              <HelperTextItem variant='warning'>
+                {validation.errors.undefinedGroups}
+              </HelperTextItem>
+            </HelperText>
+          )}
         </Td>
         <Td>
           <Checkbox

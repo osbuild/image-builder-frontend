@@ -17,6 +17,7 @@ const UserInfo = () => {
     users.length === 0
       ? [
           {
+            id: 'temp-user',
             name: '',
             password: '',
             ssh_key: '',
@@ -61,7 +62,7 @@ const UserInfo = () => {
         <Tbody>
           {usersToRender.map((user, index) => (
             <UserRow
-              key={index}
+              key={user.id}
               user={user}
               index={index}
               userCount={users.length}

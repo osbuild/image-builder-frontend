@@ -43,7 +43,9 @@ import {
   selectTemplate,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
+  UserGroup,
   UserWithAdditionalInfo,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
@@ -74,6 +76,8 @@ import {
   validateMultipleCertificates,
 } from '../validators';
 
+const SYSTEM_GROUPS = ['wheel', 'sudo'];
+
 export type StepValidation = {
   errors: {
     [key: string]: string;
@@ -82,6 +86,13 @@ export type StepValidation = {
 };
 
 export type UsersStepValidation = {
+  errors: {
+    [key: string]: { [key: string]: string };
+  };
+  disabledNext: boolean;
+};
+
+export type GroupsStepValidation = {
   errors: {
     [key: string]: { [key: string]: string };
   };
@@ -101,6 +112,7 @@ export function useIsBlueprintValid(): boolean {
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
+  const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
   return (
     !registration.disabledNext &&
@@ -115,6 +127,7 @@ export function useIsBlueprintValid(): boolean {
     !firstBoot.disabledNext &&
     !details.disabledNext &&
     !users.disabledNext &&
+    !userGroups.disabledNext &&
     !azureTarget.disabledNext
   );
 }
@@ -757,26 +770,51 @@ export function useServicesValidation(): StepValidation {
   };
 }
 
+/**
+ * Generic validator for unique names with custom validation logic
+ * @param items Array of items with a name property
+ * @param name Name to validate
+ * @param currentIndex Index of the item being validated (to exclude from duplicate check)
+ * @param validator Custom validation function for the name format
+ * @param entityType Type of entity being validated (e.g., 'user', 'group')
+ * @returns Error message or empty string if valid
+ */
+const validateUniqueName = <T extends { name: string }>(
+  items: T[],
+  name: string,
+  currentIndex: number,
+  validator: (name: string) => boolean,
+  entityType: string,
+): string => {
+  if (!name) {
+    return 'Required value';
+  }
+  if (!validator(name)) {
+    return `Invalid ${entityType} name`;
+  }
+
+  // Check for duplicate names
+  const count = items.filter(
+    (item, index) => item.name === name && index !== currentIndex,
+  ).length;
+  if (count > 0) {
+    return `${entityType.charAt(0).toUpperCase() + entityType.slice(1)} name already exists`;
+  }
+  return '';
+};
+
 const validateUserName = (
   users: UserWithAdditionalInfo[],
   userName: string,
   currentIndex: number,
 ): string => {
-  if (!userName) {
-    return 'Required value';
-  }
-  if (!isUserNameValid(userName)) {
-    return 'Invalid user name';
-  }
-
-  // check for duplicate names
-  const count = users.filter(
-    (user, index) => user.name === userName && index !== currentIndex,
-  ).length;
-  if (count > 0) {
-    return 'Username already exists';
-  }
-  return '';
+  return validateUniqueName(
+    users,
+    userName,
+    currentIndex,
+    isUserNameValid,
+    'user',
+  );
 };
 
 const validateSshKey = (userSshKey: string): string => {
@@ -789,6 +827,7 @@ const validateSshKey = (userSshKey: string): string => {
 export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
   const users = useAppSelector(selectUsers);
+  const definedGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   if (users.length === 0) {
@@ -839,6 +878,15 @@ export function useUsersValidation(): UsersStepValidation {
         ? users[index].name
         : '';
 
+    // Check for groups that are assigned to users but not defined in Groups section
+    const definedGroupNames = definedGroups.map((group) => group.name);
+    const undefinedGroups = users[index].groups.filter(
+      (groupName) =>
+        !definedGroupNames.includes(groupName) &&
+        !SYSTEM_GROUPS.includes(groupName) &&
+        isUserGroupValid(groupName),
+    );
+
     if (
       invalidGroups.length > 0 ||
       duplicateGroups.length > 0 ||
@@ -861,20 +909,23 @@ export function useUsersValidation(): UsersStepValidation {
       userErrors.groups = groupsErrors.join(' | ');
     }
 
+    if (undefinedGroups.length > 0) {
+      userErrors.undefinedGroups =
+        "User assigned to undefined group(s). Ensure these groups exist on the system or define them in the 'Groups' section.";
+    }
+
     if (Object.keys(userErrors).length > 0) {
       errors[index] = userErrors;
     }
   }
 
-  const canProceed =
-    // Case 1: there is no users
-    users.length === 0 ||
-    // Case 2: all users are valid
-    Object.keys(errors).length === 0;
+  const hasBlockingErrors = Object.values(errors).some((userErrors) =>
+    Object.keys(userErrors).some((key) => key !== 'undefinedGroups'),
+  );
 
   return {
     errors,
-    disabledNext: !canProceed,
+    disabledNext: hasBlockingErrors,
   };
 }
 
@@ -1037,4 +1088,57 @@ export function useAzureValidation(): StepValidation {
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
+}
+
+const validateUserGroupName = (
+  userGroups: UserGroup[],
+  groupName: string,
+  currentIndex: number,
+): string => {
+  return validateUniqueName(
+    userGroups,
+    groupName,
+    currentIndex,
+    isUserGroupValid,
+    'group',
+  );
+};
+
+export function useUserGroupsValidation(): GroupsStepValidation {
+  const userGroups = useAppSelector(selectUserGroups);
+  const errors: { [key: string]: { [key: string]: string } } = {};
+
+  if (userGroups.length === 0) {
+    return {
+      errors: {},
+      disabledNext: false,
+    };
+  }
+
+  for (let index = 0; index < userGroups.length; index++) {
+    const groupErrors: { [key: string]: string } = {};
+    const isLastGroup = index === userGroups.length - 1;
+
+    if (userGroups[index].name) {
+      const groupNameError = validateUserGroupName(
+        userGroups,
+        userGroups[index].name,
+        index,
+      );
+      if (groupNameError) {
+        groupErrors.groupName = groupNameError;
+      }
+    } else if (!isLastGroup) {
+      groupErrors.groupName = 'Required value';
+    }
+
+    if (Object.keys(groupErrors).length > 0) {
+      errors[index] = groupErrors;
+    }
+  }
+
+  return {
+    errors,
+    disabledNext: Object.keys(errors).length > 0,
+  };
 }

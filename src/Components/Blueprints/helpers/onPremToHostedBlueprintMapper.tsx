@@ -77,7 +77,16 @@ export type CustomizationsOnPrem = {
   hostname?: string;
   kernel?: Kernel;
   user?: UserOnPrem[];
+  /**
+   * User groups with GIDs (plural form, used in Hosted environment).
+   * Hosted blueprints use this field in JSON format.
+   */
   groups?: GroupOnPrem[];
+  /**
+   * User groups with GIDs (singular form, used in On-Prem environment).
+   * On-Prem blueprints use this field in TOML format: [[customizations.group]]
+   */
+  group?: GroupOnPrem[];
   timezone?: Timezone;
   locale?: Locale;
   firewall?: FirewallCustomization;
@@ -123,9 +132,11 @@ export const mapOnPremToHosted = async (
     blueprint.packages !== undefined
       ? blueprint.packages.map((p) => p.name)
       : undefined;
-  const groups =
-    blueprint.customizations?.groups !== undefined
-      ? blueprint.customizations.groups.map((p) => `@${p.name}`)
+  // Note: blueprint.groups refers to package groups (e.g., @development-tools),
+  // not user groups. User groups are in customizations.groups (see below).
+  const packageGroups =
+    blueprint.groups !== undefined
+      ? blueprint.groups.map((p) => `@${p.name}`)
       : undefined;
   const distro = process.env.IS_ON_PREMISE
     ? await getHostDistro()
@@ -144,14 +155,19 @@ export const mapOnPremToHosted = async (
         }),
       ),
       packages:
-        packages !== undefined || groups !== undefined
-          ? [...(packages ? packages : []), ...(groups ? groups : [])]
+        packages !== undefined || packageGroups !== undefined
+          ? [
+              ...(packages ? packages : []),
+              ...(packageGroups ? packageGroups : []),
+            ]
           : undefined,
       users:
         users !== undefined || user_keys !== undefined
           ? [...(users ? users : []), ...(user_keys ? user_keys : [])]
           : undefined,
-      groups: blueprint.customizations?.groups,
+      // Support both 'groups' (hosted/current) and 'group' (on-prem/legacy) formats
+      groups:
+        blueprint.customizations?.groups || blueprint.customizations?.group,
       filesystem: blueprint.customizations?.filesystem?.map(
         ({ minsize, size, ...fs }) => ({
           min_size: minsize || size,
@@ -207,12 +223,36 @@ export const mapHostedToOnPrem = (
   };
 
   if (blueprint.customizations.packages) {
-    result.packages = blueprint.customizations.packages.map((pkg) => {
-      return {
-        name: pkg,
-        version: '*',
-      };
+    // Separate regular packages from package groups (those starting with @)
+    const regularPackages: string[] = [];
+    const packageGroups: string[] = [];
+
+    blueprint.customizations.packages.forEach((pkg) => {
+      if (pkg.startsWith('@')) {
+        // Package group (e.g., @development-tools) - remove @ prefix and add to groups
+        packageGroups.push(pkg.substring(1));
+      } else {
+        // Regular package
+        regularPackages.push(pkg);
+      }
     });
+
+    // Map regular packages to packages array
+    if (regularPackages.length > 0) {
+      result.packages = regularPackages.map((pkg) => {
+        return {
+          name: pkg,
+          version: '*',
+        };
+      });
+    }
+
+    // Map package groups to blueprint.groups array
+    if (packageGroups.length > 0) {
+      result.groups = packageGroups.map((groupName) => ({
+        name: groupName,
+      }));
+    }
   }
 
   if (blueprint.customizations.containers) {
@@ -240,6 +280,10 @@ export const mapHostedToOnPrem = (
 
   if (blueprint.customizations.disk) {
     result.customizations!.disk = blueprint.customizations.disk;
+  }
+
+  if (blueprint.customizations.groups) {
+    result.customizations!.group = blueprint.customizations.groups;
   }
 
   if (blueprint.customizations.users) {
