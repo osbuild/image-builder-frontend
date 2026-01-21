@@ -144,16 +144,20 @@ test('Create a blueprint with Users customization', async ({
     // Test 4: Empty username with password filled
     await expect(
       frame.getByRole('heading', {
-        name: 'Danger alert: All users need to have a username',
+        name: 'Danger alert: Errors found',
       }),
     ).toBeHidden();
     await usernameInputs.nth(4).fill('');
     await passwordInputs.nth(4).fill('password123');
+    // Click Next to trigger validation
+    await frame.getByRole('button', { name: 'Next' }).click();
     await expect(
       frame.getByRole('heading', {
-        name: 'Danger alert: All users need to have a username',
+        name: 'Danger alert: Errors found',
       }),
     ).toBeVisible();
+    // Go back to Users step to continue with other tests
+    await frame.getByRole('button', { name: 'Users' }).click();
 
     // Test 5: Invalid group name with spaces
     await expect(
