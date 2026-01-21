@@ -10,7 +10,11 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { addUser, selectUsers } from '../../../../../store/wizardSlice';
 import { useUsersValidation } from '../../../utilities/useValidation';
 
-const UserInfo = () => {
+type UserInfoProps = {
+  attemptedNext?: boolean | undefined;
+};
+
+const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
   const usersToRender =
@@ -28,22 +32,19 @@ const UserInfo = () => {
       : users;
 
   const stepValidation = useUsersValidation();
-
-  const hasUserWithoutName = Object.values(stepValidation.errors).some(
-    (userErrors) => userErrors.userName === 'Required value',
-  );
+  const hasErrors = !!stepValidation.disabledNext;
+  const showAlert = attemptedNext && hasErrors;
 
   const onAddUserClick = () => {
     dispatch(addUser());
   };
-
   return (
     <>
-      {hasUserWithoutName && (
+      {showAlert && (
         <Alert
           variant='danger'
           isInline
-          title='All users need to have a username'
+          title='Errors found'
           className='pf-v6-u-mt-lg'
         />
       )}
@@ -74,11 +75,7 @@ const UserInfo = () => {
           variant='link'
           onClick={onAddUserClick}
           icon={<AddCircleOIcon />}
-          isDisabled={
-            hasUserWithoutName ||
-            !!stepValidation.disabledNext ||
-            users.length < 1
-          }
+          isDisabled={!!stepValidation.disabledNext || users.length < 1}
         >
           Add user
         </Button>

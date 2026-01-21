@@ -285,6 +285,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const detailsValidation = useDetailsValidation();
   // Users
   const usersValidation = useUsersValidation();
+  const [usersStepAttemptedNext, setUsersStepAttemptedNext] = useState(false);
+
+  // Reset attemptedNext when errors are fixed
+  useEffect(() => {
+    if (!usersValidation.disabledNext && usersStepAttemptedNext) {
+      setUsersStepAttemptedNext(false);
+    }
+  }, [usersValidation.disabledNext, usersStepAttemptedNext]);
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
@@ -615,13 +623,22 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 status={usersValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
-                    disableNext={usersValidation.disabledNext}
+                    disableNext={
+                      usersStepAttemptedNext && usersValidation.disabledNext
+                    }
+                    beforeNext={() => {
+                      if (usersValidation.disabledNext) {
+                        setUsersStepAttemptedNext(true);
+                        return false;
+                      }
+                      return true;
+                    }}
                     optional={true}
                     isOnPremise={isOnPremise}
                   />
                 }
               >
-                <UsersStep />
+                <UsersStep attemptedNext={usersStepAttemptedNext} />
               </WizardStep>,
               <WizardStep
                 name='Timezone'
