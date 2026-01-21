@@ -4,7 +4,11 @@ import { Content, Form, Title } from '@patternfly/react-core';
 
 import UserInfo from './components/UserInfo';
 
-const UsersStep = () => {
+type UsersStepProps = {
+  attemptedNext?: boolean | undefined;
+};
+
+const UsersStep = ({ attemptedNext }: UsersStepProps) => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
@@ -14,7 +18,7 @@ const UsersStep = () => {
         Create user accounts for systems that will use this image. Duplicate
         usernames are not allowed.
       </Content>
-      <UserInfo />
+      <UserInfo attemptedNext={attemptedNext} />
     </Form>
   );
 };
