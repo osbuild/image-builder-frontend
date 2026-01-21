@@ -238,7 +238,7 @@ const TargetEnvironment = () => {
               id='vsphere-checkbox-ova'
               label={
                 <>
-                  VMware vSphere - Open virtualization format (.ova)
+                  VMware vSphere - Open virtualization format (.ova){' '}
                   <Popover
                     maxWidth='30rem'
                     position='right'
@@ -256,10 +256,10 @@ const TargetEnvironment = () => {
                   >
                     <Button
                       icon={<HelpIcon />}
-                      className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
                       variant='plain'
                       aria-label='About OVA file'
                       isInline
+                      hasNoPadding
                     />
                   </Popover>
                 </>
@@ -278,7 +278,7 @@ const TargetEnvironment = () => {
               id='vsphere-checkbox-vmdk'
               label={
                 <>
-                  VMware vSphere - Virtual disk (.vmdk)
+                  VMware vSphere - Virtual disk (.vmdk){' '}
                   <Popover
                     maxWidth='30rem'
                     position='right'
@@ -295,10 +295,10 @@ const TargetEnvironment = () => {
                   >
                     <Button
                       icon={<HelpIcon />}
-                      className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
                       variant='plain'
                       aria-label='About VMDK file'
                       isInline
+                      hasNoPadding
                     />
                   </Popover>
                 </>
@@ -311,7 +311,7 @@ const TargetEnvironment = () => {
           )}
         </FormGroup>
       )}
-      <FormGroup label={<small>Other</small>}>
+      <FormGroup label={<small>Other</small>} className='pf-v6-u-mt-sm'>
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label='Virtualization - Guest image (.qcow2)'
@@ -340,7 +340,7 @@ const TargetEnvironment = () => {
           <Checkbox
             label={
               <>
-                WSL - Windows Subsystem for Linux (.wsl)
+                WSL - Windows Subsystem for Linux (.wsl){' '}
                 <Popover
                   maxWidth='30rem'
                   position='right'
@@ -378,10 +378,10 @@ const TargetEnvironment = () => {
                 >
                   <Button
                     icon={<HelpIcon />}
-                    className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
                     variant='plain'
                     aria-label='About WSL file'
                     isInline
+                    hasNoPadding
                   />
                 </Popover>
               </>
