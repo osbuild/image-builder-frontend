@@ -1,10 +1,15 @@
+import { Bootc } from './composerCloudApi';
+
 import {
   Awss3UploadRequestOptions,
   AwsUploadRequestOptions,
+  BlueprintResponse,
   ComposeRequest,
   ComposesResponseItem,
   CreateBlueprintApiArg,
   CreateBlueprintRequest,
+  DistributionProfileItem,
+  Distributions,
   ImageRequest,
   UpdateBlueprintApiArg,
   UploadTypes,
@@ -84,6 +89,23 @@ export type UpdateWorkerConfigApiArg = {
   updateWorkerConfigRequest: WorkerConfigRequest | undefined;
 };
 
+export type GetArchitecturesApiArg = {
+  distribution: Distributions | 'image-mode';
+};
+
+export type GetOscapProfilesApiArg = {
+  // NOTE: this is a workaround to get the types happy,
+  // we will disable openscap for image-mode
+  distribution: Distributions | 'image-mode';
+};
+
+export type GetOscapCustomizationsApiArg = {
+  // NOTE: this is a workaround to get the types happy,
+  // we will disable openscap for image-mode
+  distribution: Distributions | 'image-mode';
+  profile: DistributionProfileItem;
+};
+
 export type CockpitUploadTypes = UploadTypes | 'local';
 
 export type CockpitAwsUploadRequestOptions = AwsUploadRequestOptions & {
@@ -99,11 +121,20 @@ export type CockpitImageRequest = Omit<ImageRequest, 'upload_request'> & {
   upload_request: CockpitUploadRequest;
 };
 
+export type CockpitBlueprintResponse = Omit<
+  BlueprintResponse,
+  'distribution'
+> & {
+  distribution: Distributions | 'image-mode';
+};
+
 export type CockpitCreateBlueprintRequest = Omit<
   CreateBlueprintRequest,
-  'image_requests'
+  'image_requests' | 'distribution'
 > & {
+  distribution: Distributions | 'image-mode';
   image_requests: CockpitImageRequest[];
+  bootc?: Bootc | undefined;
 };
 
 export type CockpitCreateBlueprintApiArg = Omit<
@@ -124,8 +155,10 @@ export type CockpitComposesResponseItem = Omit<
   ComposesResponseItem,
   'request'
 > & {
-  request: Omit<ComposeRequest, 'image_requests'> & {
+  request: Omit<ComposeRequest, 'image_requests' | 'distribution'> & {
+    distribution?: Distributions | 'image-mode' | undefined;
     image_requests: CockpitImageRequest[];
+    bootc?: Bootc | undefined;
   };
 };
 

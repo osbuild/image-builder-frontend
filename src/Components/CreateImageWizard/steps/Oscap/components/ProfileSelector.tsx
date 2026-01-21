@@ -31,6 +31,7 @@ import {
   OpenScap,
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeFips,
   changeFscMode,
@@ -55,7 +56,9 @@ type ProfileSelectorProps = {
 const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
   const isOnPremise = useIsOnPremise();
   const profileID = useAppSelector(selectComplianceProfileID);
-  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
+  const release = removeBetaFromRelease(
+    asDistribution(useAppSelector(selectDistribution)),
+  );
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);

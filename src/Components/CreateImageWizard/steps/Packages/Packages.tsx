@@ -79,6 +79,7 @@ import {
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { Package } from '../../../../store/imageBuilderApi';
+import { asDistribution } from '../../../../store/typeGuards';
 import {
   addModule,
   addPackage,
@@ -172,7 +173,7 @@ const Packages = () => {
 
   const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
     useGetArchitecturesQuery({
-      distribution: distribution,
+      distribution: asDistribution(distribution),
     });
 
   const epelRepoUrlByDistribution =

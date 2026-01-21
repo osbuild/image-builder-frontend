@@ -2,8 +2,8 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
 import { useAppSelector } from '../../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../../store/imageBuilderApi';
 import {
   addDisabledService,
   addEnabledService,

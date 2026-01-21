@@ -17,6 +17,7 @@ import {
   OpenScap,
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   selectComplianceProfileID,
   selectDistribution,
@@ -25,7 +26,7 @@ import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 const ProfileDetails = (): JSX.Element => {
   const releaseRaw = useAppSelector(selectDistribution);
-  const release = removeBetaFromRelease(releaseRaw);
+  const release = removeBetaFromRelease(asDistribution(releaseRaw));
   const profileID = useAppSelector(selectComplianceProfileID);
 
   const { data, isFetching, error } = useGetOscapCustomizationsQuery(
