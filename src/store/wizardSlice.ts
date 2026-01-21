@@ -44,7 +44,7 @@ import type { RootState } from '.';
 
 type WizardModeOptions = 'create' | 'edit';
 
-type BlueprintModeOptions = 'image' | 'package';
+export type BlueprintModeOptions = 'image' | 'package';
 
 export type ImageSource = string;
 
@@ -100,9 +100,9 @@ export type wizardState = {
   blueprintId?: string;
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
-  imageSource: ImageSource;
+  imageSource?: ImageSource | undefined;
   architecture: ImageRequest['architecture'];
-  distribution: Distributions;
+  distribution: Distributions | 'image-mode';
   imageTypes: ImageTypes[];
   aapRegistration: {
     callbackUrl: string | undefined;

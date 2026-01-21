@@ -10,6 +10,7 @@ import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
 import { imageBuilderApi } from './service/enhancedImageBuilderApi';
+import { asDistribution } from './typeGuards';
 import wizardSlice, {
   changeArchitecture,
   changeDistribution,
@@ -59,7 +60,7 @@ startAppListening({
           distribution: distribution,
         })(state as onPremState)
       : imageBuilderApi.endpoints.getArchitectures.select({
-          distribution: distribution,
+          distribution: asDistribution(distribution),
         })(state as serviceState);
 
     const allowedImageTypes = architecturesResponse.data?.find(

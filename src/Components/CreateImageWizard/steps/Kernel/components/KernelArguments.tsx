@@ -4,6 +4,7 @@ import { FormGroup } from '@patternfly/react-core';
 
 import { useAppSelector } from '../../../../../store/hooks';
 import { useGetOscapCustomizationsQuery } from '../../../../../store/imageBuilderApi';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   addKernelArg,
   removeKernelArg,
@@ -25,7 +26,7 @@ const KernelArguments = () => {
 
   const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
     {
-      distribution: release,
+      distribution: asDistribution(release),
       // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
       profile: complianceProfileID,
     },

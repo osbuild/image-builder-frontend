@@ -21,6 +21,7 @@ import {
   usePoliciesQuery,
 } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeFips,
   changeFscMode,
@@ -68,7 +69,9 @@ type PolicySelectorProps = {
 const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
   const policyID = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
-  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
+  const release = removeBetaFromRelease(
+    asDistribution(useAppSelector(selectDistribution)),
+  );
   const majorVersion = release.split('-')[1];
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();

@@ -20,6 +20,7 @@ import {
   DistributionProfileItem,
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
@@ -45,7 +46,7 @@ export const SecurityInformation = (): JSX.Element => {
     error: profileError,
   } = useGetOscapCustomizationsQuery(
     {
-      distribution: release,
+      distribution: asDistribution(release),
       profile: complianceProfileID as unknown as DistributionProfileItem,
     },
     {
@@ -60,7 +61,7 @@ export const SecurityInformation = (): JSX.Element => {
     error: complianceError,
   } = useGetComplianceCustomizationsQuery(
     {
-      distribution: release,
+      distribution: asDistribution(release),
       policy: compliancePolicyID!,
     },
     {

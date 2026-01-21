@@ -41,6 +41,7 @@ import {
 } from '../../../../store/backendApi';
 import { usePoliciesQuery } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { asDistribution } from '../../../../store/typeGuards';
 import {
   changeComplianceType,
   changeDisabledServices,
@@ -74,7 +75,9 @@ const OscapContent = () => {
   const fips = useAppSelector(selectFips);
   const services = useAppSelector(selectServices);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
-  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
+  const release = removeBetaFromRelease(
+    asDistribution(useAppSelector(selectDistribution)),
+  );
   const majorVersion = release.split('-')[1];
   const environments = useAppSelector(selectImageTypes);
 

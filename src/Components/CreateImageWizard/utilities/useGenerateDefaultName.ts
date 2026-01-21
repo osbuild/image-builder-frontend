@@ -1,7 +1,7 @@
 import { Distributions, ImageRequest } from '../../../store/imageBuilderApi';
 
 export const generateDefaultName = (
-  distribution: Distributions,
+  distribution: Distributions | 'image-mode',
   arch: ImageRequest['architecture'],
 ) => {
   const date = new Date();

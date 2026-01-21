@@ -29,6 +29,9 @@ import {
   type CockpitCreateBlueprintRequest,
   type CockpitImageRequest,
   type CockpitUpdateBlueprintApiArg,
+  GetArchitecturesApiArg,
+  GetOscapCustomizationsApiArg,
+  GetOscapProfilesApiArg,
   isProcessError,
   type PodmanImageExistsArg,
   type PodmanImageExistsResponse,
@@ -41,7 +44,7 @@ import {
   mapHostedToOnPrem,
   mapOnPremToHosted,
 } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
-import { BLUEPRINTS_DIR } from '../../constants';
+import { BLUEPRINTS_DIR, IMAGE_MODE } from '../../constants';
 import {
   BlueprintItem,
   ComposeBlueprintApiArg,
@@ -54,7 +57,6 @@ import {
   DeleteBlueprintApiResponse,
   DistributionProfileItem,
   ExportBlueprintApiArg,
-  GetArchitecturesApiArg,
   GetArchitecturesApiResponse,
   GetBlueprintApiArg,
   GetBlueprintApiResponse,
@@ -66,9 +68,7 @@ import {
   GetComposesApiResponse,
   GetComposeStatusApiArg,
   GetComposeStatusApiResponse,
-  GetOscapCustomizationsApiArg,
   GetOscapCustomizationsApiResponse,
-  GetOscapProfilesApiArg,
   GetOscapProfilesApiResponse,
   OpenScapProfile,
   UpdateBlueprintApiResponse,
@@ -209,8 +209,19 @@ export const toCloudAPIComposeRequest = (
     };
   }
 
+  let distro: string | undefined = distribution;
+  if (distro === IMAGE_MODE) {
+    distro = undefined;
+  }
+
+  let bootc = undefined;
+  if (blueprint.bootc) {
+    bootc = blueprint.bootc;
+  }
+
   return {
-    distribution,
+    distribution: distro,
+    bootc: bootc,
     customizations,
     image_requests: image_requests.map((ir) => ({
       architecture: ir.architecture,
@@ -386,7 +397,18 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             );
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
-              .replace(JSON.stringify(blueprintReq));
+              .replace(
+                JSON.stringify({
+                  ...blueprintReq,
+                  // we need to strip the dummy distribution
+                  // before saving the blueprint to preserve
+                  // blueprint interoperability
+                  distribution:
+                    blueprintReq.distribution !== IMAGE_MODE
+                      ? blueprintReq.distribution
+                      : undefined,
+                }),
+              );
             return {
               data: {
                 id: id,
@@ -406,7 +428,18 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprintsDir = await getBlueprintsPath();
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
-              .replace(JSON.stringify(blueprintReq));
+              .replace(
+                JSON.stringify({
+                  ...blueprintReq,
+                  // we need to strip the dummy distribution
+                  // before saving the blueprint to preserve
+                  // blueprint interoperability
+                  distribution:
+                    blueprintReq.distribution !== IMAGE_MODE
+                      ? blueprintReq.distribution
+                      : undefined,
+                }),
+              );
             return {
               data: {
                 id: id,
