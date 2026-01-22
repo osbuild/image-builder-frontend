@@ -247,7 +247,7 @@ const ImagesTable = () => {
             <Th>Updated</Th>
             <Th>OS</Th>
             <Th>Target</Th>
-            <Th>Version</Th>
+            {!isOnPremise && <Th>Version</Th>}
             <Th>Status</Th>
             <Th>Instance</Th>
             <Th aria-label='Actions menu' />
@@ -646,9 +646,11 @@ const Row = ({
         <Td dataLabel='Target'>
           {target ? target : <Target compose={compose} />}
         </Td>
-        <Td dataLabel='Version'>
-          <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
-        </Td>
+        {!isOnPremise && (
+          <Td dataLabel='Version'>
+            <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
+          </Td>
+        )}
         <Td dataLabel='Status'>{status}</Td>
         <Td dataLabel='Instance'>{instance}</Td>
         <Td>
