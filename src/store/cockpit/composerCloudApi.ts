@@ -134,6 +134,9 @@ export type Error = ObjectReference & {
 export type ComposeId = ObjectReference & {
   id: string;
 };
+export type Bootc = {
+  reference: string;
+};
 export type ImageTypes =
   | "aws"
   | "aws-ha-rhui"
@@ -836,7 +839,8 @@ export type Blueprint = {
   customizations?: BlueprintCustomizations | undefined;
 };
 export type ComposeRequest = {
-  distribution: string;
+  distribution?: string | undefined;
+  bootc?: Bootc | undefined;
   image_request?: ImageRequest | undefined;
   image_requests?: ImageRequest[] | undefined;
   customizations?: Customizations | undefined;
