@@ -7,7 +7,6 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import ImportImageWizard from '../Components/CreateImageWizard/ImportImageWizard';
 import LandingPage from '../Components/LandingPage/LandingPage';
-import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import {
   serviceMiddleware as middleware,
   onPremMiddleware as onPremMiddleware,
@@ -24,10 +23,6 @@ const defaultRoutes = [
   {
     path: 'insights/image-builder/imagewizard/import',
     element: <ImportImageWizard />,
-  },
-  {
-    path: 'insights/image-builder/share/:composeId',
-    element: <ShareImageModal />,
   },
 ];
 

@@ -3,7 +3,6 @@ export { useUpdateBPWithNotification } from './MutationNotifications/useUpdateBP
 export { useDeleteBPWithNotification } from './MutationNotifications/useDeleteBPWithNotification';
 export { useFixupBPWithNotification } from './MutationNotifications/useFixupBPWithNotification';
 export { useComposeBPWithNotification } from './MutationNotifications/useComposeBPWithNotification';
-export { useCloneComposeWithNotification } from './MutationNotifications/useCloneComposeWithNotification';
 export {
   useGetDocumentationUrl,
   useGetUser,

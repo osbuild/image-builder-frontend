@@ -21,12 +21,7 @@ import {
   mockGetBlueprints,
 } from '../fixtures/blueprints';
 import { mockPolicies } from '../fixtures/compliance';
-import {
-  composesEndpoint,
-  mockClones,
-  mockCloneStatus,
-  mockStatus,
-} from '../fixtures/composes';
+import { composesEndpoint, mockStatus } from '../fixtures/composes';
 import { getMockBlueprintResponse } from '../fixtures/editMode';
 import { mockedFeatureResponse } from '../fixtures/features';
 import {
@@ -146,14 +141,6 @@ export const handlers = [
   http.get(`${IMAGE_BUILDER_API}/composes/:composeId`, ({ params }) => {
     const { composeId } = params;
     return HttpResponse.json(mockStatus(composeId));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/composes/:composeId/clones`, ({ params }) => {
-    const { composeId } = params;
-    return HttpResponse.json(mockClones(composeId));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, ({ params }) => {
-    const { cloneId } = params;
-    return HttpResponse.json(mockCloneStatus[cloneId]);
   }),
   http.post(`${IMAGE_BUILDER_API}/compose`, () => {
     return HttpResponse.json({});

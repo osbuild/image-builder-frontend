@@ -26,7 +26,6 @@ import {
 } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import ImagesEmptyState from './EmptyState';
 import {
@@ -73,11 +72,9 @@ import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
   ComposesResponseItem,
-  ComposeStatus,
   GetBlueprintComposesApiArg,
   GetBlueprintsApiArg,
 } from '../../store/imageBuilderApi';
-import { resolveRelPath } from '../../Utilities/path';
 import {
   computeHoursToExpiration,
   timestampToDisplayString,
@@ -374,13 +371,7 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
 
   switch (type as string) {
     case 'aws':
-      return (
-        <AwsRow
-          compose={compose}
-          composeStatus={composeStatus}
-          rowIndex={rowIndex}
-        />
-      );
+      return <AwsRow compose={compose} rowIndex={rowIndex} />;
     case 'gcp':
       return <GcpRow compose={compose} rowIndex={rowIndex} />;
     case 'azure':
@@ -504,33 +495,14 @@ const AwsS3Row = ({ compose, rowIndex }: AwsS3RowPropTypes) => {
 
 type AwsRowPropTypes = {
   compose: ComposesResponseItem;
-  composeStatus: ComposeStatus | undefined;
   rowIndex: number;
 };
 
-const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
-  const navigate = useNavigate();
-  const { analytics, auth } = useChrome();
-  const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
-
-  const target = <AwsTarget compose={compose} />;
+const AwsRow = ({ compose, rowIndex }: AwsRowPropTypes) => {
+  const target = <AwsTarget />;
   const status = <CloudStatus compose={compose} />;
   const instance = <AWSLaunchModal compose={compose} />;
   const details = <AwsDetails compose={compose} />;
-
-  const actions = (
-    <ActionsColumn
-      items={awsActions(
-        compose,
-        composeStatus,
-        navigate,
-        analytics,
-        userData?.identity.internal?.account_id,
-        isOnPremise,
-      )}
-    />
-  );
 
   return (
     <Row
@@ -538,7 +510,6 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
       rowIndex={rowIndex}
       status={status}
       target={target}
-      actions={actions}
       instance={instance}
       details={details}
     />
@@ -721,24 +692,6 @@ const defaultActions = (
         </a>
       ),
     },
-  ];
-};
-
-const awsActions = (
-  compose: ComposesResponseItem,
-  status: ComposeStatus | undefined,
-  navigate: NavigateFunction,
-  analytics: Analytics,
-  account_id: string | undefined,
-  isOnPremise: boolean,
-) => {
-  return [
-    {
-      title: 'Share to new region',
-      onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
-      isDisabled: status?.image_status.status === 'success' ? false : true,
-    },
-    ...defaultActions(compose, analytics, account_id, isOnPremise),
   ];
 };
 

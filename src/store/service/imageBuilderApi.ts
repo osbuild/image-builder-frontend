@@ -101,31 +101,6 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({ url: `/composes/${queryArg.composeId}` }),
     }),
-    cloneCompose: build.mutation<CloneComposeApiResponse, CloneComposeApiArg>({
-      query: (queryArg) => ({
-        url: `/composes/${queryArg.composeId}/clone`,
-        method: "POST",
-        body: queryArg.cloneRequest,
-      }),
-    }),
-    getComposeClones: build.query<
-      GetComposeClonesApiResponse,
-      GetComposeClonesApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/composes/${queryArg.composeId}/clones`,
-        params: {
-          limit: queryArg.limit,
-          offset: queryArg.offset,
-        },
-      }),
-    }),
-    getCloneStatus: build.query<
-      GetCloneStatusApiResponse,
-      GetCloneStatusApiArg
-    >({
-      query: (queryArg) => ({ url: `/clones/${queryArg.id}` }),
-    }),
     composeImage: build.mutation<ComposeImageApiResponse, ComposeImageApiArg>({
       query: (queryArg) => ({
         url: `/compose`,
@@ -288,30 +263,6 @@ export type GetComposeStatusApiResponse =
 export type GetComposeStatusApiArg = {
   /** Id of compose */
   composeId: string;
-};
-export type CloneComposeApiResponse =
-  /** status 201 cloning has started */ CloneResponse;
-export type CloneComposeApiArg = {
-  /** Id of compose to clone */
-  composeId: string;
-  /** details of the new clone */
-  cloneRequest: CloneRequest;
-};
-export type GetComposeClonesApiResponse =
-  /** status 200 compose clones */ ClonesResponse;
-export type GetComposeClonesApiArg = {
-  /** Id of compose to get the clones of */
-  composeId: string;
-  /** max amount of clones, default 100 */
-  limit?: number;
-  /** clones page offset, default 0 */
-  offset?: number;
-};
-export type GetCloneStatusApiResponse =
-  /** status 200 clone status */ CloneStatusResponse;
-export type GetCloneStatusApiArg = {
-  /** Id of clone status to get */
-  id: string;
 };
 export type ComposeImageApiResponse =
   /** status 201 compose has started */ ComposeResponse;
@@ -1011,36 +962,6 @@ export type ComposeStatus = {
   image_status: ImageStatus;
   request: ComposeRequest;
 };
-export type CloneResponse = {
-  id: string;
-};
-export type Awsec2Clone = {
-  /** A region as described in
-    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-regions
-     */
-  region: string;
-  /** An array of AWS account IDs as described in
-    https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
-     */
-  share_with_accounts?: string[] | undefined;
-  share_with_sources?: string[] | undefined;
-};
-export type CloneRequest = Awsec2Clone;
-export type ClonesResponseItem = {
-  id: string;
-  /** UUID of the parent compose of the clone */
-  compose_id: string;
-  request: CloneRequest;
-  created_at: string;
-};
-export type ClonesResponse = {
-  meta: ListResponseMeta;
-  links: ListResponseLinks;
-  data: ClonesResponseItem[];
-};
-export type CloneStatusResponse = {
-  compose_id: string;
-} & UploadStatus;
 export type Package = {
   name: string;
   summary: string;
@@ -1100,11 +1021,6 @@ export const {
   useLazyGetComposesQuery,
   useGetComposeStatusQuery,
   useLazyGetComposeStatusQuery,
-  useCloneComposeMutation,
-  useGetComposeClonesQuery,
-  useLazyGetComposeClonesQuery,
-  useGetCloneStatusQuery,
-  useLazyGetCloneStatusQuery,
   useComposeImageMutation,
   useGetPackagesQuery,
   useLazyGetPackagesQuery,

@@ -1,11 +1,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import {
-  mockClones,
-  mockCloneStatus,
-  mockComposes,
-} from '../../fixtures/composes';
+import { mockComposes } from '../../fixtures/composes';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 describe('Images Table', () => {
@@ -141,11 +137,11 @@ describe('Images Table', () => {
       name: /details/i,
     });
 
-    expect(await screen.findByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
+    expect(await screen.findByText(/ami-0217b81d9be50e44b/i)).not.toBeVisible();
     await user.click(toggleButton);
-    expect(await screen.findByText(/ami-0e778053cd490ad21/i)).toBeVisible();
+    expect(await screen.findByText(/ami-0217b81d9be50e44b/i)).toBeVisible();
     await user.click(toggleButton);
-    expect(await screen.findByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
+    expect(await screen.findByText(/ami-0217b81d9be50e44b/i)).not.toBeVisible();
   });
 
   test('check error details', async () => {
@@ -244,102 +240,5 @@ describe('Images Table Toolbar', () => {
     // check pagination renders
     await screen.findByTestId('images-pagination-top');
     await screen.findByTestId('images-pagination-bottom');
-  });
-});
-
-describe('Clones table', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const user = userEvent.setup();
-  test('renders clones table', async () => {
-    await renderCustomRoutesWithReduxRouter();
-
-    const table = await screen.findByTestId('images-table');
-
-    // make sure the empty state message isn't present
-    const emptyState = screen.queryByText(
-      /Image builder is a tool for creating deployment-ready customized system images/i,
-    );
-    expect(emptyState).not.toBeInTheDocument();
-
-    // get rows
-    const { getAllByRole } = within(table);
-    const rows = getAllByRole('row');
-
-    // first row is header so look at index 1
-    const detailsButton = await within(rows[1]).findByRole('button', {
-      name: /details/i,
-    });
-    await user.click(detailsButton);
-
-    // Multiple clones tables exist (one per AWS image), get the first one (which has clones)
-    const clonesTable = await screen.findAllByTestId('clones-table');
-    const cloneRows = within(clonesTable[0]).getAllByRole('row');
-
-    // remove first row from list since it is just header labels
-    const header: HTMLElement = cloneRows.shift()!;
-    const headerCells = within(header).getAllByRole('columnheader');
-    // test the header has correct labels
-    expect(headerCells[0]).toHaveTextContent('AMI');
-    expect(headerCells[1]).toHaveTextContent('Region');
-    expect(headerCells[2]).toHaveTextContent('Status');
-
-    // shift by a parent compose as the row has a different format
-    cloneRows.shift();
-
-    expect(cloneRows).toHaveLength(4);
-
-    // prepend parent data
-    const composeId = '1579d95b-8f1d-4982-8c53-8c2afa4ab04c';
-
-    const clonesTableData = {
-      ami: [
-        ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus[clone.id].options.ami,
-        ),
-      ],
-      created: [...mockClones(composeId).data.map((clone) => clone.created_at)],
-      region: [
-        ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus[clone.id].options.region,
-        ),
-      ],
-    };
-
-    for (const [index, row] of cloneRows.entries()) {
-      // render AMIs in correct order
-      const cells = await within(row).findAllByRole('cell');
-      let toTest = expect(cells[0]);
-      switch (index) {
-        case 0:
-        case 1:
-        case 3:
-          toTest.toHaveTextContent(clonesTableData.ami[index]);
-          break;
-        case 2:
-          toTest.toHaveTextContent('');
-          break;
-        // no default
-      }
-
-      // region cell
-      expect(cells[1]).toHaveTextContent(clonesTableData.region[index]);
-
-      toTest = expect(cells[2]);
-      // status cell
-      switch (index) {
-        case 0:
-        case 1:
-        case 3:
-          toTest.toHaveTextContent('Ready');
-          break;
-        case 2:
-          toTest.toHaveTextContent('Sharing image failed');
-          break;
-        // no default
-      }
-    }
   });
 });

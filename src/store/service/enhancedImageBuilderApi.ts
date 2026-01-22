@@ -14,13 +14,7 @@ export const errorMessage = (err: any) => {
 };
 
 const enhancedApi = imageBuilderApi.enhanceEndpoints({
-  addTagTypes: [
-    'Clone',
-    'Compose',
-    'Blueprints',
-    'BlueprintComposes',
-    'Blueprint',
-  ],
+  addTagTypes: ['Compose', 'Blueprints', 'BlueprintComposes', 'Blueprint'],
   endpoints: {
     getBlueprint: {
       providesTags: () => {
@@ -42,11 +36,6 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
         return [{ type: 'Compose' }];
       },
     },
-    getComposeClones: {
-      providesTags: (_request, _error, arg) => {
-        return [{ type: 'Clone', id: arg.composeId }];
-      },
-    },
     updateBlueprint: {
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled.then(() => {
@@ -62,18 +51,6 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
         queryFulfilled.then(() => {
           // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
           dispatch(imageBuilderApi.util.invalidateTags(['Blueprints']));
-        });
-      },
-    },
-    cloneCompose: {
-      onQueryStarted: async ({ composeId }, { dispatch, queryFulfilled }) => {
-        queryFulfilled.then(() => {
-          dispatch(
-            imageBuilderApi.util.invalidateTags([
-              // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-              { type: 'Clone', id: composeId },
-            ]),
-          );
         });
       },
     },

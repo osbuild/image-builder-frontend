@@ -2,8 +2,6 @@ import React, { lazy, Suspense } from 'react';
 
 import { Route, Routes } from 'react-router-dom';
 
-import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
-
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
   () => import('./Components/CreateImageWizard/ImportImageWizard'),
@@ -20,9 +18,7 @@ export const Router = () => {
             <LandingPage />
           </Suspense>
         }
-      >
-        <Route path='share/:composeId' element={<ShareImageModal />} />
-      </Route>
+      />
       <Route
         path='imagewizard/import'
         element={
