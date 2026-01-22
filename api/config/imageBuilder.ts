@@ -10,12 +10,9 @@ const config: ConfigFile = {
   hooks: { queries: true, lazyQueries: true, mutations: true },
   unionUndefined: true,
   filterEndpoints: [
-    'cloneCompose',
     'composeImage',
     'getComposes',
     'getComposeStatus',
-    'getComposeClones',
-    'getCloneStatus',
     'getArchitectures',
     'getPackages',
     'getOscapProfiles',

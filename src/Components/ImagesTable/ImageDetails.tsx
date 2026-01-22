@@ -14,8 +14,6 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import ClonesTable from './ClonesTable';
-
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
 import { useGetUser, useIsOnPremise } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
@@ -115,12 +113,21 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useIsOnPremise();
+  const {
+    data: composeStatus,
+    isLoading,
+    isError,
+  } = useGetComposeStatusQuery({
+    composeId: compose.id,
+  });
 
   if (!isAwsUploadRequestOptions(options)) {
     throw TypeError(
       `Error: options must be of type AwsUploadRequestOptions, not ${typeof options}.`,
     );
   }
+
+  const uploadStatus = composeStatus?.image_status.upload_status?.options;
 
   return (
     <>
@@ -198,13 +205,39 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
           </DescriptionListGroup>
         )}
       </DescriptionList>
-      <>
-        <br />
-        <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
-          Cloud Provider Identifiers
-        </div>
-      </>
-      <ClonesTable compose={compose} />
+      <br />
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
+        Cloud Provider Identifiers
+      </div>
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
+        <DescriptionListGroup>
+          <DescriptionListTerm>AMI</DescriptionListTerm>
+          <DescriptionListDescription>
+            {isLoading && <Skeleton width='150px' />}
+            {isError && (
+              <span className='pf-v6-u-color-200'>Unable to load</span>
+            )}
+            {!isLoading &&
+              !isError &&
+              composeStatus?.image_status.status === 'success' &&
+              uploadStatus &&
+              'ami' in uploadStatus && (
+                <ClipboardCopy
+                  hoverTip='Copy'
+                  clickTip='Copied'
+                  variant='inline-compact'
+                >
+                  {uploadStatus.ami}
+                </ClipboardCopy>
+              )}
+            {!isLoading &&
+              !isError &&
+              composeStatus?.image_status.status !== 'success' && (
+                <span className='pf-v6-u-color-200'>-</span>
+              )}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     </>
   );
 };

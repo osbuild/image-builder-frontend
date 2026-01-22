@@ -32,42 +32,11 @@ import {
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { CockpitComposesResponseItem } from '../../store/cockpit/types';
 import {
-  ClonesResponseItem,
   ComposesResponseItem,
   ComposeStatus,
   ComposeStatusError,
-  UploadStatus,
 } from '../../store/imageBuilderApi';
 import { useFlag } from '../../Utilities/useGetEnvironment';
-
-type StatusClonePropTypes = {
-  clone: ClonesResponseItem;
-  status: UploadStatus | undefined;
-};
-
-export const StatusClone = ({ clone, status }: StatusClonePropTypes) => {
-  switch (status?.status) {
-    case 'failure':
-      return (
-        <ErrorStatus
-          icon={statuses.failureSharing.icon}
-          text={statuses.failureSharing.text}
-          error={`Failed to share image to ${clone.request.region}`}
-        />
-      );
-    case 'success':
-    case 'running':
-    case 'pending':
-      return (
-        <Status
-          icon={statuses[status.status].icon}
-          text={statuses[status.status].text}
-        />
-      );
-    default:
-      return <></>;
-  }
-};
 
 type ComposeStatusPropTypes = {
   compose: ComposesResponseItem | CockpitComposesResponseItem;
