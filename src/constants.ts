@@ -71,6 +71,7 @@ export const FEDORA_41 = 'fedora-41';
 export const FEDORA_42 = 'fedora-42';
 export const FEDORA_43 = 'fedora-43';
 export const FEDORA_44 = 'fedora-44';
+export const IMAGE_MODE = 'image-mode';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
 

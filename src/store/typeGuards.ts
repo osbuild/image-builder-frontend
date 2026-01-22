@@ -3,12 +3,15 @@ import {
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   AzureUploadStatus,
+  Distributions,
   GcpUploadRequestOptions,
   GcpUploadStatus,
   OciUploadStatus,
   UploadRequest,
   UploadStatus,
 } from './imageBuilderApi';
+
+import { IMAGE_MODE } from '../constants';
 
 export const isGcpUploadRequestOptions = (
   options: UploadRequest['options'],
@@ -50,4 +53,24 @@ export const isAzureUploadStatus = (
   status: UploadStatus['options'],
 ): status is AzureUploadStatus => {
   return 'image_name' in status;
+};
+
+export const isImageMode = (
+  distribution?: Distributions | 'image-mode' | undefined,
+): distribution is 'image-mode' => {
+  return distribution === undefined || distribution === IMAGE_MODE;
+};
+
+// we added a dummy distribution, 'image-mode', for image-mode
+// images on-prem. However this caused a number of type issues
+// in the codebase, mostly in places that won't have image-mode
+// support, but this typeguard is useful for managing this in
+// one place
+export const asDistribution = (
+  distribution: Distributions | 'image-mode',
+): Distributions => {
+  if (isImageMode(distribution)) {
+    throw new Error('Unexpected image-mode distribution');
+  }
+  return distribution;
 };
