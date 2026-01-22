@@ -42,6 +42,7 @@ import isRhel from '../../../../../src/Utilities/isRhel';
 import { targetOptions } from '../../../../constants';
 import { useIsOnPremise } from '../../../../Hooks';
 import { useAppSelector } from '../../../../store/hooks';
+import { isImageMode } from '../../../../store/typeGuards';
 import {
   selectAapRegistration,
   selectBlueprintDescription,
@@ -193,6 +194,11 @@ const Review = () => {
   const wizardStepId =
     blueprintMode === 'image' ? 'wizard-users' : 'wizard-users-optional';
 
+  // This is needed because on first render (during create)
+  // the distribution is set to a known distribution
+  const isPackageMode =
+    !isImageMode(distribution) && blueprintMode === 'package';
+
   return (
     <>
       <ExpandableSection
@@ -318,21 +324,23 @@ const Review = () => {
         </ExpandableSection>
       )}
 
-      <ExpandableSection
-        toggleContent={composeExpandable(
-          'Security',
-          'revisit-compliance',
-          'step-oscap',
-        )}
-        onToggle={(_event, isExpandedSecurityDetail) =>
-          onToggleSecurityDetails(isExpandedSecurityDetail)
-        }
-        isExpanded={isExpandedSecurityDetail}
-        isIndented
-        data-testid='compliance-detail-expandable'
-      >
-        <SecurityInformation />
-      </ExpandableSection>
+      {isPackageMode && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Security',
+            'revisit-compliance',
+            'step-oscap',
+          )}
+          onToggle={(_event, isExpandedSecurityDetail) =>
+            onToggleSecurityDetails(isExpandedSecurityDetail)
+          }
+          isExpanded={isExpandedSecurityDetail}
+          isIndented
+          data-testid='compliance-detail-expandable'
+        >
+          <SecurityInformation />
+        </ExpandableSection>
+      )}
       {!hasWslTargetOnly && (
         <ExpandableSection
           toggleContent={composeExpandable(
@@ -348,21 +356,23 @@ const Review = () => {
           <FSCList />
         </ExpandableSection>
       )}
-      <ExpandableSection
-        toggleContent={composeExpandable(
-          'Content',
-          'revisit-custom-repositories',
-          'wizard-custom-repositories',
-        )}
-        onToggle={(_event, isExpandedContent) =>
-          onToggleContent(isExpandedContent)
-        }
-        isExpanded={isExpandedContent}
-        isIndented
-        data-testid='content-expandable'
-      >
-        <ContentList />
-      </ExpandableSection>
+      {isPackageMode && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Content',
+            'revisit-custom-repositories',
+            'wizard-custom-repositories',
+          )}
+          onToggle={(_event, isExpandedContent) =>
+            onToggleContent(isExpandedContent)
+          }
+          isExpanded={isExpandedContent}
+          isIndented
+          data-testid='content-expandable'
+        >
+          <ContentList />
+        </ExpandableSection>
+      )}
       {users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(
@@ -378,7 +388,7 @@ const Review = () => {
           <UsersList />
         </ExpandableSection>
       )}
-      {(timezone || (ntpServers && ntpServers.length > 0)) && (
+      {isPackageMode && (timezone || (ntpServers && ntpServers.length > 0)) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Timezone',
@@ -395,24 +405,25 @@ const Review = () => {
           <TimezoneList />
         </ExpandableSection>
       )}
-      {((languages && languages.length > 0) ||
-        (keyboard && keyboard.length > 0)) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Locale',
-            'revisit-locale',
-            'wizard-locale',
-          )}
-          onToggle={(_event, isExpandedLocale) =>
-            onToggleLocale(isExpandedLocale)
-          }
-          isExpanded={isExpandedLocale}
-          isIndented
-          data-testid='locale-expandable'
-        >
-          <LocaleList />
-        </ExpandableSection>
-      )}
+      {isPackageMode &&
+        ((languages && languages.length > 0) ||
+          (keyboard && keyboard.length > 0)) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Locale',
+              'revisit-locale',
+              'wizard-locale',
+            )}
+            onToggle={(_event, isExpandedLocale) =>
+              onToggleLocale(isExpandedLocale)
+            }
+            isExpanded={isExpandedLocale}
+            isIndented
+            data-testid='locale-expandable'
+          >
+            <LocaleList />
+          </ExpandableSection>
+        )}
       {hostname && (
         <ExpandableSection
           toggleContent={composeExpandable(
