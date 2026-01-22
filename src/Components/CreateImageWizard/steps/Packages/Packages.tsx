@@ -1629,7 +1629,7 @@ const Packages = () => {
         <Tab
           eventKey='included-repos'
           title={<TabTitleText>Included repos</TabTitleText>}
-          actions={<IncludedReposPopover />}
+          actions={!isOnPremise ? <IncludedReposPopover /> : undefined}
           aria-label='Included repositories'
         />
         {!isOnPremise && (
