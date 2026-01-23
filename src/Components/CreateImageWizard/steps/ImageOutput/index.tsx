@@ -50,7 +50,10 @@ const ImageOutputStep = () => {
         <br />
         <DocumentationButton />
       </Content>
-      {isOnPremise && !distribution.startsWith('fedora') && <BlueprintMode />}
+      {isOnPremise &&
+        // The distribution won't be defined if the blueprint is in image mode
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        !distribution?.startsWith('fedora') && <BlueprintMode />}
       {blueprintMode === 'image' && <ImageSourceSelect />}
       {blueprintMode === 'package' && (
         <>
