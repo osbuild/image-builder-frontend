@@ -1,8 +1,3 @@
-.pf-v6-c-wizard__nav-list {
-    padding-right: 0px;
-}
-
-
 .pf-c-popover[data-popper-reference-hidden="true"] {
     font-weight: initial;
     visibility: initial;
@@ -54,7 +49,19 @@ div.pf-v6-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     }
 }
 
-// Ensures the wizard takes up the entire height of the page in Firefox as well
-.pf-v6-c-wizard {
-    flex: 1;
+.create-image-wizard {
+    .pf-v6-c-wizard__nav-list {
+        padding-right: 0px;
+    }
+
+    // Ensures the wizard takes up the entire height of the page in Firefox as well
+    .pf-v6-c-wizard {
+        flex: 1;
+    }
+
+    .pf-v6-c-wizard__footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+    }
 }
