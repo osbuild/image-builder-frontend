@@ -615,7 +615,10 @@ export const wizardSlice = createSlice({
     ) => {
       state.architecture = action.payload;
     },
-    changeDistribution: (state, action: PayloadAction<Distributions>) => {
+    changeDistribution: (
+      state,
+      action: PayloadAction<Distributions | 'image-mode'>,
+    ) => {
       state.distribution = action.payload;
     },
     addImageType: (state, action: PayloadAction<ImageTypes>) => {
