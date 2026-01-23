@@ -139,7 +139,7 @@ const OscapContent = () => {
       filter: `os_major_version=${majorVersion}`,
     },
     {
-      skip: complianceType === 'openscap',
+      skip: complianceType === 'openscap' || isOnPremise,
     },
   );
 
@@ -189,54 +189,58 @@ const OscapContent = () => {
         )}
 
         <FormGroup>
-          <>
-            <Content className='pf-v6-u-pb-sm'>
-              <Radio
-                id='security-type-compliance'
-                name='security-type'
-                label='Use a custom compliance policy'
-                isChecked={complianceType === 'compliance'}
-                onChange={() => handleTypeChange('compliance')}
-              />
-            </Content>
-            <Content className='pf-v6-u-pl-lg pf-v6-u-pb-md'>
-              <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                <FlexItem className='pf-v6-u-w-50'>
-                  <PolicySelector
-                    isDisabled={complianceType !== 'compliance'}
-                  />
-                </FlexItem>
-                <FlexItem>
-                  <Popover
-                    headerContent='Details'
-                    bodyContent={<PolicyDetails />}
-                    minWidth='30'
-                  >
-                    <Button
-                      variant='secondary'
-                      icon={<InfoCircleIcon />}
-                      iconPosition='left'
-                      isDisabled={complianceType !== 'compliance' || !policyID}
+          {!isOnPremise && (
+            <>
+              <Content className='pf-v6-u-pb-sm'>
+                <Radio
+                  id='security-type-compliance'
+                  name='security-type'
+                  label='Use a custom compliance policy'
+                  isChecked={complianceType === 'compliance'}
+                  onChange={() => handleTypeChange('compliance')}
+                />
+              </Content>
+              <Content className='pf-v6-u-pl-lg pf-v6-u-pb-md'>
+                <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+                  <FlexItem className='pf-v6-u-w-50'>
+                    <PolicySelector
+                      isDisabled={complianceType !== 'compliance'}
+                    />
+                  </FlexItem>
+                  <FlexItem>
+                    <Popover
+                      headerContent='Details'
+                      bodyContent={<PolicyDetails />}
+                      minWidth='30'
                     >
-                      View details
-                    </Button>
-                  </Popover>
-                </FlexItem>
-              </Flex>
-              <FormHelperText>
-                <HelperText>
-                  <HelperTextItem>
-                    <ExternalLinkButton
-                      url={COMPLIANCE_URL}
-                      analyticsStepId='step-oscap'
-                    >
-                      Manage Red Hat Lightspeed compliance
-                    </ExternalLinkButton>
-                  </HelperTextItem>
-                </HelperText>
-              </FormHelperText>
-            </Content>
-          </>
+                      <Button
+                        variant='secondary'
+                        icon={<InfoCircleIcon />}
+                        iconPosition='left'
+                        isDisabled={
+                          complianceType !== 'compliance' || !policyID
+                        }
+                      >
+                        View details
+                      </Button>
+                    </Popover>
+                  </FlexItem>
+                </Flex>
+                <FormHelperText>
+                  <HelperText>
+                    <HelperTextItem>
+                      <ExternalLinkButton
+                        url={COMPLIANCE_URL}
+                        analyticsStepId='step-oscap'
+                      >
+                        Manage Red Hat Lightspeed compliance
+                      </ExternalLinkButton>
+                    </HelperTextItem>
+                  </HelperText>
+                </FormHelperText>
+              </Content>
+            </>
+          )}
           <Content className='pf-v6-u-pb-sm'>
             <Radio
               id='security-type-openscap'
