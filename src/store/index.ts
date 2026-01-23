@@ -90,7 +90,7 @@ startAppListening({
           distribution: distribution,
         })(state as onPremState)
       : imageBuilderApi.endpoints.getArchitectures.select({
-          distribution: distribution,
+          distribution: asDistribution(distribution),
         })(state as serviceState);
 
     const allowedImageTypes = architecturesResponse.data?.find(
