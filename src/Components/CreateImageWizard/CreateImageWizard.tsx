@@ -383,7 +383,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         stepIndex={step.index}
         onClick={() => {
           goToStepByIndex(step.index);
-          if (isEdit && step.id === 'wizard-additional-packages') {
+          if (
+            !isOnPremise &&
+            isEdit &&
+            step.id === 'wizard-additional-packages'
+          ) {
             analytics.track(
               `${AMPLITUDE_MODULE_NAME} - Additional Packages Revisited in Edit`,
               {
