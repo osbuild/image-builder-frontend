@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Content,
@@ -8,15 +8,36 @@ import {
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
+import { RHEL_10 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { Distributions } from '../../../../../store/imageBuilderApi';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeBlueprintMode,
+  changeDistribution,
   selectBlueprintMode,
 } from '../../../../../store/wizardSlice';
+import { getHostDistro } from '../../../../../Utilities/getHostInfo';
 
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();
   const blueprintMode = useAppSelector(selectBlueprintMode);
+  const [defaultDistro, setDefaultDistro] = useState<Distributions>(RHEL_10);
+
+  useEffect(() => {
+    const fetchDefaultDistro = async () => {
+      try {
+        const distro = await getHostDistro();
+        setDefaultDistro(asDistribution(distro as Distributions));
+      } catch {
+        // defaultDistro remains RHEL_10
+        // this is fine since image-mode is
+        // limited to RHEL_10 for now
+      }
+    };
+
+    fetchDefaultDistro();
+  }, []);
 
   return (
     <FormGroup label='Image type' isRequired>
@@ -28,6 +49,7 @@ const BlueprintMode = () => {
           isSelected={blueprintMode === 'package'}
           onChange={() => {
             dispatch(changeBlueprintMode('package'));
+            dispatch(changeDistribution(defaultDistro));
           }}
           aria-describedby='blueprint-mode-description'
         />
@@ -38,6 +60,7 @@ const BlueprintMode = () => {
           isSelected={blueprintMode === 'image'}
           onChange={() => {
             dispatch(changeBlueprintMode('image'));
+            dispatch(changeDistribution('image-mode'));
           }}
           aria-describedby='blueprint-mode-description'
         />

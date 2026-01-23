@@ -128,11 +128,6 @@ export const RHEL_9_IMAGE_MODE = {
   reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
 };
 
-export const IMAGE_MODE_SUPPORTED_TARGETS: ImageTypes[] = [
-  'aws',
-  'guest-image',
-];
-
 // Container images for image mode, pinned to specific stable versions
 export const IMAGE_MODE_RELEASES = new Map([
   [RHEL_10, RHEL_10_IMAGE_MODE],
