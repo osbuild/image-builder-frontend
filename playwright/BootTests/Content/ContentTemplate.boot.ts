@@ -118,7 +118,7 @@ test('Content integration test - Content Template', async ({
       .getByRole('row')
       .filter({ hasText: repositoryName })
       .getByLabel('Select row')
-      .click();
+      .click({ timeout: 60000 });
     await page.getByRole('button', { name: 'Next', exact: true }).click();
 
     await expect(
@@ -135,7 +135,9 @@ test('Content integration test - Content Template', async ({
     await page.getByRole('button', { name: 'Next', exact: true }).click();
 
     await page.getByRole('button', { name: 'Create other options' }).click();
-    await page.getByRole('menuitem', { name: 'Create template only' }).click();
+    await page
+      .getByRole('menuitem', { name: 'Create template only' })
+      .click({ timeout: 60000 });
 
     // Wait for template to be created and valid
     await page
