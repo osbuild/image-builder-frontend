@@ -450,7 +450,12 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
     }
     if (Array.isArray(error.details)) {
       for (const line in error.details) {
-        detailsArray.push(`${error.details[line]}`);
+        const detail = error.details[line];
+        if (detail && typeof detail === 'object' && 'reason' in detail) {
+          detailsArray.push(String(detail.reason));
+        } else {
+          detailsArray.push(String(detail));
+        }
       }
     }
     if (typeof error.details === 'string') {
