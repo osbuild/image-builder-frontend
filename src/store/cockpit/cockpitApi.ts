@@ -244,8 +244,25 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         GetArchitecturesApiResponse,
         GetArchitecturesApiArg
       >({
-        queryFn: async () => {
+        queryFn: async ({ distribution }) => {
           try {
+            if (distribution === IMAGE_MODE) {
+              return {
+                data: [
+                  {
+                    arch: 'aarch64',
+                    image_types: ['guest-image'],
+                    repositories: [],
+                  },
+                  {
+                    arch: 'x86_64',
+                    image_types: ['guest-image'],
+                    repositories: [],
+                  },
+                ],
+              };
+            }
+
             const cloudImageTypes = await getCloudConfigs();
             return {
               data: [
