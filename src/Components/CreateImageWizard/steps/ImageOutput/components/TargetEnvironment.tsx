@@ -18,10 +18,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
-import { IMAGE_MODE_SUPPORTED_TARGETS } from '../../../../../constants';
 import { useIsOnPremise } from '../../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
-import { selectAWSConfig } from '../../../../../store/cloudProviderConfigSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../../store/provisioningApi';
@@ -33,7 +31,6 @@ import {
   reinitializeGcp,
   removeImageType,
   selectArchitecture,
-  selectBlueprintMode,
   selectDistribution,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
@@ -96,13 +93,9 @@ const TargetEnvironmentCard = ({
 };
 
 const TargetEnvironment = () => {
-  const isOnPremise = useIsOnPremise();
-  const blueprintMode = useAppSelector(selectBlueprintMode);
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
-  const config = useAppSelector(selectAWSConfig);
-  const hasNoCloudProvidersConfig = isOnPremise && !config;
 
   // NOTE: We're using 'image-mode' as a dummy distribution for the
   // on-prem frontend, this is one of the few cases where we
@@ -125,15 +118,9 @@ const TargetEnvironment = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let supportedEnvironments = data?.find(
+  const supportedEnvironments = data?.find(
     (elem) => elem.arch === arch,
   )?.image_types;
-
-  if (blueprintMode === 'image') {
-    supportedEnvironments = !hasNoCloudProvidersConfig
-      ? IMAGE_MODE_SUPPORTED_TARGETS
-      : IMAGE_MODE_SUPPORTED_TARGETS.filter((target) => target !== 'aws');
-  }
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
