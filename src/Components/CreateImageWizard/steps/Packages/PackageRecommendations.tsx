@@ -21,6 +21,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
 import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../constants';
+import { useIsOnPremise } from '../../../../Hooks';
 import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
@@ -37,6 +38,7 @@ import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
+  const isOnPremise = useIsOnPremise();
   const { analytics, isBeta } = useChrome();
   const dispatch = useDispatch();
 
@@ -86,9 +88,13 @@ const PackageRecommendations = () => {
           },
         });
 
-        // there is a mismatch between API type and real data
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (response?.data?.packages && response.data.packages.length > 0) {
+        if (
+          !isOnPremise &&
+          // there is a mismatch between API type and real data
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          response?.data?.packages &&
+          response.data.packages.length > 0
+        ) {
           analytics.track(
             `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
             {
@@ -262,20 +268,25 @@ const PackageRecommendations = () => {
                               variant='link'
                               component='a'
                               onClick={() => {
-                                analytics.track(
-                                  `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
-                                  {
-                                    module: AMPLITUDE_MODULE_NAME,
-                                    isPreview: isBeta(),
-                                    packageName: pkg,
-                                    selectedPackages: packages.map(
-                                      (pkg) => pkg.name,
-                                    ),
-                                    shownRecommendations: data.packages,
-                                    distribution: distribution.replace('-', ''),
-                                    modelVersion: data.modelVersion,
-                                  },
-                                );
+                                if (!isOnPremise) {
+                                  analytics.track(
+                                    `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
+                                    {
+                                      module: AMPLITUDE_MODULE_NAME,
+                                      isPreview: isBeta(),
+                                      packageName: pkg,
+                                      selectedPackages: packages.map(
+                                        (pkg) => pkg.name,
+                                      ),
+                                      shownRecommendations: data.packages,
+                                      distribution: distribution.replace(
+                                        '-',
+                                        '',
+                                      ),
+                                      modelVersion: data.modelVersion,
+                                    },
+                                  );
+                                }
                                 addRecommendedPackage(pkg);
                               }}
                               isInline
