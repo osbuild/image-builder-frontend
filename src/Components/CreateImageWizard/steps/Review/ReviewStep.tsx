@@ -302,7 +302,7 @@ const Review = () => {
           )}
         </Stack>
       </ExpandableSection>
-      {isRhel(distribution) && (
+      {(isRhel(distribution) || blueprintMode === 'image') && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Registration',
