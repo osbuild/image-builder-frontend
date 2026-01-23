@@ -32,7 +32,6 @@ export const selectTarget = async (
         .click();
       break;
   }
-  await page.getByRole('button', { name: 'Next' }).click();
 };
 
 export const selectDistro = async (
