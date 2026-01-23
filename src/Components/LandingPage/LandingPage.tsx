@@ -9,7 +9,6 @@ import {
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
-import { useFlag } from '@unleash/proxy-client-react';
 import { Outlet } from 'react-router-dom';
 
 import './LandingPage.scss';
@@ -17,6 +16,7 @@ import './LandingPage.scss';
 import { NewAlert } from './NewAlert';
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
