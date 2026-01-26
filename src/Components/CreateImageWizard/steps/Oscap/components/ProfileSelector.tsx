@@ -338,6 +338,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
               <SelectOption
                 key='oscap-none-option'
                 value={{ toString: () => 'None', compareTo: () => false }}
+                isSelected={!profileID}
               >
                 None
               </SelectOption>,
@@ -349,6 +350,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
                     profileID: id,
                     toString: () => name,
                   }}
+                  isSelected={profileID === id}
                 >
                   {name}
                 </SelectOption>

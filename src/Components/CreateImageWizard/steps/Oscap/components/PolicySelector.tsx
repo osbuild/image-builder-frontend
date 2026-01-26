@@ -35,17 +35,21 @@ import {
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
-type ComplianceSelectOptionPropType = {
-  policy: PolicyRead;
-};
-
 type ComplianceSelectOptionValueType = {
   policyID?: string;
   title?: string;
   toString: () => string;
 };
 
-const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
+type ComplianceSelectOptionProps = {
+  policy: PolicyRead;
+  isSelected: boolean;
+};
+
+const ComplianceSelectOption = ({
+  policy,
+  isSelected,
+}: ComplianceSelectOptionProps) => {
   const selectObj = (
     policyID: string,
     title: string,
@@ -56,7 +60,11 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
   });
 
   return (
-    <SelectOption key={policy.id} value={selectObj(policy.id!, policy.title!)}>
+    <SelectOption
+      key={policy.id}
+      value={selectObj(policy.id!, policy.title!)}
+      isSelected={isSelected}
+    >
       {policy.title}
     </SelectOption>
   );
@@ -209,6 +217,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       <SelectOption
         key='compliance-none-option'
         value={{ toString: () => 'None', compareTo: () => false }}
+        isSelected={!policyID}
       >
         None
       </SelectOption>,
@@ -220,7 +229,13 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
         continue;
       }
       const pol = p as PolicyRead;
-      res.push(<ComplianceSelectOption key={pol.id} policy={pol} />);
+      res.push(
+        <ComplianceSelectOption
+          key={pol.id}
+          policy={pol}
+          isSelected={policyID === pol.id}
+        />,
+      );
     }
     return res;
   };
