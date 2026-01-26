@@ -22,6 +22,7 @@ import {
   selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintId,
+  selectBlueprintMode,
   selectBlueprintName,
   selectDiskPartitions,
   selectFilesystemPartitions,
@@ -788,10 +789,23 @@ const validateSshKey = (userSshKey: string): string => {
 
 export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const users = useAppSelector(selectUsers);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
-  if (users.length === 0) {
+  if (
+    users.length === 0 ||
+    (users.length === 1 && (users[0].name || '').trim() === '')
+  ) {
+    if (blueprintMode === 'image') {
+      return {
+        // the User step is required in image mode
+        // blocking Next without a render error is sufficient
+        errors: {},
+        disabledNext: true,
+      };
+    }
+
     return {
       errors: {},
       disabledNext: false,
