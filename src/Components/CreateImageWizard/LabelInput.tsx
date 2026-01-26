@@ -72,7 +72,7 @@ const LabelInput = ({
       switch (fieldName) {
         case 'ports':
           setOnStepInputErrorText(
-            'Expected format: <port/port-name>:<protocol> or <port/port-name>/<protocol>. Example: 8080:tcp, ssh:tcp, imap/tcp',
+            'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
           );
           break;
         case 'kernelAppend':

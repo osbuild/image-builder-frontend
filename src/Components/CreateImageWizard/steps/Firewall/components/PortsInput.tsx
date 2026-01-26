@@ -21,7 +21,7 @@ const PortsInput = () => {
     <FormGroup label='Ports'>
       <LabelInput
         ariaLabel='Add ports'
-        placeholder='Enter port (e.g., 8080/tcp, 443:udp)'
+        placeholder='Enter port (e.g., 8080:tcp)'
         validator={isPortValid}
         list={ports}
         item='Port'
