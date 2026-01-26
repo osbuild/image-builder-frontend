@@ -16,7 +16,7 @@ import {
 import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import {
   getPrefix,
-  getSuffix,
+  getSubpath,
   isMountpointPrefixAvailable,
 } from '../fscUtilities';
 
@@ -46,12 +46,12 @@ const MountpointPrefix = ({
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const [isOpen, setIsOpen] = useState(false);
   const prefix = getPrefix(partition.mountpoint);
-  const suffix = getSuffix(partition.mountpoint);
+  const subpath = getSubpath(partition.mountpoint);
 
   const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
     if (selection && typeof selection === 'string') {
       setIsOpen(false);
-      const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
+      const mountpoint = selection + (subpath.length > 0 ? '/' + subpath : '');
       dispatch(
         changePartitionMountpoint({
           id: partition.id,

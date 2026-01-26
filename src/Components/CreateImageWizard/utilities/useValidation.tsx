@@ -340,7 +340,7 @@ export function useFilesystemValidation(): StepValidation {
       disabledNext = true;
     }
     if (!isMountpointValid(partition, blueprintMode)) {
-      errors[`mountpoint-suffix-${partition.id}`] = 'Invalid mountpoint';
+      errors[`mountpoint-subpath-${partition.id}`] = 'Invalid mountpoint';
       disabledNext = true;
     }
   }

@@ -6,7 +6,7 @@ import { Td, Tr } from '@patternfly/react-table';
 
 import MinimumSize from './MinimumSize';
 import MountpointPrefix from './MountpointPrefix';
-import MountpointSuffix from './MountpointSuffix';
+import MountpointSubpath from './MountpointSuffix';
 import SizeUnit from './SizeUnit';
 
 import { useAppDispatch } from '../../../../../store/hooks';
@@ -69,7 +69,7 @@ const Row = ({
       !partition.mountpoint.startsWith('/boot') &&
       !partition.mountpoint.startsWith('/usr') ? (
         <Td width={20}>
-          <MountpointSuffix
+          <MountpointSubpath
             partition={partition}
             customization={customization}
           />
