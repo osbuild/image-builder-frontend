@@ -4,11 +4,12 @@ import { expect } from '@playwright/test';
 import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
+import isRhel from '../../src/Utilities/isRhel';
 import { test } from '../fixtures/customizations';
-import { isHosted } from '../helpers/helpers';
+import { getHostDistroName, isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import { ibFrame, navigateToLandingPage } from '../helpers/navHelpers';
-import { deleteBlueprint } from '../helpers/wizardHelpers';
+import { deleteBlueprint, registerLater } from '../helpers/wizardHelpers';
 
 test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
   test.skip(isHosted(), 'Skip cockpit specific tests on hosted');
@@ -93,9 +94,10 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await expect(
       frame.getByRole('heading', { name: 'Image output' }),
     ).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Amazon Web Services' }).click();
+    await frame.getByRole('checkbox', { name: /amazon web services/i }).click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    await registerLater(frame);
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'Back', exact: true }).click();
 

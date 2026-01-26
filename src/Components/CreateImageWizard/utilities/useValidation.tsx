@@ -162,7 +162,7 @@ export function useRegistrationValidation(): StepValidation {
     return { errors: {}, disabledNext: false };
   }
 
-  if (isOnPremise) {
+  if (isOnPremise && registrationType !== 'register-satellite') {
     const errors: Record<string, string> = {};
     let disabledNext = false;
 
@@ -204,7 +204,9 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   if (registrationType === 'register-satellite') {
-    const errors = {};
+    const errors: Record<string, string> = {};
+    const commandTrimmed =
+      typeof registrationCommand === 'string' ? registrationCommand.trim() : '';
 
     if (caCertificate === '') {
       Object.assign(errors, {
@@ -213,20 +215,17 @@ export function useRegistrationValidation(): StepValidation {
       });
     }
 
-    if (registrationCommand === '' || !registrationCommand) {
+    if (commandTrimmed === '') {
       Object.assign(errors, {
         command: 'No registration command for Satellite registration',
       });
-    }
-
-    if (registrationCommand) {
-      try {
-        const match = registrationCommand.match(
-          /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/,
-        );
-        if (!match) {
-          Object.assign(errors, { command: 'Invalid or missing token' });
-        } else {
+    } else {
+      const bearerJwtRegex = /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/;
+      const match = commandTrimmed.match(bearerJwtRegex);
+      if (!match) {
+        Object.assign(errors, { command: 'Invalid or missing token' });
+      } else {
+        try {
           const token = match[1];
           const decoded = jwtDecode(token);
           if (decoded.exp) {
@@ -244,9 +243,9 @@ export function useRegistrationValidation(): StepValidation {
               };
             }
           }
+        } catch {
+          Object.assign(errors, { command: 'Invalid or missing token' });
         }
-      } catch {
-        Object.assign(errors, { command: 'Invalid or missing token' });
       }
     }
 
