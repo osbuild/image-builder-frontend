@@ -180,12 +180,7 @@ export const FSCList = () => {
                 minWidth='30rem'
                 bodyContent={<FSReviewTable />}
               >
-                <Button
-                  variant='link'
-                  aria-label='File system configuration info'
-                  aria-describedby='file-system-configuration-info'
-                  className='pf-v6-u-pt-0 pf-v6-u-pb-0'
-                >
+                <Button variant='link' className='pf-v6-u-pt-0 pf-v6-u-pb-0'>
                   View partitions
                 </Button>
               </Popover>
