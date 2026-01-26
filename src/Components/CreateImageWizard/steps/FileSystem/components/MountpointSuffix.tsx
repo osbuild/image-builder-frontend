@@ -5,20 +5,20 @@ import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
-import { getPrefix, getSuffix, normalizeSuffix } from '../fscUtilities';
+import { getPrefix, getSubpath, normalizeSubpath } from '../fscUtilities';
 
-type MountpointSuffixPropTypes = {
+type MountpointSubpathPropTypes = {
   partition: FilesystemPartition;
   customization: PartitioningCustomization;
 };
 
-const MountpointSuffix = ({
+const MountpointSubpath = ({
   partition,
   customization,
-}: MountpointSuffixPropTypes) => {
+}: MountpointSubpathPropTypes) => {
   const dispatch = useAppDispatch();
   const prefix = getPrefix(partition.mountpoint);
-  const suffix = getSuffix(partition.mountpoint);
+  const subpath = getSubpath(partition.mountpoint);
 
   const stepValidation = useFilesystemValidation();
 
@@ -26,9 +26,9 @@ const MountpointSuffix = ({
     <ValidatedInputAndTextArea
       ariaLabel='Mountpoint subpath'
       placeholder='Define mountpoint subpath'
-      value={suffix}
+      value={subpath}
       onChange={(event: React.FormEvent, newValue) => {
-        const mountpoint = prefix + normalizeSuffix(newValue);
+        const mountpoint = prefix + normalizeSubpath(newValue);
         dispatch(
           changePartitionMountpoint({
             id: partition.id,
@@ -38,9 +38,9 @@ const MountpointSuffix = ({
         );
       }}
       stepValidation={stepValidation}
-      fieldName={`mountpoint-suffix-${partition.id}`}
+      fieldName={`mountpoint-subpath-${partition.id}`}
     />
   );
 };
 
-export default MountpointSuffix;
+export default MountpointSubpath;
