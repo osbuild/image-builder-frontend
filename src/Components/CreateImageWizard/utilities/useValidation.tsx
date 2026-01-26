@@ -22,6 +22,7 @@ import {
   selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintId,
+  selectBlueprintMode,
   selectBlueprintName,
   selectDiskPartitions,
   selectFilesystemPartitions,
@@ -315,6 +316,7 @@ export function useFilesystemValidation(): StepValidation {
   const fscMode = useAppSelector(selectFscMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   let disabledNext = false;
 
   const errors: { [key: string]: string } = {};
@@ -340,7 +342,10 @@ export function useFilesystemValidation(): StepValidation {
 
   const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
   const diskMountpointDuplicates = getDuplicateMountPoints(diskPartitions);
-  const diskInvalidMountpoints = getInvalidMountpoints(diskPartitions);
+  const diskInvalidMountpoints = getInvalidMountpoints(
+    diskPartitions,
+    blueprintMode,
+  );
   const diskNameDuplicates = volumeGroups.flatMap((vg) =>
     getDuplicateNames(vg),
   );
