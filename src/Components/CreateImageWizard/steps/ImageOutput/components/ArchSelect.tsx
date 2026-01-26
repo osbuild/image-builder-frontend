@@ -60,6 +60,12 @@ const ArchSelect = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
+      style={
+        {
+          minWidth: '50%',
+          maxWidth: '100%',
+        } as React.CSSProperties
+      }
       data-testid='arch_select'
     >
       {arch}
