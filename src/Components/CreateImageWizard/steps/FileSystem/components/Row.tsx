@@ -6,7 +6,7 @@ import { Td, Tr } from '@patternfly/react-table';
 
 import MinimumSize from './MinimumSize';
 import MountpointPrefix from './MountpointPrefix';
-import MountpointSubpath from './MountpointSuffix';
+import MountpointSubpath from './MountpointSubpath';
 import SizeUnit from './SizeUnit';
 
 import { useAppDispatch } from '../../../../../store/hooks';
