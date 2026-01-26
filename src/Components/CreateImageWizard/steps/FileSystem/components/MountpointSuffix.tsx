@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { TextInput } from '@patternfly/react-core';
-
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
+import { useFilesystemValidation } from '../../../utilities/useValidation';
+import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import { getPrefix, getSuffix, normalizeSuffix } from '../fscUtilities';
 
@@ -20,10 +20,13 @@ const MountpointSuffix = ({
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
 
+  const stepValidation = useFilesystemValidation();
+
   return (
-    <TextInput
+    <ValidatedInputAndTextArea
+      ariaLabel='Mountpoint subpath'
+      placeholder='Define mountpoint subpath'
       value={suffix}
-      type='text'
       onChange={(event: React.FormEvent, newValue) => {
         const mountpoint = prefix + normalizeSuffix(newValue);
         dispatch(
@@ -34,7 +37,8 @@ const MountpointSuffix = ({
           }),
         );
       }}
-      aria-label='mountpoint suffix'
+      stepValidation={stepValidation}
+      fieldName={`mountpoint-suffix-${partition.id}`}
     />
   );
 };
