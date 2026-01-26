@@ -19,8 +19,7 @@ const MinimumSizePopover = () => {
       <Button
         icon={<HelpIcon />}
         variant='plain'
-        aria-label='File system configuration info'
-        aria-describedby='file-system-configuration-info'
+        aria-label='Minimum size information'
         className='popover-button pf-v6-u-p-0'
       />
     </Popover>
