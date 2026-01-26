@@ -47,17 +47,13 @@ test('Create a blueprint with Firewall customization', async ({
   await test.step('Select and correctly fill the ports in Firewall step', async () => {
     await frame.getByRole('button', { name: 'Firewall' }).click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
-    await frame
-      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443:udp)')
-      .fill('80:tcp');
+    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('80:tcp');
     await page.keyboard.press('Enter');
     await expect(frame.getByText('80:tcp')).toBeVisible();
 
-    await frame
-      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443:udp)')
-      .fill('443/udp');
+    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('443:udp');
     await page.keyboard.press('Enter');
-    await expect(frame.getByText('443/udp')).toBeVisible();
+    await expect(frame.getByText('443:udp')).toBeVisible();
   });
 
   await test.step('Select and correctly fill the disabled services in Firewall step', async () => {
@@ -79,9 +75,7 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   await test.step('Prevent adding duplicate ports and services', async () => {
-    await frame
-      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443:udp)')
-      .fill('80:tcp');
+    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('80:tcp');
     await page.keyboard.press('Enter');
     await expect(frame.getByText('Port already exists.')).toBeVisible();
 
@@ -106,13 +100,13 @@ test('Create a blueprint with Firewall customization', async ({
 
   await test.step('Select and incorrectly fill the ports in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443:udp)')
+      .getByPlaceholder('Enter port (e.g., 8080:tcp)')
       .fill('00:wrongFormat');
     await page.keyboard.press('Enter');
     await expect(
       frame
         .getByText(
-          'Expected format: <port/port-name>:<protocol> or <port/port-name>/<protocol>. Example: 8080:tcp, ssh:tcp, imap/tcp',
+          'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
         )
         .nth(0),
     ).toBeVisible();
@@ -162,7 +156,7 @@ test('Create a blueprint with Firewall customization', async ({
 
     const body = request.postDataJSON();
     expect(body?.customizations?.firewall).toEqual({
-      ports: ['80:tcp', '443/udp'],
+      ports: ['80:tcp', '443:udp'],
       services: {
         enabled: ['cloud-init'],
         disabled: ['telnet.socket'],
@@ -174,9 +168,7 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit Firewall step').click();
 
-    await frame
-      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443:udp)')
-      .fill('90:tcp');
+    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('90:tcp');
     await page.keyboard.press('Enter');
     await frame.getByPlaceholder('Enter firewalld service').nth(0).fill('x');
     await page.keyboard.press('Enter');
@@ -184,7 +176,7 @@ test('Create a blueprint with Firewall customization', async ({
     await page.keyboard.press('Enter');
 
     await frame.getByRole('button', { name: 'Close 80:tcp' }).click();
-    await frame.getByRole('button', { name: 'Close 443/udp' }).click();
+    await frame.getByRole('button', { name: 'Close 443:udp' }).click();
     await frame.getByRole('button', { name: 'Close cloud-init' }).click();
     await frame.getByRole('button', { name: 'Close telnet.socket' }).click();
 
@@ -193,7 +185,7 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('y').nth(0)).toBeVisible();
 
     await expect(frame.getByText('80:tcp')).toBeHidden();
-    await expect(frame.getByText('443/udp')).toBeHidden();
+    await expect(frame.getByText('443:udp')).toBeHidden();
     await expect(frame.getByText('telnet.socket')).toBeHidden();
     await expect(frame.getByText('cloud-init')).toBeHidden();
 
@@ -233,7 +225,7 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('y').nth(0)).toBeVisible();
 
     await expect(frame.getByText('80:tcp')).toBeHidden();
-    await expect(frame.getByText('443/udp')).toBeHidden();
+    await expect(frame.getByText('443:udp')).toBeHidden();
     await expect(frame.getByText('telnet.socket')).toBeHidden();
     await expect(frame.getByText('cloud-init')).toBeHidden();
 
