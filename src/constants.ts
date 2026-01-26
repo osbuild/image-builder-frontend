@@ -29,9 +29,7 @@ export const AZURE_AUTH_URL =
 export const COMPLIANCE_URL = '/insights/compliance/scappolicies';
 export const OSCAP_URL =
   'https://www.open-scap.org/resources/documentation/perform-vulnerability-scan-of-rhel-6-machine/';
-export const ACTIVATION_KEYS_URL = !process.env.IS_ON_PREMISE
-  ? '/insights/connector/activation-keys'
-  : 'https://console.redhat.com/settings/connector/activation-keys';
+export const ACTIVATION_KEYS_URL = '/insights/connector/activation-keys';
 export const COMPLIANCE_AND_VULN_SCANNING_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
 export const MANAGING_WITH_DNF_URL =

@@ -76,26 +76,30 @@ const registrationModes = [
         await frame.getByRole('option', { name: 'activation-key-' }).click();
       } else if (isRhel(getHostDistroName())) {
         // On-premise RHEL: Fill activation key and organization ID input fields
-        await frame.getByRole('textbox', { name: 'activation key' }).fill(' ');
+        const activationKeyInput = frame.getByRole('textbox', {
+          name: 'activation key',
+        });
+        await activationKeyInput.fill(' ');
+        await activationKeyInput.blur();
         await expect(
           frame.getByText('The activation key cannot be empty'),
         ).toBeVisible();
-        await frame
-          .getByRole('textbox', { name: 'activation key' })
-          .fill('test-activation-key');
-        await expect(frame.getByText('12345')).toBeVisible(); // organization id
+        await activationKeyInput.fill('test-activation-key');
+        if (isHosted()) {
+          await expect(frame.getByText('12345')).toBeVisible(); // organization id from session
+        }
         await expect(
           frame.getByText('The activation key cannot be empty'),
         ).toBeHidden();
-        await frame
-          .getByRole('textbox', { name: 'organization id' })
-          .fill('abcdefghijkl');
+        const orgIdInput = frame.getByRole('textbox', {
+          name: 'organization id',
+        });
+        await orgIdInput.fill('abcdefghijkl');
+        await orgIdInput.blur();
         await expect(
           frame.getByText('Please enter a valid Organization ID'),
         ).toBeVisible();
-        await frame
-          .getByRole('textbox', { name: 'organization id' })
-          .fill('12345');
+        await orgIdInput.fill('12345');
       } else {
         // On-premise non-RHEL: Skip automatic registration test
         test.skip(
@@ -123,6 +127,7 @@ const registrationModes = [
         .check();
       // Upload certificate file using helper function
       await uploadCertificateFile(
+        frame,
         frame.getByRole('button', { name: 'Upload' }),
         CERTIFICATE,
         'satellite_cert.pem',
@@ -177,16 +182,19 @@ registrationModes.forEach(
 
         await test.step('Test registration options toggles', async () => {
           if (name === 'automatic') {
-            await expect(
-              frame.getByRole('button', { name: 'View details' }),
-            ).toBeVisible();
-            await expect(frame.getByText('activation-key-')).toBeHidden();
-            await frame.getByRole('button', { name: 'View details' }).click();
-            await expect(
-              frame.getByRole('button', { name: 'View details' }),
-            ).toBeVisible();
-            await expect(frame.getByText('activation-key-')).toBeVisible();
-            await frame.getByRole('button', { name: 'Close' }).click();
+            // View details button only exists on hosted (ActivationKeysList); on-prem uses ManualActivationKey
+            if (isHosted()) {
+              await expect(
+                frame.getByRole('button', { name: 'View details' }),
+              ).toBeVisible();
+              await expect(frame.getByText('activation-key-')).toBeHidden();
+              await frame.getByRole('button', { name: 'View details' }).click();
+              await expect(
+                frame.getByRole('button', { name: 'View details' }),
+              ).toBeVisible();
+              await expect(frame.getByText('activation-key-')).toBeVisible();
+              await frame.getByRole('button', { name: 'Close' }).click();
+            }
 
             // Test enabling/disabling predictive analytics
             const insightsSwitch = frame.getByText(
@@ -293,14 +301,17 @@ registrationModes.forEach(
               name: 'registration command',
             });
 
-            // Test invalid command
-            await registrationCommandInput.fill('invalid-command');
-            await expect(
-              frame.getByText('Invalid or missing token:'),
-            ).toBeVisible();
+            // Test invalid command (pressSequentially so React onChange fires in iframe)
+            await registrationCommandInput.click();
+            await registrationCommandInput.clear();
+            await registrationCommandInput.pressSequentially('invalid-command');
+            await registrationCommandInput.blur();
             await expect(
               frame.getByRole('button', { name: 'Review and finish' }),
             ).toBeDisabled();
+            await expect(
+              frame.getByText('Invalid or missing token'),
+            ).toBeVisible();
 
             // Test expired token command
             await registrationCommandInput.fill(
@@ -320,7 +331,7 @@ registrationModes.forEach(
               SATELLITE_COMMAND_NO_EXPIRATION,
             );
             await expect(
-              frame.getByText('Invalid or missing token:'),
+              frame.getByText('Invalid or missing token'),
             ).toBeHidden();
             await expect(
               frame.getByText(
@@ -331,7 +342,7 @@ registrationModes.forEach(
             // Test valid command with standard token
             await registrationCommandInput.fill(SATELLITE_COMMAND);
             await expect(
-              frame.getByText('Invalid or missing token:'),
+              frame.getByText('Invalid or missing token'),
             ).toBeHidden();
 
             await frame

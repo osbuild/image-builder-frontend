@@ -5,6 +5,7 @@ import path from 'path';
 import {
   BrowserContext,
   expect,
+  type FrameLocator,
   type Locator,
   type Page,
 } from '@playwright/test';
@@ -98,6 +99,7 @@ export const getHostArch = (): string => {
 };
 
 export const uploadCertificateFile = async (
+  scope: Page | FrameLocator,
   uploadButton: Locator,
   certificateContent: string,
   fileName: string = 'certificate.pem',
@@ -109,16 +111,14 @@ export const uploadCertificateFile = async (
     // Write certificate content to temporary file
     writeFileSync(tempCertPath, certificateContent);
 
-    // Find the file input element (usually hidden, so we need to locate it)
-    const fileInput = uploadButton.page().locator('input[type="file"]');
+    // Find the file input in the same scope as the button (page or iframe)
+    const fileInput = scope.locator('input[type="file"]');
 
     // Set the file directly on the input element
     await fileInput.setInputFiles(tempCertPath);
 
     // Verify the certificate was uploaded successfully
-    await expect(
-      uploadButton.page().getByText('Certificate was uploaded:'),
-    ).toBeVisible();
+    await expect(scope.getByText('Certificate was uploaded')).toBeVisible();
   } finally {
     // Clean up temporary file
     if (existsSync(tempCertPath)) {

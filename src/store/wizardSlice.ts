@@ -38,6 +38,7 @@ import type {
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
 import { RHEL_10, X86_64 } from '../constants';
+import isRhel from '../Utilities/isRhel';
 import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
@@ -254,9 +255,7 @@ export const initialState: wizardState = {
     email: '',
   },
   registration: {
-    registrationType: process.env.IS_ON_PREMISE
-      ? 'register-later'
-      : 'register-now-rhc',
+    registrationType: 'register-now-rhc',
     activationKey: undefined,
     orgId: undefined,
     satelliteRegistration: {
@@ -650,6 +649,10 @@ export const wizardSlice = createSlice({
       action: PayloadAction<Distributions | 'image-mode'>,
     ) => {
       state.distribution = action.payload;
+
+      if (process.env.IS_ON_PREMISE && !isRhel(action.payload)) {
+        state.registration.registrationType = 'register-later';
+      }
     },
     addImageType: (state, action: PayloadAction<ImageTypes>) => {
       // Remove (if present) before adding to avoid duplicates
