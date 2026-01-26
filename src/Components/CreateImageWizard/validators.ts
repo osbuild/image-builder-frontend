@@ -1,4 +1,7 @@
-import { MountpointPolicies } from './steps/FileSystem/fscPolicies';
+import {
+  ImageModeMountpointPolicies,
+  MountpointPolicies,
+} from './steps/FileSystem/fscPolicies';
 import {
   DiskPartition,
   FilesystemPartition,
@@ -174,9 +177,17 @@ export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
   return duplicates;
 };
 
-export const isMountpointValid = (partition: DiskPartition) => {
+export const isMountpointValid = (
+  partition: DiskPartition,
+  blueprintMode: string,
+) => {
+  const policies =
+    blueprintMode === 'package'
+      ? MountpointPolicies
+      : ImageModeMountpointPolicies;
+
   if ('mountpoint' in partition && partition.mountpoint) {
-    for (const [mountpointPath, policy] of Object.entries(MountpointPolicies)) {
+    for (const [mountpointPath, policy] of Object.entries(policies)) {
       if (policy.Exact && partition.mountpoint.startsWith(mountpointPath)) {
         return partition.mountpoint === mountpointPath;
       }
@@ -194,21 +205,24 @@ export const isMountpointValid = (partition: DiskPartition) => {
   return true;
 };
 
-export const getInvalidMountpoints = (partitions: DiskPartition[]) => {
+export const getInvalidMountpoints = (
+  partitions: DiskPartition[],
+  blueprintMode: string,
+) => {
   const invalidMountpoints = [];
 
   for (const partition of partitions) {
     if (
       'mountpoint' in partition &&
       partition.mountpoint &&
-      !isMountpointValid(partition)
+      !isMountpointValid(partition, blueprintMode)
     ) {
       invalidMountpoints.push(partition.mountpoint);
     }
     if ('type' in partition && partition.type === 'lvm') {
       for (const lv of partition.logical_volumes) {
         if ('mountpoint' in lv && lv.mountpoint) {
-          if (!isMountpointValid(lv)) {
+          if (!isMountpointValid(lv, blueprintMode)) {
             invalidMountpoints.push(lv.mountpoint);
           }
         }
