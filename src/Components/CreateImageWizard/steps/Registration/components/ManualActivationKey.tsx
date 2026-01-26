@@ -1,16 +1,14 @@
 import React, { MutableRefObject, useEffect, useRef } from 'react';
 
 import {
-  Button,
   Content,
   ContentVariants,
   FormGroup,
   FormGroupLabelHelp,
   Popover,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { ACTIVATION_KEYS_URL, CDN_PROD_URL } from '../../../../../constants';
+import { CDN_PROD_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeActivationKey,
@@ -43,21 +41,8 @@ const ManualRegistrationPopover = ({
           </Content>
           <Content component={ContentVariants.p}>
             The Organization ID is the numeric identifier for your organization
-            and is separate from your account number. Your organization&apos;s
-            activation keys and organization ID are displayed on the Activation
-            Keys page in the Hybrid Cloud Console.
+            and is separate from your account number.
           </Content>
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            icon={<ExternalLinkAltIcon />}
-            iconPosition='right'
-            isInline
-            href={ACTIVATION_KEYS_URL}
-          >
-            View activation keys in Hybrid Cloud Console
-          </Button>
         </Content>
       }
     >
@@ -84,6 +69,7 @@ export const ManualActivationKey = () => {
   return (
     <>
       <FormGroup
+        className='pf-v6-u-mb-md'
         label={'Activation key'}
         labelHelp={<ManualRegistrationPopover ref={activationKeyRef} />}
       >

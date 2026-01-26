@@ -123,6 +123,7 @@ const registrationModes = [
         .check();
       // Upload certificate file using helper function
       await uploadCertificateFile(
+        frame,
         frame.getByRole('button', { name: 'Upload' }),
         CERTIFICATE,
         'satellite_cert.pem',

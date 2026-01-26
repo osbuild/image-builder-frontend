@@ -5,8 +5,10 @@ import * as path from 'path';
 
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { closePopupsIfExist, isHosted } from './helpers';
+import { closePopupsIfExist, getHostDistroName, isHosted } from './helpers';
 import { ibFrame, navigateToLandingPage } from './navHelpers';
+
+import isRhel from '../../src/Utilities/isRhel';
 
 /**
  * Clicks the create button, handles the modal, clicks the button again and selecets the BP in the list
@@ -52,11 +54,10 @@ export const fillInDetails = async (
 
 /**
  * Select "Register later" option in the wizard
- * This function executes only on the hosted service
  * @param page - the page object
  */
 export const registerLater = async (page: Page | FrameLocator) => {
-  if (isHosted()) {
+  if (isHosted() || isRhel(getHostDistroName())) {
     await page.getByRole('button', { name: 'Register' }).click();
     await page.getByRole('radio', { name: 'Register later' }).click();
   }
