@@ -306,6 +306,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
+  const [wasUsersVisited, setWasUsersVisited] = useState(false);
   const lastTrackedStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
@@ -341,6 +342,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         }
       } else if (step.id === 'step-register' && step.isVisited) {
         setWasRegisterVisited(true);
+      } else if (step.id === 'wizard-users' && step.isVisited) {
+        setWasUsersVisited(true);
       }
     }, [step.id, step.isVisited]);
 
@@ -509,7 +512,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             key='wizard-users'
             isHidden={!isImageMode}
             navItem={CustomStatusNavItem}
-            status={usersValidation.disabledNext ? 'error' : 'default'}
+            status={
+              wasUsersVisited
+                ? usersValidation.disabledNext
+                  ? 'error'
+                  : 'default'
+                : 'default'
+            }
             footer={
               <CustomWizardFooter
                 disableNext={usersValidation.disabledNext}
