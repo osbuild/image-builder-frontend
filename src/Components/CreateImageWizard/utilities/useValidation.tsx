@@ -63,6 +63,7 @@ import {
   isKernelArgumentValid,
   isKernelNameValid,
   isMountpointMinSizeValid,
+  isMountpointValid,
   isNtpServerValid,
   isPartitionNameValid,
   isPortValid,
@@ -336,6 +337,10 @@ export function useFilesystemValidation(): StepValidation {
     }
     if (fscMountpointDuplicates.includes(partition.mountpoint)) {
       errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
+      disabledNext = true;
+    }
+    if (!isMountpointValid(partition, blueprintMode)) {
+      errors[`mountpoint-suffix-${partition.id}`] = 'Invalid mountpoint';
       disabledNext = true;
     }
   }

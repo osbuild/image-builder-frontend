@@ -178,7 +178,7 @@ export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
 };
 
 export const isMountpointValid = (
-  partition: DiskPartition,
+  partition: FilesystemPartition | DiskPartition,
   blueprintMode: string,
 ) => {
   const policies =

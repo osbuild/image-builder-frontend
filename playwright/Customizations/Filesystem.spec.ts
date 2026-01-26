@@ -127,7 +127,7 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('option', { name: '/tmp' }).click();
 
     await frame
-      .getByRole('textbox', { name: 'mountpoint suffix' })
+      .getByRole('textbox', { name: 'Mountpoint subpath' })
       .fill('/usb');
     await frame
       .getByRole('gridcell', { name: '1', exact: true })
@@ -188,7 +188,7 @@ test('Create a blueprint with Filesystem customization', async ({
     await expect(closeTmpButton).toBeEnabled();
 
     const usbTextbox = frame.getByRole('textbox', {
-      name: 'mountpoint suffix',
+      name: 'Mountpoint subpath',
     });
     await expect(usbTextbox).toHaveValue('/usb');
 
@@ -213,7 +213,7 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('option', { name: '/srv' }).click();
 
     await frame
-      .getByRole('textbox', { name: 'mountpoint suffix' })
+      .getByRole('textbox', { name: 'Mountpoint subpath' })
       .fill('/data');
 
     await frame.getByRole('button', { name: 'MiB' }).click();
@@ -280,7 +280,7 @@ test('Create a blueprint with Filesystem customization', async ({
     await expect(closeTmpButton).toBeEnabled();
 
     const dataTextbox = frame.getByRole('textbox', {
-      name: 'mountpoint suffix',
+      name: 'Mountpoint subpath',
     });
     await expect(dataTextbox).toHaveValue('/data');
 

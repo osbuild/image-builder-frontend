@@ -66,7 +66,7 @@ const customizePartition = async () => {
   const user = userEvent.setup();
   const row = await getRow(2);
   const minSize = await within(row).findByRole('textbox', {
-    name: /mountpoint suffix/i,
+    name: /Mountpoint subpath/i,
   });
   await waitFor(() => user.type(minSize, 'cakerecipes'));
 };
