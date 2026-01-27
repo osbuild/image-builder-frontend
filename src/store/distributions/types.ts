@@ -44,3 +44,7 @@ export type DistributionDetailsCustomizationArgs = {
 };
 
 export type DistributionDetailsCustomizationApi = DistributionDetails;
+
+export type RestrictionStrategy = {
+  shouldHide: boolean;
+};
