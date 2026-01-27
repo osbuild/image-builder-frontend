@@ -13,7 +13,7 @@ import { selectArchitecture, selectDistribution } from '../wizardSlice';
 // to work with where we need it. This way it will be easy to decide whether we
 // need to hide the customizations or display an alert, without complex conditionals
 // in the ui components.
-export const useGetCustomizationRestrictions = ({
+export const useCustomizationRestrictions = ({
   selectedImageTypes,
 }: {
   selectedImageTypes: ImageTypes[];
