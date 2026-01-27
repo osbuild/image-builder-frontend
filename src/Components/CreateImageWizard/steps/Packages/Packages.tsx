@@ -1327,7 +1327,7 @@ const Packages = () => {
                   }}
                 />
                 <Td>
-                  @{grp.name}
+                  @{grp.name}{' '}
                   <Popover
                     minWidth='25rem'
                     headerContent='Included packages'
@@ -1359,12 +1359,12 @@ const Packages = () => {
                     }
                   >
                     <Button
-                      icon={<HelpIcon className='pf-v6-u-ml-xs' />}
+                      icon={<HelpIcon />}
                       variant='plain'
                       aria-label='About included packages'
-                      component='span'
-                      className='pf-v6-u-p-0'
                       isInline
+                      size='sm'
+                      hasNoPadding
                     />
                   </Popover>
                 </Td>
