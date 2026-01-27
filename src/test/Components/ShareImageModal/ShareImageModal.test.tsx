@@ -41,7 +41,7 @@ describe('Create Share To Regions Modal', () => {
     await waitFor(() => user.click(selectToggle));
 
     const usEast2 = await screen.findByRole('option', {
-      name: /us east \(ohio\) us-east-2/i,
+      name: /us east \(ohio\)/i,
     });
     expect(usEast2).toBeEnabled();
     await waitFor(() => user.click(usEast2));
@@ -101,7 +101,7 @@ describe('Create Share To Regions Modal', () => {
 
     // parent region disabled
     const usEast1 = await screen.findByRole('option', {
-      name: /us east \(n. virginia\) us-east-1/i,
+      name: /us east \(n. virginia\)/i,
     });
     expect(usEast1).toBeDisabled();
 

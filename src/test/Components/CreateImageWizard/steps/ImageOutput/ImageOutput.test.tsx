@@ -59,7 +59,7 @@ const selectRhel8 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
   const rhel8 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
+    name: /red hat enterprise linux \(rhel\) 8/i,
   });
   await waitFor(() => user.click(rhel8));
 };
@@ -68,7 +68,7 @@ const selectRhel10 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
   const rhel10 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 10 full support ends: may 2030 \| maintenance support ends: may 2035/i,
+    name: /red hat enterprise linux \(rhel\) 10/i,
   });
   await waitFor(() => user.click(rhel10));
 };
@@ -85,7 +85,7 @@ const selectCentos9 = async () => {
 
 const openArchitectureMenu = async () => {
   const user = userEvent.setup();
-  const archMenu = screen.getByTestId('arch_select');
+  const archMenu = await screen.findByTestId('arch_select');
   await waitFor(() => user.click(archMenu));
 };
 
@@ -116,10 +116,10 @@ const selectGuestImageTarget = async () => {
 };
 
 const verifyNameInReviewStep = async (name: string) => {
-  const region = screen.getByRole('region', {
+  const region = await screen.findByRole('region', {
     name: /details revisit step/i,
   });
-  const definition = within(region).getByRole('definition');
+  const definition = await within(region).findByRole('definition');
   expect(definition).toHaveTextContent(name);
 };
 

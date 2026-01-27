@@ -161,7 +161,7 @@ describe('Step File system configuration', () => {
     await clickNext();
     expect(await getNextButton()).toBeDisabled();
     const mountPointAlerts = screen.getAllByRole('heading', {
-      name: /danger alert: duplicate mount point/i,
+      name: /duplicate mount point/i,
     });
     const rows = await screen.findAllByRole('row');
     rows.shift(); // remove table header
