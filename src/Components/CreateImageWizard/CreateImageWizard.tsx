@@ -633,10 +633,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-repository-snapshot'
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
-                isHidden={
-                  // TODO: maybe move the isOnPremise into the customizationRestrictions query transformation
-                  isOnPremise || restrictions.repositories.shouldHide
-                }
+                isHidden={restrictions.repositories.shouldHide}
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
@@ -652,10 +649,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-custom-repositories'
                 key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}
-                isHidden={
-                  // TODO: maybe move the isOnPremise into the customizationRestrictions query transformation
-                  isOnPremise || restrictions.repositories.shouldHide
-                }
+                isHidden={restrictions.repositories.shouldHide}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter
@@ -847,10 +841,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-first-boot'
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                isHidden={
-                  // TODO: maybe move the isOnPremise into the customizationRestrictions query transformation
-                  isOnPremise || restrictions.firstBoot.shouldHide
-                }
+                isHidden={restrictions.firstBoot.shouldHide}
                 footer={
                   <CustomWizardFooter
                     disableNext={firstBootValidation.disabledNext}

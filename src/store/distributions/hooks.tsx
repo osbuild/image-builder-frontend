@@ -4,6 +4,7 @@ import { ALL_CUSTOMIZATIONS } from './constants';
 import { distroDetailsApi as api } from './distributionDetailsApi';
 import { CustomizationType, RestrictionStrategy } from './types';
 
+import { useIsOnPremise } from '../../Hooks';
 import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
 import {
@@ -24,6 +25,7 @@ export const useCustomizationRestrictions = ({
 }) => {
   const distro = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
+  const isOnPremise = useIsOnPremise();
   const isImageMode = useAppSelector(selectIsImageMode);
   const isSingleTarget = selectedImageTypes.length === 1;
 
@@ -52,6 +54,19 @@ export const useCustomizationRestrictions = ({
           shouldHide: !allowed,
           // users is required for image-mode
           required: customization === 'users',
+        };
+        continue;
+      }
+
+      if (
+        isOnPremise &&
+        // on-premise doesn't allow first boot & repository
+        // customizations just yet
+        ['repositories', 'firstBoot'].includes(customization)
+      ) {
+        result[customization] = {
+          shouldHide: true,
+          required: false,
         };
         continue;
       }
@@ -97,7 +112,7 @@ export const useCustomizationRestrictions = ({
     }
 
     return result;
-  }, [data, arch, isSingleTarget, isImageMode]);
+  }, [data, arch, isSingleTarget, isImageMode, isOnPremise]);
 
   return {
     restrictions,
