@@ -42,16 +42,16 @@ import isRhel from '../../../../../src/Utilities/isRhel';
 import { targetOptions } from '../../../../constants';
 import { useIsOnPremise } from '../../../../Hooks';
 import { useAppSelector } from '../../../../store/hooks';
-import { isImageMode } from '../../../../store/typeGuards';
+import { isImageMode as isImageModeDistribution } from '../../../../store/typeGuards';
 import {
   selectAapRegistration,
   selectBlueprintDescription,
-  selectBlueprintMode,
   selectBlueprintName,
   selectDistribution,
   selectFirewall,
   selectHostname,
   selectImageTypes,
+  selectIsImageMode,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -68,7 +68,7 @@ const Review = () => {
   const { goToStepById } = useWizardContext();
   const isOnPremise = useIsOnPremise();
 
-  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const aapRegistration = useAppSelector(selectAapRegistration);
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
@@ -191,13 +191,11 @@ const Review = () => {
     );
   };
 
-  const wizardStepId =
-    blueprintMode === 'image' ? 'wizard-users' : 'wizard-users-optional';
+  const wizardStepId = isImageMode ? 'wizard-users' : 'wizard-users-optional';
 
   // This is needed because on first render (during create)
   // the distribution is set to a known distribution
-  const isPackageMode =
-    !isImageMode(distribution) && blueprintMode === 'package';
+  const isPackageMode = !isImageModeDistribution(distribution) && !isImageMode;
 
   return (
     <>
