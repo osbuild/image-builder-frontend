@@ -8,6 +8,7 @@ import {
   RestrictionStrategy,
 } from './types';
 
+import { useIsOnPremise } from '../../Hooks';
 import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
 import { selectIsImageMode } from '../wizardSlice';
@@ -22,6 +23,7 @@ export const useGetCustomizationRestrictionsQuery = ({
 }: {
   selectedImageTypes: ImageTypes[];
 }) => {
+  const isOnPremise = useIsOnPremise();
   const isImageMode = useAppSelector(selectIsImageMode);
   const isSingleTarget = selectedImageTypes.length === 1;
 
@@ -53,6 +55,23 @@ export const useGetCustomizationRestrictionsQuery = ({
         continue;
       }
 
+      if (
+        isOnPremise &&
+        // on-premise doesn't allow first boot & repository
+        // customizations just yet
+        ['repositories', 'firstBoot'].includes(customization)
+      ) {
+        result[customization] = {
+          isAllowed: false,
+          shouldHide: true,
+          // these are hidden, so we can leave this empty
+
+          supportedImageTypes: [],
+          required: false,
+        };
+        continue;
+      }
+
       const supportedImageTypes = selectedImageTypes.filter((imageType) => {
         // this image supports this specific customization
         // so we want it in the list of supported image types
@@ -71,7 +90,7 @@ export const useGetCustomizationRestrictionsQuery = ({
     }
 
     return result;
-  }, [data, selectedImageTypes, isSingleTarget, isImageMode]);
+  }, [data, selectedImageTypes, isSingleTarget, isImageMode, isOnPremise]);
 
   return {
     restrictions,
