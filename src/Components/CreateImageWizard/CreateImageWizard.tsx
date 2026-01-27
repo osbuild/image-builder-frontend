@@ -90,7 +90,6 @@ import {
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
-  selectIsImageMode,
   selectTimezone,
 } from '../../store/wizardSlice';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
@@ -188,7 +187,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const imageTypes = useAppSelector(selectImageTypes);
-  const isImageMode = useAppSelector(selectIsImageMode);
   const [searchParams] = useSearchParams();
 
   const { restrictions } = useCustomizationRestrictions({
@@ -521,7 +519,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             name='Groups and users'
             id='wizard-users'
             key='wizard-users'
-            isHidden={!isImageMode}
+            // This step is only visible when users is required (i.e., in image mode)
+            isHidden={!restrictions.users.required}
             navItem={CustomStatusNavItem}
             status={
               wasUsersVisited
@@ -584,10 +583,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Security'
                 id='step-oscap'
                 key='step-oscap'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.openscap.shouldHide
-                }
+                isHidden={restrictions.openscap.shouldHide}
                 navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter
@@ -638,10 +634,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
                 isHidden={
-                  // TODO: maybe move the isImageMode & isOnPremise into the customizationRestrictions query transformation
-                  isOnPremise ||
-                  isImageMode ||
-                  restrictions.repositories.shouldHide
+                  // TODO: maybe move the isOnPremise into the customizationRestrictions query transformation
+                  isOnPremise || restrictions.repositories.shouldHide
                 }
                 footer={
                   <CustomWizardFooter
@@ -659,10 +653,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}
                 isHidden={
-                  // TODO: maybe move the isImageMode & isOnPremise into the customizationRestrictions query transformation
-                  isOnPremise ||
-                  isImageMode ||
-                  restrictions.repositories.shouldHide
+                  // TODO: maybe move the isOnPremise into the customizationRestrictions query transformation
+                  isOnPremise || restrictions.repositories.shouldHide
                 }
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
@@ -679,10 +671,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Additional packages'
                 id='wizard-additional-packages'
                 key='wizard-additional-packages'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.packages.shouldHide
-                }
+                isHidden={restrictions.packages.shouldHide}
                 navItem={CustomStatusNavItem}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
@@ -700,8 +689,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-users-optional'
                 key='wizard-users-optional'
                 isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.users.shouldHide
+                  restrictions.users.shouldHide || restrictions.users.required
                 }
                 navItem={CustomStatusNavItem}
                 status={
@@ -738,10 +726,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Timezone'
                 id='wizard-timezone'
                 key='wizard-timezone'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.timezone.shouldHide
-                }
+                isHidden={restrictions.timezone.shouldHide}
                 navItem={CustomStatusNavItem}
                 status={timezoneValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -758,10 +743,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Locale'
                 id='wizard-locale'
                 key='wizard-locale'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.locale.shouldHide
-                }
+                isHidden={restrictions.locale.shouldHide}
                 navItem={CustomStatusNavItem}
                 status={localeValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -778,10 +760,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Hostname'
                 id='wizard-hostname'
                 key='wizard-hostname'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.hostname.shouldHide
-                }
+                isHidden={restrictions.hostname.shouldHide}
                 navItem={CustomStatusNavItem}
                 status={hostnameValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -799,10 +778,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='wizard-kernel'
                 key='wizard-kernel'
                 navItem={CustomStatusNavItem}
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.kernel.shouldHide
-                }
+                isHidden={restrictions.kernel.shouldHide}
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -818,10 +794,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Firewall'
                 id='wizard-firewall'
                 key='wizard-firewall'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.firewall.shouldHide
-                }
+                isHidden={restrictions.firewall.shouldHide}
                 navItem={CustomStatusNavItem}
                 status={firewallValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -838,8 +811,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Systemd services'
                 id='wizard-services'
                 key='wizard-services'
-                // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                isHidden={isImageMode || restrictions.services.shouldHide}
+                isHidden={restrictions.services.shouldHide}
                 navItem={CustomStatusNavItem}
                 status={servicesValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -856,10 +828,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Ansible Automation Platform'
                 id='wizard-aap'
                 key='wizard-aap'
-                isHidden={
-                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
-                  isImageMode || restrictions.aap.shouldHide
-                }
+                isHidden={restrictions.aap.shouldHide}
                 navItem={CustomStatusNavItem}
                 status={aapValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -878,11 +847,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-first-boot'
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
                 isHidden={
-                  isOnPremise ||
-                  isImageMode ||
-                  restrictions.firstBoot.shouldHide
+                  // TODO: maybe move the isOnPremise into the customizationRestrictions query transformation
+                  isOnPremise || restrictions.firstBoot.shouldHide
                 }
                 footer={
                   <CustomWizardFooter
