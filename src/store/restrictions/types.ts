@@ -80,3 +80,9 @@ export type RestrictedCustomizationApi = {
 };
 
 export type RestrictedImageType = keyof typeof RESTRICTED_IMAGE_TYPES;
+
+export type RestrictionStrategy = {
+  isAllowed: boolean;
+  shouldHide: boolean;
+  supportedImageTypes: ImageTypes[];
+};
