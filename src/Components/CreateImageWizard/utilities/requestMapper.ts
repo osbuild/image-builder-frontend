@@ -56,7 +56,7 @@ import {
   VolumeGroup,
 } from '../../../store/imageBuilderApi';
 import { ApiRepositoryImportResponseRead } from '../../../store/service/contentSourcesApi';
-import { isImageMode } from '../../../store/typeGuards';
+import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import {
   ComplianceType,
   initialState,
@@ -77,7 +77,6 @@ import {
   selectAzureTenantId,
   selectBaseUrl,
   selectBlueprintDescription,
-  selectBlueprintMode,
   selectBlueprintName,
   selectCompliancePolicyID,
   selectComplianceProfileID,
@@ -99,6 +98,7 @@ import {
   selectHostname,
   selectImageSource,
   selectImageTypes,
+  selectIsImageMode,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -155,7 +155,7 @@ export const mapRequestFromState = (
   const state = store.getState();
   const imageRequests = getImageRequests(state);
   const customizations = getCustomizations(state, orgID);
-  const blueprintMode = selectBlueprintMode(state);
+  const isImageMode = selectIsImageMode(state);
   const imageSource = selectImageSource(state);
 
   return {
@@ -165,11 +165,9 @@ export const mapRequestFromState = (
     distribution:
       // we want to make sure image-source is defined
       // if it isn't, then keep the original distro
-      blueprintMode === 'image' && imageSource
-        ? IMAGE_MODE
-        : selectDistribution(state),
+      isImageMode && imageSource ? IMAGE_MODE : selectDistribution(state),
     bootc:
-      blueprintMode === 'image' && imageSource
+      isImageMode && imageSource
         ? {
             reference: imageSource,
           }
@@ -263,7 +261,7 @@ const convertLogicalVolume = (volume: LogicalVolume) => {
  * @param distribution blueprint distribution
  */
 const getLatestRelease = (distribution: Distributions | 'image-mode') => {
-  if (isImageMode(distribution)) {
+  if (isImageModeDistribution(distribution)) {
     return distribution;
   }
 
@@ -593,7 +591,9 @@ export const mapRequestToState = (
   request: BlueprintResponse | CockpitBlueprintResponse,
 ): wizardState => {
   const wizardMode = 'edit';
-  const blueprintMode = isImageMode(request.distribution) ? 'image' : 'package';
+  const blueprintMode = isImageModeDistribution(request.distribution)
+    ? 'image'
+    : 'package';
   return {
     wizardMode,
     blueprintMode,
@@ -1118,10 +1118,10 @@ const getTimezone = (state: RootState) => {
   const timezone = selectTimezone(state);
   const ntpservers = selectNtpServers(state);
   const distribution = selectDistribution(state);
-  const blueprintMode = selectBlueprintMode(state);
+  const isImageMode = selectIsImageMode(state);
 
   // timezone isn't supported by image-mode
-  if (blueprintMode === 'image' || isImageMode(distribution)) {
+  if (isImageMode || isImageModeDistribution(distribution)) {
     return undefined;
   }
 
@@ -1176,10 +1176,10 @@ const getLocale = (state: RootState) => {
   const languages = selectLanguages(state);
   const keyboard = selectKeyboard(state);
   const distribution = selectDistribution(state);
-  const blueprintMode = selectBlueprintMode(state);
+  const isImageMode = selectIsImageMode(state);
 
   // locale isn't supported by image-mode
-  if (blueprintMode === 'image' || isImageMode(distribution)) {
+  if (isImageMode || isImageModeDistribution(distribution)) {
     return undefined;
   }
 

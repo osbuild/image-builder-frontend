@@ -85,12 +85,12 @@ import {
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
-  selectBlueprintMode,
   selectDistribution,
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
+  selectIsImageMode,
   selectTimezone,
 } from '../../store/wizardSlice';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
@@ -187,8 +187,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const isOnPremise = useIsOnPremise();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const blueprintMode = useAppSelector(selectBlueprintMode);
   const imageTypes = useAppSelector(selectImageTypes);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const [searchParams] = useSearchParams();
 
   const { restrictions } = useCustomizationRestrictions({
@@ -417,8 +417,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       />
     );
   };
-
-  const isImageMode = blueprintMode === 'image';
 
   return (
     <>

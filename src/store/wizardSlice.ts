@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { ApiRepositoryResponseRead } from './contentSourcesApi';
@@ -605,6 +605,12 @@ export const selectFirewall = (state: RootState) => {
 export const selectFips = (state: RootState) => {
   return state.wizard.fips;
 };
+
+// Derived selector for checking if we're in image mode
+export const selectIsImageMode = createSelector(
+  [selectBlueprintMode],
+  (mode) => mode === 'image',
+);
 
 export const wizardSlice = createSlice({
   name: 'wizard',

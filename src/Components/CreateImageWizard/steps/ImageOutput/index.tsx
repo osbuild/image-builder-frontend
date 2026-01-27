@@ -15,10 +15,10 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintName,
   selectArchitecture,
-  selectBlueprintMode,
   selectBlueprintName,
   selectDistribution,
   selectIsCustomName,
+  selectIsImageMode,
 } from '../../../../store/wizardSlice';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
@@ -26,7 +26,7 @@ import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 const ImageOutputStep = () => {
   const isOnPremise = useIsOnPremise();
   const dispatch = useAppDispatch();
-  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const blueprintName = useAppSelector(selectBlueprintName);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
@@ -54,8 +54,8 @@ const ImageOutputStep = () => {
         // The distribution won't be defined if the blueprint is in image mode
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         !distribution?.startsWith('fedora') && <BlueprintMode />}
-      {blueprintMode === 'image' && <ImageSourceSelect />}
-      {blueprintMode === 'package' && (
+      {isImageMode && <ImageSourceSelect />}
+      {!isImageMode && (
         <>
           <ReleaseSelect />
           {distribution.match('centos-*') && <CentOSAcknowledgement />}
