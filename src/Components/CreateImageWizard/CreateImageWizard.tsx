@@ -38,7 +38,6 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
-import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
   useAAPValidation,
   useAzureValidation,
@@ -311,8 +310,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     userGroupsValidation.disabledNext,
     usersStepAttemptedNext,
   ]);
-
-  const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
   let startIndex = 1; // default index
   const JUMP_TO_REVIEW_STEP = 24;
@@ -609,9 +606,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id='step-file-system'
                 key='step-file-system'
                 navItem={CustomStatusNavItem}
-                isHidden={
-                  hasWslTargetOnly || restrictions.filesystem.shouldHide
-                }
+                isHidden={restrictions.filesystem.shouldHide}
                 status={
                   !filesystemPristine && fileSystemValidation.disabledNext
                     ? 'error'
@@ -807,10 +802,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-kernel'
                 navItem={CustomStatusNavItem}
                 isHidden={
-                  // TODO: maybe move the hasWslTargetOnly & isImageMode into the customizationRestrictions query transformation
-                  hasWslTargetOnly ||
-                  isImageMode ||
-                  restrictions.kernel.shouldHide
+                  // TODO: maybe move the isImageMode into the customizationRestrictions query transformation
+                  isImageMode || restrictions.kernel.shouldHide
                 }
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
