@@ -64,6 +64,7 @@ export const isMountpointPrefixAvailable = (
   prefix: string,
   partition: FilesystemPartition | DiskPartition,
   customization: PartitioningCustomization,
+  blueprintMode: string,
 ): boolean => {
   // mountpoint '/' is not allowed in filesystem customization
   // as it is added and not removable from the start to ensure
@@ -75,5 +76,10 @@ export const isMountpointPrefixAvailable = (
   if ('name' in partition && prefix === '/boot') {
     return false;
   }
+
+  if (blueprintMode === 'image' && prefix !== '/var') {
+    return false;
+  }
+
   return true;
 };

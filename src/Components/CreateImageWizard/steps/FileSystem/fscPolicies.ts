@@ -23,7 +23,7 @@ export const MountpointPolicies: MountpointPoliciesType = {
 export const ImageModeMountpointPolicies: MountpointPoliciesType = {
   '/': {},
   '/boot': { Deny: false, Exact: true },
-  '/var': { Deny: false },
+  '/var': { Deny: true, Exact: true },
   '/var/home': { Deny: true },
   '/var/lock': { Deny: true },
   '/var/mail': { Deny: true },
