@@ -131,7 +131,7 @@ export type GroupWithRepositoryInfo = {
   name: string;
   description: string;
   repository: PackageRepository;
-  package_list: string[];
+  package_list?: string[];
 };
 
 export enum Repos {
@@ -1334,12 +1334,12 @@ const Packages = () => {
                     bodyContent={
                       <div
                         style={
-                          grp.package_list.length > 0
+                          grp.package_list?.length
                             ? { height: '40em', overflow: 'scroll' }
                             : {}
                         }
                       >
-                        {grp.package_list.length > 0 ? (
+                        {grp.package_list?.length ? (
                           <Table
                             variant='compact'
                             data-testid='group-included-packages-table'
