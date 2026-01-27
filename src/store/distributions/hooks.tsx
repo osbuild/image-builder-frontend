@@ -6,7 +6,11 @@ import { CustomizationType, RestrictionStrategy } from './types';
 
 import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
-import { selectArchitecture, selectDistribution } from '../wizardSlice';
+import {
+  selectArchitecture,
+  selectDistribution,
+  selectIsImageMode,
+} from '../wizardSlice';
 
 // Instead of exporting the hook directly from the `restrictedCustomizationsApi`
 // let's create a wrapper around this to transform the data so that it is easier
@@ -20,13 +24,19 @@ export const useCustomizationRestrictions = ({
 }) => {
   const distro = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const isSingleTarget = selectedImageTypes.length === 1;
 
-  const { data } = api.useGetDistributionDetailsQuery({
-    distro: distro,
-    architecture: [arch],
-    imageType: selectedImageTypes,
-  });
+  const { data } = api.useGetDistributionDetailsQuery(
+    {
+      distro: distro,
+      architecture: [arch],
+      imageType: selectedImageTypes,
+    },
+    {
+      skip: isImageMode,
+    },
+  );
 
   const restrictions = useMemo(() => {
     const result: Record<CustomizationType, RestrictionStrategy> = {} as Record<
@@ -35,8 +45,20 @@ export const useCustomizationRestrictions = ({
     >;
 
     for (const customization of ALL_CUSTOMIZATIONS) {
+      if (isImageMode) {
+        // users & filesystem are the only allowed customization for image mode,
+        const allowed = ['filesystem', 'users'].includes(customization);
+        result[customization] = {
+          shouldHide: !allowed,
+          // users is required for image-mode
+          required: customization === 'users',
+        };
+        continue;
+      }
+
       result[customization] = {
         shouldHide: false,
+        required: false,
       };
 
       const architectures = data?.architectures;
@@ -70,11 +92,12 @@ export const useCustomizationRestrictions = ({
       // to be hidden for this image type
       result[customization] = {
         shouldHide: !supportedOptions.includes(customization),
+        required: false,
       };
     }
 
     return result;
-  }, [data, arch, isSingleTarget]);
+  }, [data, arch, isSingleTarget, isImageMode]);
 
   return {
     restrictions,
