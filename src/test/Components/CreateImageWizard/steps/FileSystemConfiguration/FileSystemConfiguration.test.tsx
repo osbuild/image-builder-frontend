@@ -179,12 +179,15 @@ describe('Step File system configuration', () => {
     expect(await getNextButton()).toBeEnabled();
   });
 
-  test('manual partitioning is hidden for ISO targets only', async () => {
+  test('file system step is hidden for ISO targets only', async () => {
     await renderCreateMode();
     await selectImageInstaller();
-    await goToFileSystemConfigurationStep();
+    await clickNext(); // Registration
+    await clickRegisterLater();
+    // The file system configuration step should not be visible in the nav
+    // when only ISO target is selected, as filesystem customization is not supported
     expect(
-      screen.queryByText(/Basic filesystem partitioning/i),
+      screen.queryByRole('button', { name: /File system configuration/ }),
     ).not.toBeInTheDocument();
   });
 
