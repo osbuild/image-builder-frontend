@@ -22,6 +22,7 @@ import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import {
   addPartition,
   changePartitioningMode,
+  selectBlueprintMode,
   selectFilesystemPartitions,
   selectImageTypes,
   selectPartitioningMode,
@@ -30,8 +31,10 @@ import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 
 const FileSystemConfiguration = () => {
   const environments = useAppSelector(selectImageTypes);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const partitioningMode = useAppSelector(selectPartitioningMode);
+  const inImageMode = blueprintMode === 'image';
 
   const dispatch = useAppDispatch();
 
@@ -40,7 +43,7 @@ const FileSystemConfiguration = () => {
     dispatch(
       addPartition({
         id,
-        mountpoint: '/home',
+        mountpoint: inImageMode ? '/var' : '/home',
         min_size: '1',
         unit: 'GiB',
       }),

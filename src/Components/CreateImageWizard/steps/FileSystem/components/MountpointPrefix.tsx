@@ -8,8 +8,11 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { useAppDispatch } from '../../../../../store/hooks';
-import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import {
+  changePartitionMountpoint,
+  selectBlueprintMode,
+} from '../../../../../store/wizardSlice';
 import { FilesystemPartition, PartitioningCustomization } from '../fscTypes';
 import {
   getPrefix,
@@ -40,6 +43,7 @@ const MountpointPrefix = ({
   customization,
 }: MountpointPrefixPropTypes) => {
   const dispatch = useAppDispatch();
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const [isOpen, setIsOpen] = useState(false);
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
@@ -88,7 +92,12 @@ const MountpointPrefix = ({
       <SelectList>
         {mountpointPrefixes
           .filter((prefix) =>
-            isMountpointPrefixAvailable(prefix, partition, customization),
+            isMountpointPrefixAvailable(
+              prefix,
+              partition,
+              customization,
+              blueprintMode,
+            ),
           )
           .map((prefix, index) => {
             return (

@@ -188,17 +188,30 @@ export const isMountpointValid = (
 
   if ('mountpoint' in partition && partition.mountpoint) {
     for (const [mountpointPath, policy] of Object.entries(policies)) {
-      if (policy.Exact && partition.mountpoint.startsWith(mountpointPath)) {
+      if (
+        policy.Exact &&
+        !policy.Deny &&
+        partition.mountpoint.startsWith(mountpointPath)
+      ) {
         return partition.mountpoint === mountpointPath;
       }
 
       if (
         policy.Deny &&
         (partition.mountpoint === mountpointPath ||
-          partition.mountpoint.startsWith(`${mountpointPath}/`))
+          (!policy.Exact &&
+            partition.mountpoint.startsWith(`${mountpointPath}/`)))
       ) {
         return false;
       }
+    }
+
+    if (blueprintMode === 'image') {
+      return Object.keys(policies).some(
+        (path) =>
+          partition.mountpoint === path ||
+          partition.mountpoint?.startsWith(`${path}/`),
+      );
     }
   }
 
