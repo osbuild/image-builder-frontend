@@ -85,4 +85,5 @@ export type RestrictionStrategy = {
   isAllowed: boolean;
   shouldHide: boolean;
   supportedImageTypes: ImageTypes[];
+  required: boolean;
 };

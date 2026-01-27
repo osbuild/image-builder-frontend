@@ -8,7 +8,9 @@ import {
   RestrictionStrategy,
 } from './types';
 
+import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
+import { selectIsImageMode } from '../wizardSlice';
 
 // Instead of exporting the hook directly from the `restrictedCustomizationsApi`
 // let's create a wrapper around this to transform the data so that it is easier
@@ -20,6 +22,7 @@ export const useGetCustomizationRestrictionsQuery = ({
 }: {
   selectedImageTypes: ImageTypes[];
 }) => {
+  const isImageMode = useAppSelector(selectIsImageMode);
   const isSingleTarget = selectedImageTypes.length === 1;
 
   const { data } = api.useGetCustomizationRestrictionsQuery({
@@ -33,7 +36,22 @@ export const useGetCustomizationRestrictionsQuery = ({
     >;
 
     for (const customization of ALL_CUSTOMIZATION_TYPES) {
-      const allowed = data?.isAllowed ? data.isAllowed[customization] : true;
+      let allowed = data?.isAllowed ? data.isAllowed[customization] : true;
+
+      if (isImageMode) {
+        // users & filesystem are the only allowed customization for image mode,
+        allowed = ['filesystem', 'users'].includes(customization);
+        result[customization] = {
+          isAllowed: allowed,
+          shouldHide: !allowed,
+          // this can be empty since there are no steps that
+          // might have conflicting customizations
+          supportedImageTypes: [],
+          // users is required for image-mode
+          required: customization === 'users',
+        };
+        continue;
+      }
 
       const supportedImageTypes = selectedImageTypes.filter((imageType) => {
         // this image supports this specific customization
@@ -48,11 +66,12 @@ export const useGetCustomizationRestrictionsQuery = ({
         isAllowed: allowed,
         shouldHide: !allowed && isSingleTarget,
         supportedImageTypes,
+        required: false,
       };
     }
 
     return result;
-  }, [data, selectedImageTypes, isSingleTarget]);
+  }, [data, selectedImageTypes, isSingleTarget, isImageMode]);
 
   return {
     restrictions,
