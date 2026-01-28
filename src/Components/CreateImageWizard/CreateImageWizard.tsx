@@ -38,6 +38,7 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
+import { UsersContext } from './steps/Users/components/UserRow';
 import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
   useAAPValidation,
@@ -287,14 +288,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const detailsValidation = useDetailsValidation();
   // Users
   const usersValidation = useUsersValidation();
-  const [usersStepAttemptedNext, setUsersStepAttemptedNext] = useState(false);
-
-  // Reset attemptedNext when errors are fixed
-  useEffect(() => {
-    if (!usersValidation.disabledNext && usersStepAttemptedNext) {
-      setUsersStepAttemptedNext(false);
-    }
-  }, [usersValidation.disabledNext, usersStepAttemptedNext]);
+  const [usersPristine, setUsersPristine] = useState(true);
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
@@ -660,25 +654,29 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='wizard-users-optional'
                 isHidden={isImageMode}
                 navItem={CustomStatusNavItem}
-                status={usersValidation.disabledNext ? 'error' : 'default'}
+                status={
+                  !usersPristine && usersValidation.disabledNext
+                    ? 'error'
+                    : 'default'
+                }
                 footer={
                   <CustomWizardFooter
-                    disableNext={
-                      usersStepAttemptedNext && usersValidation.disabledNext
-                    }
                     beforeNext={() => {
                       if (usersValidation.disabledNext) {
-                        setUsersStepAttemptedNext(true);
+                        setUsersPristine(false);
                         return false;
                       }
                       return true;
                     }}
+                    disableNext={!usersPristine && usersValidation.disabledNext}
                     optional={true}
                     isOnPremise={isOnPremise}
                   />
                 }
               >
-                <UsersStep attemptedNext={usersStepAttemptedNext} />
+                <UsersContext.Provider value={usersPristine}>
+                  <UsersStep />
+                </UsersContext.Provider>
               </WizardStep>,
               <WizardStep
                 name='Timezone'
