@@ -18,17 +18,27 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addDiskPartition,
   changeDiskMinsize,
+  selectBlueprintMode,
   selectDiskMinsize,
   selectDiskPartitions,
+  selectFilesystemPartitions,
 } from '../../../../../store/wizardSlice';
+import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const AdvancedPartitioning = () => {
   const dispatch = useAppDispatch();
   const minsize = useAppSelector(selectDiskMinsize);
   const diskPartitions = useAppSelector(selectDiskPartitions);
-
+  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const inImageMode = blueprintMode === 'image';
   const handleAddPartition = () => {
     const id = uuidv4();
+    const mountpoint = getNextAvailableMountpoint(
+      filesystemPartitions,
+      diskPartitions,
+      inImageMode,
+    );
     dispatch(
       addDiskPartition({
         id,
@@ -36,7 +46,7 @@ const AdvancedPartitioning = () => {
         min_size: '1',
         unit: 'GiB',
         type: 'plain',
-        mountpoint: '/home',
+        mountpoint,
       }),
     );
   };
@@ -44,6 +54,11 @@ const AdvancedPartitioning = () => {
   const handleAddVolumeGroup = () => {
     const vgId = uuidv4();
     const lvId = uuidv4();
+    const mountpoint = getNextAvailableMountpoint(
+      filesystemPartitions,
+      diskPartitions,
+      inImageMode,
+    );
     dispatch(
       addDiskPartition({
         id: vgId,
@@ -55,7 +70,7 @@ const AdvancedPartitioning = () => {
           {
             id: lvId,
             name: '',
-            mountpoint: '/home',
+            mountpoint,
             min_size: '1',
             unit: 'GiB',
             fs_type: 'xfs',
