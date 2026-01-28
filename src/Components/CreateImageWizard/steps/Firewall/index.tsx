@@ -5,6 +5,8 @@ import { ClipboardCopy, Content, Form, Title } from '@patternfly/react-core';
 import PortsInput from './components/PortsInput';
 import Services from './components/Services';
 
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
+
 const FirewallStep = () => {
   return (
     <Form>
@@ -25,6 +27,7 @@ const FirewallStep = () => {
           firewall-cmd --get-services
         </ClipboardCopy>
       </Content>
+      <NetworkInstallerAlert />
       <PortsInput />
       <Services />
     </Form>

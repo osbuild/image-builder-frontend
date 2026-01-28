@@ -83,6 +83,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   gcp: 'Google Cloud',
   'guest-image': 'Virtualization - Guest image',
   'image-installer': 'Bare metal - Installer',
+  'network-installer': 'Network - Installer',
   vsphere: 'VMware vSphere',
   'vsphere-ova': 'VMware vSphere',
   wsl: 'Windows Subsystem for Linux',
@@ -92,7 +93,6 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   vhd: '',
   oci: 'Oracle Cloud Infrastructure',
   'pxe-tar-xz': '',
-  'network-installer': '',
 };
 
 export const UNIT_KIB = 1024 ** 1;

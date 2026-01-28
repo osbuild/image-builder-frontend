@@ -5,6 +5,8 @@ import { Content, Form, Title } from '@patternfly/react-core';
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
+
 const LocaleStep = () => {
   return (
     <Form>
@@ -12,6 +14,7 @@ const LocaleStep = () => {
         Locale
       </Title>
       <Content>Select the locale for your image.</Content>
+      <NetworkInstallerAlert />
       <LanguagesDropDown />
       <KeyboardDropDown />
     </Form>
