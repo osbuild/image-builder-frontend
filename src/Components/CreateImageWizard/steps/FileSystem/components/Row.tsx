@@ -19,18 +19,9 @@ export const FileSystemContext = React.createContext<boolean>(true);
 type RowPropTypes = {
   partition: FilesystemPartition;
   isRemovingDisabled: boolean;
-  onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
-  onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
-  onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
 };
 
-const Row = ({
-  partition,
-  isRemovingDisabled,
-  onDragEnd,
-  onDragStart,
-  onDrop,
-}: RowPropTypes) => {
+const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
   const dispatch = useAppDispatch();
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
@@ -41,18 +32,7 @@ const Row = ({
   const customization = 'fileSystem';
 
   return (
-    <Tr
-      draggable
-      id={partition.id}
-      onDrop={onDrop}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-    >
-      <Td
-        draggableRow={{
-          id: `draggable-row-${partition.id}`,
-        }}
-      />
+    <Tr id={partition.id}>
       <Td className='pf-m-width-20'>
         <MountpointPrefix partition={partition} customization={customization} />
         {!isPristine && stepValidation.errors[`mountpoint-${partition.id}`] && (

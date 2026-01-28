@@ -59,16 +59,16 @@ test('Import a blueprint with invalid customization', async ({
       .first()
       .click();
     const closeRootButton = frame
-      .locator('td:nth-child(7) > .pf-v6-c-button')
+      .locator('td:nth-child(6) > .pf-v6-c-button')
       .first();
     await expect(closeRootButton).toBeEnabled();
     await closeRootButton.click();
     const closeRootButton2 = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button / xfs 10 GiB',
+        name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(closeRootButton2).toBeDisabled();
   });
 
