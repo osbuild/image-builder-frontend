@@ -83,7 +83,7 @@ test('Create a blueprint with Disk customization', async ({
 
     await frame.getByRole('button', { name: 'Add LVM volume group' }).click();
     await expect(
-      frame.getByRole('row').nth(1).getByRole('button').nth(3),
+      frame.getByRole('row').nth(1).getByRole('button').nth(2),
     ).toBeEnabled();
 
     await frame
@@ -108,17 +108,17 @@ test('Create a blueprint with Disk customization', async ({
 
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp/usb xfs 1 GiB',
+        name: '/tmp/usb xfs 1 GiB',
       })
       .getByLabel('Partition name input')
       .fill('lv2');
     await frame
       .getByRole('row', {
-        name: 'Draggable row draggable button lv2 /tmp/usb xfs 1 GiB',
+        name: 'lv2 /tmp/usb xfs 1 GiB',
       })
       .getByPlaceholder('Define minimum size')
       .fill('10');
-    await frame.getByRole('button', { name: 'GiB' }).nth(2).click();
+    await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
     await frame.getByRole('option', { name: 'KiB' }).click();
   });
 
@@ -139,12 +139,12 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('row')
       .nth(1)
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(removeRootButton).toBeEnabled();
 
     const secondRow = frame.getByRole('row').nth(2);
 
-    const removeTmpButton = secondRow.getByRole('button').nth(3);
+    const removeTmpButton = secondRow.getByRole('button').nth(2);
     await expect(removeTmpButton).toBeEnabled();
 
     await expect(
@@ -214,13 +214,13 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('row')
       .nth(1)
       .getByRole('button')
-      .nth(3);
+      .nth(2);
 
     await expect(removeRootButton).toBeEnabled();
 
     const secondRow = frame.getByRole('row').nth(2);
 
-    const removeTmpButton = secondRow.getByRole('button').nth(3);
+    const removeTmpButton = secondRow.getByRole('button').nth(2);
     await expect(removeTmpButton).toBeEnabled();
 
     await expect(

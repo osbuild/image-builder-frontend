@@ -116,10 +116,10 @@ test('Create a blueprint with Filesystem customization', async ({
     await expect(frame.getByRole('button', { name: '/' })).toBeDisabled();
     const closeRootButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button / xfs 10 GiB',
+        name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(closeRootButton).toBeDisabled();
 
     await frame.getByRole('button', { name: 'Add partition' }).click();
@@ -138,10 +138,10 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp /usb xfs 15 MiB',
+        name: '/tmp /usb xfs 15 MiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
 
     await expect(closeTmpButton).toBeEnabled();
   });
@@ -173,18 +173,18 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const closeRootButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button / xfs 10 GiB',
+        name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(closeRootButton).toBeDisabled();
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /tmp /usb xfs 15 MiB',
+        name: '/tmp /usb xfs 15 MiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(closeTmpButton).toBeEnabled();
 
     const usbTextbox = frame.getByRole('textbox', {
@@ -265,18 +265,18 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const closeRootButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button / xfs 10 GiB',
+        name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(closeRootButton).toBeDisabled();
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: 'Draggable row draggable button /srv /data xfs 20 GiB',
+        name: '/srv /data xfs 20 GiB',
       })
       .getByRole('button')
-      .nth(3);
+      .nth(2);
     await expect(closeTmpButton).toBeEnabled();
 
     const dataTextbox = frame.getByRole('textbox', {

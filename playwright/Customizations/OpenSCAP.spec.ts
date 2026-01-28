@@ -111,10 +111,10 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(
       frame
         .getByRole('row', {
-          name: 'Draggable row draggable button /tmp xfs 1 GiB',
+          name: '/tmp xfs 1 GiB',
         })
         .getByRole('button')
-        .nth(3),
+        .nth(2),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await frame.getByRole('button', { name: 'Selected (9)' }).click();
