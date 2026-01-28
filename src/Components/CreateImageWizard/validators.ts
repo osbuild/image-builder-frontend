@@ -177,6 +177,11 @@ export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
   return duplicates;
 };
 
+const normalizeMountpoint = (mountpoint: string): string => {
+  if (mountpoint === '/') return mountpoint;
+  return mountpoint.replace(/\/+$/, '');
+};
+
 export const isMountpointValid = (
   partition: FilesystemPartition | DiskPartition,
   blueprintMode: string,
@@ -187,20 +192,21 @@ export const isMountpointValid = (
       : ImageModeMountpointPolicies;
 
   if ('mountpoint' in partition && partition.mountpoint) {
+    const mountpoint = normalizeMountpoint(partition.mountpoint);
+
     for (const [mountpointPath, policy] of Object.entries(policies)) {
       if (
         policy.Exact &&
         !policy.Deny &&
-        partition.mountpoint.startsWith(mountpointPath)
+        mountpoint.startsWith(mountpointPath)
       ) {
-        return partition.mountpoint === mountpointPath;
+        return mountpoint === mountpointPath;
       }
 
       if (
         policy.Deny &&
-        (partition.mountpoint === mountpointPath ||
-          (!policy.Exact &&
-            partition.mountpoint.startsWith(`${mountpointPath}/`)))
+        (mountpoint === mountpointPath ||
+          (!policy.Exact && mountpoint.startsWith(`${mountpointPath}/`)))
       ) {
         return false;
       }
@@ -208,9 +214,7 @@ export const isMountpointValid = (
 
     if (blueprintMode === 'image') {
       return Object.keys(policies).some(
-        (path) =>
-          partition.mountpoint === path ||
-          partition.mountpoint?.startsWith(`${path}/`),
+        (path) => mountpoint === path || mountpoint.startsWith(`${path}/`),
       );
     }
   }

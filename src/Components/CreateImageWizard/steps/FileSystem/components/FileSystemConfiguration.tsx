@@ -23,16 +23,19 @@ import {
   addPartition,
   changePartitioningMode,
   selectBlueprintMode,
+  selectDiskPartitions,
   selectFilesystemPartitions,
   selectImageTypes,
   selectPartitioningMode,
 } from '../../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
+import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const FileSystemConfiguration = () => {
   const environments = useAppSelector(selectImageTypes);
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
+  const diskPartitions = useAppSelector(selectDiskPartitions);
   const partitioningMode = useAppSelector(selectPartitioningMode);
   const inImageMode = blueprintMode === 'image';
 
@@ -40,10 +43,15 @@ const FileSystemConfiguration = () => {
 
   const handleAddPartition = () => {
     const id = uuidv4();
+    const mountpoint = getNextAvailableMountpoint(
+      filesystemPartitions,
+      diskPartitions,
+      inImageMode,
+    );
     dispatch(
       addPartition({
         id,
-        mountpoint: inImageMode ? '/var' : '/home',
+        mountpoint,
         min_size: '1',
         unit: 'GiB',
       }),

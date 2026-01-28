@@ -17,16 +17,20 @@ import FileSystemTable from './FileSystemTable';
 import MinimumSize from './MinimumSize';
 import SizeUnit from './SizeUnit';
 
-import { useAppDispatch } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { VolumeGroup } from '../../../../../store/imageBuilderApi';
 import {
   addLogicalVolumeToVolumeGroup,
   changeDiskPartitionName,
   removeDiskPartition,
+  selectDiskPartitions,
+  selectFilesystemPartitions,
+  selectIsImageMode,
 } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { DiskPartition, DiskPartitionBase } from '../fscTypes';
+import { getNextAvailableMountpoint } from '../fscUtilities';
 
 type VolumeGroupsType = {
   volumeGroups: Extract<DiskPartition, VolumeGroup & DiskPartitionBase>[];
@@ -35,16 +39,24 @@ type VolumeGroupsType = {
 const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
+  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
+  const diskPartitions = useAppSelector(selectDiskPartitions);
+  const inImageMode = useAppSelector(selectIsImageMode);
 
   const handleAddLogicalVolume = (vgId: string) => {
     const id = uuidv4();
+    const mountpoint = getNextAvailableMountpoint(
+      filesystemPartitions,
+      diskPartitions,
+      inImageMode,
+    );
     dispatch(
       addLogicalVolumeToVolumeGroup({
         vgId: vgId,
         logicalVolume: {
           id,
           name: '',
-          mountpoint: '/home',
+          mountpoint,
           min_size: '1',
           unit: 'GiB',
           fs_type: 'xfs',

@@ -103,7 +103,6 @@ test('Create a blueprint with Disk customization', async ({
     await frame
       .getByRole('gridcell', { name: /\/home/ })
       .getByPlaceholder('Define mount point')
-      .nth(1)
       .fill('/tmp/usb');
 
     await frame

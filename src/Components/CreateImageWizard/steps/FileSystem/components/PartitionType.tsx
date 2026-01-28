@@ -8,17 +8,23 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { useAppDispatch } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changePartitionMountpoint,
   changePartitionType,
+  selectDiskPartitions,
+  selectFilesystemPartitions,
+  selectIsImageMode,
 } from '../../../../../store/wizardSlice';
 import {
   FSType,
   LogicalVolumeWithBase,
   PartitioningCustomization,
 } from '../fscTypes';
-import { isPartitionTypeAvailable } from '../fscUtilities';
+import {
+  getNextAvailableMountpoint,
+  isPartitionTypeAvailable,
+} from '../fscUtilities';
 
 const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
@@ -33,7 +39,9 @@ const PartitionType = ({
 }: PartitionTypePropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-
+  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
+  const diskPartitions = useAppSelector(selectDiskPartitions);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
 
@@ -48,10 +56,15 @@ const PartitionType = ({
     }
 
     if (partition.mountpoint === '' && selection !== 'swap') {
+      const mountpoint = getNextAvailableMountpoint(
+        filesystemPartitions,
+        diskPartitions,
+        isImageMode,
+      );
       dispatch(
         changePartitionMountpoint({
           id: partition.id,
-          mountpoint: '/home',
+          mountpoint,
           customization: customization,
         }),
       );
