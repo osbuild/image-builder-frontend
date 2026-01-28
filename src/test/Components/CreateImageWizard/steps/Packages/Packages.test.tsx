@@ -1,3 +1,6 @@
+// NOTE: Ready for Playwright migration
+// The unit tests for this component have been migrated to co-located tests.
+// The remaining tests here are integration/E2E tests that should be migrated to Playwright.
 import { Router as RemixRouter } from '@remix-run/router/dist/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -59,14 +62,6 @@ const typeIntoSearchBox = async (searchTerm: string) => {
   await waitFor(() => user.type(searchbox, searchTerm));
 };
 
-const clearSearchInput = async () => {
-  const user = userEvent.setup();
-  const pkgSearch = await screen.findByRole('textbox', {
-    name: /search packages/i,
-  });
-  await waitFor(() => user.clear(pkgSearch));
-};
-
 const getAllCheckboxes = async () => {
   const pkgTable = await screen.findByTestId('packages-table');
   await screen.findAllByTestId('package-row');
@@ -78,21 +73,6 @@ const getAllCheckboxes = async () => {
   return checkboxes;
 };
 
-const getRows = async () => {
-  const packagesTable = await screen.findByTestId('packages-table');
-  return await within(packagesTable).findAllByTestId('package-row');
-};
-
-const comparePackageSearchResults = async () => {
-  const availablePackages = await getRows();
-
-  await waitFor(() => expect(availablePackages).toHaveLength(3));
-
-  expect(availablePackages[0]).toHaveTextContent('test');
-  expect(availablePackages[1]).toHaveTextContent('test-lib');
-  expect(availablePackages[2]).toHaveTextContent('testPkg');
-};
-
 const clickFirstPackageCheckbox = async () => {
   const user = userEvent.setup();
   const row0Checkbox = await screen.findByRole('checkbox', {
@@ -101,34 +81,10 @@ const clickFirstPackageCheckbox = async () => {
   await waitFor(() => user.click(row0Checkbox));
 };
 
-const clickSecondPackageCheckbox = async () => {
-  const user = userEvent.setup();
-  const row1Checkbox = await screen.findByRole('checkbox', {
-    name: /select row 1/i,
-  });
-  await waitFor(() => user.click(row1Checkbox));
-};
-
-const clickThirdPackageCheckbox = async () => {
-  const user = userEvent.setup();
-  const row2Checkbox = await screen.findByRole('checkbox', {
-    name: /select row 2/i,
-  });
-  await waitFor(() => user.click(row2Checkbox));
-};
-
 const toggleSelected = async () => {
   const user = userEvent.setup();
   const selected = await screen.findByRole('button', { name: /selected/i });
   await waitFor(() => user.click(selected));
-};
-
-const openIncludedPackagesPopover = async () => {
-  const user = userEvent.setup();
-  const popoverBtn = await screen.findByRole('button', {
-    name: /About included packages/i,
-  });
-  await waitFor(() => user.click(popoverBtn));
 };
 
 const checkRecommendationsEmptyState = async () => {
@@ -213,78 +169,9 @@ describe('Step Packages', () => {
     });
   });
 
-  test('should display search bar and toggle buttons', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('test');
-    await screen.findByRole('button', {
-      name: /Available/,
-    });
-    await screen.findByRole('button', {
-      name: /Selected/,
-    });
-  });
-
-  test('should display default state in Available mode', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await screen.findByRole('heading', {
-      name: /Search packages/i,
-    });
-    await screen.findByText(
-      /Search for additional packages to add to your image/i,
-    );
-  });
-
-  test('shows package group search instructions', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-
-    await screen.findByText(
-      /Search for package groups by starting your search with the '@' character/i,
-    );
-  });
-
-  test('should display correct empty state in Selected mode', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await toggleSelected();
-    await screen.findByRole('heading', {
-      name: /There are no selected packages/i,
-    });
-    await screen.findByText(/Search above to see available packages/i);
-  });
-
-  test('search results should be sorted with most relevant results first', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await selectCustomRepo();
-    await typeIntoSearchBox('test');
-    await screen.findByRole('cell', { name: /test-lib/ }); // wait until packages get rendered
-    await comparePackageSearchResults();
-  });
-
-  test('selected packages are sorted the same way as available packages', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await selectCustomRepo();
-    await typeIntoSearchBox('test');
-    await screen.findByRole('cell', { name: /test-lib/ }); // wait until packages get rendered
-
-    // select all packages
-    await clickFirstPackageCheckbox();
-    await clickSecondPackageCheckbox();
-    await clickThirdPackageCheckbox();
-
-    await toggleSelected();
-    const availablePackages = await getRows();
-    await waitFor(() => expect(availablePackages).toHaveLength(3));
-
-    expect(availablePackages[0]).toHaveTextContent('test');
-    expect(availablePackages[1]).toHaveTextContent('test-lib');
-    expect(availablePackages[2]).toHaveTextContent('testPkg');
-  });
-
+  // Note: Basic UI tests (search bar, toggle buttons, default state, search results
+  // sorting, selected packages sorting) are now covered by unit tests in:
+  // src/Components/CreateImageWizard/steps/Packages/tests/Packages.test.tsx
   test('selected packages persist throughout steps', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -346,19 +233,8 @@ describe('Step Packages', () => {
   //    expect(updatedRows.length).toBe(1);
   //  });
 
-  test('should display empty available state on failed search', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('asdf');
-    await screen.findByText('No results found');
-  });
-
-  test('should display too short', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('t');
-    await screen.findByText('The search value is too short');
-  });
+  // Note: "no results" and "too short" tests are now covered by unit tests in:
+  // src/Components/CreateImageWizard/steps/Packages/tests/Packages.test.tsx
 
   //  test('should display relevant results in selected first', async () => {
   //    await renderCreateMode();
@@ -425,116 +301,17 @@ describe('Step Packages', () => {
     await screen.findByRole('heading', { name: /Repositories/ });
   });
 
-  describe('Pagination', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    test('itemcount correct after search', async () => {
-      await renderCreateMode();
-      await goToPackagesStep();
-      await selectCustomRepo();
-      await typeIntoSearchBox('test'); // search for 'test' package
-      await clickFirstPackageCheckbox(); // select
-
-      // the pagination in the top right
-      const top = await screen.findByTestId('packages-pagination-top');
-      expect(top).toHaveTextContent('of 3');
-      const bottom = await screen.findByTestId('packages-pagination-bottom');
-      expect(bottom).toHaveTextContent('of 3');
-    });
-
-    test('itemcount correct after toggling selected', async () => {
-      await renderCreateMode();
-      await goToPackagesStep();
-      await typeIntoSearchBox('test'); // search for 'test' package
-      await clickFirstPackageCheckbox(); // select
-      await toggleSelected();
-
-      // the pagination in the top right
-      const top = await screen.findByTestId('packages-pagination-top');
-      expect(top).toHaveTextContent('of 1');
-      const bottom = await screen.findByTestId('packages-pagination-bottom');
-      expect(bottom).toHaveTextContent('of 1');
-    });
-
-    test('itemcount correct after clearing search input', async () => {
-      await renderCreateMode();
-      await goToPackagesStep();
-      await typeIntoSearchBox('test'); // search for 'test' package
-      await clickFirstPackageCheckbox(); // select
-      await clearSearchInput();
-
-      // the pagination in the top right
-      const top = await screen.findByTestId('packages-pagination-top');
-      expect(top).toHaveTextContent('of 0');
-      const bottom = await screen.findByTestId('packages-pagination-bottom');
-      expect(bottom).toHaveTextContent('of 0');
-    });
-  });
-
-  describe('Package groups', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    test('included packages popover', async () => {
-      await renderCreateMode();
-      await goToPackagesStep();
-      await typeIntoSearchBox('@grouper'); // search for '@grouper' package group
-      await clickFirstPackageCheckbox(); // select
-      await openIncludedPackagesPopover();
-
-      const table = await screen.findByTestId('group-included-packages-table');
-      const rows = await within(table).findAllByRole('row');
-      expect(rows).toHaveLength(2);
-
-      const firstRowCells = await within(rows[0]).findAllByRole('cell');
-      expect(firstRowCells[0]).toHaveTextContent('fish1');
-      const secondRowCells = await within(rows[1]).findAllByRole('cell');
-      await waitFor(() => expect(secondRowCells[0]).toHaveTextContent('fish2'));
-    });
-  });
+  // Note: Pagination tests, package groups popover test, and basic module tests are
+  // now covered by unit tests in:
+  // src/Components/CreateImageWizard/steps/Packages/tests/Packages.test.tsx
 
   describe('Modules', () => {
     beforeEach(() => {
       vi.clearAllMocks();
     });
 
-    test('modules get rendered with one stream on each line', async () => {
-      await renderCreateMode();
-      await goToPackagesStep();
-      await selectCustomRepo();
-      await typeIntoSearchBox('testModule');
-      await screen.findByText('1.22');
-      const rows = await screen.findAllByRole('row');
-      rows.shift();
-      expect(rows).toHaveLength(2);
-      expect(rows[0]).toHaveTextContent('1.24');
-      expect(rows[1]).toHaveTextContent('1.22');
-      expect(rows[0]).toHaveTextContent('May 2027');
-      expect(rows[1]).toHaveTextContent('May 2025');
-    });
-
-    test('only one stream gets selected, other should be disabled', async () => {
-      const user = userEvent.setup();
-
-      await renderCreateMode();
-      await goToPackagesStep();
-      await selectCustomRepo();
-      await typeIntoSearchBox('testModule');
-
-      const firstAppStreamRow = await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
-      await waitFor(() => user.click(firstAppStreamRow));
-
-      const secondAppStreamRow = await screen.findByRole('checkbox', {
-        name: /select row 1/i,
-      });
-      expect(secondAppStreamRow).toBeDisabled();
-      expect(secondAppStreamRow).not.toBeChecked();
-    });
+    // Note: Basic module rendering and stream selection tests are now covered by unit
+    // tests. The following tests verify complex sorting behavior requiring wizard context.
 
     test('module selection sorts selected stream to top while maintaining alphabetical order', async () => {
       const user = userEvent.setup();
