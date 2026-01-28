@@ -41,7 +41,6 @@ import {
   selectDistribution,
   setOscapProfile,
 } from '../../../../../store/wizardSlice';
-import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionValueType = {
@@ -59,7 +58,6 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
   const release = removeBetaFromRelease(
     asDistribution(useAppSelector(selectDistribution)),
   );
-  const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -280,7 +278,7 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
       variant='typeahead'
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={isDisabled || !isSuccess || hasWslTargetOnly}
+      isDisabled={isDisabled || !isSuccess}
       isFullWidth
     >
       <TextInputGroup isPlain>
