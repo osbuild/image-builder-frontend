@@ -137,9 +137,16 @@ describe('Step File system configuration', () => {
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
 
-    // Create duplicate partitions
     await addPartition();
     await addPartition();
+
+    // Create a duplicate mount point so the step is invalid
+    const rows = await screen.findAllByRole('row');
+    rows.shift();
+    const thirdRowMountPoint = await within(rows[2]).findByText('/var');
+    await waitFor(() => user.click(thirdRowMountPoint));
+    const homeOption = await screen.findByRole('option', { name: /\/home/i });
+    await waitFor(() => user.click(homeOption));
 
     await clickReviewAndFinish();
     expect(
@@ -153,29 +160,41 @@ describe('Step File system configuration', () => {
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
 
-    // Create duplicate partitions
+    // Add two partitions
     await addPartition();
     await addPartition();
 
-    // Clicking next causes errors to appear
+    const rows = await screen.findAllByRole('row');
+    rows.shift(); // remove table header
+    expect(rows).toHaveLength(3);
+
+    // Create a duplicate by changing the third row from /var to /home
+    const thirdRowMountPoint = await within(rows[2]).findByText('/var');
+    await waitFor(() => user.click(thirdRowMountPoint));
+    const homeOption = await screen.findByRole('option', { name: /\/home/i });
+    await waitFor(() => user.click(homeOption));
+
+    // Can't click next because duplicate mount point error appears
     await clickNext();
     expect(await getNextButton()).toBeDisabled();
     const mountPointAlerts = screen.getAllByRole('heading', {
       name: /danger alert: duplicate mount point/i,
     });
-    const rows = await screen.findAllByRole('row');
-    rows.shift(); // remove table header
-    expect(rows).toHaveLength(3);
+    expect(mountPointAlerts.length).toBeGreaterThanOrEqual(1);
 
-    //Change mountpoint of final row to /var, resolving errors
-    const mountPointOptions = await within(rows[2]).findByText('/home');
-    await waitFor(() => user.click(mountPointOptions));
-    const varButton = await screen.findByRole('option', {
+    // Change mount point of final row back to /var, resolving errors
+    const thirdRowMountPointAgain = await within(rows[2]).findByText('/home');
+    await waitFor(() => user.click(thirdRowMountPointAgain));
+    const varOption = await screen.findByRole('option', {
       name: /\/var/i,
     });
-    await waitFor(() => user.click(varButton));
-    await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
-    await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
+    await waitFor(() => user.click(varOption));
+    await waitFor(() => {
+      const alerts = screen.queryAllByRole('heading', {
+        name: /danger alert: duplicate mount point/i,
+      });
+      expect(alerts).toHaveLength(0);
+    });
     expect(await getNextButton()).toBeEnabled();
   });
 

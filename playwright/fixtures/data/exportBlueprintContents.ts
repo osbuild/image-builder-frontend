@@ -19,16 +19,16 @@ name = "vg-edited-name"
 type = "lvm"
 
 [[customizations.disk.partitions.logical_volumes]]
-minsize = "1 KiB"
-name = "lv1"
-fs_type = "xfs"
-mountpoint = "/home"
-
-[[customizations.disk.partitions.logical_volumes]]
-minsize = "10 GiB"
-name = "lv2-edited"
+minsize = "10 KiB"
+name = "lv2"
 fs_type = "xfs"
 mountpoint = "/tmp/usb"
+
+[[customizations.disk.partitions.logical_volumes]]
+minsize = "1 GiB"
+name = "lv2-edited"
+fs_type = "xfs"
+mountpoint = "/var"
 
 [customizations.timezone]
 timezone = "Etc/UTC"
