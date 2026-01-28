@@ -93,8 +93,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await expect(
       frame.getByRole('heading', { name: 'Image output' }),
     ).toBeVisible();
-    // the first card should be the AWS card
-    await frame.locator('.pf-v6-c-card').first().click();
+    await frame.getByRole('checkbox', { name: 'Amazon Web Services' }).click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();

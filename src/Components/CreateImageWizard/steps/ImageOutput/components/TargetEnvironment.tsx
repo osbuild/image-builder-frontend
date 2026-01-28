@@ -54,7 +54,6 @@ const TargetEnvironmentCard = ({
   isClicked,
   isDisabled = false,
 }: TargetEnvironmentCardProps) => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <Card
       style={{ textAlign: 'center' } as React.CSSProperties}
@@ -74,13 +73,9 @@ const TargetEnvironmentCard = ({
         }}
       >
         <Flex direction={{ default: 'column' }}>
-          {!isOnPremise && (
-            // the logos don't display in cockpit,
-            // so we can just hide them
-            <FlexItem>
-              <img className='provider-icon' src={imageSrc} alt={imageAlt} />
-            </FlexItem>
-          )}
+          <FlexItem>
+            <img className='provider-icon' src={imageSrc} alt={imageAlt} />
+          </FlexItem>
           <FlexItem>
             <Title headingLevel='h5' size='md'>
               {title}
@@ -89,6 +84,113 @@ const TargetEnvironmentCard = ({
         </Flex>
       </CardHeader>
     </Card>
+  );
+};
+
+type PublicCloudTargetsProps = {
+  supportedEnvironments: string[] | undefined;
+  environments: ImageTypes[];
+  handleToggleEnvironment: (environment: ImageTypes) => void;
+  prefetchSources: (arg: { provider: 'aws' | 'azure' | 'gcp' }) => void;
+};
+
+const PublicCloudTargets = ({
+  supportedEnvironments,
+  environments,
+  handleToggleEnvironment,
+  prefetchSources,
+}: PublicCloudTargetsProps) => {
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+
+  if (isOnPremise) {
+    return (
+      <>
+        {supportedEnvironments?.includes('aws') && (
+          <Checkbox
+            label='Amazon Web Services'
+            isChecked={environments.includes('aws')}
+            onChange={() => handleToggleEnvironment('aws')}
+            aria-label='Amazon Web Services checkbox'
+            id='checkbox-aws'
+            name='Amazon Web Services'
+          />
+        )}
+        {supportedEnvironments?.includes('gcp') && (
+          <Checkbox
+            label='Google Cloud'
+            isChecked={environments.includes('gcp')}
+            onChange={() => handleToggleEnvironment('gcp')}
+            aria-label='Google Cloud checkbox'
+            id='checkbox-gcp'
+            name='Google Cloud'
+          />
+        )}
+        {supportedEnvironments?.includes('azure') && (
+          <Checkbox
+            label='Microsoft Azure'
+            isChecked={environments.includes('azure')}
+            onChange={() => handleToggleEnvironment('azure')}
+            aria-label='Microsoft Azure checkbox'
+            id='checkbox-azure'
+            name='Microsoft Azure'
+          />
+        )}
+        {supportedEnvironments?.includes('oci') && (
+          <Checkbox
+            label='Oracle Cloud Infrastructure'
+            isChecked={environments.includes('oci')}
+            onChange={() => handleToggleEnvironment('oci')}
+            aria-label='Oracle Cloud Infrastructure checkbox'
+            id='checkbox-oci'
+            name='Oracle Cloud Infrastructure'
+          />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <Gallery hasGutter>
+      {supportedEnvironments?.includes('aws') && (
+        <TargetEnvironmentCard
+          title='Amazon Web Services'
+          imageSrc='/apps/frontend-assets/partners-icons/aws-logomark.svg'
+          imageAlt='Amazon Web Services logo'
+          handleOnClick={() => handleToggleEnvironment('aws')}
+          onMouseEnter={() => prefetchSources({ provider: 'aws' })}
+          isClicked={environments.includes('aws')}
+        />
+      )}
+      {supportedEnvironments?.includes('gcp') && (
+        <TargetEnvironmentCard
+          title='Google Cloud'
+          imageSrc='/apps/frontend-assets/partners-icons/google-cloud-logomark.svg'
+          imageAlt='Google Cloud logo'
+          handleOnClick={() => handleToggleEnvironment('gcp')}
+          onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
+          isClicked={environments.includes('gcp')}
+        />
+      )}
+      {supportedEnvironments?.includes('azure') && (
+        <TargetEnvironmentCard
+          title='Microsoft Azure'
+          imageSrc='/apps/frontend-assets/partners-icons/microsoft-azure-logomark.svg'
+          imageAlt='Microsoft Azure logo'
+          handleOnClick={() => handleToggleEnvironment('azure')}
+          onMouseEnter={() => prefetchSources({ provider: 'azure' })}
+          isClicked={environments.includes('azure')}
+        />
+      )}
+      {supportedEnvironments?.includes('oci') && (
+        <TargetEnvironmentCard
+          title='Oracle Cloud Infrastructure'
+          imageSrc='/apps/frontend-assets/partners-icons/oracle-short.svg'
+          imageAlt='Oracle Cloud Infrastructure logo'
+          handleOnClick={() => handleToggleEnvironment('oci')}
+          isClicked={environments.includes('oci')}
+        />
+      )}
+    </Gallery>
   );
 };
 
@@ -180,55 +282,12 @@ const TargetEnvironment = () => {
     >
       {publicCloudsSupported() && (
         <FormGroup label={<small>Public cloud</small>}>
-          <Gallery hasGutter>
-            {supportedEnvironments?.includes('aws') && (
-              <TargetEnvironmentCard
-                title='Amazon Web Services'
-                imageSrc={
-                  '/apps/frontend-assets/partners-icons/aws-logomark.svg'
-                }
-                imageAlt='Amazon Web Services logo'
-                handleOnClick={() => handleToggleEnvironment('aws')}
-                onMouseEnter={() => prefetchSources({ provider: 'aws' })}
-                isClicked={environments.includes('aws')}
-              />
-            )}
-            {supportedEnvironments?.includes('gcp') && (
-              <TargetEnvironmentCard
-                title='Google Cloud'
-                imageSrc={
-                  '/apps/frontend-assets/partners-icons/google-cloud-logomark.svg'
-                }
-                imageAlt='Google Cloud logo'
-                handleOnClick={() => handleToggleEnvironment('gcp')}
-                onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
-                isClicked={environments.includes('gcp')}
-              />
-            )}
-            {supportedEnvironments?.includes('azure') && (
-              <TargetEnvironmentCard
-                title='Microsoft Azure'
-                imageSrc={
-                  '/apps/frontend-assets/partners-icons/microsoft-azure-logomark.svg'
-                }
-                imageAlt='Microsoft Azure logo'
-                handleOnClick={() => handleToggleEnvironment('azure')}
-                onMouseEnter={() => prefetchSources({ provider: 'azure' })}
-                isClicked={environments.includes('azure')}
-              />
-            )}
-            {supportedEnvironments?.includes('oci') && (
-              <TargetEnvironmentCard
-                title='Oracle Cloud Infrastructure'
-                imageSrc={
-                  '/apps/frontend-assets/partners-icons/oracle-short.svg'
-                }
-                imageAlt='Oracle Cloud Infrastructure logo'
-                handleOnClick={() => handleToggleEnvironment('oci')}
-                isClicked={environments.includes('oci')}
-              />
-            )}
-          </Gallery>
+          <PublicCloudTargets
+            supportedEnvironments={supportedEnvironments}
+            environments={environments}
+            handleToggleEnvironment={handleToggleEnvironment}
+            prefetchSources={prefetchSources}
+          />
         </FormGroup>
       )}
       {(supportedEnvironments?.includes('vsphere') ||
