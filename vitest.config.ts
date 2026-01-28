@@ -1,9 +1,35 @@
+import fs from 'fs';
 import path from 'path';
 
 import react from '@vitejs/plugin-react';
 
+// Packages with broken sourcemaps (reference source files not included in npm package)
+const brokenSourcemapPackages = [
+  'node_modules/@redhat-cloud-services',
+  'node_modules/@scalprum',
+];
+
+// Plugin to strip sourcemap comments from problematic packages
+const stripSourcemaps = {
+  name: 'strip-sourcemaps',
+  enforce: 'pre' as const,
+  load(id: string) {
+    if (
+      id.endsWith('.js') &&
+      brokenSourcemapPackages.some((pkg) => id.includes(pkg))
+    ) {
+      const code = fs.readFileSync(id, 'utf-8');
+      return {
+        code: code.replace(/\/\/# sourceMappingURL=.*/g, ''),
+        map: null,
+      };
+    }
+    return null;
+  },
+};
+
 const config = {
-  plugins: [react()],
+  plugins: [stripSourcemaps, react()],
   test: {
     globals: true,
     environment: 'jsdom',
@@ -37,7 +63,7 @@ const config = {
       cockpit: path.resolve(__dirname, 'src/test/mocks/cockpit'),
       'cockpit/fsinfo': path.resolve(
         __dirname,
-        'src/test/mocks/cockpit/fsinfo'
+        'src/test/mocks/cockpit/fsinfo',
       ),
       'os-release': path.resolve(__dirname, 'src/test/mocks/os-release'),
     },
