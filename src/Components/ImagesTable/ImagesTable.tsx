@@ -5,6 +5,7 @@ import {
   Badge,
   Bullseye,
   Button,
+  Label,
   PageSection,
   Pagination,
   PaginationVariant,
@@ -590,17 +591,33 @@ const Row = ({
         />
         <Td dataLabel='Image name'>
           {compose.blueprint_id && !selectedBlueprintId ? (
-            <Button
-              component='a'
-              variant='link'
-              isInline
-              onClick={() =>
-                compose.blueprint_id &&
-                handleClick({ blueprintId: compose.blueprint_id })
+            <>
+              <Button
+                component='a'
+                variant='link'
+                isInline
+                onClick={() =>
+                  compose.blueprint_id &&
+                  handleClick({ blueprintId: compose.blueprint_id })
+                }
+              >
+                {compose.image_name || compose.id}
+              </Button>{' '}
+              {
+                // API needs to be updated first
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                compose.request.distribution ? (
+                  <Label isCompact color='teal'>
+                    Package mode
+                  </Label>
+                ) : //@ts-ignore API needs to be updated first
+                compose.request.bootc ? (
+                  <Label isCompact color='yellow'>
+                    Image mode
+                  </Label>
+                ) : null
               }
-            >
-              {compose.image_name || compose.id}
-            </Button>
+            </>
           ) : (
             <span> {compose.image_name || compose.id}</span>
           )}
