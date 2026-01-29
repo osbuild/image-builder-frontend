@@ -9,6 +9,7 @@ import { useIsOnPremise } from '../../../../Hooks';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 
 const PackagesStep = () => {
   const distribution = useAppSelector(selectDistribution);
@@ -21,6 +22,7 @@ const PackagesStep = () => {
       <Content>
         Blueprints created with Images include all required packages.
       </Content>
+      <NetworkInstallerAlert />
       {!isOnPremise && (
         <Alert variant='info' isInline title='Search for package groups'>
           Search for package groups by starting your search with the
