@@ -228,8 +228,11 @@ describe('Step Packages', () => {
   test('should display default state', async () => {
     await renderCreateMode();
     await goToPackagesStep();
+    await screen.findByRole('heading', {
+      name: /There are no selected packages/i,
+    });
     await screen.findByText(
-      'Search above to add additionalpackages to your image.',
+      /Search and add the packages you want to this image/i,
     );
   });
 

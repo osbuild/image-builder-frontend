@@ -468,20 +468,15 @@ const Packages = () => {
         <Tr>
           <Td colSpan={5}>
             <Bullseye>
-              <EmptyState icon={SearchIcon} variant={EmptyStateVariant.sm}>
-                {toggleSelected === 'toggle-available' ? (
-                  <EmptyStateBody>
-                    Search above to add additional
-                    <br />
-                    packages to your image.
-                  </EmptyStateBody>
-                ) : (
-                  <EmptyStateBody>
-                    No packages selected.
-                    <br />
-                    Search above to see available packages.
-                  </EmptyStateBody>
-                )}
+              <EmptyState
+                headingLevel='h4'
+                titleText='There are no selected packages'
+                icon={SearchIcon}
+                variant={EmptyStateVariant.sm}
+              >
+                <EmptyStateBody>
+                  Search and add the packages you want to this image.
+                </EmptyStateBody>
               </EmptyState>
             </Bullseye>
           </Td>
