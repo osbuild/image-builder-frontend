@@ -53,6 +53,7 @@ import {
   useServicesValidation,
   useSnapshotValidation,
   useTimezoneValidation,
+  useUserGroupsValidation,
   useUsersValidation,
 } from './utilities/useValidation';
 import {
@@ -287,14 +288,23 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const detailsValidation = useDetailsValidation();
   // Users
   const usersValidation = useUsersValidation();
+  const userGroupsValidation = useUserGroupsValidation();
   const [usersStepAttemptedNext, setUsersStepAttemptedNext] = useState(false);
 
   // Reset attemptedNext when errors are fixed
   useEffect(() => {
-    if (!usersValidation.disabledNext && usersStepAttemptedNext) {
+    if (
+      !usersValidation.disabledNext &&
+      !userGroupsValidation.disabledNext &&
+      usersStepAttemptedNext
+    ) {
       setUsersStepAttemptedNext(false);
     }
-  }, [usersValidation.disabledNext, usersStepAttemptedNext]);
+  }, [
+    usersValidation.disabledNext,
+    userGroupsValidation.disabledNext,
+    usersStepAttemptedNext,
+  ]);
 
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
@@ -507,26 +517,40 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             ]}
           />
           <WizardStep
-            name='Users'
+            name='Groups and users'
             id='wizard-users'
             key='wizard-users'
             isHidden={!isImageMode}
             navItem={CustomStatusNavItem}
             status={
               wasUsersVisited
-                ? usersValidation.disabledNext
+                ? usersValidation.disabledNext ||
+                  userGroupsValidation.disabledNext
                   ? 'error'
                   : 'default'
                 : 'default'
             }
             footer={
               <CustomWizardFooter
-                disableNext={usersValidation.disabledNext}
+                beforeNext={() => {
+                  if (
+                    usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext
+                  ) {
+                    setUsersStepAttemptedNext(true);
+                    return false;
+                  }
+                  return true;
+                }}
+                disableNext={
+                  usersValidation.disabledNext ||
+                  userGroupsValidation.disabledNext
+                }
                 isOnPremise={isOnPremise}
               />
             }
           >
-            <UsersStep />
+            <UsersStep attemptedNext={usersStepAttemptedNext} />
           </WizardStep>
           <WizardStep
             name='Optional steps'
@@ -655,19 +679,29 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <PackagesStep />
               </WizardStep>,
               <WizardStep
-                name='Users'
+                name='Groups and users'
                 id='wizard-users-optional'
                 key='wizard-users-optional'
                 isHidden={isImageMode}
                 navItem={CustomStatusNavItem}
-                status={usersValidation.disabledNext ? 'error' : 'default'}
+                status={
+                  usersValidation.disabledNext ||
+                  userGroupsValidation.disabledNext
+                    ? 'error'
+                    : 'default'
+                }
                 footer={
                   <CustomWizardFooter
                     disableNext={
-                      usersStepAttemptedNext && usersValidation.disabledNext
+                      usersStepAttemptedNext &&
+                      (usersValidation.disabledNext ||
+                        userGroupsValidation.disabledNext)
                     }
                     beforeNext={() => {
-                      if (usersValidation.disabledNext) {
+                      if (
+                        usersValidation.disabledNext ||
+                        userGroupsValidation.disabledNext
+                      ) {
                         setUsersStepAttemptedNext(true);
                         return false;
                       }
