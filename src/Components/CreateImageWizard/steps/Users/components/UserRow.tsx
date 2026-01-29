@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 
-import { Button, Checkbox } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
-import { Td, Tr } from '@patternfly/react-table';
+import {
+  Button,
+  Checkbox,
+  FormGroup,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
+import { AddCircleOIcon, MinusCircleIcon } from '@patternfly/react-icons';
 
 import RemoveUserModal from './RemoveUserModal';
 
@@ -12,6 +17,7 @@ import {
   addUser,
   removeGroupFromUserByIndex,
   removeUser,
+  setCurrentGroupInputByIndex,
   setUserAdministratorByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
@@ -23,20 +29,46 @@ import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInpu
 import { useUsersValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { isUserGroupValid } from '../../../validators';
+import { isUserDefined } from '../utilities/isUserDefined';
 
 type UserRowProps = {
   user: UserWithAdditionalInfo;
   index: number;
   userCount: number;
+  isAddButtonDisabled: boolean;
+  attemptedNext?: boolean;
 };
 
-const UserRow = ({ user, index, userCount }: UserRowProps) => {
+const UserRow = ({
+  user,
+  index,
+  userCount,
+  isAddButtonDisabled,
+  attemptedNext = false,
+}: UserRowProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useUsersValidation();
   const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
+
   const getValidationByIndex = (idx: number) => {
-    const errors =
-      idx in stepValidation.errors ? stepValidation.errors[idx] : {};
+    const userErrors = stepValidation.errors[idx] ?? {};
+    const errors: { [key: string]: string } = {};
+
+    if (!attemptedNext) {
+      ['groups', 'userSshKey'].forEach((field) => {
+        if (userErrors[field]) {
+          errors[field] = userErrors[field];
+        }
+      });
+      if (userErrors.userName) {
+        if (userErrors.userName !== 'Required value' || isUserDefined(user)) {
+          errors.userName = userErrors.userName;
+        }
+      }
+    } else {
+      Object.assign(errors, userErrors);
+    }
+
     return {
       errors,
       disabledNext: stepValidation.disabledNext,
@@ -98,76 +130,107 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
     );
   };
 
+  const onAddUserClick = () => {
+    dispatch(addUser());
+  };
+
   return (
     <>
-      <Tr>
-        <Td>
-          <ValidatedInputAndTextArea
-            ariaLabel='blueprint user name'
-            value={user.name || ''}
-            placeholder='Set username'
-            onChange={(_e, value) => handleNameChange(_e, value)}
-            stepValidation={getValidationByIndex(index)}
-            fieldName='userName'
-            forceErrorDisplay={true}
-          />
-        </Td>
-        <Td>
-          <PasswordValidatedInput
-            value={user.password || ''}
-            ariaLabel='blueprint user password'
-            placeholder='Set password'
-            onChange={(_e, value) => handlePasswordChange(_e, value)}
-            hasPassword={user.hasPassword}
-          />
-        </Td>
-        <Td>
-          <ValidatedInputAndTextArea
-            ariaLabel='public SSH key'
-            value={user.ssh_key || ''}
-            type={'text'}
-            onChange={(_e, value) => handleSshKeyChange(_e, value)}
-            placeholder='Set SSH key'
-            stepValidation={getValidationByIndex(index)}
-            fieldName='userSshKey'
-          />
-        </Td>
-        <Td>
-          <LabelInput
-            ariaLabel='Add user group'
-            placeholder='Add user group'
-            validator={isUserGroupValid}
-            list={user.groups}
-            item='Group'
-            addAction={(value) =>
-              addGroupToUserByUserIndex({ index: index, group: value })
-            }
-            removeAction={(value) =>
-              removeGroupFromUserByIndex({ index: index, group: value })
-            }
-            stepValidation={getValidationByIndex(index)}
-            fieldName='groups'
-          />
-        </Td>
-        <Td>
-          <Checkbox
-            isChecked={user.isAdministrator || user.groups.includes('wheel')}
-            onChange={(_e, value) => handleCheckboxChange(_e, value)}
-            aria-label='Administrator'
-            id={`${user.name}-${index}`}
-            name='user Administrator'
-          />
-        </Td>
-        <Td>
-          <Button
-            isDisabled={userCount <= 1}
-            variant='plain'
-            icon={<MinusCircleIcon />}
-            onClick={() => onRemove()}
-            aria-label='Remove user'
-          />
-        </Td>
-      </Tr>
+      <Grid hasGutter md={11}>
+        <GridItem span={2}>
+          <FormGroup isRequired label='Username' className='pf-v6-u-pb-md'>
+            <ValidatedInputAndTextArea
+              ariaLabel='blueprint user name'
+              value={user.name || ''}
+              placeholder='Set username'
+              onChange={(_e, value) => handleNameChange(_e, value)}
+              stepValidation={getValidationByIndex(index)}
+              fieldName='userName'
+            />
+            {index === userCount - 1 && (
+              <Button
+                variant='link'
+                onClick={onAddUserClick}
+                icon={<AddCircleOIcon />}
+                isDisabled={isAddButtonDisabled}
+                className='pf-v6-u-mt-md'
+              >
+                Add user
+              </Button>
+            )}
+          </FormGroup>
+        </GridItem>
+        <GridItem span={2}>
+          <FormGroup label='Password' className='pf-v6-u-pb-md'>
+            <PasswordValidatedInput
+              value={user.password || ''}
+              ariaLabel='blueprint user password'
+              placeholder='Set password'
+              onChange={(_e, value) => handlePasswordChange(_e, value)}
+              hasPassword={user.hasPassword}
+            />
+          </FormGroup>
+        </GridItem>
+        <GridItem span={3}>
+          <FormGroup label='SSH key' className='pf-v6-u-pb-md'>
+            <ValidatedInputAndTextArea
+              ariaLabel='public SSH key'
+              value={user.ssh_key || ''}
+              type={'text'}
+              onChange={(_e, value) => handleSshKeyChange(_e, value)}
+              placeholder='Set SSH key'
+              stepValidation={getValidationByIndex(index)}
+              fieldName='userSshKey'
+            />
+          </FormGroup>
+        </GridItem>
+        <GridItem span={3}>
+          <FormGroup label='Groups' className='pf-v6-u-pb-md'>
+            <LabelInput
+              ariaLabel='Add user group'
+              placeholder='Add user group'
+              validator={isUserGroupValid}
+              list={user.groups}
+              item='Group'
+              addAction={(value) =>
+                addGroupToUserByUserIndex({ index: index, group: value })
+              }
+              removeAction={(value) =>
+                removeGroupFromUserByIndex({ index: index, group: value })
+              }
+              stepValidation={getValidationByIndex(index)}
+              fieldName='groups'
+              currentInputValue={user.currentGroupInput}
+              onInputValueChange={(value) =>
+                setCurrentGroupInputByIndex({ index: index, input: value })
+              }
+              addOnBlur={true}
+            />
+          </FormGroup>
+        </GridItem>
+        <GridItem span={1}>
+          <FormGroup label='Admin'>
+            <Checkbox
+              isChecked={user.isAdministrator || user.groups.includes('wheel')}
+              onChange={(_e, value) => handleCheckboxChange(_e, value)}
+              aria-label='Administrator'
+              id={`${user.name}-${index}`}
+              name='user Administrator'
+            />
+          </FormGroup>
+        </GridItem>
+        <GridItem span={1}>
+          <FormGroup label=' ' className='pf-v6-u-pb-md'>
+            <Button
+              isDisabled={userCount <= 1}
+              variant='plain'
+              icon={<MinusCircleIcon />}
+              onClick={() => onRemove()}
+              aria-label='Remove user'
+            />
+          </FormGroup>
+        </GridItem>
+      </Grid>
       <RemoveUserModal
         setShowRemoveUserModal={setShowRemoveUserModal}
         index={index}

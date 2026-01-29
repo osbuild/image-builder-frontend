@@ -1,23 +1,24 @@
 import React from 'react';
 
-import { Alert, Button, Content } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons';
-import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import { Alert } from '@patternfly/react-core';
 
 import UserRow from './UserRow';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { addUser, selectUsers } from '../../../../../store/wizardSlice';
+import { useAppSelector } from '../../../../../store/hooks';
+import {
+  selectUsers,
+  UserWithAdditionalInfo,
+} from '../../../../../store/wizardSlice';
 import { useUsersValidation } from '../../../utilities/useValidation';
+import { isUserDefined } from '../utilities/isUserDefined';
 
 type UserInfoProps = {
   attemptedNext?: boolean | undefined;
 };
 
 const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
-  const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
-  const usersToRender =
+  const usersToRender: UserWithAdditionalInfo[] =
     users.length === 0
       ? [
           {
@@ -27,20 +28,28 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
             groups: [],
             isAdministrator: false,
             hasPassword: false,
+            currentGroupInput: '',
           },
         ]
       : users;
 
   const stepValidation = useUsersValidation();
-  const hasErrors = !!stepValidation.disabledNext;
-  const showAlert = attemptedNext && hasErrors;
+  const hasBlockingErrors = users.some((user, index) => {
+    const userErrors = stepValidation.errors[index];
+    if (!userErrors || Object.keys(userErrors).length === 0) {
+      return false;
+    }
 
-  const onAddUserClick = () => {
-    dispatch(addUser());
-  };
+    const hasOnlyEmptyUserNameError =
+      Object.keys(userErrors).length === 1 &&
+      userErrors.userName === 'Required value';
+
+    return isUserDefined(user) || !hasOnlyEmptyUserNameError;
+  });
+
   return (
     <>
-      {showAlert && (
+      {attemptedNext && hasBlockingErrors && (
         <Alert
           variant='danger'
           isInline
@@ -48,38 +57,16 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
-      <Table variant='compact' borders={false}>
-        <Thead>
-          <Tr>
-            <Th width={20}>Username</Th>
-            <Th width={20}>Password</Th>
-            <Th width={20}>SSH key</Th>
-            <Th width={20}>Groups</Th>
-            <Th width={10}>Admin</Th>
-            <Th width={10} aria-label='Remove user' />
-          </Tr>
-        </Thead>
-        <Tbody>
-          {usersToRender.map((user, index) => (
-            <UserRow
-              key={index}
-              user={user}
-              index={index}
-              userCount={users.length}
-            />
-          ))}
-        </Tbody>
-      </Table>
-      <Content>
-        <Button
-          variant='link'
-          onClick={onAddUserClick}
-          icon={<AddCircleOIcon />}
-          isDisabled={!!stepValidation.disabledNext || users.length < 1}
-        >
-          Add user
-        </Button>
-      </Content>
+      {usersToRender.map((user, index) => (
+        <UserRow
+          key={index}
+          user={user}
+          index={index}
+          userCount={users.length}
+          isAddButtonDisabled={hasBlockingErrors}
+          attemptedNext={attemptedNext}
+        />
+      ))}
     </>
   );
 };
