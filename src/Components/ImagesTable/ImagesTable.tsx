@@ -603,10 +603,10 @@ const Row = ({
               >
                 {compose.image_name || compose.id}
               </Button>{' '}
-              {
+              {isOnPremise &&
                 // API needs to be updated first
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                compose.request.distribution ? (
+                (compose.request.distribution ? (
                   <Label isCompact color='teal'>
                     Package mode
                   </Label>
@@ -615,8 +615,7 @@ const Row = ({
                   <Label isCompact color='yellow'>
                     Image mode
                   </Label>
-                ) : null
-              }
+                ) : null)}
             </>
           ) : (
             <span> {compose.image_name || compose.id}</span>
