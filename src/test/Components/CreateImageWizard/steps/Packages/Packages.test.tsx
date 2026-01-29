@@ -225,12 +225,25 @@ describe('Step Packages', () => {
     });
   });
 
-  test('should display default state', async () => {
+  test('should display default state in Available mode', async () => {
     await renderCreateMode();
     await goToPackagesStep();
+    await screen.findByRole('heading', {
+      name: /Search packages/i,
+    });
     await screen.findByText(
-      'Search above to add additionalpackages to your image.',
+      /Search for exact matches by specifying the package name to add additional packages to your image/i,
     );
+  });
+
+  test('should display correct empty state in Selected mode', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await toggleSelected();
+    await screen.findByRole('heading', {
+      name: /There are no selected packages/i,
+    });
+    await screen.findByText(/Search above to see available packages/i);
   });
 
   test('search results should be sorted with most relevant results first', async () => {
