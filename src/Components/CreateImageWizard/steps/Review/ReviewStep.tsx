@@ -40,18 +40,17 @@ import {
 
 import isRhel from '../../../../../src/Utilities/isRhel';
 import { targetOptions } from '../../../../constants';
-import { useIsOnPremise } from '../../../../Hooks';
+import { useCustomizationRestrictions } from '../../../../store/distributions';
 import { useAppSelector } from '../../../../store/hooks';
-import { isImageMode } from '../../../../store/typeGuards';
 import {
   selectAapRegistration,
   selectBlueprintDescription,
-  selectBlueprintMode,
   selectBlueprintName,
   selectDistribution,
   selectFirewall,
   selectHostname,
   selectImageTypes,
+  selectIsImageMode,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -61,14 +60,12 @@ import {
   selectTimezone,
   selectUsers,
 } from '../../../../store/wizardSlice';
-import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
-  const isOnPremise = useIsOnPremise();
 
-  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const aapRegistration = useAppSelector(selectAapRegistration);
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
@@ -103,6 +100,10 @@ const Review = () => {
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
 
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: environments,
+  });
+
   const onToggleAap = (isExpandedAap: boolean) =>
     setIsExpandedAap(isExpandedAap);
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
@@ -135,8 +136,6 @@ const Review = () => {
     setIsExpandedFirstBoot(isExpandableFirstBoot);
   const onToggleUsers = (isExpandedUsers: boolean) =>
     setIsExpandedUsers(isExpandedUsers);
-
-  const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
 
   type RevisitStepButtonProps = {
     ariaLabel: string;
@@ -191,13 +190,7 @@ const Review = () => {
     );
   };
 
-  const wizardStepId =
-    blueprintMode === 'image' ? 'wizard-users' : 'wizard-users-optional';
-
-  // This is needed because on first render (during create)
-  // the distribution is set to a known distribution
-  const isPackageMode =
-    !isImageMode(distribution) && blueprintMode === 'package';
+  const wizardStepId = isImageMode ? 'wizard-users' : 'wizard-users-optional';
 
   return (
     <>
@@ -324,7 +317,7 @@ const Review = () => {
         </ExpandableSection>
       )}
 
-      {isPackageMode && (
+      {!restrictions.openscap.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Security',
@@ -341,7 +334,7 @@ const Review = () => {
           <SecurityInformation />
         </ExpandableSection>
       )}
-      {!hasWslTargetOnly && (
+      {!restrictions.filesystem.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'File system configuration',
@@ -356,7 +349,7 @@ const Review = () => {
           <FSCList />
         </ExpandableSection>
       )}
-      {isPackageMode && (
+      {!restrictions.repositories.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Content',
@@ -373,7 +366,7 @@ const Review = () => {
           <ContentList />
         </ExpandableSection>
       )}
-      {users.length > 0 && (
+      {!restrictions.users.shouldHide && users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Users',
@@ -388,24 +381,25 @@ const Review = () => {
           <UsersList />
         </ExpandableSection>
       )}
-      {isPackageMode && (timezone || (ntpServers && ntpServers.length > 0)) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Timezone',
-            'revisit-timezone',
-            'wizard-timezone',
-          )}
-          onToggle={(_event, isExpandedTimezone) =>
-            onToggleTimezone(isExpandedTimezone)
-          }
-          isExpanded={isExpandedTimezone}
-          isIndented
-          data-testid='timezone-expandable'
-        >
-          <TimezoneList />
-        </ExpandableSection>
-      )}
-      {isPackageMode &&
+      {!restrictions.timezone.shouldHide &&
+        (timezone || (ntpServers && ntpServers.length > 0)) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Timezone',
+              'revisit-timezone',
+              'wizard-timezone',
+            )}
+            onToggle={(_event, isExpandedTimezone) =>
+              onToggleTimezone(isExpandedTimezone)
+            }
+            isExpanded={isExpandedTimezone}
+            isIndented
+            data-testid='timezone-expandable'
+          >
+            <TimezoneList />
+          </ExpandableSection>
+        )}
+      {!restrictions.locale.shouldHide &&
         ((languages && languages.length > 0) ||
           (keyboard && keyboard.length > 0)) && (
           <ExpandableSection
@@ -424,7 +418,7 @@ const Review = () => {
             <LocaleList />
           </ExpandableSection>
         )}
-      {hostname && (
+      {!restrictions.hostname.shouldHide && hostname && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Hostname',
@@ -441,62 +435,65 @@ const Review = () => {
           <HostnameList />
         </ExpandableSection>
       )}
-      {(kernel.name || kernel.append.length > 0) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Kernel',
-            'revisit-kernel',
-            'wizard-kernel',
-          )}
-          onToggle={(_event, isExpandedKernel) =>
-            onToggleKernel(isExpandedKernel)
-          }
-          isExpanded={isExpandedKernel}
-          isIndented
-          data-testid='kernel-expandable'
-        >
-          <KernelList />
-        </ExpandableSection>
-      )}
-      {(firewall.ports.length > 0 ||
-        firewall.services.disabled.length > 0 ||
-        firewall.services.enabled.length > 0) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Firewall',
-            'revisit-firewall',
-            'wizard-firewall',
-          )}
-          onToggle={(_event, isExpandedFirewall) =>
-            onToggleFirewall(isExpandedFirewall)
-          }
-          isExpanded={isExpandedFirewall}
-          isIndented
-          data-testid='firewall-expandable'
-        >
-          <FirewallList />
-        </ExpandableSection>
-      )}
-      {(services.enabled.length > 0 ||
-        services.disabled.length > 0 ||
-        services.masked.length > 0) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Systemd services',
-            'revisit-services',
-            'wizard-services',
-          )}
-          onToggle={(_event, isExpandedServices) =>
-            onToggleServices(isExpandedServices)
-          }
-          isExpanded={isExpandedServices}
-          isIndented
-          data-testid='services-expandable'
-        >
-          <ServicesList />
-        </ExpandableSection>
-      )}
-      {aapRegistration.callbackUrl && (
+      {!restrictions.kernel.shouldHide &&
+        (kernel.name || kernel.append.length > 0) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Kernel',
+              'revisit-kernel',
+              'wizard-kernel',
+            )}
+            onToggle={(_event, isExpandedKernel) =>
+              onToggleKernel(isExpandedKernel)
+            }
+            isExpanded={isExpandedKernel}
+            isIndented
+            data-testid='kernel-expandable'
+          >
+            <KernelList />
+          </ExpandableSection>
+        )}
+      {!restrictions.firewall.shouldHide &&
+        (firewall.ports.length > 0 ||
+          firewall.services.disabled.length > 0 ||
+          firewall.services.enabled.length > 0) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Firewall',
+              'revisit-firewall',
+              'wizard-firewall',
+            )}
+            onToggle={(_event, isExpandedFirewall) =>
+              onToggleFirewall(isExpandedFirewall)
+            }
+            isExpanded={isExpandedFirewall}
+            isIndented
+            data-testid='firewall-expandable'
+          >
+            <FirewallList />
+          </ExpandableSection>
+        )}
+      {!restrictions.services.shouldHide &&
+        (services.enabled.length > 0 ||
+          services.disabled.length > 0 ||
+          services.masked.length > 0) && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Systemd services',
+              'revisit-services',
+              'wizard-services',
+            )}
+            onToggle={(_event, isExpandedServices) =>
+              onToggleServices(isExpandedServices)
+            }
+            isExpanded={isExpandedServices}
+            isIndented
+            data-testid='services-expandable'
+          >
+            <ServicesList />
+          </ExpandableSection>
+        )}
+      {!restrictions.aap.shouldHide && aapRegistration.callbackUrl && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Ansible Automation Platform',
@@ -511,7 +508,7 @@ const Review = () => {
           <RegisterAapList />
         </ExpandableSection>
       )}
-      {!isOnPremise && (
+      {!restrictions.firstBoot.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'First boot',

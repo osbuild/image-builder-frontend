@@ -15,13 +15,13 @@ import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeBlueprintMode,
   changeDistribution,
-  selectBlueprintMode,
+  selectIsImageMode,
 } from '../../../../../store/wizardSlice';
 import { getHostDistro } from '../../../../../Utilities/getHostInfo';
 
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();
-  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const [defaultDistro, setDefaultDistro] = useState<Distributions>(RHEL_10);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const BlueprintMode = () => {
           icon={<RepositoryIcon />}
           text='Package mode'
           buttonId='blueprint-mode-package'
-          isSelected={blueprintMode === 'package'}
+          isSelected={!isImageMode}
           onChange={() => {
             dispatch(changeBlueprintMode('package'));
             dispatch(changeDistribution(defaultDistro));
@@ -57,7 +57,7 @@ const BlueprintMode = () => {
           icon={<BuildIcon />}
           text='Image mode'
           buttonId='blueprint-mode-image'
-          isSelected={blueprintMode === 'image'}
+          isSelected={isImageMode}
           onChange={() => {
             dispatch(changeBlueprintMode('image'));
             dispatch(changeDistribution('image-mode'));
@@ -69,9 +69,9 @@ const BlueprintMode = () => {
         id='blueprint-mode-description'
         className='pf-v6-u-pt-sm pf-v6-u-text-color-subtle'
       >
-        {blueprintMode === 'package' &&
+        {!isImageMode &&
           'RHEL in package mode is a system managed by individually installing and updating software packages'}
-        {blueprintMode === 'image' &&
+        {isImageMode &&
           'RHEL image mode treats the entire operating system as a single, immutable container image that is updated atomically'}
       </Content>
     </FormGroup>
