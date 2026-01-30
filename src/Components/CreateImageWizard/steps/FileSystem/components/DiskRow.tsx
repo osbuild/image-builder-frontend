@@ -19,17 +19,9 @@ import { DiskPartition } from '../fscTypes';
 
 type DiskRowPropTypes = {
   partition: DiskPartition;
-  onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
-  onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
-  onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
 };
 
-const DiskRow = ({
-  partition,
-  onDragEnd,
-  onDragStart,
-  onDrop,
-}: DiskRowPropTypes) => {
+const DiskRow = ({ partition }: DiskRowPropTypes) => {
   const dispatch = useAppDispatch();
   const diskPartitions = useAppSelector(selectDiskPartitions);
 
@@ -44,18 +36,7 @@ const DiskRow = ({
   }
 
   return (
-    <Tr
-      draggable
-      id={partition.id}
-      onDrop={onDrop}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-    >
-      <Td
-        draggableRow={{
-          id: `draggable-row-${partition.id}`,
-        }}
-      />
+    <Tr id={partition.id}>
       {partition.type !== 'plain' && (
         <Td className='pf-m-width-20'>
           <PartitionName partition={partition} customization={customization} />
