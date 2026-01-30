@@ -20,6 +20,29 @@ import { server } from '../../../../../test/mocks/server';
 
 fetchMock.enableMocks();
 
+vi.mock('../../../../../Utilities/useDebounce', async () => {
+  const { useState, useEffect } = await import('react');
+  const { isEqual } = await import('lodash');
+
+  return {
+    default: function useDebounce<T>(value: T, delay: number = 100): T {
+      const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+      useEffect(() => {
+        if (!isEqual(value, debouncedValue)) {
+          const timer = setTimeout(
+            () => setDebouncedValue(value),
+            value === '' ? 0 : delay,
+          );
+          return () => clearTimeout(timer);
+        }
+      }, [value, delay, debouncedValue]);
+
+      return debouncedValue;
+    },
+  };
+});
+
 // Disable global MSW server for this file - we use fetch mocks instead
 beforeAll(() => {
   server.close();
