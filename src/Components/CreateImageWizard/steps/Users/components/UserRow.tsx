@@ -147,6 +147,8 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             }
             stepValidation={getValidationByIndex(index)}
             fieldName='groups'
+            truncateLength={12}
+            inlineChips={true}
           />
         </Td>
         <Td>
