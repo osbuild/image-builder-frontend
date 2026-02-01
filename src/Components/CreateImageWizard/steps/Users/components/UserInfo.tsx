@@ -75,7 +75,7 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           variant='link'
           onClick={onAddUserClick}
           icon={<AddCircleOIcon />}
-          isDisabled={!!stepValidation.disabledNext || users.length < 1}
+          isDisabled={users.length === 0 || !!stepValidation.disabledNext}
         >
           Add user
         </Button>
