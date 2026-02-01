@@ -2,17 +2,19 @@ import React from 'react';
 
 import path from 'path';
 
-import { Button, Skeleton } from '@patternfly/react-core';
+import { Button, Flex, FlexItem, Skeleton } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
+import { useCockpitMachinesAvailable } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { LocalUploadStatus } from '../../store/cockpit/composerCloudApi';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { ComposesResponseItem, ImageTypes } from '../../store/imageBuilderApi';
 import { isAwss3UploadStatus } from '../../store/typeGuards';
+import { distributionToOSShortId } from '../../Utilities/distributionToOSShortId';
 
 type AwsS3InstancePropTypes = {
   compose: ComposesResponseItem;
@@ -100,10 +102,18 @@ type LocalInstancePropTypes = {
   compose: ComposesResponseItem;
 };
 
+// Image types that can be imported into cockpit-machines as VM disk images
+const VM_IMPORTABLE_IMAGE_TYPES: ImageTypes[] = ['guest-image'];
+
+// Image types that can be used as installation media in cockpit-machines
+const VM_INSTALLABLE_IMAGE_TYPES: ImageTypes[] = ['image-installer'];
+
 export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
+  const isMachinesAvailable = useCockpitMachinesAvailable();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
+
   if (!isSuccess) {
     return <Skeleton />;
   }
@@ -117,24 +127,83 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   }
 
   const parsedPath = path.parse(options.artifact_path);
-  const href = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
+  const fileBrowserHref = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
+
+  // Check if this image type can be imported or installed in a VM
+  const imageType = compose.request.image_requests[0]?.image_type;
+  const canLaunchInMachines =
+    isMachinesAvailable && VM_IMPORTABLE_IMAGE_TYPES.includes(imageType);
+  const canInstallInMachines =
+    isMachinesAvailable && VM_INSTALLABLE_IMAGE_TYPES.includes(imageType);
+
+  // Parameters for cockpit-machines
+  const osShortId = distributionToOSShortId(compose.request.distribution);
+  const vmName = (compose.request as unknown as { name?: string }).name || '';
+
+  // Build cockpit-machines URLs for Create VM dialog
+  const encodedSource = encodeURIComponent(options.artifact_path);
+  const launchHref =
+    '/machines#?action=create&type=cloud&source=' +
+    encodedSource +
+    (osShortId ? '&os=' + encodeURIComponent(osShortId) : '') +
+    (vmName ? '&name=' + encodeURIComponent(vmName) : '');
+  const installHref =
+    '/machines#?action=create&type=file&source=' +
+    encodedSource +
+    (osShortId ? '&os=' + encodeURIComponent(osShortId) : '') +
+    (vmName ? '&name=' + encodeURIComponent(vmName) : '');
+
   return (
-    <Button
-      component='a'
-      target='_blank'
-      variant='link'
-      onClick={(ev) => {
-        ev.preventDefault();
-        // previously it wasn't possible to have administrative
-        // access in `cockpit-files`, so we had to update the permissions.
-        // This has changed and we can skip changing the permissions and
-        // jump directly to the file in `cockpit-files`.
-        cockpit.jump(href, cockpit.transport.host);
-      }}
-      href={href}
-      isInline
-    >
-      Open in file browser
-    </Button>
+    <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+      <FlexItem>
+        <Button
+          component='a'
+          target='_blank'
+          variant='link'
+          onClick={(ev) => {
+            ev.preventDefault();
+            cockpit.jump(fileBrowserHref, cockpit.transport.host);
+          }}
+          href={fileBrowserHref}
+          isInline
+        >
+          Open in file browser
+        </Button>
+      </FlexItem>
+      {canLaunchInMachines && (
+        <FlexItem>
+          <Button
+            component='a'
+            target='_blank'
+            variant='link'
+            onClick={(ev) => {
+              ev.preventDefault();
+              cockpit.jump(launchHref, cockpit.transport.host);
+            }}
+            href={launchHref}
+            isInline
+          >
+            Launch
+          </Button>
+        </FlexItem>
+      )}
+      {canInstallInMachines && (
+        <FlexItem>
+          <Button
+            component='a'
+            target='_blank'
+            variant='link'
+            onClick={(ev) => {
+              ev.preventDefault();
+              cockpit.jump(installHref, cockpit.transport.host);
+            }}
+            href={installHref}
+            isInline
+          >
+            Install
+          </Button>
+        </FlexItem>
+      )}
+    </Flex>
   );
 };
