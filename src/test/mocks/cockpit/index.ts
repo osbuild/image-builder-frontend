@@ -8,6 +8,8 @@ import { cockpitPermission } from './cockpitPermission';
 
 type userinfo = {
   home: string;
+  name: string;
+  groups: string[];
 };
 
 export default {
@@ -19,6 +21,8 @@ export default {
     return new Promise((resolve) => {
       resolve({
         home: '/default',
+        name: 'testuser',
+        groups: ['testuser'],
       });
     });
   },

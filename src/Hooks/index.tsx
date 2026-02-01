@@ -3,4 +3,8 @@ export { useUpdateBPWithNotification } from './MutationNotifications/useUpdateBP
 export { useDeleteBPWithNotification } from './MutationNotifications/useDeleteBPWithNotification';
 export { useFixupBPWithNotification } from './MutationNotifications/useFixupBPWithNotification';
 export { useComposeBPWithNotification } from './MutationNotifications/useComposeBPWithNotification';
-export { useGetDocumentationUrl, useGetUser } from './Utilities/';
+export {
+  useCockpitMachinesAvailable,
+  useGetDocumentationUrl,
+  useGetUser,
+} from './Utilities/';
