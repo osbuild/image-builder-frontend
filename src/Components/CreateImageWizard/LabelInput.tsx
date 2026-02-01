@@ -28,6 +28,8 @@ type LabelInputProps = {
   removeAction: (value: string) => UnknownAction;
   stepValidation: StepValidation;
   fieldName: string;
+  truncateLength?: number;
+  inlineChips?: boolean;
 };
 
 const LabelInput = ({
@@ -42,6 +44,8 @@ const LabelInput = ({
   removeAction,
   stepValidation,
   fieldName,
+  truncateLength = FIREWALL_LABEL_TRUNCATE_DEFAULT,
+  inlineChips = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -135,33 +139,74 @@ const LabelInput = ({
   if (invalidImports) errors.push(invalidImports);
   if (duplicateImports) errors.push(duplicateImports);
 
+  const chipsInInput = inlineChips && list && list.length > 0 && (
+    <LabelGroup
+      isCompact
+      numLabels={4}
+      expandedText='Show less'
+      collapsedText={`${list.length - 4} more`}
+    >
+      {list.map((group) => (
+        <Label
+          key={group}
+          color='blue'
+          isCompact
+          onClose={(e) => handleRemoveItem(e, group)}
+        >
+          {group.length > truncateLength
+            ? `${group.slice(0, truncateLength)}...`
+            : group}
+        </Label>
+      ))}
+    </LabelGroup>
+  );
+
+  const inputWithInlineChips = inlineChips && (
+    <TextInputGroup>
+      <TextInputGroupMain
+        aria-label={ariaLabel}
+        placeholder={placeholder}
+        onChange={onTextInputChange}
+        value={inputValue}
+        onKeyDown={(e) => handleKeyDown(e, inputValue)}
+      >
+        {chipsInInput}
+      </TextInputGroupMain>
+    </TextInputGroup>
+  );
+
   return (
     <>
-      <TextInputGroup>
-        <TextInputGroupMain
-          aria-label={ariaLabel}
-          placeholder={placeholder}
-          onChange={onTextInputChange}
-          value={inputValue}
-          onKeyDown={(e) => handleKeyDown(e, inputValue)}
-        >
-          {list && list.length > 0 && (
-            <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
-              {list.map((item) => (
-                <Label
-                  key={item}
-                  color='blue'
-                  onClose={(e) => handleRemoveItem(e, item)}
-                >
-                  {item.length > FIREWALL_LABEL_TRUNCATE_DEFAULT
-                    ? `${item.slice(0, FIREWALL_LABEL_TRUNCATE_DEFAULT)}...`
-                    : item}
-                </Label>
-              ))}
-            </LabelGroup>
-          )}
-        </TextInputGroupMain>
-      </TextInputGroup>
+      {inlineChips ? (
+        inputWithInlineChips
+      ) : (
+        <TextInputGroup>
+          <TextInputGroupMain
+            aria-label={ariaLabel}
+            placeholder={placeholder}
+            onChange={onTextInputChange}
+            value={inputValue}
+            onKeyDown={(e) => handleKeyDown(e, inputValue)}
+          >
+            {list && list.length > 0 && (
+              <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
+                {list.map((item) => (
+                  <Label
+                    key={item}
+                    color='blue'
+                    onClose={(e) => handleRemoveItem(e, item)}
+                  >
+                    {item.length > FIREWALL_LABEL_TRUNCATE_DEFAULT
+                      ? `${item.slice(0, FIREWALL_LABEL_TRUNCATE_DEFAULT)}...`
+                      : item}
+                  </Label>
+                ))}
+              </LabelGroup>
+            )}
+          </TextInputGroupMain>
+        </TextInputGroup>
+      )}
+
       {errors.length > 0 && (
         <HelperText>
           {errors.map((error, index) => (
