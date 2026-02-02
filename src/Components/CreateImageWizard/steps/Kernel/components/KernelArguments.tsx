@@ -40,7 +40,7 @@ const KernelArguments = () => {
   );
 
   return (
-    <FormGroup isRequired={false} label='Append'>
+    <FormGroup isRequired={false} label='Arguments'>
       <LabelInput
         ariaLabel='Add kernel argument'
         placeholder='Add kernel argument'
