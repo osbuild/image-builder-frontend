@@ -10,7 +10,7 @@ const HostnameStep = () => {
       <Title headingLevel='h1' size='xl'>
         Hostname
       </Title>
-      <Content>Select a hostname for your image.</Content>
+      <Content>Define a hostname for your image.</Content>
       <HostnameInput />
     </Form>
   );
