@@ -915,7 +915,7 @@ export const KernelList = () => {
           {kernel.name ? kernel.name : 'None'}
         </Content>
         <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Append
+          Arguments
         </Content>
         <Content component={ContentVariants.dd}>
           {kernel.append.length > 0 ? (
