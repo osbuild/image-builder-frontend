@@ -104,7 +104,11 @@ const LanguagesDropDown = () => {
     if (value && typeof value === 'string') {
       setInputValue('');
       setFilterValue('');
-      dispatch(addLanguage(value));
+      if (languages?.includes(value)) {
+        dispatch(removeLanguage(value));
+      } else {
+        dispatch(addLanguage(value));
+      }
       setIsOpen(false);
     }
   };
@@ -165,7 +169,7 @@ const LanguagesDropDown = () => {
       <Select
         isScrollable
         isOpen={isOpen}
-        selected={inputValue}
+        selected={languages}
         onSelect={onSelect}
         onOpenChange={(isOpen) => setIsOpen(isOpen)}
         toggle={toggle}
@@ -174,14 +178,7 @@ const LanguagesDropDown = () => {
         <SelectList>
           {selectOptions.length > 0 ? (
             selectOptions.map((option) => (
-              <SelectOption
-                key={option}
-                value={option}
-                isDisabled={languages?.includes(option) || false}
-                description={
-                  languages?.includes(option) && 'Language already added'
-                }
-              >
+              <SelectOption key={option} value={option}>
                 {parseLanguageOption(option)}
               </SelectOption>
             ))

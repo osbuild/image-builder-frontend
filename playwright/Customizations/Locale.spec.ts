@@ -82,10 +82,12 @@ test('Create a blueprint with Locale customization', async ({
       frame.getByRole('button', { name: 'Close aa - Djibouti (aa_DJ.UTF-8)' }),
     ).toBeEnabled();
     await frame.getByPlaceholder('Select a language').fill('aa');
+    // Verify that the dropdown shows filtered options starting with 'aa'
     await expect(
-      frame.getByText(
-        'aa - Djibouti (aa_DJ.UTF-8)Language already addedaa - Eritrea (aa_ER.UTF-8)aa - Ethiopia (aa_ET.UTF-8)',
-      ),
+      frame.getByRole('option', { name: 'aa - Eritrea (aa_ER.UTF-8)' }),
+    ).toBeAttached();
+    await expect(
+      frame.getByRole('option', { name: 'aa - Ethiopia (aa_ET.UTF-8)' }),
     ).toBeAttached();
     await frame.getByPlaceholder('Select a language').fill('xxx');
     await expect(frame.getByText('No results found for')).toBeAttached();
