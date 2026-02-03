@@ -44,13 +44,13 @@ test('Create a blueprint with Users customization', async ({
   await navigateToLandingPage(page);
   const frame = ibFrame(page);
 
-  await test.step('Navigate to Users step', async () => {
+  await test.step('Navigate to Groups and users step', async () => {
     await fillInImageOutput(frame);
     await registerLater(frame);
   });
 
   await test.step('Create initial valid users', async () => {
-    await frame.getByRole('button', { name: 'Users' }).click();
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
 
     // Create admin user with correct password and wheel group
     await frame
@@ -156,8 +156,8 @@ test('Create a blueprint with Users customization', async ({
         name: 'Danger alert: Errors found',
       }),
     ).toBeVisible();
-    // Go back to Users step to continue with other tests
-    await frame.getByRole('button', { name: 'Users' }).click();
+    // Go back to Groups and users step to continue with other tests
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
 
     // Test 5: Invalid group name with spaces
     await expect(
@@ -445,7 +445,7 @@ test('Create a blueprint with Users customization', async ({
 
   await test.step('Verify imported users', async () => {
     await fillInImageOutputGuest(frame);
-    await frame.getByRole('button', { name: 'Users' }).click();
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
 
     // Verify users are preserved
     await expect(

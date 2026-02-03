@@ -180,12 +180,12 @@ describe('Step Packages', () => {
 
   const user = userEvent.setup();
 
-  test('clicking Next loads Users', async () => {
+  test('clicking Next loads Groups and users', async () => {
     await renderCreateMode();
     await goToPackagesStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Users',
+      name: 'Groups and users',
     });
   });
 
