@@ -350,3 +350,10 @@ export const PAGINATION_COUNT = 0;
 export const SEARCH_INPUT = '';
 
 export const BLUEPRINTS_DIR = 'cockpit-image-builder';
+
+// Common system groups that are typically available on Linux systems
+// This list can be extended to support additional platforms or system groups
+export const SYSTEM_GROUPS = ['wheel', 'sudo'];
+
+// Validation error key for undefined groups warning
+export const UNDEFINED_GROUPS_WARNING_KEY = 'undefinedGroupsWarning';

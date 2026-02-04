@@ -12,6 +12,7 @@ import { UnknownAction } from 'redux';
 
 import { StepValidation } from './utilities/useValidation';
 
+import { UNDEFINED_GROUPS_WARNING_KEY } from '../../constants';
 import { useAppDispatch } from '../../store/hooks';
 
 const FIREWALL_LABEL_TRUNCATE_DEFAULT = 20;
@@ -135,6 +136,8 @@ const LabelInput = ({
   if (invalidImports) errors.push(invalidImports);
   if (duplicateImports) errors.push(duplicateImports);
 
+  const warning = stepValidation.errors[UNDEFINED_GROUPS_WARNING_KEY];
+
   return (
     <>
       <TextInputGroup>
@@ -169,6 +172,11 @@ const LabelInput = ({
               {error}
             </HelperTextItem>
           ))}
+        </HelperText>
+      )}
+      {warning && (
+        <HelperText>
+          <HelperTextItem variant={'warning'}>{warning}</HelperTextItem>
         </HelperText>
       )}
       {requiredList && requiredList.length > 0 && (
