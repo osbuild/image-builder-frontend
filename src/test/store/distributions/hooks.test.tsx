@@ -4,6 +4,7 @@ import { ALL_CUSTOMIZATIONS } from '../../../store/distributions/constants';
 import { computeRestrictions } from '../../../store/distributions/hooks';
 import {
   CustomizationType,
+  DistributionDetails,
   RestrictionStrategy,
 } from '../../../store/distributions/types';
 
@@ -17,7 +18,6 @@ const computeRestrictionStrategy = ({
   return computeRestrictions({
     isImageMode,
     isOnPremise,
-    isSingleTarget: false,
     arch: 'x86_64',
     data: undefined,
   });
@@ -152,6 +152,157 @@ describe('useCustomizationRestrictions hook logic', () => {
         expect(result[customization]).toHaveProperty('shouldHide');
         expect(result[customization]).toHaveProperty('required');
       }
+    });
+  });
+
+  describe('image type restrictions', () => {
+    it('should hide customization when single image type does not support it', () => {
+      // image-installer doesn't support filesystem
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {
+              'image-installer': {
+                name: 'image-installer',
+                supported_blueprint_options: [
+                  'packages',
+                  'repositories',
+                  'kernel',
+                  'timezone',
+                  'locale',
+                  'firewall',
+                  'services',
+                  'hostname',
+                  'firstBoot',
+                  'openscap',
+                  'users',
+                  'fips',
+                  'aap',
+                ],
+              },
+            },
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      expect(result.filesystem.shouldHide).toBe(true);
+      expect(result.packages.shouldHide).toBe(false);
+    });
+
+    it('should hide customization when no selected image types support it', () => {
+      // Both wsl and image-installer don't support filesystem
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {
+              'image-installer': {
+                name: 'image-installer',
+                supported_blueprint_options: ['packages', 'users'],
+              },
+              wsl: {
+                name: 'wsl',
+                supported_blueprint_options: ['packages', 'users'],
+              },
+            },
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      // filesystem is not supported by either, should be hidden
+      expect(result.filesystem.shouldHide).toBe(true);
+      // packages is supported by both, should not be hidden
+      expect(result.packages.shouldHide).toBe(false);
+    });
+
+    it('should show customization when at least one image type supports it', () => {
+      // aws supports filesystem, image-installer doesn't
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {
+              aws: {
+                name: 'aws',
+                supported_blueprint_options: [
+                  'packages',
+                  'filesystem',
+                  'users',
+                ],
+              },
+              'image-installer': {
+                name: 'image-installer',
+                supported_blueprint_options: ['packages', 'users'],
+              },
+            },
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      // filesystem is supported by aws, should NOT be hidden
+      expect(result.filesystem.shouldHide).toBe(false);
+      // packages is supported by both
+      expect(result.packages.shouldHide).toBe(false);
+    });
+
+    it('should hide most customizations for network-installer', () => {
+      // network-installer only supports locale and fips
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {
+              'network-installer': {
+                name: 'network-installer',
+                supported_blueprint_options: ['locale', 'fips'],
+              },
+            },
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      // Only locale and fips should be visible
+      expect(result.locale.shouldHide).toBe(false);
+      expect(result.fips.shouldHide).toBe(false);
+
+      // Everything else should be hidden
+      expect(result.packages.shouldHide).toBe(true);
+      expect(result.filesystem.shouldHide).toBe(true);
+      expect(result.kernel.shouldHide).toBe(true);
+      expect(result.users.shouldHide).toBe(true);
     });
   });
 });

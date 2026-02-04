@@ -20,7 +20,6 @@ import {
 export type ComputeRestrictionsArgs = {
   isImageMode: boolean;
   isOnPremise: boolean;
-  isSingleTarget: boolean;
   arch: string;
   data: DistributionDetails | undefined;
 };
@@ -28,7 +27,6 @@ export type ComputeRestrictionsArgs = {
 export const computeRestrictions = ({
   isImageMode,
   isOnPremise,
-  isSingleTarget,
   arch,
   data,
 }: ComputeRestrictionsArgs): Record<CustomizationType, RestrictionStrategy> => {
@@ -77,27 +75,28 @@ export const computeRestrictions = ({
     }
 
     const imageTypes = architectures[arch].image_types;
-    if (!imageTypes || !isSingleTarget) {
+    // at this point the user probably doesn't have any
+    // image types selected, so let's return the default list
+    if (!imageTypes || Object.keys(imageTypes).length === 0) {
       continue;
     }
 
-    const selectedImageType = Object.keys(imageTypes)[0];
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!selectedImageType || !imageTypes[selectedImageType]) {
-      continue;
+    // we can collect a set of the supported image types, this way we can catch the
+    // case where a user selects multiple image types that all don't support a certain
+    // customization. For example, wsl & image-installer both don't support fs
+    // customizations, so it's safe to hide this option if the user selects both.
+    const supportedOptions: Set<string> = new Set();
+    for (const imageType of Object.keys(imageTypes)) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!imageTypes[imageType]) continue;
+
+      imageTypes[imageType].supported_blueprint_options?.forEach((option) => {
+        supportedOptions.add(option);
+      });
     }
 
-    const supportedOptions =
-      imageTypes[selectedImageType].supported_blueprint_options;
-    if (!supportedOptions) {
-      continue;
-    }
-
-    // at this point we're dealing with a single target only
-    // so we should know whether or not the customization needs
-    // to be hidden for this image type
     result[customization] = {
-      shouldHide: !supportedOptions.includes(customization),
+      shouldHide: !supportedOptions.has(customization),
       required: false,
     };
   }
@@ -119,7 +118,6 @@ export const useCustomizationRestrictions = ({
   const arch = useAppSelector(selectArchitecture);
   const isOnPremise = useIsOnPremise();
   const isImageMode = useAppSelector(selectIsImageMode);
-  const isSingleTarget = selectedImageTypes.length === 1;
 
   const { data } = api.useGetDistributionDetailsQuery(
     {
@@ -136,11 +134,10 @@ export const useCustomizationRestrictions = ({
     return computeRestrictions({
       isImageMode,
       isOnPremise,
-      isSingleTarget,
       arch,
       data,
     });
-  }, [data, arch, isSingleTarget, isImageMode, isOnPremise]);
+  }, [data, arch, isImageMode, isOnPremise]);
 
   return {
     restrictions,
