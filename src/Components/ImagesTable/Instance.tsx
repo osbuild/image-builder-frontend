@@ -122,13 +122,12 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
       component='a'
       target='_blank'
       variant='link'
-      onClick={async (ev) => {
+      onClick={(ev) => {
         ev.preventDefault();
-        // Make sure the file is readable for the user, the artefact
-        // directory is created as 700 by default.
-        await cockpit.spawn(['chmod', '755', parsedPath.dir], {
-          superuser: 'try',
-        });
+        // previously it wasn't possible to have administrative
+        // access in `cockpit-files`, so we had to update the permissions.
+        // This has changed and we can skip changing the permissions and
+        // jump directly to the file in `cockpit-files`.
         cockpit.jump(href, cockpit.transport.host);
       }}
       href={href}
