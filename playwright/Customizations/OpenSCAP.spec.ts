@@ -83,12 +83,9 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await frame.getByRole('option', { name: /^None$/ }).click();
   });
 
-  await test.step('Verify FSC and Packages show no OpenSCAP additions', async () => {
-    await frame
-      .getByRole('button', { name: 'File system configuration' })
-      .click();
-    await expect(frame.getByText('/tmp')).toHaveCount(0);
-
+  await test.step('Verify Packages show no OpenSCAP additions', async () => {
+    // NOTE: fsc check was removed since we now hide steps when
+    // none of the image types support the customization
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await expect(frame.getByRole('button', { name: /Selected/ })).toBeVisible();
   });
@@ -105,17 +102,6 @@ test('Create a blueprint with OpenSCAP customization', async ({
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
       })
       .click();
-    await frame
-      .getByRole('button', { name: 'File system configuration' })
-      .click();
-    await expect(
-      frame
-        .getByRole('row', {
-          name: 'Draggable row draggable button /tmp xfs 1 GiB',
-        })
-        .getByRole('button')
-        .nth(3),
-    ).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await frame.getByRole('button', { name: 'Selected (9)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
