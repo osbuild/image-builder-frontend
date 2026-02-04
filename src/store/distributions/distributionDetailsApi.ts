@@ -28,7 +28,7 @@ export const distroDetailsApi = imageBuilderApi.injectEndpoints({
           };
           for (const it of imageType) {
             // eslint complains about this always being truthy, it's not a
-            // complete list of image types, so there is a change it is undefined
+            // complete list of image types, so there is a chance it is undefined
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (DISTRO_DETAILS[it]) {
               architectures[arch].image_types![it] = DISTRO_DETAILS[it];

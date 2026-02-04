@@ -105,7 +105,7 @@ export const computeRestrictions = ({
   return result;
 };
 
-// Instead of exporting the hook directly from the `restrictedCustomizationsApi`
+// Instead of exporting the hook directly from the `distributionDetailsApi`
 // let's create a wrapper around this to transform the data so that it is easier
 // to work with where we need it. This way it will be easy to decide whether we
 // need to hide the customizations or display an alert, without complex conditionals
