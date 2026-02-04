@@ -87,6 +87,7 @@ import {
   selectTemplate,
   selectTimezone,
   selectUseLatest,
+  selectUserGroups,
   selectUsers,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
@@ -851,6 +852,35 @@ export const UsersList = () => {
           </Content>
           <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
             {user.isAdministrator ? 'True' : 'False'}
+          </Content>
+        </Content>
+      ))}
+    </Content>
+  );
+};
+
+export const GroupsList = () => {
+  const userGroups = useAppSelector(selectUserGroups);
+
+  return (
+    <Content>
+      {userGroups.map((group) => (
+        <Content
+          key={group.name}
+          component={ContentVariants.dl}
+          className='review-step-dl'
+        >
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            Group name
+          </Content>
+          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
+            {group.name ? group.name : 'None'}
+          </Content>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            GID
+          </Content>
+          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
+            {group.gid !== undefined ? group.gid : 'None'}
           </Content>
         </Content>
       ))}

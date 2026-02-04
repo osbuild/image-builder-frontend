@@ -20,6 +20,7 @@ import {
   FirewallList,
   FirstBootList,
   FSCList,
+  GroupsList,
   HostnameList,
   ImageOutputList,
   KernelList,
@@ -58,6 +59,7 @@ import {
   selectRegistrationType,
   selectServices,
   selectTimezone,
+  selectUserGroups,
   selectUsers,
 } from '../../../../store/wizardSlice';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
@@ -80,6 +82,7 @@ const Review = () => {
   const firewall = useAppSelector(selectFirewall);
   const services = useAppSelector(selectServices);
   const users = useAppSelector(selectUsers);
+  const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
@@ -99,6 +102,7 @@ const Review = () => {
   const [isExpandedServices, setIsExpandedServices] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
+  const [isExpandedGroups, setIsExpandedGroups] = useState(true);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -136,6 +140,8 @@ const Review = () => {
     setIsExpandedFirstBoot(isExpandableFirstBoot);
   const onToggleUsers = (isExpandedUsers: boolean) =>
     setIsExpandedUsers(isExpandedUsers);
+  const onToggleGroups = (isExpandedGroups: boolean) =>
+    setIsExpandedGroups(isExpandedGroups);
 
   type RevisitStepButtonProps = {
     ariaLabel: string;
@@ -379,6 +385,23 @@ const Review = () => {
           data-testid='users-expandable'
         >
           <UsersList />
+        </ExpandableSection>
+      )}
+      {!restrictions.users.shouldHide && userGroups.length > 0 && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Groups',
+            'revisit-groups',
+            wizardStepId,
+          )}
+          onToggle={(_event, isExpandedGroups) =>
+            onToggleGroups(isExpandedGroups)
+          }
+          isExpanded={isExpandedGroups}
+          isIndented
+          data-testid='groups-expandable'
+        >
+          <GroupsList />
         </ExpandableSection>
       )}
       {!restrictions.timezone.shouldHide &&
