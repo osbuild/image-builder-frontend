@@ -4,6 +4,8 @@ import {
   Alert,
   Button,
   ClipboardCopy,
+  Content,
+  ExpandableSection,
   Flex,
   FlexItem,
   FormGroup,
@@ -46,6 +48,7 @@ const ImageSourceSelect = () => {
   const dispatch = useAppDispatch();
   const imageSource = useAppSelector(selectImageSource);
   const [isOpen, setIsOpen] = useState(false);
+  const [isPullInfoExpanded, setIsPullInfoExpanded] = useState(false);
 
   const [
     trigger,
@@ -103,7 +106,7 @@ const ImageSourceSelect = () => {
         </Alert>
       )}
 
-      {!isLoading && !isError && imageExists === false && (
+      {!isLoading && !isError && imageExists === false ? (
         <Alert
           title='Image not found'
           className='pf-v6-u-mb-md'
@@ -119,6 +122,32 @@ const ImageSourceSelect = () => {
           </p>
           <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
         </Alert>
+      ) : (
+        <ExpandableSection
+          toggleText={
+            isPullInfoExpanded
+              ? 'Hide information about pulling images'
+              : 'Show information about pulling images'
+          }
+          onToggle={(_event, isPullInfoExpanded) =>
+            setIsPullInfoExpanded(isPullInfoExpanded)
+          }
+          isExpanded={isPullInfoExpanded}
+          className='pf-v6-u-pb-sm'
+        >
+          <Content component='p'>
+            Container images must be pulled using Podman with root privileges,
+            as rootless images are not accessible to image builder at build
+            time.
+          </Content>
+          <Content component='p'>
+            To pull the image, ensure you are logged in to the registry and use
+            the following command:
+          </Content>
+          <Content component='p'>
+            <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
+          </Content>
+        </ExpandableSection>
       )}
       <Flex>
         <FlexItem>
