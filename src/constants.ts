@@ -355,3 +355,9 @@ export const SEARCH_INPUT = '';
 export const BLUEPRINTS_DIR = 'cockpit-image-builder';
 
 export const DEFAULT_TIMEZONE = 'Etc/UTC';
+
+// System groups available by default in RHEL
+export const SYSTEM_GROUPS = ['wheel'];
+
+// Validation error key for undefined groups warning
+export const UNDEFINED_GROUPS_WARNING_KEY = 'undefinedGroupsWarning';
