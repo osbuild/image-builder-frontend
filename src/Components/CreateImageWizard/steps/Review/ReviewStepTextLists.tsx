@@ -14,13 +14,16 @@ import {
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
+  TimesCircleIcon,
 } from '@patternfly/react-icons';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
   FSReviewTable,
   PackagesTable,
   RepositoriesTable,
   SnapshotTable,
+  UserGroupsTable,
 } from './ReviewStepTables';
 
 import {
@@ -822,40 +825,61 @@ export const UsersList = () => {
   const users = useAppSelector(selectUsers);
 
   return (
-    <Content>
-      {users.map((user) => (
-        <Content
-          key={user.name}
-          component={ContentVariants.dl}
-          className='review-step-dl'
-        >
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Username
-          </Content>
-          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
-            {user.name ? user.name : 'None'}
-          </Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Password
-          </Content>
-          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
-            {user.password || user.hasPassword ? '●'.repeat(8) : 'None'}
-          </Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            SSH key
-          </Content>
-          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
-            {user.ssh_key ? user.ssh_key : 'None'}
-          </Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Administrator
-          </Content>
-          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
-            {user.isAdministrator ? 'True' : 'False'}
-          </Content>
-        </Content>
-      ))}
-    </Content>
+    <Table variant='compact' borders={false}>
+      <Thead>
+        <Tr>
+          <Th>Username</Th>
+          <Th>Password</Th>
+          <Th>SSH key</Th>
+          <Th>Groups</Th>
+          <Th>Administrator</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {users.map((user) => (
+          <Tr key={user.name}>
+            <Td width={25}>{user.name ? user.name : 'None'}</Td>
+            <Td>
+              {user.password || user.hasPassword ? '●'.repeat(8) : 'None'}
+            </Td>
+            <Td>{user.ssh_key ? user.ssh_key : 'None'}</Td>
+            <Td>
+              {user.groups.length > 0 ? (
+                <Popover
+                  position='bottom'
+                  hasAutoWidth
+                  minWidth='30rem'
+                  bodyContent={<UserGroupsTable groups={user.groups} />}
+                >
+                  <Button variant='link' isInline aria-label='View user groups'>
+                    {user.groups.length}
+                  </Button>
+                </Popover>
+              ) : (
+                'None'
+              )}
+            </Td>
+            <Td>
+              {user.isAdministrator ? (
+                <>
+                  <Icon status='success'>
+                    <CheckCircleIcon />
+                  </Icon>{' '}
+                  Enabled
+                </>
+              ) : (
+                <>
+                  <Icon status='danger'>
+                    <TimesCircleIcon />
+                  </Icon>{' '}
+                  Disabled
+                </>
+              )}
+            </Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 
@@ -863,28 +887,22 @@ export const GroupsList = () => {
   const userGroups = useAppSelector(selectUserGroups);
 
   return (
-    <Content>
-      {userGroups.map((group) => (
-        <Content
-          key={group.name}
-          component={ContentVariants.dl}
-          className='review-step-dl'
-        >
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Group name
-          </Content>
-          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
-            {group.name ? group.name : 'None'}
-          </Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            GID
-          </Content>
-          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
-            {group.gid !== undefined ? group.gid : 'None'}
-          </Content>
-        </Content>
-      ))}
-    </Content>
+    <Table variant='compact' borders={false} className='pf-v6-u-w-50'>
+      <Thead>
+        <Tr>
+          <Th>Group name</Th>
+          <Th>GID</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {userGroups.map((group) => (
+          <Tr key={group.name}>
+            <Td width={50}>{group.name ? group.name : 'None'}</Td>
+            <Td>{group.gid !== undefined ? group.gid : 'None'}</Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 

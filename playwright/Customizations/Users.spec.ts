@@ -347,17 +347,17 @@ test('Create a blueprint with Users customization', async ({
     // Verify admin user details
     await expect(frame.getByText('admin1', { exact: true })).toBeVisible();
     await expect(frame.getByText('●●●●●●●●').first()).toBeVisible(); // Masked password
-    await expect(frame.getByText('True').first()).toBeVisible(); // Admin status
+    await expect(frame.getByText('Enabled').first()).toBeVisible(); // Admin status
 
     // Verify SSH user details
     await expect(frame.getByText('sshuser')).toBeVisible();
     await expect(frame.getByText('None').first()).toBeVisible(); // No password
-    await expect(frame.getByText('False').first()).toBeVisible(); // Not admin
+    await expect(frame.getByText('Disabled').first()).toBeVisible(); // Not admin
 
     // Verify admin user details
     await expect(frame.getByText('admin2', { exact: true })).toBeVisible();
     await expect(frame.getByText('●●●●●●●●').first()).toBeVisible(); // Masked password
-    await expect(frame.getByText('True').first()).toBeVisible(); // Admin status
+    await expect(frame.getByText('Enabled').first()).toBeVisible(); // Admin status
   });
 
   await test.step('Create and save blueprint', async () => {
