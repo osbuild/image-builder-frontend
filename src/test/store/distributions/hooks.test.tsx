@@ -304,6 +304,73 @@ describe('useCustomizationRestrictions hook logic', () => {
       expect(result.kernel.shouldHide).toBe(true);
       expect(result.users.shouldHide).toBe(true);
     });
+
+    it('should handle image type with undefined supported_blueprint_options alongside one that defines it', () => {
+      // aws has supported_blueprint_options with filesystem, gcp has undefined supported_blueprint_options
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {
+              aws: {
+                name: 'aws',
+                supported_blueprint_options: ['filesystem', 'packages'],
+              },
+              gcp: {
+                name: 'gcp',
+                // supported_blueprint_options is intentionally omitted (undefined)
+              },
+            },
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      const supportedByAws = ['filesystem', 'packages'];
+
+      // Verify all customizations: only those in aws's list should be visible
+      for (const customization of getAllCustomizationTypes()) {
+        if (supportedByAws.includes(customization)) {
+          expect(result[customization].shouldHide).toBe(false);
+        } else {
+          expect(result[customization].shouldHide).toBe(true);
+        }
+      }
+    });
+
+    it('should not hide any customizations when image_types is an empty object', () => {
+      // Empty image_types means no image types are selected yet,
+      // so we should fall back to showing all customizations
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {},
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      // All customizations should be visible when no image types are selected
+      for (const customization of getAllCustomizationTypes()) {
+        expect(result[customization].shouldHide).toBe(false);
+        expect(result[customization].required).toBe(false);
+      }
+    });
   });
 });
 
