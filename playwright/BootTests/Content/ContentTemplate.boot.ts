@@ -12,7 +12,7 @@ import {
 
 import { test } from '../../fixtures/customizations';
 import { isHosted, sleep } from '../../helpers/helpers';
-import { ensureAuthenticated, login } from '../../helpers/login';
+import { ensureAuthenticated } from '../../helpers/login';
 import {
   fillInImageOutput,
   ibFrame,
@@ -22,7 +22,7 @@ import {
   createBlueprint,
   deleteBlueprint,
   fillInDetails,
-  registerWithActivationKey,
+  registerAutomatically,
 } from '../../helpers/wizardHelpers';
 import {
   buildImage,
@@ -30,9 +30,6 @@ import {
   downloadImage,
 } from '../helpers/imageBuilding';
 import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
-
-// Clear the login from global setup so we can use static user
-test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Content integration test - Content Template', async ({
   page,
@@ -47,10 +44,12 @@ test('Content integration test - Content Template', async ({
   const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName = 'content-template-test-' + uuidv4().slice(0, 8);
   const templateName = 'content-template-test-' + uuidv4().slice(0, 8);
-  const hostname = 'content-template-test-' + uuidv4().slice(0, 8); // Short unique hostname for system identification
+  const hostname = 'content-template-test-' + uuidv4().slice(0, 8);
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata-multi/2/';
   const packageName = 'cockateel';
+  const layeredPackageName = 'pcs'; // Package from the High Availability layered repo (installed at first boot, not build time)
+  const layeredRepoDisplayName = 'High Availability'; // Shown in Content Sources UI; used for filter and row selection
 
   // Register cleanup functions
   cleanup.add(() => deleteBlueprint(page, blueprintName));
@@ -59,8 +58,7 @@ test('Content integration test - Content Template', async ({
   cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
   cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
-  // Use static user because of activation key
-  await login(page, true);
+  await ensureAuthenticated(page);
 
   // Ensure repository URL is not already in use
   await deleteRepository(page, repositoryUrl);
@@ -75,10 +73,13 @@ test('Content integration test - Content Template', async ({
       .getByRole('textbox', { name: 'Name/URL filter' })
       .fill(repositoryName);
     await expect(
-      page.getByRole('gridcell', { name: repositoryName }),
+      page.getByRole('row').filter({ hasText: repositoryName }),
     ).toBeVisible();
     await expect(
-      page.getByRole('gridcell', { name: 'Valid', exact: true }),
+      page
+        .getByRole('row')
+        .filter({ hasText: repositoryName })
+        .getByText('Valid', { exact: true }),
     ).toBeVisible({
       timeout: 180000,
     });
@@ -102,13 +103,27 @@ test('Content integration test - Content Template', async ({
         exact: true,
       }),
     ).toBeVisible();
+
+    // Search for and select High Availability repo (wait for searchbox to be ready)
+    const repoFilter = page.getByRole('searchbox', { name: 'Filter by name' });
+    await repoFilter.waitFor({ state: 'visible', timeout: 60000 });
+    await repoFilter.fill(layeredRepoDisplayName);
+    await expect(
+      page.getByRole('row').filter({ hasText: layeredRepoDisplayName }),
+    ).toBeVisible({ timeout: 60000 });
+    await page
+      .getByRole('row')
+      .filter({ hasText: layeredRepoDisplayName })
+      .first()
+      .getByLabel('Select row')
+      .click();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
 
     await expect(
       page.getByRole('heading', { name: 'Other repositories', exact: true }),
     ).toBeVisible();
     await page
-      .getByRole('searchbox', { name: 'Filter by name/url' })
+      .getByRole('searchbox', { name: 'Filter by name' })
       .fill(repositoryName);
     // Wait for the search results to load (can take time on stage)
     await expect(
@@ -156,8 +171,8 @@ test('Content integration test - Content Template', async ({
     await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
   });
 
-  await test.step('Register with activation key', async () => {
-    await registerWithActivationKey(frame);
+  await test.step('Register automatically', async () => {
+    await registerAutomatically(frame);
   });
 
   await test.step('Select Content Template in Repeatable build step', async () => {
@@ -185,15 +200,19 @@ test('Content integration test - Content Template', async ({
   });
 
   // SMELL: This shouldn't be necessary, but without loading this wizard step, the package search will fail
-  await test.step('Verify repository is included from template', async () => {
-    // Navigate to Repositories step to ensure the template's repository is loaded
+  await test.step('Verify repositories are included from template', async () => {
+    // Navigate to Repositories step to ensure the template's repositories are loaded
     await frame.getByRole('button', { name: 'Repositories' }).click();
     await expect(
       frame.getByRole('row').filter({ hasText: repositoryName }),
     ).toBeVisible({ timeout: 30000 });
+    await expect(
+      frame.getByRole('row').filter({ hasText: layeredRepoDisplayName }),
+    ).toBeVisible({ timeout: 30000 });
   });
 
-  await test.step('Select the package', async () => {
+  // Custom package is installed here, not layered package (pcs)
+  await test.step('Select the package from custom repository', async () => {
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await frame
       .getByRole('textbox', { name: 'Search packages' })
@@ -237,7 +256,7 @@ test('Content integration test - Content Template', async ({
     await image.launchInstance();
   });
 
-  await test.step('Test package was installed', async () => {
+  await test.step('Test custom package was installed', async () => {
     const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
     expect(exitCode).toBe(0);
     expect(output).toContain(packageName);
@@ -275,9 +294,22 @@ test('Content integration test - Content Template', async ({
     );
   });
 
+  await test.step('Install package from layered product repo', async () => {
+    const [installExitCode] = await image.exec(
+      `sudo dnf install -y ${layeredPackageName}`,
+    );
+    expect(installExitCode).toBe(0);
+  });
+
+  await test.step('Test layered product package was installed', async () => {
+    const [exitCode, output] = await image.exec(`rpm -q ${layeredPackageName}`);
+    expect(exitCode).toBe(0);
+    expect(output).toContain(layeredPackageName);
+  });
+
   await test.step('Verify system appears in Inventory', async () => {
-    // Re-authenticate to refresh cookies (session may have expired during long build)
-    await ensureAuthenticated(page, true);
+    // Re-authenticate to refresh cookies (session might have expired during long build)
+    await ensureAuthenticated(page);
 
     const result = await pollForSystemInInventory(
       page,
@@ -292,7 +324,7 @@ test('Content integration test - Content Template', async ({
   });
 
   await test.step('Verify system is attached to content template', async () => {
-    await ensureAuthenticated(page, true);
+    await ensureAuthenticated(page);
 
     const isAttached = await pollForSystemTemplateAttachment(
       page,
