@@ -24,6 +24,7 @@ import {
   selectPackages,
   selectRecommendedRepositories,
   selectTemplate,
+  UserWithAdditionalInfo,
 } from '../../../../store/wizardSlice';
 import { getEpelVersionForDistribution } from '../../../../Utilities/epel';
 import PackageInfoNotAvailablePopover from '../Packages/components/PackageInfoNotAvailablePopover';
@@ -285,6 +286,33 @@ export const RepositoriesTable = () => {
                 </Td>
               </Tr>
             )}
+          </Tbody>
+        </Table>
+      </PanelMain>
+    </Panel>
+  );
+};
+
+type UserGroupsTableProps = {
+  groups: UserWithAdditionalInfo['groups'];
+};
+
+export const UserGroupsTable = ({ groups }: UserGroupsTableProps) => {
+  return (
+    <Panel isScrollable>
+      <PanelMain maxHeight='30ch'>
+        <Table aria-label='User groups table' variant='compact'>
+          <Thead>
+            <Tr>
+              <Th>Group name</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {groups.map((group) => (
+              <Tr key={group}>
+                <Td>{group}</Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </PanelMain>
