@@ -57,6 +57,7 @@ div.pf-v6-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     // Ensures the wizard takes up the entire height of the page in Firefox as well
     .pf-v6-c-wizard {
         flex: 1;
+        min-height: 80vh;
     }
 
     .pf-v6-c-wizard__footer {
