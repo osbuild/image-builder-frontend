@@ -65,7 +65,6 @@ import {
   ContentOrigin,
   EPEL_10_REPO_DEFINITION,
 } from '../../../../constants';
-import { useIsOnPremise } from '../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import {
   ApiRepositoryResponseRead,
@@ -77,6 +76,7 @@ import {
   useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
 } from '../../../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { Package } from '../../../../store/imageBuilderApi';
 import { asDistribution } from '../../../../store/typeGuards';
@@ -142,7 +142,7 @@ export enum Repos {
 const Packages = () => {
   const dispatch = useDispatch();
 
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const customRepositories = useAppSelector(selectCustomRepositories);

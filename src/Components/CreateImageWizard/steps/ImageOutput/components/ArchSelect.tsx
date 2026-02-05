@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 
 import { ARCHES } from '../../../../../constants';
-import { useIsOnPremise } from '../../../../../Hooks';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageRequest } from '../../../../../store/imageBuilderApi';
 import {
@@ -21,7 +21,7 @@ import {
 const ArchSelect = () => {
   const arch = useAppSelector(selectArchitecture);
   const dispatch = useAppDispatch();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const [isOpen, setIsOpen] = useState(false);
 
   const setArch = (_event?: React.MouseEvent, selection?: string | number) => {

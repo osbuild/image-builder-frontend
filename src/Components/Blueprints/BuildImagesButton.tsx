@@ -22,10 +22,10 @@ import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useGetUser,
-  useIsOnPremise,
 } from '../../Hooks';
 import { useGetBlueprintQuery } from '../../store/backendApi';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { ImageTypes } from '../../store/imageBuilderApi';
 
@@ -41,7 +41,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
     useComposeBlueprintMutation();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {

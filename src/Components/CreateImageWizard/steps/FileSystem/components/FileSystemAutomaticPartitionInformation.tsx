@@ -8,12 +8,14 @@ import {
   AMPLITUDE_MODULE_NAME,
   FILE_SYSTEM_CUSTOMIZATION_URL,
 } from '../../../../../constants';
-import { useGetUser, useIsOnPremise } from '../../../../../Hooks';
+import { useGetUser } from '../../../../../Hooks';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
+import { useAppSelector } from '../../../../../store/hooks';
 
 const FileSystemAutomaticPartition = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <Content>
       <Content component={ContentVariants.h3}>Automatic partitioning</Content>

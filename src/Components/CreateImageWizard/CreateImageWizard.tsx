@@ -68,8 +68,9 @@ import {
   RHEL_8,
   RHEL_9,
 } from '../../constants';
-import { useGetUser, useIsOnPremise } from '../../Hooks';
+import { useGetUser } from '../../Hooks';
 import { useCustomizationRestrictions } from '../../store/distributions';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -183,7 +184,7 @@ type CreateImageWizardProps = {
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const imageTypes = useAppSelector(selectImageTypes);

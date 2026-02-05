@@ -18,8 +18,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
-import { useIsOnPremise } from '../../../../../Hooks';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../../store/provisioningApi';
@@ -54,7 +54,7 @@ const TargetEnvironmentCard = ({
   isClicked,
   isDisabled = false,
 }: TargetEnvironmentCardProps) => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <Card
       style={{ textAlign: 'center' } as React.CSSProperties}

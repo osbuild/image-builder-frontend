@@ -6,7 +6,7 @@ import ActivationKeysList from './ActivationKeysList';
 import { ManualActivationKey } from './ManualActivationKey';
 import SatelliteRegistration from './SatelliteRegistration';
 
-import { useIsOnPremise } from '../../../../../Hooks';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeRegistrationType,
@@ -17,7 +17,7 @@ import { RegistrationProps } from '../registrationTypes';
 const Registration = ({ onErrorChange }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   return (
     <FormGroup label='Registration method'>

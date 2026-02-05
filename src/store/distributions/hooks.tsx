@@ -8,7 +8,7 @@ import {
   RestrictionStrategy,
 } from './types';
 
-import { useIsOnPremise } from '../../Hooks';
+import { selectIsOnPremise } from '../envSlice';
 import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
 import {
@@ -116,7 +116,7 @@ export const useCustomizationRestrictions = ({
 }) => {
   const distro = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
 
   const { data } = api.useGetDistributionDetailsQuery(

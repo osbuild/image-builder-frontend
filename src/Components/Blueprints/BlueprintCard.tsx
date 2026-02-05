@@ -10,14 +10,12 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import {
-  useDeleteBPWithNotification as useDeleteBlueprintMutation,
-  useIsOnPremise,
-} from '../../Hooks';
+import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
 import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { BlueprintItem } from '../../store/imageBuilderApi';
 
@@ -28,7 +26,7 @@ type blueprintProps = {
 const BlueprintCard = ({ blueprint }: blueprintProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const dispatch = useAppDispatch();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { isLoading } = useDeleteBlueprintMutation({
     fixedCacheKey: 'delete-blueprint',

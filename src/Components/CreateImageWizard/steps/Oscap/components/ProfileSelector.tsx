@@ -18,13 +18,13 @@ import { TimesIcon } from '@patternfly/react-icons';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
-import { useIsOnPremise } from '../../../../../Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
   useLazyGetOscapCustomizationsQuery,
 } from '../../../../../store/backendApi';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
@@ -53,7 +53,7 @@ type ProfileSelectorProps = {
 };
 
 const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(
     asDistribution(useAppSelector(selectDistribution)),

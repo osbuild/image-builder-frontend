@@ -34,12 +34,13 @@ import {
   FIRST_BOOT_SERVICE,
   OSCAP_URL,
 } from '../../../../constants';
-import { useGetUser, useIsOnPremise } from '../../../../Hooks';
+import { useGetUser } from '../../../../Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
 } from '../../../../store/backendApi';
 import { usePoliciesQuery } from '../../../../store/complianceApi';
+import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';
 import {
@@ -130,7 +131,7 @@ const OscapContent = () => {
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   if (!isOnPremise) {
     analytics.screen('ib-createimagewizard-step-security');
   }
@@ -343,7 +344,7 @@ const OnPremOscapStep = () => {
 };
 
 const OscapStep = () => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   return isOnPremise ? <OnPremOscapStep /> : <OscapContent />;
 };
 

@@ -10,8 +10,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
-import { useGetDocumentationUrl, useIsOnPremise } from '../../Hooks';
+import { useGetDocumentationUrl } from '../../Hooks';
 import { useBackendPrefetch } from '../../store/backendApi';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
@@ -69,7 +70,7 @@ export const ImageBuilderHeader = ({
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
