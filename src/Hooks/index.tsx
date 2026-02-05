@@ -3,8 +3,4 @@ export { useUpdateBPWithNotification } from './MutationNotifications/useUpdateBP
 export { useDeleteBPWithNotification } from './MutationNotifications/useDeleteBPWithNotification';
 export { useFixupBPWithNotification } from './MutationNotifications/useFixupBPWithNotification';
 export { useComposeBPWithNotification } from './MutationNotifications/useComposeBPWithNotification';
-export {
-  useGetDocumentationUrl,
-  useGetUser,
-  useIsOnPremise,
-} from './Utilities/';
+export { useGetDocumentationUrl, useGetUser } from './Utilities/';
