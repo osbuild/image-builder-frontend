@@ -295,6 +295,7 @@ Description=Custom first boot script
 ConditionFileIsExecutable=${FIRSTBOOT_PATH}
 ConditionPathExists=!/var/local/.custom-first-boot-done
 Wants=network-online.target
+After=selinux-autorelabel.service
 After=network-online.target
 After=osbuild-first-boot.service
 After=register-satellite.service
@@ -317,6 +318,7 @@ Description=Register satellite first boot script
 ConditionFileIsExecutable=${SATELLITE_PATH}
 ConditionPathExists=!/var/local/.register-satellite-done
 Wants=network-online.target
+After=selinux-autorelabel.service
 After=network-online.target
 After=osbuild-first-boot.service
 
