@@ -15,9 +15,11 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import { useGetUser, useIsOnPremise } from '../../Hooks';
+import { useGetUser } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { extractProvisioningList } from '../../store/helpers';
+import { useAppSelector } from '../../store/hooks';
 import {
   ComposesResponseItem,
   GcpUploadRequestOptions,
@@ -112,7 +114,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const {
     data: composeStatus,
     isLoading,

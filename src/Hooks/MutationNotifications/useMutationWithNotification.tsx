@@ -4,8 +4,9 @@ import {
   TypedMutationTrigger,
 } from '@reduxjs/toolkit/dist/query/react';
 
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import { errorMessage } from '../../store/service/enhancedImageBuilderApi';
-import { useIsOnPremise } from '../Utilities';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getErrorDescription = (err: any, isOnPremise: boolean) => {
@@ -60,7 +61,7 @@ export function useMutationWithNotification<
 ) {
   const [trigger, state] = mutationHook(options);
   const addNotification = useAddNotification();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const handler = async (args: Arg): Promise<Result> => {
     try {

@@ -22,7 +22,7 @@ import {
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
-import { useIsOnPremise } from '../../../../../Hooks';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { Distributions } from '../../../../../store/imageBuilderApi';
 import {
@@ -41,7 +41,7 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 

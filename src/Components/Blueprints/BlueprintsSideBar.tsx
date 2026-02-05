@@ -28,7 +28,7 @@ import {
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
 } from '../../constants';
-import { useGetUser, useIsOnPremise } from '../../Hooks';
+import { useGetUser } from '../../Hooks';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
@@ -39,6 +39,7 @@ import {
   setBlueprintSearchInput,
   setBlueprintsOffset,
 } from '../../store/BlueprintSlice';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
@@ -62,7 +63,7 @@ type emptyBlueprintStateProps = {
 const BlueprintsSidebar = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);

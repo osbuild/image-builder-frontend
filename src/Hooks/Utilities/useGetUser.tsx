@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { ChromeUser } from '@redhat-cloud-services/types';
 
-import { useIsOnPremise } from './useIsOnPremise';
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 
 export const useGetUser = (auth: { getUser(): Promise<void | ChromeUser> }) => {
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const [orgId, setOrgId] = useState<string | undefined>(undefined);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   useEffect(() => {
     (async () => {

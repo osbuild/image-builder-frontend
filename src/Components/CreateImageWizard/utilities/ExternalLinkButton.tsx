@@ -5,7 +5,9 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../constants';
-import { useGetUser, useIsOnPremise } from '../../../Hooks';
+import { useGetUser } from '../../../Hooks';
+import { selectIsOnPremise } from '../../../store/envSlice';
+import { useAppSelector } from '../../../store/hooks';
 
 type ExternalLinkButtonProps = {
   url: string;
@@ -20,7 +22,7 @@ const ExternalLinkButton = ({
 }: ExternalLinkButtonProps) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <Button
       component='a'

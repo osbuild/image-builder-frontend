@@ -10,11 +10,11 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 
-import { useIsOnPremise } from '../../../../../Hooks';
 import {
   useGetComplianceCustomizationsQuery,
   useGetOscapCustomizationsQuery,
 } from '../../../../../store/backendApi';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
@@ -37,7 +37,7 @@ export const SecurityInformation = (): JSX.Element => {
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const compliancePolicyTitle = useAppSelector(selectCompliancePolicyTitle);
   const fips = useAppSelector(selectFips);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const {
     data: oscapProfileInfo,

@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import { useIsOnPremise } from './useIsOnPremise';
-
 import {
   IB_HOSTED_LIGHTSPEED_DOCUMENTATION_URL,
   IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL,
   IB_ON_PREMISE_RHEL10_DOCUMENTATION_URL,
   IB_ON_PREMISE_RHEL9_DOCUMENTATION_URL,
 } from '../../constants';
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import { getHostDistro } from '../../Utilities/getHostInfo';
 
 export const useGetDocumentationUrl = () => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const [hostDistro, setHostDistro] = useState<string | null>(null);
 
   useEffect(() => {

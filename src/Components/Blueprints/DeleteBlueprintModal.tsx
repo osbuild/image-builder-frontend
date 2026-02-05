@@ -18,7 +18,6 @@ import {
 import {
   useDeleteBPWithNotification as useDeleteBlueprintMutation,
   useGetUser,
-  useIsOnPremise,
 } from '../../Hooks';
 import { backendApi, useGetBlueprintsQuery } from '../../store/backendApi';
 import {
@@ -28,6 +27,7 @@ import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { GetBlueprintsApiArg } from '../../store/imageBuilderApi';
 
@@ -46,7 +46,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const dispatch = useAppDispatch();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const searchParams: GetBlueprintsApiArg = {
     limit: blueprintsLimit,

@@ -20,10 +20,10 @@ import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useGetUser,
-  useIsOnPremise,
 } from '../../../../../Hooks';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
 import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
@@ -47,7 +47,7 @@ export const CreateSaveAndBuildBtn = ({
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const packages = useAppSelector(selectPackages);
 
@@ -142,7 +142,7 @@ export const CreateSaveButton = ({
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const packages = useAppSelector(selectPackages);
 

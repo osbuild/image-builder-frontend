@@ -10,7 +10,7 @@ import ReleaseLifecycle from './components/ReleaseLifecycle';
 import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
 
-import { useIsOnPremise } from '../../../../Hooks';
+import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintName,
@@ -24,7 +24,7 @@ import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const dispatch = useAppDispatch();
   const isImageMode = useAppSelector(selectIsImageMode);
   const blueprintName = useAppSelector(selectBlueprintName);

@@ -18,9 +18,9 @@ import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
 import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
-  useIsOnPremise,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { selectOrgId } from '../../../../../store/wizardSlice';
 import { resolveRelPath } from '../../../../../Utilities/path';
@@ -36,7 +36,7 @@ const ReviewWizardFooter = () => {
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();

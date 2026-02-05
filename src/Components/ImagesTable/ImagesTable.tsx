@@ -53,7 +53,7 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
-import { useGetUser, useIsOnPremise } from '../../Hooks';
+import { useGetUser } from '../../Hooks';
 import {
   useGetBlueprintComposesQuery,
   useGetBlueprintsQuery,
@@ -69,6 +69,7 @@ import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
+import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
@@ -103,7 +104,7 @@ const ImagesTable = () => {
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -305,7 +306,7 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
   const lastTrackedStatusRef = useRef<string | null>(null);
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { data: composeStatus } = useGetComposeStatusQuery(
     {
@@ -562,7 +563,7 @@ const Row = ({
 }: RowPropTypes) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);

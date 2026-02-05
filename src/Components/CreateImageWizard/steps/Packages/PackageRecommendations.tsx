@@ -21,11 +21,11 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
 import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../constants';
-import { useIsOnPremise } from '../../../../Hooks';
 import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
 } from '../../../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
 import {
@@ -38,7 +38,7 @@ import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const { analytics, isBeta } = useChrome();
   const dispatch = useDispatch();
 

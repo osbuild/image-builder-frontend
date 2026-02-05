@@ -25,12 +25,13 @@ import TOML from 'smol-toml';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
-import { useIsOnPremise } from '../../Hooks';
 import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
 } from '../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintExportResponse,
   BlueprintItem,
@@ -60,7 +61,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
     React.useState<wizardState>();

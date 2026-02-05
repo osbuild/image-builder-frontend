@@ -7,9 +7,10 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import { useIsOnPremise } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { LocalUploadStatus } from '../../store/cockpit/composerCloudApi';
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import { ComposesResponseItem, ImageTypes } from '../../store/imageBuilderApi';
 import { isAwss3UploadStatus } from '../../store/typeGuards';
 
@@ -23,7 +24,7 @@ export const AwsS3Instance = ({
   isExpired,
 }: AwsS3InstancePropTypes) => {
   const { analytics } = useChrome();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,

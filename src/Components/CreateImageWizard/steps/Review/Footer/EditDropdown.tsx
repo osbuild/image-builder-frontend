@@ -14,10 +14,10 @@ import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useGetUser,
-  useIsOnPremise,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
@@ -40,7 +40,7 @@ export const EditSaveAndBuildBtn = ({
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { trigger: buildBlueprint } = useComposeBlueprintMutation();
   const packages = useAppSelector(selectPackages);
@@ -104,7 +104,7 @@ export const EditSaveButton = ({
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const packages = useAppSelector(selectPackages);
 

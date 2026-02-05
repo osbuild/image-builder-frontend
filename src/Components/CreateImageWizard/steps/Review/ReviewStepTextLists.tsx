@@ -39,11 +39,11 @@ import {
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
-import { useIsOnPremise } from '../../../../Hooks';
 import {
   useGetTemplateQuery,
   useListSnapshotsByDateMutation,
 } from '../../../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
@@ -115,7 +115,7 @@ export const ImageOutputList = () => {
   const distribution = useAppSelector(selectDistribution);
   const imageSource = useAppSelector(selectImageSource);
   const arch = useAppSelector(selectArchitecture);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
   return (
@@ -410,7 +410,7 @@ export const TargetEnvOtherList = () => {
 };
 
 export const ContentList = () => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
@@ -681,7 +681,7 @@ export const RegisterAapList = () => {
 };
 
 export const RegisterNowList = () => {
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const orgId = useAppSelector(selectOrgId);
   const activationKey = useAppSelector(selectActivationKey);

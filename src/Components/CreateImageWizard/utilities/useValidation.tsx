@@ -6,8 +6,8 @@ import { jwtDecode } from 'jwt-decode';
 import { getListOfDuplicates } from './getListOfDuplicates';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
-import { useIsOnPremise } from '../../../Hooks';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
+import { selectIsOnPremise } from '../../../store/envSlice';
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
@@ -143,7 +143,7 @@ export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
   const orgId = useAppSelector(selectOrgId);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand,
   );

@@ -15,15 +15,16 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import Registration from './components/Registration';
 
-import { useGetUser, useIsOnPremise } from '../../../../Hooks';
-import { useAppDispatch } from '../../../../store/hooks';
+import { useGetUser } from '../../../../Hooks';
+import { selectIsOnPremise } from '../../../../store/envSlice';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { changeOrgId } from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
   const dispatch = useAppDispatch();
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {

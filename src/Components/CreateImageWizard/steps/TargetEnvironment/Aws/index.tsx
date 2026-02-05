@@ -23,7 +23,7 @@ import { AwsAccountId } from './AwsAccountId';
 import { AwsSourcesSelect } from './AwsSourcesSelect';
 
 import { AWS_REGIONS } from '../../../../../constants';
-import { useIsOnPremise } from '../../../../../Hooks';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAwsAccountId,
@@ -105,7 +105,7 @@ const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
 
 const Aws = () => {
   const dispatch = useAppDispatch();
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const shareMethod = useAppSelector(selectAwsShareMethod);
   const shareWithAccount = useAppSelector(selectAwsAccountId);

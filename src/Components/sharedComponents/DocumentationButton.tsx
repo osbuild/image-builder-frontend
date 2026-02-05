@@ -5,16 +5,14 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import {
-  useGetDocumentationUrl,
-  useGetUser,
-  useIsOnPremise,
-} from '../../Hooks';
+import { useGetDocumentationUrl, useGetUser } from '../../Hooks';
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 
 const DocumentationButton = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
-  const isOnPremise = useIsOnPremise();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const documentationURL = useGetDocumentationUrl();
 
   return (
