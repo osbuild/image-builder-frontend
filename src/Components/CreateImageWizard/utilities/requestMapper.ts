@@ -24,6 +24,7 @@ import {
   CockpitImageRequest,
   CockpitUploadTypes,
 } from '../../../store/cockpit/types';
+import { selectIsOnPremise } from '../../../store/envSlice';
 import {
   AapRegistration,
   AwsUploadRequestOptions,
@@ -821,11 +822,12 @@ const getImageOptions = (
   | AzureUploadRequestOptions
   | GcpUploadRequestOptions
   | CockpitAwsUploadRequestOptions => {
+  const isOnPremise = selectIsOnPremise(state);
   switch (imageType) {
     case 'aws':
       if (selectAwsShareMethod(state) === 'sources')
         return { share_with_sources: [selectAwsSourceId(state) || ''] };
-      if (!process.env.IS_ON_PREMISE)
+      if (!isOnPremise)
         return { share_with_accounts: [selectAwsAccountId(state)] };
 
       // TODO: we might want to update the image-builder-crc api

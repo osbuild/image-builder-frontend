@@ -6,6 +6,7 @@ import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
 import { cockpitApi } from './cockpit/cockpitApi';
 import { complianceApi } from './complianceApi';
 import { contentSourcesApi } from './contentSourcesApi';
+import { envSlice, selectIsOnPremise } from './envSlice';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
@@ -21,6 +22,7 @@ import wizardSlice, {
 } from './wizardSlice';
 
 export const serviceReducer = combineReducers({
+  env: envSlice.reducer,
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
@@ -32,6 +34,7 @@ export const serviceReducer = combineReducers({
 });
 
 export const onPremReducer = combineReducers({
+  env: envSlice.reducer,
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
@@ -50,12 +53,13 @@ startAppListening({
   effect: (action, listenerApi) => {
     const state = listenerApi.getState();
 
+    const isOnPremise = selectIsOnPremise(state);
     const distribution = selectDistribution(state);
     const imageTypes = selectImageTypes(state);
     const architecture = action.payload;
 
     // The response from the RTKQ getArchitectures hook
-    const architecturesResponse = process.env.IS_ON_PREMISE
+    const architecturesResponse = isOnPremise
       ? cockpitApi.endpoints.getArchitectures.select({
           distribution: distribution,
         })(state as onPremState)
@@ -80,12 +84,13 @@ startAppListening({
   effect: (action, listenerApi) => {
     const state = listenerApi.getState();
 
+    const isOnPremise = selectIsOnPremise(state);
     const distribution = action.payload;
     const imageTypes = selectImageTypes(state);
     const architecture = selectArchitecture(state);
 
     // The response from the RTKQ getArchitectures hook
-    const architecturesResponse = process.env.IS_ON_PREMISE
+    const architecturesResponse = isOnPremise
       ? cockpitApi.endpoints.getArchitectures.select({
           distribution: distribution,
         })(state as onPremState)
