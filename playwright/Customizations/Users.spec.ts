@@ -190,19 +190,20 @@ test('Create a blueprint with Users customization', async ({
   });
 
   await test.step('Test keyboard navigation and accessibility', async () => {
-    // Focus on the first user's fields for keyboard navigation testing
+    // Use the third user (index 2) because users 0 and 1 already have group chips
+    // from previous test steps, which would interfere with Tab navigation testing
     const usernameInput = frame
       .getByRole('textbox', {
         name: 'blueprint user name',
       })
-      .first();
+      .nth(2);
     const passwordInput = frame
       .getByRole('textbox', {
         name: 'blueprint user password',
       })
-      .first();
-    const sshInput = frame.getByPlaceholder('Set SSH key').first();
-    const groupInput = frame.getByPlaceholder('Add user group').first();
+      .nth(2);
+    const sshInput = frame.getByPlaceholder('Set SSH key').nth(2);
+    const groupInput = frame.getByPlaceholder('Add user group').nth(2);
 
     // Tab through fields to test keyboard navigation
     await usernameInput.press('Tab');
@@ -212,7 +213,6 @@ test('Create a blueprint with Users customization', async ({
     await expect(sshInput).toBeFocused();
 
     await sshInput.press('Tab');
-    await page.keyboard.press('Tab');
     await expect(groupInput).toBeFocused();
   });
 
