@@ -321,6 +321,16 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const [wasUsersVisited, setWasUsersVisited] = useState(false);
   const lastTrackedStepIdRef = useRef<string | undefined>();
 
+  // If register step is hidden (due to restrictions), mark it as visited
+  // so users can access optional steps. Reset it when register becomes visible again.
+  useEffect(() => {
+    if (restrictions.registration.shouldHide) {
+      setWasRegisterVisited(true);
+    } else {
+      setWasRegisterVisited(false);
+    }
+  }, [restrictions.registration.shouldHide]);
+
   useEffect(() => {
     if (isEdit) {
       return;
@@ -346,6 +356,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   ) => {
     const isVisitOptional =
       'parentId' in step && step.parentId === 'step-optional-steps';
+
+    // Network installer requires sequential navigation - no skipping steps
+    const hasNetworkInstaller = imageTypes.includes('network-installer');
 
     useEffect(() => {
       if (!isRhel(distribution)) {
@@ -392,7 +405,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           step.isDisabled ||
           (!step.isVisited &&
             !hasVisitedNextStep &&
-            !(isVisitOptional && wasRegisterVisited))
+            !(isVisitOptional && wasRegisterVisited && !hasNetworkInstaller))
         }
         isVisited={step.isVisited || false}
         stepIndex={step.index}
@@ -561,7 +574,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Register'
                 id='step-register'
                 key='step-register'
-                isHidden={!isRhel(distribution)}
+                isHidden={
+                  !isRhel(distribution) || restrictions.registration.shouldHide
+                }
                 navItem={CustomStatusNavItem}
                 status={
                   wasRegisterVisited

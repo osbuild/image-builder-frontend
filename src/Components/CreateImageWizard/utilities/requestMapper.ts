@@ -24,6 +24,7 @@ import {
   CockpitImageRequest,
   CockpitUploadTypes,
 } from '../../../store/cockpit/types';
+import { DISTRO_DETAILS } from '../../../store/distributions/constants';
 import { selectIsOnPremise } from '../../../store/envSlice';
 import {
   AapRegistration,
@@ -803,6 +804,8 @@ const uploadTypeByTargetEnv = (
       return 'aws.s3';
     case 'image-installer':
       return 'aws.s3';
+    case 'network-installer':
+      return 'aws.s3';
     case 'vsphere':
       return 'aws.s3';
     case 'vsphere-ova':
@@ -1142,6 +1145,23 @@ const getSubscription = (
 ): Subscription | undefined => {
   const registrationType = selectRegistrationType(state);
   const activationKey = selectActivationKey(state);
+  const imageTypes = selectImageTypes(state);
+
+  // Check if registration is supported for the selected image types
+  // Only check if there's exactly one image type selected
+  let registrationSupported = true;
+  if (imageTypes.length === 1 && imageTypes[0]) {
+    const imageTypeDetails = DISTRO_DETAILS[imageTypes[0]];
+    const supportedOptions = imageTypeDetails.supported_blueprint_options;
+    if (supportedOptions) {
+      registrationSupported = supportedOptions.includes('registration');
+    }
+  }
+
+  // If registration is not supported, return undefined
+  if (!registrationSupported) {
+    return undefined;
+  }
 
   if (
     registrationType === 'register-later' ||

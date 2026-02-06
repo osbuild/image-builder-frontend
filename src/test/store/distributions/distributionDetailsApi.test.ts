@@ -115,6 +115,7 @@ describe('ALL_CUSTOMIZATIONS', () => {
       'hostname',
       'firstBoot',
       'openscap',
+      'registration',
       'users',
       'fips',
       'aap',
@@ -123,8 +124,8 @@ describe('ALL_CUSTOMIZATIONS', () => {
     expect([...ALL_CUSTOMIZATIONS]).toEqual(expectedTypes);
   });
 
-  it('should have 14 customization types', () => {
-    expect(ALL_CUSTOMIZATIONS).toHaveLength(14);
+  it('should have 15 customization types', () => {
+    expect(ALL_CUSTOMIZATIONS).toHaveLength(15);
   });
 });
 

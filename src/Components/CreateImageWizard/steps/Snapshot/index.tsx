@@ -4,6 +4,7 @@ import { Content, Form, Title } from '@patternfly/react-core';
 
 import Snapshot from './components/Snapshot';
 
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 import ManageRepositoriesButton from '../Repositories/components/ManageRepositoriesButton';
 
 export default function SnapshotStep() {
@@ -19,6 +20,7 @@ export default function SnapshotStep() {
           <ManageRepositoriesButton />
         </Content>
       </Content>
+      <NetworkInstallerAlert />
       <Snapshot />
     </Form>
   );

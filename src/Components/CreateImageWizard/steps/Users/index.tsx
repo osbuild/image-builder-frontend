@@ -7,6 +7,7 @@ import UserInfo from './components/UserInfo';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectBlueprintMode } from '../../../../store/wizardSlice';
+import { NetworkInstallerAlert } from '../../../sharedComponents/NetworkInstallerAlert';
 
 type UsersStepProps = {
   attemptedNext?: boolean | undefined;
@@ -20,6 +21,7 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
       <Title headingLevel='h1' size='xl'>
         Groups and users
       </Title>
+      <NetworkInstallerAlert />
       <Title headingLevel='h2' size='lg'>
         Groups
       </Title>
