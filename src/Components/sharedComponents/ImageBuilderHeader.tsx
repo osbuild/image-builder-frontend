@@ -12,10 +12,9 @@ import { useNavigate } from 'react-router-dom';
 import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
 import { useGetDocumentationUrl } from '../../Hooks';
 import { useBackendPrefetch } from '../../store/backendApi';
-import { selectIsOnPremise } from '../../store/envSlice';
+import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
-import { resolveRelPath } from '../../Utilities/path';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
 
@@ -71,6 +70,7 @@ export const ImageBuilderHeader = ({
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const resolvePath = useAppSelector(selectPathResolver);
 
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
@@ -115,7 +115,7 @@ export const ImageBuilderHeader = ({
                   <Button
                     variant='primary'
                     data-testid='blueprints-create-button'
-                    onClick={() => navigate(resolveRelPath('imagewizard'))}
+                    onClick={() => navigate(resolvePath('imagewizard'))}
                     onMouseEnter={() =>
                       prefetchTargets({
                         distribution: distribution,

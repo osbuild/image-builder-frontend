@@ -30,7 +30,7 @@ import {
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
 } from '../../store/contentSourcesApi';
-import { selectIsOnPremise } from '../../store/envSlice';
+import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintExportResponse,
@@ -39,7 +39,6 @@ import {
 } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
-import { resolveRelPath } from '../../Utilities/path';
 import {
   mapExportRequestToState,
   mapToCustomRepositories,
@@ -248,6 +247,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setIsLoading(false);
   };
   const navigate = useNavigate();
+  const resolvePath = useAppSelector(selectPathResolver);
 
   const variantSwitch = () => {
     switch (true) {
@@ -344,7 +344,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
           type='button'
           isDisabled={isRejected || isInvalidFormat || !fileContent}
           onClick={() =>
-            navigate(resolveRelPath(`imagewizard/import`), {
+            navigate(resolvePath(`imagewizard/import`), {
               state: { blueprint: importedBlueprint },
             })
           }

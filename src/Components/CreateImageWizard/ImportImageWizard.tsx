@@ -5,22 +5,23 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import CreateImageWizard from './CreateImageWizard';
 
-import { useAppDispatch } from '../../store/hooks';
+import { selectPathResolver } from '../../store/envSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loadWizardState, wizardState } from '../../store/wizardSlice';
-import { resolveRelPath } from '../../Utilities/path';
 
 const ImportImageWizard = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const addNotification = useAddNotification();
+  const resolvePath = useAppSelector(selectPathResolver);
   const locationState = location.state as { blueprint?: wizardState };
   const blueprint = locationState.blueprint;
   useEffect(() => {
     if (blueprint) {
       dispatch(loadWizardState(blueprint));
     } else {
-      navigate(resolveRelPath(''));
+      navigate(resolvePath(''));
       addNotification({
         variant: 'warning',
         title: 'No blueprint was imported',

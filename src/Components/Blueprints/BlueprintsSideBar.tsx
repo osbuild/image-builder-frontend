@@ -39,14 +39,13 @@ import {
   setBlueprintSearchInput,
   setBlueprintsOffset,
 } from '../../store/BlueprintSlice';
-import { selectIsOnPremise } from '../../store/envSlice';
+import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
   GetBlueprintsApiArg,
 } from '../../store/imageBuilderApi';
 import { imageBuilderApi } from '../../store/service/enhancedImageBuilderApi';
-import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
@@ -64,6 +63,7 @@ const BlueprintsSidebar = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const resolvePath = useAppSelector(selectPathResolver);
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -106,7 +106,7 @@ const BlueprintsSidebar = () => {
       <EmptyBlueprintState
         icon={PlusCircleIcon}
         action={
-          <Link to={resolveRelPath('imagewizard')}>Create image blueprint</Link>
+          <Link to={resolvePath('imagewizard')}>Create image blueprint</Link>
         }
         titleText='No blueprints'
         bodyText='Create a blueprint and optionally build related images.'

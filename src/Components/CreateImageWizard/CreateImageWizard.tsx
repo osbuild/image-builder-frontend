@@ -70,7 +70,7 @@ import {
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
 import { useCustomizationRestrictions } from '../../store/distributions';
-import { selectIsOnPremise } from '../../store/envSlice';
+import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -95,7 +95,6 @@ import {
 } from '../../store/wizardSlice';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import isRhel from '../../Utilities/isRhel';
-import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -185,6 +184,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const resolvePath = useAppSelector(selectPathResolver);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const imageTypes = useAppSelector(selectImageTypes);
@@ -427,7 +427,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       >
         <Wizard
           startIndex={startIndex}
-          onClose={() => navigate(resolveRelPath(''))}
+          onClose={() => navigate(resolvePath(''))}
           isVisitRequired
         >
           <WizardStep

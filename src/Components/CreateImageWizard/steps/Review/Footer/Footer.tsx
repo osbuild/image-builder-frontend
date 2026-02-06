@@ -20,10 +20,12 @@ import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
+import {
+  selectIsOnPremise,
+  selectPathResolver,
+} from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { selectOrgId } from '../../../../../store/wizardSlice';
-import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
 
@@ -37,6 +39,7 @@ const ReviewWizardFooter = () => {
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const resolvePath = useAppSelector(selectPathResolver);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
@@ -51,7 +54,7 @@ const ReviewWizardFooter = () => {
     if (isUpdateSuccess || isCreateSuccess) {
       resetCreate();
       resetUpdate();
-      navigate(resolveRelPath(''));
+      navigate(resolvePath(''));
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
 
