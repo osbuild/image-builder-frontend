@@ -20,6 +20,8 @@ Requires:       cockpit
 Requires:       cockpit-files
 Requires:       osbuild-composer >= 131
 
+Recommends:     cockpit-machines
+
 %description
 The image-builder-frontend generates custom images suitable for
 deploying systems or uploading to the cloud. It integrates into Cockpit
