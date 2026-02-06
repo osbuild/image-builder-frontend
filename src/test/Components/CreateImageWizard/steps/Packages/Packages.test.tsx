@@ -232,7 +232,7 @@ describe('Step Packages', () => {
       name: /Search packages/i,
     });
     await screen.findByText(
-      /Search for exact matches by specifying the package name to add additional packages to your image/i,
+      /Search for additional packages to add to your image/i,
     );
   });
 
