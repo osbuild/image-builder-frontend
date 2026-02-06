@@ -4,17 +4,18 @@ import { Button } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
+import { selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
-import { resolveRelPath } from '../../Utilities/path';
 
 export const EditBlueprintButton = () => {
   const navigate = useNavigate();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const resolvePath = useAppSelector(selectPathResolver);
 
   return (
     <Button
       onClick={() =>
-        navigate(resolveRelPath(`imagewizard/${selectedBlueprintId}`))
+        navigate(resolvePath(`imagewizard/${selectedBlueprintId}`))
       }
       variant='secondary'
     >

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 import type { RootState } from '.';
 
@@ -13,6 +13,17 @@ const initialState = {
 export const selectIsOnPremise = (state: RootState) => {
   return state.env.isOnPremise;
 };
+
+export const selectPathResolver = createSelector(
+  [selectIsOnPremise],
+  (isOnPremise) =>
+    (path = ''): string => {
+      if (isOnPremise) {
+        return path.length > 0 ? path : '/';
+      }
+      return `/insights/image-builder${path.length > 0 ? `/${path}` : ''}`;
+    },
+);
 
 // NOTE: env might get confusing since there is an
 // env object already inside the wizardSlice, but this

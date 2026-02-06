@@ -6,9 +6,9 @@ import CreateImageWizard from './CreateImageWizard';
 import { mapRequestToState } from './utilities/requestMapper';
 
 import { useGetBlueprintQuery } from '../../store/backendApi';
-import { useAppDispatch } from '../../store/hooks';
+import { selectPathResolver } from '../../store/envSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loadWizardState } from '../../store/wizardSlice';
-import { resolveRelPath } from '../../Utilities/path';
 
 type EditImageWizardProps = {
   blueprintId: string;
@@ -17,6 +17,7 @@ type EditImageWizardProps = {
 const EditImageWizard = ({ blueprintId }: EditImageWizardProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const resolvePath = useAppSelector(selectPathResolver);
 
   const {
     data: blueprintDetails,
@@ -36,7 +37,7 @@ const EditImageWizard = ({ blueprintId }: EditImageWizardProps) => {
     // redirect to the main page if the composeId is invalid
 
     if (error) {
-      navigate(resolveRelPath(''));
+      navigate(resolvePath(''));
     }
   }, [error, navigate]);
   return isSuccess ? <CreateImageWizard isEdit /> : undefined;

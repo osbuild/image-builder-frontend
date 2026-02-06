@@ -18,12 +18,13 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 
+import { selectPathResolver } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import { isOciUploadStatus } from '../../store/typeGuards';
-import { resolveRelPath } from '../../Utilities/path';
 
 type LaunchProps = {
   isExpired: boolean;
@@ -35,6 +36,7 @@ export const OciLaunchModal = ({ isExpired, compose }: LaunchProps) => {
   const { data, isSuccess, isFetching } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
+  const resolvePath = useAppSelector(selectPathResolver);
 
   const navigate = useNavigate();
   if (!isSuccess) {
@@ -55,7 +57,7 @@ export const OciLaunchModal = ({ isExpired, compose }: LaunchProps) => {
         component='a'
         target='_blank'
         variant='link'
-        onClick={() => navigate(resolveRelPath(`imagewizard/${compose.id}`))}
+        onClick={() => navigate(resolvePath(`imagewizard/${compose.id}`))}
         isInline
       >
         Recreate image
