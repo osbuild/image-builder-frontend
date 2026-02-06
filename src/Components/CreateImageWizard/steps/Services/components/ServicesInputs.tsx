@@ -2,6 +2,8 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import MaskedServicesPopover from './MaskedServicesPopover';
+
 import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
 import { useAppSelector } from '../../../../../store/hooks';
 import {
@@ -89,7 +91,11 @@ const ServicesInput = () => {
           fieldName='disabledSystemdServices'
         />
       </FormGroup>
-      <FormGroup isRequired={false} label='Masked services'>
+      <FormGroup
+        isRequired={false}
+        label='Masked services'
+        labelHelp={<MaskedServicesPopover />}
+      >
         <LabelInput
           ariaLabel='Add masked service'
           placeholder='Add masked service'
