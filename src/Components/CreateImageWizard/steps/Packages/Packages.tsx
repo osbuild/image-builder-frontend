@@ -476,8 +476,7 @@ const Packages = () => {
                   variant={EmptyStateVariant.sm}
                 >
                   <EmptyStateBody>
-                    Search for exact matches by specifying the package name to
-                    add additional packages to your image
+                    Search for additional packages to add to your image
                   </EmptyStateBody>
                 </EmptyState>
               ) : (
