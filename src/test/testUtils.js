@@ -13,7 +13,14 @@ import {
   onPremReducer as onPremReducer,
   serviceReducer as reducer,
 } from '../store';
-import { resolveRelPath } from '../Utilities/path';
+
+// Test-only utility for resolving paths outside React components
+const resolveRelPath = (path = '') => {
+  if (process.env.IS_ON_PREMISE) {
+    return path.length > 0 ? path : '/';
+  }
+  return `/insights/image-builder${path.length > 0 ? `/${path}` : ''}`;
+};
 
 const defaultRoutes = [
   {
