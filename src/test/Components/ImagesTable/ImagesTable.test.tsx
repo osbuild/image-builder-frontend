@@ -11,7 +11,7 @@ describe('Images Table', () => {
 
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
-    renderCustomRoutesWithReduxRouter();
+    await renderCustomRoutesWithReduxRouter();
 
     const table = await screen.findByTestId('images-table');
 
@@ -19,7 +19,7 @@ describe('Images Table', () => {
     const emptyState = screen.queryByText(
       /Image builder is a tool for creating deployment-ready customized system images/i,
     );
-    expect(emptyState).not.toBeInTheDocument();
+    await waitFor(() => expect(emptyState).not.toBeInTheDocument());
 
     // check table
     const { getAllByRole } = within(table);
