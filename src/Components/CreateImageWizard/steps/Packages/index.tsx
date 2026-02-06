@@ -5,12 +5,14 @@ import { Content, Form, Title } from '@patternfly/react-core';
 import PackageRecommendations from './PackageRecommendations';
 import Packages from './Packages';
 
+import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
 
 const PackagesStep = () => {
   const distribution = useAppSelector(selectDistribution);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
@@ -18,6 +20,20 @@ const PackagesStep = () => {
       </Title>
       <Content>
         Blueprints created with Images include all required packages.
+      </Content>
+      <Content>
+        {isOnPremise ? (
+          <>
+            Search for exact matches by specifying the whole package name, or
+            glob using asterisk wildcards (*) before or after the package name.
+          </>
+        ) : (
+          <>
+            Search for package groups by starting your search with the
+            &apos;@&apos; character. A single &apos;@&apos; as search input
+            lists all available package groups.
+          </>
+        )}
       </Content>
       <Packages />
       {isRhel(distribution) && <PackageRecommendations />}
