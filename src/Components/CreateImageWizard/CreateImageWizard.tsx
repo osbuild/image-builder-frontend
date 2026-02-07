@@ -318,7 +318,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
-  const [wasUsersVisited, setWasUsersVisited] = useState(false);
   const lastTrackedStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
@@ -354,8 +353,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         }
       } else if (step.id === 'step-register' && step.isVisited) {
         setWasRegisterVisited(true);
-      } else if (step.id === 'wizard-users' && step.isVisited) {
-        setWasUsersVisited(true);
       }
     }, [step.id, step.isVisited]);
 
@@ -524,11 +521,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             isHidden={!restrictions.users.required}
             navItem={CustomStatusNavItem}
             status={
-              wasUsersVisited
-                ? usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
-                  ? 'error'
-                  : 'default'
+              usersStepAttemptedNext &&
+              (usersValidation.disabledNext ||
+                userGroupsValidation.disabledNext)
+                ? 'error'
                 : 'default'
             }
             footer={
@@ -688,18 +684,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
                 navItem={CustomStatusNavItem}
                 status={
-                  usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
+                  usersStepAttemptedNext &&
+                  (usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext)
                     ? 'error'
                     : 'default'
                 }
                 footer={
                   <CustomWizardFooter
-                    disableNext={
-                      usersStepAttemptedNext &&
-                      (usersValidation.disabledNext ||
-                        userGroupsValidation.disabledNext)
-                    }
                     beforeNext={() => {
                       if (
                         usersValidation.disabledNext ||
@@ -710,6 +702,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                       }
                       return true;
                     }}
+                    disableNext={
+                      usersStepAttemptedNext &&
+                      (usersValidation.disabledNext ||
+                        userGroupsValidation.disabledNext)
+                    }
                     optional={true}
                     isOnPremise={isOnPremise}
                   />
