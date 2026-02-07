@@ -78,7 +78,7 @@ const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
       isExpanded={isOpen}
       style={
         {
-          width: '100%',
+          width: '50%',
         } as React.CSSProperties
       }
     >
@@ -89,6 +89,7 @@ const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
   return (
     <Select
       isOpen={isOpen}
+      isScrollable
       selected={value}
       onSelect={onSelect}
       onOpenChange={() => setIsOpen(!isOpen)}
@@ -117,8 +118,9 @@ const Aws = () => {
         Target environment - Amazon Web Services
       </Title>
       <Content>
-        Your image will be uploaded to AWS and shared with the account you
-        provide below.
+        {isOnPremise
+          ? 'Your image will be uploaded to AWS in the region you select below.'
+          : 'Your image will be uploaded to AWS and shared with the account you provide below.'}
       </Content>
       {!isOnPremise && (
         <>
@@ -201,22 +203,24 @@ const Aws = () => {
               />
             </FormGroup>
           )}
-          <FormGroup label='Default region' isRequired>
-            {!isOnPremise && (
+          {!isOnPremise && (
+            <FormGroup label='Default region' isRequired>
               <TextInput
                 value={'us-east-1'}
                 type='text'
                 aria-label='default region'
                 readOnlyVariant='default'
               />
-            )}
-            {isOnPremise && (
+            </FormGroup>
+          )}
+          {isOnPremise && (
+            <FormGroup label='Region' isRequired>
               <AWSRegion
                 value={region || ''}
                 onChange={(v) => dispatch(changeAwsRegion(v))}
               />
-            )}
-          </FormGroup>
+            </FormGroup>
+          )}
         </>
       )}
     </Form>
