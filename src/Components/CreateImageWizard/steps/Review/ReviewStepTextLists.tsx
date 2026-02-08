@@ -90,8 +90,8 @@ import {
   selectTemplate,
   selectTimezone,
   selectUseLatest,
-  selectUserGroups,
   selectUsers,
+  UserGroup,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import MinimumSizePopover from '../FileSystem/components/MinimumSizePopover';
@@ -883,9 +883,7 @@ export const UsersList = () => {
   );
 };
 
-export const GroupsList = () => {
-  const userGroups = useAppSelector(selectUserGroups);
-
+export const GroupsList = ({ groups }: { groups: UserGroup[] }) => {
   return (
     <Table variant='compact' borders={false} className='pf-v6-u-w-50'>
       <Thead>
@@ -895,9 +893,9 @@ export const GroupsList = () => {
         </Tr>
       </Thead>
       <Tbody>
-        {userGroups.map((group) => (
+        {groups.map((group) => (
           <Tr key={group.name}>
-            <Td width={50}>{group.name ? group.name : 'None'}</Td>
+            <Td width={50}>{group.name}</Td>
             <Td>{group.gid !== undefined ? group.gid : 'None'}</Td>
           </Tr>
         ))}

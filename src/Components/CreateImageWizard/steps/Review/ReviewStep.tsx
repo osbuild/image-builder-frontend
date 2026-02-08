@@ -61,6 +61,7 @@ import {
   selectTimezone,
   selectUserGroups,
   selectUsers,
+  UserGroup,
 } from '../../../../store/wizardSlice';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
 
@@ -197,6 +198,10 @@ const Review = () => {
   };
 
   const wizardStepId = isImageMode ? 'wizard-users' : 'wizard-users-optional';
+
+  const filterNonEmptyGroups = (groups: UserGroup[]) => {
+    return groups.filter((group) => group.name.trim());
+  };
 
   return (
     <>
@@ -387,23 +392,24 @@ const Review = () => {
           <UsersList />
         </ExpandableSection>
       )}
-      {!restrictions.users.shouldHide && userGroups.length > 0 && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Groups',
-            'revisit-groups',
-            wizardStepId,
-          )}
-          onToggle={(_event, isExpandedGroups) =>
-            onToggleGroups(isExpandedGroups)
-          }
-          isExpanded={isExpandedGroups}
-          isIndented
-          data-testid='groups-expandable'
-        >
-          <GroupsList />
-        </ExpandableSection>
-      )}
+      {!restrictions.users.shouldHide &&
+        filterNonEmptyGroups(userGroups).length > 0 && (
+          <ExpandableSection
+            toggleContent={composeExpandable(
+              'Groups',
+              'revisit-groups',
+              wizardStepId,
+            )}
+            onToggle={(_event, isExpandedGroups) =>
+              onToggleGroups(isExpandedGroups)
+            }
+            isExpanded={isExpandedGroups}
+            isIndented
+            data-testid='groups-expandable'
+          >
+            <GroupsList groups={filterNonEmptyGroups(userGroups)} />
+          </ExpandableSection>
+        )}
       {!restrictions.timezone.shouldHide &&
         (timezone || (ntpServers && ntpServers.length > 0)) && (
           <ExpandableSection
