@@ -24,7 +24,7 @@ import {
   CockpitImageRequest,
   CockpitUploadTypes,
 } from '../../../store/cockpit/types';
-import { DISTRO_DETAILS } from '../../../store/distributions/constants';
+import { isCustomizationSupportedForImageTypes } from '../../../store/distributions/hooks';
 import { selectIsOnPremise } from '../../../store/envSlice';
 import {
   AapRegistration,
@@ -1147,19 +1147,7 @@ const getSubscription = (
   const activationKey = selectActivationKey(state);
   const imageTypes = selectImageTypes(state);
 
-  // Check if registration is supported for the selected image types
-  // Only check if there's exactly one image type selected
-  let registrationSupported = true;
-  if (imageTypes.length === 1 && imageTypes[0]) {
-    const imageTypeDetails = DISTRO_DETAILS[imageTypes[0]];
-    const supportedOptions = imageTypeDetails.supported_blueprint_options;
-    if (supportedOptions) {
-      registrationSupported = supportedOptions.includes('registration');
-    }
-  }
-
-  // If registration is not supported, return undefined
-  if (!registrationSupported) {
+  if (!isCustomizationSupportedForImageTypes(imageTypes, 'registration')) {
     return undefined;
   }
 

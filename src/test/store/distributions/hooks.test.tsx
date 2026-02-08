@@ -305,6 +305,53 @@ describe('useCustomizationRestrictions hook logic', () => {
       expect(result.users.shouldHide).toBe(true);
     });
 
+    it('should show customizations when network-installer is combined with another image type', () => {
+      const data: DistributionDetails = {
+        name: 'rhel-9',
+        architectures: {
+          x86_64: {
+            name: 'x86_64',
+            image_types: {
+              'network-installer': {
+                name: 'network-installer',
+                supported_blueprint_options: ['locale', 'fips'],
+              },
+              aws: {
+                name: 'aws',
+                supported_blueprint_options: [
+                  'packages',
+                  'filesystem',
+                  'users',
+                  'kernel',
+                  'hostname',
+                  'timezone',
+                  'locale',
+                  'fips',
+                ],
+              },
+            },
+          },
+        },
+      };
+
+      const result = computeRestrictions({
+        isImageMode: false,
+        isOnPremise: false,
+        arch: 'x86_64',
+        data,
+      });
+
+      // All customizations supported by either should be visible
+      expect(result.locale.shouldHide).toBe(false);
+      expect(result.fips.shouldHide).toBe(false);
+      expect(result.packages.shouldHide).toBe(false);
+      expect(result.filesystem.shouldHide).toBe(false);
+      expect(result.kernel.shouldHide).toBe(false);
+      expect(result.users.shouldHide).toBe(false);
+      expect(result.hostname.shouldHide).toBe(false);
+      expect(result.timezone.shouldHide).toBe(false);
+    });
+
     it('should handle image type with undefined supported_blueprint_options alongside one that defines it', () => {
       // aws has supported_blueprint_options with filesystem, gcp has undefined supported_blueprint_options
       const data: DistributionDetails = {
@@ -379,10 +426,12 @@ describe('RestrictionStrategy type', () => {
     const strategy: RestrictionStrategy = {
       shouldHide: false,
       required: false,
+      isAllowed: true,
     };
 
     expect(strategy).toHaveProperty('shouldHide');
     expect(strategy).toHaveProperty('required');
+    expect(strategy).toHaveProperty('isAllowed');
   });
 });
 

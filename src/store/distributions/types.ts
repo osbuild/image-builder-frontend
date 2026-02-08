@@ -49,4 +49,5 @@ export type DistributionDetailsCustomizationApi = DistributionDetails;
 export type RestrictionStrategy = {
   shouldHide: boolean;
   required: boolean;
+  isAllowed: boolean;
 };

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { ALL_CUSTOMIZATIONS } from './constants';
+import { ALL_CUSTOMIZATIONS, DISTRO_DETAILS } from './constants';
 import { distroDetailsApi as api } from './distributionDetailsApi';
 import {
   CustomizationType,
@@ -16,6 +16,26 @@ import {
   selectDistribution,
   selectIsImageMode,
 } from '../wizardSlice';
+
+export const isCustomizationSupportedForImageTypes = (
+  imageTypes: ImageTypes[],
+  customization: string,
+): boolean => {
+  if (imageTypes.length === 0) {
+    return true;
+  }
+
+  // Check if at least one image type supports the customization
+  for (const imageType of imageTypes) {
+    const supportedOptions =
+      DISTRO_DETAILS[imageType].supported_blueprint_options;
+    if (supportedOptions?.includes(customization)) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 export type ComputeRestrictionsArgs = {
   isImageMode: boolean;
@@ -41,8 +61,9 @@ export const computeRestrictions = ({
       const allowed = ['filesystem', 'users'].includes(customization);
       result[customization] = {
         shouldHide: !allowed,
-        // users is required for image-mode
+        // users are required for image-mode
         required: customization === 'users',
+        isAllowed: allowed,
       };
       continue;
     }
@@ -56,6 +77,7 @@ export const computeRestrictions = ({
       result[customization] = {
         shouldHide: true,
         required: false,
+        isAllowed: false,
       };
       continue;
     }
@@ -63,6 +85,7 @@ export const computeRestrictions = ({
     result[customization] = {
       shouldHide: false,
       required: false,
+      isAllowed: true,
     };
 
     const architectures = data?.architectures;
@@ -98,6 +121,7 @@ export const computeRestrictions = ({
     result[customization] = {
       shouldHide: !supportedOptions.has(customization),
       required: false,
+      isAllowed: supportedOptions.has(customization),
     };
   }
 

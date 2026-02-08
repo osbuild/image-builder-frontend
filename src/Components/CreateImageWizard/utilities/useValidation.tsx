@@ -7,7 +7,7 @@ import { getListOfDuplicates } from './getListOfDuplicates';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
-import { DISTRO_DETAILS } from '../../../store/distributions/constants';
+import { useCustomizationRestrictions } from '../../../store/distributions/hooks';
 import { selectIsOnPremise } from '../../../store/envSlice';
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
@@ -94,23 +94,9 @@ export type UsersStepValidation = {
 
 export function useIsBlueprintValid(): boolean {
   const imageTypes = useAppSelector(selectImageTypes);
-
-  // Helper to check if a customization is supported
-  const isCustomizationSupported = (customization: string): boolean => {
-    // If multiple targets or no target, check all validations
-    if (imageTypes.length !== 1 || !imageTypes[0]) {
-      return true;
-    }
-
-    const imageTypeDetails = DISTRO_DETAILS[imageTypes[0]];
-    const supportedOptions = imageTypeDetails.supported_blueprint_options;
-    // If no supported options defined, assume all are supported
-    if (!supportedOptions) {
-      return true;
-    }
-
-    return supportedOptions.includes(customization);
-  };
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: imageTypes,
+  });
 
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
@@ -126,27 +112,20 @@ export function useIsBlueprintValid(): boolean {
   const users = useUsersValidation();
   const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
-
   return (
-    (isCustomizationSupported('registration')
-      ? !registration.disabledNext
-      : true) &&
-    (isCustomizationSupported('filesystem')
-      ? !filesystem.disabledNext
-      : true) &&
-    (isCustomizationSupported('repositories')
-      ? !snapshot.disabledNext
-      : true) &&
-    (isCustomizationSupported('timezone') ? !timezone.disabledNext : true) &&
-    (isCustomizationSupported('locale') ? !locale.disabledNext : true) &&
-    (isCustomizationSupported('hostname') ? !hostname.disabledNext : true) &&
-    (isCustomizationSupported('kernel') ? !kernel.disabledNext : true) &&
-    (isCustomizationSupported('firewall') ? !firewall.disabledNext : true) &&
-    (isCustomizationSupported('services') ? !services.disabledNext : true) &&
-    (isCustomizationSupported('firstBoot') ? !firstBoot.disabledNext : true) &&
+    (restrictions.registration.isAllowed ? !registration.disabledNext : true) &&
+    (restrictions.filesystem.isAllowed ? !filesystem.disabledNext : true) &&
+    (restrictions.repositories.isAllowed ? !snapshot.disabledNext : true) &&
+    (restrictions.timezone.isAllowed ? !timezone.disabledNext : true) &&
+    (restrictions.locale.isAllowed ? !locale.disabledNext : true) &&
+    (restrictions.hostname.isAllowed ? !hostname.disabledNext : true) &&
+    (restrictions.kernel.isAllowed ? !kernel.disabledNext : true) &&
+    (restrictions.firewall.isAllowed ? !firewall.disabledNext : true) &&
+    (restrictions.services.isAllowed ? !services.disabledNext : true) &&
+    (restrictions.firstBoot.isAllowed ? !firstBoot.disabledNext : true) &&
     !details.disabledNext &&
-    (isCustomizationSupported('users') ? !users.disabledNext : true) &&
-    (isCustomizationSupported('users') ? !userGroups.disabledNext : true) &&
+    (restrictions.users.isAllowed ? !users.disabledNext : true) &&
+    (restrictions.users.isAllowed ? !userGroups.disabledNext : true) &&
     !azureTarget.disabledNext
   );
 }
