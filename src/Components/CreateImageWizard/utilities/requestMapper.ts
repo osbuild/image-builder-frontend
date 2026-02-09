@@ -803,6 +803,8 @@ const uploadTypeByTargetEnv = (
       return 'aws.s3';
     case 'image-installer':
       return 'aws.s3';
+    case 'network-installer':
+      return 'aws.s3';
     case 'vsphere':
       return 'aws.s3';
     case 'vsphere-ova':
