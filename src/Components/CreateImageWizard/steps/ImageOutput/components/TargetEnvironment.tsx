@@ -212,6 +212,7 @@ const TargetEnvironment = () => {
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
   const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
+  const isPXEEnabled = useFlag('image-builder.pxe-tar-xz.enabled');
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -477,6 +478,44 @@ const TargetEnvironment = () => {
               isDisabled={isOtherEnvironmentSelected}
             />
           )}
+        {isPXEEnabled && supportedEnvironments?.includes('pxe-tar-xz') && (
+          <Checkbox
+            label={
+              <>
+                Network - PXE boot (.tar.xz){' '}
+                <Popover
+                  maxWidth='30rem'
+                  position='right'
+                  bodyContent={
+                    <Content>
+                      <Content>
+                        A PXE boot image is a compressed archive containing the
+                        kernel, initramfs, and root filesystem needed to boot a
+                        system over the network using the Preboot Execution
+                        Environment (PXE) protocol.
+                      </Content>
+                    </Content>
+                  }
+                >
+                  <Button
+                    icon={<HelpIcon />}
+                    variant='plain'
+                    aria-label='About PXE boot'
+                    isInline
+                    hasNoPadding
+                  />
+                </Popover>
+              </>
+            }
+            isChecked={environments.includes('pxe-tar-xz')}
+            onChange={() => {
+              handleToggleEnvironment('pxe-tar-xz');
+            }}
+            aria-label='PXE boot image checkbox'
+            id='checkbox-pxe-boot'
+            name='PXE boot image'
+          />
+        )}
         {supportedEnvironments?.includes('wsl') && (
           <Checkbox
             label={

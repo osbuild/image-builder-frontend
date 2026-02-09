@@ -40,6 +40,8 @@ const onPremFlag = (flag: string): boolean => {
   switch (flag) {
     case 'image-builder.net-installer':
       return true;
+    case 'image-builder.pxe-tar-xz.enabled':
+      return true;
     default:
       return false;
   }

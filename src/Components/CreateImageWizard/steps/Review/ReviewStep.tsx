@@ -88,6 +88,7 @@ const Review = () => {
   const kernel = useAppSelector(selectKernel);
 
   const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
+  const isPXEEnabled = useFlag('image-builder.pxe-tar-xz.enabled');
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
@@ -308,6 +309,16 @@ const Review = () => {
                 </Content>
               </StackItem>
             )}
+          {isPXEEnabled && environments.includes('pxe-tar-xz') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['pxe-tar-xz']} (.tar.xz)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
           {environments.includes('wsl') && (
             <StackItem>
               <Content>

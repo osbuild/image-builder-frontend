@@ -811,6 +811,8 @@ const uploadTypeByTargetEnv = (
       return 'aws.s3';
     case 'ami':
       return 'aws';
+    case 'pxe-tar-xz':
+      return 'aws.s3';
     default: {
       throw new Error(`image type: ${imageType} has no implementation yet`);
     }

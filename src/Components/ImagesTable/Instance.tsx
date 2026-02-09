@@ -52,7 +52,7 @@ export const AwsS3Instance = ({
     'rhel-edge-installer': '',
     vhd: '',
     oci: '',
-    'pxe-tar-xz': '',
+    'pxe-tar-xz': '.tar.xz',
     'network-installer': '.iso',
   };
 

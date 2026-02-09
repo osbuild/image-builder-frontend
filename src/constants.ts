@@ -91,7 +91,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   'rhel-edge-installer': 'RHEL Edge Installer',
   vhd: '',
   oci: 'Oracle Cloud Infrastructure',
-  'pxe-tar-xz': '',
+  'pxe-tar-xz': 'Network - PXE Boot',
   'network-installer': 'Network - Installer',
 };
 
