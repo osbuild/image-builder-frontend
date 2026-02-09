@@ -53,7 +53,7 @@ export const AwsS3Instance = ({
     vhd: '',
     oci: '',
     'pxe-tar-xz': '',
-    'network-installer': '',
+    'network-installer': '.iso',
   };
 
   const status = composeStatus.image_status.status;
