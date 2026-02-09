@@ -92,7 +92,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   vhd: '',
   oci: 'Oracle Cloud Infrastructure',
   'pxe-tar-xz': '',
-  'network-installer': '',
+  'network-installer': 'Network - Installer',
 };
 
 export const UNIT_KIB = 1024 ** 1;

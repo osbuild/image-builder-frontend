@@ -63,6 +63,7 @@ import {
   selectUsers,
   UserGroup,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {
@@ -85,6 +86,8 @@ const Review = () => {
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
+
+  const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
@@ -294,6 +297,17 @@ const Review = () => {
               </Content>
             </StackItem>
           )}
+          {environments.includes('network-installer') &&
+            isNetworkInstallerEnabled && (
+              <StackItem>
+                <Content>
+                  <Content component={ContentVariants.h3}>
+                    {targetOptions['network-installer']} (.iso)
+                  </Content>
+                  <TargetEnvOtherList />
+                </Content>
+              </StackItem>
+            )}
           {environments.includes('wsl') && (
             <StackItem>
               <Content>

@@ -34,6 +34,7 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
+import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 
 type TargetEnvironmentCardProps = {
   title: string;
@@ -198,6 +199,7 @@ const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
+  const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
 
   // NOTE: We're using 'image-mode' as a dummy distribution for the
   // on-prem frontend, this is one of the few cases where we
@@ -401,6 +403,45 @@ const TargetEnvironment = () => {
             name='Bare metal installer'
           />
         )}
+        {supportedEnvironments?.includes('network-installer') &&
+          isNetworkInstallerEnabled && (
+            <Checkbox
+              label={
+                <>
+                  Network - Installer (.iso){' '}
+                  <Popover
+                    maxWidth='30rem'
+                    position='right'
+                    bodyContent={
+                      <Content>
+                        <Content>
+                          This is a lightweight image that differs from a
+                          standard &quot;full&quot; ISO by requiring an active
+                          network connection to pull the latest software
+                          directly from RHEL repositories, as no OS packages are
+                          stored locally on the image.
+                        </Content>
+                      </Content>
+                    }
+                  >
+                    <Button
+                      icon={<HelpIcon />}
+                      variant='plain'
+                      aria-label='About Network installer'
+                      isInline
+                      hasNoPadding
+                    />
+                  </Popover>
+                </>
+              }
+              isChecked={environments.includes('network-installer')}
+              onChange={() => {
+                handleToggleEnvironment('network-installer');
+              }}
+              id='checkbox-network-installer'
+              name='Network - Installer'
+            />
+          )}
         {supportedEnvironments?.includes('wsl') && (
           <Checkbox
             label={
