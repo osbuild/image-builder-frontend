@@ -290,10 +290,17 @@ describe('Import modal', () => {
     expect(
       await screen.findByText('Invalid NTP servers: invalid-ntp-server'),
     ).toBeInTheDocument();
-    const clearButtons = await screen.findAllByRole('button', {
-      name: /clear input/i,
-    });
-    await waitFor(async () => user.click(clearButtons[0]));
+    const timezoneDropdown =
+      await screen.findByPlaceholderText(/select a timezone/i);
+    await waitFor(() => user.click(timezoneDropdown));
+
+    const timezoneOptions = await screen.findAllByRole('option');
+    expect(timezoneOptions[0]).toHaveTextContent(/Etc\/UTC.*Default/i);
+
+    await waitFor(() => user.clear(timezoneDropdown));
+    await waitFor(() => user.type(timezoneDropdown, 'Etc/UTC'));
+    const defaultTimezone = await screen.findByText('Etc/UTC');
+    await waitFor(() => user.click(defaultTimezone));
     await waitFor(async () =>
       user.click(
         await screen.findByRole('button', {
