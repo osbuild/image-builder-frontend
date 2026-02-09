@@ -37,6 +37,23 @@ export const login = async (page: Page, staticUser: boolean = false) => {
 };
 
 /**
+ * Logs in with specific credentials
+ * @param page - the page object
+ * @param user - username
+ * @param password - password
+ */
+export const loginWithCredentials = async (
+  page: Page,
+  user: string,
+  password: string,
+) => {
+  if (isHosted()) {
+    return loginConsole(page, user, password);
+  }
+  return loginCockpit(page, user, password);
+};
+
+/**
  * Checks if the user is already authenticated, if not, logs them in
  * @param page - the page object
  * @param staticUser - if true, use the static user instead of dynamically created one
@@ -69,6 +86,44 @@ export const ensureAuthenticated = async (
   if (!isAuthenticated) {
     // Not authenticated, need to login
     await login(page, staticUser);
+  }
+};
+
+/**
+ * Checks if the user is already authenticated, if not, logs them in with specific credentials
+ * @param page - the page object
+ * @param user - username
+ * @param password - password
+ */
+export const ensureAuthenticatedWithCredentials = async (
+  page: Page,
+  user: string,
+  password: string,
+) => {
+  // Navigate to the target page
+  if (isHosted()) {
+    await page.goto('/insights/image-builder/landing');
+  } else {
+    await page.goto('/cockpit-image-builder');
+  }
+
+  // Check for authentication success indicator
+  const successIndicator = isHosted()
+    ? page.getByRole('heading', { name: 'All images' })
+    : ibFrame(page).getByRole('heading', { name: 'All images' });
+
+  let isAuthenticated = false;
+  try {
+    // Give it a 30 second period to load, it's less expensive than having to rerun the test
+    await expect(successIndicator).toBeVisible({ timeout: 30000 });
+    isAuthenticated = true;
+  } catch {
+    isAuthenticated = false;
+  }
+
+  if (!isAuthenticated) {
+    // Not authenticated, need to login
+    await loginWithCredentials(page, user, password);
   }
 };
 
