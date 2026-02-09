@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Button,
   FormGroup,
   HelperText,
   HelperTextItem,
@@ -13,10 +12,9 @@ import {
   SelectOption,
   TextInputGroup,
   TextInputGroupMain,
-  TextInputGroupUtilities,
 } from '@patternfly/react-core';
-import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 
+import { DEFAULT_TIMEZONE } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeTimezone,
@@ -59,7 +57,14 @@ const TimezoneDropDown = () => {
         setIsOpen(true);
       }
     }
-    setSelectOptions(filteredTimezones);
+
+    const sortedTimezones = [...filteredTimezones].sort((a, b) => {
+      if (a === DEFAULT_TIMEZONE) return -1;
+      if (b === DEFAULT_TIMEZONE) return 1;
+      return 0;
+    });
+
+    setSelectOptions(sortedTimezones);
 
     // This useEffect hook should run *only* on when the filter value changes.
     // eslint's exhaustive-deps rule does not support this use.
@@ -97,13 +102,6 @@ const TimezoneDropDown = () => {
     setIsOpen(!isOpen);
   };
 
-  const onClearButtonClick = () => {
-    setInputValue('');
-    setFilterValue('');
-    setErrorText('');
-    dispatch(changeTimezone(''));
-  };
-
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
@@ -120,17 +118,6 @@ const TimezoneDropDown = () => {
           placeholder='Select a timezone'
           isExpanded={isOpen}
         />
-
-        {timezone && (
-          <TextInputGroupUtilities>
-            <Button
-              icon={<TimesIcon />}
-              variant='plain'
-              onClick={onClearButtonClick}
-              aria-label='Clear input'
-            />
-          </TextInputGroupUtilities>
-        )}
       </TextInputGroup>
     </MenuToggle>
   );
@@ -151,7 +138,7 @@ const TimezoneDropDown = () => {
             selectOptions.map((option) => (
               <SelectOption key={option} value={option}>
                 {option}{' '}
-                {option === 'Etc/UTC' && (
+                {option === DEFAULT_TIMEZONE && (
                   <Label color='blue' isCompact>
                     Default
                   </Label>

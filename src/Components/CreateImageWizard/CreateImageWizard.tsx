@@ -64,6 +64,7 @@ import {
 import {
   AARCH64,
   AMPLITUDE_MODULE_NAME,
+  DEFAULT_TIMEZONE,
   RHEL_10,
   RHEL_8,
   RHEL_9,
@@ -328,7 +329,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
     const defaultTimezone =
       distribution === RHEL_10 || targetEnvironments.includes('azure')
-        ? 'Etc/UTC'
+        ? DEFAULT_TIMEZONE
         : 'America/New_York';
 
     if (!timezone) {
