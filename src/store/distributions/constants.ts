@@ -68,4 +68,11 @@ export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {
     name: 'network-installer',
     supported_blueprint_options: ['locale', 'fips'],
   },
+  'pxe-tar-xz': {
+    name: 'pxe-tar-xz',
+    supported_blueprint_options: [
+      // pxe boot has everything but filesystem
+      ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem'),
+    ],
+  },
 };
