@@ -5,6 +5,7 @@ import {
   FormGroup,
   HelperText,
   HelperTextItem,
+  Label,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -149,7 +150,12 @@ const TimezoneDropDown = () => {
           {selectOptions.length > 0 ? (
             selectOptions.map((option) => (
               <SelectOption key={option} value={option}>
-                {option}
+                {option}{' '}
+                {option === 'Etc/UTC' && (
+                  <Label color='blue' isCompact>
+                    Default
+                  </Label>
+                )}
               </SelectOption>
             ))
           ) : (

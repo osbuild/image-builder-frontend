@@ -11,7 +11,10 @@ const TimezoneStep = () => {
       <Title headingLevel='h1' size='xl'>
         Timezone
       </Title>
-      <Content>Select a timezone for your image.</Content>
+      <Content>
+        Select a timezone for your image. The default timezone is
+        &apos;Etc/UTC&apos;.
+      </Content>
       <TimezoneDropDown />
       <NtpServersInput />
     </Form>
