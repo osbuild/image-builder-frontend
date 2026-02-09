@@ -13,7 +13,8 @@ const TimezoneStep = () => {
       </Title>
       <Content>
         Select a timezone for your image. The default timezone is
-        &apos;Etc/UTC&apos;.
+        &apos;Etc/UTC&apos;. You can also configure NTP servers - multiple
+        servers can be added.
       </Content>
       <TimezoneDropDown />
       <NtpServersInput />
