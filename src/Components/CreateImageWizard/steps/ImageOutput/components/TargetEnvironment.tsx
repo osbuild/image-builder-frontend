@@ -418,8 +418,8 @@ const TargetEnvironment = () => {
                           This is a lightweight image that differs from a
                           standard &quot;full&quot; ISO by requiring an active
                           network connection to pull the latest software
-                          directly from RHEL repositories, as no OS packages are
-                          stored locally on the image.
+                          directly from package repositories, as no OS packages
+                          are stored locally on the image.
                         </Content>
                       </Content>
                     }
