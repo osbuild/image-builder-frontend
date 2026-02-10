@@ -38,6 +38,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
   if (displayAlert) {
     return (
       <Alert
+        data-testid='new-in-image-builder-banner'
         isExpandable
         style={{ margin: '0 0 16px 0' }}
         title='New in image builder: more customizations'
