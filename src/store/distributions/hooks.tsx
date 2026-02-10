@@ -8,6 +8,7 @@ import {
   RestrictionStrategy,
 } from './types';
 
+import isRhel from '../../Utilities/isRhel';
 import { selectIsOnPremise } from '../envSlice';
 import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
@@ -21,6 +22,7 @@ export type ComputeRestrictionsArgs = {
   isImageMode: boolean;
   isOnPremise: boolean;
   arch: string;
+  distro: string;
   data: DistributionDetails | undefined;
 };
 
@@ -28,6 +30,7 @@ export const computeRestrictions = ({
   isImageMode,
   isOnPremise,
   arch,
+  distro,
   data,
 }: ComputeRestrictionsArgs): Record<CustomizationType, RestrictionStrategy> => {
   const result: Record<CustomizationType, RestrictionStrategy> = {} as Record<
@@ -53,6 +56,14 @@ export const computeRestrictions = ({
       // customizations just yet
       ['repositories', 'firstBoot'].includes(customization)
     ) {
+      result[customization] = {
+        shouldHide: true,
+        required: false,
+      };
+      continue;
+    }
+
+    if (!isRhel(distro) && customization === 'registration') {
       result[customization] = {
         shouldHide: true,
         required: false,
@@ -135,9 +146,10 @@ export const useCustomizationRestrictions = ({
       isImageMode,
       isOnPremise,
       arch,
+      distro,
       data,
     });
-  }, [data, arch, isImageMode, isOnPremise]);
+  }, [data, arch, distro, isImageMode, isOnPremise]);
 
   return {
     restrictions,
