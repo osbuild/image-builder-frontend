@@ -38,8 +38,8 @@ export const useFlagWithEphemDefault = (
 
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
-    // case <flag>:
-    //   return true;
+    case 'image-builder.net-installer':
+      return true;
     default:
       return false;
   }

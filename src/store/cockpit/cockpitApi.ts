@@ -271,6 +271,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                   image_types: [
                     'guest-image',
                     'image-installer',
+                    'network-installer',
                     ...cloudImageTypes,
                   ],
                   repositories: [],
@@ -284,6 +285,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     'edge-installer',
                     'guest-image',
                     'image-installer',
+                    'network-installer',
                     'vsphere',
                     'vsphere-ova',
                     ...cloudImageTypes,
