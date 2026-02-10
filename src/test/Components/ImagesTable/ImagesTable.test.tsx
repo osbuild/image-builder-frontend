@@ -50,11 +50,44 @@ describe('Images Table', () => {
       } else {
         expect(cells[1]).toHaveTextContent(imageNameValues[index]);
       }
-      expect(cells[2]).toHaveTextContent('Apr 27, 2021');
-      expect(cells[3]).toHaveTextContent('RHEL 8');
+      // Skip image-mode compose in this shared expectations loop; it is covered
+      // explicitly in the dedicated "image mode" test below.
+      if (mockComposes[index].id !== 'image-mode-bootc-rhel9') {
+        expect(cells[2]).toHaveTextContent('Apr 27, 2021');
+        expect(cells[3]).toHaveTextContent('RHEL 8');
+      }
     });
 
     // TODO Test remaining table content.
+  });
+
+  test('displays OS from bootc reference when compose has no distribution (image mode)', async () => {
+    await renderCustomRoutesWithReduxRouter();
+
+    await screen.findByTestId('images-table');
+
+    // The image-mode entry is at the end of mockComposes (page 3).
+    // Navigate forward twice to reach it.
+    const pagination = await screen.findByTestId('images-pagination-top');
+    const nextButtons = await within(pagination).findAllByRole('button');
+    await user.click(nextButtons[nextButtons.length - 1]);
+    await user.click(nextButtons[nextButtons.length - 1]);
+
+    const table = await screen.findByTestId('images-table');
+
+    const imageModeRow = await waitFor(() => {
+      const rows = within(table).getAllByRole('row');
+      const dataRows = rows.slice(1);
+      const row = dataRows.find((r) =>
+        within(r).queryByText('image-mode-rhel9'),
+      );
+      if (!row) throw new Error('Row not found');
+      return row;
+    });
+
+    const cells = within(imageModeRow).getAllByRole('cell');
+    const osCell = cells[3];
+    expect(osCell).toHaveTextContent('RHEL 9.7');
   });
 
   test('check download compose request action', async () => {
