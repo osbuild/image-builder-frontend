@@ -16,6 +16,8 @@ import './LandingPage.scss';
 import { NewAlert } from './NewAlert';
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
+import { selectIsOnPremise } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import ImagesTable from '../ImagesTable/ImagesTable';
@@ -23,13 +25,14 @@ import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
   const [showAlert, setShowAlert] = useState(true);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
 
   const imageList = (
     <>
       <PageSection hasBodyWrapper={false}>
         {serviceUnavailable && <ServiceUnavailableAlert />}
-        {showAlert && <NewAlert setShowAlert={setShowAlert} />}
+        {!isOnPremise && showAlert && <NewAlert setShowAlert={setShowAlert} />}
         <Sidebar hasBorder className='pf-v6-u-background-color-100'>
           <SidebarPanel
             variant='sticky'

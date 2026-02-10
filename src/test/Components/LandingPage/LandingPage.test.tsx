@@ -32,4 +32,15 @@ describe('Landing Page', () => {
       /Image builder is a tool for creating deployment-ready customized system images/i,
     );
   });
+
+  test('does not show New in image builder banner when on-premises', async () => {
+    renderCustomRoutesWithReduxRouter('/', {
+      env: { isOnPremise: true },
+    });
+
+    await screen.findByRole('heading', { name: 'Image builder' });
+    expect(
+      screen.queryByTestId('new-in-image-builder-banner'),
+    ).not.toBeInTheDocument();
+  });
 });
