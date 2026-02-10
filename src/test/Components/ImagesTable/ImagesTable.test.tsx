@@ -11,7 +11,7 @@ describe('Images Table', () => {
 
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
-    renderCustomRoutesWithReduxRouter();
+    await renderCustomRoutesWithReduxRouter();
 
     const table = await screen.findByTestId('images-table');
 

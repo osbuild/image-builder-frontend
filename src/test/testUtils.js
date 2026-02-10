@@ -40,7 +40,7 @@ const cockpitRoutes = [
   },
 ];
 
-export const renderCustomRoutesWithReduxRouter = async (
+export const renderCustomRoutesWithReduxRouter = (
   route = '/',
   preloadedState = {},
   routes = process.env.IS_ON_PREMISE ? cockpitRoutes : defaultRoutes,

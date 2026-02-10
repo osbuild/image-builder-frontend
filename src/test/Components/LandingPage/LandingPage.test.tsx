@@ -12,7 +12,7 @@ describe('Landing Page', () => {
   });
 
   test('renders page heading', async () => {
-    renderCustomRoutesWithReduxRouter();
+    await renderCustomRoutesWithReduxRouter();
 
     // check heading
     const heading = await screen.findByText('Image builder');
@@ -26,7 +26,7 @@ describe('Landing Page', () => {
       }),
     );
 
-    renderCustomRoutesWithReduxRouter();
+    await renderCustomRoutesWithReduxRouter();
     // check table loads
     await screen.findByText(
       /Image builder is a tool for creating deployment-ready customized system images/i,

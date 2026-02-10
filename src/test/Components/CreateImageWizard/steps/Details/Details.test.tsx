@@ -40,7 +40,7 @@ const clickRevisitButton = async () => {
 };
 
 describe('Step Details', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
@@ -119,7 +119,7 @@ describe('Step Details', () => {
 });
 
 describe('Details request generated correctly', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 

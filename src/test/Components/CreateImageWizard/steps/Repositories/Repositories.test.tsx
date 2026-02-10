@@ -61,13 +61,13 @@ const getSecondRepoCheckbox = async () =>
 const selectFirstRepository = async () => {
   const user = userEvent.setup();
   const row0Checkbox = await getFirstRepoCheckbox();
-  await waitFor(async () => user.click(row0Checkbox));
+  await waitFor(() => user.click(row0Checkbox));
 };
 
 const deselectFirstRepository = async () => {
   const user = userEvent.setup();
   const row0Checkbox = await getFirstRepoCheckbox();
-  await waitFor(async () => user.click(row0Checkbox));
+  await waitFor(() => user.click(row0Checkbox));
 };
 
 const clickBulkSelect = async () => {
@@ -75,7 +75,7 @@ const clickBulkSelect = async () => {
   const bulkSelectCheckbox = await screen.findByRole('checkbox', {
     name: /select all/i,
   });
-  await waitFor(async () => user.click(bulkSelectCheckbox));
+  await waitFor(() => user.click(bulkSelectCheckbox));
 };
 
 const toggleSelected = async () => {
@@ -83,7 +83,7 @@ const toggleSelected = async () => {
   const selectedButton = await screen.findByRole('button', {
     name: /selected repositories/i,
   });
-  await waitFor(async () => user.click(selectedButton));
+  await waitFor(() => user.click(selectedButton));
 };
 
 const toggleAll = async () => {
@@ -254,9 +254,7 @@ describe('Repositories request generated correctly', () => {
     const user = userEvent.setup();
     const search = await screen.findByLabelText('Filter repositories');
     await waitFor(() => user.type(search, 'nginx stable repo'));
-    await waitFor(
-      () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument,
-    );
+    expect(await screen.findByText('nginx stable repo')).toBeInTheDocument();
     await selectFirstRepository();
   };
 

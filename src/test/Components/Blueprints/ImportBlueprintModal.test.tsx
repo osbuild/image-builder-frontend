@@ -293,7 +293,7 @@ describe('Import modal', () => {
     const clearButtons = await screen.findAllByRole('button', {
       name: /clear input/i,
     });
-    await waitFor(async () => user.click(clearButtons[0]));
+    await waitFor(() => user.click(clearButtons[0]));
     await waitFor(async () =>
       user.click(
         await screen.findByRole('button', {

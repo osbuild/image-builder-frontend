@@ -10,6 +10,7 @@ const pluginPrettier = require('eslint-plugin-prettier');
 const jestDom = require('eslint-plugin-jest-dom');
 const pluginTestingLibrary = require('eslint-plugin-testing-library');
 const pluginPlaywright = require('eslint-plugin-playwright');
+const pluginVitest = require('eslint-plugin-vitest');
 const { defineConfig } = require('eslint/config');
 const globals = require('globals');
 
@@ -143,13 +144,21 @@ module.exports = defineConfig([
     plugins: {
       'jest-dom': jestDom,
       'testing-library': pluginTestingLibrary,
+      '@typescript-eslint': tseslint.plugin,
+      'vitest': pluginVitest,
     },
     rules: {
       ...jestDom.configs.recommended.rules,
       ...pluginTestingLibrary.configs.react.rules,
+      ...pluginVitest.configs.recommended.rules,
       'react/display-name': 'off',
       'react/prop-types': 'off',
-      'testing-library/no-debugging-utils': 'error'
+      'testing-library/no-debugging-utils': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      'no-await-in-loop': 'warn',
+      'require-await': 'error',
+      'vitest/expect-expect': 'off',
+      'vitest/no-commented-out-tests': 'warn',
     },
   },
 

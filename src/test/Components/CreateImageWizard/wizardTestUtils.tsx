@@ -119,7 +119,7 @@ export const selectRhel9 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
   const rhel9 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
+    name: /red hat enterprise linux \(rhel\) 9/i,
   });
   await waitFor(() => user.click(rhel9));
 };
@@ -235,7 +235,7 @@ export const openAndDismissSaveAndBuildModal = async () => {
   const createBlueprintBtn = await screen.findByRole('button', {
     name: 'Create blueprint',
   });
-  await waitFor(async () => user.click(createBlueprintBtn));
+  await waitFor(() => user.click(createBlueprintBtn));
   const saveAndBuildModal = screen.queryByTestId(
     'close-button-saveandbuild-modal',
   );

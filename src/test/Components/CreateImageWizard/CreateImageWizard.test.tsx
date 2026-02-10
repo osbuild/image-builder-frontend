@@ -21,7 +21,7 @@ const selectSourcesOption = async () => {
   const sourcesOption = await screen.findByRole('radio', {
     name: /use an account configured from sources\./i,
   });
-  await waitFor(async () => user.click(sourcesOption));
+  await waitFor(() => user.click(sourcesOption));
 };
 
 const selectAllEnvironments = async () => {

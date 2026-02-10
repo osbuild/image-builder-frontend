@@ -148,7 +148,7 @@ const addSingleRecommendation = async () => {
 const addAllRecommendations = async () => {
   const user = userEvent.setup();
   const addAllBtn = await screen.findByText(/add all packages/i);
-  await waitFor(async () => user.click(addAllBtn));
+  await waitFor(() => user.click(addAllBtn));
 };
 
 const deselectRecommendation = async () => {
@@ -156,7 +156,7 @@ const deselectRecommendation = async () => {
   const row1Checkbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
-  await waitFor(async () => user.click(row1Checkbox));
+  await waitFor(() => user.click(row1Checkbox));
 };
 
 const clickRevisitButton = async () => {
