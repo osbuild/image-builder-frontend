@@ -60,3 +60,60 @@ export const distributionToOSShortId = (
   // Unknown distribution
   return undefined;
 };
+
+type BootcVersionInfo = {
+  major: string;
+  minor: string | undefined;
+};
+
+const parseBootcReference = (ref: string): BootcVersionInfo | undefined => {
+  const rhelPathMatch = ref.match(/\/rhel(\d+)\//);
+  if (!rhelPathMatch) {
+    return undefined;
+  }
+  const pathMajor = rhelPathMatch[1];
+
+  const lastColon = ref.lastIndexOf(':');
+  const tag = lastColon !== -1 ? ref.slice(lastColon + 1) : undefined;
+
+  if (tag) {
+    const majorMinor = tag.match(/^(\d+)\.(\d+)$/);
+    if (majorMinor) {
+      return { major: majorMinor[1], minor: majorMinor[2] };
+    }
+    const majorOnly = tag.match(/^(\d+)$/);
+    if (majorOnly) {
+      return { major: majorOnly[1], minor: undefined };
+    }
+  }
+
+  // Fallback: derive major from path
+  return { major: pathMajor, minor: undefined };
+};
+
+/**
+ * Maps a bootc image reference (e.g. from image mode builds) to a libosinfo shortID.
+ * Used when building Launch/Install URLs for cockpit-machines when distribution is not set.
+ * Parses the image tag to return major.minor when available.
+ *
+ * @param ref - The bootc image reference (e.g. 'registry.redhat.io/rhel9/rhel-bootc:9.7')
+ * @returns The libosinfo shortID (e.g. 'rhel9.7', 'rhel10.1', 'rhel9.0') or undefined if not mappable
+ */
+export const bootcReferenceToOSShortId = (ref: string): string | undefined => {
+  const info = parseBootcReference(ref);
+  if (!info) return undefined;
+  return `rhel${info.major}.${info.minor ?? '0'}`;
+};
+
+/**
+ * Maps a bootc image reference to a display label for the OS column.
+ * Parses the image tag to show major and minor version when available.
+ *
+ * @param ref - The bootc image reference (e.g. 'registry.redhat.io/rhel10/rhel-bootc:10.1')
+ * @returns Display label (e.g. 'RHEL 10.1', 'RHEL 9') or 'Image mode' if not recognized
+ */
+export const bootcReferenceToOSDisplayLabel = (ref: string): string => {
+  const info = parseBootcReference(ref);
+  if (!info) return 'Image mode';
+  return info.minor ? `RHEL ${info.major}.${info.minor}` : `RHEL ${info.major}`;
+};

@@ -207,6 +207,27 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   },
+  // Cockpit-only: bootc field and 'local' upload type are not in the hosted API types yet
+  {
+    id: 'image-mode-bootc-rhel9',
+    image_name: 'image-mode-rhel9',
+    created_at: '2024-01-15T10:00:00Z',
+    request: {
+      bootc: {
+        reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+      },
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'guest-image',
+          upload_request: {
+            type: 'local',
+            options: {},
+          },
+        },
+      ],
+    },
+  } as unknown as ComposesResponseItem,
   {
     created_at: '2021-04-27T12:31:12Z',
     id: 'b7193673-8dcc-4a5f-ac30-e9f4940d8346',
@@ -419,6 +440,10 @@ export const mockComposes: ComposesResponseItem[] = [
   },
 ];
 
+export const mockComposeImageModeRhel9 = mockComposes.find(
+  (c) => c.id === 'image-mode-bootc-rhel9',
+)!;
+
 /**
  * MockStatus should have the same composeRequest as the one defined in the
  * composes, and the order should be identical.
@@ -481,6 +506,34 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         ],
       },
     },
+    // Cockpit-only: bootc field and 'local' upload type are not in the hosted API types yet
+    'image-mode-bootc-rhel9': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            artifact_path: '/var/lib/osbuild/store/image-mode-rhel9.qcow2',
+          },
+          status: 'success',
+          type: 'local',
+        },
+      },
+      request: {
+        bootc: {
+          reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'local',
+              options: {},
+            },
+          },
+        ],
+      },
+    } as unknown as ComposeStatus,
     'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa': {
       image_status: {
         status: 'failure',
