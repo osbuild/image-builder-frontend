@@ -69,7 +69,7 @@ const deselectAwsAndSelectGuestImage = async () => {
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await waitFor(async () => user.click(guestImageCheckbox));
+  await waitFor(() => user.click(guestImageCheckbox));
 };
 
 const chooseManualOption = async () => {
@@ -77,7 +77,7 @@ const chooseManualOption = async () => {
   const manualOption = await screen.findByText(
     /manually enter an account id\./i,
   );
-  await waitFor(async () => user.click(manualOption));
+  await waitFor(() => user.click(manualOption));
 };
 
 const enterAccountId = async () => {
@@ -85,7 +85,7 @@ const enterAccountId = async () => {
   const awsAccountIdTextbox = await screen.findByRole('textbox', {
     name: 'aws account id',
   });
-  await waitFor(async () => user.type(awsAccountIdTextbox, '123123123123'));
+  await waitFor(() => user.type(awsAccountIdTextbox, '123123123123'));
 };
 
 const chooseSourcesOption = async () => {
@@ -106,12 +106,12 @@ const getSourceDropdown = async () => {
 const selectSource = async () => {
   const user = userEvent.setup();
   const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
-  await waitFor(async () => user.click(sourceTexbox));
+  await waitFor(() => user.click(sourceTexbox));
 
   const sourceOption = await screen.findByRole('option', {
     name: /my_source/i,
   });
-  await waitFor(async () => user.click(sourceOption));
+  await waitFor(() => user.click(sourceOption));
 };
 
 let router: RemixRouter | undefined = undefined;

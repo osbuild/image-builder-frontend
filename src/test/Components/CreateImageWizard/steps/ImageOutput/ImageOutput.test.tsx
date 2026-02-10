@@ -115,7 +115,7 @@ const selectGuestImageTarget = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
 };
 
-const verifyNameInReviewStep = async (name: string) => {
+const verifyNameInReviewStep = (name: string) => {
   const region = screen.getByRole('region', {
     name: /details revisit step/i,
   });

@@ -235,7 +235,7 @@ export const openAndDismissSaveAndBuildModal = async () => {
   const createBlueprintBtn = await screen.findByRole('button', {
     name: 'Create blueprint',
   });
-  await waitFor(async () => user.click(createBlueprintBtn));
+  await waitFor(() => user.click(createBlueprintBtn));
   const saveAndBuildModal = screen.queryByTestId(
     'close-button-saveandbuild-modal',
   );

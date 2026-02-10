@@ -231,7 +231,7 @@ describe('Step Services', () => {
 });
 
 describe('Services request generated correctly', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 

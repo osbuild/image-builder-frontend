@@ -30,7 +30,7 @@ const goToSnapshotStep = async () => {
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await waitFor(async () => user.click(guestImageCheckBox));
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await goToStep(/Repeatable build/);
@@ -49,7 +49,7 @@ const searchForRepository = async (repo: string) => {
   const user = userEvent.setup();
   const search = await screen.findByLabelText('Filter repositories');
   await waitFor(() => user.type(search, repo));
-  await waitFor(() => expect(screen.getByText(repo)).toBeInTheDocument);
+  expect(await screen.findByText(repo)).toBeInTheDocument();
 };
 
 const selectFirstRepository = async () => {
@@ -57,7 +57,7 @@ const selectFirstRepository = async () => {
   const row0Checkbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
-  await waitFor(async () => user.click(row0Checkbox));
+  await waitFor(() => user.click(row0Checkbox));
 };
 
 const clickBulkSelect = async () => {
@@ -65,7 +65,7 @@ const clickBulkSelect = async () => {
   const bulkSelectCheckbox = await screen.findByRole('checkbox', {
     name: /select all/i,
   });
-  await waitFor(async () => user.click(bulkSelectCheckbox));
+  await waitFor(() => user.click(bulkSelectCheckbox));
 };
 
 const selectUseSnapshot = async () => {
@@ -73,7 +73,7 @@ const selectUseSnapshot = async () => {
   const snapshotRadio = await screen.findByRole('radio', {
     name: /Enable repeatable build/i,
   });
-  await waitFor(async () => user.click(snapshotRadio));
+  await waitFor(() => user.click(snapshotRadio));
 };
 
 const updateDatePickerWithValue = async (date: string) => {
@@ -81,8 +81,8 @@ const updateDatePickerWithValue = async (date: string) => {
   const dateTextbox = await screen.findByRole('textbox', {
     name: /Date picker/i,
   });
-  await waitFor(async () => user.clear(dateTextbox));
-  await waitFor(async () => user.type(dateTextbox, date));
+  await waitFor(() => user.clear(dateTextbox));
+  await waitFor(() => user.type(dateTextbox, date));
 };
 
 const datePickerValue = async () => {
@@ -95,7 +95,7 @@ const datePickerValue = async () => {
 const clickContentDropdown = async () => {
   const user = userEvent.setup();
   const contentExpandable = await screen.findByTestId('content-expandable');
-  await waitFor(async () => user.click(contentExpandable));
+  await waitFor(() => user.click(contentExpandable));
 };
 
 const getSnapshotMethodElement = async () =>
@@ -106,7 +106,7 @@ const clickReset = async () => {
   const resetButton = await screen.findByRole('button', {
     name: /Reset/i,
   });
-  await waitFor(async () => user.click(resetButton));
+  await waitFor(() => user.click(resetButton));
 };
 
 const selectUseTemplate = async () => {
@@ -114,7 +114,7 @@ const selectUseTemplate = async () => {
   const templateRadio = await screen.findByRole('radio', {
     name: /Use a content template/i,
   });
-  await waitFor(async () => user.click(templateRadio));
+  await waitFor(() => user.click(templateRadio));
 };
 
 const selectFirstTemplate = async () => {
@@ -122,10 +122,10 @@ const selectFirstTemplate = async () => {
   const row0Radio = await screen.findByRole('radio', {
     name: /select row 0/i,
   });
-  await waitFor(async () => user.click(row0Radio));
+  await waitFor(() => user.click(row0Radio));
 };
 
-describe('repository snapshot tab - ', () => {
+describe('repository snapshot tab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -251,7 +251,7 @@ describe('repository snapshot tab - ', () => {
     expect(await datePickerValue()).toBe(dateStr);
   });
 
-  test('select using bulk select works ', async () => {
+  test('select using bulk select works', async () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
@@ -260,7 +260,7 @@ describe('repository snapshot tab - ', () => {
     await searchForRepository('01-test-valid-repo');
 
     // wait until there's only 1 repository on the page
-    await waitFor(async () => {
+    await waitFor(() => {
       const rows = screen.getAllByRole('row');
       // header row + repo row
       expect(rows).toHaveLength(2);

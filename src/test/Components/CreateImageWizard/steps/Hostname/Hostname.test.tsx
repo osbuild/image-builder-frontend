@@ -130,7 +130,7 @@ describe('Step Hostname', () => {
 });
 
 describe('Hostname request generated correctly', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 

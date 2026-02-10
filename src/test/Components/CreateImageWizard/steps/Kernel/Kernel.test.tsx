@@ -233,7 +233,7 @@ describe('Step Kernel', () => {
 });
 
 describe('Kernel request generated correctly', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 

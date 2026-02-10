@@ -71,7 +71,7 @@ const deselectAzureAndSelectGuestImage = async () => {
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await waitFor(async () => user.click(guestImageCheckbox));
+  await waitFor(() => user.click(guestImageCheckbox));
 };
 
 const selectV1 = async () => {

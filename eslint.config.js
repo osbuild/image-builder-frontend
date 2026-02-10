@@ -158,6 +158,7 @@ module.exports = defineConfig([
       'no-await-in-loop': 'warn',
       'require-await': 'error',
       'vitest/expect-expect': 'off',
+      'vitest/no-commented-out-tests': 'warn',
     },
   },
 

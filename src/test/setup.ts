@@ -29,7 +29,7 @@ vi.stubGlobal('ResizeObserver', MockResizeObserver);
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   default: () => ({
     auth: {
-      getUser: async () => ({
+      getUser: () => ({
         identity: {
           internal: {
             org_id: 5,
