@@ -19,6 +19,7 @@ import {
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
+import { useCustomizationRestrictions } from '../../../../../store/distributions';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
@@ -26,6 +27,7 @@ import { provisioningApi } from '../../../../../store/provisioningApi';
 import { rhsmApi } from '../../../../../store/rhsmApi';
 import {
   addImageType,
+  changeRegistrationType,
   reinitializeAws,
   reinitializeAzure,
   reinitializeGcp,
@@ -211,6 +213,10 @@ const TargetEnvironment = () => {
   const distribution = useAppSelector(selectDistribution);
   const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
 
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: environments,
+  });
+
   // NOTE: We're using 'image-mode' as a dummy distribution for the
   // on-prem frontend, this is one of the few cases where we
   // can't work around the type error. This is fine because
@@ -231,6 +237,13 @@ const TargetEnvironment = () => {
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const registrationType = restrictions.registration.shouldHide
+      ? 'register-later'
+      : 'register-now-rhc';
+    dispatch(changeRegistrationType(registrationType));
+  }, [restrictions.registration.shouldHide, dispatch]);
 
   const supportedEnvironments = data?.find(
     (elem) => elem.arch === arch,

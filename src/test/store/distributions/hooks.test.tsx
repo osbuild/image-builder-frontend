@@ -11,14 +11,17 @@ import {
 const computeRestrictionStrategy = ({
   isImageMode,
   isOnPremise,
+  distro = 'rhel-9',
 }: {
   isImageMode: boolean;
   isOnPremise: boolean;
+  distro?: string;
 }) => {
   return computeRestrictions({
     isImageMode,
     isOnPremise,
     arch: 'x86_64',
+    distro,
     data: undefined,
   });
 };
@@ -118,6 +121,41 @@ describe('useCustomizationRestrictions hook logic', () => {
     });
   });
 
+  describe('non-RHEL distribution restrictions', () => {
+    it('should hide registration for non-RHEL distributions', () => {
+      const result = computeRestrictionStrategy({
+        isImageMode: false,
+        isOnPremise: false,
+        distro: 'centos-9',
+      });
+
+      expect(result.registration.shouldHide).toBe(true);
+      expect(result.registration.required).toBe(false);
+    });
+
+    it('should not hide registration for RHEL distributions', () => {
+      const result = computeRestrictionStrategy({
+        isImageMode: false,
+        isOnPremise: false,
+        distro: 'rhel-9',
+      });
+
+      expect(result.registration.shouldHide).toBe(false);
+    });
+
+    it('should not hide other customizations for non-RHEL distributions', () => {
+      const result = computeRestrictionStrategy({
+        isImageMode: false,
+        isOnPremise: false,
+        distro: 'centos-9',
+      });
+
+      expect(result.packages.shouldHide).toBe(false);
+      expect(result.filesystem.shouldHide).toBe(false);
+      expect(result.users.shouldHide).toBe(false);
+    });
+  });
+
   describe('combined restrictions', () => {
     it('should combine image mode and on-premise restrictions', () => {
       const result = computeRestrictionStrategy({
@@ -191,6 +229,7 @@ describe('useCustomizationRestrictions hook logic', () => {
         isImageMode: false,
         isOnPremise: false,
         arch: 'x86_64',
+        distro: 'rhel-9',
         data,
       });
 
@@ -223,6 +262,7 @@ describe('useCustomizationRestrictions hook logic', () => {
         isImageMode: false,
         isOnPremise: false,
         arch: 'x86_64',
+        distro: 'rhel-9',
         data,
       });
 
@@ -261,6 +301,7 @@ describe('useCustomizationRestrictions hook logic', () => {
         isImageMode: false,
         isOnPremise: false,
         arch: 'x86_64',
+        distro: 'rhel-9',
         data,
       });
 
@@ -291,6 +332,7 @@ describe('useCustomizationRestrictions hook logic', () => {
         isImageMode: false,
         isOnPremise: false,
         arch: 'x86_64',
+        distro: 'rhel-9',
         data,
       });
 
@@ -330,6 +372,7 @@ describe('useCustomizationRestrictions hook logic', () => {
         isImageMode: false,
         isOnPremise: false,
         arch: 'x86_64',
+        distro: 'rhel-9',
         data,
       });
 
@@ -362,6 +405,7 @@ describe('useCustomizationRestrictions hook logic', () => {
         isImageMode: false,
         isOnPremise: false,
         arch: 'x86_64',
+        distro: 'rhel-9',
         data,
       });
 
