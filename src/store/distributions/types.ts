@@ -12,6 +12,7 @@ export type CustomizationType =
   | 'hostname'
   | 'firstBoot'
   | 'openscap'
+  | 'registration'
   | 'users'
   | 'fips'
   | 'aap';
