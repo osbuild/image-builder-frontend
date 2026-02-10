@@ -13,8 +13,11 @@ import { LocalUploadStatus } from '../../store/cockpit/composerCloudApi';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { ComposesResponseItem, ImageTypes } from '../../store/imageBuilderApi';
-import { isAwss3UploadStatus } from '../../store/typeGuards';
-import { distributionToOSShortId } from '../../Utilities/distributionToOSShortId';
+import { hasBootcRequest, isAwss3UploadStatus } from '../../store/typeGuards';
+import {
+  bootcReferenceToOSShortId,
+  distributionToOSShortId,
+} from '../../Utilities/distributionToOSShortId';
 
 type AwsS3InstancePropTypes = {
   compose: ComposesResponseItem;
@@ -139,8 +142,14 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   const canInstallInMachines =
     isMachinesAvailable && VM_INSTALLABLE_IMAGE_TYPES.includes(imageType);
 
-  // Parameters for cockpit-machines
-  const osShortId = distributionToOSShortId(compose.request.distribution);
+  // Parameters for cockpit-machines (derive OS from distribution or, for image mode, from bootc reference)
+  const bootcCompose = hasBootcRequest(compose) ? compose : undefined;
+  const bootcRef = bootcCompose?.request.bootc?.reference;
+  const dist = compose.request.distribution;
+  const osShortId =
+    distributionToOSShortId(dist) ||
+    (bootcRef && bootcReferenceToOSShortId(bootcRef)) ||
+    undefined;
   const vmName = (compose.request as unknown as { name?: string }).name || '';
 
   // Build cockpit-machines URLs for Create VM dialog
