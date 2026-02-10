@@ -105,9 +105,6 @@ type LocalInstancePropTypes = {
 // Image types that can be imported into cockpit-machines as VM disk images
 const VM_IMPORTABLE_IMAGE_TYPES: ImageTypes[] = ['guest-image'];
 
-// Image types that can be used as installation media in cockpit-machines
-const VM_INSTALLABLE_IMAGE_TYPES: ImageTypes[] = ['image-installer'];
-
 export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   const isMachinesAvailable = useCockpitMachinesAvailable();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
@@ -133,8 +130,6 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   const imageType = compose.request.image_requests[0]?.image_type;
   const canLaunchInMachines =
     isMachinesAvailable && VM_IMPORTABLE_IMAGE_TYPES.includes(imageType);
-  const canInstallInMachines =
-    isMachinesAvailable && VM_INSTALLABLE_IMAGE_TYPES.includes(imageType);
 
   // Parameters for cockpit-machines
   const osShortId = distributionToOSShortId(compose.request.distribution);
@@ -170,40 +165,24 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
           Open in file browser
         </Button>
       </FlexItem>
-      {canLaunchInMachines && (
-        <FlexItem>
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            onClick={(ev) => {
-              ev.preventDefault();
-              cockpit.jump(launchHref, cockpit.transport.host);
-            }}
-            href={launchHref}
-            isInline
-          >
-            Launch
-          </Button>
-        </FlexItem>
-      )}
-      {canInstallInMachines && (
-        <FlexItem>
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            onClick={(ev) => {
-              ev.preventDefault();
-              cockpit.jump(installHref, cockpit.transport.host);
-            }}
-            href={installHref}
-            isInline
-          >
-            Install
-          </Button>
-        </FlexItem>
-      )}
+      <FlexItem>
+        <Button
+          component='a'
+          target='_blank'
+          variant='link'
+          onClick={(ev) => {
+            ev.preventDefault();
+            cockpit.jump(
+              canLaunchInMachines ? launchHref : installHref,
+              cockpit.transport.host,
+            );
+          }}
+          href={canLaunchInMachines ? launchHref : installHref}
+          isInline
+        >
+          Create VM
+        </Button>
+      </FlexItem>
     </Flex>
   );
 };
