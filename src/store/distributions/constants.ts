@@ -12,6 +12,7 @@ export const ALL_CUSTOMIZATIONS = [
   'hostname',
   'firstBoot',
   'openscap',
+  'registration',
   'users',
   'fips',
   'aap',
