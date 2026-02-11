@@ -6,6 +6,7 @@ import {
   Select,
   SelectList,
   SelectOption,
+  Tooltip,
 } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -66,6 +67,8 @@ const MountpointPrefix = ({
     setIsOpen(!isOpen);
   };
 
+  const isDisabled = customization === 'fileSystem' && prefix === '/';
+
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
@@ -73,14 +76,14 @@ const MountpointPrefix = ({
       isExpanded={isOpen}
       // disable root partition prefix for filesystem customization
       // ensuring it will stay present
-      isDisabled={customization === 'fileSystem' && prefix === '/'}
+      isDisabled={isDisabled}
       isFullWidth
     >
       {prefix}
     </MenuToggle>
   );
 
-  return (
+  const select = (
     <Select
       isOpen={isOpen}
       selected={prefix}
@@ -108,6 +111,14 @@ const MountpointPrefix = ({
           })}
       </SelectList>
     </Select>
+  );
+
+  return isDisabled ? (
+    <Tooltip content='Root partition is required'>
+      <div>{select}</div>
+    </Tooltip>
+  ) : (
+    select
   );
 };
 
