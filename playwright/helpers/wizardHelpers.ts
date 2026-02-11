@@ -5,7 +5,7 @@ import * as path from 'path';
 
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { closePopupsIfExist, getHostDistroName, isHosted } from './helpers';
+import { closePopupsIfExist, getHostDistroKey, isHosted } from './helpers';
 import { ibFrame, navigateToLandingPage } from './navHelpers';
 
 import isRhel from '../../src/Utilities/isRhel';
@@ -57,7 +57,7 @@ export const fillInDetails = async (
  * @param page - the page object
  */
 export const registerLater = async (page: Page | FrameLocator) => {
-  if (isHosted() || isRhel(getHostDistroName())) {
+  if (isHosted() || isRhel(getHostDistroKey())) {
     await page.getByRole('button', { name: 'Register' }).click();
     await page.getByRole('radio', { name: 'Register later' }).click();
   }

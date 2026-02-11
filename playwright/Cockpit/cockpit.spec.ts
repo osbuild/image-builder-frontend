@@ -4,9 +4,8 @@ import { expect } from '@playwright/test';
 import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
-import isRhel from '../../src/Utilities/isRhel';
 import { test } from '../fixtures/customizations';
-import { getHostDistroName, isHosted } from '../helpers/helpers';
+import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import { ibFrame, navigateToLandingPage } from '../helpers/navHelpers';
 import { deleteBlueprint, registerLater } from '../helpers/wizardHelpers';
