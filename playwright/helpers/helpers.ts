@@ -67,7 +67,7 @@ const ON_PREM_RELEASES = new Map([
 ]);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getHostDistroName = (): string => {
+export const getHostDistroKey = (): string => {
   const osRelData = readFileSync('/etc/os-release');
   const lines = osRelData
     .toString('utf-8')
@@ -80,17 +80,21 @@ export const getHostDistroName = (): string => {
     (osRel as any)[lineData[0]] = lineData[1].replace(/"/g, '');
   }
 
-  // strip minor version from rhel
-  const distro = ON_PREM_RELEASES.get(
-    `${(osRel as any)['ID']}-${(osRel as any)['VERSION_ID'].split('.')[0]}`,
-  );
-
-  if (distro === undefined) {
+  const key = `${(osRel as any)['ID']}-${(osRel as any)['VERSION_ID'].split('.')[0]}`;
+  if (!ON_PREM_RELEASES.has(key)) {
     /* eslint-disable no-console */
-    console.error('getHostDistroName failed, os-release config:', osRel);
+    console.error('getHostDistroKey failed, os-release config:', osRel);
+    throw new Error('getHostDistroKey failed, distro not in ON_PREM_RELEASES');
+  }
+  return key;
+};
+
+export const getHostDistroName = (): string => {
+  const key = getHostDistroKey();
+  const distro = ON_PREM_RELEASES.get(key);
+  if (distro === undefined) {
     throw new Error('getHostDistroName failed, distro undefined');
   }
-
   return distro;
 };
 
