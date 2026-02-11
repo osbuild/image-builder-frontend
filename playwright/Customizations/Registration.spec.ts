@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import isRhel from '../../src/Utilities/isRhel';
 import { test } from '../fixtures/customizations';
 import {
-  getHostDistroName,
+  getHostDistroKey,
   isHosted,
   uploadCertificateFile,
 } from '../helpers/helpers';
@@ -74,7 +74,7 @@ const registrationModes = [
         // Hosted: Select an activation key from dropdown
         await frame.getByRole('button', { name: 'Menu toggle' }).click();
         await frame.getByRole('option', { name: 'activation-key-' }).click();
-      } else if (isRhel(getHostDistroName())) {
+      } else if (isRhel(getHostDistroKey())) {
         // On-premise RHEL: Fill activation key and organization ID input fields
         await frame.getByRole('textbox', { name: 'activation key' }).fill(' ');
         await expect(
@@ -144,7 +144,7 @@ registrationModes.forEach(
       }
 
       test('Create, Edit, and Import', async ({ page, cleanup }) => {
-        if (!isHosted() && !isRhel(getHostDistroName())) {
+        if (!isHosted() && !isRhel(getHostDistroKey())) {
           test.skip(
             true,
             'Registration is only available for RHEL distributions on-premise',
@@ -218,7 +218,7 @@ registrationModes.forEach(
             // Check activation key display based on environment
             if (isHosted()) {
               await expect(frame.getByText('activation-key-')).toBeVisible();
-            } else if (isRhel(getHostDistroName())) {
+            } else if (isRhel(getHostDistroKey())) {
               await expect(
                 frame.getByText('test-activation-key'),
               ).toBeVisible();
@@ -276,7 +276,7 @@ registrationModes.forEach(
             // Check activation key display based on environment
             if (isHosted()) {
               await expect(frame.getByText('activation-key-')).toBeVisible();
-            } else if (isRhel(getHostDistroName())) {
+            } else if (isRhel(getHostDistroKey())) {
               await expect(
                 frame.getByText('test-activation-key'),
               ).toBeVisible();
