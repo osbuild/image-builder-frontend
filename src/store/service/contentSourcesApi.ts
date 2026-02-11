@@ -45,6 +45,8 @@ const injectedRtkApi = api.injectEndpoints({
           status: queryArg.status,
           origin: queryArg.origin,
           content_type: queryArg.contentType,
+          extended_release: queryArg.extendedRelease,
+          extended_release_version: queryArg.extendedReleaseVersion,
         },
       }),
     }),
@@ -172,6 +174,10 @@ export type ListRepositoriesApiArg = {
   origin?: string;
   /** content type of a repository to filter on (rpm) */
   contentType?: string;
+  /** A comma separated list of extended release types to filter on (eus, e4s), or 'none' to filter out extended release repositories */
+  extendedRelease?: string;
+  /** A comma separated list of extended release versions to filter on (e.g. 9.4,9.6) */
+  extendedReleaseVersion?: string;
 };
 export type CreateRepositoryApiResponse =
   /** status 201 Created */ ApiRepositoryResponseRead;
@@ -391,6 +397,10 @@ export type ApiRepositoryResponse = {
   distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
   distribution_versions?: string[] | undefined;
+  /** Extended release type (eus, e4s) */
+  extended_release?: string | undefined;
+  /** Extended release version (9.4, 9.6, etc.) */
+  extended_release_version?: string | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
@@ -447,6 +457,10 @@ export type ApiRepositoryResponseRead = {
   distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
   distribution_versions?: string[] | undefined;
+  /** Extended release type (eus, e4s) */
+  extended_release?: string | undefined;
+  /** Extended release version (9.4, 9.6, etc.) */
+  extended_release_version?: string | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
@@ -577,6 +591,10 @@ export type ApiRepositoryImportResponse = {
   distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
   distribution_versions?: string[] | undefined;
+  /** Extended release type (eus, e4s) */
+  extended_release?: string | undefined;
+  /** Extended release version (9.4, 9.6, etc.) */
+  extended_release_version?: string | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
@@ -639,6 +657,10 @@ export type ApiRepositoryImportResponseRead = {
   distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
   distribution_versions?: string[] | undefined;
+  /** Extended release type (eus, e4s) */
+  extended_release?: string | undefined;
+  /** Extended release version (9.4, 9.6, etc.) */
+  extended_release_version?: string | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
