@@ -63,14 +63,14 @@ const TargetEnvironmentCard = ({
       isDisabled={isDisabled}
       isClickable
       isLarge
-      onClick={handleOnClick}
+      onClick={isDisabled ? undefined : handleOnClick}
     >
       <CardHeader
         selectableActions={{
           name: title,
           selectableActionId: title.toLowerCase(),
           selectableActionAriaLabel: title.toLowerCase(),
-          onClickAction: handleOnClick,
+          ...(!isDisabled && { onClickAction: handleOnClick }),
         }}
       >
         <Flex direction={{ default: 'column' }}>
@@ -93,6 +93,7 @@ type PublicCloudTargetsProps = {
   environments: ImageTypes[];
   handleToggleEnvironment: (environment: ImageTypes) => void;
   prefetchSources: (arg: { provider: 'aws' | 'azure' | 'gcp' }) => void;
+  isDisabled?: boolean;
 };
 
 const PublicCloudTargets = ({
@@ -100,6 +101,7 @@ const PublicCloudTargets = ({
   environments,
   handleToggleEnvironment,
   prefetchSources,
+  isDisabled = false,
 }: PublicCloudTargetsProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
@@ -114,6 +116,7 @@ const PublicCloudTargets = ({
             aria-label='Amazon Web Services checkbox'
             id='checkbox-aws'
             name='Amazon Web Services'
+            isDisabled={isDisabled}
           />
         )}
         {supportedEnvironments?.includes('gcp') && (
@@ -124,6 +127,7 @@ const PublicCloudTargets = ({
             aria-label='Google Cloud checkbox'
             id='checkbox-gcp'
             name='Google Cloud'
+            isDisabled={isDisabled}
           />
         )}
         {supportedEnvironments?.includes('azure') && (
@@ -134,6 +138,7 @@ const PublicCloudTargets = ({
             aria-label='Microsoft Azure checkbox'
             id='checkbox-azure'
             name='Microsoft Azure'
+            isDisabled={isDisabled}
           />
         )}
         {supportedEnvironments?.includes('oci') && (
@@ -144,6 +149,7 @@ const PublicCloudTargets = ({
             aria-label='Oracle Cloud Infrastructure checkbox'
             id='checkbox-oci'
             name='Oracle Cloud Infrastructure'
+            isDisabled={isDisabled}
           />
         )}
       </>
@@ -160,6 +166,7 @@ const PublicCloudTargets = ({
           handleOnClick={() => handleToggleEnvironment('aws')}
           onMouseEnter={() => prefetchSources({ provider: 'aws' })}
           isClicked={environments.includes('aws')}
+          isDisabled={isDisabled}
         />
       )}
       {supportedEnvironments?.includes('gcp') && (
@@ -170,6 +177,7 @@ const PublicCloudTargets = ({
           handleOnClick={() => handleToggleEnvironment('gcp')}
           onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
           isClicked={environments.includes('gcp')}
+          isDisabled={isDisabled}
         />
       )}
       {supportedEnvironments?.includes('azure') && (
@@ -180,6 +188,7 @@ const PublicCloudTargets = ({
           handleOnClick={() => handleToggleEnvironment('azure')}
           onMouseEnter={() => prefetchSources({ provider: 'azure' })}
           isClicked={environments.includes('azure')}
+          isDisabled={isDisabled}
         />
       )}
       {supportedEnvironments?.includes('oci') && (
@@ -189,6 +198,7 @@ const PublicCloudTargets = ({
           imageAlt='Oracle Cloud Infrastructure logo'
           handleOnClick={() => handleToggleEnvironment('oci')}
           isClicked={environments.includes('oci')}
+          isDisabled={isDisabled}
         />
       )}
     </Gallery>
@@ -225,6 +235,12 @@ const TargetEnvironment = () => {
   const supportedEnvironments = data?.find(
     (elem) => elem.arch === arch,
   )?.image_types;
+
+  const isOnlyNetworkInstallerSelected =
+    environments.length === 1 && environments.includes('network-installer');
+
+  const isOtherEnvironmentSelected =
+    environments.length >= 1 && !environments.includes('network-installer');
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
@@ -289,6 +305,7 @@ const TargetEnvironment = () => {
             environments={environments}
             handleToggleEnvironment={handleToggleEnvironment}
             prefetchSources={prefetchSources}
+            isDisabled={isOnlyNetworkInstallerSelected}
           />
         </FormGroup>
       )}
@@ -303,6 +320,7 @@ const TargetEnvironment = () => {
               name='vsphere-checkbox-ova'
               aria-label='VMware vSphere checkbox OVA'
               id='vsphere-checkbox-ova'
+              isDisabled={isOnlyNetworkInstallerSelected}
               label={
                 <>
                   VMware vSphere - Open virtualization format (.ova){' '}
@@ -343,6 +361,7 @@ const TargetEnvironment = () => {
               name='vsphere-checkbox-vmdk'
               aria-label='VMware vSphere checkbox VMDK'
               id='vsphere-checkbox-vmdk'
+              isDisabled={isOnlyNetworkInstallerSelected}
               label={
                 <>
                   VMware vSphere - Virtual disk (.vmdk){' '}
@@ -389,6 +408,7 @@ const TargetEnvironment = () => {
             aria-label='Virtualization guest image checkbox'
             id='checkbox-guest-image'
             name='Virtualization guest image'
+            isDisabled={isOnlyNetworkInstallerSelected}
           />
         )}
         {supportedEnvironments?.includes('image-installer') && (
@@ -401,6 +421,7 @@ const TargetEnvironment = () => {
             aria-label='Bare metal installer checkbox'
             id='checkbox-image-installer'
             name='Bare metal installer'
+            isDisabled={isOnlyNetworkInstallerSelected}
           />
         )}
         {supportedEnvironments?.includes('network-installer') &&
@@ -440,6 +461,7 @@ const TargetEnvironment = () => {
               }}
               id='checkbox-network-installer'
               name='Network - Installer'
+              isDisabled={isOtherEnvironmentSelected}
             />
           )}
         {supportedEnvironments?.includes('wsl') && (
@@ -499,9 +521,27 @@ const TargetEnvironment = () => {
             aria-label='windows subsystem for linux checkbox'
             id='checkbox-wsl'
             name='WSL'
+            isDisabled={isOnlyNetworkInstallerSelected}
           />
         )}
       </FormGroup>
+      {isOnlyNetworkInstallerSelected && (
+        <Alert
+          variant='info'
+          className='pf-v6-u-mt-lg'
+          style={{ maxWidth: '54rem' }}
+          isInline
+          title='Network installer image selection'
+        >
+          <Content>
+            This image type requires specific, minimal configuration for remote
+            installation, so most customization options are restricted.
+          </Content>
+          <Content>
+            To select a different target, first deselect network installer.
+          </Content>
+        </Alert>
+      )}
     </FormGroup>
   );
 };
