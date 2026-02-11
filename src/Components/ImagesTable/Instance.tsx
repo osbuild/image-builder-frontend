@@ -1,8 +1,6 @@
 import React from 'react';
 
-import path from 'path';
-
-import { Button, Flex, FlexItem, Skeleton } from '@patternfly/react-core';
+import { Button, Skeleton } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 
@@ -123,9 +121,6 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <></>;
   }
 
-  const parsedPath = path.parse(options.artifact_path);
-  const fileBrowserHref = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
-
   // Check if this image type can be imported or installed in a VM
   const imageType = compose.request.image_requests[0]?.image_type;
   const canLaunchInMachines =
@@ -149,40 +144,21 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     (vmName ? '&name=' + encodeURIComponent(vmName) : '');
 
   return (
-    <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-      <FlexItem>
-        <Button
-          component='a'
-          target='_blank'
-          variant='link'
-          onClick={(ev) => {
-            ev.preventDefault();
-            cockpit.jump(fileBrowserHref, cockpit.transport.host);
-          }}
-          href={fileBrowserHref}
-          isInline
-        >
-          Open in file browser
-        </Button>
-      </FlexItem>
-      <FlexItem>
-        <Button
-          component='a'
-          target='_blank'
-          variant='link'
-          onClick={(ev) => {
-            ev.preventDefault();
-            cockpit.jump(
-              canLaunchInMachines ? launchHref : installHref,
-              cockpit.transport.host,
-            );
-          }}
-          href={canLaunchInMachines ? launchHref : installHref}
-          isInline
-        >
-          Create VM
-        </Button>
-      </FlexItem>
-    </Flex>
+    <Button
+      component='a'
+      target='_blank'
+      variant='link'
+      onClick={(ev) => {
+        ev.preventDefault();
+        cockpit.jump(
+          canLaunchInMachines ? launchHref : installHref,
+          cockpit.transport.host,
+        );
+      }}
+      href={canLaunchInMachines ? launchHref : installHref}
+      isInline
+    >
+      Create VM
+    </Button>
   );
 };

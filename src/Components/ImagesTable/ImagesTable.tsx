@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import path from 'path';
+
 import {
   Alert,
   Badge,
@@ -26,6 +28,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import cockpit from 'cockpit';
 import { useDispatch } from 'react-redux';
 
 import ImagesEmptyState from './EmptyState';
@@ -69,6 +72,7 @@ import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
+import { LocalUploadStatus } from '../../store/cockpit/composerCloudApi';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
@@ -570,6 +574,14 @@ const Row = ({
   const dispatch = useDispatch();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
 
+  const { data } = useGetComposeStatusQuery({
+    composeId: compose.id,
+  });
+
+  const options = data?.image_status.upload_status?.options as unknown as
+    | LocalUploadStatus
+    | undefined;
+
   const handleClick = ({
     blueprintId,
   }: {
@@ -651,6 +663,7 @@ const Row = ({
                 analytics,
                 userData?.identity.internal?.account_id,
                 isOnPremise,
+                options,
               )}
             />
           )}
@@ -670,6 +683,7 @@ const defaultActions = (
   analytics: Analytics,
   account_id: string | undefined,
   isOnPremise: boolean,
+  options: LocalUploadStatus | undefined,
 ) => {
   const name = `request-${compose.id}.json`;
 
@@ -701,7 +715,7 @@ const defaultActions = (
     }
   };
 
-  return [
+  const actions = [
     {
       title: (
         <a className='ib-subdued-link' href='#' onClick={handleDownload}>
@@ -710,6 +724,33 @@ const defaultActions = (
       ),
     },
   ];
+
+  if (isOnPremise && options?.artifact_path) {
+    const parsedPath = path.parse(options.artifact_path);
+    const fileBrowserHref =
+      '/files#/?path=' + encodeURIComponent(parsedPath.dir);
+
+    const handleOpenInFileBrowser = (
+      e: React.MouseEvent<HTMLAnchorElement>,
+    ) => {
+      e.preventDefault();
+      cockpit.jump(fileBrowserHref, cockpit.transport.host);
+    };
+
+    actions.push({
+      title: (
+        <a
+          className='ib-subdued-link'
+          href='#'
+          onClick={handleOpenInFileBrowser}
+        >
+          Open in file browser
+        </a>
+      ),
+    });
+  }
+
+  return actions;
 };
 
 export default ImagesTable;
