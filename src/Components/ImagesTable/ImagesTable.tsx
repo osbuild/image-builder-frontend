@@ -56,7 +56,7 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
-import { useGetUser } from '../../Hooks';
+import { useCockpitMachinesAvailable, useGetUser } from '../../Hooks';
 import {
   useGetBlueprintComposesQuery,
   useGetBlueprintsQuery,
@@ -568,6 +568,7 @@ const Row = ({
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isMachinesAvailable = useCockpitMachinesAvailable();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
@@ -664,6 +665,7 @@ const Row = ({
                 userData?.identity.internal?.account_id,
                 isOnPremise,
                 options,
+                isMachinesAvailable,
               )}
             />
           )}
@@ -684,6 +686,7 @@ const defaultActions = (
   account_id: string | undefined,
   isOnPremise: boolean,
   options: LocalUploadStatus | undefined,
+  isMachinesAvailable: boolean,
 ) => {
   const name = `request-${compose.id}.json`;
 
@@ -725,7 +728,7 @@ const defaultActions = (
     },
   ];
 
-  if (isOnPremise && options?.artifact_path) {
+  if (isOnPremise && isMachinesAvailable && options?.artifact_path) {
     const parsedPath = path.parse(options.artifact_path);
     const fileBrowserHref =
       '/files#/?path=' + encodeURIComponent(parsedPath.dir);
