@@ -1,5 +1,7 @@
 import React from 'react';
 
+import path from 'path';
+
 import { Button, Skeleton } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
@@ -103,6 +105,12 @@ type LocalInstancePropTypes = {
 // Image types that can be imported into cockpit-machines as VM disk images
 const VM_IMPORTABLE_IMAGE_TYPES: ImageTypes[] = ['guest-image'];
 
+// Image types that can be used as installation media in cockpit-machines
+const VM_INSTALLABLE_IMAGE_TYPES: ImageTypes[] = [
+  'image-installer',
+  'network-installer',
+];
+
 export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   const isMachinesAvailable = useCockpitMachinesAvailable();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
@@ -121,10 +129,15 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <></>;
   }
 
+  const parsedPath = path.parse(options.artifact_path);
+  const fileBrowserHref = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
+
   // Check if this image type can be imported or installed in a VM
   const imageType = compose.request.image_requests[0]?.image_type;
   const canLaunchInMachines =
     isMachinesAvailable && VM_IMPORTABLE_IMAGE_TYPES.includes(imageType);
+  const canInstallInMachines =
+    isMachinesAvailable && VM_INSTALLABLE_IMAGE_TYPES.includes(imageType);
 
   // Parameters for cockpit-machines
   const osShortId = distributionToOSShortId(compose.request.distribution);
@@ -143,6 +156,26 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     (osShortId ? '&os=' + encodeURIComponent(osShortId) : '') +
     (vmName ? '&name=' + encodeURIComponent(vmName) : '');
 
+  if (!canLaunchInMachines && !canInstallInMachines) {
+    return (
+      <Button
+        component='a'
+        target='_blank'
+        variant='link'
+        onClick={(ev) => {
+          ev.preventDefault();
+          cockpit.jump(fileBrowserHref, cockpit.transport.host);
+        }}
+        href={fileBrowserHref}
+        isInline
+      >
+        Open in file browser
+      </Button>
+    );
+  }
+
+  const href = canLaunchInMachines ? launchHref : installHref;
+
   return (
     <Button
       component='a'
@@ -150,12 +183,9 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
       variant='link'
       onClick={(ev) => {
         ev.preventDefault();
-        cockpit.jump(
-          canLaunchInMachines ? launchHref : installHref,
-          cockpit.transport.host,
-        );
+        cockpit.jump(href, cockpit.transport.host);
       }}
-      href={canLaunchInMachines ? launchHref : installHref}
+      href={href}
       isInline
     >
       Create VM
