@@ -182,7 +182,7 @@ const Packages = () => {
   const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
     useListRepositoriesQuery({
       url: epelRepoUrlByDistribution,
-      origin: ContentOrigin.EXTERNAL,
+      origin: ContentOrigin.COMMUNITY,
     });
 
   const distroUrls = useMemo(() => {
