@@ -20,11 +20,8 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
-import {
-  IMAGE_MODE_RELEASE_LOOKUP,
-  IMAGE_MODE_RELEASES,
-} from '../../../../../constants';
-import { useLazyPodmanImageExistsQuery } from '../../../../../store/cockpit/cockpitApi';
+import { RHEL_10_IMAGE_MODE } from '../../../../../constants';
+import { usePodmanImagesQuery } from '../../../../../store/cockpit/cockpitApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeImageSource,
@@ -52,8 +49,8 @@ const InfoMessageContent = ({ source }: { source: string }) => {
         rootless images are not accessible to image builder at build time.
       </Content>
       <Content component='p'>
-        To pull the image, ensure you are logged in to the registry and use the
-        following command:
+        To pull an image locally, ensure you are logged in to the registry and
+        use the following command to use the recommended image mode image:
       </Content>
       <CopyInlineCompact text={`sudo podman pull ${source}`} />
     </>
@@ -65,29 +62,26 @@ const ImageSourceSelect = () => {
   const imageSource = useAppSelector(selectImageSource);
   const [isOpen, setIsOpen] = useState(false);
   const [isPullInfoExpanded, setIsPullInfoExpanded] = useState(false);
+  const [isImagesAvailable, setImagesAvailable] = useState(false);
 
-  const [
-    trigger,
-    { data: imageExists, error: queryError, isError, isLoading },
-  ] = useLazyPodmanImageExistsQuery();
+  const { data: images, isError, isLoading, refetch } = usePodmanImagesQuery();
 
   useEffect(() => {
-    if (imageSource) {
-      trigger({ image: imageSource });
+    if (!isLoading && !isError) {
+      const count = images ? images.length : 0;
+      setImagesAvailable(count > 0);
+      setIsPullInfoExpanded(count === 0);
     }
-  }, [trigger, imageSource]);
+  }, [isLoading, isError, images]);
 
   const refreshImageSources = () => {
-    if (imageSource) {
-      trigger({ image: imageSource });
-    }
+    refetch();
   };
 
   const setImageSource = (
     _event?: React.MouseEvent,
     selection?: ImageSource,
   ) => {
-    if (selection === undefined) return;
     dispatch(changeImageSource(selection));
     setIsOpen(false);
   };
@@ -97,15 +91,26 @@ const ImageSourceSelect = () => {
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => {
-    // NOTE: Although this shouldn't be undefined and the default should be RHEL-10,
-    // let's set the name to 'Unknown' if it is actually defined. If the lookup
-    // fails, let's just fallback to the full image reference
-    const name = !imageSource
-      ? 'Unknown Image'
-      : IMAGE_MODE_RELEASE_LOOKUP[imageSource] || imageSource;
+    if (isLoading) {
+      return (
+        <MenuToggle
+          ref={toggleRef}
+          onClick={onToggleClick}
+          isExpanded={isOpen}
+          isDisabled
+        >
+          <Spinner size='sm' /> Loading images...
+        </MenuToggle>
+      );
+    }
+
+    const optionText = imageSource
+      ? `Red Hat Enterprise Linux (RHEL - bootc) ${imageSource.split(':')[1]}`
+      : 'Select an image';
+
     return (
       <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-        {name}
+        {optionText}
       </MenuToggle>
     );
   };
@@ -114,23 +119,16 @@ const ImageSourceSelect = () => {
     <FormGroup label='Image source' isRequired>
       {isError && (
         <Alert
-          title='Error checking image availability'
+          title='Error listing images'
           variant='danger'
           className='pf-v6-u-mb-md'
         >
-          Unable to verify if the image exists: {String(queryError)}
+          Unable to list podman images. Ensure podman is installed and
+          accessible.
         </Alert>
       )}
 
-      {!isLoading && !isError && imageExists === false ? (
-        <Alert
-          title='Image not found'
-          className='pf-v6-u-mb-md'
-          variant='warning'
-        >
-          <InfoMessageContent source={imageSource || ''} />
-        </Alert>
-      ) : (
+      {!isLoading && !isError && (
         <ExpandableSection
           toggleText={
             isPullInfoExpanded
@@ -143,9 +141,18 @@ const ImageSourceSelect = () => {
           isExpanded={isPullInfoExpanded}
           className='pf-v6-u-pb-sm'
         >
-          <InfoMessageContent source={imageSource || ''} />
+          <Alert
+            title={
+              isImagesAvailable ? 'Note on pulling images' : 'No images found'
+            }
+            variant={isImagesAvailable ? 'info' : 'warning'}
+            className='pf-v6-u-mb-md'
+          >
+            <InfoMessageContent source={RHEL_10_IMAGE_MODE.reference} />
+          </Alert>
         </ExpandableSection>
       )}
+
       <Flex>
         <FlexItem>
           <Select
@@ -157,9 +164,16 @@ const ImageSourceSelect = () => {
             shouldFocusToggleOnSelect
           >
             <SelectList>
-              {[...IMAGE_MODE_RELEASES].map(([_, options]) => (
-                <SelectOption key={options.reference} value={options.reference}>
-                  {options.name}
+              <SelectOption
+                key='none-option'
+                value={undefined}
+                isSelected={!imageSource}
+              >
+                Select an image
+              </SelectOption>
+              {images?.map((option) => (
+                <SelectOption key={option.image} value={option.image}>
+                  Red Hat Enterprise Linux (RHEL - bootc) {option.tag}
                 </SelectOption>
               ))}
             </SelectList>
@@ -168,13 +182,13 @@ const ImageSourceSelect = () => {
             <Spinner
               size='md'
               className='pf-v6-u-ml-sm'
-              aria-label='Checking image availability'
+              aria-label='Reload local images'
             />
           )}
           <HelperText className='pf-v6-u-mt-sm'>
             <HelperTextItem>
               <span className='pf-v6-u-text-color-subtle'>
-                FROM: {imageSource}
+                {imageSource && `FROM: ${imageSource}`}
               </span>
             </HelperTextItem>
           </HelperText>

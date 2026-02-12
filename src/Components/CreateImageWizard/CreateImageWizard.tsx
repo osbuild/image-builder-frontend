@@ -91,7 +91,9 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
+  selectImageSource,
   selectImageTypes,
+  selectIsImageMode,
   selectTimezone,
 } from '../../store/wizardSlice';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
@@ -251,6 +253,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // Image Output
   const targetEnvironments = useAppSelector(selectImageTypes);
+  const isImageMode = useAppSelector(selectIsImageMode);
+  const imageSource = useAppSelector(selectImageSource);
   // AWS
   const awsShareMethod = useAppSelector(selectAwsShareMethod);
   const awsAccountId = useAppSelector(selectAwsAccountId);
@@ -436,7 +440,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             id='step-image-output'
             footer={
               <CustomWizardFooter
-                disableNext={targetEnvironments.length === 0}
+                disableNext={
+                  targetEnvironments.length === 0 ||
+                  (isImageMode && !imageSource)
+                }
                 disableBack={true}
                 isOnPremise={isOnPremise}
               />
