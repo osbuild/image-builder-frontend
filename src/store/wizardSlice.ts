@@ -37,7 +37,7 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
-import { RHEL_10, RHEL_10_IMAGE_MODE, X86_64 } from '../constants';
+import { RHEL_10, X86_64 } from '../constants';
 import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
@@ -227,7 +227,6 @@ export const initialState: wizardState = {
   },
   wizardMode: 'create',
   blueprintMode: 'package',
-  imageSource: RHEL_10_IMAGE_MODE.reference,
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
@@ -634,7 +633,10 @@ export const wizardSlice = createSlice({
     ) => {
       state.blueprintMode = action.payload;
     },
-    changeImageSource: (state, action: PayloadAction<ImageSource>) => {
+    changeImageSource: (
+      state,
+      action: PayloadAction<ImageSource | undefined>,
+    ) => {
       state.imageSource = action.payload;
     },
     changeArchitecture: (

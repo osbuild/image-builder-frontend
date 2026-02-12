@@ -119,7 +119,7 @@ export const ON_PREM_RELEASES = new Map([
 ]);
 
 export const RHEL_10_IMAGE_MODE = {
-  name: 'Red Hat Enterprise Linux (RHEL) 10',
+  name: 'Red Hat Enterprise Linux (RHEL - bootc) 10',
   reference: 'registry.redhat.io/rhel10/rhel-bootc:10.1',
 };
 
