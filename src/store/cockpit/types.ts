@@ -167,3 +167,12 @@ export type PodmanImageExistsArg = {
 };
 
 export type PodmanImageExistsResponse = boolean;
+
+export type PodmanImageInfo = {
+  image: string;
+  repository: string;
+  tag: string;
+};
+
+export type PodmanImagesArg = void;
+export type PodmanImagesResponse = PodmanImageInfo[];
