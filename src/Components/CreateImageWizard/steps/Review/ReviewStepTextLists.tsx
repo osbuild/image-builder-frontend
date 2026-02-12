@@ -19,6 +19,7 @@ import {
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
+  DiskReviewTable,
   FSReviewTable,
   PackagesTable,
   RepositoriesTable,
@@ -170,7 +171,11 @@ export const FSCList = () => {
           Configuration type
         </Content>
         <Content component={ContentVariants.dd}>
-          {fscMode === 'basic' ? 'Basic' : 'Automatic'}
+          {fscMode === 'basic'
+            ? 'Basic'
+            : fscMode === 'advanced'
+              ? 'Advanced'
+              : 'Automatic'}
           {fscMode === 'basic' && (
             <>
               {' '}
@@ -180,6 +185,21 @@ export const FSCList = () => {
                 hasAutoWidth
                 minWidth='30rem'
                 bodyContent={<FSReviewTable />}
+              >
+                <Button variant='link' className='pf-v6-u-pt-0 pf-v6-u-pb-0'>
+                  View partitions
+                </Button>
+              </Popover>
+            </>
+          )}
+          {fscMode === 'advanced' && (
+            <>
+              {' '}
+              <Popover
+                position='bottom'
+                hasAutoWidth
+                minWidth='50rem'
+                bodyContent={<DiskReviewTable />}
               >
                 <Button variant='link' className='pf-v6-u-pt-0 pf-v6-u-pb-0'>
                   View partitions
