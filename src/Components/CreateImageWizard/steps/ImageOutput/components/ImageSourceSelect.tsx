@@ -44,6 +44,22 @@ const CopyInlineCompact = ({ text }: { text: string }) => (
   </ClipboardCopy>
 );
 
+const InfoMessageContent = ({ source }: { source: string }) => {
+  return (
+    <>
+      <Content component='p'>
+        Container images must be pulled using Podman with root privileges, as
+        rootless images are not accessible to image builder at build time.
+      </Content>
+      <Content component='p'>
+        To pull the image, ensure you are logged in to the registry and use the
+        following command:
+      </Content>
+      <CopyInlineCompact text={`sudo podman pull ${source}`} />
+    </>
+  );
+};
+
 const ImageSourceSelect = () => {
   const dispatch = useAppDispatch();
   const imageSource = useAppSelector(selectImageSource);
@@ -112,15 +128,7 @@ const ImageSourceSelect = () => {
           className='pf-v6-u-mb-md'
           variant='warning'
         >
-          <p>
-            The selected image is not available on this machine. Please navigate
-            to a terminal, ensure you are logged in to the
-          </p>
-          <p>
-            registry and pull the image using Podman as root, as rootless images
-            are not accessible by image builder at build time:
-          </p>
-          <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
+          <InfoMessageContent source={imageSource || ''} />
         </Alert>
       ) : (
         <ExpandableSection
@@ -135,16 +143,7 @@ const ImageSourceSelect = () => {
           isExpanded={isPullInfoExpanded}
           className='pf-v6-u-pb-sm'
         >
-          <Content component='p'>
-            Container images must be pulled using Podman with root privileges,
-            as rootless images are not accessible to image builder at build
-            time.
-          </Content>
-          <Content component='p'>
-            To pull the image, ensure you are logged in to the registry and use
-            the following command:
-          </Content>
-          <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
+          <InfoMessageContent source={imageSource || ''} />
         </ExpandableSection>
       )}
       <Flex>
