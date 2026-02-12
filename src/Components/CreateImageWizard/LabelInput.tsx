@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   HelperText,
@@ -28,6 +28,10 @@ type LabelInputProps = {
   removeAction: (value: string) => UnknownAction;
   stepValidation: StepValidation;
   fieldName: string;
+  onInputErrorChange?: (hasError: boolean) => void;
+  currentInputValue?: string;
+  onInputValueChange?: (value: string) => UnknownAction;
+  addOnBlur?: boolean;
 };
 
 const LabelInput = ({
@@ -42,33 +46,58 @@ const LabelInput = ({
   removeAction,
   stepValidation,
   fieldName,
+  onInputErrorChange,
+  currentInputValue,
+  onInputValueChange,
+  addOnBlur = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
-  const [inputValue, setInputValue] = useState('');
-  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
-  let [invalidImports, duplicateImports] = ['', ''];
+  const useReduxState =
+    currentInputValue !== undefined && onInputValueChange !== undefined;
+  const [localInputValue, setLocalInputValue] = useState('');
+  const inputValue = useReduxState ? currentInputValue! : localInputValue;
 
-  if (stepValidation.errors[fieldName]) {
-    [invalidImports, duplicateImports] =
-      stepValidation.errors[fieldName].split('|');
-  }
+  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
+
+  const validationErrorText = stepValidation.errors[fieldName] || '';
+  const validationErrors = React.useMemo(
+    () =>
+      validationErrorText
+        ? validationErrorText.split(/\s*\|\s*/).filter((e) => e.trim())
+        : [],
+    [validationErrorText],
+  );
+
+  useEffect(() => {
+    onInputErrorChange?.(!!onStepInputErrorText || validationErrors.length > 0);
+  }, [onStepInputErrorText, validationErrors, onInputErrorChange]);
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    setInputValue(value);
+    if (useReduxState) {
+      dispatch(onInputValueChange!(value));
+    } else {
+      setLocalInputValue(value);
+    }
     setOnStepInputErrorText('');
   };
 
-  const addItem = (value: string) => {
-    if (list?.includes(value) || requiredList?.includes(value)) {
-      setOnStepInputErrorText(`${item} already exists.`);
-      return;
+  const addItem = (value: string): boolean => {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      return false;
     }
 
-    if (!validator(value)) {
+    if (list?.includes(trimmedValue) || requiredList?.includes(trimmedValue)) {
+      setOnStepInputErrorText(`${item} already exists.`);
+      onInputErrorChange?.(true);
+      return false;
+    }
+
+    if (!validator(trimmedValue)) {
       switch (fieldName) {
         case 'ports':
           setOnStepInputErrorText(
@@ -111,12 +140,19 @@ const LabelInput = ({
         default:
           setOnStepInputErrorText('Invalid format.');
       }
-      return;
+      onInputErrorChange?.(true);
+      return false;
     }
 
-    dispatch(addAction(value));
-    setInputValue('');
+    dispatch(addAction(trimmedValue));
+    if (useReduxState) {
+      dispatch(onInputValueChange!(''));
+    } else {
+      setLocalInputValue('');
+    }
     setOnStepInputErrorText('');
+    onInputErrorChange?.(false);
+    return true;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
@@ -126,14 +162,30 @@ const LabelInput = ({
     }
   };
 
+  const handleBlur = () => {
+    if (!addOnBlur) return;
+    if (inputValue.trim()) {
+      addItem(inputValue);
+    }
+  };
+
   const handleRemoveItem = (e: React.MouseEvent, value: string) => {
     dispatch(removeAction(value));
   };
 
   const errors = [];
   if (onStepInputErrorText) errors.push(onStepInputErrorText);
-  if (invalidImports) errors.push(invalidImports);
-  if (duplicateImports) errors.push(duplicateImports);
+  // Filter out validation errors that are already shown in onStepInputErrorText
+  const filteredValidationErrors = validationErrors.filter((error) => {
+    if (
+      onStepInputErrorText.includes('already exists') &&
+      error.includes('Group already exists')
+    ) {
+      return false;
+    }
+    return true;
+  });
+  errors.push(...filteredValidationErrors);
 
   return (
     <>
@@ -144,6 +196,7 @@ const LabelInput = ({
           onChange={onTextInputChange}
           value={inputValue}
           onKeyDown={(e) => handleKeyDown(e, inputValue)}
+          onBlur={handleBlur}
         >
           {list && list.length > 0 && (
             <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
