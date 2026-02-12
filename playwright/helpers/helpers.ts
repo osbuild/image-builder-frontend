@@ -5,6 +5,7 @@ import path from 'path';
 import {
   BrowserContext,
   expect,
+  type FrameLocator,
   type Locator,
   type Page,
 } from '@playwright/test';
@@ -65,7 +66,7 @@ const ON_PREM_RELEASES = new Map([
 ]);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const getHostDistroName = (): string => {
+export const getHostDistroKey = (): string => {
   const osRelData = readFileSync('/etc/os-release');
   const lines = osRelData
     .toString('utf-8')
@@ -78,17 +79,21 @@ export const getHostDistroName = (): string => {
     (osRel as any)[lineData[0]] = lineData[1].replace(/"/g, '');
   }
 
-  // strip minor version from rhel
-  const distro = ON_PREM_RELEASES.get(
-    `${(osRel as any)['ID']}-${(osRel as any)['VERSION_ID'].split('.')[0]}`,
-  );
-
-  if (distro === undefined) {
+  const key = `${(osRel as any)['ID']}-${(osRel as any)['VERSION_ID'].split('.')[0]}`;
+  if (!ON_PREM_RELEASES.has(key)) {
     /* eslint-disable no-console */
-    console.error('getHostDistroName failed, os-release config:', osRel);
+    console.error('getHostDistroKey failed, os-release config:', osRel);
+    throw new Error('getHostDistroKey failed, distro not in ON_PREM_RELEASES');
+  }
+  return key;
+};
+
+export const getHostDistroName = (): string => {
+  const key = getHostDistroKey();
+  const distro = ON_PREM_RELEASES.get(key);
+  if (distro === undefined) {
     throw new Error('getHostDistroName failed, distro undefined');
   }
-
   return distro;
 };
 
@@ -97,6 +102,7 @@ export const getHostArch = (): string => {
 };
 
 export const uploadCertificateFile = async (
+  scope: Page | FrameLocator,
   uploadButton: Locator,
   certificateContent: string,
   fileName: string = 'certificate.pem',
@@ -108,16 +114,14 @@ export const uploadCertificateFile = async (
     // Write certificate content to temporary file
     writeFileSync(tempCertPath, certificateContent);
 
-    // Find the file input element (usually hidden, so we need to locate it)
-    const fileInput = uploadButton.page().locator('input[type="file"]');
+    // Find the file input in the same scope as the button (page or iframe)
+    const fileInput = scope.locator('input[type="file"]');
 
     // Set the file directly on the input element
     await fileInput.setInputFiles(tempCertPath);
 
     // Verify the certificate was uploaded successfully
-    await expect(
-      uploadButton.page().getByText('Certificate was uploaded:'),
-    ).toBeVisible();
+    await expect(scope.getByText('Certificate was uploaded')).toBeVisible();
   } finally {
     // Clean up temporary file
     if (existsSync(tempCertPath)) {
