@@ -13,6 +13,7 @@ export const mockArchitecturesByDistro = (
           'gcp',
           'guest-image',
           'image-installer',
+          'network-installer',
           'oci',
           'wsl',
         ],
