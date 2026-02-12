@@ -144,9 +144,7 @@ const ImageSourceSelect = () => {
             To pull the image, ensure you are logged in to the registry and use
             the following command:
           </Content>
-          <Content component='p'>
-            <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
-          </Content>
+          <CopyInlineCompact text={`sudo podman pull ${imageSource}`} />
         </ExpandableSection>
       )}
       <Flex>
