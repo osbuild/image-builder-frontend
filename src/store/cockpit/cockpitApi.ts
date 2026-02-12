@@ -35,6 +35,9 @@ import {
   isProcessError,
   type PodmanImageExistsArg,
   type PodmanImageExistsResponse,
+  PodmanImageInfo,
+  PodmanImagesArg,
+  PodmanImagesResponse,
   type UpdateWorkerConfigApiArg,
   type WorkerConfigFile,
   type WorkerConfigResponse,
@@ -884,6 +887,66 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      podmanImages: builder.query<PodmanImagesResponse, PodmanImagesArg>({
+        queryFn: async () => {
+          try {
+            const result = (await cockpit.spawn(
+              [
+                'podman',
+                'images',
+                '--filter',
+                'reference=registry.redhat.io/rhel*/rhel-bootc',
+                '--format',
+                '{{.Repository}},{{.Tag}}',
+              ],
+              {
+                superuser: 'require',
+              },
+            )) as string;
+
+            if (!result.trim()) {
+              return {
+                data: [],
+              };
+            }
+
+            const images = result
+              .trim()
+              .split('\n')
+              .map((s) => {
+                if (!s.trim()) {
+                  return null;
+                }
+
+                const parts = s.trim().split(',');
+                if (parts.length !== 2) {
+                  // Skip malformed lines that don't match "repository,tag"
+                  return null;
+                }
+
+                const [repository, tag] = parts.map((p) => p.trim());
+                if (!repository || !tag) {
+                  return null;
+                }
+
+                return {
+                  image: `${repository}:${tag}`,
+                  repository,
+                  tag,
+                };
+              })
+              .filter((image): image is PodmanImageInfo => image !== null);
+
+            return {
+              data: images,
+            };
+          } catch (error: unknown) {
+            return {
+              error: error instanceof Error ? error.message : String(error),
+            };
+          }
+        },
+      }),
     };
   },
   // since we are inheriting some endpoints,
@@ -913,4 +976,6 @@ export const {
   useUpdateWorkerConfigMutation,
   usePodmanImageExistsQuery,
   useLazyPodmanImageExistsQuery,
+  usePodmanImagesQuery,
+  useLazyPodmanImagesQuery,
 } = cockpitApi;
