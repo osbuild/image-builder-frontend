@@ -20,7 +20,7 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
-import { RHEL_10_IMAGE_MODE } from '../../../../../constants';
+import { RHEL_10_IMAGE_MODE_IMAGE } from '../../../../../constants';
 import { usePodmanImagesQuery } from '../../../../../store/cockpit/cockpitApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -148,7 +148,7 @@ const ImageSourceSelect = () => {
             variant={isImagesAvailable ? 'info' : 'warning'}
             className='pf-v6-u-mb-md'
           >
-            <InfoMessageContent source={RHEL_10_IMAGE_MODE.reference} />
+            <InfoMessageContent source={RHEL_10_IMAGE_MODE_IMAGE} />
           </Alert>
         </ExpandableSection>
       )}

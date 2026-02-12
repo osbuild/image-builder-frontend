@@ -32,9 +32,6 @@ import {
   GetArchitecturesApiArg,
   GetOscapCustomizationsApiArg,
   GetOscapProfilesApiArg,
-  isProcessError,
-  type PodmanImageExistsArg,
-  type PodmanImageExistsResponse,
   PodmanImageInfo,
   PodmanImagesArg,
   PodmanImagesResponse,
@@ -851,42 +848,6 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
-      podmanImageExists: builder.query<
-        PodmanImageExistsResponse,
-        PodmanImageExistsArg
-      >({
-        queryFn: async ({ image }) => {
-          try {
-            await cockpit.spawn(['podman', 'image', 'exists', image], {
-              superuser: 'require',
-            });
-
-            // if we got this far it means that the command
-            // exit code is 0 and so the container image exists
-            return {
-              data: true,
-            };
-          } catch (error: unknown) {
-            if (!isProcessError(error)) {
-              return {
-                error: error instanceof Error ? error.message : String(error),
-              };
-            }
-
-            // this means that the command ran okay, but
-            // the image is not available locally
-            if (error.exit_status === 1) {
-              return {
-                data: false,
-              };
-            }
-
-            return {
-              error: error.message,
-            };
-          }
-        },
-      }),
       podmanImages: builder.query<PodmanImagesResponse, PodmanImagesArg>({
         queryFn: async () => {
           try {
@@ -974,8 +935,6 @@ export const {
   useGetComposeStatusQuery,
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
-  usePodmanImageExistsQuery,
-  useLazyPodmanImageExistsQuery,
   usePodmanImagesQuery,
   useLazyPodmanImagesQuery,
 } = cockpitApi;

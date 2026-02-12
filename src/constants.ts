@@ -118,26 +118,8 @@ export const ON_PREM_RELEASES = new Map([
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 
-export const RHEL_10_IMAGE_MODE = {
-  name: 'Red Hat Enterprise Linux (RHEL - bootc) 10',
-  reference: 'registry.redhat.io/rhel10/rhel-bootc:10.1',
-};
-
-export const RHEL_9_IMAGE_MODE = {
-  name: 'Red Hat Enterprise Linux (RHEL) 9',
-  reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
-};
-
-// Container images for image mode, pinned to specific stable versions
-export const IMAGE_MODE_RELEASES = new Map([
-  [RHEL_10, RHEL_10_IMAGE_MODE],
-  [RHEL_9, RHEL_9_IMAGE_MODE],
-]);
-
-export const IMAGE_MODE_RELEASE_LOOKUP = {
-  [RHEL_10_IMAGE_MODE.reference]: RHEL_10_IMAGE_MODE.name,
-  [RHEL_9_IMAGE_MODE.reference]: RHEL_9_IMAGE_MODE.name,
-};
+export const RHEL_10_IMAGE_MODE_IMAGE =
+  'registry.redhat.io/rhel10/rhel-bootc:10.2';
 
 export const RHEL_10_FULL_SUPPORT = ['2025-05-13', '2030-05-31'];
 export const RHEL_9_FULL_SUPPORT = ['2022-05-18', '2027-05-31'];
