@@ -2,17 +2,46 @@ import { useMemo } from 'react';
 
 import { ALL_CUSTOMIZATIONS } from './constants';
 import { distroDetailsApi as api } from './distributionDetailsApi';
-import { CustomizationType, ImageTypeInfo, RestrictionStrategy } from './types';
+import {
+  ArchitectureInfo,
+  CustomizationType,
+  ImageTypeInfo,
+  RestrictionStrategy,
+} from './types';
 
+import { simpleTargetNames } from '../../constants';
 import isRhel from '../../Utilities/isRhel';
 import { selectIsOnPremise } from '../envSlice';
 import { useAppSelector } from '../hooks';
 import { ImageTypes } from '../imageBuilderApi';
+import { isImageType } from '../typeGuards';
 import {
   selectArchitecture,
   selectDistribution,
+  selectImageTypes,
   selectIsImageMode,
 } from '../wizardSlice';
+
+const extractImageTypes = ({
+  architectures,
+  arch,
+}: {
+  architectures: Record<string, ArchitectureInfo> | undefined;
+  arch: string;
+}): Record<string, ImageTypeInfo> => {
+  if (
+    !architectures ||
+    // eslint complains about this always being falsy, but there are cases
+    // where this does actually happen and can cause some rendering issues.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    !architectures[arch] ||
+    !architectures[arch].image_types
+  ) {
+    return {};
+  }
+
+  return architectures[arch].image_types;
+};
 
 export type SupportContext = {
   isImageMode: boolean;
@@ -114,17 +143,10 @@ export const useCustomizationRestrictions = ({
   );
 
   const restrictions = useMemo(() => {
-    let imageTypes = {};
-    if (
-      data?.architectures &&
-      // eslint complains about this always being falsy, but there are cases
-      // where this does actually happen and can cause some rendering issues.
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      data.architectures[arch] &&
-      data.architectures[arch].image_types
-    ) {
-      imageTypes = data.architectures[arch].image_types;
-    }
+    const imageTypes = extractImageTypes({
+      architectures: data?.architectures,
+      arch,
+    });
 
     return computeRestrictions({
       imageTypes,
@@ -139,4 +161,76 @@ export const useCustomizationRestrictions = ({
   return {
     restrictions,
   };
+};
+
+export type ImageTypeCustomizationSupport = {
+  name: string | undefined;
+  supported: boolean;
+};
+
+export const computeImageTypeCustomizationSupport = (
+  imageTypes: Record<string, ImageTypeInfo>,
+  customization: CustomizationType,
+  context: SupportContext,
+): ImageTypeCustomizationSupport[] => {
+  return (
+    Object.keys(imageTypes)
+      .map((it) => {
+        // we should be okay here, but it's better to be a bit
+        // defensive and add a typecheck
+        if (!isImageType(it)) {
+          return {
+            name: undefined,
+            supported: false,
+          };
+        }
+
+        const imageTypeName = simpleTargetNames[it];
+        const isSupported = isCustomizationSupported(
+          customization,
+          imageTypes[it],
+          context,
+        );
+
+        return {
+          supported: isSupported,
+          name: imageTypeName,
+        };
+      })
+      // this is again a defensive check just incase the
+      // naming lookup fails or returns an undefined result
+      .filter(({ name }) => name)
+  );
+};
+
+export const useImageTypeCustomizationSupport = (
+  customization: CustomizationType,
+) => {
+  const distro = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageMode = useAppSelector(selectIsImageMode);
+  const selectedImageTypes = useAppSelector(selectImageTypes);
+
+  const { data } = api.useGetDistributionDetailsQuery(
+    {
+      distro: distro,
+      architecture: [arch],
+      imageType: selectedImageTypes,
+    },
+    {
+      skip: isImageMode,
+    },
+  );
+
+  const imageTypes = extractImageTypes({
+    architectures: data?.architectures,
+    arch,
+  });
+
+  return computeImageTypeCustomizationSupport(imageTypes, customization, {
+    isImageMode,
+    isOnPremise,
+    isRhel: isRhel(distro),
+  });
 };
