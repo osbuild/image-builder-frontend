@@ -592,7 +592,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Security'
                 id='step-oscap'
                 key='step-oscap'
-                isHidden={restrictions.openscap.shouldHide}
+                isHidden={
+                  // this is specifically for the net-installer image,
+                  // it allows fips but not openscap/compliance. We will
+                  // handle that in the step itself instead.
+                  restrictions.openscap.shouldHide &&
+                  restrictions.fips.shouldHide
+                }
                 navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter
