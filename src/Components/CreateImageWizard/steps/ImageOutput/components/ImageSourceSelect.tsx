@@ -98,6 +98,12 @@ const ImageSourceSelect = () => {
           onClick={onToggleClick}
           isExpanded={isOpen}
           isDisabled
+          style={
+            {
+              minWidth: '50%',
+              maxWidth: '100%',
+            } as React.CSSProperties
+          }
         >
           <Spinner size='sm' /> Loading images...
         </MenuToggle>
@@ -109,7 +115,16 @@ const ImageSourceSelect = () => {
       : 'Select an image';
 
     return (
-      <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+      <MenuToggle
+        ref={toggleRef}
+        onClick={onToggleClick}
+        isExpanded={isOpen}
+        style={
+          {
+            width: '100%',
+          } as React.CSSProperties
+        }
+      >
         {optionText}
       </MenuToggle>
     );
@@ -154,7 +169,14 @@ const ImageSourceSelect = () => {
       )}
 
       <Flex>
-        <FlexItem>
+        <FlexItem
+          style={
+            {
+              minWidth: '50%',
+              maxWidth: '100%',
+            } as React.CSSProperties
+          }
+        >
           <Select
             isOpen={isOpen}
             selected={imageSource}
@@ -164,18 +186,15 @@ const ImageSourceSelect = () => {
             shouldFocusToggleOnSelect
           >
             <SelectList>
-              <SelectOption
-                key='none-option'
-                value={undefined}
-                isSelected={!imageSource}
-              >
-                Select an image
-              </SelectOption>
-              {images?.map((option) => (
-                <SelectOption key={option.image} value={option.image}>
-                  Red Hat Enterprise Linux (RHEL - bootc) {option.tag}
-                </SelectOption>
-              ))}
+              {images && images.length > 0 ? (
+                images.map((option) => (
+                  <SelectOption key={option.image} value={option.image}>
+                    Red Hat Enterprise Linux (RHEL - bootc) {option.tag}
+                  </SelectOption>
+                ))
+              ) : (
+                <SelectOption isDisabled>{'No images found'}</SelectOption>
+              )}
             </SelectList>
           </Select>
           {isLoading && (
