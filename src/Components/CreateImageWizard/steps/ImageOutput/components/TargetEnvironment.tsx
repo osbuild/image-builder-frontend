@@ -283,6 +283,15 @@ const TargetEnvironment = () => {
     );
   };
 
+  const privateCloudsSupported = () => {
+    return (
+      supportedEnvironments?.includes('vsphere') ||
+      supportedEnvironments?.includes('vsphere-ova')
+    );
+  };
+
+  const showOtherLabel = publicCloudsSupported() || privateCloudsSupported();
+
   if (isFetching) {
     return (
       <EmptyState
@@ -411,7 +420,10 @@ const TargetEnvironment = () => {
           )}
         </FormGroup>
       )}
-      <FormGroup label={<small>Other</small>} className='pf-v6-u-mt-sm'>
+      <FormGroup
+        label={showOtherLabel ? <small>Other</small> : undefined}
+        className='pf-v6-u-mt-sm'
+      >
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label='Virtualization - Guest image (.qcow2)'
