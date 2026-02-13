@@ -40,6 +40,7 @@ import {
   useGetOscapCustomizationsQuery,
 } from '../../../../store/backendApi';
 import { usePoliciesQuery } from '../../../../store/complianceApi';
+import { useCustomizationRestrictions } from '../../../../store/distributions';
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';
@@ -75,6 +76,7 @@ const OscapContent = () => {
   const profileID = useAppSelector(selectComplianceProfileID);
   const fips = useAppSelector(selectFips);
   const services = useAppSelector(selectServices);
+  const imageTypes = useAppSelector(selectImageTypes);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
   const release = removeBetaFromRelease(
     asDistribution(useAppSelector(selectDistribution)),
@@ -82,13 +84,17 @@ const OscapContent = () => {
   const majorVersion = release.split('-')[1];
   const environments = useAppSelector(selectImageTypes);
 
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: imageTypes,
+  });
+
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
       // @ts-ignore if openScapProfile is undefined the query is going to get skipped
       profile: profileID,
     },
-    { skip: !profileID },
+    { skip: !profileID || restrictions.openscap.shouldHide },
   );
 
   useEffect(() => {
@@ -140,7 +146,10 @@ const OscapContent = () => {
       filter: `os_major_version=${majorVersion}`,
     },
     {
-      skip: complianceType === 'openscap' || isOnPremise,
+      skip:
+        complianceType === 'openscap' ||
+        isOnPremise ||
+        restrictions.openscap.shouldHide,
     },
   );
 
@@ -189,106 +198,109 @@ const OscapContent = () => {
           />
         )}
 
-        <FormGroup>
-          {!isOnPremise && (
-            <>
-              <Content className='pf-v6-u-pb-sm'>
-                <Radio
-                  id='security-type-compliance'
-                  name='security-type'
-                  label='Use a custom compliance policy'
-                  isChecked={complianceType === 'compliance'}
-                  onChange={() => handleTypeChange('compliance')}
-                />
-              </Content>
-              <Content className='pf-v6-u-pl-lg pf-v6-u-pb-md'>
-                <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                  <FlexItem className='pf-v6-u-w-50'>
-                    <PolicySelector
-                      isDisabled={complianceType !== 'compliance'}
-                    />
-                  </FlexItem>
-                  <FlexItem>
-                    <Popover
-                      headerContent='Details'
-                      bodyContent={<PolicyDetails />}
-                      minWidth='30'
+        {!restrictions.openscap.shouldHide && (
+          <FormGroup>
+            {!isOnPremise && (
+              <>
+                <Content className='pf-v6-u-pb-sm'>
+                  <Radio
+                    id='security-type-compliance'
+                    name='security-type'
+                    label='Use a custom compliance policy'
+                    isChecked={complianceType === 'compliance'}
+                    onChange={() => handleTypeChange('compliance')}
+                  />
+                </Content>
+                <Content className='pf-v6-u-pl-lg pf-v6-u-pb-md'>
+                  <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+                    <FlexItem className='pf-v6-u-w-50'>
+                      <PolicySelector
+                        isDisabled={complianceType !== 'compliance'}
+                      />
+                    </FlexItem>
+                    <FlexItem>
+                      <Popover
+                        headerContent='Details'
+                        bodyContent={<PolicyDetails />}
+                        minWidth='30'
+                      >
+                        <Button
+                          variant='secondary'
+                          icon={<InfoCircleIcon />}
+                          iconPosition='left'
+                          isDisabled={
+                            complianceType !== 'compliance' || !policyID
+                          }
+                        >
+                          View details
+                        </Button>
+                      </Popover>
+                    </FlexItem>
+                  </Flex>
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem>
+                        <ExternalLinkButton
+                          url={COMPLIANCE_URL}
+                          analyticsStepId='step-oscap'
+                        >
+                          Manage Red Hat Lightspeed compliance
+                        </ExternalLinkButton>
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
+                </Content>
+              </>
+            )}
+            <Content className='pf-v6-u-pb-sm'>
+              <Radio
+                id='security-type-openscap'
+                name='security-type'
+                label='Use a default OpenSCAP profile'
+                isChecked={complianceType === 'openscap'}
+                onChange={() => handleTypeChange('openscap')}
+              />
+            </Content>
+            <Content className='pf-v6-u-pl-lg'>
+              <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+                <FlexItem className='pf-v6-u-w-50'>
+                  <ProfileSelector isDisabled={complianceType !== 'openscap'} />
+                </FlexItem>
+                <FlexItem>
+                  <Popover
+                    headerContent='Details'
+                    bodyContent={<OpenScapProfileDetails />}
+                    minWidth='30'
+                  >
+                    <Button
+                      variant='secondary'
+                      icon={<InfoCircleIcon />}
+                      iconPosition='left'
+                      isDisabled={complianceType !== 'openscap' || !profileID}
                     >
-                      <Button
-                        variant='secondary'
-                        icon={<InfoCircleIcon />}
-                        iconPosition='left'
-                        isDisabled={
-                          complianceType !== 'compliance' || !policyID
-                        }
-                      >
-                        View details
-                      </Button>
-                    </Popover>
-                  </FlexItem>
-                </Flex>
-                <FormHelperText>
-                  <HelperText>
-                    <HelperTextItem>
-                      <ExternalLinkButton
-                        url={COMPLIANCE_URL}
-                        analyticsStepId='step-oscap'
-                      >
-                        Manage Red Hat Lightspeed compliance
-                      </ExternalLinkButton>
-                    </HelperTextItem>
-                  </HelperText>
-                </FormHelperText>
-              </Content>
-            </>
-          )}
-          <Content className='pf-v6-u-pb-sm'>
-            <Radio
-              id='security-type-openscap'
-              name='security-type'
-              label='Use a default OpenSCAP profile'
-              isChecked={complianceType === 'openscap'}
-              onChange={() => handleTypeChange('openscap')}
-            />
-          </Content>
-          <Content className='pf-v6-u-pl-lg'>
-            <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-              <FlexItem className='pf-v6-u-w-50'>
-                <ProfileSelector isDisabled={complianceType !== 'openscap'} />
-              </FlexItem>
-              <FlexItem>
-                <Popover
-                  headerContent='Details'
-                  bodyContent={<OpenScapProfileDetails />}
-                  minWidth='30'
-                >
-                  <Button
-                    variant='secondary'
-                    icon={<InfoCircleIcon />}
-                    iconPosition='left'
-                    isDisabled={complianceType !== 'openscap' || !profileID}
-                  >
-                    View details
-                  </Button>
-                </Popover>
-              </FlexItem>
-            </Flex>
-            <FormHelperText>
-              <HelperText>
-                <HelperTextItem>
-                  <ExternalLinkButton
-                    url={OSCAP_URL}
-                    analyticsStepId='step-oscap'
-                  >
-                    Manage with OpenSCAP
-                  </ExternalLinkButton>
-                </HelperTextItem>
-              </HelperText>
-            </FormHelperText>
-          </Content>
-        </FormGroup>
+                      View details
+                    </Button>
+                  </Popover>
+                </FlexItem>
+              </Flex>
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem>
+                    <ExternalLinkButton
+                      url={OSCAP_URL}
+                      analyticsStepId='step-oscap'
+                    >
+                      Manage with OpenSCAP
+                    </ExternalLinkButton>
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </Content>
+          </FormGroup>
+        )}
 
-        {Array.isArray(policies?.data) &&
+        {!restrictions.openscap.shouldHide &&
+          Array.isArray(policies?.data) &&
           policies.data.length === 0 &&
           complianceType === 'compliance' && (
             <Alert
