@@ -514,6 +514,7 @@ const TargetEnvironment = () => {
             aria-label='PXE boot image checkbox'
             id='checkbox-pxe-boot'
             name='PXE boot image'
+            isDisabled={isOnlyNetworkInstallerSelected}
           />
         )}
         {supportedEnvironments?.includes('wsl') && (
