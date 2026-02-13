@@ -81,6 +81,8 @@ import {
   GetBlueprintComposesApiArg,
   GetBlueprintsApiArg,
 } from '../../store/imageBuilderApi';
+import { hasBootcRequest } from '../../store/typeGuards';
+import { bootcReferenceToOSDisplayLabel } from '../../Utilities/distributionToOSShortId';
 import {
   computeHoursToExpiration,
   timestampToDisplayString,
@@ -574,6 +576,7 @@ const Row = ({
   const handleToggle = () => setIsExpanded(!isExpanded);
   const dispatch = useDispatch();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const bootcCompose = hasBootcRequest(compose) ? compose : undefined;
 
   const { data } = useGetComposeStatusQuery({
     composeId: compose.id,
@@ -618,18 +621,15 @@ const Row = ({
                 {compose.image_name || compose.id}
               </Button>{' '}
               {isOnPremise &&
-                // API needs to be updated first
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                (compose.request.distribution ? (
-                  <Label isCompact color='teal'>
-                    Package mode
-                  </Label>
-                ) : //@ts-ignore API needs to be updated first
-                compose.request.bootc ? (
+                (bootcCompose?.request.bootc ? (
                   <Label isCompact color='yellow'>
                     Image mode
                   </Label>
-                ) : null)}
+                ) : (
+                  <Label isCompact color='teal'>
+                    Package mode
+                  </Label>
+                ))}
             </>
           ) : (
             <span> {compose.image_name || compose.id}</span>
@@ -642,7 +642,15 @@ const Row = ({
           {timestampToDisplayString(compose.created_at)}
         </Td>
         <Td dataLabel='Release'>
-          <Release release={compose.request.distribution} />
+          {bootcCompose?.request.bootc?.reference ? (
+            <p>
+              {bootcReferenceToOSDisplayLabel(
+                bootcCompose.request.bootc.reference,
+              )}
+            </p>
+          ) : (
+            <Release release={compose.request.distribution} />
+          )}
         </Td>
         <Td dataLabel='Target'>
           {target ? target : <Target compose={compose} />}

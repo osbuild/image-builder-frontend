@@ -417,7 +417,32 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   },
+  // Cockpit-only: bootc field and 'local' upload type are not in the hosted API types yet
+  {
+    id: 'image-mode-bootc-rhel9',
+    image_name: 'image-mode-rhel9',
+    created_at: '2024-01-15T10:00:00Z',
+    request: {
+      bootc: {
+        reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+      },
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'guest-image',
+          upload_request: {
+            type: 'local',
+            options: {},
+          },
+        },
+      ],
+    },
+  } as unknown as ComposesResponseItem,
 ];
+
+export const mockComposeImageModeRhel9 = mockComposes.find(
+  (c) => c.id === 'image-mode-bootc-rhel9',
+)!;
 
 /**
  * MockStatus should have the same composeRequest as the one defined in the
@@ -992,6 +1017,34 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         ],
       },
     },
+    // Cockpit-only: bootc field and 'local' upload type are not in the hosted API types yet
+    'image-mode-bootc-rhel9': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            artifact_path: '/var/lib/osbuild/store/image-mode-rhel9.qcow2',
+          },
+          status: 'success',
+          type: 'local',
+        },
+      },
+      request: {
+        bootc: {
+          reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'local',
+              options: {},
+            },
+          },
+        ],
+      },
+    } as unknown as ComposeStatus,
   };
   return mockComposes[composeId];
 };

@@ -1,8 +1,10 @@
+import { Bootc } from './cockpit/composerCloudApi';
 import {
   Awss3UploadStatus,
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   AzureUploadStatus,
+  ComposesResponseItem,
   Distributions,
   GcpUploadRequestOptions,
   GcpUploadStatus,
@@ -59,6 +61,18 @@ export const isImageMode = (
   distribution?: Distributions | 'image-mode' | undefined,
 ): distribution is 'image-mode' => {
   return distribution === undefined || distribution === IMAGE_MODE;
+};
+
+export type ComposeWithBootc = ComposesResponseItem & {
+  request: ComposesResponseItem['request'] & {
+    bootc?: Bootc;
+  };
+};
+
+export const hasBootcRequest = (
+  compose: ComposesResponseItem,
+): compose is ComposeWithBootc => {
+  return 'bootc' in compose.request;
 };
 
 // we added a dummy distribution, 'image-mode', for image-mode
