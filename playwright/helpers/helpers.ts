@@ -61,6 +61,7 @@ const ON_PREM_RELEASES = new Map([
   ['fedora-42', 'Fedora Linux 42'],
   ['fedora-43', 'Fedora Linux 43'],
   ['fedora-44', 'Fedora Linux 44'],
+  ['fedora-45', 'Fedora Linux 45'],
   ['rhel-10', 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 
