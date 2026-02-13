@@ -96,6 +96,26 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   'network-installer': 'Network - Installer',
 };
 
+export const simpleTargetNames: { [key in ImageTypes]: string } = {
+  aws: 'AWS',
+  azure: 'Microsoft Azure',
+  'edge-commit': 'Edge Commit',
+  'edge-installer': 'Edge Installer',
+  gcp: 'Google Cloud',
+  'guest-image': 'Guest image',
+  'image-installer': 'Installer',
+  vsphere: 'vSphere',
+  'vsphere-ova': 'vSphere',
+  wsl: 'WSL',
+  ami: 'AWS',
+  'rhel-edge-commit': 'RHEL Edge Commit',
+  'rhel-edge-installer': 'RHEL Edge Installer',
+  vhd: '',
+  oci: 'OCI',
+  'pxe-tar-xz': 'PXE Boot',
+  'network-installer': 'Network Installer',
+};
+
 export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
 export const UNIT_GIB = 1024 ** 3;
