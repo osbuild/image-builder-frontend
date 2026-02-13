@@ -7,6 +7,7 @@ import {
   DistributionDetails,
   RestrictionStrategy,
 } from '../../../store/distributions/types';
+import isRhel from '../../../Utilities/isRhel';
 
 const computeRestrictionStrategy = ({
   isImageMode,
@@ -18,11 +19,12 @@ const computeRestrictionStrategy = ({
   distro?: string;
 }) => {
   return computeRestrictions({
-    isImageMode,
-    isOnPremise,
-    arch: 'x86_64',
-    distro,
-    data: undefined,
+    imageTypes: {},
+    context: {
+      isImageMode,
+      isOnPremise,
+      isRhel: isRhel(distro),
+    },
   });
 };
 
@@ -226,11 +228,12 @@ describe('useCustomizationRestrictions hook logic', () => {
       };
 
       const result = computeRestrictions({
-        isImageMode: false,
-        isOnPremise: false,
-        arch: 'x86_64',
-        distro: 'rhel-9',
-        data,
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: {
+          isImageMode: false,
+          isOnPremise: false,
+          isRhel: true,
+        },
       });
 
       expect(result.filesystem.shouldHide).toBe(true);
@@ -259,11 +262,12 @@ describe('useCustomizationRestrictions hook logic', () => {
       };
 
       const result = computeRestrictions({
-        isImageMode: false,
-        isOnPremise: false,
-        arch: 'x86_64',
-        distro: 'rhel-9',
-        data,
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: {
+          isImageMode: false,
+          isOnPremise: false,
+          isRhel: true,
+        },
       });
 
       // filesystem is not supported by either, should be hidden
@@ -298,11 +302,12 @@ describe('useCustomizationRestrictions hook logic', () => {
       };
 
       const result = computeRestrictions({
-        isImageMode: false,
-        isOnPremise: false,
-        arch: 'x86_64',
-        distro: 'rhel-9',
-        data,
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: {
+          isImageMode: false,
+          isOnPremise: false,
+          isRhel: true,
+        },
       });
 
       // filesystem is supported by aws, should NOT be hidden
@@ -329,11 +334,12 @@ describe('useCustomizationRestrictions hook logic', () => {
       };
 
       const result = computeRestrictions({
-        isImageMode: false,
-        isOnPremise: false,
-        arch: 'x86_64',
-        distro: 'rhel-9',
-        data,
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: {
+          isImageMode: false,
+          isOnPremise: false,
+          isRhel: true,
+        },
       });
 
       // Only locale and fips should be visible
@@ -348,7 +354,8 @@ describe('useCustomizationRestrictions hook logic', () => {
     });
 
     it('should handle image type with undefined supported_blueprint_options alongside one that defines it', () => {
-      // aws has supported_blueprint_options with filesystem, gcp has undefined supported_blueprint_options
+      // aws has supported_blueprint_options with filesystem & packages,
+      // gcp has undefined supported_blueprint_options (meaning it supports ALL)
       const data: DistributionDetails = {
         name: 'rhel-9',
         architectures: {
@@ -362,6 +369,7 @@ describe('useCustomizationRestrictions hook logic', () => {
               gcp: {
                 name: 'gcp',
                 // supported_blueprint_options is intentionally omitted (undefined)
+                // This means gcp supports ALL customizations
               },
             },
           },
@@ -369,22 +377,18 @@ describe('useCustomizationRestrictions hook logic', () => {
       };
 
       const result = computeRestrictions({
-        isImageMode: false,
-        isOnPremise: false,
-        arch: 'x86_64',
-        distro: 'rhel-9',
-        data,
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: {
+          isImageMode: false,
+          isOnPremise: false,
+          isRhel: true,
+        },
       });
 
-      const supportedByAws = ['filesystem', 'packages'];
-
-      // Verify all customizations: only those in aws's list should be visible
+      // When at least one image type has undefined supported_blueprint_options,
+      // it supports all customizations, so nothing should be hidden
       for (const customization of getAllCustomizationTypes()) {
-        if (supportedByAws.includes(customization)) {
-          expect(result[customization].shouldHide).toBe(false);
-        } else {
-          expect(result[customization].shouldHide).toBe(true);
-        }
+        expect(result[customization].shouldHide).toBe(false);
       }
     });
 
@@ -402,11 +406,12 @@ describe('useCustomizationRestrictions hook logic', () => {
       };
 
       const result = computeRestrictions({
-        isImageMode: false,
-        isOnPremise: false,
-        arch: 'x86_64',
-        distro: 'rhel-9',
-        data,
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: {
+          isImageMode: false,
+          isOnPremise: false,
+          isRhel: true,
+        },
       });
 
       // All customizations should be visible when no image types are selected
