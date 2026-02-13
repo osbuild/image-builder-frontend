@@ -10,6 +10,7 @@ import {
   selectPackages,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
@@ -17,6 +18,7 @@ const RepositoriesStep = () => {
 
   return (
     <Form>
+      <CustomizationLabels customization='repositories' />
       <Title headingLevel='h1' size='xl'>
         Repositories
       </Title>

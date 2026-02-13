@@ -9,6 +9,7 @@ import FileSystemPartition from './components/FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectFscMode } from '../../../../store/wizardSlice';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 export type FscModeType = 'automatic' | 'basic' | 'advanced';
 
@@ -17,6 +18,7 @@ const FileSystemStep = () => {
 
   return (
     <Form>
+      <CustomizationLabels customization='filesystem' />
       <Title headingLevel='h1' size='xl'>
         File system configuration
       </Title>

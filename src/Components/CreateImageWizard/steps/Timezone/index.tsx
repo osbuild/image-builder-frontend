@@ -6,10 +6,12 @@ import NtpServersInput from './components/NtpServersInput';
 import TimezoneDropDown from './components/TimezoneDropDown';
 
 import { DEFAULT_TIMEZONE } from '../../../../constants';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const TimezoneStep = () => {
   return (
     <Form>
+      <CustomizationLabels customization='timezone' />
       <Title headingLevel='h1' size='xl'>
         Timezone
       </Title>
