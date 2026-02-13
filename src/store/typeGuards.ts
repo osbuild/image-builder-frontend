@@ -6,12 +6,13 @@ import {
   Distributions,
   GcpUploadRequestOptions,
   GcpUploadStatus,
+  ImageTypes,
   OciUploadStatus,
   UploadRequest,
   UploadStatus,
 } from './imageBuilderApi';
 
-import { IMAGE_MODE } from '../constants';
+import { IMAGE_MODE, targetOptions } from '../constants';
 
 export const isGcpUploadRequestOptions = (
   options: UploadRequest['options'],
@@ -73,4 +74,8 @@ export const asDistribution = (
     throw new Error('Unexpected image-mode distribution');
   }
   return distribution;
+};
+
+export const isImageType = (key: string): key is ImageTypes => {
+  return key in targetOptions;
 };
