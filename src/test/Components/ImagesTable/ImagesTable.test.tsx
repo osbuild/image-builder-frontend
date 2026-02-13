@@ -64,6 +64,15 @@ describe('Images Table', () => {
   test('displays OS from bootc reference when compose has no distribution (image mode)', async () => {
     await renderCustomRoutesWithReduxRouter();
 
+    await screen.findByTestId('images-table');
+
+    // The image-mode entry is at the end of mockComposes (page 3).
+    // Navigate forward twice to reach it.
+    const pagination = await screen.findByTestId('images-pagination-top');
+    const nextButtons = await within(pagination).findAllByRole('button');
+    await user.click(nextButtons[nextButtons.length - 1]);
+    await user.click(nextButtons[nextButtons.length - 1]);
+
     const table = await screen.findByTestId('images-table');
 
     const imageModeRow = await waitFor(() => {
