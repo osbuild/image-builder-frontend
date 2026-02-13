@@ -7,6 +7,7 @@ import UserInfo from './components/UserInfo';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectBlueprintMode } from '../../../../store/wizardSlice';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 type UsersStepProps = {
   attemptedNext?: boolean | undefined;
@@ -17,6 +18,7 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
 
   return (
     <Form>
+      <CustomizationLabels customization='users' />
       <Title headingLevel='h1' size='xl'>
         Groups and users
       </Title>

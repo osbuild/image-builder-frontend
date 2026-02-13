@@ -21,6 +21,7 @@ import {
   selectRegistrationType,
   setFirstBootScript,
 } from '../../../../store/wizardSlice';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import { useFirstBootValidation } from '../../utilities/useValidation';
 
 const detectScriptType = (scriptString: string): Language => {
@@ -55,6 +56,7 @@ const FirstBootStep = () => {
 
   return (
     <Form>
+      <CustomizationLabels customization='firstBoot' />
       <Title headingLevel='h1' size='xl'>
         First boot configuration
       </Title>

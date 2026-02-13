@@ -9,12 +9,14 @@ import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const PackagesStep = () => {
   const distribution = useAppSelector(selectDistribution);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <Form>
+      <CustomizationLabels customization='packages' />
       <Title headingLevel='h1' size='xl'>
         Additional packages
       </Title>

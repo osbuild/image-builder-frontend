@@ -4,11 +4,13 @@ import { Content, Form, Title } from '@patternfly/react-core';
 
 import Snapshot from './components/Snapshot';
 
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import ManageRepositoriesButton from '../Repositories/components/ManageRepositoriesButton';
 
 export default function SnapshotStep() {
   return (
     <Form>
+      <CustomizationLabels customization='repositories' />
       <Title headingLevel='h1' size='xl'>
         Repeatable build
       </Title>

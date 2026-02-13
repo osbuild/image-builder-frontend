@@ -5,9 +5,12 @@ import { ClipboardCopy, Content, Form, Title } from '@patternfly/react-core';
 import PortsInput from './components/PortsInput';
 import Services from './components/Services';
 
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
+
 const FirewallStep = () => {
   return (
     <Form>
+      <CustomizationLabels customization='firewall' />
       <Title headingLevel='h1' size='xl'>
         Firewall
       </Title>
