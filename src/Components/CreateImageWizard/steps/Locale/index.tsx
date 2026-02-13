@@ -5,9 +5,12 @@ import { Content, Form, Title } from '@patternfly/react-core';
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
+
 const LocaleStep = () => {
   return (
     <Form>
+      <CustomizationLabels customization='locale' />
       <Title headingLevel='h1' size='xl'>
         Locale
       </Title>

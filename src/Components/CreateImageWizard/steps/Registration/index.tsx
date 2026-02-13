@@ -19,6 +19,7 @@ import { useGetUser } from '../../../../Hooks';
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { changeOrgId } from '../../../../store/wizardSlice';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const RegistrationStep = () => {
   const dispatch = useAppDispatch();
@@ -35,6 +36,7 @@ const RegistrationStep = () => {
 
   return (
     <Form>
+      <CustomizationLabels customization='registration' />
       <Content>
         <Title headingLevel='h1' size='xl'>
           Register

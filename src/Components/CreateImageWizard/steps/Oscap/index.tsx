@@ -66,6 +66,7 @@ import {
   setOscapProfile,
 } from '../../../../store/wizardSlice';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
@@ -156,6 +157,14 @@ const OscapContent = () => {
   return (
     <>
       <Form>
+        {
+          // TODO: for now we will just check openscap, but
+          // this is an edge case where we have two different
+          // customizations in this step
+          // NOTE: the openscap customization covers both
+          // 'compliance' & 'openscap' here
+        }
+        <CustomizationLabels customization={'openscap'} />
         <Title headingLevel='h1' size='xl'>
           Security
         </Title>

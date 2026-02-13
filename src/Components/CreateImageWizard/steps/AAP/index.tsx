@@ -4,9 +4,12 @@ import { Content, Form, Title } from '@patternfly/react-core';
 
 import AAPRegistration from './components/AAPRegistration';
 
+import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
+
 const AAPStep = () => {
   return (
     <Form>
+      <CustomizationLabels customization='aap' />
       <Title headingLevel='h1' size='xl'>
         Ansible Automation Platform
       </Title>
