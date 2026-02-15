@@ -5,7 +5,11 @@ import { jwtDecode } from 'jwt-decode';
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
-import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
+import {
+  SYSTEM_GROUPS,
+  UNDEFINED_GROUPS_WARNING_KEY,
+  UNIQUE_VALIDATION_DELAY,
+} from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
 import { selectIsOnPremise } from '../../../store/envSlice';
 import { useAppSelector } from '../../../store/hooks';
@@ -825,6 +829,8 @@ export function useUsersValidation(): UsersStepValidation {
     };
   }
 
+  const definedGroupNames = userGroups.map((group) => group.name);
+
   for (let index = 0; index < users.length; index++) {
     const userErrors: { [key: string]: string } = {};
     const isUserDefined =
@@ -873,6 +879,12 @@ export function useUsersValidation(): UsersStepValidation {
         ? users[index].name
         : '';
 
+    const undefinedGroups = users[index].groups.filter(
+      (groupName) =>
+        !definedGroupNames.includes(groupName) &&
+        !SYSTEM_GROUPS.includes(groupName) &&
+        isUserGroupValid(groupName),
+    );
     if (
       invalidGroups.length > 0 ||
       duplicateGroups.length > 0 ||
@@ -895,16 +907,28 @@ export function useUsersValidation(): UsersStepValidation {
       userErrors.groups = groupsErrors.join(' | ');
     }
 
+    if (undefinedGroups.length > 0) {
+      userErrors[UNDEFINED_GROUPS_WARNING_KEY] =
+        `User assigned to undefined group(s): ${undefinedGroups.join(', ')}. Ensure these groups exist on the system or define them in the 'Groups' section.`;
+    }
+
     if (Object.keys(userErrors).length > 0) {
       errors[index] = userErrors;
     }
   }
 
+  // Count only blocking errors (exclude warnings)
+  const hasBlockingErrors = Object.values(errors).some((userErrors) => {
+    return Object.keys(userErrors).some(
+      (key) => key !== UNDEFINED_GROUPS_WARNING_KEY,
+    );
+  });
+
   const canProceed =
     // Case 1: there is no users
     users.length === 0 ||
-    // Case 2: all users are valid
-    Object.keys(errors).length === 0;
+    // Case 2: all users are valid (no blocking errors)
+    !hasBlockingErrors;
 
   return {
     errors,
