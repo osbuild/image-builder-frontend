@@ -261,9 +261,11 @@ const convertLogicalVolume = (volume: LogicalVolume) => {
  * Minor releases were previously used and are still present in older blueprints
  * @param distribution blueprint distribution
  */
-const getLatestRelease = (distribution: Distributions | 'image-mode') => {
+const getLatestRelease = (
+  distribution: Distributions | 'image-mode',
+): Distributions | 'image-mode' => {
   if (isImageModeDistribution(distribution)) {
-    return distribution;
+    return 'image-mode';
   }
 
   return distribution.startsWith('rhel-10')
