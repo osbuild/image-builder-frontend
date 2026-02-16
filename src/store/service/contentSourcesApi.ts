@@ -750,17 +750,31 @@ export type ConfigDistributionArch = {
   /** Human-readable form of the architecture */
   name?: string | undefined;
 };
+export type ConfigDistributionMinorVersion = {
+  feature_names?: string[] | undefined;
+  label?: string | undefined;
+  major?: string | undefined;
+  name?: string | undefined;
+};
 export type ConfigDistributionVersion = {
   /** Static label of the version */
   label?: string | undefined;
   /** Human-readable form of the version */
   name?: string | undefined;
 };
+export type ConfigExtendedReleaseFeature = {
+  label?: string | undefined;
+  name?: string | undefined;
+};
 export type ApiRepositoryParameterResponse = {
   /** Architectures available for repository creation */
   distribution_arches?: ConfigDistributionArch[] | undefined;
+  /** Minor versions available for repository creation (filtered by subscriptions) */
+  distribution_minor_versions?: ConfigDistributionMinorVersion[] | undefined;
   /** Versions available for repository creation */
   distribution_versions?: ConfigDistributionVersion[] | undefined;
+  /** Extended release features available (filtered by subscriptions) */
+  extended_release_features?: ConfigExtendedReleaseFeature[] | undefined;
 };
 export type ApiPackageSourcesResponse = {
   /** Architecture of the module */
