@@ -223,6 +223,13 @@ export const useImageTypeCustomizationSupport = (
     },
   );
 
+  if (selectedImageTypes.length === 1) {
+    // if there is only one image type selected the wizard will
+    // hide the unsupported steps, so we can just return an empty
+    // array and labels won't be generated.
+    return [];
+  }
+
   const imageTypes = extractImageTypes({
     architectures: data?.architectures,
     arch,
