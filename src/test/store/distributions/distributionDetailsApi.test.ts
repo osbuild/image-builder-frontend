@@ -85,18 +85,19 @@ describe('DISTRO_DETAILS configuration', () => {
   });
 
   describe('wsl restrictions', () => {
-    it('should allow all customizations except filesystem and kernel for wsl', () => {
+    it('should allow all customizations except filesystem, kernel, and openscap for wsl', () => {
       const wslSupported = DISTRO_DETAILS['wsl'].supported_blueprint_options;
 
       // Verify it's an array (not an object due to accidental object spread)
       expect(Array.isArray(wslSupported)).toBe(true);
 
-      // Should not contain filesystem and kernel
+      // Should not contain filesystem, kernel, and openscap
       expect(wslSupported).not.toContain('filesystem');
       expect(wslSupported).not.toContain('kernel');
+      expect(wslSupported).not.toContain('openscap');
 
-      // Should have length of ALL_CUSTOMIZATIONS - 2 (minus filesystem and kernel)
-      expect(wslSupported).toHaveLength(ALL_CUSTOMIZATIONS.length - 2);
+      // Should have length of ALL_CUSTOMIZATIONS - 3 (minus filesystem, kernel, and openscap)
+      expect(wslSupported).toHaveLength(ALL_CUSTOMIZATIONS.length - 3);
     });
   });
 });

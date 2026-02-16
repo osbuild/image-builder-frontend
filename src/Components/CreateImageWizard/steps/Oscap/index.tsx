@@ -83,7 +83,6 @@ const OscapContent = () => {
     asDistribution(useAppSelector(selectDistribution)),
   );
   const majorVersion = release.split('-')[1];
-  const environments = useAppSelector(selectImageTypes);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: imageTypes,
@@ -199,13 +198,6 @@ const OscapContent = () => {
             </HelperText>
           </FormHelperText>
         </FormGroup>
-        {environments.includes('wsl') && (
-          <Alert
-            variant='warning'
-            isInline
-            title='OpenSCAP profiles are not compatible with WSL images.'
-          />
-        )}
 
         {!restrictions.openscap.shouldHide && (
           <FormGroup>

@@ -35,33 +35,20 @@ test('Create a blueprint with OpenSCAP customization', async ({
   await navigateToLandingPage(page);
   const frame = ibFrame(page);
 
-  await test.step('WSL only disables selector', async () => {
+  await test.step('WSL + Installer shows WSL is not supported', async () => {
+    // Back to Image output and add Installer
     await frame.getByRole('button', { name: 'Create image blueprint' }).click();
     await selectDistro(frame, 'rhel9');
     await frame
       .getByRole('checkbox', { name: 'Windows Subsystem for Linux' })
       .click();
-    await frame.getByRole('button', { name: 'Next' }).click();
-    await registerLater(frame);
-
-    await frame.getByRole('button', { name: 'Security' }).nth(1).click();
-    await expect(
-      frame.getByText('OpenSCAP profiles are not compatible with WSL images.'),
-    ).toBeVisible();
-    await expect(frame.getByRole('button', { name: 'None' })).toBeDisabled();
-  });
-
-  await test.step('WSL + Installer shows alert but keeps selector enabled', async () => {
-    // Back to Image output and add Installer
-    await frame.getByRole('button', { name: 'Image output' }).click();
-    await selectDistro(frame, 'rhel9');
     await frame.getByRole('checkbox', { name: 'Bare metal installer' }).click();
     await frame.getByRole('button', { name: 'Next' }).click();
     await registerLater(frame);
 
     await frame.getByRole('button', { name: 'Security' }).nth(1).click();
     await expect(
-      frame.getByText('OpenSCAP profiles are not compatible with WSL images.'),
+      frame.getByText('WSL: customization is not supported'),
     ).toBeVisible();
     await expect(
       frame.getByRole('textbox', { name: 'Type to filter' }),
