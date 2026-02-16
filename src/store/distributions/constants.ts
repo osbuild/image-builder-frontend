@@ -56,8 +56,10 @@ export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {
   wsl: {
     name: 'wsl',
     supported_blueprint_options: [
-      // wsl has everything but filesystem & kernel
-      ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem' && c !== 'kernel'),
+      // wsl has everything but filesystem, openscap & kernel
+      ...ALL_CUSTOMIZATIONS.filter(
+        (c) => c !== 'filesystem' && c !== 'kernel' && c !== 'openscap',
+      ),
     ],
   },
   ami: { name: 'ami', supported_blueprint_options: [...ALL_CUSTOMIZATIONS] },
