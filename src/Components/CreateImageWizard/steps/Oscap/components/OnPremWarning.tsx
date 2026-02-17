@@ -5,17 +5,12 @@ import {
   ClipboardCopy,
   CodeBlock,
   CodeBlockCode,
-  Form,
   FormGroup,
-  Title,
 } from '@patternfly/react-core';
 
 const OscapOnPremWarning = () => {
   return (
-    <Form>
-      <Title headingLevel='h1' size='xl'>
-        Security
-      </Title>
+    <>
       <FormGroup>
         <Alert
           style={{
@@ -40,7 +35,7 @@ const OscapOnPremWarning = () => {
           </CodeBlockCode>
         </CodeBlock>
       </FormGroup>
-    </Form>
+    </>
   );
 };
 

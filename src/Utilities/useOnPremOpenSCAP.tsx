@@ -9,6 +9,13 @@ export const useOnPremOpenSCAPAvailable = () => {
   const [packagesAvailable, setPackagesAvailable] = useState(false);
 
   useEffect(() => {
+    // The hook is now invoked also for hosted, just return if that's the case
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!cockpit.spawn) {
+      setIsLoading(false);
+      return;
+    }
+
     const checkPackages = () => {
       cockpit
         .spawn(['rpm', '-qa', 'openscap-scanner', 'scap-security-guide'], {})
