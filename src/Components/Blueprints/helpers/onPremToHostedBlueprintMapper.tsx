@@ -77,6 +77,7 @@ export type CustomizationsOnPrem = {
   hostname?: string;
   kernel?: Kernel;
   user?: UserOnPrem[];
+  group?: GroupOnPrem[];
   groups?: GroupOnPrem[];
   timezone?: Timezone;
   locale?: Locale;
@@ -151,7 +152,13 @@ export const mapOnPremToHosted = async (
         users !== undefined || user_keys !== undefined
           ? [...(users ? users : []), ...(user_keys ? user_keys : [])]
           : undefined,
-      groups: blueprint.customizations?.groups,
+      groups:
+        blueprint.customizations?.group || blueprint.customizations?.groups
+          ? [
+              ...(blueprint.customizations.group ?? []),
+              ...(blueprint.customizations.groups ?? []),
+            ]
+          : undefined,
       filesystem: blueprint.customizations?.filesystem?.map(
         ({ minsize, size, ...fs }) => ({
           min_size: minsize || size,
@@ -251,6 +258,10 @@ export const mapHostedToOnPrem = (
         password: u.password || '',
       };
     });
+  }
+
+  if (blueprint.customizations.groups) {
+    result.customizations!.group = blueprint.customizations.groups;
   }
 
   if (blueprint.customizations.services) {
