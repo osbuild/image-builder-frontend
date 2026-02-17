@@ -169,21 +169,27 @@ const OscapContent = () => {
         <Title headingLevel='h1' size='xl'>
           Security
         </Title>
-        <Content>
-          Select which Red Hat Lightspeed compliance policy or OpenSCAP profile
-          you want your image to be compliant-ready for. Red Hat Lightspeed
-          compliance allows the use of tailored policies, whereas OpenSCAP
-          provides default versions. This step automatically helps monitor the
-          adherence of your registered RHEL systems to a selected policy or
-          profile.
-        </Content>
-        {registrationType.startsWith('register-now') && (
-          <Alert
-            title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
+        {restrictions.openscap.shouldHide ? (
+          <Content>Configure security settings for your image.</Content>
+        ) : (
+          <>
+            <Content>
+              Select which Red Hat Lightspeed compliance policy or OpenSCAP
+              profile you want your image to be compliant-ready for. Red Hat
+              Lightspeed compliance allows the use of tailored policies, whereas
+              OpenSCAP provides default versions. This step automatically helps
+              monitor the adherence of your registered RHEL systems to a
+              selected policy or profile.
+            </Content>
+            {registrationType.startsWith('register-now') && (
+              <Alert
+                title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
             Lightspeed by default.'
-            variant='info'
-            isInline
-          />
+                variant='info'
+                isInline
+              />
+            )}
+          </>
         )}
         <FormGroup>
           <Switch
