@@ -190,8 +190,13 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
       component='a'
       target='_blank'
       variant='link'
-      onClick={(ev) => {
+      onClick={async (ev) => {
         ev.preventDefault();
+        // Make sure the file is readable for the user, the artefact
+        // directory is created as 700 by default.
+        await cockpit.spawn(['chmod', '755', parsedPath.dir], {
+          superuser: 'try',
+        });
         cockpit.jump(href, cockpit.transport.host);
       }}
       href={href}
