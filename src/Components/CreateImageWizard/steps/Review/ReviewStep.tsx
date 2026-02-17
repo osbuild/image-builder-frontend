@@ -331,7 +331,7 @@ const Review = () => {
           )}
         </Stack>
       </ExpandableSection>
-      {isRhel(distribution) && (
+      {isRhel(distribution) && !restrictions.registration.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Registration',
@@ -353,7 +353,7 @@ const Review = () => {
         </ExpandableSection>
       )}
 
-      {!restrictions.openscap.shouldHide && (
+      {!(restrictions.openscap.shouldHide && restrictions.fips.shouldHide) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Security',
