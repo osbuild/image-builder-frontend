@@ -139,6 +139,34 @@ ntpservers = [ "0.nl.pool.ntp.org", "0.de.pool.ntp.org" ]
 languages = [ "C.UTF-8" ]`;
 };
 
+export const exportedGroupsBP = (blueprintName: string): string => {
+  return `name = "${blueprintName}"
+
+[[customizations.user]]
+name = "testuser"
+key = ""
+groups = [ "developers" ]
+password = ""
+
+[[customizations.group]]
+name = "developers"
+gid = 1000
+
+[[customizations.group]]
+name = "qa-team"
+gid = 1001
+
+[[customizations.group]]
+name = "ops"
+gid = 1002
+
+[customizations.timezone]
+timezone = "Etc/UTC"
+
+[customizations.locale]
+languages = [ "C.UTF-8" ]`;
+};
+
 export const exportedUsersBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
