@@ -43,12 +43,6 @@ import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
 
-// Group ID constants based on Linux LOGIN.DEFS(5) defaults
-// GID_MIN: minimum group ID for regular groups (default: 1000)
-// GID_MAX: maximum group ID for regular groups (default: 60000)
-const MIN_GROUP_ID = 1000;
-const MAX_GROUP_ID = 60000;
-
 type WizardModeOptions = 'create' | 'edit';
 
 export type BlueprintModeOptions = 'image' | 'package';
@@ -101,6 +95,11 @@ type UserGroupPayload = {
 type UserGroupNamePayload = {
   index: number;
   name: string;
+};
+
+type UserGroupGidPayload = {
+  index: number;
+  gid: string;
 };
 
 export type UserGroup = {
@@ -1516,16 +1515,11 @@ export const wizardSlice = createSlice({
       const existingGids = new Set(
         state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
       );
-      let nextGid = MIN_GROUP_ID;
-      while (existingGids.has(nextGid) && nextGid <= MAX_GROUP_ID) {
+      let nextGid = 1000;
+      while (existingGids.has(nextGid)) {
         nextGid++;
       }
-
-      const newGroup: UserGroup = { name: '' };
-      if (nextGid <= MAX_GROUP_ID) {
-        newGroup.gid = nextGid;
-      }
-      state.userGroups.push(newGroup);
+      state.userGroups.push({ name: '', gid: nextGid });
     },
     setUserGroupNameByIndex: (
       state,
@@ -1536,16 +1530,29 @@ export const wizardSlice = createSlice({
       if (name.trim() === '') {
         delete state.userGroups[index].gid;
       } else if (state.userGroups[index].gid === undefined) {
-        // Re-assign gid if the group now has a valid name but no gid
         const existingGids = new Set(
           state.userGroups.map((g) => g.gid).filter((gid) => gid !== undefined),
         );
-        let nextGid = MIN_GROUP_ID;
-        while (existingGids.has(nextGid) && nextGid <= MAX_GROUP_ID) {
+        let nextGid = 1000;
+        while (existingGids.has(nextGid)) {
           nextGid++;
         }
-        if (nextGid <= MAX_GROUP_ID) {
-          state.userGroups[index].gid = nextGid;
+        state.userGroups[index].gid = nextGid;
+      }
+    },
+    setUserGroupGidByIndex: (
+      state,
+      action: PayloadAction<UserGroupGidPayload>,
+    ) => {
+      const { index, gid } = action.payload;
+      if (gid === '') {
+        delete state.userGroups[index].gid;
+      } else {
+        const parsed = parseInt(gid, 10);
+        if (isNaN(parsed)) {
+          delete state.userGroups[index].gid;
+        } else {
+          state.userGroups[index].gid = parsed;
         }
       }
     },
@@ -1629,6 +1636,7 @@ export const {
   removePackageGroup,
   addUserGroup,
   setUserGroupNameByIndex,
+  setUserGroupGidByIndex,
   removeUserGroup,
   addLanguage,
   removeLanguage,

@@ -49,9 +49,54 @@ test('Create a blueprint with Users customization', async ({
     await registerLater(frame);
   });
 
-  await test.step('Create initial valid users', async () => {
+  await test.step('Test editable Group ID', async () => {
     await frame.getByRole('button', { name: 'Groups and users' }).click();
 
+    // Verify default auto-generated GID is present
+    const gidInput = frame.getByRole('textbox', { name: 'Group ID' });
+    await expect(gidInput).toBeVisible();
+
+    // Set a group name to trigger auto-GID assignment
+    await frame.getByRole('textbox', { name: 'Group name' }).fill('testgroup');
+    await expect(gidInput).toHaveValue('1000');
+
+    // Edit the GID to a custom value
+    await gidInput.fill('2000');
+    await expect(gidInput).toHaveValue('2000');
+
+    // Test validation: out-of-range GID
+    await gidInput.fill('99999');
+    await gidInput.press('Tab');
+    await expect(
+      frame.getByText('Group ID must be between 1000 and 60000'),
+    ).toBeVisible();
+
+    // Fix GID to valid value
+    await gidInput.fill('1500');
+    await expect(
+      frame.getByText('Group ID must be between 1000 and 60000'),
+    ).toBeHidden();
+
+    // Test validation: duplicate GID
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    const gidInputs = frame.getByRole('textbox', { name: 'Group ID' });
+    const groupNameInputs = frame.getByRole('textbox', {
+      name: 'Group name',
+    });
+    await groupNameInputs.nth(1).fill('testgroup2');
+    await gidInputs.nth(1).fill('1500');
+    await gidInputs.nth(1).press('Tab');
+    await expect(
+      frame.getByText('Group ID must be unique').first(),
+    ).toBeVisible();
+
+    // Clean up: remove groups and reset
+    await frame.getByRole('button', { name: 'Remove group' }).nth(1).click();
+    await groupNameInputs.first().fill('');
+    await gidInput.fill('');
+  });
+
+  await test.step('Create initial valid users', async () => {
     // Create admin user with correct password and wheel group
     await frame
       .getByRole('textbox', { name: 'blueprint user name' })
