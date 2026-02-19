@@ -35,7 +35,7 @@ type ValidationInputProp = TextInputProps &
       value: string,
     ) => void;
     isRequired?: boolean;
-    warning?: string;
+    warning?: string | undefined;
     forceErrorDisplay?: boolean;
     isDisabled?: boolean;
   };
