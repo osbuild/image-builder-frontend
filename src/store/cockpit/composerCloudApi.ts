@@ -139,6 +139,7 @@ export type Bootc = {
 };
 export type ImageTypes =
   | "aws"
+  | "aws-cvm"
   | "aws-ha-rhui"
   | "aws-rhui"
   | "aws-sap-rhui"
