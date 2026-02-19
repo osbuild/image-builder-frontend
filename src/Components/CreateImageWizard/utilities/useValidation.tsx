@@ -932,6 +932,15 @@ export function useUserGroupsValidation(): UsersStepValidation {
       }
     }
 
+    if (group.gid !== undefined) {
+      const duplicateGids = userGroups.filter(
+        (g, idx) => idx !== index && g.gid === group.gid,
+      );
+      if (duplicateGids.length > 0) {
+        groupErrors.groupGid = 'Group ID must be unique';
+      }
+    }
+
     if (Object.keys(groupErrors).length > 0) {
       errors[index] = groupErrors;
     }

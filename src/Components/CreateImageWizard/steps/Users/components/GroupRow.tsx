@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Button, TextInput } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import {
   removeUserGroup,
+  setUserGroupGidByIndex,
   setUserGroupNameByIndex,
   UserGroup,
 } from '../../../../../store/wizardSlice';
@@ -42,6 +43,13 @@ const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
     dispatch(setUserGroupNameByIndex({ index, name: value }));
   };
 
+  const handleGroupGidChange = (
+    _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    value: string,
+  ) => {
+    dispatch(setUserGroupGidByIndex({ index, gid: value }));
+  };
+
   return (
     <Tr>
       <Td>
@@ -55,11 +63,13 @@ const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
         />
       </Td>
       <Td>
-        <TextInput
+        <ValidatedInputAndTextArea
+          ariaLabel='Group ID'
           value={group.gid?.toString() || ''}
-          isDisabled={true}
           placeholder='Auto-generated'
-          aria-label='Group ID'
+          onChange={handleGroupGidChange}
+          stepValidation={getValidationByIndex(index)}
+          fieldName='groupGid'
         />
       </Td>
       <Td>
