@@ -94,6 +94,21 @@ jobs:
             curl -k -X POST https://ethel.rhsm.redhat.com/account/refresh -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
             # Step 5: View account to check account status
             curl -k -X GET "https://ethel.rhsm.redhat.com/account/get?username=$PLAYWRIGHT_USER&password=$PLAYWRIGHT_PASSWORD"
+
+            echo "Setting up layered product account."
+            export LAYERED_PRODUCT_USER=image-builder-layered-$RANDOM
+            export LAYERED_PRODUCT_USER_PASSWORD=Image-builder-layered-$(cat /proc/sys/kernel/random/uuid)
+            # Step 1: Create a new empty account for layered products
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/new -d "{\"username\": \"$LAYERED_PRODUCT_USER\", \"password\":\"$LAYERED_PRODUCT_USER_PASSWORD\"}"
+            # Step 2: Attach RHEL and High Availability subscriptions to the account
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/attach \
+              -d "{\"username\": \"$LAYERED_PRODUCT_USER\", \"password\":\"$LAYERED_PRODUCT_USER_PASSWORD\", \"sku\":[\"RH00003\", \"RH00050\"],\"quantity\": 1}"
+            # Step 3: Activate the account by accepting Terms and Conditions
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/activate -d "{\"username\": \"$LAYERED_PRODUCT_USER\", \"password\":\"$LAYERED_PRODUCT_USER_PASSWORD\"}"
+            # Step 4: Refresh account to update subscription pools
+            curl -k -X POST https://ethel.rhsm.redhat.com/account/refresh -d "{\"username\": \"$LAYERED_PRODUCT_USER\", \"password\":\"$LAYERED_PRODUCT_USER_PASSWORD\"}"
+            # Step 5: View account to check account status
+            curl -k -X GET "https://ethel.rhsm.redhat.com/account/get?username=$LAYERED_PRODUCT_USER&password=$LAYERED_PRODUCT_USER_PASSWORD"
           else
             echo "Skipping account setup for Playwright tests."
           fi
