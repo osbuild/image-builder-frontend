@@ -5,7 +5,10 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
-import { exportedUsersBP } from '../fixtures/data/exportBlueprintContents';
+import {
+  exportedGroupsBP,
+  exportedUsersBP,
+} from '../fixtures/data/exportBlueprintContents';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
@@ -460,6 +463,182 @@ test('Create a blueprint with Users customization', async ({
     await expect(
       frame.getByRole('textbox', { name: 'blueprint user name' }).nth(3),
     ).toHaveValue('newuser');
+
+    await frame.getByRole('button', { name: 'Cancel' }).click();
+  });
+});
+
+test('Create a blueprint with Groups customization', async ({
+  page,
+  cleanup,
+}) => {
+  const blueprintName = 'test-' + uuidv4();
+
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+
+  await ensureAuthenticated(page);
+
+  await navigateToLandingPage(page);
+  const frame = ibFrame(page);
+
+  await test.step('Navigate to Groups and users step', async () => {
+    await fillInImageOutput(frame);
+    await registerLater(frame);
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
+  });
+
+  await test.step('Add groups', async () => {
+    await frame.getByPlaceholder('Set group name').fill('developers');
+    await expect(frame.getByPlaceholder('Auto-generated')).toBeVisible();
+
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    await frame.getByPlaceholder('Set group name').last().fill('qa-team');
+
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    await frame.getByPlaceholder('Set group name').last().fill('ops');
+  });
+
+  await test.step('Test group validation errors', async () => {
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    const lastGroupInput = frame.getByPlaceholder('Set group name').last();
+    await lastGroupInput.fill('invalid group');
+    await expect(frame.getByText('Invalid group name')).toBeVisible();
+
+    await lastGroupInput.fill('developers');
+    await expect(
+      frame.getByText('Group name must be unique').first(),
+    ).toBeVisible();
+
+    await expect(
+      frame.getByRole('button', { name: 'Add group' }),
+    ).toBeDisabled();
+
+    await lastGroupInput.fill('valid-group');
+    await expect(frame.getByText('Invalid group name')).toHaveCount(0);
+    await expect(frame.getByText('Group name must be unique')).toHaveCount(0);
+  });
+
+  await test.step('Test group removal', async () => {
+    await frame
+      .getByRole('row')
+      .filter({ has: frame.locator('input[value="valid-group"]') })
+      .getByRole('button', { name: 'Remove group' })
+      .click();
+
+    const groupNameInputs = frame.getByPlaceholder('Set group name');
+    await expect(groupNameInputs).toHaveCount(3);
+    await expect(groupNameInputs.nth(0)).toHaveValue('developers');
+    await expect(groupNameInputs.nth(1)).toHaveValue('qa-team');
+    await expect(groupNameInputs.nth(2)).toHaveValue('ops');
+  });
+
+  await test.step('Test remove button disabled for single group', async () => {
+    await frame
+      .getByRole('row')
+      .filter({ has: frame.locator('input[value="ops"]') })
+      .getByRole('button', { name: 'Remove group' })
+      .click();
+    await frame
+      .getByRole('row')
+      .filter({ has: frame.locator('input[value="qa-team"]') })
+      .getByRole('button', { name: 'Remove group' })
+      .click();
+
+    await expect(
+      frame.getByRole('button', { name: 'Remove group' }).first(),
+    ).toBeDisabled();
+
+    await expect(frame.getByPlaceholder('Set group name').first()).toHaveValue(
+      'developers',
+    );
+
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    await frame.getByPlaceholder('Set group name').last().fill('qa-team');
+
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    await frame.getByPlaceholder('Set group name').last().fill('ops');
+  });
+
+  await test.step('Add a user assigned to a group', async () => {
+    await frame
+      .getByRole('textbox', { name: 'blueprint user name' })
+      .fill('testuser');
+    await frame
+      .getByRole('textbox', { name: 'blueprint user password' })
+      .fill('TestPass123');
+
+    await frame.getByPlaceholder('Add user group').fill('developers');
+    await frame.getByPlaceholder('Add user group').press('Enter');
+  });
+
+  await test.step('Verify groups in Review step', async () => {
+    await frame.getByRole('button', { name: 'Review and finish' }).click();
+
+    await expect(frame.getByTestId('groups-expandable')).toBeVisible();
+    await expect(
+      frame.getByTestId('groups-expandable').getByText('developers'),
+    ).toBeVisible();
+    await expect(
+      frame.getByTestId('groups-expandable').getByText('qa-team'),
+    ).toBeVisible();
+    await expect(
+      frame.getByTestId('groups-expandable').getByText('ops'),
+    ).toBeVisible();
+  });
+
+  await test.step('Fill details and create blueprint', async () => {
+    await fillInDetails(frame, blueprintName);
+    await createBlueprint(frame, blueprintName);
+  });
+
+  await test.step('Edit blueprint and verify groups persist', async () => {
+    await frame.getByRole('button', { name: 'Edit blueprint' }).click();
+    await frame.getByTestId('revisit-groups').click();
+
+    const groupNameInputs = frame.getByPlaceholder('Set group name');
+    await expect(groupNameInputs.nth(0)).toHaveValue('developers');
+    await expect(groupNameInputs.nth(1)).toHaveValue('qa-team');
+    await expect(groupNameInputs.nth(2)).toHaveValue('ops');
+
+    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    await frame
+      .getByRole('button', { name: 'Save changes to blueprint' })
+      .click();
+  });
+
+  let exportedBP = '';
+
+  await test.step('Export BP', async () => {
+    exportedBP = await exportBlueprint(page);
+    cleanup.add(async () => {
+      await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+    });
+  });
+
+  await test.step('Review exported BP', async (step) => {
+    step.skip(
+      isHosted(),
+      'Only verify the contents of the exported blueprint in cockpit',
+    );
+    verifyExportedBlueprint(exportedBP, exportedGroupsBP(blueprintName));
+  });
+
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
+  });
+
+  await test.step('Review imported groups', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
+
+    const groupNameInputs = frame.getByPlaceholder('Set group name');
+    await expect(groupNameInputs.nth(0)).toHaveValue('developers');
+    await expect(groupNameInputs.nth(1)).toHaveValue('qa-team');
+    await expect(groupNameInputs.nth(2)).toHaveValue('ops');
+
+    await expect(
+      frame.getByRole('textbox', { name: 'blueprint user name' }).first(),
+    ).toHaveValue('testuser');
 
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
