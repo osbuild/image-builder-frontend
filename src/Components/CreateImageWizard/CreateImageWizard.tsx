@@ -126,8 +126,12 @@ export const CustomWizardFooter = ({
         <Button
           variant='primary'
           onClick={() => {
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
             if (!beforeNext || beforeNext()) goToNextStep();
           }}
+          onMouseDown={(e) => e.preventDefault()}
           isDisabled={disableNext}
         >
           Next
@@ -145,6 +149,9 @@ export const CustomWizardFooter = ({
           <Button
             variant='tertiary'
             onClick={() => {
+              if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+              }
               if (!isOnPremise) {
                 analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                   module: AMPLITUDE_MODULE_NAME,
@@ -154,6 +161,7 @@ export const CustomWizardFooter = ({
               }
               if (!beforeNext || beforeNext()) goToStepById('step-review');
             }}
+            onMouseDown={(e) => e.preventDefault()}
             isDisabled={disableNext}
           >
             Review and finish
@@ -323,7 +331,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
-  const [wasUsersVisited, setWasUsersVisited] = useState(false);
   const lastTrackedStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
@@ -359,8 +366,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         }
       } else if (step.id === 'step-register' && step.isVisited) {
         setWasRegisterVisited(true);
-      } else if (step.id === 'wizard-users' && step.isVisited) {
-        setWasUsersVisited(true);
       }
     }, [step.id, step.isVisited]);
 
@@ -532,11 +537,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             isHidden={!restrictions.users.required}
             navItem={CustomStatusNavItem}
             status={
-              wasUsersVisited
-                ? usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
-                  ? 'error'
-                  : 'default'
+              usersStepAttemptedNext &&
+              (usersValidation.disabledNext ||
+                userGroupsValidation.disabledNext)
+                ? 'error'
                 : 'default'
             }
             footer={
@@ -702,18 +706,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
                 navItem={CustomStatusNavItem}
                 status={
-                  usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
+                  usersStepAttemptedNext &&
+                  (usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext)
                     ? 'error'
                     : 'default'
                 }
                 footer={
                   <CustomWizardFooter
-                    disableNext={
-                      usersStepAttemptedNext &&
-                      (usersValidation.disabledNext ||
-                        userGroupsValidation.disabledNext)
-                    }
                     beforeNext={() => {
                       if (
                         usersValidation.disabledNext ||
@@ -724,6 +724,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                       }
                       return true;
                     }}
+                    disableNext={
+                      usersStepAttemptedNext &&
+                      (usersValidation.disabledNext ||
+                        userGroupsValidation.disabledNext)
+                    }
                     optional={true}
                     isOnPremise={isOnPremise}
                   />
