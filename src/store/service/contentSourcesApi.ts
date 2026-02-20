@@ -833,6 +833,10 @@ export type ApiTemplateResponse = {
   date?: string | undefined;
   /** Description of the template */
   description?: string | undefined;
+  /** Extended release type (eus, e4s) */
+  extended_release?: string | undefined;
+  /** Extended release version (9.4, 9.6, etc.) */
+  extended_release_version?: string | undefined;
   /** Error of last update_latest_snapshot task that updated the template */
   last_update_snapshot_error?: string | undefined;
   /** Response of last update_template_content task that updated the template */
@@ -867,6 +871,10 @@ export type ApiTemplateResponseRead = {
   date?: string | undefined;
   /** Description of the template */
   description?: string | undefined;
+  /** Extended release type (eus, e4s) */
+  extended_release?: string | undefined;
+  /** Extended release version (9.4, 9.6, etc.) */
+  extended_release_version?: string | undefined;
   /** Error of last update_latest_snapshot task that updated the template */
   last_update_snapshot_error?: string | undefined;
   /** Response of last update_template_content task that updated the template */
