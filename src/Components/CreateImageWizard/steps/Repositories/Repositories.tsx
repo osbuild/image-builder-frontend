@@ -429,6 +429,18 @@ const Repositories = () => {
       return [true, 'Repository data is still fetching, please wait.'];
     }
 
+    if (
+      !isSelected &&
+      isEPELUrl(repo.url!) &&
+      repo.origin === ContentOrigin.EXTERNAL
+    ) {
+      return [
+        true,
+        'Custom EPEL repositories are going to be removed soon.\n' +
+          'Please use the "Community" EPEL repositories instead.',
+      ];
+    }
+
     const hasSelectedEPEL = contentList.some(
       (r) => r.uuid !== repo.uuid && isEPELUrl(r.url!) && selected.has(r.uuid!),
     );
