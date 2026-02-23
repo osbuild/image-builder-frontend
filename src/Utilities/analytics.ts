@@ -1,4 +1,4 @@
-import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizard/steps/Packages/Packages';
+import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizard/steps/Packages/packagesTypes';
 import { AMPLITUDE_MODULE_NAME } from '../constants';
 import { CreateBlueprintRequest } from '../store/imageBuilderApi';
 
