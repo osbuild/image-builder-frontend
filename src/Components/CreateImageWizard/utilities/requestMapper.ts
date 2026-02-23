@@ -134,7 +134,7 @@ import {
   Units,
 } from '../steps/FileSystem/fscTypes';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
-import { PackageRepository } from '../steps/Packages/Packages';
+import { PackageRepository } from '../steps/Packages/packagesTypes';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
