@@ -7,7 +7,6 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
-  Icon,
   Pagination,
   PaginationVariant,
   Popover,
@@ -22,12 +21,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-  HelpIcon,
-} from '@patternfly/react-icons';
+import { HelpIcon } from '@patternfly/react-icons';
 import {
   ExpandableRowContent,
   Table,
@@ -49,6 +43,7 @@ import {
   OtherReposPopover,
 } from './components/RepoPopovers';
 import RepositoryModal from './components/RepositoryModal';
+import RetirementDate from './components/RetirementDate';
 import Searching from './components/Searching';
 import TooShort from './components/TooShort';
 import TryLookingUnderIncluded from './components/TryLookingUnderIncluded';
@@ -884,55 +879,6 @@ const Packages = () => {
     );
   };
 
-  const formatDate = (date: string | undefined) => {
-    if (!date) {
-      return <>N/A</>;
-    }
-
-    const retirementDate = new Date(date);
-
-    const currentDate = new Date();
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const differenceInDays = Math.round(
-      (retirementDate.getTime() - currentDate.getTime()) / msPerDay,
-    );
-
-    let icon;
-
-    switch (true) {
-      case differenceInDays < 0:
-        icon = (
-          <Icon status='danger' isInline>
-            <ExclamationCircleIcon />
-          </Icon>
-        );
-        break;
-      case differenceInDays <= 365:
-        icon = (
-          <Icon status='warning' isInline>
-            <ExclamationTriangleIcon />
-          </Icon>
-        );
-        break;
-      case differenceInDays > 365:
-        icon = (
-          <Icon status='success' isInline>
-            <CheckCircleIcon />
-          </Icon>
-        );
-        break;
-    }
-
-    return (
-      <>
-        {icon}{' '}
-        {retirementDate.toLocaleString('en-US', { month: 'short' }) +
-          ' ' +
-          retirementDate.getFullYear()}
-      </>
-    );
-  };
-
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
 
@@ -1070,7 +1016,9 @@ const Packages = () => {
                 />
                 <Td>{pkg.name}</Td>
                 <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
-                <Td>{pkg.end_date ? formatDate(pkg.end_date) : 'N/A'}</Td>
+                <Td>
+                  <RetirementDate date={pkg.end_date} />
+                </Td>
               </Tr>
               <Tr isExpanded={isPkgExpanded(pkg)}>
                 <Td colSpan={5}>
