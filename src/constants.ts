@@ -249,7 +249,6 @@ export const AWS_REGIONS = [
 ];
 
 export const AWS_S3_EXPIRATION_TIME_IN_HOURS = 168; // 7 days
-export const AWS_S3_EXPIRATION_TIME_IN_HOURS_LEGACY = 6; // Legacy 6 hours expiration
 export const OCI_STORAGE_EXPIRATION_TIME_IN_DAYS = 7;
 
 // Anchor element for all modals that we display so that they play nice with top-most components like Quickstarts
