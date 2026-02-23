@@ -34,12 +34,6 @@ const ServiceUnavailableAlert = () => {
       }
     >
       {body}
-      {body && (
-        <>
-          <br />
-          We&apos;ve identified the issue and are working on a fix.
-        </>
-      )}
     </Alert>
   );
 };
