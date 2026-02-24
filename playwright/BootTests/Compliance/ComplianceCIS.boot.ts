@@ -1,6 +1,8 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
+import { deleteCompliancePolicy, navigateToCompliance } from './helpers';
+
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
 import { login } from '../../helpers/login';
@@ -14,10 +16,6 @@ import {
   deleteBlueprint,
   fillInDetails,
 } from '../../helpers/wizardHelpers';
-import {
-  createCompliancePolicy,
-  deleteCompliancePolicy,
-} from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
@@ -49,7 +47,32 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   // TODO: because of the empty state in Compliance service when new user has not registered a system yet
   await login(page, true);
 
-  await createCompliancePolicy(page, policyName, policyType, 'RHEL 10');
+  await test.step('Create a Compliance policy', async () => {
+    await navigateToCompliance(page);
+    await page.getByRole('button', { name: 'Create new policy' }).click();
+    await page.getByRole('option', { name: 'RHEL 10' }).click();
+    await expect(
+      page.getByRole('gridcell', { name: 'ANSSI-BP-028 (enhanced)' }).first(),
+    ).toBeVisible(); // Wait for the policy type list to load
+    await page.getByRole('textbox', { name: 'text input' }).fill(policyType);
+    await expect(
+      page.getByRole('gridcell', { name: policyType }).first(),
+    ).toBeVisible();
+    await page.getByRole('radio', { name: 'Select row 0' }).click();
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName); // Get the policy name
+    await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Details"
+    await page.getByRole('button', { name: 'Next', exact: true }).click(); // Skip "Systems"
+    /** TODO: Currently broken
+    // Change rule to see if tailoring works correctly
+    await page.getByRole('textbox', { name: 'text input' }).fill('bluetooth');
+    await page.getByRole('checkbox', { name: 'Select row 0' }).click(); */
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
+    await page.getByRole('button', { name: 'Finish' }).click();
+    await page
+      .getByRole('button', { name: 'Return to application' })
+      .click({ timeout: 2 * 60 * 1000 }); // Wait for the policy to be created
+  });
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
@@ -188,7 +211,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   });
 
   await test.step('Check system was registered to the policy', async () => {
-    await page.goto('/insights/compliance/scappolicies');
+    await navigateToCompliance(page);
     await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
     await expect(page.getByRole('row', { name: policyName })).toBeVisible();
     await page.getByRole('link', { name: policyName }).click();
