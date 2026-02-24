@@ -62,6 +62,74 @@ afterEach(() => {
 });
 
 describe('Packages Component', () => {
+  describe('Loading State', () => {
+    test('shows loading spinner while searching for packages', async () => {
+      // Create a promise that won't resolve immediately to keep loading state
+      let resolveSearch!: (value: string) => void;
+      const searchPromise = new Promise<string>((resolve) => {
+        resolveSearch = resolve;
+      });
+
+      // Override the default handler to return a pending promise for RPM searches
+      fetchMock.mockResponse((req) => {
+        if (req.url.endsWith('/rpms/names') && req.method === 'POST') {
+          return searchPromise;
+        }
+        return createDefaultFetchHandler({ url: req.url, method: req.method });
+      });
+
+      renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      await typeIntoSearchBox(user, 'test');
+
+      // The loading spinner should be visible while waiting
+      expect(await screen.findByText(/searching/i)).toBeInTheDocument();
+
+      // Resolve the promise to complete the test
+      resolveSearch(JSON.stringify(mockSearchResults));
+
+      // Loading should disappear and results should appear
+      await waitFor(() => {
+        expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
+      });
+      await screen.findByRole('cell', { name: /test-lib/ });
+    });
+
+    test('shows loading spinner while searching for groups', async () => {
+      let resolveSearch!: (value: string) => void;
+      const searchPromise = new Promise<string>((resolve) => {
+        resolveSearch = resolve;
+      });
+
+      // Override the default handler to return a pending promise for group searches
+      fetchMock.mockResponse((req) => {
+        if (
+          req.url.endsWith('/package_groups/names') &&
+          req.method === 'POST'
+        ) {
+          return searchPromise;
+        }
+        return createDefaultFetchHandler({ url: req.url, method: req.method });
+      });
+
+      renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      // Use @ prefix to search for groups
+      await typeIntoSearchBox(user, '@group');
+
+      expect(await screen.findByText(/searching/i)).toBeInTheDocument();
+
+      resolveSearch(JSON.stringify(mockGroupSearchResults));
+
+      await waitFor(() => {
+        expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
+      });
+      await screen.findByText(/@grouper/i);
+    });
+  });
+
   describe('Search Functionality', () => {
     test('displays search bar and toggle buttons', async () => {
       renderPackagesStep();
