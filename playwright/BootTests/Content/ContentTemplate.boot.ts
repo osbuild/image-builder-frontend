@@ -1,8 +1,17 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  deleteRepository,
+  deleteTemplate,
+  navigateToRepositories,
+  navigateToTemplates,
+  pollForSystemInInventory,
+  pollForSystemTemplateAttachment,
+} from './helpers';
+
 import { test } from '../../fixtures/customizations';
-import { isHosted } from '../../helpers/helpers';
+import { isHosted, sleep } from '../../helpers/helpers';
 import { ensureAuthenticated, login } from '../../helpers/login';
 import {
   fillInImageOutput,
@@ -15,15 +24,6 @@ import {
   fillInDetails,
   registerWithActivationKey,
 } from '../../helpers/wizardHelpers';
-import {
-  deleteRepository,
-  deleteTemplate,
-  navigateToRepositories,
-  navigateToTemplates,
-  pollForSystemInInventory,
-  pollForSystemTemplateAttachment,
-  sleep,
-} from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
