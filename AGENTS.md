@@ -10,7 +10,6 @@ React/TypeScript frontend for Red Hat's Image Builder service, running on consol
 - **Webpack** with module federation
 - **Vitest** + React Testing Library for unit tests
 - **Playwright** for E2E tests
-- **MSW (Mock Service Worker)** for API mocking in tests
 
 ## Project Structure
 
@@ -20,7 +19,7 @@ React/TypeScript frontend for Red Hat's Image Builder service, running on consol
 | `src/store/`      | Redux store, slices, and RTK Query API definitions |
 | `src/Utilities/`  | Shared utility functions                           |
 | `src/Hooks/`      | Custom React hooks                                 |
-| `src/test/`       | Vitest utilities and MSW mock handlers             |
+| `src/test/`       | Vitest utilities and legacy integration tests      |
 | `api/config/`     | RTK Query codegen configuration files              |
 | `playwright/`     | Playwright E2E tests                               |
 | `cockpit/`        | Cockpit plugin build configuration                 |
@@ -31,7 +30,9 @@ React/TypeScript frontend for Red Hat's Image Builder service, running on consol
 npm ci                  # Install dependencies (prefer over npm install)
 npm run start:prod      # Run against production
 npm run start:stage     # Run against staging
-npm run test            # Run Vitest unit tests
+npm run test            # Run all Vitest tests
+npm run test:unit       # Run unit tests only (co-located with components)
+npm run test:integration # Run integration tests only (src/test/) - legacy
 npm run lint            # Run ESLint
 npm run lint:js:fix     # Auto-fix lint errors
 npm run api             # Regenerate RTK Query API code from OpenAPI specs
@@ -78,8 +79,13 @@ Imports are enforced alphabetically by ESLint. Group order:
 ## Testing
 
 - All UI contributions must include tests
+- **Unit tests** are co-located with components in a `tests/` subdirectory (e.g., `src/Components/Feature/tests/Feature.test.tsx`)
+- Unit test directories can include:
+  - `mocks/` - Component-specific mock data and vitest mocks for API responses
+  - `helpers.tsx` - Shared test utilities and render wrappers
 - Use React Testing Library patterns (query by role, text, etc.)
-- Mock API calls using MSW handlers in `src/test/mocks/`
+- Mock API responses using vitest mocks; MSW is legacy and should not be used for new tests
+- Integration tests in `src/test/` are legacy; prefer co-located unit tests for new work
 - Playwright tests for E2E coverage of critical flows
 - The `TZ=UTC` prefix is applied automatically by npm scripts
 
