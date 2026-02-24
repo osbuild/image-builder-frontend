@@ -268,7 +268,7 @@ we're planning on using.
 | [`/src/Components`](src/Components/)             | source code split by individual components |
 | [`/playwright`](playwright/)                     | Playwright tests                           |
 | [`/playwright/BootTests`](playwright/BootTests/) | Playwright boot tests                      |
-| [`/src/test`](src/test/)                         | vitest utilities                           |
+| [`/src/test`](src/test/)                         | Vitest utilities and integration tests     |
 | [`/src/test/mocks`](src/test/mocks/)             | mock handlers and server config for MSW    |
 | [`/src/store`](src/store/)                       | Redux store                                |
 
@@ -310,13 +310,50 @@ All UI contributions must also include a new test or update an existing test in 
 
 ### Running the tests
 
-To run the unit tests, the linter, and the code coverage check run:
+To run all tests:
 
 ```bash
 npm run test
 ```
 
+To run unit tests only (co-located with components):
+
+```bash
+npm run test:unit
+```
+
+To run integration tests only:
+
+```bash
+npm run test:integration
+```
+
+**Test discoverability:** Run tests for a specific component by name:
+
+```bash
+npm run test:unit -- Packages
+```
+
 These tests will also be run in our CI when a PR is opened.
+
+### Test structure
+
+Unit tests are co-located with their components in a `tests/` subdirectory:
+
+```
+src/Components/Feature/
+├── Feature.tsx
+├── index.tsx
+└── tests/
+    ├── Feature.test.tsx
+    ├── helpers.tsx        # Shared test utilities and render wrappers
+    └── mocks/
+        ├── index.ts       # Re-exports mock data and handlers
+        ├── data.ts        # Mock data fixtures
+        └── api.ts         # Fetch mock handlers for component-specific endpoints
+```
+
+Prefer this co-located structure for new tests. Integration tests in `src/test/` should be migrated to unit tests over time.
 
 Note that `testing-library` DOM printout is currently disabled for all tests by the following configuration in `src/test/setup.ts`:
 
@@ -420,4 +457,3 @@ In order to run the Boot tests on a PR, you can open the `Boot tests` workflow i
 #### Where can I see results?
 
 You can find artifacts and link to a Currents report directly in the workflow run detail, but Currents will also link the report back to the PR when the workflow finishes as a _check_.
-
