@@ -2,6 +2,8 @@ PACKAGE_NAME = cockpit-image-builder
 INSTALL_DIR_BASE = /share/cockpit/
 INSTALL_DIR = $(INSTALL_DIR_BASE)$(PACKAGE_NAME)
 APPSTREAMFILE=org.image-builder.$(PACKAGE_NAME).metainfo.xml
+CONTAINER_IMAGE = $(PACKAGE_NAME)
+CONTAINER_IMAGE_DEV = $(PACKAGE_NAME)-dev
 
 VERSION := $(shell grep "^Version:" cockpit/$(PACKAGE_NAME).spec | sed 's/[^[:digit:]]*\([[:digit:]]\+\).*/\1/')
 COMMIT = $(shell git rev-parse HEAD)
@@ -71,6 +73,31 @@ cockpit/build: cockpit/download
 
 .PHONY: cockpit/devel
 cockpit/devel: cockpit/devel-uninstall cockpit/build cockpit/devel-install
+
+.PHONY: cockpit/container-build
+cockpit/container-build:
+	podman build -t $(CONTAINER_IMAGE) -f devel/cockpit-container/Dockerfile devel/cockpit-container
+
+.PHONY: cockpit/container-build-dev
+cockpit/container-build-dev: cockpit/container-build
+	podman build -t $(CONTAINER_IMAGE_DEV) -f devel/cockpit-container/Dockerfile.dev devel/cockpit-container
+
+.PHONY: cockpit/container-run
+cockpit/container-run:
+	podman rm -f $(CONTAINER_IMAGE) 2>/dev/null || true
+	podman run -d --privileged --pull=never --systemd=always \
+		-p 9091:9091 \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+		--name $(CONTAINER_IMAGE) $(CONTAINER_IMAGE)
+
+.PHONY: cockpit/container-run-dev
+cockpit/container-run-dev: cockpit/container-build-dev
+	podman rm -f $(CONTAINER_IMAGE) 2>/dev/null || true
+	podman run --privileged --pull=never --systemd=always \
+		-p 9091:9091 \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+		-v $(CURDIR):/app \
+		--name $(CONTAINER_IMAGE) $(CONTAINER_IMAGE_DEV)
 
 #
 # Building packages

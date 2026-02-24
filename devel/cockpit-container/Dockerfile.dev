@@ -1,0 +1,9 @@
+FROM cockpit-image-builder
+
+RUN dnf install -y nodejs npm git make && dnf clean all
+
+COPY entrypoint-dev.sh /entrypoint-dev.sh
+RUN chmod +x /entrypoint-dev.sh
+
+ENTRYPOINT ["/entrypoint-dev.sh"]
+CMD ["/usr/sbin/init"]
