@@ -3,7 +3,6 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import path from 'path';
 
 import {
-  BrowserContext,
   expect,
   type FrameLocator,
   type Locator,
@@ -130,22 +129,10 @@ export const uploadCertificateFile = async (
     }
   }
 };
+/**
+ * Helper function for sleeping
+ * @param ms - milliseconds to sleep
+ */
 
-export const isServiceAvailable = async (
-  endpoint: string,
-  context: BrowserContext,
-  authToken: string | undefined,
-): Promise<boolean> => {
-  /* Checks if a service is available by sending GET request to endpoint belonging to the service.
-   * @param endpoint - The endpoint to check the status of
-   * @param context - The browser context
-   * @param authToken - The authentication token for consoledot
-   * @returns True if the service is available, false otherwise
-   */
-  const response = await context.request.get(endpoint, {
-    headers: {
-      Authorization: `${authToken}`,
-    },
-  });
-  return response.status() >= 200 && response.status() < 300;
-};
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

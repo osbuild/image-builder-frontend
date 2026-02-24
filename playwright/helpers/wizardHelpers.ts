@@ -5,6 +5,7 @@ import * as path from 'path';
 
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
+import { callApi } from './apiHelpers';
 import { closePopupsIfExist, getHostDistroKey, isHosted } from './helpers';
 import { ibFrame, navigateToLandingPage } from './navHelpers';
 
@@ -111,13 +112,53 @@ export const fillInImageOutputGuest = async (page: Page | FrameLocator) => {
 };
 
 /**
- * Delete the blueprint with the given name
- * Will locate to the Image Builder page and search for the blueprint first
- * If the blueprint is not found, it will fail gracefully
+ * Delete the blueprint
  * @param page - the page object
  * @param blueprintName - the name of the blueprint to delete
  */
 export const deleteBlueprint = async (page: Page, blueprintName: string) => {
+  if (isHosted()) {
+    await deleteBlueprintAPI(page, blueprintName);
+  } else {
+    // No API deletion on prem
+    await deleteBlueprintUI(page, blueprintName);
+  }
+};
+
+/**
+ * Delete the blueprint with the given name via API call
+ * @param page - the page object
+ * @param blueprintName - the name of the blueprint to delete
+ */
+export const deleteBlueprintAPI = async (page: Page, blueprintName: string) => {
+  await test.step(
+    'Delete the blueprint with name: ' + blueprintName,
+    async () => {
+      const response = await callApi(
+        `/api/blueprints/${encodeURIComponent(blueprintName)}`,
+        page,
+        'delete',
+      );
+      if (response.status() !== 204) {
+        if (response.status() === 404) {
+          // No blueprint of given name was found -> fail gracefully and do not raise error
+          return;
+        }
+        throw new Error(
+          `Failed to delete blueprint ${blueprintName}, status: ${response.status()}`,
+        );
+      }
+    },
+    { box: true },
+  );
+};
+
+/**
+ * Delete the blueprint with the given name via UI
+ * @param page - the page object
+ * @param blueprintName - the name of the blueprint to delete
+ */
+export const deleteBlueprintUI = async (page: Page, blueprintName: string) => {
   // Since new browser is opened during the BP cleanup, we need to call the popup closer again
   await closePopupsIfExist(page);
 
@@ -127,22 +168,25 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
       // Locate back to the Image Builder page every time because the test can fail at any stage
       await navigateToLandingPage(page);
       const frame = ibFrame(page);
-      await frame
-        .getByRole('textbox', { name: 'Search input' })
-        .fill(blueprintName);
-      // Check if no blueprints found -> that means no blueprint was created -> fail gracefully and do not raise error
-      try {
-        await expect(
-          frame.getByRole('heading', { name: 'No blueprints found' }),
-        ).toBeVisible({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
-        return; // Fail gracefully, no blueprint to delete
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        // If the No BP heading was not found, it means the blueprint (possibly) was created -> continue with deletion
+
+      // Check if the blueprint is already on the landing page
+      if (!(await frame.locator(`button[id="${blueprintName}"]`).isVisible())) {
+        await frame
+          .getByRole('textbox', { name: 'Search input' })
+          .fill(blueprintName);
+
+        await frame
+          .locator(`button[id="${blueprintName}"]`)
+          .or(frame.getByText('No blueprints found'))
+          .first()
+          .waitFor({ state: 'visible', timeout: 10000 });
+
+        if (await frame.getByText('No blueprints found').isVisible()) {
+          // No blueprint found -> fail gracefully
+          return;
+        }
       }
 
-      // the clickable blueprint cards are a bit awkward, so use the
-      // button's id instead
       await frame.locator(`button[id="${blueprintName}"]`).click();
       await frame.getByRole('button', { name: 'Menu toggle' }).click();
       await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();

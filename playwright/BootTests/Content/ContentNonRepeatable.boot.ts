@@ -2,6 +2,8 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
+import { deleteRepository, navigateToRepositories } from './helpers';
+
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
 import { ensureAuthenticated } from '../../helpers/login';
@@ -16,7 +18,6 @@ import {
   fillInDetails,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import { deleteRepository, navigateToRepositories } from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
