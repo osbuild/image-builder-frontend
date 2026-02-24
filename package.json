@@ -113,6 +113,8 @@
     "test": "TZ=UTC vitest run",
     "test:watch": "TZ=UTC vitest",
     "test:coverage": "TZ=UTC vitest run --coverage",
+    "test:integration": "TZ=UTC vitest run src/test",
+    "test:unit": "TZ=UTC vitest run --exclude='src/test/**'",
     "test:cockpit": "src/test/cockpit-tests.sh",
     "build": "fec build",
     "build:cockpit": "webpack --config cockpit/webpack.config.ts",
