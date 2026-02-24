@@ -34,39 +34,32 @@ import {
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
-import CustomHelperText from './components/CustomHelperText';
-import EmptySearch from './components/EmptySearch';
-import NoResultsFound from './components/NoResultsFound';
-import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailablePopover';
-import {
-  IncludedReposPopover,
-  OtherReposPopover,
-} from './components/RepoPopovers';
-import RepositoryModal from './components/RepositoryModal';
-import RetirementDate from './components/RetirementDate';
-import Searching from './components/Searching';
-import TooShort from './components/TooShort';
-import TryLookingUnderIncluded from './components/TryLookingUnderIncluded';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  ItemWithSources,
-  Repos,
-} from './packagesTypes';
-import { getPackageUniqueKey } from './packagesUtilities';
+import CustomHelperText from './CustomHelperText';
+import EmptySearch from './EmptySearch';
+import NoResultsFound from './NoResultsFound';
+import PackageInfoNotAvailablePopover from './PackageInfoNotAvailablePopover';
+import { IncludedReposPopover, OtherReposPopover } from './RepoPopovers';
+import RepositoryModal from './RepositoryModal';
+import RetirementDate from './RetirementDate';
+import Searching from './Searching';
+import TooShort from './TooShort';
+import TryLookingUnderIncluded from './TryLookingUnderIncluded';
 
-import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '../../../../constants';
-import { useGetArchitecturesQuery } from '../../../../store/backendApi';
+import {
+  ContentOrigin,
+  EPEL_10_REPO_DEFINITION,
+} from '../../../../../constants';
+import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
 import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
   useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
-} from '../../../../store/contentSourcesApi';
-import { selectIsOnPremise } from '../../../../store/envSlice';
-import { useAppSelector } from '../../../../store/hooks';
-import { asDistribution } from '../../../../store/typeGuards';
+} from '../../../../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
+import { useAppSelector } from '../../../../../store/hooks';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   addModule,
   addPackage,
@@ -85,10 +78,17 @@ import {
   selectSnapshotDate,
   selectTemplate,
   selectWizardMode,
-} from '../../../../store/wizardSlice';
-import { getEpelUrlForDistribution } from '../../../../Utilities/epel';
-import { convertStringToDate } from '../../../../Utilities/time';
-import useDebounce from '../../../../Utilities/useDebounce';
+} from '../../../../../store/wizardSlice';
+import { getEpelUrlForDistribution } from '../../../../../Utilities/epel';
+import { convertStringToDate } from '../../../../../Utilities/time';
+import useDebounce from '../../../../../Utilities/useDebounce';
+import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+  ItemWithSources,
+  Repos,
+} from '../packagesTypes';
+import { getPackageUniqueKey } from '../packagesUtilities';
 
 const Packages = () => {
   const dispatch = useDispatch();
