@@ -1,83 +1,24 @@
-import React from 'react';
-
-import { configureStore } from '@reduxjs/toolkit';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import createFetchMock from 'vitest-fetch-mock';
 
-import { RHEL_10 } from '../../../../constants';
-import { serviceMiddleware, serviceReducer } from '../../../../store';
-import { initialState } from '../../../../store/wizardSlice';
-import { server } from '../../../../test/mocks/server';
+import {
+  clearSearchInput,
+  clickPackageCheckbox,
+  renderPackagesStep,
+  toggleSelectedPackages,
+  typeIntoSearchBox,
+} from './helpers';
+import {
+  createDefaultFetchHandler,
+  fetchMock,
+  mockGroupSearchResults,
+  mockModuleSearchResults,
+  mockSearchResults,
+} from './mocks';
 
-import PackagesStep from './index';
+import { server } from '../../../../../test/mocks/server';
 
-const mockSearchResults = [
-  { package_name: 'test', summary: 'summary for test package' },
-  { package_name: 'test-lib', summary: 'test-lib package summary' },
-  { package_name: 'testPkg', summary: 'test package summary' },
-];
-
-const mockModuleSearchResults = [
-  {
-    package_name: 'testModule',
-    summary: 'testModule summary',
-    package_sources: [
-      {
-        name: 'testModule',
-        type: 'module',
-        stream: '1.22',
-        end_date: '2025-05-01',
-      },
-      {
-        name: 'testModule',
-        type: 'module',
-        stream: '1.24',
-        end_date: '2027-05-01',
-      },
-    ],
-  },
-];
-
-const mockGroupSearchResults = [
-  {
-    description: '',
-    id: 'grouper',
-    package_group_name: 'Grouper group',
-    package_list: ['fish1', 'fish2'],
-  },
-];
-
-const mockArchitectures: Record<
-  string,
-  Array<{
-    arch: string;
-    image_types: string[];
-    repositories: Array<{ baseurl: string; rhsm: boolean }>;
-  }>
-> = {
-  'rhel-10': [
-    {
-      arch: 'x86_64',
-      image_types: ['aws', 'gcp', 'azure', 'guest-image'],
-      repositories: [
-        {
-          baseurl:
-            'https://cdn.redhat.com/content/dist/rhel10/10/x86_64/baseos/os',
-          rhsm: true,
-        },
-      ],
-    },
-  ],
-};
-
-const fetchMock = createFetchMock(vi);
 fetchMock.enableMocks();
-
-// matching the url is kind of tricky with the content sources endpoints
-// since we use query parameters and things get a bit complicated
-const CONTENT_SOURCES_URL = 'http://localhost:3000/api/content-sources/v1';
 
 // Disable global MSW server for this file - we use fetch mocks instead
 beforeAll(() => {
@@ -90,111 +31,12 @@ afterAll(() => {
 });
 
 beforeEach(() => {
-  fetchMock.mockResponse(({ url, method }) => {
-    if (url.endsWith('/rpms/names') && method === 'POST') {
-      return JSON.stringify([]);
-    }
-
-    if (url.endsWith('/package_groups/names') && method === 'POST') {
-      return JSON.stringify([]);
-    }
-
-    if (url.endsWith('/architectures/rhel-10') && method === 'GET') {
-      return JSON.stringify(mockArchitectures['rhel-10']);
-    }
-
-    if (
-      url.startsWith(CONTENT_SOURCES_URL + '/repositories') &&
-      method === 'GET'
-    ) {
-      return JSON.stringify({
-        data: [],
-        meta: { count: 0, limit: 100, offset: 0 },
-      });
-    }
-
-    if (
-      url.startsWith(CONTENT_SOURCES_URL + '/templates') &&
-      method === 'GET'
-    ) {
-      return JSON.stringify({
-        data: [],
-        meta: { count: 0, limit: 100, offset: 0 },
-      });
-    }
-
-    if (url.endsWith('/experimental/recommendations') && method === 'POST') {
-      return JSON.stringify({ body: { packages: [] } });
-    }
-
-    throw new Error(`Unhandled fetch: ${method} ${url}`);
-  });
+  fetchMock.mockResponse(createDefaultFetchHandler);
 });
 
 afterEach(() => {
   fetchMock.resetMocks();
 });
-
-type WizardStateOverrides = Partial<typeof initialState>;
-
-const renderPackagesStep = (
-  wizardStateOverrides: WizardStateOverrides = {},
-) => {
-  const store = configureStore({
-    reducer: serviceReducer,
-    middleware: serviceMiddleware,
-    preloadedState: {
-      wizard: {
-        ...initialState,
-        distribution: RHEL_10,
-        architecture: 'x86_64',
-        ...wizardStateOverrides,
-      },
-    },
-  });
-
-  const result = render(
-    <Provider store={store}>
-      <PackagesStep />
-    </Provider>,
-  );
-
-  return { ...result, store };
-};
-
-const typeIntoSearchBox = async (
-  user: ReturnType<typeof userEvent.setup>,
-  searchTerm: string,
-) => {
-  const searchbox = await screen.findByRole('textbox', {
-    name: /search packages/i,
-  });
-  await waitFor(() => user.type(searchbox, searchTerm));
-};
-
-const clearSearchInput = async (user: ReturnType<typeof userEvent.setup>) => {
-  const searchbox = await screen.findByRole('textbox', {
-    name: /search packages/i,
-  });
-  await waitFor(() => user.clear(searchbox));
-};
-
-const clickPackageCheckbox = async (
-  user: ReturnType<typeof userEvent.setup>,
-  rowIndex: number,
-) => {
-  const checkbox = await screen.findByRole('checkbox', {
-    name: new RegExp(`select row ${rowIndex}`, 'i'),
-  });
-  await waitFor(() => user.click(checkbox));
-};
-
-const toggleSelectedPackages = async (
-  user: ReturnType<typeof userEvent.setup>,
-) => {
-  const selectedBtn = await screen.findByRole('button', { name: /selected/i });
-  await waitFor(() => user.click(selectedBtn));
-};
 
 describe('Packages Component', () => {
   describe('Search Functionality', () => {
