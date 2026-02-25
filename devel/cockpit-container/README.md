@@ -74,7 +74,9 @@ make cockpit/container-build-dev   # One-time build (includes Node.js, adds dev 
 make cockpit/container-run-dev     # Starts container with project mounted at /app
 ```
 
-The entrypoint runs `npm ci`, `make cockpit/download`, and `webpack --watch` inside the container. Edit `src/` on the host; webpack rebuilds; refresh the browser at http://localhost:9091 to see changes.
+The entrypoint runs `npm ci`, `make cockpit/download`, and `webpack --watch` inside the container. The plugin is symlinked to `~/.local/share/cockpit` (user directory) instead of `/usr/share/cockpit`, so Cockpit does not cache it aggressively.
+
+**Automatic reload:** When webpack rebuilds, the browser automatically reloads the plugin iframe (via LiveReload on port 35729). Do not use the browser refresh (F5) as that reloads the entire Cockpit page and requires re-login.
 
 First run may take **3–5 minutes** before Cockpit is reachable (`npm ci` ~2 min, build ~1 min, then systemd starts). Wait for the container to finish initializing before opening the browser.
 
@@ -87,6 +89,11 @@ First run may take **3–5 minutes** before Cockpit is reachable (`npm ci` ~2 mi
 3. Wait longer – the dev container needs 3–5 minutes on first start for `npm ci` and the initial build
 4. Verify Cockpit is listening: `podman exec cockpit-image-builder ss -tlnp | grep 9091`
 5. Try from inside the container: `podman exec cockpit-image-builder curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:9091`
+
+**Auto-reload not working**
+
+- Ensure port 35729 is exposed (check `podman port cockpit-image-builder` for 35729)
+- The LiveReload script is only injected in development builds (webpack watch mode)
 
 **Container exits immediately**
 

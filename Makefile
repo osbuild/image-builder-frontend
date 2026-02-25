@@ -85,7 +85,7 @@ cockpit/container-build-dev: cockpit/container-build
 .PHONY: cockpit/container-run
 cockpit/container-run:
 	podman rm -f $(CONTAINER_IMAGE) 2>/dev/null || true
-	podman run -d --privileged --pull=never --systemd=always \
+	podman run --privileged --pull=never --systemd=always \
 		-p 9091:9091 \
 		-v /sys/fs/cgroup:/sys/fs/cgroup:rw \
 		--name $(CONTAINER_IMAGE) $(CONTAINER_IMAGE)
@@ -95,6 +95,7 @@ cockpit/container-run-dev: cockpit/container-build-dev
 	podman rm -f $(CONTAINER_IMAGE) 2>/dev/null || true
 	podman run --privileged --pull=never --systemd=always \
 		-p 9091:9091 \
+		-p 35729:35729 \
 		-v /sys/fs/cgroup:/sys/fs/cgroup:rw \
 		-v $(CURDIR):/app \
 		--name $(CONTAINER_IMAGE) $(CONTAINER_IMAGE_DEV)
