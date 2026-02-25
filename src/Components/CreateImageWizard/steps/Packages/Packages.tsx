@@ -1549,7 +1549,7 @@ const Packages = () => {
               Name
             </Th>
             <Th sort={getSortParams(2)} width={20}>
-              Application stream / Version
+              Application stream
             </Th>
             <Th sort={getSortParams(3)} width={30}>
               Retirement date
