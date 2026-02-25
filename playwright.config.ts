@@ -51,6 +51,9 @@ export default defineConfig({
     {
       name: 'Boot tests',
       testMatch: /.*\.boot\.ts/, 
+      // Retry 2 times because it's still cheaper than
+      // rerunning the whole job
+      retries: process.env.CI ? 2 : 0,
       timeout: 89.5 * 60 * 1000, // 1h29.5m
       use: {
         ...devices['Desktop Chrome'],
