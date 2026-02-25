@@ -76,10 +76,16 @@ module.exports = defineConfig([
           caseInsensitive: true
         },
         'newlines-between': 'always',
-        pathGroups: [ // ensures the import of React is always on top
+        pathGroups: [
+          // ensures the import of React is always on top
           {
             pattern: 'react',
             group: 'builtin',
+            position: 'before'
+          },
+          {
+            pattern: '@/**',
+            group: 'internal',
             position: 'before'
           }
         ],
@@ -91,6 +97,16 @@ module.exports = defineConfig([
         ignoreMemberSort: false,
       }],
       'no-duplicate-imports': 'error',
+      // NOTE: we can enable this after the revamp and after summit. We can live with
+      // the mixture of alias imports and relative imports. We can then enable the warning
+      // or maybe errors (after summit). We can slowly migrate during the revamp, but adding
+      // warnings now adds too much noise.
+      // 'no-restricted-imports': ['warn', {
+      //   patterns: [{
+      //     group: ['../../*'],
+      //     message: 'Avoid deep relative imports (../../ or deeper). Use @/ alias instead.',
+      //   }],
+      // }],
       'prefer-const': ['error', {
         destructuring: 'any',
       }],

@@ -57,6 +57,7 @@ const config = {
   resolve: {
     mainFields: ['module'],
     alias: {
+      '@': path.resolve(__dirname, 'src'),
       // we have to point vitest to the mocks for `cockpit` and `cockpit/fsinfo`
       // by using aliases. This allows vitest to resolve these two packages
       // and allows the tests to pass

@@ -73,8 +73,10 @@ Each config specifies:
 Imports are enforced alphabetically by ESLint. Group order:
 
 1. External packages
-2. Internal modules (absolute paths)
-3. Relative imports
+2. Internal modules (absolute paths using `@/` alias)
+3. Relative imports (`./` and `../` only)
+
+**Import paths:** Prefer the `@/` alias for imports outside the current or parent directory. Relative imports should be limited to `./` (current directory) and `../` (parent directory). Avoid deep relative paths like `../../` or deeper.
 
 ## Testing
 

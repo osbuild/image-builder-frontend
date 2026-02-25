@@ -63,6 +63,7 @@ module.exports = {
   proxyVerbose: true,
   resolve: {
     alias: {
+      '@': path.resolve(__dirname, 'src'),
       // we don't wan't these packages bundled with
       // the service frontend, so we can set the aliases
       // to false

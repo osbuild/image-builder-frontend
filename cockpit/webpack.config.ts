@@ -31,6 +31,9 @@ module.exports = {
     historyApiFallback: true, // Ensures all routes are served with `index.html`
   },
   resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+    },
     fallback: {
       path: require.resolve('path-browserify'),
     },

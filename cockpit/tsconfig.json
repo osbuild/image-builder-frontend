@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@/*": ["../src/*"],
       "*": [
         // this allows us to pull in the `cockpit` and
         // `cockpit/fsinfo` modules from the `pkg/lib`
