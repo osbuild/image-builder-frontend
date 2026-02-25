@@ -302,6 +302,10 @@ npm run lint:js:fix
 
 All the linting rules and configuration of ESLint can be found in [`eslint.config.js`](eslint.config.js).
 
+### Import Paths
+
+Prefer the `@/` alias for imports outside the current or parent directory. Relative imports should be limited to `./` (current directory) and `../` (parent directory). Avoid deep relative paths like `../../` or deeper.
+
 ## Test Guidelines
 
 This project is tested using the [Vitest](https://vitest.dev/guide/) framework, [React Testing Library](https://testing-library.com/docs/react-testing-library/intro), and the [Mock Service Worker](https://mswjs.io/docs/) library.

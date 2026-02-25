@@ -16,7 +16,9 @@
     "incremental": true,
     "exactOptionalPropertyTypes": true,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"],
       "*": [
         // Needed so we can resolve `cockpit` & `cockpit/fsinfo`
         // types. We have stubbed those functions out for the
