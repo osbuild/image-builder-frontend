@@ -41,7 +41,6 @@ export const contentSourcesApi = emptyCockpitApi.injectEndpoints({
           ({ name, summary, version, release, arch }: Package) => ({
             package_name: name,
             summary: `${summary} (${version}-${release}.${arch})`,
-            package_sources: [{stream: version}],
           })
         );
 
