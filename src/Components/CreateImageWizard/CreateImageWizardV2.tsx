@@ -67,6 +67,8 @@ const V2WizardFooter = ({ disabledNext = false }: V2WizardFooterProps) => {
 
 const BaseSettingsFooter = () => {
   const { disabledNext: detailsDisabled } = useDetailsValidation();
+  const { disabledNext: registrationDisabled } = useRegistrationValidation();
+  const { disabledNext: snapshotDisabled } = useSnapshotValidation();
   const imageTypes = useAppSelector(selectImageTypes);
   const noTargetsSelected = imageTypes.length === 0;
   const { disabledNext: awsDisabled } = useAwsValidation();
@@ -75,8 +77,10 @@ const BaseSettingsFooter = () => {
   const hasAws = imageTypes.includes('aws');
   const hasGcp = imageTypes.includes('gcp');
   const hasAzure = imageTypes.includes('azure');
-  // Azure validators treat undefined as valid (pristine state for V1 wizard).
-  // In V2, we require all fields to be filled before proceeding.
+  // Azure validators (isAzureTenantGUIDValid, etc.) treat undefined as valid
+  // because V1's multi-step wizard needs pristine fields to not block other
+  // steps. In V2, all cloud configs are inline on one page, so we add explicit
+  // presence checks. Modifying the validators would break V1.
   const azureTenantId = useAppSelector(selectAzureTenantId);
   const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
@@ -86,6 +90,8 @@ const BaseSettingsFooter = () => {
     <V2WizardFooter
       disabledNext={
         detailsDisabled ||
+        registrationDisabled ||
+        snapshotDisabled ||
         noTargetsSelected ||
         (hasAws && awsDisabled) ||
         (hasGcp && gcpDisabled) ||

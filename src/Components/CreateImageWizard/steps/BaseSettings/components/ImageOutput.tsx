@@ -33,6 +33,10 @@ const ImageOutput = () => {
     if (!isCustomName && blueprintName !== defaultName) {
       dispatch(changeBlueprintName(defaultName));
     }
+    // Intentionally omitting blueprintName — including it would create an
+    // infinite loop (dispatch → state change → re-run). The guard condition
+    // prevents unnecessary dispatches. See commit 978237bf and 13 other
+    // instances of this pattern across the codebase.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, distribution, arch, isCustomName]);
 
