@@ -154,13 +154,13 @@ describe('CreateImageWizardV2', () => {
   test('user can select a target environment', async () => {
     const user = userEvent.setup();
     await renderV2Wizard();
-    // Wait for targets to load - AWS should be available for rhel-10/x86_64
-    const awsTile = await screen.findByRole('button', {
-      name: /Amazon Web Services/i,
+    // Wait for targets to load - use guest-image which doesn't require additional config
+    const guestImageCheckbox = await screen.findByRole('checkbox', {
+      name: /Virtualization guest image checkbox/i,
     });
-    await user.click(awsTile);
+    await user.click(guestImageCheckbox);
     const nextButton = await screen.findByRole('button', { name: /Next/i });
-    // After selecting a target, Next should be enabled
+    // After selecting a target that doesn't require config, Next should be enabled
     await waitFor(() => expect(nextButton).not.toBeDisabled());
   });
 
@@ -176,16 +176,170 @@ describe('CreateImageWizardV2', () => {
   test('user can deselect a target environment', async () => {
     const user = userEvent.setup();
     await renderV2Wizard();
+    const guestImageCheckbox = await screen.findByRole('checkbox', {
+      name: /Virtualization guest image checkbox/i,
+    });
+    // Select
+    await user.click(guestImageCheckbox);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    await waitFor(() => expect(nextButton).not.toBeDisabled());
+    // Deselect
+    await user.click(guestImageCheckbox);
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('When AWS is selected, AWS config form renders inline', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const awsTile = await screen.findByRole('button', {
+      name: /Amazon Web Services/i,
+    });
+    await user.click(awsTile);
+    // AWS config form fields should appear inline with share method radio buttons
+    await screen.findByText(/Share method/i);
+    await screen.findByRole('radio', {
+      name: /Use an account configured from Sources/i,
+    });
+    await screen.findByRole('radio', {
+      name: /Manually enter an account ID/i,
+    });
+  });
+
+  test('When AWS manual share is selected, account ID field appears', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const awsTile = await screen.findByRole('button', {
+      name: /Amazon Web Services/i,
+    });
+    await user.click(awsTile);
+    const manualRadio = await screen.findByRole('radio', {
+      name: /Manually enter an account ID/i,
+    });
+    await user.click(manualRadio);
+    // Account ID field should appear
+    await screen.findByRole('textbox', { name: /aws account id/i });
+  });
+
+  test('AWS config disappears when AWS target is deselected', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
     const awsTile = await screen.findByRole('button', {
       name: /Amazon Web Services/i,
     });
     // Select
     await user.click(awsTile);
-    const nextButton = await screen.findByRole('button', { name: /Next/i });
-    await waitFor(() => expect(nextButton).not.toBeDisabled());
+    await screen.findByText(/Share method/i);
     // Deselect
     await user.click(awsTile);
+    await waitFor(() =>
+      expect(screen.queryByText(/Share method/i)).not.toBeInTheDocument()
+    );
+  });
+
+  test('When GCP is selected, GCP config form renders inline', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const gcpTile = await screen.findByRole('button', {
+      name: /Google Cloud/i,
+    });
+    await user.click(gcpTile);
+    // GCP config form fields should appear inline with share method radio buttons
+    await screen.findByText(/Select image sharing/i);
+    await screen.findByRole('radio', {
+      name: /Share image with a Google account/i,
+    });
+    await screen.findByRole('radio', {
+      name: /Share image with Red Hat Lightspeed only/i,
+    });
+  });
+
+  test('When GCP share with Google is selected, principal field appears', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const gcpTile = await screen.findByRole('button', {
+      name: /Google Cloud/i,
+    });
+    await user.click(gcpTile);
+    // "Share with Google account" should be checked by default
+    const shareWithGoogleRadio = await screen.findByRole('radio', {
+      name: /Share image with a Google account/i,
+    });
+    expect(shareWithGoogleRadio).toBeChecked();
+    // Account type radios and principal field should appear
+    await screen.findByRole('radio', { name: /^Google account$/i });
+    await screen.findByRole('radio', { name: /^Service account$/i });
+    await screen.findByRole('radio', { name: /^Google group$/i });
+    await screen.findByRole('radio', { name: /^Google Workspace domain$/i });
+    await screen.findByRole('textbox', { name: /google principal/i });
+  });
+
+  test('When Azure is selected, Azure config form renders inline', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const azureTile = await screen.findByRole('button', {
+      name: /Microsoft Azure/i,
+    });
+    await user.click(azureTile);
+    // Azure config form fields should appear inline with all required fields
+    await screen.findByRole('textbox', { name: /Azure tenant GUID/i });
+    await screen.findByText(/Authorize Image Builder/i);
+    await screen.findByRole('textbox', { name: /subscription id/i });
+    await screen.findByRole('textbox', { name: /resource group/i });
+  });
+
+  test('Next button disabled when AWS is selected but config is incomplete', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const awsTile = await screen.findByRole('button', {
+      name: /Amazon Web Services/i,
+    });
+    await user.click(awsTile);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    // AWS requires either a valid source or a manually entered account ID.
+    // With no config provided, Next should stay disabled.
     await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('Next button is disabled when Azure is selected with empty required fields', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const azureTile = await screen.findByRole('button', {
+      name: /Microsoft Azure/i,
+    });
+    await user.click(azureTile);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    // Azure requires tenant GUID, subscription ID, and resource group.
+    // All empty by default, so Next should remain disabled.
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('Next button enabled when Azure config is fully filled', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const azureTile = await screen.findByRole('button', {
+      name: /Microsoft Azure/i,
+    });
+    await user.click(azureTile);
+
+    // Fill in all required Azure fields with valid values
+    const tenantGuidInput = await screen.findByRole('textbox', {
+      name: /Azure tenant GUID/i,
+    });
+    await user.type(tenantGuidInput, 'b8ab5893-3001-44e9-9171-00008833be51');
+
+    const subscriptionIdInput = await screen.findByRole('textbox', {
+      name: /subscription id/i,
+    });
+    await user.type(subscriptionIdInput, '68f78fb7-ffc4-499b-bb78-c36b4840ce41');
+
+    const resourceGroupInput = await screen.findByRole('textbox', {
+      name: /resource group/i,
+    });
+    await user.type(resourceGroupInput, 'testResourceGroup');
+
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    // With all valid fields filled, Next should become enabled
+    await waitFor(() => expect(nextButton).not.toBeDisabled());
   });
 
   test('placeholder steps render content when navigated to', async () => {

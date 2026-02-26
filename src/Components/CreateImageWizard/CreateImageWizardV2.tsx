@@ -16,12 +16,20 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import BaseSettingsStep from './steps/BaseSettings';
-import { useDetailsValidation } from './utilities/useValidation';
+import {
+  useAwsValidation,
+  useAzureValidation,
+  useDetailsValidation,
+  useGcpValidation,
+} from './utilities/useValidation';
 
 import { selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   initializeWizard,
+  selectAzureResourceGroup,
+  selectAzureSubscriptionId,
+  selectAzureTenantId,
   selectImageTypes,
 } from '../../store/wizardSlice';
 
@@ -61,8 +69,30 @@ const BaseSettingsFooter = () => {
   const { disabledNext: detailsDisabled } = useDetailsValidation();
   const imageTypes = useAppSelector(selectImageTypes);
   const noTargetsSelected = imageTypes.length === 0;
+  const { disabledNext: awsDisabled } = useAwsValidation();
+  const { disabledNext: gcpDisabled } = useGcpValidation();
+  const { disabledNext: azureDisabled } = useAzureValidation();
+  const hasAws = imageTypes.includes('aws');
+  const hasGcp = imageTypes.includes('gcp');
+  const hasAzure = imageTypes.includes('azure');
+  // Azure validators treat undefined as valid (pristine state for V1 wizard).
+  // In V2, we require all fields to be filled before proceeding.
+  const azureTenantId = useAppSelector(selectAzureTenantId);
+  const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
+  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
+  const azureIncomplete =
+    hasAzure && (!azureTenantId || !azureSubscriptionId || !azureResourceGroup);
   return (
-    <V2WizardFooter disabledNext={detailsDisabled || noTargetsSelected} />
+    <V2WizardFooter
+      disabledNext={
+        detailsDisabled ||
+        noTargetsSelected ||
+        (hasAws && awsDisabled) ||
+        (hasGcp && gcpDisabled) ||
+        (hasAzure && azureDisabled) ||
+        azureIncomplete
+      }
+    />
   );
 };
 

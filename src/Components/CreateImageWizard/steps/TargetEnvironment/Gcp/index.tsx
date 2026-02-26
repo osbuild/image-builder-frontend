@@ -29,7 +29,7 @@ export type GcpAccountType =
   | 'domain'
   | undefined;
 
-const Gcp = () => {
+export const GcpConfig = () => {
   const dispatch = useAppDispatch();
 
   const accountType = useAppSelector(selectGcpAccountType);
@@ -37,14 +37,7 @@ const Gcp = () => {
   const gcpEmail = useAppSelector(selectGcpEmail);
 
   return (
-    <Form>
-      <Title headingLevel='h1' size='xl'>
-        Target environment - Google Cloud
-      </Title>
-      <Content>
-        Select how to share your image. The image you create can be used to
-        launch instances on GCP, regardless of which method you select.
-      </Content>
+    <>
       <FormGroup label='Select image sharing' isRequired>
         <Radio
           id='share-with-google'
@@ -149,6 +142,21 @@ const Gcp = () => {
           </FormGroup>
         </>
       )}
+    </>
+  );
+};
+
+const Gcp = () => {
+  return (
+    <Form>
+      <Title headingLevel='h1' size='xl'>
+        Target environment - Google Cloud
+      </Title>
+      <Content>
+        Select how to share your image. The image you create can be used to
+        launch instances on GCP, regardless of which method you select.
+      </Content>
+      <GcpConfig />
     </Form>
   );
 };

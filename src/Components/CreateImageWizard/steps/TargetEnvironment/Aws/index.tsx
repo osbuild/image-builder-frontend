@@ -104,7 +104,7 @@ const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
   );
 };
 
-const Aws = () => {
+export const AwsConfig = () => {
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
@@ -113,15 +113,7 @@ const Aws = () => {
   const region = useAppSelector(selectAwsRegion);
 
   return (
-    <Form>
-      <Title headingLevel='h1' size='xl'>
-        Target environment - Amazon Web Services
-      </Title>
-      <Content>
-        {isOnPremise
-          ? 'Your image will be uploaded to AWS in the region you select below.'
-          : 'Your image will be uploaded to AWS and shared with the account you provide below.'}
-      </Content>
+    <>
       {!isOnPremise && (
         <>
           <Content>
@@ -223,6 +215,24 @@ const Aws = () => {
           )}
         </>
       )}
+    </>
+  );
+};
+
+const Aws = () => {
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+
+  return (
+    <Form>
+      <Title headingLevel='h1' size='xl'>
+        Target environment - Amazon Web Services
+      </Title>
+      <Content>
+        {isOnPremise
+          ? 'Your image will be uploaded to AWS in the region you select below.'
+          : 'Your image will be uploaded to AWS and shared with the account you provide below.'}
+      </Content>
+      <AwsConfig />
     </Form>
   );
 };

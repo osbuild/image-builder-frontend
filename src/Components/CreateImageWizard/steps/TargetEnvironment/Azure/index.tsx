@@ -29,12 +29,64 @@ import {
   isAzureTenantGUIDValid,
 } from '../../../validators';
 
-const Azure = () => {
+export const AzureConfig = () => {
   const dispatch = useAppDispatch();
   const tenantId = useAppSelector(selectAzureTenantId);
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
   const resourceGroup = useAppSelector(selectAzureResourceGroup);
 
+  return (
+    <>
+      <AzureHyperVSelect />
+      <FormGroup label='Azure tenant GUID' isRequired>
+        <ValidatedInput
+          ariaLabel='Azure tenant GUID'
+          value={tenantId || ''}
+          validator={isAzureTenantGUIDValid}
+          onChange={(_event, value) => dispatch(changeAzureTenantId(value))}
+          helperText={
+            !tenantId
+              ? 'Tenant ID is required'
+              : 'Please enter a valid tenant ID'
+          }
+        />
+      </FormGroup>
+      <AzureAuthButton />
+      <FormGroup label='Subscription ID' isRequired>
+        <ValidatedInput
+          ariaLabel='subscription id'
+          value={subscriptionId || ''}
+          validator={isAzureSubscriptionIdValid}
+          onChange={(_event, value) =>
+            dispatch(changeAzureSubscriptionId(value))
+          }
+          helperText={
+            !subscriptionId
+              ? 'Subscription ID is required'
+              : 'Please enter a valid subscription ID'
+          }
+        />
+      </FormGroup>
+      <FormGroup label='Resource group' isRequired>
+        <ValidatedInput
+          ariaLabel='resource group'
+          value={resourceGroup || ''}
+          validator={isAzureResourceGroupValid}
+          onChange={(_event, value) =>
+            dispatch(changeAzureResourceGroup(value))
+          }
+          helperText={
+            !resourceGroup
+              ? 'Resource group is required'
+              : 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
+          }
+        />
+      </FormGroup>
+    </>
+  );
+};
+
+const Azure = () => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
@@ -63,53 +115,7 @@ const Azure = () => {
           Learn more about OAuth 2.0
         </Button>
       </Content>
-      <AzureHyperVSelect />
-      <>
-        <FormGroup label='Azure tenant GUID' isRequired>
-          <ValidatedInput
-            ariaLabel='Azure tenant GUID'
-            value={tenantId || ''}
-            validator={isAzureTenantGUIDValid}
-            onChange={(_event, value) => dispatch(changeAzureTenantId(value))}
-            helperText={
-              !tenantId
-                ? 'Tenant ID is required'
-                : 'Please enter a valid tenant ID'
-            }
-          />
-        </FormGroup>
-        <AzureAuthButton />
-        <FormGroup label='Subscription ID' isRequired>
-          <ValidatedInput
-            ariaLabel='subscription id'
-            value={subscriptionId || ''}
-            validator={isAzureSubscriptionIdValid}
-            onChange={(_event, value) =>
-              dispatch(changeAzureSubscriptionId(value))
-            }
-            helperText={
-              !subscriptionId
-                ? 'Subscription ID is required'
-                : 'Please enter a valid subscription ID'
-            }
-          />
-        </FormGroup>
-        <FormGroup label='Resource group' isRequired>
-          <ValidatedInput
-            ariaLabel='resource group'
-            value={resourceGroup || ''}
-            validator={isAzureResourceGroupValid}
-            onChange={(_event, value) =>
-              dispatch(changeAzureResourceGroup(value))
-            }
-            helperText={
-              !resourceGroup
-                ? 'Resource group is required'
-                : 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
-            }
-          />
-        </FormGroup>
-      </>
+      <AzureConfig />
     </Form>
   );
 };

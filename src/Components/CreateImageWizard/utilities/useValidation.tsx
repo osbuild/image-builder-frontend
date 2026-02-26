@@ -18,6 +18,9 @@ import {
   selectAapTlsConfirmation,
   selectActivationKey,
   selectAuthor,
+  selectAwsAccountId,
+  selectAwsShareMethod,
+  selectAwsSourceId,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
@@ -30,6 +33,9 @@ import {
   selectFirewall,
   selectFirstBootScript,
   selectFscMode,
+  selectGcpAccountType,
+  selectGcpEmail,
+  selectGcpShareMethod,
   selectHostname,
   selectImageTypes,
   selectKernel,
@@ -57,10 +63,13 @@ import {
   getDuplicateMountPoints,
   getDuplicateNames,
   getInvalidMountpoints,
+  isAwsAccountIdValid,
   isAzureResourceGroupValid,
   isAzureSubscriptionIdValid,
   isAzureTenantGUIDValid,
   isBlueprintNameValid,
+  isGcpDomainValid,
+  isGcpEmailValid,
   isHostnameValid,
   isKernelArgumentValid,
   isKernelNameValid,
@@ -1099,6 +1108,48 @@ export function useDetailsValidation(): StepValidation {
   };
 }
 
+export function useAwsValidation(): StepValidation {
+  const shareMethod = useAppSelector(selectAwsShareMethod);
+  const accountId = useAppSelector(selectAwsAccountId);
+  const sourceId = useAppSelector(selectAwsSourceId);
+
+  const errors: Record<string, string> = {};
+
+  if (shareMethod === 'sources') {
+    if (!sourceId) {
+      errors.sourceId = 'No source selected';
+    }
+  } else {
+    if (!isAwsAccountIdValid(accountId)) {
+      errors.accountId = 'Invalid AWS account ID';
+    }
+  }
+
+  return { errors, disabledNext: Object.keys(errors).length > 0 };
+}
+
+export function useGcpValidation(): StepValidation {
+  const shareMethod = useAppSelector(selectGcpShareMethod);
+  const accountType = useAppSelector(selectGcpAccountType);
+  const email = useAppSelector(selectGcpEmail);
+
+  const errors: Record<string, string> = {};
+
+  if (shareMethod === 'withGoogle') {
+    if (accountType === 'domain') {
+      if (!isGcpDomainValid(email)) {
+        errors.email = 'Invalid domain';
+      }
+    } else {
+      if (!isGcpEmailValid(email)) {
+        errors.email = 'Invalid email';
+      }
+    }
+  }
+
+  return { errors, disabledNext: Object.keys(errors).length > 0 };
+}
+
 export function useAzureValidation(): StepValidation {
   const errors: Record<string, string> = {};
   const azureTenantId = useAppSelector(selectAzureTenantId);
@@ -1106,7 +1157,7 @@ export function useAzureValidation(): StepValidation {
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
 
   if (!isAzureTenantGUIDValid(azureTenantId)) {
-    errors.tenandId = 'Invalid tenant id';
+    errors.tenantId = 'Invalid tenant id';
   }
 
   if (!isAzureSubscriptionIdValid(azureSubscriptionId)) {
