@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Title } from '@patternfly/react-core';
 
 import Snapshot from '../../Snapshot/components/Snapshot';

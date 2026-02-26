@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   FormGroup,
   FormHelperText,
@@ -7,10 +9,7 @@ import {
 } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeFips,
-  selectFips,
-} from '../../../../../store/wizardSlice';
+import { changeFips, selectFips } from '../../../../../store/wizardSlice';
 
 const ComplianceSection = () => {
   const dispatch = useAppDispatch();
