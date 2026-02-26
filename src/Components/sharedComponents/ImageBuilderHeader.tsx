@@ -17,6 +17,7 @@ import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
+import CreateImageWizardV2 from '../CreateImageWizard/CreateImageWizardV2';
 
 type ImageBuilderHeaderPropTypes = {
   inWizard?: boolean;
@@ -77,6 +78,7 @@ export const ImageBuilderHeader = ({
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [showCloudConfigModal, setShowCloudConfigModal] = useState(false);
+  const [showV2Wizard, setShowV2Wizard] = useState(false);
 
   const pageHeaderProps: React.ComponentProps<typeof PageHeader> &
     React.ComponentPropsWithoutRef<'section'> = {
@@ -96,6 +98,10 @@ export const ImageBuilderHeader = ({
           isOpen={showCloudConfigModal}
         />
       )}
+      <CreateImageWizardV2
+        isOpen={showV2Wizard}
+        onClose={() => setShowV2Wizard(false)}
+      />
       <PageHeader {...pageHeaderProps}>
         <PageHeaderTitle
           title={
@@ -123,6 +129,12 @@ export const ImageBuilderHeader = ({
                     }
                   >
                     Create image blueprint
+                  </Button>
+                  <Button
+                    variant='secondary'
+                    onClick={() => setShowV2Wizard(true)}
+                  >
+                    v2
                   </Button>
                   <Button
                     variant='secondary'

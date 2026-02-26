@@ -104,7 +104,15 @@ const BaseSettingsFooter = () => {
   );
 };
 
-const CreateImageWizardV2 = () => {
+type CreateImageWizardV2Props = {
+  isOpen?: boolean;
+  onClose?: () => void;
+};
+
+const CreateImageWizardV2 = ({
+  isOpen = true,
+  onClose,
+}: CreateImageWizardV2Props) => {
   const dispatch = useAppDispatch();
   const resolvePath = useAppSelector(selectPathResolver);
   const navigate = useNavigate();
@@ -115,11 +123,15 @@ const CreateImageWizardV2 = () => {
   }, []);
 
   const handleClose = () => {
-    navigate(resolvePath(''));
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(resolvePath(''));
+    }
   };
 
   return (
-    <Modal isOpen variant={ModalVariant.large} onClose={handleClose}>
+    <Modal isOpen={isOpen} variant={ModalVariant.large} onClose={handleClose}>
       <ModalHeader
         title='Build an image'
         description='Create a custom system image ready for deployment.'
