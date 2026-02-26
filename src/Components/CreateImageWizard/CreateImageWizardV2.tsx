@@ -20,7 +20,10 @@ import { useDetailsValidation } from './utilities/useValidation';
 
 import { selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { initializeWizard } from '../../store/wizardSlice';
+import {
+  initializeWizard,
+  selectImageTypes,
+} from '../../store/wizardSlice';
 
 type V2WizardFooterProps = {
   disabledNext?: boolean;
@@ -55,8 +58,12 @@ const V2WizardFooter = ({ disabledNext = false }: V2WizardFooterProps) => {
 };
 
 const BaseSettingsFooter = () => {
-  const { disabledNext } = useDetailsValidation();
-  return <V2WizardFooter disabledNext={disabledNext} />;
+  const { disabledNext: detailsDisabled } = useDetailsValidation();
+  const imageTypes = useAppSelector(selectImageTypes);
+  const noTargetsSelected = imageTypes.length === 0;
+  return (
+    <V2WizardFooter disabledNext={detailsDisabled || noTargetsSelected} />
+  );
 };
 
 const CreateImageWizardV2 = () => {
@@ -74,12 +81,7 @@ const CreateImageWizardV2 = () => {
   };
 
   return (
-    <Modal
-      isOpen
-      variant={ModalVariant.large}
-      onClose={handleClose}
-      hasNoBodyWrapper
-    >
+    <Modal isOpen variant={ModalVariant.large} onClose={handleClose}>
       <ModalHeader
         title='Build an image'
         description='Create a custom system image ready for deployment.'

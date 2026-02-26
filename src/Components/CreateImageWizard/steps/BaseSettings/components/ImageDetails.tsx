@@ -98,7 +98,7 @@ const ImageDetails = () => {
           dataTestId='blueprint-author'
           value={author}
           onChange={handleAuthorChange}
-          placeholder='Add author email'
+          placeholder='Add author'
           stepValidation={stepValidation}
           fieldName='author'
         />

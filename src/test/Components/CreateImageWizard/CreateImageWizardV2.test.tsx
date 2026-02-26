@@ -128,6 +128,66 @@ describe('CreateImageWizardV2', () => {
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
+  test('renders Image output section with Release dropdown', async () => {
+    await renderV2Wizard();
+    const heading = await screen.findByRole('heading', {
+      name: /Image output/i,
+    });
+    expect(heading).toBeInTheDocument();
+    const releaseSelect = await screen.findByTestId('release_select');
+    expect(releaseSelect).toBeInTheDocument();
+  });
+
+  test('renders Image output section with Architecture dropdown', async () => {
+    await renderV2Wizard();
+    const archSelect = await screen.findByTestId('arch_select');
+    expect(archSelect).toBeInTheDocument();
+  });
+
+  test('renders target environment selection', async () => {
+    await renderV2Wizard();
+    // Wait for the target environments to load (async API call)
+    const targetLabel = await screen.findByText(/Select target environments/i);
+    expect(targetLabel).toBeInTheDocument();
+  });
+
+  test('user can select a target environment', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    // Wait for targets to load - AWS should be available for rhel-10/x86_64
+    const awsTile = await screen.findByRole('button', {
+      name: /Amazon Web Services/i,
+    });
+    await user.click(awsTile);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    // After selecting a target, Next should be enabled
+    await waitFor(() => expect(nextButton).not.toBeDisabled());
+  });
+
+  test('Next button is disabled when no target environment is selected', async () => {
+    await renderV2Wizard();
+    // Wait for the target environments to load
+    await screen.findByText(/Select target environments/i);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    // No targets selected initially
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('user can deselect a target environment', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const awsTile = await screen.findByRole('button', {
+      name: /Amazon Web Services/i,
+    });
+    // Select
+    await user.click(awsTile);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    await waitFor(() => expect(nextButton).not.toBeDisabled());
+    // Deselect
+    await user.click(awsTile);
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
   test('placeholder steps render content when navigated to', async () => {
     const user = userEvent.setup();
     await renderV2Wizard();
