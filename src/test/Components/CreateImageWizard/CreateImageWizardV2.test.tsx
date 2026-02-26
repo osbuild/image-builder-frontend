@@ -420,4 +420,21 @@ describe('CreateImageWizardV2', () => {
     const noneOption = await screen.findByRole('option', { name: /None/i });
     expect(noneOption).toBeInTheDocument();
   });
+
+  test('Next button enabled when target selected and Register later chosen', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    // Select a target that doesn't require additional config
+    const guestImageCheckbox = await screen.findByRole('checkbox', {
+      name: /Virtualization guest image checkbox/i,
+    });
+    await user.click(guestImageCheckbox);
+    // Select "Register later" to bypass registration validation
+    const registerLaterRadio = await screen.findByRole('radio', {
+      name: /Register later/i,
+    });
+    await user.click(registerLaterRadio);
+    const nextButton = await screen.findByRole('button', { name: /Next/i });
+    await waitFor(() => expect(nextButton).not.toBeDisabled());
+  });
 });
