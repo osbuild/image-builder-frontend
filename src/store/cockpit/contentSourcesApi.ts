@@ -42,7 +42,7 @@ export const contentSourcesApi = emptyCockpitApi.injectEndpoints({
             package_name: name,
             summary: `${summary} (${version}-${release}.${arch})`,
           })
-        );
+        ) ?? [];
 
         const deduplicatedPackages = new Set<string>();
         const resultPackages = mappedPackages.filter((pkg: {package_name: string, summary: string}) => {
