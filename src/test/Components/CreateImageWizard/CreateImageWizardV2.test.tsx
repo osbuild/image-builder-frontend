@@ -398,4 +398,20 @@ describe('CreateImageWizardV2', () => {
     await user.click(fipsToggle);
     expect(fipsToggle).toBeChecked();
   });
+
+  test('Select image blueprint section renders with dropdown defaulting to None', async () => {
+    await renderV2Wizard();
+    const heading = await screen.findByRole('heading', {
+      name: /Select image blueprint/i,
+    });
+    expect(heading).toBeInTheDocument();
+
+    await screen.findByText(
+      /In order to see the image configuration in this dropdown/i,
+    );
+
+    // The dropdown toggle should show "None" as default
+    const toggle = await screen.findByRole('button', { name: /None/i });
+    expect(toggle).toBeInTheDocument();
+  });
 });
