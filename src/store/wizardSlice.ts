@@ -638,6 +638,9 @@ export const wizardSlice = createSlice({
     ) => {
       state.blueprintMode = action.payload;
     },
+    changeBlueprintId: (state, action: PayloadAction<string>) => {
+      state.blueprintId = action.payload;
+    },
     changeImageSource: (
       state,
       action: PayloadAction<ImageSource | undefined>,
@@ -1575,6 +1578,7 @@ export const {
   changeBaseUrl,
   changeProxy,
   changeBlueprintMode,
+  changeBlueprintId,
   changeImageSource,
   changeArchitecture,
   changeDistribution,

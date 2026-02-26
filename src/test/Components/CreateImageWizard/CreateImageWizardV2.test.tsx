@@ -400,6 +400,7 @@ describe('CreateImageWizardV2', () => {
   });
 
   test('Select image blueprint section renders with dropdown defaulting to None', async () => {
+    const user = userEvent.setup();
     await renderV2Wizard();
     const heading = await screen.findByRole('heading', {
       name: /Select image blueprint/i,
@@ -413,5 +414,10 @@ describe('CreateImageWizardV2', () => {
     // The dropdown toggle should show "None" as default
     const toggle = await screen.findByRole('button', { name: /None/i });
     expect(toggle).toBeInTheDocument();
+
+    // Verify dropdown opens and shows the "None" option
+    await user.click(toggle);
+    const noneOption = await screen.findByRole('option', { name: /None/i });
+    expect(noneOption).toBeInTheDocument();
   });
 });
