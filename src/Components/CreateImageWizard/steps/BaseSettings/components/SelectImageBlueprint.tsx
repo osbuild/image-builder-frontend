@@ -27,18 +27,20 @@ const SelectImageBlueprint = () => {
     _event?: React.MouseEvent<Element, MouseEvent>,
     value?: string | number,
   ) => {
-    if (value === undefined) return;
+    if (value === undefined || value === 'none') return;
     dispatch(changeBlueprintId(value as string));
     setIsOpen(false);
   };
 
+  const onToggleClick = () => setIsOpen((prev) => !prev);
+
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      onClick={() => setIsOpen((prev) => !prev)}
+      onClick={onToggleClick}
       isExpanded={isOpen}
     >
-      {!blueprintId || blueprintId === 'none' ? 'None' : blueprintId}
+      {blueprintId ?? 'None'}
     </MenuToggle>
   );
 
@@ -50,9 +52,9 @@ const SelectImageBlueprint = () => {
       <FormGroup label='Blueprint' fieldId='select-blueprint'>
         <Select
           isOpen={isOpen}
-          selected={blueprintId || 'none'}
+          selected={blueprintId ?? 'none'}
           onSelect={handleSelect}
-          onOpenChange={setIsOpen}
+          onOpenChange={(isOpen) => setIsOpen(isOpen)}
           toggle={toggle}
         >
           <SelectList>
