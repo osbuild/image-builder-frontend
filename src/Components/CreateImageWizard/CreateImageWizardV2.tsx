@@ -67,8 +67,6 @@ const V2WizardFooter = ({ disabledNext = false }: V2WizardFooterProps) => {
 
 const BaseSettingsFooter = () => {
   const { disabledNext: detailsDisabled } = useDetailsValidation();
-  const { disabledNext: registrationDisabled } = useRegistrationValidation();
-  const { disabledNext: snapshotDisabled } = useSnapshotValidation();
   const imageTypes = useAppSelector(selectImageTypes);
   const noTargetsSelected = imageTypes.length === 0;
   const { disabledNext: awsDisabled } = useAwsValidation();
@@ -90,8 +88,6 @@ const BaseSettingsFooter = () => {
     <V2WizardFooter
       disabledNext={
         detailsDisabled ||
-        registrationDisabled ||
-        snapshotDisabled ||
         noTargetsSelected ||
         (hasAws && awsDisabled) ||
         (hasGcp && gcpDisabled) ||

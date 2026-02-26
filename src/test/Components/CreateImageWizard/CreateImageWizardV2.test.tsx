@@ -352,4 +352,50 @@ describe('CreateImageWizardV2', () => {
     await user.click(step2Nav);
     await screen.findByText(/Repositories and packages content/i);
   });
+
+  test('Register section renders with heading and registration radio buttons', async () => {
+    await renderV2Wizard();
+    const registerHeadings = await screen.findAllByRole('heading', {
+      name: /Register/i,
+    });
+    const h2 = registerHeadings.find((el) => el.tagName === 'H2');
+    expect(h2).toBeInTheDocument();
+
+    // PF6 Radio with body prop doesn't expose label as accessible name,
+    // so use findByText (matches existing wizard test pattern)
+    await screen.findByText(
+      'Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities.',
+    );
+    await screen.findByRole('radio', { name: /Register later/i });
+  });
+
+  test('Enable repeatable build section renders with snapshot options', async () => {
+    await renderV2Wizard();
+    const heading = await screen.findByRole('heading', {
+      name: /Enable repeatable build/i,
+    });
+    expect(heading).toBeInTheDocument();
+
+    await screen.findByRole('radio', { name: /Disable repeatable build/i });
+    await screen.findByRole('radio', { name: /Enable repeatable build/i });
+  });
+
+  test('Compliance section renders with FIPS toggle', async () => {
+    await renderV2Wizard();
+    const fipsToggle = await screen.findByRole('switch', {
+      name: /Enable FIPS mode/i,
+    });
+    expect(fipsToggle).toBeInTheDocument();
+  });
+
+  test('User can toggle FIPS switch', async () => {
+    const user = userEvent.setup();
+    await renderV2Wizard();
+    const fipsToggle = await screen.findByRole('switch', {
+      name: /Enable FIPS mode/i,
+    });
+    expect(fipsToggle).not.toBeChecked();
+    await user.click(fipsToggle);
+    expect(fipsToggle).toBeChecked();
+  });
 });
