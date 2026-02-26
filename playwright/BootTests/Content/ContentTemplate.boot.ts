@@ -164,6 +164,10 @@ test('Content integration test - Content Template', async ({
     await frame.getByRole('button', { name: 'Repeatable build' }).click();
     await frame.getByRole('radio', { name: 'Use a content template' }).click();
 
+    // Show the most possible amount of templates - no search bar here
+    await frame.locator('#options-menu-top-toggle').click();
+    await frame.getByRole('menuitem', { name: '100 per page' }).click();
+
     await expect(frame.getByText(templateName)).toBeVisible({ timeout: 30000 });
 
     const templateRow = frame
