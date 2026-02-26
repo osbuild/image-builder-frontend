@@ -17,6 +17,7 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
   selectActivationKey,
+  selectAuthor,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
@@ -1018,6 +1019,7 @@ const countCharacterTypes = (value: string) => {
 export function useDetailsValidation(): StepValidation {
   const name = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
+  const author = useAppSelector(selectAuthor) ?? '';
   const blueprintId = useAppSelector(selectBlueprintId);
 
   const nameValid = isBlueprintNameValid(name);
@@ -1076,13 +1078,24 @@ export function useDetailsValidation(): StepValidation {
     descriptionError = `Description is too long (max ${maxDescriptionLength} characters)`;
   }
 
+  let authorError = '';
+  const maxAuthorLength = 250;
+  if (author.length > maxAuthorLength) {
+    authorError = `Author is too long (max ${maxAuthorLength} characters)`;
+  }
+
   return {
     errors: {
       name: nameError,
       description: descriptionError,
+      author: authorError,
     },
     // if uniqueName is null, we are still waiting for the API response
-    disabledNext: !!nameError || !!descriptionError || uniqueName !== true,
+    disabledNext:
+      !!nameError ||
+      !!descriptionError ||
+      !!authorError ||
+      uniqueName !== true,
   };
 }
 

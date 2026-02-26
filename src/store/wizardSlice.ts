@@ -200,6 +200,7 @@ export type wizardState = {
     blueprintName: string;
     isCustomName: boolean;
     blueprintDescription: string;
+    author: string;
   };
   timezone: Timezone;
   hostname: string;
@@ -311,6 +312,7 @@ export const initialState: wizardState = {
     blueprintName: generateDefaultName(RHEL_10, X86_64),
     isCustomName: false,
     blueprintDescription: '',
+    author: '',
   },
   timezone: {
     timezone: '',
@@ -578,6 +580,10 @@ export const selectMetadata = (state: RootState) => {
 
 export const selectBlueprintDescription = (state: RootState) => {
   return state.wizard.details.blueprintDescription;
+};
+
+export const selectAuthor = (state: RootState) => {
+  return state.wizard.details.author ?? '';
 };
 
 export const selectFirstBootScript = (state: RootState) => {
@@ -1286,6 +1292,9 @@ export const wizardSlice = createSlice({
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
       state.details.blueprintDescription = action.payload;
     },
+    changeAuthor: (state, action: PayloadAction<string>) => {
+      state.details.author = action.payload;
+    },
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.firstBoot.script = action.payload;
     },
@@ -1637,6 +1646,7 @@ export const {
   changeBlueprintName,
   setIsCustomName,
   changeBlueprintDescription,
+  changeAuthor,
   loadWizardState,
   setFirstBootScript,
   changeEnabledServices,

@@ -444,6 +444,7 @@ function commonRequestToState(
       blueprintName: request.name || '',
       isCustomName: true,
       blueprintDescription: request.description || '',
+      author: '', // TODO: Read from API response when backend supports author field
     },
     users:
       request.customizations.users?.map((user) => ({
