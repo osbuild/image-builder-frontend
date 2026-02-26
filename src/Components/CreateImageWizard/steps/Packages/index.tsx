@@ -38,7 +38,7 @@ const PackagesStep = () => {
         )}
       </Content>
       <Packages />
-      {isRhel(distribution) && <PackageRecommendations />}
+      {!isOnPremise && isRhel(distribution) && <PackageRecommendations />}
     </Form>
   );
 };

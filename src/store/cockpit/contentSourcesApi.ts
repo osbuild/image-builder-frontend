@@ -37,12 +37,21 @@ export const contentSourcesApi = emptyCockpitApi.injectEndpoints({
           return { error: result.error };
         }
 
-        const resultPackages = result.data.packages?.map(
+        const mappedPackages = result.data.packages?.map(
           ({ name, summary, version, release, arch }: Package) => ({
             package_name: name,
             summary: `${summary} (${version}-${release}.${arch})`,
           })
-        );
+        ) ?? [];
+
+        const deduplicatedPackages = new Set<string>();
+        const resultPackages = mappedPackages.filter((pkg: {package_name: string, summary: string}) => {
+          if (deduplicatedPackages.has(pkg.package_name)) {
+            return false;
+          }
+          deduplicatedPackages.add(pkg.package_name);
+          return true;
+        });
 
         return {
           data: resultPackages,
