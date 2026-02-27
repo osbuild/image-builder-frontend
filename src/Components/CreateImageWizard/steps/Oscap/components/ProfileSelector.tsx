@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Alert,
   Button,
   FormGroup,
   MenuToggle,
@@ -88,7 +87,6 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
     data: profiles,
     isFetching,
     isSuccess,
-    isError,
     refetch,
   } = useGetOscapProfilesQuery({
     distribution: release,
@@ -361,16 +359,6 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
           )}
         </SelectList>
       </Select>
-      {isError && (
-        <Alert
-          title='Error fetching the profiles'
-          variant='danger'
-          isPlain
-          isInline
-        >
-          Cannot get the list of profiles
-        </Alert>
-      )}
     </FormGroup>
   );
 };

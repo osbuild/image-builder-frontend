@@ -38,6 +38,7 @@ import { useGetUser } from '../../../../Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
+  useGetOscapProfilesQuery,
 } from '../../../../store/backendApi';
 import { usePoliciesQuery } from '../../../../store/complianceApi';
 import { useCustomizationRestrictions } from '../../../../store/distributions';
@@ -87,6 +88,13 @@ const OscapContent = () => {
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: imageTypes,
   });
+
+  const { isError } = useGetOscapProfilesQuery(
+    {
+      distribution: release,
+    },
+    { skip: complianceType !== 'openscap' || restrictions.openscap.shouldHide },
+  );
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
@@ -352,6 +360,12 @@ const OscapContent = () => {
               </AlertActionLink>
             </Alert>
           )}
+
+        {isError && (
+          <Alert title='Error fetching the profiles' variant='danger' isInline>
+            Cannot get the list of profiles
+          </Alert>
+        )}
       </Form>
     </>
   );
