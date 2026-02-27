@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../renderUtils';
 
 describe('Landing Page', () => {
   beforeEach(() => {

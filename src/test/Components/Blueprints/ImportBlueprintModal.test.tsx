@@ -12,7 +12,7 @@ import {
   ONPREM_BLUEPRINT_TOML,
   ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES,
 } from '../../fixtures/importBlueprints';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../renderUtils';
 import { clickNext, goToStep } from '../CreateImageWizard/wizardTestUtils';
 
 const setUp = async () => {

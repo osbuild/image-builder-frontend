@@ -12,7 +12,7 @@ import {
   mockBlueprintIds,
 } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../renderUtils';
 
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();
