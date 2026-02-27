@@ -89,7 +89,13 @@ const OscapContent = () => {
     selectedImageTypes: imageTypes,
   });
 
-  const { isError } = useGetOscapProfilesQuery(
+  const {
+    data: profiles,
+    isFetching,
+    isSuccess,
+    isError,
+    refetch,
+  } = useGetOscapProfilesQuery(
     {
       distribution: release,
     },
@@ -288,6 +294,10 @@ const OscapContent = () => {
                   <FlexItem className='pf-v6-u-w-50'>
                     <ProfileSelector
                       isDisabled={complianceType !== 'openscap'}
+                      profiles={profiles}
+                      isFetching={isFetching}
+                      isSuccess={isSuccess}
+                      refetch={refetch}
                     />
                   </FlexItem>
                   <FlexItem>

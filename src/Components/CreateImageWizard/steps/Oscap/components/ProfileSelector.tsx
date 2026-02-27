@@ -20,13 +20,13 @@ import { useSelectorHandlers } from './useSelectorHandlers';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
-  useGetOscapProfilesQuery,
   useLazyGetOscapCustomizationsQuery,
 } from '../../../../../store/backendApi';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
+  DistributionProfileResponse,
   OpenScap,
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
@@ -49,9 +49,19 @@ type OScapSelectOptionValueType = {
 
 type ProfileSelectorProps = {
   isDisabled?: boolean;
+  profiles: DistributionProfileResponse | undefined;
+  isFetching: boolean;
+  isSuccess: boolean;
+  refetch: () => void;
 };
 
-const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
+const ProfileSelector = ({
+  isDisabled = false,
+  profiles,
+  isFetching,
+  isSuccess,
+  refetch,
+}: ProfileSelectorProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(
@@ -82,15 +92,6 @@ const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
     handlePartitions,
     handleServices,
   } = useSelectorHandlers();
-
-  const {
-    data: profiles,
-    isFetching,
-    isSuccess,
-    refetch,
-  } = useGetOscapProfilesQuery({
-    distribution: release,
-  });
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
