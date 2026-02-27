@@ -172,7 +172,7 @@ describe('Import modal', () => {
 
     // File system configuration
     await clickNext();
-    const partition = await screen.findByText('/var');
+    const partition = await screen.findByDisplayValue('/var');
     expect(partition).toBeInTheDocument();
     const sizeValue = screen.getByRole('cell', {
       name: /2/i,
@@ -470,7 +470,7 @@ describe('Partitioning import', () => {
         name: /Basic filesystem partitioning/i,
       }),
     ).toBeChecked();
-    await screen.findByText('/var');
+    await screen.findByDisplayValue('/var');
   });
 
   test('blueprint import with disk works', async () => {

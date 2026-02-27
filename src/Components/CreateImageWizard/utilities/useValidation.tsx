@@ -64,7 +64,6 @@ import {
   isKernelArgumentValid,
   isKernelNameValid,
   isMountpointMinSizeValid,
-  isMountpointValid,
   isNtpServerValid,
   isPartitionNameValid,
   isPortValid,
@@ -328,6 +327,10 @@ export function useFilesystemValidation(): StepValidation {
   }
 
   const fscMountpointDuplicates = getDuplicateMountPoints(filesystemPartitions);
+  const fscInvalidMountpoints = getInvalidMountpoints(
+    filesystemPartitions,
+    blueprintMode,
+  );
   for (const partition of filesystemPartitions) {
     if (!partition.min_size || partition.min_size === '') {
       errors[`min-size-${partition.id}`] = 'Partition size is required';
@@ -341,8 +344,12 @@ export function useFilesystemValidation(): StepValidation {
       errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
       disabledNext = true;
     }
-    if (!isMountpointValid(partition, blueprintMode)) {
-      errors[`mountpoint-subpath-${partition.id}`] = 'Invalid mountpoint';
+    if (!partition.mountpoint) {
+      errors[`mountpoint-${partition.id}`] = 'Undefined mount point';
+      disabledNext = true;
+    }
+    if (fscInvalidMountpoints.includes(partition.mountpoint)) {
+      errors[`mountpoint-${partition.id}`] = 'Invalid mount point';
       disabledNext = true;
     }
   }

@@ -1,30 +1,47 @@
 import React from 'react';
 
-import { useAppDispatch } from '../../../../../store/hooks';
-import { changePartitionMountpoint } from '../../../../../store/wizardSlice';
+import { Tooltip } from '@patternfly/react-core';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import {
+  changePartitionMountpoint,
+  selectFilesystemPartitions,
+} from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import {
+  FilesystemPartition,
   LogicalVolumeWithBase,
   PartitioningCustomization,
   PlainPartitionWithBase,
 } from '../fscTypes';
 
 type MountpointProps = {
-  partition: PlainPartitionWithBase | LogicalVolumeWithBase;
+  partition:
+    | FilesystemPartition
+    | PlainPartitionWithBase
+    | LogicalVolumeWithBase;
   customization: PartitioningCustomization;
 };
 
 const Mountpoint = ({ partition, customization }: MountpointProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
+  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
-  return (
+  const hasOneRoot =
+    customization === 'fileSystem' &&
+    partition.mountpoint === '/' &&
+    filesystemPartitions.filter((p) => p.mountpoint === '/').length === 1;
+
+  const mountpointInput = (
     <ValidatedInputAndTextArea
       ariaLabel='Mount point input'
       placeholder='Define mount point'
       value={partition.mountpoint || ''}
-      isDisabled={partition.fs_type === 'swap'}
+      isDisabled={
+        ('fs_type' in partition && partition.fs_type === 'swap') || hasOneRoot
+      }
       onChange={(event, mountpoint) => {
         dispatch(
           changePartitionMountpoint({
@@ -37,6 +54,14 @@ const Mountpoint = ({ partition, customization }: MountpointProps) => {
       stepValidation={stepValidation}
       fieldName={`mountpoint-${partition.id}`}
     />
+  );
+
+  return hasOneRoot ? (
+    <Tooltip content='Root partition is required'>
+      <div>{mountpointInput}</div>
+    </Tooltip>
+  ) : (
+    mountpointInput
   );
 };
 

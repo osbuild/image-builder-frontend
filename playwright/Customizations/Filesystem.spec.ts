@@ -113,22 +113,26 @@ test('Create a blueprint with Filesystem customization', async ({
   });
 
   await test.step('Fill manually selected partitions', async () => {
-    await expect(frame.getByRole('button', { name: '/' })).toBeDisabled();
+    await expect(
+      frame
+        .getByRole('row', { name: '/ xfs 10 GiB' })
+        .getByRole('textbox')
+        .first(),
+    ).toBeDisabled();
     const closeRootButton = frame
       .getByRole('row', {
         name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
     await expect(closeRootButton).toBeDisabled();
 
     await frame.getByRole('button', { name: 'Add partition' }).click();
-    await frame.getByRole('button', { name: '/home' }).click();
-    await frame.getByRole('option', { name: '/tmp' }).click();
-
     await frame
-      .getByRole('textbox', { name: 'Mountpoint subpath' })
-      .fill('/usb');
+      .getByRole('row', { name: '/home xfs 1 GiB' })
+      .getByRole('textbox')
+      .first()
+      .fill('/tmp/usb');
     await frame
       .getByRole('gridcell', { name: '1', exact: true })
       .getByPlaceholder('Define minimum size')
@@ -138,10 +142,10 @@ test('Create a blueprint with Filesystem customization', async ({
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: '/tmp /usb xfs 15 MiB',
+        name: '/tmp/usb xfs 15 MiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
 
     await expect(closeTmpButton).toBeEnabled();
   });
@@ -176,45 +180,39 @@ test('Create a blueprint with Filesystem customization', async ({
         name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
     await expect(closeRootButton).toBeDisabled();
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: '/tmp /usb xfs 15 MiB',
+        name: '/tmp/usb xfs 15 MiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
     await expect(closeTmpButton).toBeEnabled();
 
-    const usbTextbox = frame.getByRole('textbox', {
-      name: 'Mountpoint subpath',
-    });
-    await expect(usbTextbox).toHaveValue('/usb');
-
-    await frame
-      .getByRole('gridcell', { name: '15', exact: true })
-      .getByPlaceholder('Define minimum size')
-      .click();
     await frame
       .getByRole('gridcell', { name: '15', exact: true })
       .getByPlaceholder('Define minimum size')
       .fill('20');
 
-    await frame.getByRole('button', { name: '/tmp' }).click();
-    await frame.getByRole('option', { name: '/usr' }).click();
+    await frame
+      .getByRole('row', {
+        name: '/tmp/usb xfs 20 MiB',
+      })
+      .getByRole('textbox')
+      .first()
+      .fill('/usr/test');
     await expect(
       frame.getByText(
         'Sub-directories for the /usr mount point are no longer supported',
       ),
     ).toBeVisible();
 
-    await frame.getByRole('button', { name: '/usr' }).click();
-    await frame.getByRole('option', { name: '/srv' }).click();
-
     await frame
-      .getByRole('textbox', { name: 'Mountpoint subpath' })
-      .fill('/data');
+      .getByRole('textbox', { name: 'Mount point input' })
+      .nth(1)
+      .fill('/srv/data');
 
     await frame.getByRole('button', { name: 'MiB' }).click();
     await frame.getByRole('option', { name: 'GiB' }).click();
@@ -268,21 +266,16 @@ test('Create a blueprint with Filesystem customization', async ({
         name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
     await expect(closeRootButton).toBeDisabled();
 
     const closeTmpButton = frame
       .getByRole('row', {
-        name: '/srv /data xfs 20 GiB',
+        name: '/srv/data xfs 20 GiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
     await expect(closeTmpButton).toBeEnabled();
-
-    const dataTextbox = frame.getByRole('textbox', {
-      name: 'Mountpoint subpath',
-    });
-    await expect(dataTextbox).toHaveValue('/data');
 
     const size = frame
       .getByRole('gridcell', { name: '20', exact: true })
