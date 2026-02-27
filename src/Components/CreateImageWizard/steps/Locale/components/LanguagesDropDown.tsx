@@ -26,7 +26,7 @@ import {
 } from '../../../../../store/wizardSlice';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useLocaleValidation } from '../../../utilities/useValidation';
-import { languagesList } from '../languagesList';
+import { languagesList } from '../data/languagesList';
 
 const parseLanguageOption = (language: string) => {
   try {

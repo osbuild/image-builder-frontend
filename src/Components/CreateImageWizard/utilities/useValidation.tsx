@@ -56,8 +56,8 @@ import {
   DiskPartition,
   FilesystemPartition,
 } from '../steps/FileSystem/fscTypes';
-import { keyboardsList } from '../steps/Locale/keyboardsList';
-import { languagesList } from '../steps/Locale/languagesList';
+import { keyboardsList } from '../steps/Locale/data/keyboardsList';
+import { languagesList } from '../steps/Locale/data/languagesList';
 import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText';
 import { timezones } from '../steps/Timezone/timezonesList';
 import {
