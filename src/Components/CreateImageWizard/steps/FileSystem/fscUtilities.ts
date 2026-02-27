@@ -1,10 +1,4 @@
-import {
-  DiskPartition,
-  FilesystemPartition,
-  FSType,
-  PartitioningCustomization,
-  Units,
-} from './fscTypes';
+import { DiskPartition, FilesystemPartition, FSType, Units } from './fscTypes';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
 
@@ -67,30 +61,6 @@ export const isPartitionTypeAvailable = (
     }
     return true;
   }
-  return true;
-};
-
-export const isMountpointPrefixAvailable = (
-  prefix: string,
-  partition: FilesystemPartition | DiskPartition,
-  customization: PartitioningCustomization,
-  blueprintMode: string,
-): boolean => {
-  // mountpoint '/' is not allowed in filesystem customization
-  // as it is added and not removable from the start to ensure
-  // valid filesystem schema
-  if (customization === 'fileSystem' && prefix === '/') {
-    return false;
-  }
-  // mountpoint '/boot' is not allowed in LVM
-  if ('name' in partition && prefix === '/boot') {
-    return false;
-  }
-
-  if (blueprintMode === 'image' && prefix !== '/var') {
-    return false;
-  }
-
   return true;
 };
 

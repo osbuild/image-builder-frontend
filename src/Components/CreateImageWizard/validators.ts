@@ -223,7 +223,7 @@ export const isMountpointValid = (
 };
 
 export const getInvalidMountpoints = (
-  partitions: DiskPartition[],
+  partitions: DiskPartition[] | FilesystemPartition[],
   blueprintMode: string,
 ) => {
   const invalidMountpoints = [];
