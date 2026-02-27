@@ -1,3 +1,12 @@
+// NOTE: Needs Playwright coverage before deletion
+// Playwright coverage: NONE - needs new playwright/Customizations/FirstBoot.spec.ts
+// Unit test coverage: src/Components/CreateImageWizard/steps/FirstBoot/tests/
+// Gaps to cover in Playwright:
+//   - Create blueprint with first boot script
+//   - Edit blueprint with first boot script
+//   - OpenSCAP + FirstBoot integration (services merged correctly)
+//   - dos2unix conversion (CRLF -> LF)
+//   - Removing first boot script removes the enabled service
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
