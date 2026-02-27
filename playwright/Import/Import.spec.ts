@@ -53,13 +53,12 @@ test('Import a blueprint with invalid customization', async ({
       .getByLabel('Wizard steps')
       .getByRole('button', { name: 'File system configuration' })
       .click();
+    await expect(
+      frame.getByText(/Duplicate mount points/i).first(),
+    ).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame
-      .getByRole('heading', { name: 'Danger alert: Duplicate mount' })
-      .first()
-      .click();
     const closeRootButton = frame
-      .locator('td:nth-child(6) > .pf-v6-c-button')
+      .locator('td:nth-child(5) > .pf-v6-c-button')
       .first();
     await expect(closeRootButton).toBeEnabled();
     await closeRootButton.click();
@@ -68,7 +67,7 @@ test('Import a blueprint with invalid customization', async ({
         name: '/ xfs 10 GiB',
       })
       .getByRole('button')
-      .nth(2);
+      .nth(1);
     await expect(closeRootButton2).toBeDisabled();
   });
 

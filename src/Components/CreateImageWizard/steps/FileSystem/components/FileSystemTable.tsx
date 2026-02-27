@@ -37,7 +37,6 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
         <Tr>
           {mode === 'disk-lvm' && <Th>Name</Th>}
           <Th>Mount point</Th>
-          {mode === 'filesystem' && <Th aria-label='Subpath'>Subpath</Th>}
           <Th>Type</Th>
           <Th>
             Minimum size <MinimumSizePopover />

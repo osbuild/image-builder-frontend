@@ -1,10 +1,4 @@
-import {
-  DiskPartition,
-  FilesystemPartition,
-  FSType,
-  PartitioningCustomization,
-  Units,
-} from './fscTypes';
+import { DiskPartition, FilesystemPartition, FSType, Units } from './fscTypes';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
 
@@ -17,20 +11,6 @@ const defaultMountpointPreferences = [
   '/tmp',
   '/app',
 ];
-
-export const normalizeSubpath = (rawSubpath: string) => {
-  const subpath = rawSubpath.replace(/^\/+/g, '');
-  return subpath.length > 0 ? '/' + subpath : '';
-};
-
-export const getPrefix = (mountpoint: string) => {
-  return mountpoint.split('/')[1] ? '/' + mountpoint.split('/')[1] : '/';
-};
-
-export const getSubpath = (mountpoint: string) => {
-  const prefix = getPrefix(mountpoint);
-  return normalizeSubpath(mountpoint.substring(prefix.length));
-};
 
 export const getConversionFactor = (units: Units) => {
   switch (units) {
@@ -67,30 +47,6 @@ export const isPartitionTypeAvailable = (
     }
     return true;
   }
-  return true;
-};
-
-export const isMountpointPrefixAvailable = (
-  prefix: string,
-  partition: FilesystemPartition | DiskPartition,
-  customization: PartitioningCustomization,
-  blueprintMode: string,
-): boolean => {
-  // mountpoint '/' is not allowed in filesystem customization
-  // as it is added and not removable from the start to ensure
-  // valid filesystem schema
-  if (customization === 'fileSystem' && prefix === '/') {
-    return false;
-  }
-  // mountpoint '/boot' is not allowed in LVM
-  if ('name' in partition && prefix === '/boot') {
-    return false;
-  }
-
-  if (blueprintMode === 'image' && prefix !== '/var') {
-    return false;
-  }
-
   return true;
 };
 
