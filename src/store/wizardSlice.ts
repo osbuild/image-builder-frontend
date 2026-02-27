@@ -213,6 +213,7 @@ export type wizardState = {
   fips: {
     enabled: boolean;
   };
+  localeLangpacks: string[];
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -328,6 +329,7 @@ export const initialState: wizardState = {
     enabled: false,
   },
   firstBoot: { script: '' },
+  localeLangpacks: [],
   users: [],
   userGroups: [{ name: '' }],
 };
@@ -602,6 +604,10 @@ export const selectFirewall = (state: RootState) => {
 
 export const selectFips = (state: RootState) => {
   return state.wizard.fips;
+};
+
+export const selectLocaleLangpacks = (state: RootState) => {
+  return state.wizard.localeLangpacks;
 };
 
 // Derived selector for checking if we're in image mode
@@ -1557,6 +1563,9 @@ export const wizardSlice = createSlice({
     changeFips: (state, action: PayloadAction<boolean>) => {
       state.fips.enabled = action.payload;
     },
+    setLocaleLangpacks: (state, action: PayloadAction<string[]>) => {
+      state.localeLangpacks = action.payload;
+    },
   },
 });
 
@@ -1678,5 +1687,6 @@ export const {
   removeGroupFromUserByIndex,
   changeRedHatRepositories,
   changeFips,
+  setLocaleLangpacks,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
