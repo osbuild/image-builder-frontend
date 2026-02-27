@@ -4,8 +4,8 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import DiskMountpoint from './DiskMountpoint';
 import MinimumSize from './MinimumSize';
+import Mountpoint from './Mountpoint';
 import PartitionName from './PartitionName';
 import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
@@ -43,7 +43,7 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
         </Td>
       )}
       <Td width={20}>
-        <DiskMountpoint partition={partition} customization={customization} />
+        <Mountpoint partition={partition} customization={customization} />
       </Td>
       <Td width={20}>
         <PartitionType partition={partition} customization={customization} />
