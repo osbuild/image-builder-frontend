@@ -5,9 +5,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 
-import { RHEL_10 } from '../../../../../constants';
-import { serviceMiddleware, serviceReducer } from '../../../../../store';
-import { initialState } from '../../../../../store/wizardSlice';
+import { RHEL_10 } from '@/constants';
+import { serviceMiddleware, serviceReducer } from '@/store';
+import { initialState } from '@/store/wizardSlice';
 import PackagesStep from '../index';
 
 export type WizardStateOverrides = Partial<typeof initialState>;

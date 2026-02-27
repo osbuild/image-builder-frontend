@@ -17,11 +17,11 @@ import {
   mockSearchResults,
 } from './mocks';
 
-import { server } from '../../../../../test/mocks/server';
+import { server } from '@/test/mocks/server';
 
 fetchMock.enableMocks();
 
-vi.mock('../../../../../Utilities/useDebounce', () => ({
+vi.mock('@/Utilities/useDebounce', () => ({
   default: <T,>(value: T): T => value,
 }));
 
