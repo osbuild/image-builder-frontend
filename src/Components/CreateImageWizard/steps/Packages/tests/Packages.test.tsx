@@ -1,6 +1,8 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import { server } from '@/test/mocks/server';
+
 import {
   clearSearchInput,
   clickPackageCheckbox,
@@ -16,8 +18,6 @@ import {
   mockModuleSearchResults,
   mockSearchResults,
 } from './mocks';
-
-import { server } from '@/test/mocks/server';
 
 fetchMock.enableMocks();
 
