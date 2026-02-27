@@ -10,6 +10,7 @@ import {
 } from './helpers';
 import {
   createDefaultFetchHandler,
+  createFetchHandler,
   fetchMock,
   mockGroupSearchResults,
   mockModuleSearchResults,
@@ -20,28 +21,9 @@ import { server } from '../../../../../test/mocks/server';
 
 fetchMock.enableMocks();
 
-vi.mock('../../../../../Utilities/useDebounce', async () => {
-  const { useState, useEffect } = await import('react');
-  const { isEqual } = await import('lodash');
-
-  return {
-    default: function useDebounce<T>(value: T, delay: number = 100): T {
-      const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-      useEffect(() => {
-        if (!isEqual(value, debouncedValue)) {
-          const timer = setTimeout(
-            () => setDebouncedValue(value),
-            value === '' ? 0 : delay,
-          );
-          return () => clearTimeout(timer);
-        }
-      }, [value, delay, debouncedValue]);
-
-      return debouncedValue;
-    },
-  };
-});
+vi.mock('../../../../../Utilities/useDebounce', () => ({
+  default: <T,>(value: T): T => value,
+}));
 
 // Disable global MSW server for this file - we use fetch mocks instead
 beforeAll(() => {
@@ -110,6 +92,7 @@ describe('Packages Component', () => {
         ) {
           return searchPromise;
         }
+
         return createDefaultFetchHandler({ url: req.url, method: req.method });
       });
 
@@ -163,25 +146,23 @@ describe('Packages Component', () => {
     });
 
     test('shows "no results" for failed search', async () => {
+      // Default handler returns empty arrays, so no override needed
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'asdf');
-      fetchMock.mockOnce(JSON.stringify([]));
 
-      // Wait for "No results found" to appear after debounce and API call complete
-      // The debounce is 500ms, but we wait longer to account for API call timing
       await waitFor(() => {
         expect(screen.getByText('No results found')).toBeInTheDocument();
       });
     });
 
     test('displays search results sorted by relevance', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       // Wait for results to appear
       await screen.findByRole('cell', { name: /test-lib/ });
@@ -196,11 +177,11 @@ describe('Packages Component', () => {
 
   describe('Package Selection', () => {
     test('selecting a package checks the checkbox', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       await screen.findByRole('cell', { name: /test-lib/ });
 
@@ -215,12 +196,12 @@ describe('Packages Component', () => {
     });
 
     test('selected packages appear in Selected view', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       // Search and select a package
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       await screen.findByRole('cell', { name: /test-lib/ });
       await clickPackageCheckbox(user, 0);
@@ -235,11 +216,11 @@ describe('Packages Component', () => {
     });
 
     test('deselecting a package unchecks the checkbox', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       await screen.findByRole('cell', { name: /test-lib/ });
 
@@ -258,11 +239,11 @@ describe('Packages Component', () => {
 
   describe('Pagination', () => {
     test('shows correct item count after search', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       await screen.findByRole('cell', { name: /test-lib/ });
 
@@ -278,12 +259,11 @@ describe('Packages Component', () => {
     });
 
     test('shows correct item count after toggling to selected', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'test');
-
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
       await screen.findByRole('cell', { name: /test-lib/ });
       await clickPackageCheckbox(user, 0);
 
@@ -301,11 +281,11 @@ describe('Packages Component', () => {
     });
 
     test('shows zero item count after clearing search input', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       await screen.findByRole('cell', { name: /test-lib/ });
       await clickPackageCheckbox(user, 0);
@@ -328,11 +308,13 @@ describe('Packages Component', () => {
 
   describe('Modules', () => {
     test('modules render with streams on separate lines', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ rpms: mockModuleSearchResults }),
+      );
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'testModule');
-      fetchMock.mockOnce(JSON.stringify(mockModuleSearchResults));
 
       // Wait for module streams to appear
       await screen.findByText('1.22');
@@ -347,11 +329,13 @@ describe('Packages Component', () => {
     });
 
     test('displays retirement dates for module streams', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ rpms: mockModuleSearchResults }),
+      );
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'testModule');
-      fetchMock.mockOnce(JSON.stringify(mockModuleSearchResults));
 
       // Wait for module streams to appear
       await screen.findByText('1.22');
@@ -367,11 +351,13 @@ describe('Packages Component', () => {
     });
 
     test('selecting a module stream disables other streams', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ rpms: mockModuleSearchResults }),
+      );
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, 'testModule');
-      fetchMock.mockOnce(JSON.stringify(mockModuleSearchResults));
 
       // Wait for module streams to appear
       await screen.findByText('1.22');
@@ -394,11 +380,13 @@ describe('Packages Component', () => {
 
   describe('Package Groups', () => {
     test('searches for groups with @ prefix', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ groups: mockGroupSearchResults }),
+      );
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, '@grouper');
-      fetchMock.mockOnce(JSON.stringify(mockGroupSearchResults));
 
       // Wait for group to appear (groups show with @ prefix in the table)
       await waitFor(() => {
@@ -407,11 +395,13 @@ describe('Packages Component', () => {
     });
 
     test('selecting a group checks the checkbox', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ groups: mockGroupSearchResults }),
+      );
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, '@grouper');
-      fetchMock.mockOnce(JSON.stringify(mockGroupSearchResults));
 
       // Wait for group to appear
       await waitFor(() => {
@@ -427,11 +417,13 @@ describe('Packages Component', () => {
     });
 
     test('shows included packages in popover', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ groups: mockGroupSearchResults }),
+      );
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       await typeIntoSearchBox(user, '@grouper');
-      fetchMock.mockOnce(JSON.stringify(mockGroupSearchResults));
 
       // Wait for group to appear
       await waitFor(() => {
@@ -457,12 +449,12 @@ describe('Packages Component', () => {
 
   describe('Selected Packages View', () => {
     test('selected packages are sorted alphabetically', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = userEvent.setup({ delay: null });
 
       // Search and select all packages (in reverse order to verify sorting)
       await typeIntoSearchBox(user, 'test');
-      fetchMock.mockOnce(JSON.stringify(mockSearchResults));
 
       await screen.findByRole('cell', { name: /test-lib/ });
 

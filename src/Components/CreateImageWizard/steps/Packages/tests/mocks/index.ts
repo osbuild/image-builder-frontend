@@ -1,2 +1,6 @@
-export * from './api';
+export {
+  createDefaultFetchHandler,
+  createFetchHandler,
+  fetchMock,
+} from './api';
 export * from './data';
