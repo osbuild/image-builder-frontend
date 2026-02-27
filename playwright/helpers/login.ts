@@ -123,15 +123,35 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   ).toBeVisible();
 };
 
-const loginConsole = async (page: Page, user: string, password: string) => {
-  await closePopupsIfExist(page);
-  await page.goto('/insights/image-builder/landing');
+const fillAndSubmitLogin = async (
+  page: Page,
+  user: string,
+  password: string,
+) => {
   await page.getByRole('textbox', { name: 'Red Hat login' }).fill(user);
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
+};
+
+const loginConsole = async (page: Page, user: string, password: string) => {
+  await closePopupsIfExist(page);
+  await page.goto('/insights/image-builder/landing');
+  await fillAndSubmitLogin(page, user, password);
+
+  const loginField = page.getByRole('textbox', { name: 'Red Hat login' });
+  const allImagesHeading = page.getByRole('heading', { name: 'All images' });
+
+  // The cookie consent popup can appear late and reset the login state.
+  // Wait for either the success heading or the login form reappearing.
+  await expect(loginField.or(allImagesHeading)).toBeVisible();
+
+  if (await loginField.isVisible()) {
+    await fillAndSubmitLogin(page, user, password);
+  }
+
   await togglePreview(page);
-  await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible();
+  await expect(allImagesHeading).toBeVisible();
 };
 
 export const storeStorageStateAndToken = async (page: Page) => {
