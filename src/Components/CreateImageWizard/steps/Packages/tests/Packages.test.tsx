@@ -447,6 +447,152 @@ describe('Packages Component', () => {
     });
   });
 
+  describe('Redux State Integration', () => {
+    test('selecting a package updates Redux state with package data', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
+      const { store } = renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      // Initial state should have no packages
+      expect(store.getState().wizard.packages).toHaveLength(0);
+
+      await typeIntoSearchBox(user, 'test');
+      await screen.findByRole('cell', { name: /test-lib/ });
+
+      // Select the first package (sorted by relevance: 'test')
+      await clickPackageCheckbox(user, 0);
+
+      // Verify Redux state was updated
+      await waitFor(() => {
+        const packages = store.getState().wizard.packages;
+        expect(packages).toHaveLength(1);
+        expect(packages[0].name).toBe('test');
+      });
+    });
+
+    test('deselecting a package removes it from Redux state', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
+      const { store } = renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      await typeIntoSearchBox(user, 'test');
+      await screen.findByRole('cell', { name: /test-lib/ });
+
+      // Select then deselect
+      await clickPackageCheckbox(user, 0);
+      await waitFor(() => {
+        expect(store.getState().wizard.packages).toHaveLength(1);
+      });
+
+      await clickPackageCheckbox(user, 0);
+      await waitFor(() => {
+        expect(store.getState().wizard.packages).toHaveLength(0);
+      });
+    });
+
+    test('selecting multiple packages updates Redux state correctly', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
+      const { store } = renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      await typeIntoSearchBox(user, 'test');
+      await screen.findByRole('cell', { name: /test-lib/ });
+
+      // Select all three packages
+      await clickPackageCheckbox(user, 0); // test
+      await clickPackageCheckbox(user, 1); // test-lib
+      await clickPackageCheckbox(user, 2); // testPkg
+
+      await waitFor(() => {
+        const packages = store.getState().wizard.packages;
+        expect(packages).toHaveLength(3);
+        expect(packages.map((p) => p.name).sort()).toEqual([
+          'test',
+          'test-lib',
+          'testPkg',
+        ]);
+      });
+    });
+
+    test('selecting a group updates Redux groups state', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ groups: mockGroupSearchResults }),
+      );
+      const { store } = renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      // Initial state should have no groups
+      expect(store.getState().wizard.groups).toHaveLength(0);
+
+      await typeIntoSearchBox(user, '@grouper');
+      await waitFor(() => {
+        expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
+      });
+
+      await clickPackageCheckbox(user, 0);
+
+      await waitFor(() => {
+        const groups = store.getState().wizard.groups;
+        expect(groups).toHaveLength(1);
+        expect(groups[0].name).toBe('grouper');
+      });
+    });
+
+    test('selecting a module stream updates Redux modules state', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ rpms: mockModuleSearchResults }),
+      );
+      const { store } = renderPackagesStep();
+      const user = userEvent.setup({ delay: null });
+
+      // Initial state should have no modules
+      expect(store.getState().wizard.enabled_modules).toHaveLength(0);
+
+      await typeIntoSearchBox(user, 'testModule');
+      await screen.findByText('1.24');
+
+      // Select the first stream (1.24)
+      await clickPackageCheckbox(user, 0);
+
+      await waitFor(() => {
+        const modules = store.getState().wizard.enabled_modules;
+        expect(modules).toHaveLength(1);
+        expect(modules[0].name).toBe('testModule');
+        expect(modules[0].stream).toBe('1.24');
+      });
+    });
+
+    test('preloaded packages state persists in Selected view', async () => {
+      const { store } = renderPackagesStep({
+        packages: [
+          {
+            name: 'preloaded-pkg',
+            summary: 'A preloaded package',
+            repository: 'distro',
+          },
+          {
+            name: 'another-pkg',
+            summary: 'Another package',
+            repository: 'distro',
+          },
+        ],
+      });
+      const user = userEvent.setup({ delay: null });
+
+      // Verify initial Redux state has preloaded packages
+      expect(store.getState().wizard.packages).toHaveLength(2);
+
+      // Toggle to Selected view
+      await toggleSelectedPackages(user);
+
+      // Verify packages appear in UI
+      const rows = await screen.findAllByTestId('package-row');
+      expect(rows).toHaveLength(2);
+      expect(rows[0]).toHaveTextContent('another-pkg');
+      expect(rows[1]).toHaveTextContent('preloaded-pkg');
+    });
+  });
+
   describe('Selected Packages View', () => {
     test('selected packages are sorted alphabetically', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
