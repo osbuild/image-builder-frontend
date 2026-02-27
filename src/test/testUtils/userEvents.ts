@@ -32,3 +32,7 @@ export const typeWithWait = async (
 ) => {
   await waitForAction(() => user.type(element, text));
 };
+
+export const tabWithWait = async (user: UserEventInstance) => {
+  await waitForAction(() => user.tab());
+};
