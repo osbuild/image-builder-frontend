@@ -10,12 +10,12 @@ import {
   PlainPartitionWithBase,
 } from '../fscTypes';
 
-type DiskMountpointProps = {
+type MountpointProps = {
   partition: PlainPartitionWithBase | LogicalVolumeWithBase;
   customization: PartitioningCustomization;
 };
 
-const DiskMountpoint = ({ partition, customization }: DiskMountpointProps) => {
+const Mountpoint = ({ partition, customization }: MountpointProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
 
@@ -40,4 +40,4 @@ const DiskMountpoint = ({ partition, customization }: DiskMountpointProps) => {
   );
 };
 
-export default DiskMountpoint;
+export default Mountpoint;
