@@ -77,7 +77,6 @@ import './CreateImageWizard.scss';
 import {
   addImageType,
   changeArchitecture,
-  changeAwsShareMethod,
   changeDistribution,
   changeTimezone,
   initializeWizard,
@@ -228,10 +227,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       const arch = await getHostArch();
       dispatch(changeArchitecture(arch));
     };
-
-    if (isOnPremise) {
-      dispatch(changeAwsShareMethod('manual'));
-    }
 
     if (isOnPremise && !isEdit) {
       if (!searchParams.get('release')) {
