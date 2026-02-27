@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  Alert,
   Button,
   Checkbox,
   Content,
@@ -13,26 +12,20 @@ import { v4 as uuidv4 } from 'uuid';
 import FileSystemTable from './FileSystemTable';
 import PartitioningMode from './PartitioningMode';
 
-import {
-  FILE_SYSTEM_CUSTOMIZATION_URL,
-  targetOptions,
-} from '../../../../../constants';
+import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import {
   addPartition,
   changePartitioningMode,
   selectBlueprintMode,
   selectDiskPartitions,
   selectFilesystemPartitions,
-  selectImageTypes,
   selectPartitioningMode,
 } from '../../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const FileSystemConfiguration = () => {
-  const environments = useAppSelector(selectImageTypes);
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
@@ -57,17 +50,6 @@ const FileSystemConfiguration = () => {
       }),
     );
   };
-
-  const automaticPartitioningOnlyTargets: ImageTypes[] = [
-    'image-installer',
-    'wsl',
-  ];
-
-  const filteredTargets = (
-    automaticPartitioningOnlyTargets.filter((env) =>
-      environments.includes(env),
-    ) as ImageTypes[]
-  ).map((env) => targetOptions[env]);
 
   return (
     <>
@@ -100,16 +82,6 @@ const FileSystemConfiguration = () => {
           </Button>
         </Content>
       </Content>
-      {(environments.includes('image-installer') ||
-        environments.includes('wsl')) && (
-        <Alert
-          variant='warning'
-          isInline
-          title={`Filesystem customizations are not applied to ${filteredTargets.join(
-            ' and ',
-          )} images`}
-        />
-      )}
       <Checkbox
         label='Select partitioning mode'
         isChecked={partitioningMode !== undefined}
