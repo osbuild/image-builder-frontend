@@ -232,6 +232,37 @@ const Repositories = () => {
     }
   }, [contentList]);
 
+  // Auto-swap custom EPEL repos, due to their deletion, to their community counterparts on initial load
+  // REF: HMS-5853
+  useEffect(() => {
+    if (isLoading || isTemplateSelected) return;
+
+    const customEpel = customRepositories.find(
+      (repo) => repo.baseurl?.length && isEPELUrl(repo.baseurl[0]) && repo.id,
+    );
+    if (!customEpel) return;
+
+    const communityEpel = [...contentList].find(
+      (repo) => repo.origin === ContentOrigin.COMMUNITY && isEPELUrl(repo.url!),
+    );
+    if (!communityEpel?.uuid || customEpel.id === communityEpel.uuid) return;
+
+    dispatch(
+      changeCustomRepositories([
+        ...customRepositories.filter(({ id }) => id !== customEpel.id),
+        convertSchemaToIBCustomRepo(communityEpel),
+      ]),
+    );
+    dispatch(
+      changePayloadRepositories([
+        ...payloadRepositories.filter(({ id }) => !id || id !== customEpel.id),
+        convertSchemaToIBPayloadRepo(communityEpel),
+      ]),
+    );
+    // ↓ On purpose to prevent repeated executions.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
   const refresh = () => {
     // In case the user deletes an intially selected repository.
     // Refetching will react to both added and removed repositories.
@@ -427,6 +458,18 @@ const Repositories = () => {
   ): [boolean, string] => {
     if (isFetching) {
       return [true, 'Repository data is still fetching, please wait.'];
+    }
+
+    if (
+      !isSelected &&
+      isEPELUrl(repo.url!) &&
+      repo.origin === ContentOrigin.EXTERNAL
+    ) {
+      return [
+        true,
+        'Custom EPEL repositories are going to be removed soon.\n' +
+          'Please use the "Community" EPEL repositories instead.',
+      ];
     }
 
     const hasSelectedEPEL = contentList.some(
