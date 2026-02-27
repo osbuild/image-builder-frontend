@@ -1,6 +1,7 @@
 export {
   clearWithWait,
   clickWithWait,
+  tabWithWait,
   typeWithWait,
   waitForAction,
 } from './userEvents';
