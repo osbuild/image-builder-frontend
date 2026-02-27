@@ -141,7 +141,6 @@ const Aws = () => {
                 dispatch(changeAwsAccountId(''));
                 dispatch(changeAwsShareMethod('sources'));
               }}
-              autoFocus
             />
             <Radio
               id='share-with-account'

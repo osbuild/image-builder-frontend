@@ -239,7 +239,7 @@ export const initialState: wizardState = {
   },
   aws: {
     accountId: '',
-    shareMethod: 'sources',
+    shareMethod: 'manual',
     source: undefined,
     region: 'us-east-1',
   },
@@ -683,7 +683,7 @@ export const wizardSlice = createSlice({
     },
     reinitializeAws: (state) => {
       state.aws.accountId = '';
-      state.aws.shareMethod = 'sources';
+      state.aws.shareMethod = 'manual';
       state.aws.source = undefined;
       state.aws.region = 'us-east-1';
     },

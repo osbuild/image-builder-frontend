@@ -72,14 +72,6 @@ const deselectAwsAndSelectGuestImage = async () => {
   await waitFor(async () => user.click(guestImageCheckbox));
 };
 
-const chooseManualOption = async () => {
-  const user = userEvent.setup();
-  const manualOption = await screen.findByText(
-    /manually enter an account id\./i,
-  );
-  await waitFor(async () => user.click(manualOption));
-};
-
 const enterAccountId = async () => {
   const user = userEvent.setup();
   const awsAccountIdTextbox = await screen.findByRole('textbox', {
@@ -128,7 +120,6 @@ describe('Step Upload to AWS', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
-    await chooseManualOption();
     await enterAccountId();
     await clickNext();
     await screen.findByRole('heading', {
@@ -160,6 +151,7 @@ describe('Step Upload to AWS', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
+    await chooseSourcesOption();
     await screen.findByText(
       /sources cannot be reached, try again later or enter an aws account id manually\./i,
     );
@@ -171,9 +163,6 @@ describe('Step Upload to AWS', () => {
     await goToAwsStep();
 
     const nextButton = await getNextButton();
-    expect(nextButton).toBeDisabled();
-
-    await chooseManualOption();
     expect(nextButton).toBeDisabled();
 
     await enterAccountId();
@@ -191,6 +180,7 @@ describe('Step Upload to AWS', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
+    await chooseSourcesOption();
     await getSourceDropdown();
     await selectSource();
     await goToReviewStep();
@@ -208,7 +198,6 @@ describe('Step Upload to AWS', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
-    await chooseManualOption();
     await enterAccountId();
     await goToReviewStep();
     await clickRevisitButton();
@@ -225,6 +214,7 @@ describe('AWS image type request generated correctly', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
+    await chooseSourcesOption();
     await selectSource();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -252,7 +242,6 @@ describe('AWS image type request generated correctly', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
-    await chooseManualOption();
     await enterAccountId();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -280,6 +269,7 @@ describe('AWS image type request generated correctly', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
+    await chooseSourcesOption();
     await selectSource();
     await clickBack();
     await deselectAwsAndSelectGuestImage();
