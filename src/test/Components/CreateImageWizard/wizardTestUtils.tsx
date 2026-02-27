@@ -12,7 +12,7 @@ import {
 } from '../../../store/imageBuilderApi';
 import { getLastBlueprintReq } from '../../mocks/cockpit/cockpitFile';
 import { server } from '../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../renderUtils';
 
 type RequestTypes = 'GET' | 'PUT' | 'POST' | 'DELETE';
 

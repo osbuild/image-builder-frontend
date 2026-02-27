@@ -2,7 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { mockComposes } from '../../fixtures/composes';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../renderUtils';
 
 describe('Images Table', () => {
   beforeEach(() => {
