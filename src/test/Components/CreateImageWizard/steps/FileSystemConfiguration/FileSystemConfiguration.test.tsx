@@ -65,10 +65,8 @@ const addPartition = async () => {
 const customizePartition = async () => {
   const user = userEvent.setup();
   const row = await getRow(2);
-  const minSize = await within(row).findByRole('textbox', {
-    name: /Mountpoint subpath/i,
-  });
-  await waitFor(() => user.type(minSize, 'cakerecipes'));
+  const mountpoint = await within(row).findByDisplayValue('/home');
+  await waitFor(() => user.type(mountpoint, '/cakerecipes'));
 };
 
 const getRow = async (row: number) => {
@@ -143,10 +141,9 @@ describe('Step File system configuration', () => {
     // Create a duplicate mount point so the step is invalid
     const rows = await screen.findAllByRole('row');
     rows.shift();
-    const thirdRowMountPoint = await within(rows[2]).findByText('/var');
-    await waitFor(() => user.click(thirdRowMountPoint));
-    const homeOption = await screen.findByRole('option', { name: /\/home/i });
-    await waitFor(() => user.click(homeOption));
+    const thirdRowMountPoint = await within(rows[2]).findByDisplayValue('/var');
+    await waitFor(() => user.clear(thirdRowMountPoint));
+    await waitFor(() => user.type(thirdRowMountPoint, '/home'));
 
     await clickReviewAndFinish();
     expect(
@@ -169,30 +166,26 @@ describe('Step File system configuration', () => {
     expect(rows).toHaveLength(3);
 
     // Create a duplicate by changing the third row from /var to /home
-    const thirdRowMountPoint = await within(rows[2]).findByText('/var');
-    await waitFor(() => user.click(thirdRowMountPoint));
-    const homeOption = await screen.findByRole('option', { name: /\/home/i });
-    await waitFor(() => user.click(homeOption));
+    const thirdRowMountPoint = await within(rows[2]).findByDisplayValue('/var');
+    await waitFor(() => user.clear(thirdRowMountPoint));
+    await waitFor(() => user.type(thirdRowMountPoint, '/home'));
 
     // Can't click next because duplicate mount point error appears
     await clickNext();
     expect(await getNextButton()).toBeDisabled();
-    const mountPointAlerts = screen.getAllByRole('heading', {
-      name: /danger alert: duplicate mount point/i,
-    });
+    const mountPointAlerts = await screen.findAllByText(
+      /duplicate mount point/i,
+    );
     expect(mountPointAlerts.length).toBeGreaterThanOrEqual(1);
 
     // Change mount point of final row back to /var, resolving errors
-    const thirdRowMountPointAgain = await within(rows[2]).findByText('/home');
-    await waitFor(() => user.click(thirdRowMountPointAgain));
-    const varOption = await screen.findByRole('option', {
-      name: /\/var/i,
-    });
-    await waitFor(() => user.click(varOption));
+    const thirdRowMountPointAgain = await within(rows[2]).findByDisplayValue(
+      '/home',
+    );
+    await waitFor(() => user.clear(thirdRowMountPointAgain));
+    await waitFor(() => user.type(thirdRowMountPointAgain, '/var'));
     await waitFor(() => {
-      const alerts = screen.queryAllByRole('heading', {
-        name: /danger alert: duplicate mount point/i,
-      });
+      const alerts = screen.queryAllByText(/duplicate mount point/i);
       expect(alerts).toHaveLength(0);
     });
     expect(await getNextButton()).toBeEnabled();
