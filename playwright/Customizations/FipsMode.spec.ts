@@ -2,7 +2,8 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
-import { isHosted, isServiceAvailable } from '../helpers/helpers';
+import { isServiceAvailable } from '../helpers/apiHelpers';
+import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -26,11 +27,7 @@ test('FIPS switch toggles and persists through save', async ({
     const complianceLandingPageEndpoint =
       '/api/compliance/v2/policies?limit=1&offset=0';
     test.skip(
-      !(await isServiceAvailable(
-        complianceLandingPageEndpoint,
-        page.context(),
-        process.env.TOKEN,
-      )),
+      !(await isServiceAvailable(complianceLandingPageEndpoint, page)),
       `Endpoint ${complianceLandingPageEndpoint} is not available - service is most likely down.`,
     );
   });

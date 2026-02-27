@@ -1,8 +1,17 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  deleteRepository,
+  deleteTemplate,
+  navigateToRepositories,
+  navigateToTemplates,
+  pollForSystemInInventory,
+  pollForSystemTemplateAttachment,
+} from './helpers';
+
 import { test } from '../../fixtures/customizations';
-import { isHosted } from '../../helpers/helpers';
+import { isHosted, sleep } from '../../helpers/helpers';
 import { ensureAuthenticated, login } from '../../helpers/login';
 import {
   fillInImageOutput,
@@ -15,15 +24,6 @@ import {
   fillInDetails,
   registerWithActivationKey,
 } from '../../helpers/wizardHelpers';
-import {
-  deleteRepository,
-  deleteTemplate,
-  navigateToRepositories,
-  navigateToTemplates,
-  pollForSystemInInventory,
-  pollForSystemTemplateAttachment,
-  sleep,
-} from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
@@ -163,6 +163,10 @@ test('Content integration test - Content Template', async ({
   await test.step('Select Content Template in Repeatable build step', async () => {
     await frame.getByRole('button', { name: 'Repeatable build' }).click();
     await frame.getByRole('radio', { name: 'Use a content template' }).click();
+
+    // Show the most possible amount of templates - no search bar here
+    await frame.locator('#options-menu-top-toggle').click();
+    await frame.getByRole('menuitem', { name: '100 per page' }).click();
 
     await expect(frame.getByText(templateName)).toBeVisible({ timeout: 30000 });
 

@@ -1,72 +1,8 @@
-import { expect, Page, test } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
 
-import { closePopupsIfExist } from '../../helpers/helpers';
-
-/**
- * Navigate to compliance policies page and search for a policy
- * @param page - the page object
- * @param policyName - the name of the compliance policy to find
- */
-const searchCompliancePolicy = async (page: Page, policyName: string) => {
-  await page.goto('/insights/compliance/scappolicies');
-  await page.getByRole('textbox', { name: 'text input' }).fill(policyName);
-  await expect(page.getByRole('row', { name: policyName })).toBeVisible();
-};
-
-/**
- * Navigate to compliance policies page, search for a policy, and optionally click on it
- * @param page - the page object
- * @param policyName - the name of the compliance policy to find
- * @param clickLink - whether to click on the policy link after finding it (default: false)
- */
-export const navigateToCompliancePolicy = async (
-  page: Page,
-  policyName: string,
-  clickLink: boolean = false,
-) => {
-  await searchCompliancePolicy(page, policyName);
-  if (clickLink) {
-    await page.getByRole('link', { name: policyName }).click();
-  }
-};
-
-/**
- * Delete the compliance policy with the given name
- * Will locate to the Compliance service and search for the policy first
- * If the policy is not found, it will fail gracefully
- * @param page - the page object
- * @param policyName - the name of the compliance policy to delete
- */
-export const deleteCompliancePolicy = async (
-  page: Page,
-  policyName: string,
-) => {
-  // Since new browser is opened during the Compliance policy cleanup, we need to call the popup closer again
-  await closePopupsIfExist(page);
-
-  await test.step(
-    'Delete the compliance policy with name: ' + policyName,
-    async () => {
-      try {
-        await searchCompliancePolicy(page, policyName);
-        await page
-          .getByRole('row', { name: policyName })
-          .getByLabel('Kebab toggle')
-          .click({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
-      } catch {
-        // No policy of given name was found -> fail gracefully and do not raise error
-        return;
-      }
-
-      await page.getByRole('menuitem', { name: 'Delete policy' }).click();
-      await page
-        .getByRole('checkbox', { name: 'I understand this will delete' })
-        .click();
-      await page.getByRole('button', { name: 'delete' }).click();
-    },
-    { box: true },
-  );
-};
+import { getAuthHeaders } from '../../helpers/apiHelpers';
+import { closePopupsIfExist, sleep } from '../../helpers/helpers';
+import { retry } from '../../helpers/navHelpers';
 
 /**
  * Delete the repository with the given name
@@ -82,22 +18,38 @@ export const deleteRepository = async (
   await test.step(
     'Delete the repository with name: ' + repositoryNameOrUrl,
     async () => {
-      try {
-        await navigateToRepositories(page);
+      await navigateToRepositories(page);
+
+      // Check if the repository is already on the repositories page
+      if (
+        !(await page
+          .getByRole('row', { name: repositoryNameOrUrl })
+          .isVisible())
+      ) {
         await page
           .getByRole('textbox', { name: 'Name/URL filter' })
           .fill(repositoryNameOrUrl);
-        // Wait for the repository to be filtered by checking theres only one item in the list
-        // We check for list size due to the need of deleting by the name OR url and there is no better selector for that
-        await expect(
-          page.getByRole('button', { name: '- 1 of 1' }).first(),
-        ).toBeVisible();
-      } catch {
-        // No repository of given name was found -> fail gracefully and do not raise error
-        return;
+
+        await page
+          .getByRole('row', { name: repositoryNameOrUrl })
+          .or(page.getByText('No repositories match the filter criteria'))
+          .first()
+          .waitFor({ state: 'visible', timeout: 10000 });
+
+        if (
+          await page
+            .getByText('No repositories match the filter criteria')
+            .isVisible()
+        ) {
+          // No repository found -> fail gracefully
+          return;
+        }
       }
 
-      await page.getByRole('button', { name: 'Kebab toggle' }).click();
+      await page
+        .getByRole('row', { name: repositoryNameOrUrl })
+        .getByLabel('Kebab toggle')
+        .click();
       await page.getByRole('menuitem', { name: 'Delete' }).click();
       // Wait until the repo is loaded in the delete modal
       await expect(page.getByRole('gridcell').first()).not.toBeEmpty();
@@ -108,145 +60,18 @@ export const deleteRepository = async (
 };
 
 /**
- * Edit compliance policy to remove a specific rule
- * @param page - the page object
- * @param policyName - the name of the compliance policy to edit
- * @param ruleDisplayName - the display name pattern to look for (e.g., 'Install firewalld Package')
- */
-
-export const removeCompliancePolicyRule = async (
-  page: Page,
-  policyName: string,
-  ruleDisplayName: string,
-) => {
-  await closePopupsIfExist(page);
-
-  await test.step(`Edit compliance policy '${policyName}' to remove rule`, async () => {
-    await navigateToCompliancePolicy(page, policyName, true);
-
-    const rulesTab = page.getByRole('tab', {
-      name: 'Rules',
-    });
-    await expect(rulesTab.first()).toBeVisible();
-    await rulesTab.first().click();
-    const editRulesButton = page.getByRole('button', {
-      name: 'Edit',
-    });
-    await expect(editRulesButton.first()).toBeVisible();
-    await editRulesButton.first().click();
-
-    const searchInput = page.getByPlaceholder('filter by name');
-    await expect(searchInput.first()).toBeVisible();
-    await expect(searchInput.first()).toBeEnabled();
-
-    await searchInput.first().clear();
-    await searchInput.first().fill(ruleDisplayName);
-
-    await expect(searchInput.first()).toHaveValue(ruleDisplayName, {
-      timeout: 2000,
-    });
-
-    await expect(page.getByRole('row').first()).toBeVisible();
-    const ruleRow = page
-      .getByRole('row')
-      .filter({ hasText: ruleDisplayName })
-      .first();
-
-    await expect(ruleRow).toBeVisible();
-
-    const checkbox = ruleRow.getByRole('checkbox').first();
-    await expect(checkbox).toBeVisible();
-    await expect(checkbox).toBeChecked();
-    await checkbox.uncheck();
-    await expect(checkbox).not.toBeChecked();
-
-    const saveButton = page.getByRole('button', {
-      name: 'Save',
-    });
-    await expect(saveButton.first()).toBeVisible();
-    await expect(saveButton.first()).toBeEnabled();
-    await saveButton.first().click();
-
-    await expect(saveButton.first()).toBeHidden();
-    await expect(rulesTab.first()).toBeVisible();
-  });
-};
-
-/**
- * Create a compliance policy with the given name and type
- * Note: Filter doesn't work on compliance side, so we search through pages manually
- * @param page - the page object
- * @param policyName - the name of the compliance policy to create
- * @param policyType - the type/profile of the compliance policy to select
- * @param distro - the distribution to select (e.g., 'RHEL 9', 'RHEL 10')
- */
-export const createCompliancePolicy = async (
-  page: Page,
-  policyName: string,
-  policyType: string,
-  distro: string = 'RHEL 9',
-) => {
-  await closePopupsIfExist(page);
-
-  await test.step(`Create compliance policy: ${policyName}`, async () => {
-    await page.goto('/insights/compliance/scappolicies');
-    const createButton = page.getByRole('button', {
-      name: 'Create new policy',
-    });
-    await expect(createButton).toBeVisible();
-    await createButton.click();
-    await page.getByRole('option', { name: distro }).click();
-
-    // Wait for the policy type list to load before searching
-    await expect(page.getByRole('gridcell').first()).toBeVisible({
-      timeout: 10000,
-    });
-
-    // Check if policy exists on current page
-    let policyRow = page
-      .getByRole('row')
-      .filter({ hasText: policyType })
-      .first();
-
-    try {
-      await expect(policyRow).toBeVisible();
-    } catch {
-      // Policy not found on current page, try next page
-      await page
-        .getByRole('button', { name: 'Go to next page' })
-        .nth(1)
-        .click();
-      // Wait for the table to load after clicking next
-      await expect(page.getByRole('gridcell').first()).toBeVisible({
-        timeout: 10000,
-      });
-      policyRow = page.getByRole('row').filter({ hasText: policyType }).first();
-      await expect(policyRow).toBeVisible();
-    }
-
-    const radioButton = policyRow.getByRole('radio').first();
-    await expect(radioButton).toBeVisible();
-    await radioButton.click();
-
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Policy name' }).fill(policyName);
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    // Skip Systems step
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    // Skip Rules step
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
-    await page
-      .getByRole('button', { name: 'Return to application' })
-      .click({ timeout: 2 * 60 * 1000 }); // Policy creation can take up to 2 minutes
-  });
-};
-
-/**
  * Navigate to the repositories page
  * @param page - the page object
  */
 export const navigateToRepositories = async (page: Page) => {
+  try {
+    await navigateToRepositoriesFunc(page);
+  } catch {
+    await retry(page, navigateToRepositoriesFunc, 5);
+  }
+};
+
+export const navigateToRepositoriesFunc = async (page: Page) => {
   await page.goto('/insights/content/repositories');
 
   const zeroState = page.getByText('Start using Content management now');
@@ -258,8 +83,8 @@ export const navigateToRepositories = async (page: Page) => {
   // Wait for either list page or zerostate
   try {
     await Promise.race([
-      repositoriesListPage.waitFor({ state: 'visible', timeout: 30000 }),
-      zeroState.waitFor({ state: 'visible', timeout: 30000 }),
+      repositoriesListPage.waitFor({ state: 'visible', timeout: 15000 }),
+      zeroState.waitFor({ state: 'visible', timeout: 15000 }),
     ]);
   } catch (error) {
     throw new Error(
@@ -277,13 +102,21 @@ export const navigateToRepositories = async (page: Page) => {
  * @param page - the page object
  */
 export const navigateToTemplates = async (page: Page) => {
+  try {
+    await navigateToTemplatesFunc(page);
+  } catch {
+    await retry(page, navigateToTemplatesFunc, 5);
+  }
+};
+
+export const navigateToTemplatesFunc = async (page: Page) => {
   await page.goto('/insights/content/templates');
 
   const templateText = page.getByText(
     'View all content templates within your organization.',
   );
 
-  await templateText.waitFor({ state: 'visible', timeout: 30000 });
+  await expect(templateText).toBeVisible({ timeout: 15000 });
 };
 
 /**
@@ -300,49 +133,37 @@ export const deleteTemplate = async (page: Page, templateName: string) => {
     'Delete the template with name: ' + templateName,
     async () => {
       await navigateToTemplates(page);
-      await page
-        .getByRole('searchbox', { name: 'Filter by name' })
-        .fill(templateName);
+      if (!(await page.getByRole('row', { name: templateName }).isVisible())) {
+        await page
+          .getByRole('searchbox', { name: 'Filter by name' })
+          .fill(templateName);
 
-      const templateRow = page
-        .getByRole('row')
-        .filter({ hasText: templateName });
+        await page
+          .getByRole('row', { name: templateName })
+          .or(page.getByText('No templates match the filter criteria'))
+          .first()
+          .waitFor({ state: 'visible', timeout: 10000 });
 
-      try {
-        await templateRow.waitFor({ state: 'visible', timeout: 10000 });
-      } catch {
-        // Template not found - exit gracefully (cleanup for non-existent resource)
-        return;
+        if (
+          await page
+            .getByText('No templates match the filter criteria')
+            .isVisible()
+        ) {
+          // No template found -> fail gracefully
+          return;
+        }
       }
 
-      await templateRow.getByLabel('Kebab toggle').click();
+      await page
+        .getByRole('row', { name: templateName })
+        .getByLabel('Kebab toggle')
+        .click();
       await page.getByRole('menuitem', { name: 'Delete' }).click();
       await expect(page.getByText('Delete template?')).toBeVisible();
       await page.getByRole('button', { name: 'Delete' }).click();
     },
     { box: true },
   );
-};
-
-/**
- * Helper function for sleeping
- * @param ms - milliseconds to sleep
- */
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * Extract Authorization header from browser cookies
- * @param page - Playwright Page object
- * @returns Headers object with Authorization if cs_jwt cookie is found
- */
-const getAuthHeaders = async (page: Page): Promise<Record<string, string>> => {
-  const cookies = await page.context().cookies();
-  const jwtCookie = cookies.find((c) => c.name === 'cs_jwt');
-  if (jwtCookie) {
-    return { Authorization: `Bearer ${jwtCookie.value}` };
-  }
-  return {};
 };
 
 /**
@@ -359,7 +180,6 @@ interface PatchSystemAttributes {
   template_uuid?: string;
   template_name?: string;
 }
-
 interface PatchSystem {
   id: string;
   attributes: PatchSystemAttributes;
@@ -369,11 +189,10 @@ export const pollForSystemTemplateAttachment = async (
   page: Page,
   hostname: string,
   expectedTemplateName?: string,
-  delayMs: number = 10_000,
+  delayMs: number = 10000,
   maxAttempts: number = 30,
 ): Promise<boolean> => {
   /* eslint-disable no-console */
-
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       // Query the systems API with search filter for the hostname
@@ -450,7 +269,6 @@ export const pollForSystemTemplateAttachment = async (
     }
   }
   /* eslint-enable no-console */
-
   return false;
 };
 
@@ -465,7 +283,7 @@ export const pollForSystemTemplateAttachment = async (
 export const pollForSystemInInventory = async (
   page: Page,
   hostname: string,
-  delayMs: number = 20_000,
+  delayMs: number = 20000,
   maxAttempts: number = 30,
 ): Promise<{ found: boolean; inventoryId?: string }> => {
   /* eslint-disable no-console */
@@ -544,6 +362,5 @@ export const pollForSystemInInventory = async (
     }
   }
   /* eslint-enable no-console */
-
   return { found: false };
 };
