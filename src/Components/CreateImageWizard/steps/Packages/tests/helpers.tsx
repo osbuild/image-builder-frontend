@@ -1,40 +1,21 @@
 import React from 'react';
 
-import { configureStore } from '@reduxjs/toolkit';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { Provider } from 'react-redux';
 
 import { RHEL_10 } from '@/constants';
-import { serviceMiddleware, serviceReducer } from '@/store';
-import { initialState } from '@/store/wizardSlice';
-import PackagesStep from '../index';
+import { renderWithRedux, type WizardStateOverrides } from '@/test/testUtils';
 
-export type WizardStateOverrides = Partial<typeof initialState>;
+import PackagesStep from '../index';
 
 export const renderPackagesStep = (
   wizardStateOverrides: WizardStateOverrides = {},
 ) => {
-  const store = configureStore({
-    reducer: serviceReducer,
-    middleware: serviceMiddleware,
-    preloadedState: {
-      wizard: {
-        ...initialState,
-        distribution: RHEL_10,
-        architecture: 'x86_64',
-        ...wizardStateOverrides,
-      },
-    },
+  return renderWithRedux(<PackagesStep />, {
+    distribution: RHEL_10,
+    architecture: 'x86_64',
+    ...wizardStateOverrides,
   });
-
-  const result = render(
-    <Provider store={store}>
-      <PackagesStep />
-    </Provider>,
-  );
-
-  return { ...result, store };
 };
 
 export const typeIntoSearchBox = async (
