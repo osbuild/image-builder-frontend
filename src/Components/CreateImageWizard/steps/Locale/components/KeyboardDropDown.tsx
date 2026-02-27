@@ -23,7 +23,7 @@ import {
 } from '../../../../../store/wizardSlice';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useLocaleValidation } from '../../../utilities/useValidation';
-import { keyboardsList } from '../keyboardsList';
+import { keyboardsList } from '../data/keyboardsList';
 
 const KeyboardDropDown = () => {
   const keyboard = useAppSelector(selectKeyboard);
