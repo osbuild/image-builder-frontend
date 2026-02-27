@@ -1,6 +1,6 @@
 import createFetchMock from 'vitest-fetch-mock';
 
-import { mockArchitectures } from './data';
+import { mockArchitectures } from './fixtures';
 
 export const fetchMock = createFetchMock(vi);
 

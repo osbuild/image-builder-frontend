@@ -2,5 +2,5 @@ export {
   createDefaultFetchHandler,
   createFetchHandler,
   fetchMock,
-} from './api';
-export * from './data';
+} from './handlers';
+export * from './fixtures';
