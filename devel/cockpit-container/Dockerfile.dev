@@ -1,0 +1,13 @@
+FROM cockpit-image-builder
+
+RUN dnf install -y nodejs npm git make && dnf clean all
+
+COPY entrypoint-dev.sh /entrypoint-dev.sh
+RUN chmod +x /entrypoint-dev.sh
+
+RUN mkdir -p /etc/systemd/journald.conf.d /etc/systemd/system.conf.d && \
+    echo -e '[Journal]\nForwardToConsole=no' > /etc/systemd/journald.conf.d/quiet.conf && \
+    echo -e '[Manager]\nShowStatus=no' > /etc/systemd/system.conf.d/quiet.conf
+
+ENTRYPOINT ["/entrypoint-dev.sh"]
+CMD ["/usr/sbin/init"]

@@ -11,5 +11,5 @@
       ]
     }
   },
-  "content-security-policy": "default-src 'self' 'unsafe-eval'"
+  "content-security-policy": "default-src 'self' 'unsafe-eval'; script-src 'self' 'unsafe-eval' http://localhost:35729 http://127.0.0.1:35729; connect-src 'self' ws://localhost:35729 ws://127.0.0.1:35729 http://localhost:35729 http://127.0.0.1:35729"
 }
