@@ -13,19 +13,19 @@ export type HelperTextVariant =
   | 'success'
   | 'error';
 
-interface Props {
+type CustomHelperTextProps = {
   variant?: HelperTextVariant;
   textValue?: string;
   defaultText?: string;
   hide?: boolean;
-}
+};
 
 const CustomHelperText = ({
   hide = false,
   variant = 'error',
   textValue = '',
   defaultText = '',
-}: Props) =>
+}: CustomHelperTextProps) =>
   (!!textValue || !!defaultText) && !hide ? (
     <FormHelperText>
       <HelperText>

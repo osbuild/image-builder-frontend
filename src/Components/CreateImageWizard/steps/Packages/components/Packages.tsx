@@ -1,28 +1,16 @@
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import {
-  Bullseye,
   Button,
   Content,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateVariant,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Pagination,
   PaginationVariant,
   Popover,
   SearchInput,
-  Spinner,
   Stack,
   Tab,
   Tabs,
@@ -33,14 +21,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-  ExternalLinkAltIcon,
-  HelpIcon,
-  SearchIcon,
-} from '@patternfly/react-icons';
+import { HelpIcon } from '@patternfly/react-icons';
 import {
   ExpandableRowContent,
   Table,
@@ -53,38 +34,36 @@ import {
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
-import CustomHelperText from './components/CustomHelperText';
-import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailablePopover';
-import {
-  IncludedReposPopover,
-  OtherReposPopover,
-} from './components/RepoPopovers';
+import CustomHelperText from './CustomHelperText';
+import EmptySearch from './EmptySearch';
+import NoResultsFound from './NoResultsFound';
+import PackageInfoNotAvailablePopover from './PackageInfoNotAvailablePopover';
+import { IncludedReposPopover, OtherReposPopover } from './RepoPopovers';
+import RepositoryModal from './RepositoryModal';
+import RetirementDate from './RetirementDate';
+import Searching from './Searching';
+import TooShort from './TooShort';
+import TryLookingUnderIncluded from './TryLookingUnderIncluded';
 
 import {
-  CONTENT_URL,
   ContentOrigin,
   EPEL_10_REPO_DEFINITION,
-} from '../../../../constants';
-import { useGetArchitecturesQuery } from '../../../../store/backendApi';
+} from '../../../../../constants';
+import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
 import {
-  ApiRepositoryResponseRead,
-  ApiSearchRpmResponse,
-  useCreateRepositoryMutation,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
   useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
-} from '../../../../store/contentSourcesApi';
-import { selectIsOnPremise } from '../../../../store/envSlice';
-import { useAppSelector } from '../../../../store/hooks';
-import { Package } from '../../../../store/imageBuilderApi';
-import { asDistribution } from '../../../../store/typeGuards';
+} from '../../../../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
+import { useAppSelector } from '../../../../../store/hooks';
+import { asDistribution } from '../../../../../store/typeGuards';
 import {
   addModule,
   addPackage,
   addPackageGroup,
-  addRecommendedRepository,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -99,45 +78,17 @@ import {
   selectSnapshotDate,
   selectTemplate,
   selectWizardMode,
-} from '../../../../store/wizardSlice';
+} from '../../../../../store/wizardSlice';
+import { getEpelUrlForDistribution } from '../../../../../Utilities/epel';
+import { convertStringToDate } from '../../../../../Utilities/time';
+import useDebounce from '../../../../../Utilities/useDebounce';
 import {
-  getEpelDefinitionForDistribution,
-  getEpelUrlForDistribution,
-  getEpelVersionForDistribution,
-} from '../../../../Utilities/epel';
-import { convertStringToDate } from '../../../../Utilities/time';
-import useDebounce from '../../../../Utilities/useDebounce';
-
-export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
-
-export type ItemWithSources = {
-  name: Package['name'];
-  summary: Package['summary'];
-  repository: PackageRepository;
-  sources?: ApiSearchRpmResponse['package_sources'];
-};
-
-export type IBPackageWithRepositoryInfo = {
-  name: Package['name'];
-  summary: Package['summary'];
-  repository: PackageRepository;
-  type?: string;
-  module_name?: string;
-  stream?: string;
-  end_date?: string;
-};
-
-export type GroupWithRepositoryInfo = {
-  name: string;
-  description: string;
-  repository: PackageRepository;
-  package_list?: string[];
-};
-
-export enum Repos {
-  INCLUDED = 'included-repos',
-  OTHER = 'other-repos',
-}
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+  ItemWithSources,
+  Repos,
+} from '../packagesTypes';
+import { getPackageUniqueKey } from '../packagesUtilities';
 
 const Packages = () => {
   const dispatch = useDispatch();
@@ -281,9 +232,6 @@ const Packages = () => {
     searchModulesInfo,
     { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
   ] = useSearchRepositoryModuleStreamsMutation();
-
-  const [createRepository, { isLoading: createLoading }] =
-    useCreateRepositoryMutation();
 
   useEffect(() => {
     if (debouncedSearchTermIsGroup) {
@@ -461,286 +409,6 @@ const Packages = () => {
         });
     });
   }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
-
-  const EmptySearch = () => {
-    return (
-      <Tbody>
-        <Tr>
-          <Td colSpan={5}>
-            <Bullseye>
-              {toggleSelected === 'toggle-available' ? (
-                <EmptyState
-                  headingLevel='h4'
-                  titleText='Search packages'
-                  icon={SearchIcon}
-                  variant={EmptyStateVariant.sm}
-                >
-                  <EmptyStateBody>
-                    Search for additional packages to add to your image
-                  </EmptyStateBody>
-                </EmptyState>
-              ) : (
-                <EmptyState
-                  headingLevel='h4'
-                  titleText='There are no selected packages'
-                  icon={SearchIcon}
-                  variant={EmptyStateVariant.sm}
-                >
-                  <EmptyStateBody>
-                    Search above to see available packages
-                  </EmptyStateBody>
-                </EmptyState>
-              )}
-            </Bullseye>
-          </Td>
-        </Tr>
-      </Tbody>
-    );
-  };
-
-  const Searching = () => {
-    return (
-      <Tbody>
-        <Tr>
-          <Td colSpan={5}>
-            <Bullseye>
-              <EmptyState icon={Spinner} variant={EmptyStateVariant.sm}>
-                <EmptyStateBody>
-                  {activeTabKey === Repos.OTHER
-                    ? 'Searching for recommendations'
-                    : 'Searching'}
-                </EmptyStateBody>
-              </EmptyState>
-            </Bullseye>
-          </Td>
-        </Tr>
-      </Tbody>
-    );
-  };
-
-  const TooShort = () => {
-    return (
-      <Tbody>
-        <Tr>
-          <Td colSpan={5}>
-            <Bullseye>
-              <EmptyState
-                headingLevel='h4'
-                icon={SearchIcon}
-                titleText='The search value is too short'
-                variant={EmptyStateVariant.sm}
-              >
-                <EmptyStateBody>
-                  Please make the search more specific and try again.
-                </EmptyStateBody>
-              </EmptyState>
-            </Bullseye>
-          </Td>
-        </Tr>
-      </Tbody>
-    );
-  };
-
-  const TryLookingUnderIncluded = () => {
-    return (
-      <Tbody>
-        <Tr>
-          <Td colSpan={5}>
-            <Bullseye>
-              <EmptyState
-                headingLevel='h4'
-                titleText='No selected packages in Other repos'
-                variant={EmptyStateVariant.sm}
-              >
-                <EmptyStateBody>
-                  Try looking under &quot;
-                  <Button
-                    variant='link'
-                    onClick={() => setActiveTabKey(Repos.INCLUDED)}
-                    isInline
-                  >
-                    Included repos
-                  </Button>
-                  &quot;.
-                </EmptyStateBody>
-              </EmptyState>
-            </Bullseye>
-          </Td>
-        </Tr>
-      </Tbody>
-    );
-  };
-
-  const NoResultsFound = ({ isOnPremise }: { isOnPremise: boolean }) => {
-    if (activeTabKey === Repos.INCLUDED) {
-      return (
-        <Tbody>
-          <Tr>
-            <Td colSpan={5}>
-              <Bullseye>
-                <EmptyState
-                  headingLevel='h4'
-                  titleText='No results found'
-                  icon={SearchIcon}
-                  variant={EmptyStateVariant.sm}
-                >
-                  {!isOnPremise && (
-                    <EmptyStateBody>
-                      Adjust your search and try again, or search in other
-                      repositories (your repositories and popular repositories).
-                    </EmptyStateBody>
-                  )}
-                  {isOnPremise && (
-                    <EmptyStateBody>
-                      Adjust your search and try again.
-                    </EmptyStateBody>
-                  )}
-                  <EmptyStateFooter>
-                    <EmptyStateActions>
-                      {!isOnPremise && (
-                        <Button
-                          variant='primary'
-                          onClick={() => setActiveTabKey(Repos.OTHER)}
-                        >
-                          Search other repositories
-                        </Button>
-                      )}
-                    </EmptyStateActions>
-                    {!isOnPremise && (
-                      <EmptyStateActions>
-                        <Button
-                          className='pf-v6-u-pt-md'
-                          variant='link'
-                          isInline
-                          component='a'
-                          target='_blank'
-                          iconPosition='right'
-                          icon={<ExternalLinkAltIcon />}
-                          href={CONTENT_URL}
-                        >
-                          Manage your repositories and popular repositories
-                        </Button>
-                      </EmptyStateActions>
-                    )}
-                  </EmptyStateFooter>
-                </EmptyState>
-              </Bullseye>
-            </Td>
-          </Tr>
-        </Tbody>
-      );
-    } else {
-      return (
-        <Tbody>
-          <Tr>
-            <Td colSpan={5}>
-              <Bullseye>
-                <EmptyState
-                  headingLevel='h4'
-                  titleText='No results found'
-                  icon={SearchIcon}
-                  variant={EmptyStateVariant.sm}
-                >
-                  <EmptyStateBody>
-                    No packages found in known repositories. If you know of a
-                    repository containing this packages, add it to{' '}
-                    <Button
-                      variant='link'
-                      isInline
-                      component='a'
-                      target='_blank'
-                      href={CONTENT_URL}
-                    >
-                      your repositories
-                    </Button>{' '}
-                    and try searching for it again.
-                  </EmptyStateBody>
-                </EmptyState>
-              </Bullseye>
-            </Td>
-          </Tr>
-        </Tbody>
-      );
-    }
-  };
-
-  const RepositoryModal = () => {
-    return (
-      <Modal
-        isOpen={isRepoModalOpen}
-        onClose={handleCloseModalToggle}
-        width='50%'
-      >
-        <ModalHeader
-          title='Custom repositories will be added to your image'
-          titleIconVariant='warning'
-        />
-        <ModalBody>
-          You have selected packages that belong to custom repositories. By
-          continuing, you are acknowledging and consenting to adding the
-          following custom repositories to your image.
-          <br />
-          <br />
-          The repositories will also get enabled in{' '}
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            iconPosition='right'
-            isInline
-            icon={<ExternalLinkAltIcon />}
-            href={CONTENT_URL}
-          >
-            content services
-          </Button>{' '}
-          if they were not enabled yet:
-          <br />
-          <Table variant='compact'>
-            <Thead>
-              <Tr>
-                {isSelectingPackage ? (
-                  <Th>Packages</Th>
-                ) : (
-                  <Th>Package groups</Th>
-                )}
-                <Th>Repositories</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                {isSelectingPackage ? (
-                  <Td>{isSelectingPackage.name}</Td>
-                ) : (
-                  <Td>{isSelectingGroup?.name}</Td>
-                )}
-                <Td>
-                  EPEL {getEpelVersionForDistribution(distribution)} Everything
-                  x86_64
-                </Td>
-              </Tr>
-            </Tbody>
-          </Table>
-          <br />
-          To move forward, either add the repos to your image, or go back to
-          review your package selections.
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            key='add'
-            variant='primary'
-            isLoading={createLoading}
-            isDisabled={createLoading}
-            onClick={handleConfirmModalToggle}
-          >
-            Add listed repositories
-          </Button>
-          <Button key='back' variant='link' onClick={handleCloseModalToggle}>
-            Back
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
-  };
 
   const transformedPackages = useMemo(() => {
     let transformedDistroData: ItemWithSources[] = [];
@@ -1053,41 +721,6 @@ const Packages = () => {
   const computeStart = () => perPage * (page - 1);
   const computeEnd = () => perPage * page;
 
-  const handleCloseModalToggle = () => {
-    setIsRepoModalOpen(!isRepoModalOpen);
-    setIsSelectingPackage(undefined);
-  };
-
-  const handleConfirmModalToggle = async () => {
-    if (!epelRepo || !epelRepo.data) {
-      throw new Error(
-        `There was an error while adding the recommended repository.`,
-      );
-    }
-
-    if (epelRepo.data.length === 0) {
-      const result = await createRepository({
-        apiRepositoryRequest:
-          getEpelDefinitionForDistribution(distribution) ??
-          EPEL_10_REPO_DEFINITION,
-      });
-      dispatch(
-        addRecommendedRepository(
-          (result as { data: ApiRepositoryResponseRead }).data,
-        ),
-      );
-    } else {
-      dispatch(addRecommendedRepository(epelRepo.data[0]));
-    }
-    if (isSelectingPackage) {
-      dispatch(addPackage(isSelectingPackage!));
-    }
-    if (isSelectingGroup) {
-      dispatch(addPackageGroup(isSelectingGroup!));
-    }
-    setIsRepoModalOpen(!isRepoModalOpen);
-  };
-
   const handleTabClick = (
     event?: React.MouseEvent,
     tabIndex?: string | number,
@@ -1097,17 +730,6 @@ const Packages = () => {
       setCurrentlyRemovedPackages([]);
       setPage(1);
       setActiveTabKey(tabIndex as Repos);
-    }
-  };
-
-  const getPackageUniqueKey = (pkg: IBPackageWithRepositoryInfo): string => {
-    try {
-      if (!pkg.name) {
-        return `invalid_${Date.now()}`;
-      }
-      return `${pkg.name}_${pkg.stream || 'none'}_${pkg.module_name || 'none'}_${pkg.repository || 'unknown'}`;
-    } catch {
-      return `error_${Date.now()}`;
     }
   };
 
@@ -1166,9 +788,11 @@ const Packages = () => {
           if (!pkg.stream) return '';
           const parts = pkg.stream
             .split('.')
-            .map((part) => parseInt(part, 10) || 0);
+            .map((part: string) => parseInt(part, 10) || 0);
           // Convert to string with zero-padding for proper sorting
-          return parts.map((p) => p.toString().padStart(10, '0')).join('.');
+          return parts
+            .map((p: number) => p.toString().padStart(10, '0'))
+            .join('.');
         },
         // Then by end date (nulls last)
         (pkg) => pkg.end_date || '9999-12-31',
@@ -1255,55 +879,6 @@ const Packages = () => {
     );
   };
 
-  const formatDate = (date: string | undefined) => {
-    if (!date) {
-      return <>N/A</>;
-    }
-
-    const retirementDate = new Date(date);
-
-    const currentDate = new Date();
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const differenceInDays = Math.round(
-      (retirementDate.getTime() - currentDate.getTime()) / msPerDay,
-    );
-
-    let icon;
-
-    switch (true) {
-      case differenceInDays < 0:
-        icon = (
-          <Icon status='danger' isInline>
-            <ExclamationCircleIcon />
-          </Icon>
-        );
-        break;
-      case differenceInDays <= 365:
-        icon = (
-          <Icon status='warning' isInline>
-            <ExclamationTriangleIcon />
-          </Icon>
-        );
-        break;
-      case differenceInDays > 365:
-        icon = (
-          <Icon status='success' isInline>
-            <CheckCircleIcon />
-          </Icon>
-        );
-        break;
-    }
-
-    return (
-      <>
-        {icon}{' '}
-        {retirementDate.toLocaleString('en-US', { month: 'short' }) +
-          ' ' +
-          retirementDate.getFullYear()}
-      </>
-    );
-  };
-
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
 
@@ -1353,7 +928,7 @@ const Packages = () => {
                             data-testid='group-included-packages-table'
                           >
                             <Tbody>
-                              {grp.package_list.map((pkg) => (
+                              {grp.package_list.map((pkg: string) => (
                                 <Tr key={`details-${pkg}`}>
                                   <Td>{pkg}</Td>
                                 </Tr>
@@ -1441,7 +1016,9 @@ const Packages = () => {
                 />
                 <Td>{pkg.name}</Td>
                 <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
-                <Td>{pkg.end_date ? formatDate(pkg.end_date) : 'N/A'}</Td>
+                <Td>
+                  <RetirementDate date={pkg.end_date} />
+                </Td>
               </Tr>
               <Tr isExpanded={isPkgExpanded(pkg)}>
                 <Td colSpan={5}>
@@ -1474,12 +1051,12 @@ const Packages = () => {
   const bodyContent = useMemo(() => {
     switch (true) {
       case debouncedSearchTermLengthOf1 && !debouncedSearchTermIsGroup:
-        return TooShort();
+        return <TooShort />;
       case (toggleSelected === 'toggle-selected' &&
         packages.length === 0 &&
         groups.length === 0) ||
         (!debouncedSearchTerm && toggleSelected === 'toggle-available'):
-        return <EmptySearch />;
+        return <EmptySearch toggleSelected={toggleSelected} />;
       case (debouncedSearchTerm &&
         (isLoadingRecommendedPackages || isLoadingRecommendedGroups) &&
         activeTabKey === Repos.OTHER) ||
@@ -1490,18 +1067,24 @@ const Packages = () => {
             isLoadingReposInTemplate ||
             isLoadingCustomGroups) &&
           activeTabKey === Repos.INCLUDED):
-        return <Searching />;
+        return <Searching activeTabKey={activeTabKey} />;
       case debouncedSearchTerm &&
         transformedPackages.length === 0 &&
         transformedGroups.length === 0 &&
         toggleSelected === 'toggle-available':
-        return <NoResultsFound isOnPremise={isOnPremise} />;
+        return (
+          <NoResultsFound
+            isOnPremise={isOnPremise}
+            activeTabKey={activeTabKey}
+            setActiveTabKey={setActiveTabKey}
+          />
+        );
       case debouncedSearchTerm &&
         toggleSelected === 'toggle-selected' &&
         activeTabKey === Repos.OTHER &&
         packages.length > 0 &&
         groups.length > 0:
-        return <TryLookingUnderIncluded />;
+        return <TryLookingUnderIncluded setActiveTabKey={setActiveTabKey} />;
       default:
         return composePkgTable();
     }
@@ -1563,7 +1146,14 @@ const Packages = () => {
 
   return (
     <>
-      <RepositoryModal />
+      <RepositoryModal
+        isRepoModalOpen={isRepoModalOpen}
+        setIsRepoModalOpen={setIsRepoModalOpen}
+        isSelectingPackage={isSelectingPackage}
+        setIsSelectingPackage={setIsSelectingPackage}
+        isSelectingGroup={isSelectingGroup}
+        epelRepo={epelRepo}
+      />
       <Toolbar>
         <Stack>
           <ToolbarContent>

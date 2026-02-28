@@ -26,10 +26,10 @@ import type {
   PartitioningCustomization,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
-import type {
+import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-} from '../Components/CreateImageWizard/steps/Packages/Packages';
+} from '../Components/CreateImageWizard/steps/Packages/packagesTypes';
 import type { AwsShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Aws';
 import type {
   GcpAccountType,
