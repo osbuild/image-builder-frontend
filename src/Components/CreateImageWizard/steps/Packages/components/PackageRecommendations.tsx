@@ -20,22 +20,22 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
-import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../constants';
+import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../../constants';
 import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
-} from '../../../../store/contentSourcesApi';
-import { selectIsOnPremise } from '../../../../store/envSlice';
-import { useAppSelector } from '../../../../store/hooks';
-import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
+} from '../../../../../store/contentSourcesApi';
+import { selectIsOnPremise } from '../../../../../store/envSlice';
+import { useAppSelector } from '../../../../../store/hooks';
+import { useRecommendPackageMutation } from '../../../../../store/imageBuilderApi';
 import {
   addPackage,
   selectArchitecture,
   selectDistribution,
   selectPackages,
-} from '../../../../store/wizardSlice';
-import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
-import useDebounce from '../../../../Utilities/useDebounce';
+} from '../../../../../store/wizardSlice';
+import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
+import useDebounce from '../../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);

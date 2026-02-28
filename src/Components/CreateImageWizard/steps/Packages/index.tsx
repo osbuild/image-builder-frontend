@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
-import PackageRecommendations from './PackageRecommendations';
-import Packages from './Packages';
+import PackageRecommendations from './components/PackageRecommendations';
+import Packages from './components/Packages';
 
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
