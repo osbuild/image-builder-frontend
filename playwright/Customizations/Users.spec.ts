@@ -49,9 +49,39 @@ test('Create a blueprint with Users customization', async ({
     await registerLater(frame);
   });
 
-  await test.step('Create initial valid users', async () => {
+  await test.step('Test editable Group ID', async () => {
     await frame.getByRole('button', { name: 'Groups and users' }).click();
 
+    const gidInput = frame.getByRole('textbox', { name: 'Group ID' });
+    await expect(gidInput).toBeVisible();
+
+    await frame.getByRole('textbox', { name: 'Group name' }).fill('testgroup');
+    await expect(gidInput).toHaveValue('1000');
+    await gidInput.fill('2000');
+    await expect(gidInput).toHaveValue('2000');
+
+    await gidInput.fill('500');
+    await gidInput.press('Tab');
+    await expect(frame.getByText('Group ID must be unique')).toBeHidden();
+
+    await frame.getByRole('button', { name: 'Add group' }).click();
+    const gidInputs = frame.getByRole('textbox', { name: 'Group ID' });
+    const groupNameInputs = frame.getByRole('textbox', {
+      name: 'Group name',
+    });
+    await groupNameInputs.nth(1).fill('testgroup2');
+    await gidInputs.nth(1).fill('500');
+    await gidInputs.nth(1).press('Tab');
+    await expect(
+      frame.getByText('Group ID must be unique').first(),
+    ).toBeVisible();
+
+    await frame.getByRole('button', { name: 'Remove group' }).nth(1).click();
+    await groupNameInputs.first().fill('');
+    await gidInput.fill('');
+  });
+
+  await test.step('Create initial valid users', async () => {
     // Create admin user with correct password and wheel group
     await frame
       .getByRole('textbox', { name: 'blueprint user name' })
