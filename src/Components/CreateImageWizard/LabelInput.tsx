@@ -15,7 +15,8 @@ import { StepValidation } from './utilities/useValidation';
 import { UNDEFINED_GROUPS_WARNING_KEY } from '../../constants';
 import { useAppDispatch } from '../../store/hooks';
 
-const FIREWALL_LABEL_TRUNCATE_DEFAULT = 20;
+const DEFAULT_TRUNCATE_LENGTH = 20;
+const CHIP_COLLAPSE_THRESHOLD = 4;
 
 type LabelInputProps = {
   ariaLabel: string;
@@ -30,7 +31,7 @@ type LabelInputProps = {
   stepValidation: StepValidation;
   fieldName: string;
   truncateLength?: number;
-  inlineChips?: boolean;
+  isCompact?: boolean;
 };
 
 const LabelInput = ({
@@ -45,8 +46,8 @@ const LabelInput = ({
   removeAction,
   stepValidation,
   fieldName,
-  truncateLength = FIREWALL_LABEL_TRUNCATE_DEFAULT,
-  inlineChips = false,
+  truncateLength = DEFAULT_TRUNCATE_LENGTH,
+  isCompact = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -140,75 +141,46 @@ const LabelInput = ({
   if (invalidImports) errors.push(invalidImports);
   if (duplicateImports) errors.push(duplicateImports);
 
-  const chipsInInput = inlineChips && list && list.length > 0 && (
-    <LabelGroup
-      isCompact
-      numLabels={4}
-      expandedText='Show less'
-      collapsedText={`${list.length - 4} more`}
-    >
-      {list.map((group) => (
-        <Label
-          key={group}
-          color='blue'
-          isCompact
-          onClose={(e) => handleRemoveItem(e, group)}
-        >
-          {group.length > truncateLength
-            ? `${group.slice(0, truncateLength)}...`
-            : group}
-        </Label>
-      ))}
-    </LabelGroup>
-  );
-
-  const inputWithInlineChips = inlineChips && (
-    <TextInputGroup>
-      <TextInputGroupMain
-        aria-label={ariaLabel}
-        placeholder={placeholder}
-        onChange={onTextInputChange}
-        value={inputValue}
-        onKeyDown={(e) => handleKeyDown(e, inputValue)}
-      >
-        {chipsInInput}
-      </TextInputGroupMain>
-    </TextInputGroup>
-  );
-
   const warning = stepValidation.errors[UNDEFINED_GROUPS_WARNING_KEY];
 
   return (
     <>
-      {inlineChips ? (
-        inputWithInlineChips
-      ) : (
-        <TextInputGroup>
-          <TextInputGroupMain
-            aria-label={ariaLabel}
-            placeholder={placeholder}
-            onChange={onTextInputChange}
-            value={inputValue}
-            onKeyDown={(e) => handleKeyDown(e, inputValue)}
-          >
-            {list && list.length > 0 && (
-              <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
-                {list.map((item) => (
-                  <Label
-                    key={item}
-                    color='blue'
-                    onClose={(e) => handleRemoveItem(e, item)}
-                  >
-                    {item.length > FIREWALL_LABEL_TRUNCATE_DEFAULT
-                      ? `${item.slice(0, FIREWALL_LABEL_TRUNCATE_DEFAULT)}...`
-                      : item}
-                  </Label>
-                ))}
-              </LabelGroup>
-            )}
-          </TextInputGroupMain>
-        </TextInputGroup>
-      )}
+      <TextInputGroup>
+        <TextInputGroupMain
+          aria-label={ariaLabel}
+          placeholder={placeholder}
+          onChange={onTextInputChange}
+          value={inputValue}
+          onKeyDown={(e) => handleKeyDown(e, inputValue)}
+        >
+          {list && list.length > 0 && (
+            <LabelGroup
+              isCompact={isCompact}
+              numLabels={CHIP_COLLAPSE_THRESHOLD}
+              expandedText='Show less'
+              collapsedText={
+                list.length > CHIP_COLLAPSE_THRESHOLD
+                  ? `${list.length - CHIP_COLLAPSE_THRESHOLD} more`
+                  : undefined
+              }
+              className='pf-v6-u-mr-sm'
+            >
+              {list.map((labelItem) => (
+                <Label
+                  key={labelItem}
+                  color='blue'
+                  isCompact={isCompact}
+                  onClose={(e) => handleRemoveItem(e, labelItem)}
+                >
+                  {labelItem.length > truncateLength
+                    ? `${labelItem.slice(0, truncateLength)}...`
+                    : labelItem}
+                </Label>
+              ))}
+            </LabelGroup>
+          )}
+        </TextInputGroupMain>
+      </TextInputGroup>
 
       {errors.length > 0 && (
         <HelperText>

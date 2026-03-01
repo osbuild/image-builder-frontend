@@ -232,3 +232,109 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });
+
+test('Firewall fields collapse chips with show less / more', async ({
+  page,
+  cleanup,
+}) => {
+  const blueprintName = 'test-' + uuidv4();
+
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+
+  await ensureAuthenticated(page);
+  await navigateToLandingPage(page);
+  const frame = ibFrame(page);
+
+  await test.step('Navigate to Firewall step', async () => {
+    await fillInImageOutput(frame);
+    await registerLater(frame);
+    await frame.getByRole('button', { name: 'Firewall' }).click();
+  });
+
+  await test.step('Ports: shows all chips when 4 or fewer', async () => {
+    const portInput = frame.getByPlaceholder('Enter port (e.g., 8080:tcp)');
+    for (const port of ['80:tcp', '443:tcp', '8080:tcp', '22:tcp']) {
+      await portInput.fill(port);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('80:tcp', { exact: true })).toBeVisible();
+    await expect(frame.getByText('443:tcp')).toBeVisible();
+    await expect(frame.getByText('8080:tcp')).toBeVisible();
+    await expect(frame.getByText('22:tcp')).toBeVisible();
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+  });
+
+  await test.step('Ports: collapses and shows "X more" when more than 4', async () => {
+    const portInput = frame.getByPlaceholder('Enter port (e.g., 8080:tcp)');
+    for (const port of ['3000:tcp', '5432:tcp']) {
+      await portInput.fill(port);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('80:tcp', { exact: true })).toBeVisible();
+    await expect(frame.getByText('3000:tcp')).toBeHidden();
+    await expect(frame.getByText('5432:tcp')).toBeHidden();
+    await expect(frame.getByText('2 more')).toBeVisible();
+  });
+
+  await test.step('Ports: expands when clicking "X more" and collapses with "Show less"', async () => {
+    await frame.getByText('2 more').click();
+    await expect(frame.getByText('3000:tcp')).toBeVisible();
+    await expect(frame.getByText('5432:tcp')).toBeVisible();
+    await expect(frame.getByText('Show less')).toBeVisible();
+
+    await frame.getByText('Show less').click();
+    await expect(frame.getByText('3000:tcp')).toBeHidden();
+    await expect(frame.getByText('5432:tcp')).toBeHidden();
+    await expect(frame.getByText('2 more')).toBeVisible();
+  });
+
+  await test.step('Ports: collapse controls disappear when items drop below threshold', async () => {
+    await frame.getByText('2 more').click();
+
+    await frame.getByRole('button', { name: 'Close 5432:tcp' }).click();
+    await frame.getByRole('button', { name: 'Close 3000:tcp' }).click();
+
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+    await expect(frame.getByText('Show less')).toBeHidden();
+    await expect(frame.getByText('80:tcp', { exact: true })).toBeVisible();
+    await expect(frame.getByText('443:tcp')).toBeVisible();
+    await expect(frame.getByText('8080:tcp')).toBeVisible();
+    await expect(frame.getByText('22:tcp')).toBeVisible();
+  });
+
+  await test.step('Enabled services: collapses and shows "X more" when more than 4', async () => {
+    const enabledInput = frame
+      .getByPlaceholder('Enter firewalld service')
+      .nth(0);
+    for (const service of ['ssh', 'http', 'https', 'dhcp', 'dns']) {
+      await enabledInput.fill(service);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('ssh')).toBeVisible();
+    await expect(frame.getByText('http', { exact: true })).toBeVisible();
+    await expect(frame.getByText('https')).toBeVisible();
+    await expect(frame.getByText('dhcp')).toBeVisible();
+    await expect(frame.getByText('dns')).toBeHidden();
+    await expect(frame.getByText('1 more').first()).toBeVisible();
+  });
+
+  await test.step('Disabled services: collapses and shows "X more" when more than 4', async () => {
+    const disabledInput = frame
+      .getByPlaceholder('Enter firewalld service')
+      .nth(1);
+    for (const service of ['telnet', 'ftp', 'nfs', 'samba', 'cups']) {
+      await disabledInput.fill(service);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('telnet')).toBeVisible();
+    await expect(frame.getByText('ftp')).toBeVisible();
+    await expect(frame.getByText('nfs')).toBeVisible();
+    await expect(frame.getByText('samba')).toBeVisible();
+    await expect(frame.getByText('cups')).toBeHidden();
+    await expect(frame.getByText('1 more').nth(1)).toBeVisible();
+  });
+});
