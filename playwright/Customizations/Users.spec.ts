@@ -93,6 +93,14 @@ test('Create a blueprint with Users customization', async ({
       name: 'Administrator',
     });
     await expect(adminCheckboxes.nth(1)).not.toBeChecked();
+
+    // The 'developers' group is not defined in the Groups section and is not
+    // a system group, so a warning should appear
+    await expect(
+      frame.getByText(/User assigned to undefined group\(s\): developers/),
+    ).toBeVisible();
+
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
   });
 
   await test.step('Test error scenarios', async () => {
