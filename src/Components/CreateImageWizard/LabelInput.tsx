@@ -189,7 +189,12 @@ const LabelInput = ({
             onKeyDown={(e) => handleKeyDown(e, inputValue)}
           >
             {list && list.length > 0 && (
-              <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
+              <LabelGroup
+                numLabels={4}
+                expandedText='Show less'
+                collapsedText={`${list.length - 4} more`}
+                className='pf-v6-u-mr-sm'
+              >
                 {list.map((item) => (
                   <Label
                     key={item}
