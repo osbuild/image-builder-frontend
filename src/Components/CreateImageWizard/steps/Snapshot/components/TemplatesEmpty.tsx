@@ -7,26 +7,11 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { TEMPLATES_URL } from '../../../../../constants';
+import GoToTemplatesButton from './GoToTemplatesButton';
 
 type TemplatesEmptyProps = {
   refetch: () => void;
-};
-
-const GoToTemplatesButton = () => {
-  return (
-    <Button
-      component='a'
-      target='_blank'
-      variant='link'
-      icon={<ExternalLinkAltIcon />}
-      href={TEMPLATES_URL}
-    >
-      Go to content templates
-    </Button>
-  );
 };
 
 const TemplatesEmpty = ({ refetch }: TemplatesEmptyProps) => {

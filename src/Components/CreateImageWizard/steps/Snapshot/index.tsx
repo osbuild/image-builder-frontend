@@ -7,7 +7,7 @@ import Snapshot from './components/Snapshot';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import ManageRepositoriesButton from '../Repositories/components/ManageRepositoriesButton';
 
-export default function SnapshotStep() {
+const RepeatableBuildStep = () => {
   return (
     <Form>
       <CustomizationLabels customization='repositories' />
@@ -24,4 +24,6 @@ export default function SnapshotStep() {
       <Snapshot />
     </Form>
   );
-}
+};
+
+export default RepeatableBuildStep;

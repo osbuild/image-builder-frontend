@@ -32,7 +32,7 @@ import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
 import ReviewWizardFooter from './steps/Review/Footer/Footer';
 import ServicesStep from './steps/Services';
-import SnapshotStep from './steps/Snapshot';
+import RepeatableBuildStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
@@ -652,7 +652,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   />
                 }
               >
-                <SnapshotStep />
+                <RepeatableBuildStep />
               </WizardStep>,
               <WizardStep
                 name='Repositories'
