@@ -1,10 +1,15 @@
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { screen } from '@testing-library/react';
 
 import { RHEL_10 } from '@/constants';
-import { renderWithRedux, type WizardStateOverrides } from '@/test/testUtils';
+import {
+  clickWithWait,
+  renderWithRedux,
+  type UserEventInstance,
+  waitForAction,
+  type WizardStateOverrides,
+} from '@/test/testUtils';
 
 import PackagesStep from '../index';
 
@@ -19,37 +24,28 @@ export const renderPackagesStep = (
 };
 
 export const typeIntoSearchBox = async (
-  user: ReturnType<typeof userEvent.setup>,
+  user: UserEventInstance,
   searchTerm: string,
 ) => {
   const searchbox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await waitFor(() => user.type(searchbox, searchTerm));
+  await waitForAction(() => user.type(searchbox, searchTerm));
 };
 
-export const clearSearchInput = async (
-  user: ReturnType<typeof userEvent.setup>,
-) => {
+export const clearSearchInput = async (user: UserEventInstance) => {
   const searchbox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await waitFor(() => user.clear(searchbox));
+  await waitForAction(() => user.clear(searchbox));
 };
 
 export const clickPackageCheckbox = async (
-  user: ReturnType<typeof userEvent.setup>,
+  user: UserEventInstance,
   rowIndex: number,
 ) => {
   const checkbox = await screen.findByRole('checkbox', {
     name: new RegExp(`select row ${rowIndex}`, 'i'),
   });
-  await waitFor(() => user.click(checkbox));
-};
-
-export const toggleSelectedPackages = async (
-  user: ReturnType<typeof userEvent.setup>,
-) => {
-  const selectedBtn = await screen.findByRole('button', { name: /selected/i });
-  await waitFor(() => user.click(selectedBtn));
+  await clickWithWait(user, checkbox);
 };

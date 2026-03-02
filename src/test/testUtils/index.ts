@@ -1,3 +1,5 @@
+export { createUser, type UserEventInstance } from './createUser';
+
 export {
   // Fetch mock instance
   fetchMock,
