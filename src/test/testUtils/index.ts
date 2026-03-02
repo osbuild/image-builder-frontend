@@ -1,3 +1,10 @@
+export {
+  clearWithWait,
+  clickWithWait,
+  typeWithWait,
+  waitForAction,
+} from './userEvents';
+
 export { createUser, type UserEventInstance } from './createUser';
 
 export {

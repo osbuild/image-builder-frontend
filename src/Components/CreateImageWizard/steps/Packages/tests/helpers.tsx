@@ -4,10 +4,11 @@ import { screen } from '@testing-library/react';
 
 import { RHEL_10 } from '@/constants';
 import {
+  clearWithWait,
   clickWithWait,
   renderWithRedux,
+  typeWithWait,
   type UserEventInstance,
-  waitForAction,
   type WizardStateOverrides,
 } from '@/test/testUtils';
 
@@ -30,14 +31,14 @@ export const typeIntoSearchBox = async (
   const searchbox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await waitForAction(() => user.type(searchbox, searchTerm));
+  await typeWithWait(user, searchbox, searchTerm);
 };
 
 export const clearSearchInput = async (user: UserEventInstance) => {
   const searchbox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await waitForAction(() => user.clear(searchbox));
+  await clearWithWait(user, searchbox);
 };
 
 export const clickPackageCheckbox = async (
@@ -48,4 +49,9 @@ export const clickPackageCheckbox = async (
     name: new RegExp(`select row ${rowIndex}`, 'i'),
   });
   await clickWithWait(user, checkbox);
+};
+
+export const clickSelectedButton = async (user: UserEventInstance) => {
+  const selectedBtn = await screen.findByRole('button', { name: /selected/i });
+  await clickWithWait(user, selectedBtn);
 };
