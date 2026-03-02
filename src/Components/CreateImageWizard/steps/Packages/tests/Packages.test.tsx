@@ -1,13 +1,13 @@
 import { screen, waitFor, within } from '@testing-library/react';
 
 import { server } from '@/test/mocks/server';
-import { createUser } from '@/test/testUtils';
+import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {
   clearSearchInput,
   clickPackageCheckbox,
+  clickSelectedButton,
   renderPackagesStep,
-  toggleSelectedPackages,
   typeIntoSearchBox,
 } from './helpers';
 import {
@@ -152,9 +152,7 @@ describe('Packages Component', () => {
 
       await typeIntoSearchBox(user, 'asdf');
 
-      await waitFor(() => {
-        expect(screen.getByText('No results found')).toBeInTheDocument();
-      });
+      expect(screen.getByText('No results found')).toBeInTheDocument();
     });
 
     test('displays search results sorted by relevance', async () => {
@@ -190,9 +188,8 @@ describe('Packages Component', () => {
       });
       expect(checkbox).not.toBeChecked();
 
-      await waitFor(() => user.click(checkbox));
-
-      await waitFor(() => expect(checkbox).toBeChecked());
+      await clickWithWait(user, checkbox);
+      expect(checkbox).toBeChecked();
     });
 
     test('selected packages appear in Selected view', async () => {
@@ -207,7 +204,7 @@ describe('Packages Component', () => {
       await clickPackageCheckbox(user, 0);
 
       // Toggle to Selected view
-      await toggleSelectedPackages(user);
+      await clickSelectedButton(user);
 
       // Verify the selected package is shown
       const rows = await screen.findAllByTestId('package-row');
@@ -229,11 +226,11 @@ describe('Packages Component', () => {
       });
 
       // Select then deselect
-      await waitFor(() => user.click(checkbox));
-      await waitFor(() => expect(checkbox).toBeChecked());
+      await clickWithWait(user, checkbox);
+      expect(checkbox).toBeChecked();
 
-      await waitFor(() => user.click(checkbox));
-      await waitFor(() => expect(checkbox).not.toBeChecked());
+      await clickWithWait(user, checkbox);
+      expect(checkbox).not.toBeChecked();
     });
   });
 
@@ -267,7 +264,7 @@ describe('Packages Component', () => {
       await screen.findByRole('cell', { name: /test-lib/ });
       await clickPackageCheckbox(user, 0);
 
-      await toggleSelectedPackages(user);
+      await clickSelectedButton(user);
 
       const topPagination = await screen.findByTestId(
         'packages-pagination-top',
@@ -293,11 +290,9 @@ describe('Packages Component', () => {
       await clearSearchInput(user);
 
       // Wait for the empty state to appear
-      await waitFor(() => {
-        expect(
-          screen.getByText(/search for additional packages/i),
-        ).toBeInTheDocument();
-      });
+      expect(
+        screen.getByText(/search for additional packages/i),
+      ).toBeInTheDocument();
 
       const topPagination = await screen.findByTestId(
         'packages-pagination-top',
@@ -367,8 +362,8 @@ describe('Packages Component', () => {
       const checkbox = await screen.findByRole('checkbox', {
         name: /select row 0/i,
       });
-      await waitFor(() => user.click(checkbox));
-      await waitFor(() => expect(checkbox).toBeChecked());
+      await clickWithWait(user, checkbox);
+      expect(checkbox).toBeChecked();
 
       // The other stream (1.22) should be disabled
       const otherCheckbox = await screen.findByRole('checkbox', {
@@ -388,10 +383,7 @@ describe('Packages Component', () => {
 
       await typeIntoSearchBox(user, '@grouper');
 
-      // Wait for group to appear (groups show with @ prefix in the table)
-      await waitFor(() => {
-        expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
-      });
+      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
     });
 
     test('selecting a group checks the checkbox', async () => {
@@ -403,17 +395,14 @@ describe('Packages Component', () => {
 
       await typeIntoSearchBox(user, '@grouper');
 
-      // Wait for group to appear
-      await waitFor(() => {
-        expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
-      });
+      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
 
       // Select the group
       const checkbox = await screen.findByRole('checkbox', {
         name: /select row 0/i,
       });
-      await waitFor(() => user.click(checkbox));
-      await waitFor(() => expect(checkbox).toBeChecked());
+      await clickWithWait(user, checkbox);
+      expect(checkbox).toBeChecked();
     });
 
     test('shows included packages in popover', async () => {
@@ -425,16 +414,13 @@ describe('Packages Component', () => {
 
       await typeIntoSearchBox(user, '@grouper');
 
-      // Wait for group to appear
-      await waitFor(() => {
-        expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
-      });
+      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
 
       // Click the help icon to open the popover
       const popoverBtn = await screen.findByRole('button', {
         name: /about included packages/i,
       });
-      await waitFor(() => user.click(popoverBtn));
+      await clickWithWait(user, popoverBtn);
 
       // Verify the included packages table appears
       const table = await screen.findByTestId('group-included-packages-table');
@@ -463,11 +449,9 @@ describe('Packages Component', () => {
       await clickPackageCheckbox(user, 0);
 
       // Verify Redux state was updated
-      await waitFor(() => {
-        const packages = store.getState().wizard.packages;
-        expect(packages).toHaveLength(1);
-        expect(packages[0].name).toBe('test');
-      });
+      const packages = store.getState().wizard.packages;
+      expect(packages).toHaveLength(1);
+      expect(packages[0].name).toBe('test');
     });
 
     test('deselecting a package removes it from Redux state', async () => {
@@ -480,14 +464,10 @@ describe('Packages Component', () => {
 
       // Select then deselect
       await clickPackageCheckbox(user, 0);
-      await waitFor(() => {
-        expect(store.getState().wizard.packages).toHaveLength(1);
-      });
+      expect(store.getState().wizard.packages).toHaveLength(1);
 
       await clickPackageCheckbox(user, 0);
-      await waitFor(() => {
-        expect(store.getState().wizard.packages).toHaveLength(0);
-      });
+      expect(store.getState().wizard.packages).toHaveLength(0);
     });
 
     test('selecting multiple packages updates Redux state correctly', async () => {
@@ -525,17 +505,13 @@ describe('Packages Component', () => {
       expect(store.getState().wizard.groups).toHaveLength(0);
 
       await typeIntoSearchBox(user, '@grouper');
-      await waitFor(() => {
-        expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
-      });
+      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
 
       await clickPackageCheckbox(user, 0);
 
-      await waitFor(() => {
-        const groups = store.getState().wizard.groups;
-        expect(groups).toHaveLength(1);
-        expect(groups[0].name).toBe('grouper');
-      });
+      const groups = store.getState().wizard.groups;
+      expect(groups).toHaveLength(1);
+      expect(groups[0].name).toBe('grouper');
     });
 
     test('selecting a module stream updates Redux modules state', async () => {
@@ -554,12 +530,10 @@ describe('Packages Component', () => {
       // Select the first stream (1.24)
       await clickPackageCheckbox(user, 0);
 
-      await waitFor(() => {
-        const modules = store.getState().wizard.enabled_modules;
-        expect(modules).toHaveLength(1);
-        expect(modules[0].name).toBe('testModule');
-        expect(modules[0].stream).toBe('1.24');
-      });
+      const modules = store.getState().wizard.enabled_modules;
+      expect(modules).toHaveLength(1);
+      expect(modules[0].name).toBe('testModule');
+      expect(modules[0].stream).toBe('1.24');
     });
 
     test('preloaded packages state persists in Selected view', async () => {
@@ -583,7 +557,7 @@ describe('Packages Component', () => {
       expect(store.getState().wizard.packages).toHaveLength(2);
 
       // Toggle to Selected view
-      await toggleSelectedPackages(user);
+      await clickSelectedButton(user);
 
       // Verify packages appear in UI
       const rows = await screen.findAllByTestId('package-row');
@@ -610,7 +584,7 @@ describe('Packages Component', () => {
       await clickPackageCheckbox(user, 0); // test
 
       // Toggle to Selected view
-      await toggleSelectedPackages(user);
+      await clickSelectedButton(user);
 
       // Verify all packages are shown and sorted
       const rows = await screen.findAllByTestId('package-row');
@@ -625,11 +599,9 @@ describe('Packages Component', () => {
       const user = createUser();
 
       // Toggle to Selected view without selecting anything
-      await toggleSelectedPackages(user);
+      await clickSelectedButton(user);
 
-      expect(
-        await screen.findByText(/there are no selected packages/i),
-      ).toBeInTheDocument();
+      await screen.findByText(/there are no selected packages/i);
     });
   });
 });
