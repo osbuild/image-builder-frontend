@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { server } from '@/test/mocks/server';
+import { createUser } from '@/test/testUtils';
 
 import {
   clearSearchInput,
@@ -61,7 +61,7 @@ describe('Packages Component', () => {
       });
 
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
@@ -97,7 +97,7 @@ describe('Packages Component', () => {
       });
 
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Use @ prefix to search for groups
       await typeIntoSearchBox(user, '@group');
@@ -136,7 +136,7 @@ describe('Packages Component', () => {
 
     test('shows "too short" message for single character search', async () => {
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 't');
 
@@ -148,7 +148,7 @@ describe('Packages Component', () => {
     test('shows "no results" for failed search', async () => {
       // Default handler returns empty arrays, so no override needed
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'asdf');
 
@@ -160,7 +160,7 @@ describe('Packages Component', () => {
     test('displays search results sorted by relevance', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
@@ -179,7 +179,7 @@ describe('Packages Component', () => {
     test('selecting a package checks the checkbox', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
@@ -198,7 +198,7 @@ describe('Packages Component', () => {
     test('selected packages appear in Selected view', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Search and select a package
       await typeIntoSearchBox(user, 'test');
@@ -218,7 +218,7 @@ describe('Packages Component', () => {
     test('deselecting a package unchecks the checkbox', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
@@ -241,7 +241,7 @@ describe('Packages Component', () => {
     test('shows correct item count after search', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
@@ -261,7 +261,7 @@ describe('Packages Component', () => {
     test('shows correct item count after toggling to selected', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
       await screen.findByRole('cell', { name: /test-lib/ });
@@ -283,7 +283,7 @@ describe('Packages Component', () => {
     test('shows zero item count after clearing search input', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
@@ -312,7 +312,7 @@ describe('Packages Component', () => {
         createFetchHandler({ rpms: mockModuleSearchResults }),
       );
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'testModule');
 
@@ -333,7 +333,7 @@ describe('Packages Component', () => {
         createFetchHandler({ rpms: mockModuleSearchResults }),
       );
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'testModule');
 
@@ -355,7 +355,7 @@ describe('Packages Component', () => {
         createFetchHandler({ rpms: mockModuleSearchResults }),
       );
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'testModule');
 
@@ -384,7 +384,7 @@ describe('Packages Component', () => {
         createFetchHandler({ groups: mockGroupSearchResults }),
       );
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, '@grouper');
 
@@ -399,7 +399,7 @@ describe('Packages Component', () => {
         createFetchHandler({ groups: mockGroupSearchResults }),
       );
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, '@grouper');
 
@@ -421,7 +421,7 @@ describe('Packages Component', () => {
         createFetchHandler({ groups: mockGroupSearchResults }),
       );
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, '@grouper');
 
@@ -451,7 +451,7 @@ describe('Packages Component', () => {
     test('selecting a package updates Redux state with package data', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       const { store } = renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Initial state should have no packages
       expect(store.getState().wizard.packages).toHaveLength(0);
@@ -473,7 +473,7 @@ describe('Packages Component', () => {
     test('deselecting a package removes it from Redux state', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       const { store } = renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
       await screen.findByRole('cell', { name: /test-lib/ });
@@ -493,7 +493,7 @@ describe('Packages Component', () => {
     test('selecting multiple packages updates Redux state correctly', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       const { store } = renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
       await screen.findByRole('cell', { name: /test-lib/ });
@@ -519,7 +519,7 @@ describe('Packages Component', () => {
         createFetchHandler({ groups: mockGroupSearchResults }),
       );
       const { store } = renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Initial state should have no groups
       expect(store.getState().wizard.groups).toHaveLength(0);
@@ -543,7 +543,7 @@ describe('Packages Component', () => {
         createFetchHandler({ rpms: mockModuleSearchResults }),
       );
       const { store } = renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Initial state should have no modules
       expect(store.getState().wizard.enabled_modules).toHaveLength(0);
@@ -577,7 +577,7 @@ describe('Packages Component', () => {
           },
         ],
       });
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Verify initial Redux state has preloaded packages
       expect(store.getState().wizard.packages).toHaveLength(2);
@@ -597,7 +597,7 @@ describe('Packages Component', () => {
     test('selected packages are sorted alphabetically', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Search and select all packages (in reverse order to verify sorting)
       await typeIntoSearchBox(user, 'test');
@@ -622,7 +622,7 @@ describe('Packages Component', () => {
 
     test('shows empty state when no packages selected', async () => {
       renderPackagesStep();
-      const user = userEvent.setup({ delay: null });
+      const user = createUser();
 
       // Toggle to Selected view without selecting anything
       await toggleSelectedPackages(user);
