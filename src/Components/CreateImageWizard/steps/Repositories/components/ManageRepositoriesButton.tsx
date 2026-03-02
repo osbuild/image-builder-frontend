@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Button } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME, CONTENT_URL } from '../../../../../constants';
@@ -18,9 +17,7 @@ const ManageRepositoriesButton = () => {
       component='a'
       target='_blank'
       variant='link'
-      iconPosition='right'
       isInline
-      icon={<ExternalLinkAltIcon />}
       onClick={() => {
         if (!isOnPremise) {
           analytics.track(`${AMPLITUDE_MODULE_NAME} - Outside link clicked`, {
@@ -31,7 +28,7 @@ const ManageRepositoriesButton = () => {
       }}
       href={CONTENT_URL}
     >
-      Create and manage repositories here
+      Create and manage repositories
     </Button>
   );
 };
