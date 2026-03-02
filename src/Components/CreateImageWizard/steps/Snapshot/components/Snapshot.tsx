@@ -25,7 +25,7 @@ import {
 import { yyyyMMddFormat } from '../../../../../Utilities/time';
 import { isSnapshotDateValid } from '../../../validators';
 
-export default function Snapshot() {
+const Snapshot = () => {
   const dispatch = useAppDispatch();
   const snapshotDate = useAppSelector(selectSnapshotDate);
 
@@ -155,4 +155,6 @@ export default function Snapshot() {
       )}
     </>
   );
-}
+};
+
+export default Snapshot;
