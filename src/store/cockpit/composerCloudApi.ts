@@ -847,4 +847,8 @@ export type ComposeRequest = {
   customizations?: Customizations | undefined;
   koji?: Koji | undefined;
   blueprint?: Blueprint | undefined;
+  /** Optional blueprint ID to record in RHSM facts. This is set automatically
+    when composing from a blueprint via image-builder.
+     */
+  blueprint_id?: string | undefined;
 };
