@@ -48,6 +48,10 @@ import {
   selectUsers,
   UserWithAdditionalInfo,
 } from '../../../store/wizardSlice';
+import {
+  DiskPartition,
+  FilesystemPartition,
+} from '../steps/FileSystem/fscTypes';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
 import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText';
@@ -314,6 +318,73 @@ export function useAAPValidation(): StepValidation {
   return { errors, disabledNext: Object.keys(errors).length > 0 };
 }
 
+const validatePartitionSize = (
+  partition: FilesystemPartition | DiskPartition,
+  errors: { [key: string]: string },
+) => {
+  if (!partition.min_size || partition.min_size === '') {
+    errors[`min-size-${partition.id}`] = 'Partition size is required';
+    return true;
+  }
+  if (partition.min_size && !isMountpointMinSizeValid(partition.min_size)) {
+    errors[`min-size-${partition.id}`] = 'Must be larger than 0';
+    return true;
+  }
+  return false;
+};
+
+const validatePartitionMountpoint = (
+  partition: FilesystemPartition | DiskPartition,
+  errors: { [key: string]: string },
+  mountpointDuplicates: string[],
+  invalidMountpoints: string[],
+) => {
+  if ('mountpoint' in partition) {
+    if (!partition.mountpoint) {
+      const isSwap = 'fs_type' in partition && partition.fs_type === 'swap';
+      if (!isSwap) {
+        errors[`mountpoint-${partition.id}`] = 'Undefined mount point';
+        return true;
+      }
+    }
+    if (partition.mountpoint) {
+      if (mountpointDuplicates.includes(partition.mountpoint)) {
+        errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
+        return true;
+      }
+      if (invalidMountpoints.includes(partition.mountpoint)) {
+        errors[`mountpoint-${partition.id}`] = 'Invalid mount point';
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const validatePartitionName = (
+  partition: FilesystemPartition | DiskPartition,
+  errors: { [key: string]: string },
+  nameDuplicates: string[],
+) => {
+  if (
+    'name' in partition &&
+    partition.name &&
+    !isPartitionNameValid(partition.name)
+  ) {
+    errors[`name-${partition.id}`] = 'Name is invalid';
+    return true;
+  }
+  if (
+    'name' in partition &&
+    partition.name &&
+    nameDuplicates.includes(partition.name)
+  ) {
+    errors[`name-${partition.id}`] = 'Name is not unique';
+    return true;
+  }
+  return false;
+};
+
 export function useFilesystemValidation(): StepValidation {
   const fscMode = useAppSelector(selectFscMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
@@ -326,120 +397,54 @@ export function useFilesystemValidation(): StepValidation {
     return { errors, disabledNext: false };
   }
 
-  const fscMountpointDuplicates = getDuplicateMountPoints(filesystemPartitions);
-  const fscInvalidMountpoints = getInvalidMountpoints(
-    filesystemPartitions,
-    blueprintMode,
-  );
-  for (const partition of filesystemPartitions) {
-    if (!partition.min_size || partition.min_size === '') {
-      errors[`min-size-${partition.id}`] = 'Partition size is required';
-      disabledNext = true;
-    }
-    if (partition.min_size && !isMountpointMinSizeValid(partition.min_size)) {
-      errors[`min-size-${partition.id}`] = 'Must be larger than 0';
-      disabledNext = true;
-    }
-    if (fscMountpointDuplicates.includes(partition.mountpoint)) {
-      errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
-      disabledNext = true;
-    }
-    if (!partition.mountpoint) {
-      errors[`mountpoint-${partition.id}`] = 'Undefined mount point';
-      disabledNext = true;
-    }
-    if (fscInvalidMountpoints.includes(partition.mountpoint)) {
-      errors[`mountpoint-${partition.id}`] = 'Invalid mount point';
-      disabledNext = true;
-    }
-  }
+  const partitions =
+    fscMode === 'basic' ? filesystemPartitions : diskPartitions;
+
+  const mountpointDuplicates = getDuplicateMountPoints(partitions);
+  const invalidMountpoints = getInvalidMountpoints(partitions, blueprintMode);
 
   const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
-  const diskMountpointDuplicates = getDuplicateMountPoints(diskPartitions);
-  const diskInvalidMountpoints = getInvalidMountpoints(
-    diskPartitions,
-    blueprintMode,
-  );
-  const diskNameDuplicates = volumeGroups.flatMap((vg) =>
-    getDuplicateNames(vg),
-  );
-  for (const partition of diskPartitions) {
-    if (!partition.min_size || partition.min_size === '') {
-      errors[`min-size-${partition.id}`] = 'Partition size is required';
+  const nameDuplicates = volumeGroups.flatMap((vg) => getDuplicateNames(vg));
+
+  for (const partition of partitions) {
+    if (validatePartitionSize(partition, errors)) {
       disabledNext = true;
     }
-    if (partition.min_size && !isMountpointMinSizeValid(partition.min_size)) {
-      errors[`min-size-${partition.id}`] = 'Must be larger than 0';
+    if (
+      validatePartitionMountpoint(
+        partition,
+        errors,
+        mountpointDuplicates,
+        invalidMountpoints,
+      )
+    ) {
       disabledNext = true;
     }
-    if ('mountpoint' in partition) {
-      if (!partition.mountpoint) {
-        errors[`mountpoint-${partition.id}`] = 'Undefined mount point';
+    if (fscMode === 'advanced') {
+      if (validatePartitionName(partition, errors, nameDuplicates)) {
         disabledNext = true;
       }
-      if (partition.mountpoint) {
-        if (diskMountpointDuplicates.includes(partition.mountpoint)) {
-          errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
-          disabledNext = true;
-        }
-        if (diskInvalidMountpoints.includes(partition.mountpoint)) {
-          errors[`mountpoint-${partition.id}`] = 'Invalid mount point';
-          disabledNext = true;
-        }
-      }
-    }
-  }
-
-  for (const partition of diskPartitions) {
-    if (
-      'name' in partition &&
-      partition.name &&
-      !isPartitionNameValid(partition.name)
-    ) {
-      errors[`name-${partition.id}`] = 'Partition name is invalid';
-      disabledNext = true;
-    }
-    if (
-      'name' in partition &&
-      partition.name &&
-      diskNameDuplicates.includes(partition.name)
-    ) {
-      errors[`name-${partition.id}`] = 'Name is not unique';
-      disabledNext = true;
-    }
-
-    if (partition.type === 'lvm' && partition.logical_volumes.length > 0) {
-      for (const lv of partition.logical_volumes) {
-        if (lv.name && !isPartitionNameValid(lv.name)) {
-          errors[`name-${lv.id}`] = 'Volume name is invalid';
-          disabledNext = true;
-        }
-        if (lv.name && diskNameDuplicates.includes(lv.name)) {
-          errors[`name-${lv.id}`] = 'Name is not unique';
-          disabledNext = true;
-        }
-        if (!lv.min_size || lv.min_size === '') {
-          errors[`min-size-${lv.id}`] = 'Partition size is required';
-          disabledNext = true;
-        }
-        if (lv.min_size && !isMountpointMinSizeValid(lv.min_size)) {
-          errors[`min-size-${lv.id}`] = 'Must be larger than 0';
-          disabledNext = true;
-        }
-        if ('mountpoint' in lv) {
-          if (!lv.mountpoint && lv.fs_type !== 'swap') {
-            errors[`mountpoint-${lv.id}`] = 'Undefined mount point';
+      if (
+        'type' in partition &&
+        partition.type === 'lvm' &&
+        partition.logical_volumes.length > 0
+      ) {
+        for (const lv of partition.logical_volumes) {
+          if (validatePartitionName(lv, errors, nameDuplicates)) {
             disabledNext = true;
           }
-          if (lv.mountpoint) {
-            if (diskMountpointDuplicates.includes(lv.mountpoint)) {
-              errors[`mountpoint-${lv.id}`] = 'Duplicate mount points';
-              disabledNext = true;
-            }
-            if (diskInvalidMountpoints.includes(lv.mountpoint)) {
-              errors[`mountpoint-${lv.id}`] = 'Invalid mount point';
-              disabledNext = true;
-            }
+          if (validatePartitionSize(lv, errors)) {
+            disabledNext = true;
+          }
+          if (
+            validatePartitionMountpoint(
+              lv,
+              errors,
+              mountpointDuplicates,
+              invalidMountpoints,
+            )
+          ) {
+            disabledNext = true;
           }
         }
       }
