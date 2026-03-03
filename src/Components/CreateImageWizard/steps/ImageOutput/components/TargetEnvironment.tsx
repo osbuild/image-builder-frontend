@@ -36,7 +36,6 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
-import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 
 type TargetEnvironmentCardProps = {
   title: string;
@@ -211,7 +210,6 @@ const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
-  const isPXEEnabled = useFlag('image-builder.pxe-tar-xz.enabled');
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -488,7 +486,7 @@ const TargetEnvironment = () => {
             isDisabled={isOtherEnvironmentSelected}
           />
         )}
-        {isPXEEnabled && supportedEnvironments?.includes('pxe-tar-xz') && (
+        {supportedEnvironments?.includes('pxe-tar-xz') && (
           <Checkbox
             label={
               <>
