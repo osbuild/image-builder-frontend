@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import {
-  Button,
-  Grid,
-  Pagination,
-  PaginationVariant,
-  Panel,
-  PanelMain,
+  Alert,
+  Divider,
+  Menu,
+  MenuContainer,
+  MenuContent,
+  MenuList,
+  MenuSearch,
+  MenuSearchInput,
+  MenuToggle,
+  SearchInput,
+  SelectOption,
+  Spinner,
 } from '@patternfly/react-core';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import TemplatesEmpty from './TemplatesEmpty';
-
-import { PAGINATION_COUNT } from '../../../../../constants';
 import { useListTemplatesQuery } from '../../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -23,142 +25,182 @@ import {
   selectTemplate,
 } from '../../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
-import { Error } from '../../Repositories/components/Error';
-import { Loading } from '../../Repositories/components/Loading';
 
 const Templates = () => {
+  const dispatch = useAppDispatch();
+
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
-  const [perPage, setPerPage] = useState(10);
-  const [page, setPage] = useState(1);
-  const dispatch = useAppDispatch();
   const templateUuid = useAppSelector(selectTemplate);
 
+  const [input, setInput] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const {
-    data: {
-      data: templateList = [],
-      meta: { count: templateCount } = { count: 0 },
-    } = {},
+    data: { data: templateList = [] } = {},
     isError,
-    isFetching,
     isLoading,
-    refetch: refetchTemplates,
+    isFetching,
+    refetch,
   } = useListTemplatesQuery(
     {
       arch: arch,
       version: version,
-      limit: perPage,
-      offset: perPage * (page - 1),
     },
     { refetchOnMountOrArgChange: 60 },
   );
 
-  const handleRowSelect = (
-    templateUuid: string | undefined,
-    templateName: string | undefined,
-  ): void => {
-    if (templateUuid) {
-      dispatch(changeTemplate(templateUuid));
-    }
-    if (templateName) {
-      dispatch(changeTemplateName(templateName));
-    }
-  };
-
-  const handlePerPageSelect = (
-    _:
-      | MouseEvent
-      | React.MouseEvent<Element, MouseEvent>
-      | React.KeyboardEvent<Element>,
-    newPerPage: number,
-    newPage: number,
+  const onSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | undefined,
+    itemId: number | string | undefined,
   ) => {
-    setPerPage(newPerPage);
-    setPage(newPage);
+    const template = templateList.find((t) => t.uuid === itemId);
+
+    if (template?.uuid) {
+      dispatch(changeTemplate(template.uuid));
+    }
+    if (template?.name) {
+      dispatch(changeTemplateName(template.name));
+    }
+
+    setIsOpen(false);
   };
 
-  const refresh = () => {
-    refetchTemplates();
+  const onTextInputChange = (value: string) => {
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+    setInput(value);
   };
 
-  if (isError) return <Error />;
-  if (isLoading) return <Loading />;
+  const templateStatus = (lastTemplateTask: string | undefined) => {
+    switch (lastTemplateTask) {
+      case 'completed':
+        return 'Valid';
+      case 'pending':
+      case 'running':
+        return 'In progress';
+      case 'failed':
+      case 'cancelled':
+        return 'Invalid';
+      default:
+        return 'N/A';
+    }
+  };
+
+  const templateMenuItems = templateList
+    .filter(
+      (item) =>
+        !input || item.name?.toLowerCase().includes(input.toLowerCase()),
+    )
+    .map((template) => {
+      const snapshotDate = template.use_latest
+        ? 'Use latest'
+        : template.date?.split('T')[0];
+      const status = templateStatus(template.last_update_task?.status);
+
+      return (
+        <SelectOption
+          key={template.uuid}
+          itemId={template.uuid}
+          isSelected={template.uuid === templateUuid}
+          description={`Snapshot date: ${snapshotDate} | Status: ${status}`}
+        >
+          {template.name}
+        </SelectOption>
+      );
+    });
+
+  if (isLoading || isFetching) {
+    templateMenuItems.push(
+      <SelectOption key='loading' isDisabled>
+        <Spinner size='md' /> {isLoading && 'Loading templates'}
+      </SelectOption>,
+    );
+  }
+
+  if (templateMenuItems.length === 0) {
+    templateMenuItems.push(
+      <SelectOption key='no result' isDisabled>
+        {input ? 'No results found' : 'No available templates'}
+      </SelectOption>,
+    );
+  }
+
+  const selectedTemplate = templateList.find((t) => t.uuid === templateUuid);
+  const templateDisplayName =
+    selectedTemplate?.name || templateUuid || 'Select content template';
+
+  const toggle = (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => {
+        setIsOpen(!isOpen);
+        if (!isOpen) {
+          refetch();
+        }
+      }}
+      isExpanded={isOpen}
+      style={
+        {
+          minWidth: '50%',
+          maxWidth: '100%',
+        } as React.CSSProperties
+      }
+    >
+      {templateDisplayName}
+    </MenuToggle>
+  );
+
+  const menu = (
+    <Menu
+      ref={menuRef}
+      onSelect={onSelect}
+      activeItemId={templateUuid}
+      isScrollable
+    >
+      <MenuSearch>
+        <MenuSearchInput>
+          <SearchInput
+            value={input}
+            aria-label='Filter content templates'
+            onChange={(_event, value) => onTextInputChange(value)}
+            onClear={(event) => {
+              event.stopPropagation();
+              onTextInputChange('');
+            }}
+            placeholder='Find by name'
+          />
+        </MenuSearchInput>
+      </MenuSearch>
+      <Divider />
+      <MenuContent maxMenuHeight='300px'>
+        <MenuList>{templateMenuItems}</MenuList>
+      </MenuContent>
+    </Menu>
+  );
+
+  if (isError)
+    return (
+      <Alert title='Templates unavailable' variant='danger' isInline>
+        Templates cannot be reached, try again later.
+      </Alert>
+    );
+
   return (
-    <Grid>
-      <Panel>
-        {templateList.length > 0 ? (
-          <Button
-            variant='primary'
-            isInline
-            onClick={() => refresh()}
-            isLoading={isFetching}
-          >
-            {isFetching ? 'Refreshing' : 'Refresh'}
-          </Button>
-        ) : (
-          <></>
-        )}
-        <PanelMain>
-          {templateList.length === 0 ? (
-            <TemplatesEmpty refetch={refresh} />
-          ) : (
-            <>
-              <Pagination
-                itemCount={templateCount ?? PAGINATION_COUNT}
-                perPage={perPage}
-                page={page}
-                onSetPage={(_, newPage) => setPage(newPage)}
-                onPerPageSelect={handlePerPageSelect}
-                isCompact
-              />
-              <Table variant='compact'>
-                <Thead>
-                  <Tr>
-                    <Th aria-label='Selected' />
-                    <Th width={15}>Name</Th>
-                    <Th width={50}>Description</Th>
-                    <Th width={15}>Snapshot date</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {templateList.map((template, rowIndex) => {
-                    const { uuid, name, description, date, use_latest } =
-                      template;
-
-                    return (
-                      <Tr key={uuid}>
-                        <Td
-                          select={{
-                            variant: 'radio',
-                            isSelected: uuid === templateUuid,
-                            rowIndex: rowIndex,
-                            onSelect: () => handleRowSelect(uuid, name),
-                          }}
-                        />
-                        <Td dataLabel={'Name'}>{name}</Td>
-                        <Td dataLabel={'Description'}>{description}</Td>
-                        <Td dataLabel={'Snapshot date'}>
-                          {use_latest ? 'Use latest' : date?.split('T')[0]}
-                        </Td>
-                      </Tr>
-                    );
-                  })}
-                </Tbody>
-              </Table>
-              <Pagination
-                itemCount={templateCount ?? PAGINATION_COUNT}
-                perPage={perPage}
-                page={page}
-                onSetPage={(_, newPage) => setPage(newPage)}
-                onPerPageSelect={handlePerPageSelect}
-                variant={PaginationVariant.bottom}
-              />
-            </>
-          )}
-        </PanelMain>
-      </Panel>
-    </Grid>
+    <MenuContainer
+      menu={menu}
+      menuRef={menuRef}
+      toggle={toggle}
+      toggleRef={toggleRef}
+      isOpen={isOpen}
+      onOpenChange={(isOpen) => setIsOpen(isOpen)}
+      onOpenChangeKeys={['Escape']}
+    />
   );
 };
 
