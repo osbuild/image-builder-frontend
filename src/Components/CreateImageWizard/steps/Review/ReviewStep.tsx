@@ -87,7 +87,6 @@ const Review = () => {
   const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
 
-  const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
   const isPXEEnabled = useFlag('image-builder.pxe-tar-xz.enabled');
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
@@ -298,17 +297,16 @@ const Review = () => {
               </Content>
             </StackItem>
           )}
-          {environments.includes('network-installer') &&
-            isNetworkInstallerEnabled && (
-              <StackItem>
-                <Content>
-                  <Content component={ContentVariants.h3}>
-                    {targetOptions['network-installer']} (.iso)
-                  </Content>
-                  <TargetEnvOtherList />
+          {environments.includes('network-installer') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['network-installer']} (.iso)
                 </Content>
-              </StackItem>
-            )}
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
           {isPXEEnabled && environments.includes('pxe-tar-xz') && (
             <StackItem>
               <Content>

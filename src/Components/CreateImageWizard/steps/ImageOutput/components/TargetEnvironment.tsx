@@ -211,7 +211,6 @@ const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
-  const isNetworkInstallerEnabled = useFlag('image-builder.net-installer');
   const isPXEEnabled = useFlag('image-builder.pxe-tar-xz.enabled');
 
   const { restrictions } = useCustomizationRestrictions({
@@ -450,46 +449,45 @@ const TargetEnvironment = () => {
             isDisabled={isOnlyNetworkInstallerSelected}
           />
         )}
-        {supportedEnvironments?.includes('network-installer') &&
-          isNetworkInstallerEnabled && (
-            <Checkbox
-              label={
-                <>
-                  Network - Installer (.iso){' '}
-                  <Popover
-                    maxWidth='30rem'
-                    position='right'
-                    bodyContent={
+        {supportedEnvironments?.includes('network-installer') && (
+          <Checkbox
+            label={
+              <>
+                Network - Installer (.iso){' '}
+                <Popover
+                  maxWidth='30rem'
+                  position='right'
+                  bodyContent={
+                    <Content>
                       <Content>
-                        <Content>
-                          This is a lightweight image that differs from a
-                          standard &quot;full&quot; ISO by requiring an active
-                          network connection to pull the latest software
-                          directly from package repositories, as no OS packages
-                          are stored locally on the image.
-                        </Content>
+                        This is a lightweight image that differs from a standard
+                        &quot;full&quot; ISO by requiring an active network
+                        connection to pull the latest software directly from
+                        package repositories, as no OS packages are stored
+                        locally on the image.
                       </Content>
-                    }
-                  >
-                    <Button
-                      icon={<HelpIcon />}
-                      variant='plain'
-                      aria-label='About Network installer'
-                      isInline
-                      hasNoPadding
-                    />
-                  </Popover>
-                </>
-              }
-              isChecked={environments.includes('network-installer')}
-              onChange={() => {
-                handleToggleEnvironment('network-installer');
-              }}
-              id='checkbox-network-installer'
-              name='Network - Installer'
-              isDisabled={isOtherEnvironmentSelected}
-            />
-          )}
+                    </Content>
+                  }
+                >
+                  <Button
+                    icon={<HelpIcon />}
+                    variant='plain'
+                    aria-label='About Network installer'
+                    isInline
+                    hasNoPadding
+                  />
+                </Popover>
+              </>
+            }
+            isChecked={environments.includes('network-installer')}
+            onChange={() => {
+              handleToggleEnvironment('network-installer');
+            }}
+            id='checkbox-network-installer'
+            name='Network - Installer'
+            isDisabled={isOtherEnvironmentSelected}
+          />
+        )}
         {isPXEEnabled && supportedEnvironments?.includes('pxe-tar-xz') && (
           <Checkbox
             label={
