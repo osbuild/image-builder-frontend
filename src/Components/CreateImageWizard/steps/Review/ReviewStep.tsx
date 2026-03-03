@@ -63,7 +63,6 @@ import {
   selectUsers,
   UserGroup,
 } from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {
@@ -86,8 +85,6 @@ const Review = () => {
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
-
-  const isPXEEnabled = useFlag('image-builder.pxe-tar-xz.enabled');
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
@@ -307,7 +304,7 @@ const Review = () => {
               </Content>
             </StackItem>
           )}
-          {isPXEEnabled && environments.includes('pxe-tar-xz') && (
+          {environments.includes('pxe-tar-xz') && (
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
