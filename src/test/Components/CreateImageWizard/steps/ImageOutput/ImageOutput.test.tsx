@@ -18,7 +18,6 @@ import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../store/imageBuilderApi';
-import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
@@ -943,14 +942,6 @@ const selectNetworkInstaller = async () => {
 describe('Network installer target', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useFlag).mockImplementation((flag: string) => {
-      switch (flag) {
-        case 'image-builder.net-installer':
-          return true;
-        default:
-          return false;
-      }
-    });
   });
 
   test('selecting network-installer shows alert and disables other checkboxes', async () => {
