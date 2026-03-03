@@ -33,7 +33,7 @@ const goToSnapshotStep = async () => {
   await waitFor(async () => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await goToStep(/Repeatable build/);
+  await goToStep(/Enable repeatable build/);
 };
 
 const clickRevisitButton = async () => {
@@ -101,12 +101,20 @@ const clickContentDropdown = async () => {
 const getSnapshotMethodElement = async () =>
   await screen.findByRole('button', { name: /Snapshot method/i });
 
-const clickReset = async () => {
+const clickClear = async () => {
   const user = userEvent.setup();
-  const resetButton = await screen.findByRole('button', {
-    name: /Reset/i,
+  const clearButton = await screen.findByRole('button', {
+    name: /Clear/i,
   });
-  await waitFor(async () => user.click(resetButton));
+  await waitFor(async () => user.click(clearButton));
+};
+
+const clickTodaysDate = async () => {
+  const user = userEvent.setup();
+  const todaysDateButton = await screen.findByRole('button', {
+    name: /Today's date/i,
+  });
+  await waitFor(async () => user.click(todaysDateButton));
 };
 
 const selectUseTemplate = async () => {
@@ -119,13 +127,17 @@ const selectUseTemplate = async () => {
 
 const selectFirstTemplate = async () => {
   const user = userEvent.setup();
-  const row0Radio = await screen.findByRole('radio', {
-    name: /select row 0/i,
+  const templatesDropdown = await screen.findByRole('button', {
+    name: /select content template/i,
   });
-  await waitFor(async () => user.click(row0Radio));
+  await waitFor(() => user.click(templatesDropdown));
+  const firstTemplate = await screen.findByRole('menuitem', {
+    name: /template-abc/i,
+  });
+  await waitFor(() => user.click(firstTemplate));
 };
 
-describe('repository snapshot tab - ', () => {
+describe('Step Repeatable build', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -236,13 +248,11 @@ describe('repository snapshot tab - ', () => {
       expect(nextBtn).toBeEnabled();
     });
     // reset fills in the current date, so it should not be disabled
-    await clickReset();
-    // works even for invalid values
-    await updateDatePickerWithValue('xxx');
+    await clickClear();
     await waitFor(() => {
       expect(nextBtn).toBeDisabled();
     });
-    await clickReset();
+    await clickTodaysDate();
     await waitFor(() => {
       expect(nextBtn).toBeEnabled();
     });
