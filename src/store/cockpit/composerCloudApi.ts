@@ -389,6 +389,9 @@ export type Subscription = {
   /** Optional value used to specify the patch host when registering the system with Insights.
    */
   patch_url?: string | undefined;
+  /** Optional list of repository IDs to enable with subscription-manager on first boot.
+   */
+  content_sets?: string[] | undefined;
 };
 export type Module = {
   /** Name of the module to enable.
