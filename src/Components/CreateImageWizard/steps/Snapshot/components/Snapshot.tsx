@@ -11,9 +11,8 @@ import {
   Radio,
 } from '@patternfly/react-core';
 
-import Templates from './Templates';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { isSnapshotDateValid } from '@/Components/CreateImageWizard/validators';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeSnapshotDate,
   changeTemplate,
@@ -21,9 +20,10 @@ import {
   selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
-} from '../../../../../store/wizardSlice';
-import { yyyyMMddFormat } from '../../../../../Utilities/time';
-import { isSnapshotDateValid } from '../../../validators';
+} from '@/store/wizardSlice';
+import { yyyyMMddFormat } from '@/Utilities/time';
+
+import Templates from './Templates';
 
 const Snapshot = () => {
   const dispatch = useAppDispatch();
