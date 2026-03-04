@@ -11,6 +11,7 @@ import {
 } from '@/test/testUtils';
 
 import ArchSelect from '../components/ArchSelect';
+import BlueprintMode from '../components/BlueprintMode';
 import CentOSAcknowledgement from '../components/CentOSAcknowledgement';
 import ReleaseLifecycle from '../components/ReleaseLifecycle';
 import ReleaseSelect from '../components/ReleaseSelect';
@@ -116,4 +117,31 @@ export const renderReleaseLifecycle = (
 // CentOSAcknowledgement render function
 export const renderCentOSAcknowledgement = () => {
   return renderWithRedux(<CentOSAcknowledgement />);
+};
+
+// BlueprintMode render function (uses on-premise store)
+export const renderBlueprintMode = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(
+    <BlueprintMode />,
+    {
+      ...defaultStateOverrides,
+      ...wizardStateOverrides,
+    },
+    {
+      preloadedState: {
+        env: { isOnPremise: true },
+      },
+    },
+  );
+};
+
+export const toggleBlueprintMode = async (
+  user: UserEventInstance,
+  mode: 'package' | 'image',
+) => {
+  const buttonName = mode === 'package' ? /package mode/i : /image mode/i;
+  const button = await screen.findByRole('button', { name: buttonName });
+  await clickWithWait(user, button);
 };
