@@ -9,7 +9,11 @@ import {
   clickTargetCheckbox,
   renderTargetEnvironment,
 } from './helpers';
-import { createDefaultFetchHandler } from './mocks';
+import {
+  createCustomArchitecturesHandler,
+  createDefaultFetchHandler,
+  mockArchitecturesWithNetworkInstaller,
+} from './mocks';
 
 fetchMock.enableMocks();
 
@@ -152,6 +156,59 @@ describe('TargetEnvironment', () => {
       await clickTargetCheckbox(user, /Virtualization guest image/i);
 
       expect(checkbox).toBeChecked();
+    });
+  });
+
+  describe('Network installer behavior', () => {
+    beforeEach(() => {
+      fetchMock.mockResponse(
+        createCustomArchitecturesHandler({
+          'rhel-10': mockArchitecturesWithNetworkInstaller,
+        }),
+      );
+    });
+
+    test('disables other targets when network installer is selected', async () => {
+      renderTargetEnvironment({ imageTypes: ['network-installer'] });
+
+      await screen.findByRole('checkbox', { name: /Network - Installer/i });
+
+      expect(
+        screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
+      ).toBeDisabled();
+      expect(
+        screen.getByRole('checkbox', { name: /Bare metal installer/i }),
+      ).toBeDisabled();
+    });
+
+    test('shows info alert when network installer is selected', async () => {
+      renderTargetEnvironment({ imageTypes: ['network-installer'] });
+
+      expect(
+        await screen.findByText(
+          /This image type requires specific, minimal configuration/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('disables network installer when other targets are selected', async () => {
+      renderTargetEnvironment({ imageTypes: ['guest-image'] });
+
+      const networkInstallerCheckbox = await screen.findByRole('checkbox', {
+        name: /Network - Installer/i,
+      });
+
+      expect(networkInstallerCheckbox).toBeDisabled();
+    });
+
+    test('network installer checkbox is enabled when no other targets selected', async () => {
+      renderTargetEnvironment();
+
+      const networkInstallerCheckbox = await screen.findByRole('checkbox', {
+        name: /Network - Installer/i,
+      });
+
+      expect(networkInstallerCheckbox).toBeEnabled();
     });
   });
 });
