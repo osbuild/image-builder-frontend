@@ -3,6 +3,7 @@ import createFetchMock from 'vitest-fetch-mock';
 import {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
+  ApiTemplateResponseRead,
 } from '@/store/contentSourcesApi';
 import { Architectures, BlueprintsResponse } from '@/store/imageBuilderApi';
 
@@ -86,13 +87,24 @@ export const createRepositoriesHandler = (): FetchHandler => {
 };
 
 // Content sources templates handler
-export const createTemplatesHandler = (): FetchHandler => {
+export type TemplatesHandlerOptions = {
+  templates?: ApiTemplateResponseRead[] | undefined;
+};
+
+export const createTemplatesHandler = (
+  options: TemplatesHandlerOptions = {},
+): FetchHandler => {
+  const { templates = [] } = options;
+
   return ({ url, method }: FetchRequest) => {
     if (
       url.startsWith(CONTENT_SOURCES_URL + '/templates') &&
       method === 'GET'
     ) {
-      return JSON.stringify(emptyListResponse);
+      return JSON.stringify({
+        data: templates,
+        meta: { count: templates.length, limit: 100, offset: 0 },
+      });
     }
     return null;
   };
