@@ -4,20 +4,12 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
 import {
-  AARCH64,
-  CENTOS_9,
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   IMAGE_BUILDER_API,
   RHEL_10,
-  RHEL_8,
-  RHEL_9,
-  X86_64,
 } from '../../../../../constants';
-import {
-  CreateBlueprintRequest,
-  ImageRequest,
-} from '../../../../../store/imageBuilderApi';
+import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   aarch64CreateBlueprintRequest,
@@ -35,68 +27,15 @@ import {
   getNextButton,
   goToReview,
   goToStep,
-  imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
-  openReleaseMenu,
   renderCreateMode,
   renderEditMode,
-  selectRhel9,
-  verifyCancelButton,
 } from '../../wizardTestUtils';
 
+// this is a weird false positive by eslint, the var is being used
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let router: RemixRouter | undefined = undefined;
-
-const clickShowOptions = async () => {
-  const user = userEvent.setup();
-  const showOptions = await screen.findByRole('option', {
-    name: /show options for further development of rhel/i,
-  });
-  await waitFor(() => user.click(showOptions));
-};
-
-const selectRhel8 = async () => {
-  const user = userEvent.setup();
-  await openReleaseMenu();
-  const rhel8 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
-  });
-  await waitFor(() => user.click(rhel8));
-};
-
-const selectCentos9 = async () => {
-  const user = userEvent.setup();
-  await openReleaseMenu();
-  await clickShowOptions();
-  const centos9 = await screen.findByRole('option', {
-    name: 'CentOS Stream 9',
-  });
-  await waitFor(() => user.click(centos9));
-};
-
-const openArchitectureMenu = async () => {
-  const user = userEvent.setup();
-  const archMenu = screen.getByTestId('arch_select');
-  await waitFor(() => user.click(archMenu));
-};
-
-const selectX86_64 = async () => {
-  const user = userEvent.setup();
-  await openArchitectureMenu();
-  const x86_64 = await screen.findByRole('option', {
-    name: 'x86_64',
-  });
-  await waitFor(() => user.click(x86_64));
-};
-
-const selectAarch64 = async () => {
-  const user = userEvent.setup();
-  await openArchitectureMenu();
-  const aarch64 = await screen.findByRole('option', {
-    name: 'aarch64',
-  });
-  await waitFor(() => user.click(aarch64));
-};
 
 const selectGuestImageTarget = async () => {
   const user = userEvent.setup();
@@ -104,14 +43,6 @@ const selectGuestImageTarget = async () => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(() => user.click(guestImageCheckBox));
-};
-
-const verifyNameInReviewStep = async (name: string) => {
-  const region = screen.getByRole('region', {
-    name: /details revisit step/i,
-  });
-  const definition = within(region).getByRole('definition');
-  expect(definition).toHaveTextContent(name);
 };
 
 const handleRegistration = async () => {
@@ -124,66 +55,10 @@ const enterNameAndGoToReviewStep = async () => {
   await clickNext(); // Review
 };
 
-const clickRevisitButton = async () => {
-  const user = userEvent.setup();
-  const expandable = await screen.findByTestId('image-output-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-image-output',
-  );
-  await waitFor(() => user.click(revisitButton));
-};
-
 describe('Step Image output', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     router = undefined;
-  });
-
-  test('clicking Cancel loads landing page', async () => {
-    await renderCreateMode();
-    await verifyCancelButton(router);
-  });
-
-  test('revisit step button on Review works', async () => {
-    await renderCreateMode();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Image output/ });
-  });
-
-  test('change image type and check the update in Review step', async () => {
-    await renderCreateMode();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await clickNext(); // Review
-    await clickRevisitButton();
-    await selectRhel8();
-    await selectAarch64();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await clickNext(); // Review
-    await verifyNameInReviewStep('rhel-8-aarch64');
-  });
-
-  test('change blueprint name and image type, then verify the updated blueprint name in the Review step', async () => {
-    await renderCreateMode();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    await clickRevisitButton();
-    await selectRhel8();
-    await selectAarch64();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await clickNext(); // Review
-    await verifyNameInReviewStep('Red Velvet');
   });
 
   test('alert gets rendered when fetching target environments fails', async () => {
@@ -195,42 +70,6 @@ describe('Step Image output', () => {
 
     await renderCreateMode();
     await screen.findByText(/Couldn't fetch target environments/);
-  });
-});
-
-describe('Check step consistency', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const user = userEvent.setup();
-
-  test('going back and forth with selected options only keeps the one compatible', async () => {
-    await renderCreateMode();
-    await selectX86_64();
-    const next = await screen.findByRole('button', { name: /Next/ });
-
-    // select GCP, it's available for x86_64
-    const uploadGcpBtn = await screen.findByRole('button', {
-      name: /Google Cloud/i,
-    });
-    await waitFor(() => user.click(uploadGcpBtn));
-    await waitFor(() => expect(next).toBeEnabled());
-
-    // change to aarch, GCP not being compatible and gets removed from targets
-    await selectAarch64();
-    await waitFor(() => expect(next).toBeDisabled());
-
-    // clicking on AWS enables the Next button
-    const uploadAwsBtn = await screen.findByRole('button', {
-      name: /Amazon Web Services/i,
-    });
-    await waitFor(() => user.click(uploadAwsBtn));
-    await waitFor(() => expect(next).toBeEnabled());
-
-    // and going back to x86_64 the Next button stays enabled
-    await selectX86_64();
-    await waitFor(() => expect(next).toBeEnabled());
   });
 });
 
@@ -336,110 +175,6 @@ describe('Set target using query parameter', () => {
     );
     await waitFor(() => user.click(targetExpandable));
     await screen.findByText('Virtualization - Guest image (.qcow2)');
-  });
-});
-
-describe('Distribution request generated correctly', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test('rhel-8', async () => {
-    await renderCreateMode();
-    await selectRhel8();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: RHEL_8,
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
-  test('rhel-9', async () => {
-    await renderCreateMode();
-    await selectRhel9();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: RHEL_9,
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
-  test('centos-9', async () => {
-    await renderCreateMode();
-    await selectCentos9();
-    await selectGuestImageTarget();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: CENTOS_9,
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-});
-
-describe('Architecture request generated correctly', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test('x86_64', async () => {
-    await renderCreateMode();
-    await selectX86_64();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedImageRequest: ImageRequest = {
-      ...imageRequest,
-      architecture: X86_64,
-    };
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      image_requests: [expectedImageRequest],
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
-  test('aarch64', async () => {
-    await renderCreateMode();
-    await selectAarch64();
-    await selectGuestImageTarget();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedImageRequest: ImageRequest = {
-      ...imageRequest,
-      architecture: AARCH64,
-    };
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      image_requests: [expectedImageRequest],
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
   });
 });
 

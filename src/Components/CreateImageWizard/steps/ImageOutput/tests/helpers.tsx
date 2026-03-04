@@ -16,6 +16,7 @@ import CentOSAcknowledgement from '../components/CentOSAcknowledgement';
 import ReleaseLifecycle from '../components/ReleaseLifecycle';
 import ReleaseSelect from '../components/ReleaseSelect';
 import TargetEnvironment from '../components/TargetEnvironment';
+import ImageOutputStep from '../index';
 
 // Default state overrides for most tests
 const defaultStateOverrides: WizardStateOverrides = {
@@ -23,7 +24,15 @@ const defaultStateOverrides: WizardStateOverrides = {
   architecture: 'x86_64',
 };
 
-// Render functions
+export const renderImageOutputStep = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<ImageOutputStep />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
 export const renderArchSelect = (
   wizardStateOverrides: WizardStateOverrides = {},
 ) => {
