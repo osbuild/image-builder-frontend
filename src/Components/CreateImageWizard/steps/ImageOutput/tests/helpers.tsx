@@ -12,6 +12,7 @@ import {
 
 import ArchSelect from '../components/ArchSelect';
 import ReleaseSelect from '../components/ReleaseSelect';
+import TargetEnvironment from '../components/TargetEnvironment';
 
 // Default state overrides for most tests
 const defaultStateOverrides: WizardStateOverrides = {
@@ -71,4 +72,31 @@ export const expandDevelopmentOptions = async (user: UserEventInstance) => {
     name: /show options for further development/i,
   });
   await clickWithWait(user, loadMoreButton);
+};
+
+// TargetEnvironment render function
+export const renderTargetEnvironment = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<TargetEnvironment />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+// TargetEnvironment interaction helpers
+export const clickTargetCard = async (
+  user: UserEventInstance,
+  targetName: RegExp | string,
+) => {
+  const card = await screen.findByRole('button', { name: targetName });
+  await clickWithWait(user, card);
+};
+
+export const clickTargetCheckbox = async (
+  user: UserEventInstance,
+  checkboxLabel: RegExp | string,
+) => {
+  const checkbox = await screen.findByRole('checkbox', { name: checkboxLabel });
+  await clickWithWait(user, checkbox);
 };
