@@ -1,3 +1,4 @@
+import { PodmanImageInfo } from '@/store/cockpit/types';
 import { Architectures } from '@/store/imageBuilderApi';
 
 export const mockArchitecturesX86: Architectures = [
@@ -63,5 +64,18 @@ export const mockArchitecturesWithNetworkInstaller: Architectures = [
         rhsm: true,
       },
     ],
+  },
+];
+
+export const mockPodmanImages: PodmanImageInfo[] = [
+  {
+    image: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
+    repository: 'registry.redhat.io/rhel10/rhel-bootc',
+    tag: '10.0',
+  },
+  {
+    image: 'registry.redhat.io/rhel10/rhel-bootc:latest',
+    repository: 'registry.redhat.io/rhel10/rhel-bootc',
+    tag: 'latest',
   },
 ];
