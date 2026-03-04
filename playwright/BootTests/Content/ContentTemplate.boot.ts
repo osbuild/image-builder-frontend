@@ -164,16 +164,24 @@ test('Content integration test - Content Template', async ({
     await frame.getByRole('button', { name: 'Repeatable build' }).click();
     await frame.getByRole('radio', { name: 'Use a content template' }).click();
 
-    // Show the most possible amount of templates - no search bar here
-    await frame.locator('#options-menu-top-toggle').click();
-    await frame.getByRole('menuitem', { name: '100 per page' }).click();
+    const templatesDropdown = frame.getByRole('button', {
+      name: 'Select content template',
+    });
+    await templatesDropdown.click();
 
+    const templatesSearchInput = frame.getByRole('textbox', {
+      name: 'Filter content templates',
+    });
+    await templatesSearchInput.fill(templateName);
     await expect(frame.getByText(templateName)).toBeVisible({ timeout: 30000 });
 
-    const templateRow = frame
-      .getByRole('row')
-      .filter({ hasText: templateName });
-    await templateRow.getByRole('radio').click();
+    const templateOption = frame.getByRole('menuitem', {
+      name: 'content-template-test-',
+    });
+    await templateOption.click();
+    await expect(
+      frame.getByRole('button', { name: /content-template-test-/ }),
+    ).toBeVisible();
   });
 
   // SMELL: This shouldn't be necessary, but without loading this wizard step, the package search will fail
