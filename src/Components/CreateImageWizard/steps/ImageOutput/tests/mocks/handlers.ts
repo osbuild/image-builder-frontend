@@ -27,3 +27,11 @@ export const createCustomArchitecturesHandler = (
 ): FetchHandler => {
   return composeHandlers(createArchitecturesHandler({ architectures }));
 };
+
+export const setupErrorHandler = (
+  message: string = 'Internal Server Error',
+): void => {
+  fetchMock.resetMocks();
+  fetchMock.enableMocks();
+  fetchMock.mockReject(new Error(message));
+};
