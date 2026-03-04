@@ -1,3 +1,4 @@
+import { Architectures } from '@/store/imageBuilderApi';
 import {
   composeHandlers,
   createArchitecturesHandler,
@@ -19,4 +20,10 @@ export const createDefaultFetchHandler = (): FetchHandler => {
       },
     }),
   );
+};
+
+export const createCustomArchitecturesHandler = (
+  architectures: Record<string, Architectures>,
+): FetchHandler => {
+  return composeHandlers(createArchitecturesHandler({ architectures }));
 };
