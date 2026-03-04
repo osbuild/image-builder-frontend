@@ -11,6 +11,8 @@ import {
 } from '@/test/testUtils';
 
 import ArchSelect from '../components/ArchSelect';
+import CentOSAcknowledgement from '../components/CentOSAcknowledgement';
+import ReleaseLifecycle from '../components/ReleaseLifecycle';
 import ReleaseSelect from '../components/ReleaseSelect';
 import TargetEnvironment from '../components/TargetEnvironment';
 
@@ -99,4 +101,19 @@ export const clickTargetCheckbox = async (
 ) => {
   const checkbox = await screen.findByRole('checkbox', { name: checkboxLabel });
   await clickWithWait(user, checkbox);
+};
+
+// ReleaseLifecycle render function
+export const renderReleaseLifecycle = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<ReleaseLifecycle />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+// CentOSAcknowledgement render function
+export const renderCentOSAcknowledgement = () => {
+  return renderWithRedux(<CentOSAcknowledgement />);
 };

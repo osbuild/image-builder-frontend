@@ -64,15 +64,6 @@ const selectRhel8 = async () => {
   await waitFor(() => user.click(rhel8));
 };
 
-const selectRhel10 = async () => {
-  const user = userEvent.setup();
-  await openReleaseMenu();
-  const rhel10 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 10 full support ends: may 2030 \| maintenance support ends: may 2035/i,
-  });
-  await waitFor(() => user.click(rhel10));
-};
-
 const selectCentos9 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
@@ -151,37 +142,6 @@ describe('Step Image output', () => {
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
     await verifyCancelButton(router);
-  });
-
-  test('release lifecycle chart appears for RHEL 8 and RHEL 9', async () => {
-    await renderCreateMode();
-
-    await selectRhel8();
-    await screen.findByRole('region', {
-      name: /hide information about release lifecycle/i,
-    });
-
-    await selectRhel9();
-    await screen.findByRole('region', {
-      name: /hide information about release lifecycle/i,
-    });
-
-    await selectRhel10();
-    await waitFor(() =>
-      expect(
-        screen.queryByRole('region', {
-          name: /hide information about release lifecycle/i,
-        }),
-      ).not.toBeInTheDocument(),
-    );
-  });
-
-  test('CentOS acknowledgement appears', async () => {
-    await renderCreateMode();
-    await selectCentos9();
-    await screen.findByText(
-      'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.',
-    );
   });
 
   test('revisit step button on Review works', async () => {
