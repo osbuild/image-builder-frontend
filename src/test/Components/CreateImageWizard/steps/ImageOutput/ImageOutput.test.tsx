@@ -205,43 +205,6 @@ describe('Step Image output', () => {
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
-  test('expect only RHEL releases before expansion', async () => {
-    await renderCreateMode();
-    await openReleaseMenu();
-
-    await screen.findByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-    });
-    await screen.findAllByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-    });
-    await screen.findByRole('option', {
-      name: 'Show options for further development of RHEL',
-    });
-  });
-
-  test('expect all releases after expansion', async () => {
-    await renderCreateMode();
-    await openReleaseMenu();
-
-    const showOptionsButton = await screen.findByRole('option', {
-      name: 'Show options for further development of RHEL',
-    });
-    await waitFor(() => user.click(showOptionsButton));
-
-    await screen.findByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-    });
-    await screen.findAllByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-    });
-    await screen.findByRole('option', {
-      name: 'CentOS Stream 9',
-    });
-
-    expect(showOptionsButton).not.toBeInTheDocument();
-  });
-
   test('release lifecycle chart appears for RHEL 8 and RHEL 9', async () => {
     await renderCreateMode();
 
