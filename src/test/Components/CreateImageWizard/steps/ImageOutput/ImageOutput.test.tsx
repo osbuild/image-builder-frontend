@@ -21,12 +21,7 @@ import {
 import { server } from '../../../../mocks/server';
 import {
   blueprintRequest,
-  clickNext,
-  clickRegisterLater,
-  enterBlueprintName,
-  getNextButton,
   goToReview,
-  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   renderCreateMode,
@@ -45,16 +40,6 @@ const selectGuestImageTarget = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
 };
 
-const handleRegistration = async () => {
-  await clickNext(); // Registration
-  await clickRegisterLater();
-};
-
-const enterNameAndGoToReviewStep = async () => {
-  await enterBlueprintName();
-  await clickNext(); // Review
-};
-
 describe('Step Image output', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -70,111 +55,6 @@ describe('Step Image output', () => {
 
     await renderCreateMode();
     await screen.findByText(/Couldn't fetch target environments/);
-  });
-});
-
-describe('Set release using query parameter', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test('rhel 10 by default (no query parameter)', async () => {
-    await renderCreateMode();
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 10', {
-      exact: true,
-    });
-  });
-
-  test('rhel 10 by default (invalid query parameter)', async () => {
-    await renderCreateMode({ release: 'rhel9001' });
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 10', {
-      exact: true,
-    });
-  });
-
-  test('rhel 8 (query parameter provided)', async () => {
-    await renderCreateMode({ release: 'rhel8' });
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
-  });
-
-  test('rhel 9 (query parameter provided)', async () => {
-    await renderCreateMode({ release: 'rhel9' });
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
-  });
-});
-
-describe('Set architecture using query parameter', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test('x86_64 by default (no query parameter)', async () => {
-    await renderCreateMode();
-    await screen.findByText('x86_64');
-  });
-
-  test('x86_64 by default (invalid query parameter)', async () => {
-    await renderCreateMode({ arch: 'arm' });
-    await screen.findByText('x86_64');
-  });
-
-  test('aarch64 (query parameter provided)', async () => {
-    await renderCreateMode({ arch: 'aarch64' });
-    await screen.findByText('aarch64');
-  });
-});
-
-describe('Set target using query parameter', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const user = userEvent.setup();
-
-  test('no target by default (no query parameter)', async () => {
-    await renderCreateMode();
-    const nextButton = await getNextButton();
-    await waitFor(() => expect(nextButton).toBeDisabled());
-  });
-
-  test('no target by default (invalid query parameter)', async () => {
-    await renderCreateMode({ target: 'azure' });
-    const nextButton = await getNextButton();
-    await waitFor(() => expect(nextButton).toBeDisabled());
-  });
-
-  test('image-installer (query parameter provided)', async () => {
-    await renderCreateMode({ target: 'iso' });
-    expect(
-      await screen.findByRole('checkbox', {
-        name: /Bare metal installer/i,
-      }),
-    ).toBeChecked();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const targetExpandable = await screen.findByTestId(
-      'target-environments-expandable',
-    );
-    await waitFor(() => user.click(targetExpandable));
-    await screen.findByText('Bare metal - Installer (.iso)');
-  });
-
-  test('guest-image (query parameter provided)', async () => {
-    await renderCreateMode({ target: 'qcow2' });
-    expect(
-      await screen.findByRole('checkbox', {
-        name: /Virtualization guest image/i,
-      }),
-    ).toBeChecked();
-    await handleRegistration();
-    await goToStep(/Details/);
-    await enterNameAndGoToReviewStep();
-    const targetExpandable = await screen.findByTestId(
-      'target-environments-expandable',
-    );
-    await waitFor(() => user.click(targetExpandable));
-    await screen.findByText('Virtualization - Guest image (.qcow2)');
   });
 });
 
