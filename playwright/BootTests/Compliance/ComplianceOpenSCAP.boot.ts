@@ -58,6 +58,10 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
   const oscapProfileName =
     'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation';
 
+  const oscapProfileId =
+    'xccdf_org.ssgproject.content_profile_cis_workstation_l2';
+  const baselineOscapScorePercent = 90;
+
   await test.step('Select OpenSCAP profile', async () => {
     await frame
       .getByLabel('Wizard steps')
@@ -80,6 +84,21 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     await expect(profileDropdown).toHaveValue(
       'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation',
     );
+  });
+
+  await test.step('Add perl-XML-XPath package for OSCAP results parsing', async () => {
+    await frame.getByRole('button', { name: 'Additional packages' }).click();
+    await frame
+      .getByRole('textbox', { name: 'Search packages' })
+      .fill('perl-XML-XPath');
+    await expect(
+      frame.getByRole('gridcell', { name: 'perl-XML-XPath' }),
+    ).toBeVisible({ timeout: 60000 });
+    await frame
+      .getByRole('row')
+      .filter({ hasText: 'perl-XML-XPath' })
+      .getByLabel('Select row')
+      .click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
@@ -180,5 +199,34 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     );
     expect(exitCode).toBe(0);
     expect(output).toContain('0');
+  });
+
+  await test.step('Run OSCAP evaluation and verify compliance score', async () => {
+    const [listExitCode, profilesPathOutput] = await image.exec(
+      'ls /usr/share/xml/scap/ssg/content/ssg-rhel10-ds*.xml 2>/dev/null | head -1',
+    );
+    expect(listExitCode).toBe(0);
+    const profilesPath = profilesPathOutput.trim();
+    expect(profilesPath).toBeTruthy();
+
+    const [oscapExitCode, oscapOutput] = await image.exec(
+      `cd /tmp && sudo oscap xccdf eval --profile ${oscapProfileId} --results results.xml "${profilesPath}"`,
+    );
+    // oscap returns 0 for full compliance, 2 when some rules fail
+    expect(
+      [0, 2],
+      `oscap eval failed with exit code ${oscapExitCode}. Output:\n${oscapOutput}`,
+    ).toContain(oscapExitCode);
+
+    const [xpathExitCode, scoreOutput] = await image.exec(
+      'sudo xpath -q -e "//score/text()" /tmp/results.xml',
+    );
+    expect(xpathExitCode).toBe(0);
+    expect(scoreOutput).toBeTruthy();
+
+    const scoreMatch = scoreOutput.trim().match(/[\d.]+/);
+    expect(scoreMatch).toBeTruthy();
+    const scorePercent = parseFloat(scoreMatch![0]);
+    expect(scorePercent).toBeGreaterThanOrEqual(baselineOscapScorePercent);
   });
 });
