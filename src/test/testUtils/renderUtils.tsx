@@ -4,7 +4,13 @@ import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
 import { render, RenderResult } from '@testing-library/react';
 import { Provider } from 'react-redux';
 
-import { RootState, serviceMiddleware, serviceReducer } from '@/store';
+import {
+  onPremMiddleware,
+  onPremReducer,
+  RootState,
+  serviceMiddleware,
+  serviceReducer,
+} from '@/store';
 import { initialState } from '@/store/wizardSlice';
 
 export type WizardStateOverrides = Partial<typeof initialState>;
@@ -23,15 +29,20 @@ export const renderWithRedux = (
   options: RenderWithReduxOptions = {},
 ): RenderWithReduxResult => {
   const { preloadedState } = options;
+  const isOnPremise = preloadedState?.env?.isOnPremise;
 
   const store = configureStore({
-    reducer: serviceReducer,
-    middleware: serviceMiddleware,
-    preloadedState: preloadedState ?? {
+    // this makes typescript quite unhappy. I think it should
+    // be fine for now since this is just for our test suite.
+    // @ts-expect-error see above note
+    reducer: isOnPremise ? onPremReducer : serviceReducer,
+    middleware: isOnPremise ? onPremMiddleware : serviceMiddleware,
+    preloadedState: {
       wizard: {
         ...initialState,
         ...wizardStateOverrides,
       },
+      ...preloadedState,
     },
   });
 
