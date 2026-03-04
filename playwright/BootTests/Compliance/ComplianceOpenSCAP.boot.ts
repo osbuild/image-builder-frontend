@@ -58,6 +58,11 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
   const oscapProfileName =
     'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation';
 
+  const oscapProfileId =
+    'xccdf_org.ssgproject.content_profile_cis_rhel_10_workstation_l2';
+  const expectedOscapScorePercent = 98.4;
+  const oscapScoreTolerancePercent = 5;
+
   await test.step('Select OpenSCAP profile', async () => {
     await frame
       .getByLabel('Wizard steps')
@@ -80,6 +85,21 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     await expect(profileDropdown).toHaveValue(
       'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation',
     );
+  });
+
+  await test.step('Add perl-XML-XPath package for OSCAP results parsing', async () => {
+    await frame.getByRole('button', { name: 'Additional packages' }).click();
+    await frame
+      .getByRole('textbox', { name: 'Search packages' })
+      .fill('perl-XML-XPath');
+    await expect(
+      frame.getByRole('gridcell', { name: 'perl-XML-XPath' }),
+    ).toBeVisible({ timeout: 60000 });
+    await frame
+      .getByRole('row')
+      .filter({ hasText: 'perl-XML-XPath' })
+      .getByLabel('Select row')
+      .click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
@@ -180,5 +200,33 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     );
     expect(exitCode).toBe(0);
     expect(output).toContain('0');
+  });
+
+  await test.step('Run OSCAP evaluation and verify compliance score', async () => {
+    const [listExitCode, profilesPathOutput] = await image.exec(
+      'ls /usr/share/xml/scap/ssg/content/ssg-rhel10-ds*.xml 2>/dev/null | head -1',
+    );
+    expect(listExitCode).toBe(0);
+    const profilesPath = profilesPathOutput.trim();
+    expect(profilesPath).toBeTruthy();
+
+    const [oscapExitCode] = await image.exec(
+      `cd /tmp && oscap xccdf eval --profile ${oscapProfileId} --results results.xml "${profilesPath}"`,
+    );
+    expect(oscapExitCode).toBe(0);
+
+    const [xpathExitCode, scoreOutput] = await image.exec(
+      'xpath -q -e "//score/text()" /tmp/results.xml',
+    );
+    expect(xpathExitCode).toBe(0);
+    expect(scoreOutput).toBeTruthy();
+
+    const scoreMatch = scoreOutput.trim().match(/[\d.]+/);
+    expect(scoreMatch).toBeTruthy();
+    const scorePercent = parseFloat(scoreMatch![0]);
+    const minScore = expectedOscapScorePercent - oscapScoreTolerancePercent;
+    const maxScore = expectedOscapScorePercent + oscapScoreTolerancePercent;
+    expect(scorePercent).toBeGreaterThanOrEqual(minScore);
+    expect(scorePercent).toBeLessThanOrEqual(Math.min(100, maxScore));
   });
 });
