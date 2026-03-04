@@ -13,6 +13,7 @@ import {
   createCustomArchitecturesHandler,
   createDefaultFetchHandler,
   mockArchitecturesWithNetworkInstaller,
+  setupErrorHandler,
 } from './mocks';
 
 fetchMock.enableMocks();
@@ -209,6 +210,28 @@ describe('TargetEnvironment', () => {
       });
 
       expect(networkInstallerCheckbox).toBeEnabled();
+    });
+  });
+
+  describe('Loading and error states', () => {
+    test('displays loading spinner while fetching architectures', async () => {
+      fetchMock.mockResponse(() => new Promise(() => {}));
+
+      renderTargetEnvironment();
+
+      expect(
+        await screen.findByText(/loading target environments/i),
+      ).toBeInTheDocument();
+    });
+
+    test('displays error alert when fetching architectures fails', async () => {
+      setupErrorHandler();
+
+      renderTargetEnvironment();
+
+      expect(
+        await screen.findByText(/couldn't be loaded/i),
+      ).toBeInTheDocument();
     });
   });
 });
