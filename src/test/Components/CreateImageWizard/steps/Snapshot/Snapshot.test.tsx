@@ -1,3 +1,6 @@
+// NOTE: Ready for Playwright migration
+// The unit tests for this component have been migrated to co-located tests.
+// The remaining tests here are integration/E2E tests that should be migrated to Playwright.
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -9,13 +12,11 @@ import {
   expectedPayloadRepositories,
   snapshotCreateBlueprintRequest,
 } from '@/test/fixtures/editMode';
-import { yyyyMMddFormat } from '@/Utilities/time';
 
 import {
   blueprintRequest,
   clickNext,
   clickRegisterLater,
-  clickReviewAndFinish,
   getNextButton,
   goToReview,
   goToStep,
@@ -86,13 +87,6 @@ const updateDatePickerWithValue = async (date: string) => {
   await waitFor(async () => user.type(dateTextbox, date));
 };
 
-const datePickerValue = async () => {
-  const dateTextbox = await screen.findByRole('textbox', {
-    name: /Date picker/i,
-  });
-  return (dateTextbox as HTMLInputElement).value;
-};
-
 const clickContentDropdown = async () => {
   const user = userEvent.setup();
   const contentExpandable = await screen.findByTestId('content-expandable');
@@ -101,22 +95,6 @@ const clickContentDropdown = async () => {
 
 const getSnapshotMethodElement = async () =>
   await screen.findByRole('button', { name: /Snapshot method/i });
-
-const clickClear = async () => {
-  const user = userEvent.setup();
-  const clearButton = await screen.findByRole('button', {
-    name: /Clear/i,
-  });
-  await waitFor(async () => user.click(clearButton));
-};
-
-const clickTodaysDate = async () => {
-  const user = userEvent.setup();
-  const todaysDateButton = await screen.findByRole('button', {
-    name: /Today's date/i,
-  });
-  await waitFor(async () => user.click(todaysDateButton));
-};
 
 const selectUseTemplate = async () => {
   const user = userEvent.setup();
@@ -142,26 +120,6 @@ describe('Step Repeatable build', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  test('clicking Review and finish leads to Review', async () => {
-    await renderCreateMode();
-    await goToSnapshotStep();
-    await clickReviewAndFinish();
-    await screen.findByRole('heading', {
-      name: /Review/i,
-    });
-  });
-
-  test('button Review and finish is disabled for invalid state', async () => {
-    await renderCreateMode();
-    await goToSnapshotStep();
-    await selectUseSnapshot();
-    await updateDatePickerWithValue('2024-00-00');
-    expect(
-      await screen.findByRole('button', { name: /Review and finish/ }),
-    ).toBeDisabled();
-  });
-
   test('select use a snapshot with 1 repo selected', async () => {
     await renderCreateMode();
     await goToSnapshotStep();
@@ -236,30 +194,6 @@ describe('Step Repeatable build', () => {
     });
     // eslint-disable-next-line testing-library/no-node-access
     expect(bulkSelectCheckbox.closest('div')).toHaveClass('pf-m-disabled');
-  });
-
-  test('button Reset works to empty the snapshot date', async () => {
-    await renderCreateMode();
-    await goToSnapshotStep();
-    await selectUseSnapshot();
-    await updateDatePickerWithValue('2024-04-22');
-    // Check the Next button is enabled
-    const nextBtn = await screen.findByRole('button', { name: /Next/i });
-    await waitFor(() => {
-      expect(nextBtn).toBeEnabled();
-    });
-    // reset fills in the current date, so it should not be disabled
-    await clickClear();
-    await waitFor(() => {
-      expect(nextBtn).toBeDisabled();
-    });
-    await clickTodaysDate();
-    await waitFor(() => {
-      expect(nextBtn).toBeEnabled();
-    });
-
-    const dateStr = yyyyMMddFormat(new Date());
-    expect(await datePickerValue()).toBe(dateStr);
   });
 
   test('select using bulk select works ', async () => {
