@@ -1,15 +1,16 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
-import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
-import { yyyyMMddFormat } from '../../../../../Utilities/time';
-import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '@/constants';
+import { CreateBlueprintRequest } from '@/store/imageBuilderApi';
+import { mockBlueprintIds } from '@/test/fixtures/blueprints';
 import {
   expectedCustomRepositories,
   expectedPayloadRepositories,
   snapshotCreateBlueprintRequest,
-} from '../../../../fixtures/editMode';
+} from '@/test/fixtures/editMode';
+import { yyyyMMddFormat } from '@/Utilities/time';
+
 import {
   blueprintRequest,
   clickNext,

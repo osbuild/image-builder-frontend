@@ -2,9 +2,10 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+
 import Snapshot from './components/Snapshot';
 
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import ManageRepositoriesButton from '../Repositories/components/ManageRepositoriesButton';
 
 const RepeatableBuildStep = () => {

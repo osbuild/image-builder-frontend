@@ -15,16 +15,16 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { useListTemplatesQuery } from '../../../../../store/contentSourcesApi';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { useListTemplatesQuery } from '@/store/contentSourcesApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeTemplate,
   changeTemplateName,
   selectArchitecture,
   selectDistribution,
   selectTemplate,
-} from '../../../../../store/wizardSlice';
-import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
+} from '@/store/wizardSlice';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
 
 const Templates = () => {
   const dispatch = useAppDispatch();
