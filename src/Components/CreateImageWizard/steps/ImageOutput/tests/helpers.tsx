@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { RHEL_10 } from '@/constants';
+import { IMAGE_MODE, RHEL_10 } from '@/constants';
 import {
   clickWithWait,
   renderWithRedux,
@@ -12,6 +12,7 @@ import {
 
 import ArchSelect from '../components/ArchSelect';
 import BlueprintMode from '../components/BlueprintMode';
+import ImageSourceSelect from '../components/ImageSourceSelect';
 import ReleaseSelect from '../components/ReleaseSelect';
 import TargetEnvironment from '../components/TargetEnvironment';
 import ImageOutputStep from '../index';
@@ -134,5 +135,57 @@ export const toggleBlueprintMode = async (
 ) => {
   const buttonName = mode === 'package' ? /package mode/i : /image mode/i;
   const button = await screen.findByRole('button', { name: buttonName });
+  await clickWithWait(user, button);
+};
+
+// ImageSourceSelect render function (uses on-premise store)
+export const renderImageSourceSelect = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(
+    <ImageSourceSelect />,
+    {
+      distribution: IMAGE_MODE,
+      blueprintMode: 'image',
+      ...wizardStateOverrides,
+    },
+    {
+      preloadedState: {
+        env: { isOnPremise: true },
+      },
+    },
+  );
+};
+
+// ImageSourceSelect interaction helpers
+export const openImageSourceSelect = async (user: UserEventInstance) => {
+  const toggle = await screen.findByRole('button', {
+    name: /select an image/i,
+  });
+  await clickWithWait(user, toggle);
+};
+
+export const selectImageSource = async (
+  user: UserEventInstance,
+  imageTag: RegExp | string,
+) => {
+  await openImageSourceSelect(user);
+  const option = await screen.findByRole('option', {
+    name: imageTag,
+  });
+  await clickWithWait(user, option);
+};
+
+export const togglePullInfoSection = async (user: UserEventInstance) => {
+  const button = await screen.findByRole('button', {
+    name: /information about pulling images/i,
+  });
+  await clickWithWait(user, button);
+};
+
+export const clickRefreshImageSources = async (user: UserEventInstance) => {
+  const button = await screen.findByRole('button', {
+    name: /refresh image sources/i,
+  });
   await clickWithWait(user, button);
 };
