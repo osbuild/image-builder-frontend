@@ -223,7 +223,7 @@ describe('Import modal', () => {
     // Kernel
     await clickNext();
     const kernelNameInput = await screen.findByPlaceholderText(
-      /Select kernel package/i,
+      /Select default kernel/i,
     );
     expect(kernelNameInput).toHaveValue('kernel-debug');
     await screen.findByText('nosmt=force');
@@ -348,7 +348,10 @@ describe('Import modal', () => {
       await screen.findByText(/Invalid kernel arguments/),
     ).toBeInTheDocument();
     await waitFor(() =>
-      user.click(screen.getAllByRole('button', { name: /clear input/i })[0]),
+      user.click(screen.getByRole('button', { name: /Menu toggle/i })),
+    );
+    await waitFor(() =>
+      user.click(screen.getByRole('option', { name: 'None' })),
     );
     await waitFor(() =>
       user.click(

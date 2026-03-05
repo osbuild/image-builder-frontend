@@ -14,7 +14,10 @@ const KernelStep = () => {
       <Title headingLevel='h1' size='xl'>
         Kernel
       </Title>
-      <Content>Customize kernel name and kernel arguments.</Content>
+      <Content>
+        Choose a kernel package and append specific boot parameters to customize
+        how your image initializes its core operating environment.
+      </Content>
       <KernelName />
       <KernelArguments />
     </Form>

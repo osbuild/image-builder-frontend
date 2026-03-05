@@ -21,7 +21,9 @@ describe('Kernel Component', () => {
         await screen.findByRole('heading', { name: /Kernel/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Customize kernel name and kernel arguments/i),
+        screen.getByText(
+          /Choose a kernel package and append specific boot parameters/i,
+        ),
       ).toBeInTheDocument();
     });
 
@@ -29,10 +31,15 @@ describe('Kernel Component', () => {
       renderKernelStep();
 
       expect(
-        await screen.findByPlaceholderText(/Select kernel package/i),
+        await screen.findByPlaceholderText(/Select default kernel/i),
       ).toBeInTheDocument();
       expect(
         screen.getByPlaceholderText(/Add kernel argument/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Enter additional kernel boot parameters\. Examples: nomodeset or console=ttyS0\./i,
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -60,7 +67,7 @@ describe('Kernel Component', () => {
       await selectKernelOption(user, 'kernel-debug');
 
       const dropdown = await screen.findByPlaceholderText(
-        /Select kernel package/i,
+        /Select default kernel/i,
       );
       expect(dropdown).toHaveValue('kernel-debug');
     });
@@ -121,7 +128,7 @@ describe('Kernel Component', () => {
       await selectKernelOption(user, 'kernel');
 
       const dropdown = await screen.findByPlaceholderText(
-        /Select kernel package/i,
+        /Select default kernel/i,
       );
       expect(dropdown).toHaveValue('kernel');
 
@@ -185,7 +192,7 @@ describe('Kernel Component', () => {
       });
 
       const dropdown = await screen.findByPlaceholderText(
-        /Select kernel package/i,
+        /Select default kernel/i,
       );
       expect(dropdown).toHaveValue('kernel-debug');
     });

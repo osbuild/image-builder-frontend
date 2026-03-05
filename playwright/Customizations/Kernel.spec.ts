@@ -59,19 +59,19 @@ test('Create a blueprint with Kernel customization', async ({
         'Expected format: <kernel-argument>. Example: console=tty0',
       ),
     ).toBeVisible();
-    await frame.getByPlaceholder('Select kernel package').fill('new-package');
+    await frame.getByPlaceholder('Select default kernel').fill('new-package');
     await frame
       .getByRole('option', { name: 'Custom kernel package "new-' })
       .click();
     await expect(
       frame.getByRole('heading', { name: 'Warning alert: Custom kernel' }),
     ).toBeVisible();
-    await frame.getByPlaceholder('Select kernel package').fill('');
+    await frame.getByPlaceholder('Select default kernel').fill('');
     await frame.getByRole('button', { name: 'Menu toggle' }).click();
     await expect(
       frame.getByRole('option', { name: 'new-package' }),
     ).toBeVisible();
-    await frame.getByPlaceholder('Select kernel package').fill('f');
+    await frame.getByPlaceholder('Select default kernel').fill('f');
     await expect(
       frame.getByRole('option', {
         name: '"f" is not a valid kernel package name',
@@ -134,7 +134,7 @@ test('Create a blueprint with Kernel customization', async ({
   await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Kernel' }).click();
-    await expect(frame.getByPlaceholder('Select kernel package')).toHaveValue(
+    await expect(frame.getByPlaceholder('Select default kernel')).toHaveValue(
       'kernel',
     );
     await expect(frame.getByText('rootwait')).toBeVisible();
