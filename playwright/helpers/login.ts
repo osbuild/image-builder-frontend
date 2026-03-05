@@ -139,17 +139,8 @@ const loginConsole = async (page: Page, user: string, password: string) => {
   await page.goto('/insights/image-builder/landing');
   await fillAndSubmitLogin(page, user, password);
 
-  const loginField = page.getByRole('textbox', { name: 'Red Hat login' });
   const allImagesHeading = page.getByRole('heading', { name: 'All images' });
-
-  // The cookie consent popup can appear late and reset the login state.
-  // Wait for either the success heading or the login form reappearing.
-  await expect(loginField.or(allImagesHeading)).toBeVisible();
-
-  if (await loginField.isVisible()) {
-    await fillAndSubmitLogin(page, user, password);
-  }
-
+  await expect(allImagesHeading).toBeVisible({ timeout: 30000 });
   await togglePreview(page);
   await expect(allImagesHeading).toBeVisible();
 };
