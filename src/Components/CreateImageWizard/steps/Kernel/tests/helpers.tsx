@@ -3,7 +3,6 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import {
-  clearWithWait,
   clickWithWait,
   renderWithRedux,
   typeWithWait,
@@ -20,7 +19,7 @@ export const renderKernelStep = (
 };
 
 export const openKernelNameDropdown = async (user: UserEventInstance) => {
-  const dropdown = await screen.findByPlaceholderText(/Select kernel package/i);
+  const dropdown = await screen.findByPlaceholderText(/Select default kernel/i);
   await clickWithWait(user, dropdown);
 };
 
@@ -28,13 +27,13 @@ export const typeKernelName = async (
   user: UserEventInstance,
   kernelName: string,
 ) => {
-  const dropdown = await screen.findByPlaceholderText(/Select kernel package/i);
+  const dropdown = await screen.findByPlaceholderText(/Select default kernel/i);
   await typeWithWait(user, dropdown, kernelName);
 };
 
 export const clearKernelName = async (user: UserEventInstance) => {
-  const dropdown = await screen.findByPlaceholderText(/Select kernel package/i);
-  await clearWithWait(user, dropdown);
+  await openKernelNameDropdown(user);
+  await selectKernelOption(user, 'None');
 };
 
 export const selectKernelOption = async (
