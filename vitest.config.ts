@@ -39,6 +39,7 @@ const config = {
     },
     coverage: {
       provider: 'v8',
+      exclude: ['**/test/**', '**/tests/**', '**/mocks/**', '**/*.scss'],
     },
     server: {
       deps: {
@@ -47,7 +48,12 @@ const config = {
     },
     testTimeout: 10000,
     fileParallelism: false,
-    exclude: ['./pkg/lib/**', '**/node_modules/**', '**/dist/**', './playwright/**'],
+    exclude: [
+      './pkg/lib/**',
+      '**/node_modules/**',
+      '**/dist/**',
+      './playwright/**',
+    ],
     retry: 3,
   },
   reporters: ['default', 'junit'],
