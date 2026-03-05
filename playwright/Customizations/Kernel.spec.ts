@@ -42,10 +42,70 @@ test('Create a blueprint with Kernel customization', async ({
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame);
     await registerLater(frame);
+    await frame.getByRole('button', { name: 'Kernel' }).click();
+  });
+
+  await test.step('Shows all chips when 4 or fewer', async () => {
+    const argInput = frame.getByPlaceholder('Add kernel argument');
+    for (const arg of ['nosmp', 'rootwait', 'quiet', 'splash']) {
+      await argInput.fill(arg);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('nosmp')).toBeVisible();
+    await expect(frame.getByText('rootwait')).toBeVisible();
+    await expect(frame.getByText('quiet')).toBeVisible();
+    await expect(frame.getByText('splash')).toBeVisible();
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+  });
+
+  await test.step('Collapses and shows "X more" when more than 4', async () => {
+    const argInput = frame.getByPlaceholder('Add kernel argument');
+    for (const arg of ['console=tty0', 'debug']) {
+      await argInput.fill(arg);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('nosmp')).toBeVisible();
+    await expect(frame.getByText('console=tty0')).toBeHidden();
+    await expect(frame.getByText('debug')).toBeHidden();
+    await expect(frame.getByText('2 more')).toBeVisible();
+  });
+
+  await test.step('Expands when clicking "X more" and collapses with "Show less"', async () => {
+    await frame.getByText('2 more').click();
+    await expect(frame.getByText('console=tty0')).toBeVisible();
+    await expect(frame.getByText('debug')).toBeVisible();
+    await expect(frame.getByText('Show less')).toBeVisible();
+
+    await frame.getByText('Show less').click();
+    await expect(frame.getByText('console=tty0')).toBeHidden();
+    await expect(frame.getByText('debug')).toBeHidden();
+    await expect(frame.getByText('2 more')).toBeVisible();
+  });
+
+  await test.step('Collapse controls disappear when items drop below threshold', async () => {
+    await frame.getByText('2 more').click();
+
+    await frame.getByRole('button', { name: 'Close debug' }).click();
+    await frame.getByRole('button', { name: 'Close console=tty0' }).click();
+
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+    await expect(frame.getByText('Show less')).toBeHidden();
+    await expect(frame.getByText('nosmp')).toBeVisible();
+    await expect(frame.getByText('rootwait')).toBeVisible();
+    await expect(frame.getByText('quiet')).toBeVisible();
+    await expect(frame.getByText('splash')).toBeVisible();
+  });
+
+  await test.step('Clean up chip collapse test chips', async () => {
+    await frame.getByRole('button', { name: 'Close splash' }).click();
+    await frame.getByRole('button', { name: 'Close quiet' }).click();
+    await frame.getByRole('button', { name: 'Close nosmp' }).click();
+    await frame.getByRole('button', { name: 'Close rootwait' }).click();
   });
 
   await test.step('Select and fill the Kernel step', async () => {
-    await frame.getByRole('button', { name: 'Kernel' }).click();
     await frame.getByRole('button', { name: 'Menu toggle' }).click();
     await frame.getByRole('option', { name: 'kernel', exact: true }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('rootwait');

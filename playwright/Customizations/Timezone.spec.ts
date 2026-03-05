@@ -42,10 +42,87 @@ test('Create a blueprint with Timezone customization', async ({
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame);
     await registerLater(frame);
+    await frame.getByRole('button', { name: 'Timezone' }).click();
+  });
+
+  await test.step('Shows all NTP chips when 4 or fewer', async () => {
+    const ntpInput = frame.getByPlaceholder('Add NTP servers');
+    for (const server of [
+      '0.nl.pool.ntp.org',
+      '0.cz.pool.ntp.org',
+      '0.de.pool.ntp.org',
+      '0.fr.pool.ntp.org',
+    ]) {
+      await ntpInput.fill(server);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.cz.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.fr.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+  });
+
+  await test.step('Collapses and shows "X more" when more than 4', async () => {
+    const ntpInput = frame.getByPlaceholder('Add NTP servers');
+    for (const server of ['0.us.pool.ntp.org', '0.uk.pool.ntp.org']) {
+      await ntpInput.fill(server);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.us.pool.ntp.org')).toBeHidden();
+    await expect(frame.getByText('0.uk.pool.ntp.org')).toBeHidden();
+    await expect(frame.getByText('2 more')).toBeVisible();
+  });
+
+  await test.step('Expands when clicking "X more" and collapses with "Show less"', async () => {
+    await frame.getByText('2 more').click();
+    await expect(frame.getByText('0.us.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.uk.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('Show less')).toBeVisible();
+
+    await frame.getByText('Show less').click();
+    await expect(frame.getByText('0.us.pool.ntp.org')).toBeHidden();
+    await expect(frame.getByText('0.uk.pool.ntp.org')).toBeHidden();
+    await expect(frame.getByText('2 more')).toBeVisible();
+  });
+
+  await test.step('Collapse controls disappear when items drop below threshold', async () => {
+    await frame.getByText('2 more').click();
+
+    await frame
+      .getByRole('button', { name: 'Close 0.uk.pool.ntp.org' })
+      .click();
+    await frame
+      .getByRole('button', { name: 'Close 0.us.pool.ntp.org' })
+      .click();
+
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+    await expect(frame.getByText('Show less')).toBeHidden();
+    await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.cz.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
+    await expect(frame.getByText('0.fr.pool.ntp.org')).toBeVisible();
+  });
+
+  await test.step('Clean up chip collapse test chips', async () => {
+    await frame
+      .getByRole('button', { name: 'Close 0.fr.pool.ntp.org' })
+      .click();
+    await frame
+      .getByRole('button', { name: 'Close 0.de.pool.ntp.org' })
+      .click();
+    await frame
+      .getByRole('button', { name: 'Close 0.cz.pool.ntp.org' })
+      .click();
+    await frame
+      .getByRole('button', { name: 'Close 0.nl.pool.ntp.org' })
+      .click();
   });
 
   await test.step('Select and fill the Timezone step', async () => {
-    await frame.getByRole('button', { name: 'Timezone' }).click();
     await frame.getByPlaceholder('Select a timezone').fill('Canada');
     await frame.getByRole('option', { name: 'Canada/Saskatchewan' }).click();
     await frame.getByPlaceholder('Select a timezone').fill('');

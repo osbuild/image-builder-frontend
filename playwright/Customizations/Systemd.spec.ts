@@ -42,11 +42,135 @@ test('Create a blueprint with Systemd customization', async ({
   await test.step('Navigate to optional steps in Wizard', async () => {
     await fillInImageOutput(frame);
     await registerLater(frame);
+    await frame.getByRole('button', { name: 'Systemd services' }).click();
+  });
+
+  await test.step('Enabled services: shows all chips when 4 or fewer', async () => {
+    const enabledInput = frame.getByPlaceholder('Add enabled service');
+    for (const service of [
+      'sshd.service',
+      'httpd.service',
+      'nginx.service',
+      'crond.service',
+    ]) {
+      await enabledInput.fill(service);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('sshd.service')).toBeVisible();
+    await expect(frame.getByText('httpd.service')).toBeVisible();
+    await expect(frame.getByText('nginx.service')).toBeVisible();
+    await expect(frame.getByText('crond.service')).toBeVisible();
+    await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
+  });
+
+  await test.step('Enabled services: collapses and shows "X more" when more than 4', async () => {
+    const enabledInput = frame.getByPlaceholder('Add enabled service');
+    for (const service of ['rsyslog.service', 'chronyd.service']) {
+      await enabledInput.fill(service);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('sshd.service')).toBeVisible();
+    await expect(frame.getByText('rsyslog.service')).toBeHidden();
+    await expect(frame.getByText('chronyd.service')).toBeHidden();
+    await expect(frame.getByText('2 more').first()).toBeVisible();
+  });
+
+  await test.step('Enabled services: expands and collapses', async () => {
+    await frame.getByText('2 more').first().click();
+    await expect(frame.getByText('rsyslog.service')).toBeVisible();
+    await expect(frame.getByText('chronyd.service')).toBeVisible();
+    await expect(frame.getByText('Show less').first()).toBeVisible();
+
+    await frame.getByText('Show less').first().click();
+    await expect(frame.getByText('rsyslog.service')).toBeHidden();
+    await expect(frame.getByText('chronyd.service')).toBeHidden();
+    await expect(frame.getByText('2 more').first()).toBeVisible();
+  });
+
+  await test.step('Disabled services: collapses and shows "X more" when more than 4', async () => {
+    const disabledInput = frame.getByPlaceholder('Add disabled service');
+    for (const service of [
+      'cups.service',
+      'avahi-daemon.service',
+      'bluetooth.service',
+      'ModemManager.service',
+      'postfix.service',
+    ]) {
+      await disabledInput.fill(service);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('cups.service')).toBeVisible();
+    await expect(frame.getByText('avahi-daemon.service')).toBeVisible();
+    await expect(frame.getByText('bluetooth.service')).toBeVisible();
+    await expect(frame.getByText('ModemManager.service')).toBeVisible();
+    await expect(frame.getByText('postfix.service')).toBeHidden();
+    await expect(frame.getByText('1 more').first()).toBeVisible();
+  });
+
+  await test.step('Masked services: collapses and shows "X more" when more than 4', async () => {
+    const maskedInput = frame.getByPlaceholder('Add masked service');
+    for (const service of [
+      'firewalld.service',
+      'iptables.service',
+      'nftables.service',
+      'ip6tables.service',
+      'ebtables.service',
+    ]) {
+      await maskedInput.fill(service);
+      await page.keyboard.press('Enter');
+    }
+
+    await expect(frame.getByText('firewalld.service')).toBeVisible();
+    await expect(frame.getByText('iptables.service')).toBeVisible();
+    await expect(frame.getByText('nftables.service')).toBeVisible();
+    await expect(frame.getByText('ip6tables.service')).toBeVisible();
+    await expect(frame.getByText('ebtables.service')).toBeHidden();
+    await expect(frame.getByText('1 more').nth(1)).toBeVisible();
+  });
+
+  await test.step('Clean up chip collapse test chips', async () => {
+    // Clean up enabled services
+    await frame.getByText('2 more').first().click();
+    for (const service of [
+      'chronyd.service',
+      'rsyslog.service',
+      'crond.service',
+      'nginx.service',
+      'httpd.service',
+      'sshd.service',
+    ]) {
+      await frame.getByRole('button', { name: `Close ${service}` }).click();
+    }
+
+    // Clean up disabled services
+    await frame.getByText('1 more').first().click();
+    for (const service of [
+      'postfix.service',
+      'ModemManager.service',
+      'bluetooth.service',
+      'avahi-daemon.service',
+      'cups.service',
+    ]) {
+      await frame.getByRole('button', { name: `Close ${service}` }).click();
+    }
+
+    // Clean up masked services
+    await frame.getByText('1 more').first().click();
+    for (const service of [
+      'ebtables.service',
+      'ip6tables.service',
+      'nftables.service',
+      'iptables.service',
+      'firewalld.service',
+    ]) {
+      await frame.getByRole('button', { name: `Close ${service}` }).click();
+    }
   });
 
   await test.step('Select and correctly fill all of the service fields', async () => {
-    await frame.getByRole('button', { name: 'Systemd services' }).click();
-
     await frame
       .getByPlaceholder('Add disabled service')
       .fill('systemd-dis.service');
