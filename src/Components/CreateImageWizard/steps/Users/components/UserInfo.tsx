@@ -7,7 +7,11 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 import UserRow from './UserRow';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { addUser, selectUsers } from '../../../../../store/wizardSlice';
+import {
+  addUser,
+  commitAllPendingGroupInputs,
+  selectUsers,
+} from '../../../../../store/wizardSlice';
 import { useUsersValidation } from '../../../utilities/useValidation';
 
 type UserInfoProps = {
@@ -36,6 +40,7 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const showAlert = attemptedNext && hasErrors;
 
   const onAddUserClick = () => {
+    dispatch(commitAllPendingGroupInputs());
     dispatch(addUser());
   };
   return (

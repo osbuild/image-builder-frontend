@@ -93,7 +93,7 @@ export type StepValidation = {
 
 export type UsersStepValidation = {
   errors: {
-    [key: string]: { [key: string]: string };
+    [key: string]: { [key: string]: string } | undefined;
   };
   disabledNext: boolean;
 };
@@ -814,11 +814,12 @@ const validateSshKey = (userSshKey: string): string => {
   return '';
 };
 
-export function useUsersValidation(): UsersStepValidation {
-  const environments = useAppSelector(selectImageTypes);
-  const blueprintMode = useAppSelector(selectBlueprintMode);
-  const users = useAppSelector(selectUsers);
-  const userGroups = useAppSelector(selectUserGroups);
+export function computeUsersValidation(
+  users: UserWithAdditionalInfo[],
+  userGroups: { name: string }[],
+  blueprintMode: string,
+  environments: string[],
+): UsersStepValidation {
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   if (
@@ -947,8 +948,17 @@ export function useUsersValidation(): UsersStepValidation {
   };
 }
 
-export function useUserGroupsValidation(): UsersStepValidation {
+export function useUsersValidation(): UsersStepValidation {
+  const environments = useAppSelector(selectImageTypes);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
+  const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
+  return computeUsersValidation(users, userGroups, blueprintMode, environments);
+}
+
+export function computeUserGroupsValidation(
+  userGroups: { name: string; gid?: number }[],
+): UsersStepValidation {
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   for (let index = 0; index < userGroups.length; index++) {
@@ -980,6 +990,11 @@ export function useUserGroupsValidation(): UsersStepValidation {
     errors,
     disabledNext: !canProceed,
   };
+}
+
+export function useUserGroupsValidation(): UsersStepValidation {
+  const userGroups = useAppSelector(selectUserGroups);
+  return computeUserGroupsValidation(userGroups);
 }
 
 export const checkPasswordValidity = (

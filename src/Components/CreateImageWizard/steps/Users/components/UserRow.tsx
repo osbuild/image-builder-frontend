@@ -12,6 +12,7 @@ import {
   addUser,
   removeGroupFromUserByIndex,
   removeUser,
+  setPendingGroupInputByIndex,
   setUserAdministratorByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
@@ -35,8 +36,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
   const stepValidation = useUsersValidation();
   const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
   const getValidationByIndex = (idx: number) => {
-    const errors =
-      idx in stepValidation.errors ? stepValidation.errors[idx] : {};
+    const errors = stepValidation.errors[idx] ?? {};
     return {
       errors,
       disabledNext: stepValidation.disabledNext,
@@ -149,6 +149,11 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             fieldName='groups'
             truncateLength={12}
             inlineChips={true}
+            addOnBlur={true}
+            currentInputValue={user.pendingGroupInput ?? ''}
+            onInputValueChange={(value: string) =>
+              setPendingGroupInputByIndex({ index, value })
+            }
           />
         </Td>
         <Td>
