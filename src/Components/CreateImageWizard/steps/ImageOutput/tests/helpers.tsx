@@ -1,0 +1,209 @@
+import React from 'react';
+
+import { screen } from '@testing-library/react';
+
+import { IMAGE_MODE, RHEL_10 } from '@/constants';
+import {
+  clickWithWait,
+  renderWithRedux,
+  type UserEventInstance,
+  type WizardStateOverrides,
+} from '@/test/testUtils';
+
+import ArchSelect from '../components/ArchSelect';
+import BlueprintMode from '../components/BlueprintMode';
+import CentOSAcknowledgement from '../components/CentOSAcknowledgement';
+import ImageSourceSelect from '../components/ImageSourceSelect';
+import ReleaseLifecycle from '../components/ReleaseLifecycle';
+import ReleaseSelect from '../components/ReleaseSelect';
+import TargetEnvironment from '../components/TargetEnvironment';
+import ImageOutputStep from '../index';
+
+// Default state overrides for most tests
+const defaultStateOverrides: WizardStateOverrides = {
+  distribution: RHEL_10,
+  architecture: 'x86_64',
+};
+
+export const renderImageOutputStep = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<ImageOutputStep />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+export const renderArchSelect = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<ArchSelect />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+// Interaction helpers
+export const openArchSelect = async (user: UserEventInstance) => {
+  const toggle = await screen.findByTestId('arch_select');
+  await clickWithWait(user, toggle);
+};
+
+export const selectArch = async (user: UserEventInstance, arch: string) => {
+  await openArchSelect(user);
+  const option = await screen.findByRole('option', { name: arch });
+  await clickWithWait(user, option);
+};
+
+// ReleaseSelect render function
+export const renderReleaseSelect = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<ReleaseSelect />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+// ReleaseSelect interaction helpers
+export const openReleaseSelect = async (user: UserEventInstance) => {
+  const toggle = await screen.findByTestId('release_select');
+  await clickWithWait(user, toggle);
+};
+
+export const selectRelease = async (
+  user: UserEventInstance,
+  releaseName: RegExp | string,
+) => {
+  await openReleaseSelect(user);
+  const option = await screen.findByRole('option', { name: releaseName });
+  await clickWithWait(user, option);
+};
+
+export const expandDevelopmentOptions = async (user: UserEventInstance) => {
+  const loadMoreButton = await screen.findByRole('option', {
+    name: /show options for further development/i,
+  });
+  await clickWithWait(user, loadMoreButton);
+};
+
+// TargetEnvironment render function
+export const renderTargetEnvironment = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<TargetEnvironment />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+// TargetEnvironment interaction helpers
+export const clickTargetCard = async (
+  user: UserEventInstance,
+  targetName: RegExp | string,
+) => {
+  const card = await screen.findByRole('button', { name: targetName });
+  await clickWithWait(user, card);
+};
+
+export const clickTargetCheckbox = async (
+  user: UserEventInstance,
+  checkboxLabel: RegExp | string,
+) => {
+  const checkbox = await screen.findByRole('checkbox', { name: checkboxLabel });
+  await clickWithWait(user, checkbox);
+};
+
+// ReleaseLifecycle render function
+export const renderReleaseLifecycle = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<ReleaseLifecycle />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
+};
+
+// CentOSAcknowledgement render function
+export const renderCentOSAcknowledgement = () => {
+  return renderWithRedux(<CentOSAcknowledgement />);
+};
+
+// BlueprintMode render function (uses on-premise store)
+export const renderBlueprintMode = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(
+    <BlueprintMode />,
+    {
+      ...defaultStateOverrides,
+      ...wizardStateOverrides,
+    },
+    {
+      preloadedState: {
+        env: { isOnPremise: true },
+      },
+    },
+  );
+};
+
+export const toggleBlueprintMode = async (
+  user: UserEventInstance,
+  mode: 'package' | 'image',
+) => {
+  const buttonName = mode === 'package' ? /package mode/i : /image mode/i;
+  const button = await screen.findByRole('button', { name: buttonName });
+  await clickWithWait(user, button);
+};
+
+// ImageSourceSelect render function (uses on-premise store)
+export const renderImageSourceSelect = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(
+    <ImageSourceSelect />,
+    {
+      distribution: IMAGE_MODE,
+      blueprintMode: 'image',
+      ...wizardStateOverrides,
+    },
+    {
+      preloadedState: {
+        env: { isOnPremise: true },
+      },
+    },
+  );
+};
+
+// ImageSourceSelect interaction helpers
+export const openImageSourceSelect = async (user: UserEventInstance) => {
+  const toggle = await screen.findByRole('button', {
+    name: /select an image/i,
+  });
+  await clickWithWait(user, toggle);
+};
+
+export const selectImageSource = async (
+  user: UserEventInstance,
+  imageTag: RegExp | string,
+) => {
+  await openImageSourceSelect(user);
+  const option = await screen.findByRole('option', {
+    name: imageTag,
+  });
+  await clickWithWait(user, option);
+};
+
+export const togglePullInfoSection = async (user: UserEventInstance) => {
+  const button = await screen.findByRole('button', {
+    name: /information about pulling images/i,
+  });
+  await clickWithWait(user, button);
+};
+
+export const clickRefreshImageSources = async (user: UserEventInstance) => {
+  const button = await screen.findByRole('button', {
+    name: /refresh image sources/i,
+  });
+  await clickWithWait(user, button);
+};
