@@ -14,6 +14,8 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { useGetSourceListQuery } from '@/store/api/provisioning';
+
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
 import { useGetUser } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
@@ -24,7 +26,6 @@ import {
   ComposesResponseItem,
   GcpUploadRequestOptions,
 } from '../../store/imageBuilderApi';
-import { useGetSourceListQuery } from '../../store/provisioningApi';
 import {
   isAwsUploadRequestOptions,
   isAzureUploadRequestOptions,

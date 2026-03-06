@@ -1,7 +1,7 @@
 import {
   GetSourceListApiResponse,
   GetSourceUploadInfoApiResponse,
-} from '../../store/provisioningApi';
+} from '@/store/api/provisioning';
 
 export const mockSourcesByProvider = (
   provider: string,

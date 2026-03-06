@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { useGetSourceListQuery } from '@/store/api/provisioning';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 
 import {
@@ -48,7 +49,6 @@ import {
 } from '../../../../store/contentSourcesApi';
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
-import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import {
   selectAapCallbackUrl,
   selectAapHostConfigKey,

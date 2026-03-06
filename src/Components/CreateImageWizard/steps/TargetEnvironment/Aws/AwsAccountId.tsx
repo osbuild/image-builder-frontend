@@ -8,8 +8,9 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 
+import { useGetSourceUploadInfoQuery } from '@/store/api/provisioning';
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';
 import {
   changeAwsAccountId,
   selectAwsSourceId,
