@@ -3,8 +3,8 @@ import React from 'react';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { CheckIcon, MinusIcon } from '@patternfly/react-icons';
 
-import { CustomizationType } from '../../store/distributions';
-import { useImageTypeCustomizationSupport } from '../../store/distributions/hooks';
+import { CustomizationType } from '@/store/api/distributions';
+import { useImageTypeCustomizationSupport } from '@/store/api/distributions/hooks';
 
 export const CustomizationLabels = ({
   customization,

@@ -14,6 +14,8 @@ import {
 import { ArrowRightIcon } from '@patternfly/react-icons';
 
 import './ReviewStep.scss';
+import { useCustomizationRestrictions } from '@/store/api/distributions';
+
 import {
   ContentList,
   DetailsList,
@@ -41,7 +43,6 @@ import {
 
 import isRhel from '../../../../../src/Utilities/isRhel';
 import { targetOptions } from '../../../../constants';
-import { useCustomizationRestrictions } from '../../../../store/distributions';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectAapRegistration,

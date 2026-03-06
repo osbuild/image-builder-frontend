@@ -1,18 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { ALL_CUSTOMIZATIONS } from '../../../store/distributions/constants';
+import { ALL_CUSTOMIZATIONS } from '@/store/api/distributions/constants';
 import {
   computeImageTypeCustomizationSupport,
   computeRestrictions,
   isCustomizationSupported,
   SupportContext,
-} from '../../../store/distributions/hooks';
+} from '@/store/api/distributions/hooks';
 import {
   CustomizationType,
   DistributionDetails,
   ImageTypeInfo,
   RestrictionStrategy,
-} from '../../../store/distributions/types';
+} from '@/store/api/distributions/types';
+
 import isRhel from '../../../Utilities/isRhel';
 
 const computeRestrictionStrategy = ({
