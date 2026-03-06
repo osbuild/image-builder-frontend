@@ -1,44 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
-import { ALL_CUSTOMIZATIONS } from '@/store/api/distributions/constants';
 import {
+  computeRestrictionStrategy,
+  getAllCustomizationTypes,
+} from './helpers';
+import {
+  createMockDistributionDetails,
+  defaultContext,
+  mockImageTypes,
+} from './mocks';
+
+import {
+  ALL_CUSTOMIZATIONS,
   computeImageTypeCustomizationSupport,
   computeRestrictions,
-  isCustomizationSupported,
-  SupportContext,
-} from '@/store/api/distributions/hooks';
-import {
   CustomizationType,
-  DistributionDetails,
   ImageTypeInfo,
+  isCustomizationSupported,
   RestrictionStrategy,
-} from '@/store/api/distributions/types';
-
-import isRhel from '../../../Utilities/isRhel';
-
-const computeRestrictionStrategy = ({
-  isImageMode,
-  isOnPremise,
-  distro = 'rhel-9',
-}: {
-  isImageMode: boolean;
-  isOnPremise: boolean;
-  distro?: string;
-}) => {
-  return computeRestrictions({
-    imageTypes: {},
-    context: {
-      isImageMode,
-      isOnPremise,
-      isRhel: isRhel(distro),
-    },
-  });
-};
-
-// Helper to get all customization types as an array
-const getAllCustomizationTypes = (): CustomizationType[] => [
-  ...ALL_CUSTOMIZATIONS,
-];
+  SupportContext,
+} from '..';
 
 describe('useCustomizationRestrictions hook logic', () => {
   describe('default behavior (package mode, not on-premise)', () => {
@@ -204,43 +185,13 @@ describe('useCustomizationRestrictions hook logic', () => {
 
   describe('image type restrictions', () => {
     it('should hide customization when single image type does not support it', () => {
-      // image-installer doesn't support filesystem
-      const data: DistributionDetails = {
-        name: 'rhel-9',
-        architectures: {
-          x86_64: {
-            name: 'x86_64',
-            image_types: {
-              'image-installer': {
-                name: 'image-installer',
-                supported_blueprint_options: [
-                  'packages',
-                  'repositories',
-                  'kernel',
-                  'timezone',
-                  'locale',
-                  'firewall',
-                  'services',
-                  'hostname',
-                  'firstBoot',
-                  'openscap',
-                  'users',
-                  'fips',
-                  'aap',
-                ],
-              },
-            },
-          },
-        },
-      };
+      const data = createMockDistributionDetails({
+        'image-installer': mockImageTypes.imageInstallerWithoutFilesystem,
+      });
 
       const result = computeRestrictions({
         imageTypes: data.architectures!.x86_64.image_types!,
-        context: {
-          isImageMode: false,
-          isOnPremise: false,
-          isRhel: true,
-        },
+        context: defaultContext,
       });
 
       expect(result.filesystem.shouldHide).toBe(true);
@@ -248,112 +199,51 @@ describe('useCustomizationRestrictions hook logic', () => {
     });
 
     it('should hide customization when no selected image types support it', () => {
-      // Both wsl and image-installer don't support filesystem
-      const data: DistributionDetails = {
-        name: 'rhel-9',
-        architectures: {
-          x86_64: {
-            name: 'x86_64',
-            image_types: {
-              'image-installer': {
-                name: 'image-installer',
-                supported_blueprint_options: ['packages', 'users'],
-              },
-              wsl: {
-                name: 'wsl',
-                supported_blueprint_options: ['packages', 'users'],
-              },
-            },
-          },
+      const data = createMockDistributionDetails({
+        'image-installer': {
+          supported_blueprint_options: ['packages', 'users'],
         },
-      };
+        wsl: { supported_blueprint_options: ['packages', 'users'] },
+      });
 
       const result = computeRestrictions({
         imageTypes: data.architectures!.x86_64.image_types!,
-        context: {
-          isImageMode: false,
-          isOnPremise: false,
-          isRhel: true,
-        },
+        context: defaultContext,
       });
 
-      // filesystem is not supported by either, should be hidden
       expect(result.filesystem.shouldHide).toBe(true);
-      // packages is supported by both, should not be hidden
       expect(result.packages.shouldHide).toBe(false);
     });
 
     it('should show customization when at least one image type supports it', () => {
-      // aws supports filesystem, image-installer doesn't
-      const data: DistributionDetails = {
-        name: 'rhel-9',
-        architectures: {
-          x86_64: {
-            name: 'x86_64',
-            image_types: {
-              aws: {
-                name: 'aws',
-                supported_blueprint_options: [
-                  'packages',
-                  'filesystem',
-                  'users',
-                ],
-              },
-              'image-installer': {
-                name: 'image-installer',
-                supported_blueprint_options: ['packages', 'users'],
-              },
-            },
-          },
-        },
-      };
-
-      const result = computeRestrictions({
-        imageTypes: data.architectures!.x86_64.image_types!,
-        context: {
-          isImageMode: false,
-          isOnPremise: false,
-          isRhel: true,
+      const data = createMockDistributionDetails({
+        aws: mockImageTypes.awsWithLimitedCustomizations,
+        'image-installer': {
+          supported_blueprint_options: ['packages', 'users'],
         },
       });
 
-      // filesystem is supported by aws, should NOT be hidden
+      const result = computeRestrictions({
+        imageTypes: data.architectures!.x86_64.image_types!,
+        context: defaultContext,
+      });
+
       expect(result.filesystem.shouldHide).toBe(false);
-      // packages is supported by both
       expect(result.packages.shouldHide).toBe(false);
     });
 
     it('should hide most customizations for network-installer', () => {
-      // network-installer only supports locale and fips
-      const data: DistributionDetails = {
-        name: 'rhel-9',
-        architectures: {
-          x86_64: {
-            name: 'x86_64',
-            image_types: {
-              'network-installer': {
-                name: 'network-installer',
-                supported_blueprint_options: ['locale', 'fips'],
-              },
-            },
-          },
-        },
-      };
+      const data = createMockDistributionDetails({
+        'network-installer': mockImageTypes.networkInstallerMinimal,
+      });
 
       const result = computeRestrictions({
         imageTypes: data.architectures!.x86_64.image_types!,
-        context: {
-          isImageMode: false,
-          isOnPremise: false,
-          isRhel: true,
-        },
+        context: defaultContext,
       });
 
-      // Only locale and fips should be visible
       expect(result.locale.shouldHide).toBe(false);
       expect(result.fips.shouldHide).toBe(false);
-
-      // Everything else should be hidden
       expect(result.packages.shouldHide).toBe(true);
       expect(result.filesystem.shouldHide).toBe(true);
       expect(result.kernel.shouldHide).toBe(true);
@@ -361,67 +251,29 @@ describe('useCustomizationRestrictions hook logic', () => {
     });
 
     it('should handle image type with undefined supported_blueprint_options alongside one that defines it', () => {
-      // aws has supported_blueprint_options with filesystem & packages,
-      // gcp has undefined supported_blueprint_options (meaning it supports ALL)
-      const data: DistributionDetails = {
-        name: 'rhel-9',
-        architectures: {
-          x86_64: {
-            name: 'x86_64',
-            image_types: {
-              aws: {
-                name: 'aws',
-                supported_blueprint_options: ['filesystem', 'packages'],
-              },
-              gcp: {
-                name: 'gcp',
-                // supported_blueprint_options is intentionally omitted (undefined)
-                // This means gcp supports ALL customizations
-              },
-            },
-          },
-        },
-      };
+      const data = createMockDistributionDetails({
+        aws: { supported_blueprint_options: ['filesystem', 'packages'] },
+        gcp: mockImageTypes.gcpUndefined,
+      });
 
       const result = computeRestrictions({
         imageTypes: data.architectures!.x86_64.image_types!,
-        context: {
-          isImageMode: false,
-          isOnPremise: false,
-          isRhel: true,
-        },
+        context: defaultContext,
       });
 
-      // When at least one image type has undefined supported_blueprint_options,
-      // it supports all customizations, so nothing should be hidden
       for (const customization of getAllCustomizationTypes()) {
         expect(result[customization].shouldHide).toBe(false);
       }
     });
 
     it('should not hide any customizations when image_types is an empty object', () => {
-      // Empty image_types means no image types are selected yet,
-      // so we should fall back to showing all customizations
-      const data: DistributionDetails = {
-        name: 'rhel-9',
-        architectures: {
-          x86_64: {
-            name: 'x86_64',
-            image_types: {},
-          },
-        },
-      };
+      const data = createMockDistributionDetails({});
 
       const result = computeRestrictions({
         imageTypes: data.architectures!.x86_64.image_types!,
-        context: {
-          isImageMode: false,
-          isOnPremise: false,
-          isRhel: true,
-        },
+        context: defaultContext,
       });
 
-      // All customizations should be visible when no image types are selected
       for (const customization of getAllCustomizationTypes()) {
         expect(result[customization].shouldHide).toBe(false);
         expect(result[customization].required).toBe(false);
