@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   ALL_CUSTOMIZATIONS,
   DISTRO_DETAILS,
-} from '../../../store/distributions/constants';
-import { CustomizationType } from '../../../store/distributions/types';
+} from '@/store/api/distributions/constants';
+import { CustomizationType } from '@/store/api/distributions/types';
 
 describe('DISTRO_DETAILS configuration', () => {
   describe('unrestricted image types', () => {

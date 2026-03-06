@@ -1,4 +1,4 @@
-import { Distributions, ImageTypes } from '../imageBuilderApi';
+import { Distributions, ImageTypes } from '@/store/imageBuilderApi';
 
 export type CustomizationType =
   | 'packages'

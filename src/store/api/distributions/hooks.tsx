@@ -1,5 +1,18 @@
 import { useMemo } from 'react';
 
+import { simpleTargetNames } from '@/constants';
+import { selectIsOnPremise } from '@/store/envSlice';
+import { useAppSelector } from '@/store/hooks';
+import { ImageTypes } from '@/store/imageBuilderApi';
+import { isImageType } from '@/store/typeGuards';
+import {
+  selectArchitecture,
+  selectDistribution,
+  selectImageTypes,
+  selectIsImageMode,
+} from '@/store/wizardSlice';
+import isRhel from '@/Utilities/isRhel';
+
 import { ALL_CUSTOMIZATIONS } from './constants';
 import { distroDetailsApi as api } from './distributionDetailsApi';
 import {
@@ -8,19 +21,6 @@ import {
   ImageTypeInfo,
   RestrictionStrategy,
 } from './types';
-
-import { simpleTargetNames } from '../../constants';
-import isRhel from '../../Utilities/isRhel';
-import { selectIsOnPremise } from '../envSlice';
-import { useAppSelector } from '../hooks';
-import { ImageTypes } from '../imageBuilderApi';
-import { isImageType } from '../typeGuards';
-import {
-  selectArchitecture,
-  selectDistribution,
-  selectImageTypes,
-  selectIsImageMode,
-} from '../wizardSlice';
 
 const extractImageTypes = ({
   architectures,

@@ -1,11 +1,11 @@
+import { imageBuilderApi } from '@/store/imageBuilderApi';
+
 import { DISTRO_DETAILS } from './constants';
 import {
   DistributionDetails,
   DistributionDetailsCustomizationApi,
   DistributionDetailsCustomizationArgs,
 } from './types';
-
-import { imageBuilderApi } from '../imageBuilderApi';
 
 export const distroDetailsApi = imageBuilderApi.injectEndpoints({
   endpoints: (builder) => ({
