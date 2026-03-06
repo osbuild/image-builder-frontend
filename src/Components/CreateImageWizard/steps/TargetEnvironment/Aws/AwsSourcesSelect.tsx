@@ -16,8 +16,9 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
+import { useGetSourceListQuery } from '@/store/api/provisioning';
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useGetSourceListQuery } from '../../../../../store/provisioningApi';
 import {
   changeAwsSourceId,
   selectAwsSourceId,
