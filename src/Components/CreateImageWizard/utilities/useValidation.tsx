@@ -16,6 +16,8 @@ import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import {
+  MAX_REGULAR_GID,
+  MIN_REGULAR_GID,
   selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
@@ -93,6 +95,9 @@ export type StepValidation = {
 
 export type UsersStepValidation = {
   errors: {
+    [key: string]: { [key: string]: string };
+  };
+  warnings: {
     [key: string]: { [key: string]: string };
   };
   disabledNext: boolean;
@@ -830,12 +835,14 @@ export function useUsersValidation(): UsersStepValidation {
         // the User step is required in image mode
         // blocking Next without a render error is sufficient
         errors: {},
+        warnings: {},
         disabledNext: true,
       };
     }
 
     return {
       errors: {},
+      warnings: {},
       disabledNext: false,
     };
   }
@@ -943,6 +950,7 @@ export function useUsersValidation(): UsersStepValidation {
 
   return {
     errors,
+    warnings: {},
     disabledNext: !canProceed,
   };
 }
@@ -950,9 +958,11 @@ export function useUsersValidation(): UsersStepValidation {
 export function useUserGroupsValidation(): UsersStepValidation {
   const userGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
+  const warnings: { [key: string]: { [key: string]: string } } = {};
 
   for (let index = 0; index < userGroups.length; index++) {
     const groupErrors: { [key: string]: string } = {};
+    const groupWarnings: { [key: string]: string } = {};
     const group = userGroups[index];
 
     if (group.name) {
@@ -968,8 +978,23 @@ export function useUserGroupsValidation(): UsersStepValidation {
       }
     }
 
+    if (group.gid !== undefined) {
+      const duplicateGids = userGroups.filter(
+        (g, idx) => idx !== index && g.gid === group.gid,
+      );
+      if (duplicateGids.length > 0) {
+        groupErrors.groupGid = 'Group ID must be unique';
+      }
+      if (group.gid < MIN_REGULAR_GID || group.gid > MAX_REGULAR_GID) {
+        groupWarnings.groupGid = `Standard GID range is ${MIN_REGULAR_GID}–${MAX_REGULAR_GID}`;
+      }
+    }
+
     if (Object.keys(groupErrors).length > 0) {
       errors[index] = groupErrors;
+    }
+    if (Object.keys(groupWarnings).length > 0) {
+      warnings[index] = groupWarnings;
     }
   }
 
@@ -978,6 +1003,7 @@ export function useUserGroupsValidation(): UsersStepValidation {
 
   return {
     errors,
+    warnings,
     disabledNext: !canProceed,
   };
 }

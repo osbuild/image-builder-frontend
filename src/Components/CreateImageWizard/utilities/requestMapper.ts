@@ -455,18 +455,10 @@ function commonRequestToState(
         hasPassword: user.hasPassword || false,
       })) || [],
     userGroups:
-      request.customizations.groups?.map((group) => {
-        const userGroup: {
-          name: string;
-          gid?: number;
-        } = {
-          name: group.name,
-        };
-        if (group.gid !== undefined) {
-          userGroup.gid = group.gid;
-        }
-        return userGroup;
-      }) || [],
+      request.customizations.groups?.map((group) => ({
+        name: group.name,
+        ...(group.gid !== undefined && { gid: group.gid }),
+      })) || [],
     compliance:
       compliancePolicyID !== undefined
         ? {
