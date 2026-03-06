@@ -12,7 +12,7 @@ import { ibFrame, navigateToLandingPage } from './navHelpers';
 import isRhel from '../../src/Utilities/isRhel';
 
 /**
- * Clicks the create button, handles the modal, clicks the button again and selecets the BP in the list
+ * Clicks the create button, handles the modal, clicks the button again and selects the BP in the list
  * @param page - the page object
  * @param blueprintName - the name of the created blueprint
  */
@@ -61,6 +61,32 @@ export const registerLater = async (page: Page | FrameLocator) => {
   if (isHosted() || isRhel(getHostDistroKey())) {
     await page.getByRole('button', { name: 'Register' }).click();
     await page.getByRole('radio', { name: 'Register later' }).click();
+  }
+};
+
+/**
+ * Register automatically without selecting a specific activation key.
+ * Selects "Automatically register to Red Hat" and uses the default activation key.
+ * @param page - the page object (frame)
+ */
+export const registerAutomatically = async (page: Page | FrameLocator) => {
+  if (isHosted()) {
+    await page.getByRole('button', { name: 'Register' }).click();
+    await page
+      .getByRole('radio', { name: 'Automatically register to Red Hat' })
+      .click();
+    const insightsSwitch = page.getByRole('switch', {
+      name: 'Enable predictive analytics',
+    });
+    if (!(await insightsSwitch.isChecked())) {
+      await insightsSwitch.click();
+    }
+    const rhcSwitch = page.getByRole('switch', {
+      name: 'Enable remote remediations',
+    });
+    if (!(await rhcSwitch.isChecked())) {
+      await rhcSwitch.click();
+    }
   }
 };
 
