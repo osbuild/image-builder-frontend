@@ -1,7 +1,7 @@
 import {
   ListActivationKeysApiResponse,
   ShowActivationKeyApiResponse,
-} from '../../store/rhsmApi';
+} from '@/store/api/rhsm';
 
 export const mockActivationKeysResults = (): ListActivationKeysApiResponse => {
   return {
