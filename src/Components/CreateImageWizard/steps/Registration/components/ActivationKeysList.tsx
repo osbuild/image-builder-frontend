@@ -22,6 +22,11 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  useCreateActivationKeysMutation,
+  useListActivationKeysQuery,
+} from '@/store/api/rhsm';
+
 import ActivationKeyInformation from './ActivationKeyInformation';
 
 import {
@@ -30,10 +35,6 @@ import {
   CDN_STAGE_URL,
 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  useCreateActivationKeysMutation,
-  useListActivationKeysQuery,
-} from '../../../../../store/rhsmApi';
 import {
   changeActivationKey,
   changeBaseUrl,

@@ -18,6 +18,8 @@ import {
 } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+
 import {
   DiskReviewTable,
   FSReviewTable,
@@ -47,7 +49,6 @@ import {
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
-import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
 import {
   selectAapCallbackUrl,
   selectAapHostConfigKey,
