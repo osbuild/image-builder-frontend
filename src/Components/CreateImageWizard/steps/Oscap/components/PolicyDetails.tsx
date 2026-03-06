@@ -10,7 +10,8 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
+import { PolicyRead, usePolicyQuery } from '@/store/api/compliance';
+
 import { useAppSelector } from '../../../../../store/hooks';
 import { selectCompliancePolicyID } from '../../../../../store/wizardSlice';
 
