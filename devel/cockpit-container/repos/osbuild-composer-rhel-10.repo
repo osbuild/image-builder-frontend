@@ -1,0 +1,10 @@
+[copr:copr.fedorainfracloud.org:group_osbuild:osbuild-composer]
+name=Copr repo for osbuild-composer owned by @osbuild
+baseurl=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild-composer/rhel-10-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/@osbuild/osbuild-composer/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
