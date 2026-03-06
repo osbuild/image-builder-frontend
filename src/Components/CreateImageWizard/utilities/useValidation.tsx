@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode } from 'jwt-decode';
 
+import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+
 import { getListOfDuplicates } from './getListOfDuplicates';
 
 import {
@@ -14,7 +16,6 @@ import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
 import { selectIsOnPremise } from '../../../store/envSlice';
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
-import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import {
   selectAapCallbackUrl,
   selectAapHostConfigKey,

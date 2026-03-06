@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  ALL_CUSTOMIZATIONS,
-  DISTRO_DETAILS,
-} from '../../../store/distributions/constants';
-import { CustomizationType } from '../../../store/distributions/types';
+import { ALL_CUSTOMIZATIONS, type CustomizationType, DISTRO_DETAILS } from '..';
 
 describe('DISTRO_DETAILS configuration', () => {
   describe('unrestricted image types', () => {

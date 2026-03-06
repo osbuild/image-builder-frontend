@@ -20,6 +20,9 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { usePoliciesQuery } from '@/store/api/compliance';
+import { useCustomizationRestrictions } from '@/store/api/distributions';
+
 import OscapOnPremSpinner from './components/OnPremSpinner';
 import OscapOnPremWarning from './components/OnPremWarning';
 import PolicyDetails from './components/PolicyDetails';
@@ -40,8 +43,6 @@ import {
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
 } from '../../../../store/backendApi';
-import { usePoliciesQuery } from '../../../../store/complianceApi';
-import { useCustomizationRestrictions } from '../../../../store/distributions';
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';

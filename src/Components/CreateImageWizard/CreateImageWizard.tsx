@@ -15,6 +15,8 @@ import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizar
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { useCustomizationRestrictions } from '@/store/api/distributions';
+
 import AAPStep from './steps/AAP';
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
@@ -70,7 +72,6 @@ import {
   RHEL_9,
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
-import { useCustomizationRestrictions } from '../../store/distributions';
 import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
