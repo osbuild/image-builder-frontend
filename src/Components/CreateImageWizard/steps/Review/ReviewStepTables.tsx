@@ -10,12 +10,13 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { ContentOrigin } from '../../../../constants';
 import {
   ApiSnapshotForDate,
   useGetTemplateQuery,
   useListRepositoriesQuery,
-} from '../../../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
+
+import { ContentOrigin } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,

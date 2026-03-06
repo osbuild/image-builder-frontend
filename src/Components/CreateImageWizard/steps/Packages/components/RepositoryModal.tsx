@@ -11,12 +11,13 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
-import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '../../../../../constants';
 import {
   ApiRepositoryCollectionResponseRead,
   ApiRepositoryResponseRead,
   useCreateRepositoryMutation,
-} from '../../../../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
+
+import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
 import {
   addPackage,

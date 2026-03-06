@@ -20,11 +20,12 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
-import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../../constants';
 import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
-} from '../../../../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
+
+import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../../constants';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../../store/imageBuilderApi';

@@ -2,7 +2,8 @@ import {
   ApiRepositoryRpm,
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
-} from '../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
+
 import { RecommendPackageApiResponse } from '../../store/imageBuilderApi';
 
 export const mockSourcesPackagesResults = (

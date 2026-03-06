@@ -23,13 +23,14 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { useNavigate } from 'react-router-dom';
 import TOML from 'smol-toml';
 
-import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
-
 import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
-} from '../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
+
+import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
+
 import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import {

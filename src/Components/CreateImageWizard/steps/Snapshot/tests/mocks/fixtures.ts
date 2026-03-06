@@ -1,4 +1,4 @@
-import type { ApiTemplateResponseRead } from '@/store/contentSourcesApi';
+import type { ApiTemplateResponseRead } from '@/store/api/contentSources';
 
 export const mockTemplates: ApiTemplateResponseRead[] = [
   {

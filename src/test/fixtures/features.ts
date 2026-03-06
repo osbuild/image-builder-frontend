@@ -1,4 +1,4 @@
-import { ListFeaturesApiResponse } from '../../store/contentSourcesApi';
+import { ListFeaturesApiResponse } from '@/store/api/contentSources';
 
 export const mockedFeatureResponse: ListFeaturesApiResponse = {
   admintasks: {

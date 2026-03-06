@@ -1,9 +1,9 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
+import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import type { ActivationKeys } from '@/store/api/rhsm';
 
-import type { ApiRepositoryResponseRead } from './contentSourcesApi';
 import type {
   CustomRepository,
   Distributions,

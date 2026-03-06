@@ -28,6 +28,8 @@ import {
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
+import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
+
 import EmptySearch from './EmptySearch';
 import NoResultsFound from './NoResultsFound';
 import PackageInfoNotAvailablePopover from './PackageInfoNotAvailablePopover';
@@ -36,7 +38,6 @@ import Searching from './Searching';
 import TooShort from './TooShort';
 import TryLookingUnderIncluded from './TryLookingUnderIncluded';
 
-import { ApiRepositoryCollectionResponseRead } from '../../../../../store/contentSourcesApi';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { Module } from '../../../../../store/imageBuilderApi';

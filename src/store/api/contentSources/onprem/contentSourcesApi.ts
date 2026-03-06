@@ -1,13 +1,13 @@
-import { emptyCockpitApi } from './emptyCockpitApi';
+import { emptyContentSourcesApi } from './emptyContentSourcesApi';
 import type { Package, SearchRpmApiArg } from './types';
 
 import type {
   ListSnapshotsByDateApiArg,
   ListSnapshotsByDateApiResponse,
   SearchRpmApiResponse,
-} from '../service/contentSourcesApi';
+} from '../hosted/contentSourcesApi';
 
-export const contentSourcesApi = emptyCockpitApi.injectEndpoints({
+export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
   endpoints: (builder) => ({
     searchRpm: builder.mutation<SearchRpmApiResponse, SearchRpmApiArg>({
       queryFn: async (queryArgs, _, __, baseQuery) => {
@@ -33,25 +33,28 @@ export const contentSourcesApi = emptyCockpitApi.injectEndpoints({
           body: JSON.stringify(body),
         });
 
-        if (result?.error) {
+        if (result.error) {
           return { error: result.error };
         }
 
-        const mappedPackages = result.data.packages?.map(
-          ({ name, summary, version, release, arch }: Package) => ({
-            package_name: name,
-            summary: `${summary} (${version}-${release}.${arch})`,
-          })
-        ) ?? [];
+        const mappedPackages =
+          result.data.packages?.map(
+            ({ name, summary, version, release, arch }: Package) => ({
+              package_name: name,
+              summary: `${summary} (${version}-${release}.${arch})`,
+            }),
+          ) ?? [];
 
         const deduplicatedPackages = new Set<string>();
-        const resultPackages = mappedPackages.filter((pkg: {package_name: string, summary: string}) => {
-          if (deduplicatedPackages.has(pkg.package_name)) {
-            return false;
-          }
-          deduplicatedPackages.add(pkg.package_name);
-          return true;
-        });
+        const resultPackages = mappedPackages.filter(
+          (pkg: { package_name: string; summary: string }) => {
+            if (deduplicatedPackages.has(pkg.package_name)) {
+              return false;
+            }
+            deduplicatedPackages.add(pkg.package_name);
+            return true;
+          },
+        );
 
         return {
           data: resultPackages,

@@ -4,7 +4,7 @@ import {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
   ApiTemplateResponseRead,
-} from '@/store/contentSourcesApi';
+} from '@/store/api/contentSources';
 import { Architectures, BlueprintsResponse } from '@/store/imageBuilderApi';
 
 // Shared fetch mock instance

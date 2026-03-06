@@ -23,6 +23,14 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import {
+  ApiRepositoryResponseRead,
+  useGetTemplateQuery,
+  useListRepositoriesQuery,
+  useListRepositoryParametersQuery,
+  useListSnapshotsByDateMutation,
+} from '@/store/api/contentSources';
+
 import { BulkSelect } from './components/BulkSelect';
 import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
 import CustomEpelWarning from './components/CustomEpelWarning';
@@ -43,13 +51,6 @@ import {
   PAGINATION_COUNT,
   TEMPLATES_URL,
 } from '../../../../constants';
-import {
-  ApiRepositoryResponseRead,
-  useGetTemplateQuery,
-  useListRepositoriesQuery,
-  useListRepositoryParametersQuery,
-  useListSnapshotsByDateMutation,
-} from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeCustomRepositories,

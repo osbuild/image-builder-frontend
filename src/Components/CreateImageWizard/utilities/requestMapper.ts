@@ -1,6 +1,8 @@
 import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
+
 import { parseSizeUnit } from './parseSizeUnit';
 
 import {
@@ -56,7 +58,6 @@ import {
   User,
   VolumeGroup,
 } from '../../../store/imageBuilderApi';
-import { ApiRepositoryImportResponseRead } from '../../../store/service/contentSourcesApi';
 import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import {
   ComplianceType,
