@@ -17,13 +17,6 @@ import type {
   ImageTypes as CloudApiImageTypes,
   Customizations,
 } from './composerCloudApi';
-// We have to work around RTK query here, since it doesn't like splitting
-// out the same api into two separate apis. So, instead, we can just
-// inherit/import the `contentSourcesApi` and build on top of that.
-// This is fine since all the api endpoints for on-prem should query
-// the same unix socket. This allows us to split out the code a little
-// bit so that the `cockpitApi` doesn't become a monolith.
-import { contentSourcesApi } from './contentSourcesApi';
 import {
   type CockpitCreateBlueprintApiArg,
   type CockpitCreateBlueprintRequest,
@@ -45,6 +38,13 @@ import {
   mapOnPremToHosted,
 } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR, IMAGE_MODE } from '../../constants';
+// We have to work around RTK query here, since it doesn't like splitting
+// out the same api into two separate apis. So, instead, we can just
+// inherit/import the `contentSourcesApi` and build on top of that.
+// This is fine since all the api endpoints for on-prem should query
+// the same unix socket. This allows us to split out the code a little
+// bit so that the `cockpitApi` doesn't become a monolith.
+import { contentSourcesApi } from '../api/contentSources/onprem';
 import {
   BlueprintItem,
   ComposeBlueprintApiArg,

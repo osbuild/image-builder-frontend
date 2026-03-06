@@ -9,7 +9,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 
-import { ApiRepositoryResponseRead } from '../../../../../store/contentSourcesApi';
+import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 
 interface BulkSelectProps {
   selected: Set<string>;

@@ -18,8 +18,9 @@ import {
   ExternalLinkAltIcon,
 } from '@patternfly/react-icons';
 
+import { ApiRepositoryResponse } from '@/store/api/contentSources';
+
 import { CONTENT_URL } from '../../../../constants';
-import { ApiRepositoryResponse } from '../../../../store/contentSourcesApi';
 import {
   convertStringToDate,
   timestampToDisplayString,

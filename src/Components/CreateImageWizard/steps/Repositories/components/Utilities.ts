@@ -1,5 +1,6 @@
+import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
+
 import { ContentOrigin } from '../../../../../constants';
-import { ApiRepositoryResponseRead } from '../../../../../store/contentSourcesApi';
 import {
   CustomRepository,
   Repository,

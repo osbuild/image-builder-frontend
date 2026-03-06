@@ -18,7 +18,7 @@ module.exports = defineConfig([
     ignores: [
       '**/mockServiceWorker.js',
       '**/imageBuilderApi.ts',
-      '**/contentSourcesApi.ts',
+      '**/hosted/contentSourcesApi.ts',
       '**/rhsmApi.ts',
       '**/provisioningApi.ts',
       '**/complianceApi.ts',

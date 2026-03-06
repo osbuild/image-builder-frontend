@@ -17,6 +17,14 @@ import {
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
+import {
+  useGetTemplateQuery,
+  useListRepositoriesQuery,
+  useSearchPackageGroupMutation,
+  useSearchRepositoryModuleStreamsMutation,
+  useSearchRpmMutation,
+} from '@/store/api/contentSources';
+
 import CustomHelperText from './CustomHelperText';
 import PackagesTable from './PackagesTable';
 import { IncludedReposPopover, OtherReposPopover } from './RepoPopovers';
@@ -27,13 +35,6 @@ import {
   EPEL_10_REPO_DEFINITION,
 } from '../../../../../constants';
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
-import {
-  useGetTemplateQuery,
-  useListRepositoriesQuery,
-  useSearchPackageGroupMutation,
-  useSearchRepositoryModuleStreamsMutation,
-  useSearchRpmMutation,
-} from '../../../../../store/contentSourcesApi';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';

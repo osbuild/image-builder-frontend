@@ -4,7 +4,7 @@ import {
   ApiRepositoryResponseRead,
   ApiResponseMetadata,
   ListRepositoriesApiArg,
-} from '../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
 
 type repoArgs = {
   available_for_arch: ListRepositoriesApiArg['availableForArch'];

@@ -4,7 +4,7 @@ import {
   ApiTemplateResponse,
   ApiTemplateResponseRead,
   ListTemplatesApiArg,
-} from '../../store/contentSourcesApi';
+} from '@/store/api/contentSources';
 
 type templateArgs = {
   arch: ListTemplatesApiArg['arch'];

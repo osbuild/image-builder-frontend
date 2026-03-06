@@ -1,4 +1,5 @@
-import { ApiSearchRpmResponse } from '../../../../store/contentSourcesApi';
+import { ApiSearchRpmResponse } from '@/store/api/contentSources';
+
 import { Package } from '../../../../store/imageBuilderApi';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';

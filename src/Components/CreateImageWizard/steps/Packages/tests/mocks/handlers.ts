@@ -1,7 +1,7 @@
 import {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
-} from '@/store/contentSourcesApi';
+} from '@/store/api/contentSources';
 import {
   composeHandlers,
   createArchitecturesHandler,

@@ -15,7 +15,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { useListTemplatesQuery } from '@/store/contentSourcesApi';
+import { useListTemplatesQuery } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeTemplate,

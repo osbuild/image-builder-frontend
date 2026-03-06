@@ -1,7 +1,7 @@
 import type {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
-} from '@/store/contentSourcesApi';
+} from '@/store/api/contentSources';
 import type { Architectures } from '@/store/imageBuilderApi';
 
 export const mockSearchResults: ApiSearchRpmResponse[] = [
