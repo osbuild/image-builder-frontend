@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import {
   Alert,
-  Button,
   HelperText,
   HelperTextItem,
   MenuToggle,
@@ -13,9 +12,7 @@ import {
   SelectOption,
   TextInputGroup,
   TextInputGroupMain,
-  TextInputGroupUtilities,
 } from '@patternfly/react-core/dist/esm';
-import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -25,6 +22,7 @@ import {
 import { useKernelValidation } from '../../../utilities/useValidation';
 import { isKernelNameValid } from '../../../validators';
 
+const NONE_OPTION = 'None';
 const initialOptions = ['kernel', 'kernel-debug'];
 let kernelOptions = initialOptions;
 
@@ -75,7 +73,12 @@ const KernelName = () => {
 
   const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
     if (value && typeof value === 'string') {
-      if (/custom kernel package/i.test(value)) {
+      if (value === NONE_OPTION) {
+        setInputValue('');
+        setFilterValue('');
+        dispatch(changeKernelName(''));
+        setIsOpen(false);
+      } else if (/custom kernel package/i.test(value)) {
         if (!kernelOptions.some((kernel) => kernel === filterValue)) {
           kernelOptions = [...kernelOptions, filterValue];
         }
@@ -104,12 +107,6 @@ const KernelName = () => {
     setIsOpen(!isOpen);
   };
 
-  const onClearButtonClick = () => {
-    setInputValue('');
-    setFilterValue('');
-    dispatch(changeKernelName(''));
-  };
-
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
@@ -123,20 +120,9 @@ const KernelName = () => {
           onClick={onInputClick}
           onChange={onTextInputChange}
           autoComplete='off'
-          placeholder='Select kernel package'
+          placeholder='Select default kernel'
           isExpanded={isOpen}
         />
-
-        {kernel && (
-          <TextInputGroupUtilities>
-            <Button
-              icon={<TimesIcon />}
-              variant='plain'
-              onClick={onClearButtonClick}
-              aria-label='Clear input'
-            />
-          </TextInputGroupUtilities>
-        )}
       </TextInputGroup>
     </MenuToggle>
   );
@@ -161,6 +147,9 @@ const KernelName = () => {
           shouldFocusFirstItemOnOpen={false}
         >
           <SelectList>
+            <SelectOption key={NONE_OPTION} value={NONE_OPTION}>
+              {NONE_OPTION}
+            </SelectOption>
             {selectOptions.map((option) => (
               <SelectOption
                 key={option}
