@@ -1,4 +1,5 @@
 import { emptyContentSourcesApi } from './emptyContentSourcesApi';
+import { transformPackageResponse } from './helpers';
 import type { Package, SearchRpmApiArg } from './types';
 
 import type {
@@ -6,6 +7,10 @@ import type {
   ListSnapshotsByDateApiResponse,
   SearchRpmApiResponse,
 } from '../hosted/contentSourcesApi';
+
+type PackagesResponse = {
+  packages?: Package[];
+};
 
 export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -37,27 +42,25 @@ export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
           return { error: result.error };
         }
 
-        const mappedPackages =
-          result.data.packages?.map(
-            ({ name, summary, version, release, arch }: Package) => ({
-              package_name: name,
-              summary: `${summary} (${version}-${release}.${arch})`,
-            }),
-          ) ?? [];
+        if (!result.data) {
+          return { data: [] };
+        }
 
-        const deduplicatedPackages = new Set<string>();
-        const resultPackages = mappedPackages.filter(
-          (pkg: { package_name: string; summary: string }) => {
-            if (deduplicatedPackages.has(pkg.package_name)) {
-              return false;
-            }
-            deduplicatedPackages.add(pkg.package_name);
-            return true;
-          },
-        );
+        const data = result.data as PackagesResponse;
+        if (typeof data !== 'object') {
+          return {
+            error: {
+              message: 'Invalid response',
+              body: {
+                details:
+                  'Expected a packages response object but received malformed data',
+              },
+            },
+          };
+        }
 
         return {
-          data: resultPackages,
+          data: transformPackageResponse(data.packages),
         };
       },
     }),
