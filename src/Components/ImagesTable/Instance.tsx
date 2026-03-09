@@ -6,14 +6,17 @@ import { Button, Skeleton } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 
+import {
+  ComposesResponseItem,
+  ImageTypes,
+  useGetComposeStatusQuery,
+} from '@/store/api/backend';
 import { LocalUploadStatus } from '@/store/cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
 import { useCockpitMachinesAvailable } from '../../Hooks';
-import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
-import { ComposesResponseItem, ImageTypes } from '../../store/imageBuilderApi';
 import { hasBootcRequest, isAwss3UploadStatus } from '../../store/typeGuards';
 import {
   bootcReferenceToOSShortId,

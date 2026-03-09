@@ -13,11 +13,16 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 
-import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import {
+  BlueprintItem,
+  Distributions,
+  GetBlueprintComposesApiArg,
+  useGetBlueprintComposesQuery,
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
-} from '../../store/backendApi';
+} from '@/store/api/backend';
+
+import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilterAPI,
@@ -25,12 +30,6 @@ import {
 } from '../../store/BlueprintSlice';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
-import {
-  BlueprintItem,
-  Distributions,
-  GetBlueprintComposesApiArg,
-  useGetBlueprintComposesQuery,
-} from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';
 import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';

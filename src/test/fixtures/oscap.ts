@@ -1,9 +1,9 @@
-import { mockPolicies } from './compliance';
-
 import {
   GetOscapCustomizationsApiResponse,
   GetOscapProfilesApiResponse,
-} from '../../store/imageBuilderApi';
+} from '@/store/api/backend';
+
+import { mockPolicies } from './compliance';
 
 export const distributionOscapProfiles = (): GetOscapProfilesApiResponse => {
   return [

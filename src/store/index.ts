@@ -7,12 +7,12 @@ import {
   provisioningApi,
   rhsmApi,
 } from './api';
+import { imageBuilderApi } from './api/backend/hosted/enhancedImageBuilderApi';
 import { blueprintsSlice } from './BlueprintSlice';
 import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
 import { cockpitApi } from './cockpit/cockpitApi';
 import { envSlice, selectIsOnPremise } from './envSlice';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
-import { imageBuilderApi } from './service/enhancedImageBuilderApi';
 import { asDistribution } from './typeGuards';
 import wizardSlice, {
   changeArchitecture,

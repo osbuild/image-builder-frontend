@@ -18,7 +18,8 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
-} from '../../store/imageBuilderApi';
+} from '@/store/api/backend';
+
 import { isAzureUploadStatus } from '../../store/typeGuards';
 
 type LaunchProps = {

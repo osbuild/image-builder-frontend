@@ -1,8 +1,8 @@
+import type { Architectures } from '@/store/api/backend';
 import type {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
 } from '@/store/api/contentSources';
-import type { Architectures } from '@/store/imageBuilderApi';
 
 export const mockSearchResults: ApiSearchRpmResponse[] = [
   { package_name: 'test', summary: 'summary for test package' },

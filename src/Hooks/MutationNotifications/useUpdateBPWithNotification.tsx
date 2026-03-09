@@ -1,9 +1,9 @@
+import { useUpdateBlueprintMutation } from '@/store/api/backend';
+
 import {
   HookOptions,
   useMutationWithNotification,
 } from './useMutationWithNotification';
-
-import { useUpdateBlueprintMutation } from '../../store/backendApi';
 
 export const useUpdateBPWithNotification = (options?: HookOptions) => {
   const { trigger: updateBlueprint, ...rest } = useMutationWithNotification(

@@ -1,4 +1,4 @@
-import { Customizations } from '../../store/imageBuilderApi';
+import { Customizations } from '@/store/api/backend';
 
 export const customizations: Customizations = {
   custom_repositories: [

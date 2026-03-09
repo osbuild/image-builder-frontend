@@ -1,6 +1,5 @@
+import { Package } from '@/store/api/backend';
 import { ApiSearchRpmResponse } from '@/store/api/contentSources';
-
-import { Package } from '../../../../store/imageBuilderApi';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 

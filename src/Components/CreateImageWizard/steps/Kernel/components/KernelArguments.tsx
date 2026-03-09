@@ -2,8 +2,9 @@ import React from 'react';
 
 import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
+import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+
 import { useAppSelector } from '../../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../../store/imageBuilderApi';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {
   addKernelArg,

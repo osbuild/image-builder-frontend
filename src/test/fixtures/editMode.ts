@@ -1,4 +1,15 @@
 import {
+  BlueprintResponse,
+  CreateBlueprintRequest,
+  CustomRepository,
+  Disk,
+  File,
+  ImageRequest,
+  Module,
+  Repository,
+} from '@/store/api/backend';
+
+import {
   darkChocolateBlueprintResponse,
   mockBlueprintDescriptions,
   mockBlueprintIds,
@@ -20,16 +31,6 @@ import {
   UNIT_MIB,
   X86_64,
 } from '../../constants';
-import {
-  BlueprintResponse,
-  CreateBlueprintRequest,
-  CustomRepository,
-  Disk,
-  File,
-  ImageRequest,
-  Module,
-  Repository,
-} from '../../store/imageBuilderApi';
 
 // Registration
 export const expectedSubscription = {

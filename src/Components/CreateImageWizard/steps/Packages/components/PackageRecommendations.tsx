@@ -20,6 +20,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
+import { useRecommendPackageMutation } from '@/store/api/backend';
 import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
@@ -28,7 +29,6 @@ import {
 import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../../constants';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
-import { useRecommendPackageMutation } from '../../../../../store/imageBuilderApi';
 import {
   addPackage,
   selectArchitecture,

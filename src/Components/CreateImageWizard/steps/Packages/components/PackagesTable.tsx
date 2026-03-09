@@ -28,6 +28,7 @@ import {
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
+import { Module } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 
 import EmptySearch from './EmptySearch';
@@ -40,7 +41,6 @@ import TryLookingUnderIncluded from './TryLookingUnderIncluded';
 
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
-import { Module } from '../../../../../store/imageBuilderApi';
 import {
   addModule,
   addPackage,

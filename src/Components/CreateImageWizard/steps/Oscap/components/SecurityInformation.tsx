@@ -11,15 +11,14 @@ import {
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 
 import {
-  useGetComplianceCustomizationsQuery,
-  useGetOscapCustomizationsQuery,
-} from '../../../../../store/backendApi';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
-import { useAppSelector } from '../../../../../store/hooks';
-import {
   DistributionProfileItem,
   OpenScapProfile,
-} from '../../../../../store/imageBuilderApi';
+  useGetComplianceCustomizationsQuery,
+  useGetOscapCustomizationsQuery,
+} from '@/store/api/backend';
+
+import { selectIsOnPremise } from '../../../../../store/envSlice';
+import { useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {
   selectCompliancePolicyID,

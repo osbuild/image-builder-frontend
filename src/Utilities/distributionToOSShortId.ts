@@ -1,4 +1,4 @@
-import { Distributions } from '../store/imageBuilderApi';
+import { Distributions } from '../store/api/backend';
 
 /**
  * Maps image-builder distribution identifiers to libosinfo shortIDs.

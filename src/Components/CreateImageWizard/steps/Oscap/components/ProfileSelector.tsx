@@ -15,21 +15,20 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
-import { useSelectorHandlers } from './useSelectorHandlers';
-
-import {
-  useBackendPrefetch,
-  useGetOscapCustomizationsQuery,
-  useLazyGetOscapCustomizationsQuery,
-} from '../../../../../store/backendApi';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
   DistributionProfileResponse,
   OpenScap,
   OpenScapProfile,
-} from '../../../../../store/imageBuilderApi';
+  useBackendPrefetch,
+  useGetOscapCustomizationsQuery,
+  useLazyGetOscapCustomizationsQuery,
+} from '@/store/api/backend';
+
+import { useSelectorHandlers } from './useSelectorHandlers';
+
+import { selectIsOnPremise } from '../../../../../store/envSlice';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeFips,

@@ -4,9 +4,10 @@ import {
   TypedMutationTrigger,
 } from '@reduxjs/toolkit/dist/query/react';
 
+import { errorMessage } from '@/store/api/backend';
+
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
-import { errorMessage } from '../../store/service/enhancedImageBuilderApi';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getErrorDescription = (err: any, isOnPremise: boolean) => {

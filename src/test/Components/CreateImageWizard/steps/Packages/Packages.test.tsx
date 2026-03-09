@@ -5,12 +5,13 @@ import { Router as RemixRouter } from '@remix-run/router/dist/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import { CreateBlueprintRequest } from '@/store/api/backend';
+
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   RHEL_9,
 } from '../../../../../constants';
-import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   expectedAllPackageRecommendations,

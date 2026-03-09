@@ -1,4 +1,4 @@
-import { Architectures, Distributions } from '../../store/imageBuilderApi';
+import { Architectures, Distributions } from '@/store/api/backend';
 
 export const mockArchitecturesByDistro = (
   distro: Distributions,

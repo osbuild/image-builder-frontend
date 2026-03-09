@@ -3,7 +3,7 @@ import {
   FilesystemTyped,
   LogicalVolume,
   Minsize,
-} from '../../../../store/imageBuilderApi';
+} from '@/store/api/backend';
 
 export type PartitioningCustomization = 'disk' | 'fileSystem';
 

@@ -1,9 +1,9 @@
+import { useFixupBlueprintMutation } from '@/store/api/backend';
+
 import {
   HookOptions,
   useMutationWithNotification,
 } from './useMutationWithNotification';
-
-import { useFixupBlueprintMutation } from '../../store/imageBuilderApi';
 
 export const useFixupBPWithNotification = (options?: HookOptions) => {
   const { trigger: fixupBlueprint, ...rest } = useMutationWithNotification(

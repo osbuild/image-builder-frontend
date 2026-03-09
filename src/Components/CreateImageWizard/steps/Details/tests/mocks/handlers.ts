@@ -1,4 +1,4 @@
-import type { BlueprintsResponse } from '@/store/imageBuilderApi';
+import type { BlueprintsResponse } from '@/store/api/backend';
 import {
   composeHandlers,
   createBlueprintsHandler,

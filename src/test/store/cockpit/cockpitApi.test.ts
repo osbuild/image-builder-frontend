@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
+import type { OpenScapProfile } from '@/store/api/backend';
 import {
   type CockpitCreateBlueprintRequest,
   type CockpitImageRequest,
   toCloudAPIComposeRequest,
 } from '@/store/cockpit';
-import type { OpenScapProfile } from '@/store/service/imageBuilderApi';
 
 describe('toCloudAPIComposeRequest', () => {
   describe('basic conversion', () => {

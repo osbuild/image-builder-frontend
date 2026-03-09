@@ -1,32 +1,6 @@
 import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
-
-import { parseSizeUnit } from './parseSizeUnit';
-
-import {
-  CENTOS_9,
-  FIRST_BOOT_SERVICE_DATA,
-  FIRSTBOOT_PATH,
-  FIRSTBOOT_SERVICE_PATH,
-  IMAGE_MODE,
-  RHEL_10,
-  RHEL_8,
-  RHEL_9,
-  SATELLITE_PATH,
-  SATELLITE_SERVICE_DATA,
-  SATELLITE_SERVICE_PATH,
-} from '../../../constants';
-import { RootState } from '../../../store';
-import {
-  CockpitAwsUploadRequestOptions,
-  CockpitBlueprintResponse,
-  CockpitCreateBlueprintRequest,
-  CockpitImageRequest,
-  CockpitUploadTypes,
-} from '../../../store/cockpit/types';
-import { selectIsOnPremise } from '../../../store/envSlice';
 import {
   AapRegistration,
   AwsUploadRequestOptions,
@@ -57,7 +31,33 @@ import {
   UploadTypes,
   User,
   VolumeGroup,
-} from '../../../store/imageBuilderApi';
+} from '@/store/api/backend';
+import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
+import {
+  CockpitAwsUploadRequestOptions,
+  CockpitBlueprintResponse,
+  CockpitCreateBlueprintRequest,
+  CockpitImageRequest,
+  CockpitUploadTypes,
+} from '@/store/cockpit';
+
+import { parseSizeUnit } from './parseSizeUnit';
+
+import {
+  CENTOS_9,
+  FIRST_BOOT_SERVICE_DATA,
+  FIRSTBOOT_PATH,
+  FIRSTBOOT_SERVICE_PATH,
+  IMAGE_MODE,
+  RHEL_10,
+  RHEL_8,
+  RHEL_9,
+  SATELLITE_PATH,
+  SATELLITE_SERVICE_DATA,
+  SATELLITE_SERVICE_PATH,
+} from '../../../constants';
+import { RootState } from '../../../store';
+import { selectIsOnPremise } from '../../../store/envSlice';
 import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import {
   ComplianceType,

@@ -10,6 +10,8 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { CreateBlueprintRequest } from '@/store/api/backend';
+
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
@@ -19,7 +21,6 @@ import {
 import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
-import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 

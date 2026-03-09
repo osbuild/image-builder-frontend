@@ -8,9 +8,10 @@ import {
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
+import { Distributions } from '@/store/api/backend';
+
 import { RHEL_10 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { Distributions } from '../../../../../store/imageBuilderApi';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeBlueprintMode,

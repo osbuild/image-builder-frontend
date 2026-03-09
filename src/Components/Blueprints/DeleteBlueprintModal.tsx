@@ -11,6 +11,12 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import {
+  backendApi,
+  GetBlueprintsApiArg,
+  useGetBlueprintsQuery,
+} from '@/store/api/backend';
+
+import {
   AMPLITUDE_MODULE_NAME,
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
@@ -19,7 +25,6 @@ import {
   useDeleteBPWithNotification as useDeleteBlueprintMutation,
   useGetUser,
 } from '../../Hooks';
-import { backendApi, useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -29,7 +34,6 @@ import {
 } from '../../store/BlueprintSlice';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { GetBlueprintsApiArg } from '../../store/imageBuilderApi';
 
 interface DeleteBlueprintModalProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;

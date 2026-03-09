@@ -18,12 +18,13 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { generateDefaultName } from './useGenerateDefaultName';
-
 import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
-} from '../../store/imageBuilderApi';
+} from '@/store/api/backend';
+
+import { generateDefaultName } from './useGenerateDefaultName';
+
 import {
   isGcpUploadRequestOptions,
   isGcpUploadStatus,
