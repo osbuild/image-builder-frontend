@@ -11,17 +11,15 @@ import { fsinfo } from 'cockpit/fsinfo';
 import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
-import type {
-  Blueprint as CloudApiBlueprint,
-  ComposeRequest as CloudApiComposeRequest,
-  ImageTypes as CloudApiImageTypes,
-  Customizations,
-} from './composerCloudApi';
 import {
+  type Blueprint as CloudApiBlueprint,
+  type ComposeRequest as CloudApiComposeRequest,
+  type ImageTypes as CloudApiImageTypes,
   type CockpitCreateBlueprintApiArg,
   type CockpitCreateBlueprintRequest,
   type CockpitImageRequest,
   type CockpitUpdateBlueprintApiArg,
+  type Customizations,
   GetArchitecturesApiArg,
   GetOscapCustomizationsApiArg,
   GetOscapProfilesApiArg,

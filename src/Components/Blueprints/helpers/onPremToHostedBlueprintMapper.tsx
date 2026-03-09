@@ -1,5 +1,6 @@
+import { Blueprint as CloudApiBlueprint } from '@/store/cockpit';
+
 import { RHEL_10 } from '../../../constants';
-import { Blueprint as CloudApiBlueprint } from '../../../store/cockpit/composerCloudApi';
 import {
   BlueprintExportResponse,
   Container,

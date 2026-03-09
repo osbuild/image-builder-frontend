@@ -1,4 +1,6 @@
-import { Bootc } from './cockpit/composerCloudApi';
+// import from ./cockpit/types to break circular dependency
+import { Bootc } from './cockpit/types';
+
 import {
   Awss3UploadStatus,
   AwsUploadRequestOptions,

@@ -1,5 +1,3 @@
-import { Bootc } from './composerCloudApi';
-
 import {
   Awss3UploadRequestOptions,
   AwsUploadRequestOptions,
@@ -13,7 +11,9 @@ import {
   ImageRequest,
   UpdateBlueprintApiArg,
   UploadTypes,
-} from '../imageBuilderApi';
+} from '@/store/imageBuilderApi';
+
+import { Bootc } from './generated';
 
 export type AWSWorkerConfig = {
   bucket?: string | undefined;
@@ -125,3 +125,12 @@ export type PodmanImageInfo = {
 
 export type PodmanImagesArg = void;
 export type PodmanImagesResponse = PodmanImageInfo[];
+
+export type {
+  Blueprint,
+  Bootc,
+  ComposeRequest,
+  Customizations,
+  ImageTypes,
+  LocalUploadStatus,
+} from './generated';
