@@ -866,11 +866,6 @@ export const wizardSlice = createSlice({
         state.fileSystem.partitions.splice(index, 1);
       }
     },
-    changePartitionOrder: (state, action: PayloadAction<string[]>) => {
-      state.fileSystem.partitions = state.fileSystem.partitions.sort(
-        (a, b) => action.payload.indexOf(a.id) - action.payload.indexOf(b.id),
-      );
-    },
     changePartitionMountpoint: (
       state,
       action: PayloadAction<{
@@ -1603,7 +1598,6 @@ export const {
   changePartitionMinSize,
   changePartitionType,
   changePartitionName,
-  changePartitionOrder,
   changeDiskMinsize,
   changeDiskType,
   addDiskPartition,
