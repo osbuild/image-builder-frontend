@@ -1,7 +1,5 @@
-import { emptyCockpitApi } from '@/store/cockpit/emptyCockpitApi';
+import { emptyOnPremApi } from '@/store/api/shared';
 
-// NOTE: we are re-exporting the 'emptyCockpitApi' as the `emptyContentSourcesApi`
-// to maintain consistency across the modules. RTK Query requires endpoints that
-// share a backend to use the same API slice to properly manage caching and request
-// deduplication, for on-prem, all queries share the same base URL and unix socket.
-export const emptyContentSourcesApi = emptyCockpitApi;
+// NOTE: we are re-exporting this for consistency with
+// other api modules in this directory.
+export const emptyContentSourcesApi = emptyOnPremApi;

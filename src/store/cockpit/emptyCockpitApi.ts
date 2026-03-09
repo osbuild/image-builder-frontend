@@ -1,11 +1,5 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { emptyOnPremApi } from '../api';
 
-import { baseQuery } from './baseQuery';
-
-export const emptyCockpitApi = createApi({
-  reducerPath: 'cockpitApi',
-  baseQuery: baseQuery({
-    baseUrl: '/api/image-builder-composer/v2',
-  }),
-  endpoints: () => ({}),
-});
+// NOTE: we are re-exporting this for consistency with
+// other api modules in this directory.
+export const emptyCockpitApi = emptyOnPremApi;

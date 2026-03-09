@@ -1,7 +1,7 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import cockpit from 'cockpit';
 
-import type { Headers, Method, Params } from './types.js';
+import type { Headers, Method, Params } from './types';
 
 export const baseQuery =
   (
