@@ -237,7 +237,7 @@ export const createCompliancePolicy = async (
     await page.getByRole('button', { name: 'Next', exact: true }).click();
     // Skip Rules step
     await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Next' }).click(); // temporary change to unblock us while Compliance solves the issue
+    await page.getByRole('button', { name: 'Finish' }).click();
     await page
       .getByRole('button', { name: 'Return to application' })
       .click({ timeout: 2 * 60 * 1000 }); // Policy creation can take up to 2 minutes
