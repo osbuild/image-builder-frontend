@@ -2,13 +2,14 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   GcpUploadRequestOptions,
   ImageRequest,
   ImageTypes,
-} from '../../../../../store/imageBuilderApi';
+} from '@/store/api/backend';
+
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { gcpCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {

@@ -9,6 +9,8 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
+import { Distributions } from '@/store/api/backend';
+
 import {
   ON_PREM_RELEASES,
   RELEASES,
@@ -24,7 +26,6 @@ import {
 } from '../../../../../constants';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { Distributions } from '../../../../../store/imageBuilderApi';
 import {
   changeDistribution,
   changeRegistrationType,

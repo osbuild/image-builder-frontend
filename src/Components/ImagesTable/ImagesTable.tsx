@@ -31,6 +31,16 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 import { useDispatch } from 'react-redux';
 
+import {
+  BlueprintItem,
+  ComposesResponseItem,
+  GetBlueprintComposesApiArg,
+  GetBlueprintsApiArg,
+  useGetBlueprintComposesQuery,
+  useGetBlueprintsQuery,
+  useGetComposesQuery,
+  useGetComposeStatusQuery,
+} from '@/store/api/backend';
 import { LocalUploadStatus } from '@/store/cockpit';
 
 import ImagesEmptyState from './EmptyState';
@@ -63,12 +73,6 @@ import {
   useGetUser,
 } from '../../Hooks';
 import {
-  useGetBlueprintComposesQuery,
-  useGetBlueprintsQuery,
-  useGetComposesQuery,
-  useGetComposeStatusQuery,
-} from '../../store/backendApi';
-import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
   selectBlueprintVersionFilterAPI,
@@ -79,12 +83,6 @@ import {
 } from '../../store/BlueprintSlice';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
-import {
-  BlueprintItem,
-  ComposesResponseItem,
-  GetBlueprintComposesApiArg,
-  GetBlueprintsApiArg,
-} from '../../store/imageBuilderApi';
 import { hasBootcRequest } from '../../store/typeGuards';
 import { bootcReferenceToOSDisplayLabel } from '../../Utilities/distributionToOSShortId';
 import {

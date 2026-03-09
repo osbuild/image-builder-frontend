@@ -10,6 +10,8 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
+import { BlueprintItem } from '@/store/api/backend';
+
 import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
 import {
   selectSelectedBlueprintId,
@@ -17,7 +19,6 @@ import {
 } from '../../store/BlueprintSlice';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { BlueprintItem } from '../../store/imageBuilderApi';
 
 type blueprintProps = {
   blueprint: BlueprintItem;

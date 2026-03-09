@@ -5,7 +5,7 @@ import type {
   IBPackageWithRepositoryInfo,
   PackageRepository,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
-import type { Module } from '@/store/imageBuilderApi';
+import type { Module } from '@/store/api/backend';
 import wizardReducer, {
   addModule,
   addPackage,

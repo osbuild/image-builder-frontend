@@ -20,6 +20,13 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';
 
+import {
+  BlueprintItem,
+  GetBlueprintsApiArg,
+  imageBuilderApi,
+  useGetBlueprintsQuery,
+} from '@/store/api/backend';
+
 import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
 
@@ -29,7 +36,6 @@ import {
   PAGINATION_OFFSET,
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
-import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -41,11 +47,6 @@ import {
 } from '../../store/BlueprintSlice';
 import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  BlueprintItem,
-  GetBlueprintsApiArg,
-} from '../../store/imageBuilderApi';
-import { imageBuilderApi } from '../../store/service/enhancedImageBuilderApi';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;

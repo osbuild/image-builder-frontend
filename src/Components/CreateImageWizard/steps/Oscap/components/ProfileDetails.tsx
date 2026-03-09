@@ -10,13 +10,14 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
-import { useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
   OpenScap,
   OpenScapProfile,
-} from '../../../../../store/imageBuilderApi';
+  useGetOscapCustomizationsQuery,
+} from '@/store/api/backend';
+
+import { useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {
   selectComplianceProfileID,

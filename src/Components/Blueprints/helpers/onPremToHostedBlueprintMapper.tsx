@@ -1,6 +1,3 @@
-import { Blueprint as CloudApiBlueprint } from '@/store/cockpit';
-
-import { RHEL_10 } from '../../../constants';
 import {
   BlueprintExportResponse,
   Container,
@@ -18,7 +15,10 @@ import {
   OpenScap,
   Services,
   Timezone,
-} from '../../../store/imageBuilderApi';
+} from '@/store/api/backend';
+import { Blueprint as CloudApiBlueprint } from '@/store/cockpit';
+
+import { RHEL_10 } from '../../../constants';
 import { getHostDistro } from '../../../Utilities/getHostInfo';
 
 // Blueprint as defined by the osbuild-composer cloudapi's /compose

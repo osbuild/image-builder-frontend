@@ -1,4 +1,4 @@
-import type { ImageTypes } from './store/imageBuilderApi';
+import type { ImageTypes } from './store/api/backend';
 
 export const IMAGE_BUILDER_API = '/api/image-builder/v1';
 export const RHSM_API = '/api/rhsm/v2';

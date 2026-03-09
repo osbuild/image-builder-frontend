@@ -2,9 +2,10 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+
 import MaskedServicesPopover from './MaskedServicesPopover';
 
-import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
 import { useAppSelector } from '../../../../../store/hooks';
 import {
   addDisabledService,

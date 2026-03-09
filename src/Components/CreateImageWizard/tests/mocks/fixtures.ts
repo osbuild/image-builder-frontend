@@ -1,4 +1,4 @@
-import { Architectures } from '@/store/imageBuilderApi';
+import { Architectures } from '@/store/api/backend';
 
 export const mockArchitectures: Record<string, Architectures> = {
   'rhel-8': [

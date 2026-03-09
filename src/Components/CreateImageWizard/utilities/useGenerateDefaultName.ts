@@ -1,4 +1,4 @@
-import { Distributions, ImageRequest } from '../../../store/imageBuilderApi';
+import { Distributions, ImageRequest } from '@/store/api/backend';
 
 export const generateDefaultName = (
   distribution: Distributions | 'image-mode',

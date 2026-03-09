@@ -1,4 +1,4 @@
-import { imageBuilderApi } from '@/store/imageBuilderApi';
+import { imageBuilderApi } from '@/store/api/backend';
 
 import { DISTRO_DETAILS } from './constants';
 import {

@@ -11,7 +11,7 @@ import {
   ImageRequest,
   UpdateBlueprintApiArg,
   UploadTypes,
-} from '@/store/imageBuilderApi';
+} from '@/store/api/backend';
 
 import { Bootc } from './generated';
 

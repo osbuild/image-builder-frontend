@@ -3,15 +3,13 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
+import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
+
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   PROVISIONING_API,
 } from '../../../../../constants';
-import {
-  CreateBlueprintRequest,
-  ImageRequest,
-} from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { awsCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';

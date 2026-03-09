@@ -20,6 +20,11 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import {
+  useBackendPrefetch,
+  useGetOscapCustomizationsQuery,
+  useGetOscapProfilesQuery,
+} from '@/store/api/backend';
 import { usePoliciesQuery } from '@/store/api/compliance';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 
@@ -38,11 +43,6 @@ import {
   OSCAP_URL,
 } from '../../../../constants';
 import { useGetUser } from '../../../../Hooks';
-import {
-  useBackendPrefetch,
-  useGetOscapCustomizationsQuery,
-  useGetOscapProfilesQuery,
-} from '../../../../store/backendApi';
 import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';

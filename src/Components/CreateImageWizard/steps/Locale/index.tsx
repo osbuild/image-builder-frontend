@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 
 import { Content, Form, Spinner, Title } from '@patternfly/react-core';
 
+import { useGetArchitecturesQuery } from '@/store/api/backend';
 import { useSearchLanguagePacks } from '@/store/api/distributions';
 
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
-import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';
 import {

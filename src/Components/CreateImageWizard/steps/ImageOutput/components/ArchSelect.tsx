@@ -9,10 +9,11 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
+import { ImageRequest } from '@/store/api/backend';
+
 import { ARCHES } from '../../../../../constants';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { ImageRequest } from '../../../../../store/imageBuilderApi';
 import {
   changeArchitecture,
   selectArchitecture,

@@ -15,7 +15,7 @@ import type {
   Repository,
   Timezone,
   User,
-} from './imageBuilderApi';
+} from './api/backend';
 
 import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSystem';
 import type {

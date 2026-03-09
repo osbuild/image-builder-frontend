@@ -24,6 +24,11 @@ import { useNavigate } from 'react-router-dom';
 import TOML from 'smol-toml';
 
 import {
+  BlueprintExportResponse,
+  BlueprintItem,
+  CustomRepository,
+} from '@/store/api/backend';
+import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
@@ -33,11 +38,6 @@ import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
-import {
-  BlueprintExportResponse,
-  BlueprintItem,
-  CustomRepository,
-} from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
 import {

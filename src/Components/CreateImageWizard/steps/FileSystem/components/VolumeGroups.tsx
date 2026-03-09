@@ -13,12 +13,13 @@ import {
 import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
+import { VolumeGroup } from '@/store/api/backend';
+
 import FileSystemTable from './FileSystemTable';
 import MinimumSize from './MinimumSize';
 import SizeUnit from './SizeUnit';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { VolumeGroup } from '../../../../../store/imageBuilderApi';
 import {
   addLogicalVolumeToVolumeGroup,
   changeDiskPartitionName,

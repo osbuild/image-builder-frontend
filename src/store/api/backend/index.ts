@@ -1,7 +1,11 @@
-import * as cockpitQueries from './cockpit/cockpitApi';
-import { cockpitApi } from './cockpit/enhancedCockpitApi';
-import { imageBuilderApi } from './service/enhancedImageBuilderApi';
-import * as serviceQueries from './service/imageBuilderApi';
+import {
+  errorMessage,
+  imageBuilderApi,
+} from './hosted/enhancedImageBuilderApi';
+import * as serviceQueries from './hosted/imageBuilderApi';
+
+import * as cockpitQueries from '../../cockpit/cockpitApi';
+import { cockpitApi } from '../../cockpit/enhancedCockpitApi';
 
 export const useGetArchitecturesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetArchitecturesQuery
@@ -72,3 +76,20 @@ export const useBackendPrefetch = process.env.IS_ON_PREMISE
 export const backendApi = process.env.IS_ON_PREMISE
   ? cockpitApi
   : imageBuilderApi;
+
+// These aren't used by on-prem so they aren't covered by the conditional
+// exports above. Let's re-export them so we can consolidate our imports
+// in other parts of the project.
+export {
+  useComposeImageMutation,
+  useExportBlueprintQuery,
+  useFixupBlueprintMutation,
+  useGetPackagesQuery,
+  useLazyExportBlueprintQuery,
+  useLazyGetPackagesQuery,
+  useRecommendPackageMutation,
+} from './hosted';
+
+export { cockpitApi, errorMessage, imageBuilderApi };
+// Re-export types from hosted (these are the canonical types for the API)
+export type * from './hosted';

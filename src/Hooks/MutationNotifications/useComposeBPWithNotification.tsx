@@ -1,6 +1,6 @@
-import { useMutationWithNotification } from './useMutationWithNotification';
+import { useComposeBlueprintMutation } from '@/store/api/backend';
 
-import { useComposeBlueprintMutation } from '../../store/backendApi';
+import { useMutationWithNotification } from './useMutationWithNotification';
 
 export const useComposeBPWithNotification = () => {
   const { trigger: composeBlueprint, ...rest } = useMutationWithNotification(

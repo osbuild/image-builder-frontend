@@ -18,12 +18,13 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 
-import { selectPathResolver } from '../../store/envSlice';
-import { useAppSelector } from '../../store/hooks';
 import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
-} from '../../store/imageBuilderApi';
+} from '@/store/api/backend';
+
+import { selectPathResolver } from '../../store/envSlice';
+import { useAppSelector } from '../../store/hooks';
 import { isOciUploadStatus } from '../../store/typeGuards';
 
 type LaunchProps = {

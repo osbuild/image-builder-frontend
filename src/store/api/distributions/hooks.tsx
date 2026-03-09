@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 
 import { simpleTargetNames } from '@/constants';
+import { ImageTypes } from '@/store/api/backend';
 import { useSearchRpmMutation } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/envSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { ImageTypes } from '@/store/imageBuilderApi';
 import { asDistribution, isImageType } from '@/store/typeGuards';
 import {
   selectArchitecture,
