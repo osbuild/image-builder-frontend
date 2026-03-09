@@ -1,4 +1,4 @@
-import { emptyOnPremApi as api } from "../api/shared/emptyOnPremApi";
+import { emptyOnPremApi as api } from "../../api/shared/emptyOnPremApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     getComposeStatus: build.query<

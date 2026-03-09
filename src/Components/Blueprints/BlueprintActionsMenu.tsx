@@ -14,9 +14,10 @@ import TOML from 'smol-toml';
 // Because the blueprint formats differ, using the 'backendApi'
 // abstraction would be misleading.  Import and handle each environment
 // separately.
+import type { Blueprint as CockpitExportResponse } from '@/store/cockpit';
+
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useLazyExportBlueprintCockpitQuery } from '../../store/cockpit/cockpitApi';
-import type { Blueprint as CockpitExportResponse } from '../../store/cockpit/composerCloudApi';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import {

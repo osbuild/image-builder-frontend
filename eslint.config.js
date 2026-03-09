@@ -22,8 +22,8 @@ module.exports = defineConfig([
       '**/rhsmApi.ts',
       '**/provisioningApi.ts',
       '**/complianceApi.ts',
-      '**/composerCloudApi.ts'
-    ]
+      '**/types/generated.ts',
+    ],
   },
 
   { // Base config for js/ts files
