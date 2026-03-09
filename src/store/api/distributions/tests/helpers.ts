@@ -6,11 +6,11 @@ import {
   type CustomizationType,
 } from '..';
 
-export interface ComputeRestrictionStrategyArgs {
+export type ComputeRestrictionStrategyArgs = {
   isImageMode: boolean;
   isOnPremise: boolean;
   distro?: string;
-}
+};
 
 export const computeRestrictionStrategy = ({
   isImageMode,
