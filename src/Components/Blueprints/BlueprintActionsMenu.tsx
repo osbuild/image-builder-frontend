@@ -16,12 +16,12 @@ import TOML from 'smol-toml';
 // separately.
 import {
   BlueprintExportResponse,
+  useLazyExportBlueprintCockpitQuery,
   useLazyExportBlueprintQuery,
 } from '@/store/api/backend';
 import type { Blueprint as CockpitExportResponse } from '@/store/cockpit';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
-import { useLazyExportBlueprintCockpitQuery } from '../../store/cockpit/cockpitApi';
 import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 

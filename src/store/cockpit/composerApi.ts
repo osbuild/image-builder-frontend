@@ -161,7 +161,7 @@ const getCloudConfigs = async () => {
   }
 };
 
-export const toCloudAPIComposeRequest = (
+export const toComposerComposeRequest = (
   blueprint: CockpitCreateBlueprintRequest,
   distribution: string,
   image_requests: CockpitImageRequest[],
@@ -235,7 +235,7 @@ export const toCloudAPIComposeRequest = (
   };
 };
 
-export const cockpitApi = contentSourcesApi.injectEndpoints({
+export const composerApi = contentSourcesApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getArchitectures: builder.query<
@@ -642,7 +642,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                 body: JSON.stringify(
                   // since this is the request that gets sent to the cloudapi
                   // backend, we need to modify it slightly
-                  toCloudAPIComposeRequest(
+                  toComposerComposeRequest(
                     blueprint,
                     crcComposeRequest.distribution,
                     [ir],
@@ -935,4 +935,4 @@ export const {
   useUpdateWorkerConfigMutation,
   usePodmanImagesQuery,
   useLazyPodmanImagesQuery,
-} = cockpitApi;
+} = composerApi;

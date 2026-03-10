@@ -16,9 +16,9 @@ import { mockPodmanImages } from './mocks';
 const mockRefetch = vi.fn();
 const mockUsePodmanImagesQuery = vi.fn();
 
-vi.mock('@/store/cockpit/cockpitApi', async (importOriginal) => {
+vi.mock('@/store/cockpit/composerApi', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@/store/cockpit/cockpitApi')>();
+    await importOriginal<typeof import('@/store/cockpit/composerApi')>();
   return {
     ...actual,
     usePodmanImagesQuery: () => mockUsePodmanImagesQuery(),

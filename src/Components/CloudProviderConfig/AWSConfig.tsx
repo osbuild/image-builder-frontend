@@ -12,6 +12,11 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
+import {
+  AWSWorkerConfig,
+  WorkerConfigResponse,
+} from '@/store/api/backend/onprem';
+
 import { isAwsBucketValid, isAwsCredsPathValid } from './validators';
 
 import {
@@ -21,10 +26,6 @@ import {
   selectAWSBucketName,
   selectAWSCredsPath,
 } from '../../store/cloudProviderConfigSlice';
-import {
-  AWSWorkerConfig,
-  WorkerConfigResponse,
-} from '../../store/cockpit/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 
