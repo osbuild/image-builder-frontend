@@ -1,18 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  type ComposerCreateBlueprintRequest,
+  type ComposerImageRequest,
   type OpenScapProfile,
   toComposerComposeRequest,
 } from '@/store/api/backend';
-import {
-  type CockpitCreateBlueprintRequest,
-  type CockpitImageRequest,
-} from '@/store/cockpit';
 
 describe('toComposerComposeRequest', () => {
   describe('basic conversion', () => {
     it('should convert a minimal blueprint without customizations', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -21,7 +19,7 @@ describe('toComposerComposeRequest', () => {
       };
 
       const distribution = 'rhel-9';
-      const imageRequests: CockpitImageRequest[] = [
+      const imageRequests: ComposerImageRequest[] = [
         {
           architecture: 'x86_64',
           image_type: 'guest-image',
@@ -58,7 +56,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should preserve basic customizations that are compatible', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -95,7 +93,7 @@ describe('toComposerComposeRequest', () => {
 
   describe('subscription handling', () => {
     it('should transform subscription from cockpit format to cloud API format', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -125,7 +123,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle subscription with optional fields', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -157,7 +155,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle subscription alongside other customizations', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -190,7 +188,7 @@ describe('toComposerComposeRequest', () => {
     const password = process.env.TEST_PASSWORD || 'hashedpassword'; // not secret
 
     it('should convert ssh_key to key for cloud API', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -228,7 +226,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle users alongside other customizations', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -256,7 +254,7 @@ describe('toComposerComposeRequest', () => {
 
   describe('openscap handling', () => {
     it('should transform openscap profile to only include profile_id', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -278,7 +276,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle openscap alongside other customizations', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -303,7 +301,7 @@ describe('toComposerComposeRequest', () => {
 
   describe('image_requests handling', () => {
     it('should transform a single image request', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -311,7 +309,7 @@ describe('toComposerComposeRequest', () => {
         image_requests: [],
       };
 
-      const imageRequests: CockpitImageRequest[] = [
+      const imageRequests: ComposerImageRequest[] = [
         {
           architecture: 'x86_64',
           image_type: 'ami',
@@ -347,7 +345,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should transform multiple image requests', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -355,7 +353,7 @@ describe('toComposerComposeRequest', () => {
         image_requests: [],
       };
 
-      const imageRequests: CockpitImageRequest[] = [
+      const imageRequests: ComposerImageRequest[] = [
         {
           architecture: 'x86_64',
           image_type: 'guest-image',
@@ -390,7 +388,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle different upload request types', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -398,7 +396,7 @@ describe('toComposerComposeRequest', () => {
         image_requests: [],
       };
 
-      const imageRequests: CockpitImageRequest[] = [
+      const imageRequests: ComposerImageRequest[] = [
         {
           architecture: 'x86_64',
           image_type: 'vhd',
@@ -430,7 +428,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should always set repositories to empty array', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -438,7 +436,7 @@ describe('toComposerComposeRequest', () => {
         image_requests: [],
       };
 
-      const imageRequests: CockpitImageRequest[] = [
+      const imageRequests: ComposerImageRequest[] = [
         {
           architecture: 'x86_64',
           image_type: 'guest-image',
@@ -461,7 +459,7 @@ describe('toComposerComposeRequest', () => {
 
   describe('distribution handling', () => {
     it('should pass through the distribution parameter', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -474,7 +472,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle different distribution versions', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',
@@ -499,7 +497,7 @@ describe('toComposerComposeRequest', () => {
 
   describe('complex scenarios', () => {
     it('should handle blueprint with subscription, openscap, and other customizations', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'secure-server',
         description: 'Secure server blueprint',
         distribution: 'rhel-9',
@@ -530,7 +528,7 @@ describe('toComposerComposeRequest', () => {
         image_requests: [],
       };
 
-      const imageRequests: CockpitImageRequest[] = [
+      const imageRequests: ComposerImageRequest[] = [
         {
           architecture: 'x86_64',
           image_type: 'ami',
@@ -578,7 +576,7 @@ describe('toComposerComposeRequest', () => {
     });
 
     it('should handle empty image_requests array', () => {
-      const blueprint: CockpitCreateBlueprintRequest = {
+      const blueprint: ComposerCreateBlueprintRequest = {
         name: 'test-blueprint',
         description: 'Test description',
         distribution: 'rhel-9',

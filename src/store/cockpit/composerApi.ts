@@ -12,20 +12,20 @@ import TOML from 'smol-toml';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  type Blueprint as CloudApiBlueprint,
-  type ComposeRequest as CloudApiComposeRequest,
-  type ImageTypes as CloudApiImageTypes,
-  type CockpitCreateBlueprintApiArg,
-  type CockpitCreateBlueprintRequest,
-  type CockpitImageRequest,
-  type CockpitUpdateBlueprintApiArg,
-  type Customizations,
-  GetArchitecturesApiArg,
-  GetOscapCustomizationsApiArg,
-  GetOscapProfilesApiArg,
-  PodmanImageInfo,
-  PodmanImagesArg,
-  PodmanImagesResponse,
+  type ComposerBlueprint as Blueprint,
+  type ComposerCreateBlueprintApiArg,
+  type ComposerCreateBlueprintRequest,
+  type ComposerComposeRequest as ComposeRequest,
+  type ComposerGetArchitecturesApiArg,
+  type ComposerGetOscapCustomizationsApiArg,
+  type ComposerGetOscapProfilesApiArg,
+  type ComposerImageRequest,
+  type ComposerUpdateBlueprintApiArg,
+  type ComposerCustomizations as Customizations,
+  type ComposerImageTypes as ImageTypes,
+  type PodmanImageInfo,
+  type PodmanImagesArg,
+  type PodmanImagesResponse,
   type UpdateWorkerConfigApiArg,
   type WorkerConfigFile,
   type WorkerConfigResponse,
@@ -162,10 +162,10 @@ const getCloudConfigs = async () => {
 };
 
 export const toComposerComposeRequest = (
-  blueprint: CockpitCreateBlueprintRequest,
+  blueprint: ComposerCreateBlueprintRequest,
   distribution: string,
-  image_requests: CockpitImageRequest[],
-): CloudApiComposeRequest => {
+  image_requests: ComposerImageRequest[],
+): ComposeRequest => {
   // subscription, users & openscap are the only options
   // that aren't compatibile with the on-prem customizations,
   // so we have to handle those separately
@@ -223,7 +223,7 @@ export const toComposerComposeRequest = (
     customizations,
     image_requests: image_requests.map((ir) => ({
       architecture: ir.architecture,
-      image_type: ir.image_type as CloudApiImageTypes,
+      image_type: ir.image_type as ImageTypes,
       repositories: [],
       upload_targets: [
         {
@@ -240,7 +240,7 @@ export const composerApi = contentSourcesApi.injectEndpoints({
     return {
       getArchitectures: builder.query<
         GetArchitecturesApiResponse,
-        GetArchitecturesApiArg
+        ComposerGetArchitecturesApiArg
       >({
         queryFn: async ({ distribution }) => {
           try {
@@ -404,7 +404,7 @@ export const composerApi = contentSourcesApi.injectEndpoints({
       }),
       createBlueprint: builder.mutation<
         CreateBlueprintApiResponse,
-        CockpitCreateBlueprintApiArg
+        ComposerCreateBlueprintApiArg
       >({
         queryFn: async ({ createBlueprintRequest: blueprintReq }) => {
           try {
@@ -440,7 +440,7 @@ export const composerApi = contentSourcesApi.injectEndpoints({
       }),
       updateBlueprint: builder.mutation<
         UpdateBlueprintApiResponse,
-        CockpitUpdateBlueprintApiArg
+        ComposerUpdateBlueprintApiArg
       >({
         queryFn: async ({ id: id, createBlueprintRequest: blueprintReq }) => {
           try {
@@ -490,17 +490,14 @@ export const composerApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
-      exportBlueprintCockpit: builder.query<
-        CloudApiBlueprint,
-        ExportBlueprintApiArg
-      >({
+      exportBlueprintCockpit: builder.query<Blueprint, ExportBlueprintApiArg>({
         queryFn: async ({ id }) => {
           const blueprintsDir = await getBlueprintsPath();
           const file = cockpit.file(path.join(blueprintsDir, id, `${id}.json`));
           const contents = await file.read();
           const blueprint = JSON.parse(
             contents,
-          ) as CockpitCreateBlueprintRequest;
+          ) as ComposerCreateBlueprintRequest;
           const onPrem = mapHostedToOnPrem(blueprint as CreateBlueprintRequest);
           return {
             data: onPrem,
@@ -509,7 +506,7 @@ export const composerApi = contentSourcesApi.injectEndpoints({
       }),
       getOscapProfiles: builder.query<
         GetOscapProfilesApiResponse,
-        GetOscapProfilesApiArg
+        ComposerGetOscapProfilesApiArg
       >({
         queryFn: async ({ distribution }) => {
           try {
@@ -542,7 +539,7 @@ export const composerApi = contentSourcesApi.injectEndpoints({
       }),
       getOscapCustomizations: builder.query<
         GetOscapCustomizationsApiResponse,
-        GetOscapCustomizationsApiArg
+        ComposerGetOscapCustomizationsApiArg
       >({
         queryFn: async ({ distribution, profile }) => {
           try {
@@ -618,7 +615,7 @@ export const composerApi = contentSourcesApi.injectEndpoints({
             const contents = await file.read();
             const parsed = JSON.parse(contents);
 
-            const blueprint = parsed as CockpitCreateBlueprintRequest;
+            const blueprint = parsed as ComposerCreateBlueprintRequest;
             const composes: ComposeResponse[] = [];
             for (const ir of blueprint.image_requests) {
               if (ir.upload_request.type === 'aws.s3') {

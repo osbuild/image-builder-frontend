@@ -25,12 +25,12 @@ import {
 } from '@patternfly/react-icons';
 
 import {
+  ComposerComposesResponseItem,
   ComposesResponseItem,
   ComposeStatus,
   ComposeStatusError,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-import { CockpitComposesResponseItem } from '@/store/cockpit';
 
 import {
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
@@ -38,7 +38,7 @@ import {
 } from '../../constants';
 
 type ComposeStatusPropTypes = {
-  compose: ComposesResponseItem | CockpitComposesResponseItem;
+  compose: ComposesResponseItem | ComposerComposesResponseItem;
 };
 
 export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {

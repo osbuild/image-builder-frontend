@@ -23,11 +23,11 @@ import {
 import { ExclamationIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
-import { AWSWorkerConfig } from '@/store/cockpit';
 import {
+  AWSWorkerConfig,
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
-} from '@/store/cockpit/composerApi';
+} from '@/store/api/backend';
 
 import { AWSConfig } from './AWSConfig';
 import { isAwsStepValid } from './validators';

@@ -92,10 +92,13 @@ export {
 export {
   toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
+  useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
   usePodmanImagesQuery,
+  useUpdateWorkerConfigMutation,
 } from './onprem';
 
 export { composerApi, errorMessage, imageBuilderApi };
 
 export type * from './hosted';
+export type * from './onprem';
