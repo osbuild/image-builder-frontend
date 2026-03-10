@@ -9,6 +9,11 @@ import {
   BlueprintMetadata,
   BlueprintResponse,
   BtrfsVolume,
+  ComposerAwsUploadRequestOptions,
+  ComposerBlueprintResponse,
+  ComposerCreateBlueprintRequest,
+  ComposerImageRequest,
+  ComposerUploadTypes,
   CreateBlueprintRequest,
   Customizations,
   CustomRepository,
@@ -33,13 +38,6 @@ import {
   VolumeGroup,
 } from '@/store/api/backend';
 import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
-import {
-  CockpitAwsUploadRequestOptions,
-  CockpitBlueprintResponse,
-  CockpitCreateBlueprintRequest,
-  CockpitImageRequest,
-  CockpitUploadTypes,
-} from '@/store/cockpit';
 
 import { parseSizeUnit } from './parseSizeUnit';
 
@@ -154,7 +152,7 @@ import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 export const mapRequestFromState = (
   store: Store,
   orgID: string,
-): CreateBlueprintRequest | CockpitCreateBlueprintRequest => {
+): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
   const customizations = getCustomizations(state, orgID);
@@ -350,7 +348,7 @@ const gcpTargetOptions = (options: GcpUploadRequestOptions) => {
 };
 
 const awsTargetOptions = (
-  options: AwsUploadRequestOptions | CockpitAwsUploadRequestOptions,
+  options: AwsUploadRequestOptions | ComposerAwsUploadRequestOptions,
 ) => {
   // there is a mismatch between API type and real data
   // this check allows removing optional chaining from the rest of the code
@@ -381,8 +379,8 @@ function commonRequestToState(
   request:
     | BlueprintResponse
     | CreateBlueprintRequest
-    | CockpitBlueprintResponse
-    | CockpitCreateBlueprintRequest,
+    | ComposerBlueprintResponse
+    | ComposerCreateBlueprintRequest,
 ) {
   const gcp = request.image_requests.find(
     (image) => image.image_type === 'gcp',
@@ -593,7 +591,7 @@ function commonRequestToState(
  * @returns wizardState
  */
 export const mapRequestToState = (
-  request: BlueprintResponse | CockpitBlueprintResponse,
+  request: BlueprintResponse | ComposerBlueprintResponse,
 ): wizardState => {
   const wizardMode = 'edit';
   const blueprintMode = isImageModeDistribution(request.distribution)
@@ -736,7 +734,7 @@ const getAapRegistration = (state: RootState): AapRegistration | undefined => {
 
 const getImageRequests = (
   state: RootState,
-): ImageRequest[] | CockpitImageRequest[] => {
+): ImageRequest[] | ComposerImageRequest[] => {
   const imageTypes = selectImageTypes(state);
   const snapshotDate = selectSnapshotDate(state);
   const useLatest = selectUseLatest(state);
@@ -762,8 +760,8 @@ const getRegistrationType = (
   request:
     | BlueprintResponse
     | CreateBlueprintRequest
-    | CockpitBlueprintResponse
-    | CockpitCreateBlueprintRequest,
+    | ComposerBlueprintResponse
+    | ComposerCreateBlueprintRequest,
 ): RegistrationType => {
   const subscription = request.customizations.subscription;
   const distribution = request.distribution;
@@ -791,7 +789,7 @@ const getSatelliteCommand = (files?: File[]): string => {
 
 const uploadTypeByTargetEnv = (
   imageType: ImageTypes,
-): UploadTypes | CockpitUploadTypes => {
+): UploadTypes | ComposerUploadTypes => {
   switch (imageType) {
     case 'aws':
       return 'aws';
@@ -829,7 +827,7 @@ const getImageOptions = (
   | AwsUploadRequestOptions
   | AzureUploadRequestOptions
   | GcpUploadRequestOptions
-  | CockpitAwsUploadRequestOptions => {
+  | ComposerAwsUploadRequestOptions => {
   const isOnPremise = selectIsOnPremise(state);
   switch (imageType) {
     case 'aws':

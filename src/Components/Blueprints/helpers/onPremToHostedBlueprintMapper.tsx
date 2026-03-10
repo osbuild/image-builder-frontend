@@ -1,5 +1,6 @@
 import {
   BlueprintExportResponse,
+  ComposerBlueprint,
   Container,
   CreateBlueprintRequest,
   Directory,
@@ -16,13 +17,9 @@ import {
   Services,
   Timezone,
 } from '@/store/api/backend';
-import { Blueprint as CloudApiBlueprint } from '@/store/cockpit';
 
 import { RHEL_10 } from '../../../constants';
 import { getHostDistro } from '../../../Utilities/getHostInfo';
-
-// Blueprint as defined by the osbuild-composer cloudapi's /compose
-// endpoint.
 
 export type BlueprintOnPrem = {
   name: string;
@@ -208,8 +205,8 @@ export const mapOnPremToHosted = async (
 
 export const mapHostedToOnPrem = (
   blueprint: CreateBlueprintRequest,
-): CloudApiBlueprint => {
-  const result: CloudApiBlueprint = {
+): ComposerBlueprint => {
+  const result: ComposerBlueprint = {
     name: blueprint.name,
     customizations: {},
   };

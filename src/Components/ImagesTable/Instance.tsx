@@ -9,9 +9,9 @@ import cockpit from 'cockpit';
 import {
   ComposesResponseItem,
   ImageTypes,
+  LocalUploadStatus,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-import { LocalUploadStatus } from '@/store/cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
 import { useCockpitMachinesAvailable } from '../../Hooks';

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AWSWorkerConfig } from '@/store/api/backend/onprem';
+import { AWSWorkerConfig } from '@/store/api/backend';
 
 export const isAwsBucketValid = (bucket?: string): boolean => {
   if (!bucket || bucket === '') {

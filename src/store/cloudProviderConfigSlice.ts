@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import type { CloudProviderConfigState } from './api/backend/onprem';
+import type { CloudProviderConfigState } from './api/backend';
 
 import type { RootState } from '.';
 

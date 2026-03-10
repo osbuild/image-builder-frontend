@@ -10,16 +10,12 @@ import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/Me
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import TOML from 'smol-toml';
 
-// The hosted UI exports JSON, while the Cockpit plugin exports TOML.
-// Because the blueprint formats differ, using the 'backendApi'
-// abstraction would be misleading.  Import and handle each environment
-// separately.
 import {
   BlueprintExportResponse,
+  ComposerBlueprint,
   useLazyExportBlueprintCockpitQuery,
   useLazyExportBlueprintQuery,
 } from '@/store/api/backend';
-import type { Blueprint as CockpitExportResponse } from '@/store/cockpit';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { selectIsOnPremise } from '../../store/envSlice';
@@ -56,7 +52,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   const handleCockpitClick = () => {
     cockpitTrigger({ id: selectedBlueprintId })
       .unwrap()
-      .then((response: CockpitExportResponse) => {
+      .then((response: ComposerBlueprint) => {
         handleExportBlueprint(response.name, response, isOnPremise);
       });
   };
@@ -95,7 +91,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
 
 async function handleExportBlueprint(
   blueprintName: string,
-  blueprint: BlueprintExportResponse | CockpitExportResponse,
+  blueprint: BlueprintExportResponse | ComposerBlueprint,
   isOnPremise: boolean,
 ) {
   const data = isOnPremise

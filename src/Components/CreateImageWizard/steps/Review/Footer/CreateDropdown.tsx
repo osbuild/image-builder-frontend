@@ -16,10 +16,10 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import {
+  ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
   CreateBlueprintResponse,
 } from '@/store/api/backend';
-import { CockpitCreateBlueprintRequest } from '@/store/cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
@@ -35,7 +35,7 @@ import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<
-    '' | CreateBlueprintRequest | CockpitCreateBlueprintRequest | undefined
+    '' | CreateBlueprintRequest | ComposerCreateBlueprintRequest | undefined
   >;
   setIsOpen: (isOpen: boolean) => void;
   isDisabled: boolean;
