@@ -36,12 +36,12 @@ import {
   ComposesResponseItem,
   GetBlueprintComposesApiArg,
   GetBlueprintsApiArg,
+  LocalUploadStatus,
   useGetBlueprintComposesQuery,
   useGetBlueprintsQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-import { LocalUploadStatus } from '@/store/cockpit';
 
 import ImagesEmptyState from './EmptyState';
 import {

@@ -1,5 +1,4 @@
-import { Architectures } from '@/store/api/backend';
-import { PodmanImageInfo } from '@/store/cockpit/types';
+import { Architectures, PodmanImageInfo } from '@/store/api/backend';
 
 export const mockArchitecturesX86: Architectures = [
   {
