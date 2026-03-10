@@ -245,12 +245,10 @@ test('Create a blueprint with Users customization', async ({
     }
 
     // Verify only the original 2 valid users remain
-    const remainingUsers = await frame
-      .getByRole('textbox', {
-        name: 'blueprint user name',
-      })
-      .count();
-    expect(remainingUsers).toBe(2);
+    const remainingUsers = frame.getByRole('textbox', {
+      name: 'blueprint user name',
+    });
+    await expect(remainingUsers).toHaveCount(2);
 
     // Verify the remaining users are the correct ones
     const remainingUsernameInputs = frame.getByRole('textbox', {
@@ -318,8 +316,8 @@ test('Create a blueprint with Users customization', async ({
     await removeButtons.last().click();
 
     // Should remove directly without confirmation modal
-    const finalUserCount = await removeButtons.count();
-    expect(finalUserCount).toBe(initialUserCount - 1);
+    const finalUserCount = removeButtons;
+    await expect(finalUserCount).toHaveCount(initialUserCount - 1);
   });
 
   await test.step('Verify users in Review step', async () => {
