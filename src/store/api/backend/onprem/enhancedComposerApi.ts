@@ -1,7 +1,13 @@
 import { composerApi } from './composerApi';
 
 const enhancedApi = composerApi.enhanceEndpoints({
-  addTagTypes: ['Blueprint', 'Blueprints', 'Composes', 'WorkerConfig'],
+  addTagTypes: [
+    'Blueprint',
+    'Blueprints',
+    'Compose',
+    'BlueprintComposes',
+    'WorkerConfig',
+  ],
   endpoints: {
     getBlueprint: {
       providesTags: () => {
@@ -20,16 +26,20 @@ const enhancedApi = composerApi.enhanceEndpoints({
       invalidatesTags: [{ type: 'Blueprint' }, { type: 'Blueprints' }],
     },
     deleteBlueprint: {
-      invalidatesTags: [{ type: 'Blueprints' }, { type: 'Composes' }],
+      invalidatesTags: [
+        { type: 'Blueprints' },
+        { type: 'Compose' },
+        { type: 'BlueprintComposes' },
+      ],
     },
     composeBlueprint: {
-      invalidatesTags: [{ type: 'Composes' }],
+      invalidatesTags: [{ type: 'Compose' }, { type: 'BlueprintComposes' }],
     },
     getComposes: {
-      providesTags: [{ type: 'Composes' }],
+      providesTags: [{ type: 'Compose' }],
     },
     getBlueprintComposes: {
-      providesTags: [{ type: 'Composes' }],
+      providesTags: [{ type: 'BlueprintComposes' }],
     },
     getWorkerConfig: {
       providesTags: [{ type: 'WorkerConfig' }],
