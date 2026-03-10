@@ -20,7 +20,7 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
-import { usePodmanImagesQuery } from '@/store/cockpit/composerApi';
+import { usePodmanImagesQuery } from '@/store/api/backend';
 
 import { RHEL_10_IMAGE_MODE_IMAGE } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';

@@ -12,8 +12,8 @@ import {
   UploadRequest,
   UploadStatus,
 } from './api/backend/hosted';
-// import from ./cockpit/types to break circular dependency
-import { Bootc } from './cockpit/types';
+// import from ./api/backend/onprem to break circular dependency
+import { Bootc } from './api/backend/onprem';
 
 import { IMAGE_MODE, targetOptions } from '../constants';
 

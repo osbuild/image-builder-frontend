@@ -1,5 +1,5 @@
+export { composerApi } from './enhancedComposerApi';
 export {
-  composerApi,
   toComposerComposeRequest,
   useComposeBlueprintMutation,
   useCreateBlueprintMutation,
@@ -21,5 +21,6 @@ export {
   usePodmanImagesQuery,
   useUpdateBlueprintMutation,
   useUpdateWorkerConfigMutation,
-} from '@/store/cockpit';
-export type * from '@/store/cockpit';
+} from './composerApi';
+
+export type * from './types';

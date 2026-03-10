@@ -3,9 +3,8 @@ import {
   imageBuilderApi,
 } from './hosted/enhancedImageBuilderApi';
 import * as serviceQueries from './hosted/imageBuilderApi';
-
-import * as composerQueries from '../../cockpit/composerApi';
-import { composerApi } from '../../cockpit/enhancedComposerApi';
+import * as composerQueries from './onprem/composerApi';
+import { composerApi } from './onprem/enhancedComposerApi';
 
 export const useGetArchitecturesQuery = process.env.IS_ON_PREMISE
   ? composerQueries.useGetArchitecturesQuery
@@ -100,5 +99,41 @@ export {
 
 export { composerApi, errorMessage, imageBuilderApi };
 
+// Re-export all types from hosted API (primary/canonical types)
 export type * from './hosted';
-export type * from './onprem';
+// Selectively re-export on-prem types that don't conflict with hosted
+// The on-prem types module already prefixes conflicting types (e.g., ComposerBlueprint)
+export type {
+  // Custom on-prem API argument types
+  ComposerCreateBlueprintApiArg,
+  ComposerCreateBlueprintRequest,
+  ComposerGetArchitecturesApiArg,
+  ComposerGetOscapCustomizationsApiArg,
+  ComposerGetOscapProfilesApiArg,
+  ComposerUpdateBlueprintApiArg,
+  // Prefixed types to avoid conflicts with hosted
+  ComposerBlueprint,
+  ComposerComposeRequest,
+  ComposerCustomizations,
+  ComposerImageTypes,
+  // On-prem specific types
+  ComposerAwsUploadRequestOptions,
+  ComposerBlueprintResponse,
+  ComposerComposesResponseItem,
+  ComposerImageRequest,
+  ComposerUploadTypes,
+  // Worker config types (on-prem only)
+  AWSWorkerConfig,
+  CloudProviderConfigState,
+  UpdateWorkerConfigApiArg,
+  WorkerConfigFile,
+  WorkerConfigRequest,
+  WorkerConfigResponse,
+  // Podman types (on-prem only)
+  PodmanImageInfo,
+  PodmanImagesArg,
+  PodmanImagesResponse,
+  // Non-conflicting generated types
+  Bootc,
+  LocalUploadStatus,
+} from './onprem';

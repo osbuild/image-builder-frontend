@@ -24,7 +24,7 @@ import { ExclamationIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
 import {
-  AWSWorkerConfig,
+  type AWSWorkerConfig,
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
 } from '@/store/api/backend';
