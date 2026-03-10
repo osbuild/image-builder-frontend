@@ -73,7 +73,7 @@ test('Create a blueprint with Repeatable build customization', async ({
     await page.getByRole('menuitem', { name: 'x86_64' }).click();
 
     await page.getByRole('button', { name: 'filter OS version' }).click();
-    await page.getByRole('menuitem', { name: 'el10' }).click();
+    await page.getByRole('menuitem', { name: 'RHEL 10' }).click();
 
     await page.getByRole('button', { name: 'Next', exact: true }).click();
     await page.getByRole('button', { name: 'Next', exact: true }).click(); // skip additional repositories
