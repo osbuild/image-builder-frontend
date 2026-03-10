@@ -1,6 +1,6 @@
-import { cockpitApi } from './cockpitApi';
+import { composerApi } from './composerApi';
 
-const enhancedApi = cockpitApi.enhanceEndpoints({
+const enhancedApi = composerApi.enhanceEndpoints({
   addTagTypes: ['Blueprint', 'Blueprints', 'Composes', 'WorkerConfig'],
   endpoints: {
     getBlueprint: {
@@ -40,4 +40,4 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
   },
 });
 
-export { enhancedApi as cockpitApi };
+export { enhancedApi as composerApi };

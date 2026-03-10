@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import type { OpenScapProfile } from '@/store/api/backend';
+import {
+  type OpenScapProfile,
+  toComposerComposeRequest,
+} from '@/store/api/backend';
 import {
   type CockpitCreateBlueprintRequest,
   type CockpitImageRequest,
-  toCloudAPIComposeRequest,
 } from '@/store/cockpit';
 
-describe('toCloudAPIComposeRequest', () => {
+describe('toComposerComposeRequest', () => {
   describe('basic conversion', () => {
     it('should convert a minimal blueprint without customizations', () => {
       const blueprint: CockpitCreateBlueprintRequest = {
@@ -30,7 +32,7 @@ describe('toCloudAPIComposeRequest', () => {
         },
       ];
 
-      const result = toCloudAPIComposeRequest(
+      const result = toComposerComposeRequest(
         blueprint,
         distribution,
         imageRequests,
@@ -75,7 +77,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations).toEqual({
         packages: ['vim', 'git', 'curl'],
@@ -110,7 +112,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations?.subscription).toEqual({
         organization: '12345', // converted to string
@@ -141,7 +143,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations?.subscription).toEqual({
         organization: '67890',
@@ -173,7 +175,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations).toHaveProperty('packages');
       expect(result.customizations).toHaveProperty('hostname');
@@ -210,7 +212,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations?.users).toHaveLength(2);
       expect(result.customizations?.users?.[0]).toEqual({
@@ -243,7 +245,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations?.packages).toEqual(['htop']);
       expect(result.customizations?.hostname).toBe('server.example.com');
@@ -268,7 +270,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations?.openscap).toEqual({
         profile_id: 'xccdf_org.ssgproject.content_profile_cis',
@@ -290,7 +292,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.customizations?.packages).toEqual(['aide']);
       expect(result.customizations?.openscap).toEqual({
@@ -322,7 +324,7 @@ describe('toCloudAPIComposeRequest', () => {
         },
       ];
 
-      const result = toCloudAPIComposeRequest(
+      const result = toComposerComposeRequest(
         blueprint,
         'rhel-9',
         imageRequests,
@@ -374,7 +376,7 @@ describe('toCloudAPIComposeRequest', () => {
         },
       ];
 
-      const result = toCloudAPIComposeRequest(
+      const result = toComposerComposeRequest(
         blueprint,
         'rhel-9',
         imageRequests,
@@ -411,7 +413,7 @@ describe('toCloudAPIComposeRequest', () => {
         },
       ];
 
-      const result = toCloudAPIComposeRequest(
+      const result = toComposerComposeRequest(
         blueprint,
         'rhel-9',
         imageRequests,
@@ -447,7 +449,7 @@ describe('toCloudAPIComposeRequest', () => {
         },
       ];
 
-      const result = toCloudAPIComposeRequest(
+      const result = toComposerComposeRequest(
         blueprint,
         'rhel-9',
         imageRequests,
@@ -467,7 +469,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'centos-9', []);
+      const result = toComposerComposeRequest(blueprint, 'centos-9', []);
       expect(result.distribution).toBe('centos-9');
     });
 
@@ -489,7 +491,7 @@ describe('toCloudAPIComposeRequest', () => {
       ];
 
       distributions.forEach((dist) => {
-        const result = toCloudAPIComposeRequest(blueprint, dist, []);
+        const result = toComposerComposeRequest(blueprint, dist, []);
         expect(result.distribution).toBe(dist);
       });
     });
@@ -541,7 +543,7 @@ describe('toCloudAPIComposeRequest', () => {
         },
       ];
 
-      const result = toCloudAPIComposeRequest(
+      const result = toComposerComposeRequest(
         blueprint,
         'rhel-9',
         imageRequests,
@@ -586,7 +588,7 @@ describe('toCloudAPIComposeRequest', () => {
         image_requests: [],
       };
 
-      const result = toCloudAPIComposeRequest(blueprint, 'rhel-9', []);
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
 
       expect(result.image_requests).toEqual([]);
     });

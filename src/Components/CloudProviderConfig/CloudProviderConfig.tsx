@@ -23,6 +23,12 @@ import {
 import { ExclamationIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
+import { AWSWorkerConfig } from '@/store/cockpit';
+import {
+  useGetWorkerConfigQuery,
+  useUpdateWorkerConfigMutation,
+} from '@/store/cockpit/composerApi';
+
 import { AWSConfig } from './AWSConfig';
 import { isAwsStepValid } from './validators';
 
@@ -32,11 +38,6 @@ import {
   reinitializeAWSConfig,
   selectAWSConfig,
 } from '../../store/cloudProviderConfigSlice';
-import {
-  useGetWorkerConfigQuery,
-  useUpdateWorkerConfigMutation,
-} from '../../store/cockpit/cockpitApi';
-import { AWSWorkerConfig } from '../../store/cockpit/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const ConfigError = ({

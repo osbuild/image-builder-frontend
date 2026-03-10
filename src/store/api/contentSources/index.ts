@@ -14,7 +14,7 @@ export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
 
 // NOTE: We have to explicitly export **only** the hosted contentSourcesApi
 // here because of RTK. The on-prem version of the contentSourcesApi shares
-// a base URL with the cockpitApi. This means it is very difficult to separate
+// a base URL with the composerApi. This means it is very difficult to separate
 // the two slices. If we were to export the on-prem contentSourcesApi here, we
 // would get an error about duplicate middleware & reducers.
 export const contentSourcesApi = hostedQueries.contentSourcesApi;

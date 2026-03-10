@@ -20,8 +20,9 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
+import { usePodmanImagesQuery } from '@/store/cockpit/composerApi';
+
 import { RHEL_10_IMAGE_MODE_IMAGE } from '../../../../../constants';
-import { usePodmanImagesQuery } from '../../../../../store/cockpit/cockpitApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeImageSource,

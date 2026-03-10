@@ -3,14 +3,14 @@ import promiseMiddleware from 'redux-promise-middleware';
 
 import {
   complianceApi,
+  composerApi,
   contentSourcesApi,
+  imageBuilderApi,
   provisioningApi,
   rhsmApi,
 } from './api';
-import { imageBuilderApi } from './api/backend/hosted/enhancedImageBuilderApi';
 import { blueprintsSlice } from './BlueprintSlice';
 import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
-import { cockpitApi } from './cockpit/cockpitApi';
 import { envSlice, selectIsOnPremise } from './envSlice';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { asDistribution } from './typeGuards';
@@ -41,7 +41,7 @@ export const onPremReducer = combineReducers({
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
-  [cockpitApi.reducerPath]: cockpitApi.reducer,
+  [composerApi.reducerPath]: composerApi.reducer,
   // TODO: add other endpoints so we can remove this.
   // It's still needed to get things to work.
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
@@ -62,7 +62,7 @@ startAppListening({
 
     // The response from the RTKQ getArchitectures hook
     const architecturesResponse = isOnPremise
-      ? cockpitApi.endpoints.getArchitectures.select({
+      ? composerApi.endpoints.getArchitectures.select({
           distribution: distribution,
         })(state as onPremState)
       : imageBuilderApi.endpoints.getArchitectures.select({
@@ -93,7 +93,7 @@ startAppListening({
 
     // The response from the RTKQ getArchitectures hook
     const architecturesResponse = isOnPremise
-      ? cockpitApi.endpoints.getArchitectures.select({
+      ? composerApi.endpoints.getArchitectures.select({
           distribution: distribution,
         })(state as onPremState)
       : imageBuilderApi.endpoints.getArchitectures.select({
@@ -140,7 +140,7 @@ export const onPremMiddleware = (getDefaultMiddleware: Function) =>
     provisioningApi.middleware,
     complianceApi.middleware,
     imageBuilderApi.middleware,
-    cockpitApi.middleware,
+    composerApi.middleware,
   );
 
 export const onPremStore = configureStore({

@@ -19,6 +19,7 @@ import {
   CreateBlueprintRequest,
   CreateBlueprintResponse,
 } from '@/store/api/backend';
+import { CockpitCreateBlueprintRequest } from '@/store/cockpit';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
@@ -27,7 +28,6 @@ import {
   useGetUser,
 } from '../../../../../Hooks';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
-import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
 import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { selectPackages } from '../../../../../store/wizardSlice';
