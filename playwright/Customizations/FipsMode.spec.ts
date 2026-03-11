@@ -71,6 +71,15 @@ test('FIPS switch toggles and persists through save', async ({
 
     const fipsInput = frame.locator('#fips-enabled-switch');
     await expect(fipsInput).toBeChecked();
+  });
+
+  await test.step('Navigate to Kernel step and verify FIPS alert', async () => {
+    await frame.getByRole('button', { name: 'Kernel' }).click();
+    await expect(
+      frame.getByText(
+        'Kernel will be configured to use FIPS, no additional configuration needed.',
+      ),
+    ).toBeVisible();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 

@@ -75,7 +75,6 @@ import {
   isBlueprintNameValid,
   isHostnameValid,
   isKernelArgumentValid,
-  isKernelNameValid,
   isMountpointMinSizeValid,
   isNtpServerValid,
   isPartitionNameValid,
@@ -604,9 +603,6 @@ export function useKernelValidation(): StepValidation {
 
   const duplicateKernelArgs = getListOfDuplicates(kernel.append);
 
-  const kernelNameError =
-    kernel.name && !isKernelNameValid(kernel.name) ? 'Invalid format.' : '';
-
   const kernelAppendError =
     invalidArgs.length > 0 ? `Invalid kernel arguments: ${invalidArgs}` : '';
 
@@ -617,13 +613,9 @@ export function useKernelValidation(): StepValidation {
 
   return {
     errors: {
-      kernel: kernelNameError,
       kernelAppend: kernelAppendError + '|' + duplicateKernelArgsError,
     },
-    disabledNext:
-      kernelNameError !== '' ||
-      kernelAppendError !== '' ||
-      duplicateKernelArgs.length > 0,
+    disabledNext: kernelAppendError !== '' || duplicateKernelArgs.length > 0,
   };
 }
 

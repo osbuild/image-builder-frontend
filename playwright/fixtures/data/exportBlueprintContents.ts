@@ -92,7 +92,7 @@ export const exportedKernelBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
 [customizations.kernel]
-name = "kernel"
+name = "kernel-debug"
 append = "rootwait console=tty0 console=ttyS0,115200n8 new=argument"
 
 [customizations.timezone]

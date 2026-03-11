@@ -19,20 +19,17 @@ export const renderKernelStep = (
 };
 
 export const openKernelNameDropdown = async (user: UserEventInstance) => {
-  const dropdown = await screen.findByPlaceholderText(/Select default kernel/i);
+  const dropdown = await screen.findByRole('button', {
+    name: /Select default kernel/i,
+  });
   await clickWithWait(user, dropdown);
 };
 
-export const typeKernelName = async (
-  user: UserEventInstance,
-  kernelName: string,
-) => {
-  const dropdown = await screen.findByPlaceholderText(/Select default kernel/i);
-  await typeWithWait(user, dropdown, kernelName);
-};
-
 export const clearKernelName = async (user: UserEventInstance) => {
-  await openKernelNameDropdown(user);
+  const toggle = await screen.findByRole('button', {
+    name: /kernel/i,
+  });
+  await clickWithWait(user, toggle);
   await selectKernelOption(user, 'None');
 };
 
