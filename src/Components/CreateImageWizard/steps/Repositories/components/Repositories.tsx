@@ -72,6 +72,9 @@ import {
   getReadableVersions,
 } from '../repositoriesUtilities';
 
+// Until IB has full support for extended release repositories, filter them out
+export const excludeEUSReposFilter = { extendedRelease: 'none' };
+
 const Repositories = () => {
   const dispatch = useAppDispatch();
   const wizardMode = useAppSelector(selectWizardMode);
@@ -136,6 +139,7 @@ const Repositories = () => {
     {
       availableForArch: arch,
       availableForVersion: version,
+      ...excludeEUSReposFilter,
       origin: originParam,
       limit: 999, // O.O Oh dear, if possible this whole call should be removed
       offset: 0,
@@ -176,6 +180,7 @@ const Repositories = () => {
     {
       availableForArch: arch,
       availableForVersion: version,
+      ...excludeEUSReposFilter,
       contentType: 'rpm',
       origin: originParam,
       limit: perPage,

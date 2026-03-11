@@ -20,6 +20,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
+import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/components/Repositories';
 import { useRecommendPackageMutation } from '@/store/api/backend';
 import {
   useListRepositoriesQuery,
@@ -56,6 +57,7 @@ const PackageRecommendations = () => {
     useListRepositoriesQuery({
       availableForArch: arch,
       availableForVersion: version,
+      ...excludeEUSReposFilter,
       contentType: 'rpm',
       origin: ContentOrigin.REDHAT,
       limit: 100,
