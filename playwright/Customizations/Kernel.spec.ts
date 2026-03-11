@@ -106,7 +106,7 @@ test('Create a blueprint with Kernel customization', async ({
   });
 
   await test.step('Select and fill the Kernel step', async () => {
-    await frame.getByRole('button', { name: 'Menu toggle' }).click();
+    await frame.getByRole('button', { name: 'Select default kernel' }).click();
     await frame.getByRole('option', { name: 'kernel', exact: true }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('rootwait');
     await frame.getByPlaceholder('Add kernel argument').press('Enter');
@@ -118,24 +118,6 @@ test('Create a blueprint with Kernel customization', async ({
       frame.getByText(
         'Expected format: <kernel-argument>. Example: console=tty0',
       ),
-    ).toBeVisible();
-    await frame.getByPlaceholder('Select default kernel').fill('new-package');
-    await frame
-      .getByRole('option', { name: 'Custom kernel package "new-' })
-      .click();
-    await expect(
-      frame.getByRole('heading', { name: 'Warning alert: Custom kernel' }),
-    ).toBeVisible();
-    await frame.getByPlaceholder('Select default kernel').fill('');
-    await frame.getByRole('button', { name: 'Menu toggle' }).click();
-    await expect(
-      frame.getByRole('option', { name: 'new-package' }),
-    ).toBeVisible();
-    await frame.getByPlaceholder('Select default kernel').fill('f');
-    await expect(
-      frame.getByRole('option', {
-        name: '"f" is not a valid kernel package name',
-      }),
     ).toBeVisible();
     await frame.getByPlaceholder('Add kernel argument').fill('console=tty0');
     await frame.getByPlaceholder('Add kernel argument').press('Enter');
@@ -159,8 +141,8 @@ test('Create a blueprint with Kernel customization', async ({
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit Kernel step').click();
-    await frame.getByRole('button', { name: 'Menu toggle' }).click();
-    await frame.getByRole('option', { name: 'kernel', exact: true }).click();
+    await frame.getByRole('button', { name: 'kernel', exact: true }).click();
+    await frame.getByRole('option', { name: 'kernel-debug' }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('new=argument');
     await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await frame.getByRole('button', { name: 'Close xxnosmp' }).click();
@@ -194,9 +176,9 @@ test('Create a blueprint with Kernel customization', async ({
   await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Kernel' }).click();
-    await expect(frame.getByPlaceholder('Select default kernel')).toHaveValue(
-      'kernel',
-    );
+    await expect(
+      frame.getByRole('button', { name: 'kernel-debug' }),
+    ).toBeVisible();
     await expect(frame.getByText('rootwait')).toBeVisible();
     await expect(frame.getByText('console=tty0')).toBeVisible();
     await expect(frame.getByText('console=ttyS0,115200...')).toBeVisible();

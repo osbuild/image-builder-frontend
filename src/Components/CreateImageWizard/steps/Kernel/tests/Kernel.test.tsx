@@ -9,7 +9,6 @@ import {
   removeKernelArgument,
   renderKernelStep,
   selectKernelOption,
-  typeKernelName,
 } from './helpers';
 
 describe('Kernel Component', () => {
@@ -31,7 +30,9 @@ describe('Kernel Component', () => {
       renderKernelStep();
 
       expect(
-        await screen.findByPlaceholderText(/Select default kernel/i),
+        await screen.findByRole('button', {
+          name: /Select default kernel/i,
+        }),
       ).toBeInTheDocument();
       expect(
         screen.getByPlaceholderText(/Add kernel argument/i),
@@ -40,6 +41,23 @@ describe('Kernel Component', () => {
         screen.getByText(
           /Enter additional kernel boot parameters\. Examples: nomodeset or console=ttyS0\./i,
         ),
+      ).toBeInTheDocument();
+    });
+
+    test('does not display FIPS alert when FIPS is disabled', async () => {
+      renderKernelStep();
+
+      await screen.findByRole('heading', { name: /Kernel/i });
+      expect(
+        screen.queryByText(/kernel will be configured to use FIPS/i),
+      ).not.toBeInTheDocument();
+    });
+
+    test('displays FIPS alert when FIPS is enabled', async () => {
+      renderKernelStep({ fips: { enabled: true } });
+
+      expect(
+        await screen.findByText(/kernel will be configured to use FIPS/i),
       ).toBeInTheDocument();
     });
   });
@@ -66,58 +84,10 @@ describe('Kernel Component', () => {
       await openKernelNameDropdown(user);
       await selectKernelOption(user, 'kernel-debug');
 
-      const dropdown = await screen.findByPlaceholderText(
-        /Select default kernel/i,
-      );
-      expect(dropdown).toHaveValue('kernel-debug');
-    });
-
-    test('shows custom kernel package option when typing', async () => {
-      renderKernelStep();
-      const user = createUser();
-
-      await typeKernelName(user, 'my-custom-kernel');
-
-      expect(
-        screen.getByRole('option', {
-          name: /Custom kernel package "my-custom-kernel"/i,
-        }),
-      ).toBeInTheDocument();
-    });
-
-    test('adds custom kernel to options after selection', async () => {
-      renderKernelStep();
-      const user = createUser();
-
-      await typeKernelName(user, 'custom-kernel-pkg');
-      await selectKernelOption(user, /Custom kernel package/i);
-
-      expect(
-        screen.getByText(/Custom kernel packages cannot be validated/i),
-      ).toBeInTheDocument();
-
-      await openKernelNameDropdown(user);
-      expect(
-        screen.getByRole('option', { name: 'custom-kernel-pkg' }),
-      ).toBeInTheDocument();
-    });
-
-    test('shows invalid name message for invalid kernel name', async () => {
-      renderKernelStep();
-      const user = createUser();
-
-      await typeKernelName(user, '-----------');
-
-      expect(
-        screen.getByRole('option', {
-          name: /"-----------" is not a valid kernel package name/i,
-        }),
-      ).toBeInTheDocument();
-
-      const invalidOption = screen.getByRole('option', {
-        name: /is not a valid kernel package name/i,
+      const dropdown = await screen.findByRole('button', {
+        name: /kernel-debug/i,
       });
-      expect(invalidOption).toBeDisabled();
+      expect(dropdown).toBeInTheDocument();
     });
 
     test('can clear kernel name selection', async () => {
@@ -127,13 +97,17 @@ describe('Kernel Component', () => {
       await openKernelNameDropdown(user);
       await selectKernelOption(user, 'kernel');
 
-      const dropdown = await screen.findByPlaceholderText(
-        /Select default kernel/i,
-      );
-      expect(dropdown).toHaveValue('kernel');
+      expect(
+        await screen.findByRole('button', { name: /kernel/i }),
+      ).toBeInTheDocument();
 
       await clearKernelName(user);
-      expect(dropdown).toHaveValue('');
+
+      expect(
+        await screen.findByRole('button', {
+          name: /Select default kernel/i,
+        }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -191,10 +165,9 @@ describe('Kernel Component', () => {
         },
       });
 
-      const dropdown = await screen.findByPlaceholderText(
-        /Select default kernel/i,
-      );
-      expect(dropdown).toHaveValue('kernel-debug');
+      expect(
+        await screen.findByRole('button', { name: /kernel-debug/i }),
+      ).toBeInTheDocument();
     });
 
     test('renders with pre-populated kernel arguments from state', async () => {

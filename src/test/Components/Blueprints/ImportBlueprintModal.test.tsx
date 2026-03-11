@@ -222,10 +222,9 @@ describe('Import modal', () => {
 
     // Kernel
     await clickNext();
-    const kernelNameInput = await screen.findByPlaceholderText(
-      /Select default kernel/i,
-    );
-    expect(kernelNameInput).toHaveValue('kernel-debug');
+    expect(
+      await screen.findByRole('button', { name: /kernel-debug/i }),
+    ).toBeInTheDocument();
     await screen.findByText('nosmt=force');
 
     // Firewall
@@ -343,16 +342,9 @@ describe('Import modal', () => {
 
     // Kernel
     await clickNext();
-    expect(await screen.findByText(/Invalid format/)).toBeInTheDocument();
     expect(
       await screen.findByText(/Invalid kernel arguments/),
     ).toBeInTheDocument();
-    await waitFor(() =>
-      user.click(screen.getByRole('button', { name: /Menu toggle/i })),
-    );
-    await waitFor(() =>
-      user.click(screen.getByRole('option', { name: 'None' })),
-    );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {

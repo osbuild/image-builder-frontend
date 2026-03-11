@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 import {
-  Alert,
-  HelperText,
-  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  TextInputGroup,
-  TextInputGroupMain,
 } from '@patternfly/react-core/dist/esm';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -19,87 +14,24 @@ import {
   changeKernelName,
   selectKernel,
 } from '../../../../../store/wizardSlice';
-import { useKernelValidation } from '../../../utilities/useValidation';
-import { isKernelNameValid } from '../../../validators';
 
 const NONE_OPTION = 'None';
-const initialOptions = ['kernel', 'kernel-debug'];
-let kernelOptions = initialOptions;
+const kernelOptions = ['kernel', 'kernel-debug'];
 
 const KernelName = () => {
   const dispatch = useAppDispatch();
   const kernel = useAppSelector(selectKernel).name;
 
-  const stepValidation = useKernelValidation();
-
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] = useState<string[]>(kernelOptions);
-
-  useEffect(() => {
-    let filteredKernelPkgs = kernelOptions;
-
-    if (filterValue) {
-      filteredKernelPkgs = kernelOptions.filter((kernel: string) =>
-        String(kernel).toLowerCase().includes(filterValue.toLowerCase()),
-      );
-      if (!filteredKernelPkgs.some((kernel) => kernel === filterValue)) {
-        filteredKernelPkgs = [
-          ...filteredKernelPkgs,
-          isKernelNameValid(filterValue)
-            ? `Custom kernel package "${filterValue}"`
-            : `"${filterValue}" is not a valid kernel package name`,
-        ];
-      }
-      if (!isOpen) {
-        setIsOpen(true);
-      }
-    }
-    setSelectOptions(filteredKernelPkgs);
-
-    // This useEffect hook should run *only* on when the filter value changes.
-    // eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue]);
-
-  const onInputClick = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-    } else if (!inputValue) {
-      setIsOpen(false);
-    }
-  };
 
   const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
     if (value && typeof value === 'string') {
       if (value === NONE_OPTION) {
-        setInputValue('');
-        setFilterValue('');
         dispatch(changeKernelName(''));
-        setIsOpen(false);
-      } else if (/custom kernel package/i.test(value)) {
-        if (!kernelOptions.some((kernel) => kernel === filterValue)) {
-          kernelOptions = [...kernelOptions, filterValue];
-        }
-        dispatch(changeKernelName(filterValue));
-        setFilterValue('');
-        setIsOpen(false);
       } else {
-        setInputValue(value);
-        setFilterValue('');
         dispatch(changeKernelName(value));
-        setIsOpen(false);
       }
-    }
-  };
-
-  const onTextInputChange = (_event: React.FormEvent, value: string) => {
-    setInputValue(value);
-    setFilterValue(value);
-
-    if (value !== kernel) {
-      dispatch(changeKernelName(''));
+      setIsOpen(false);
     }
   };
 
@@ -108,68 +40,34 @@ const KernelName = () => {
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      variant='typeahead'
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-    >
-      <TextInputGroup isPlain>
-        <TextInputGroupMain
-          value={kernel ? kernel : inputValue}
-          onClick={onInputClick}
-          onChange={onTextInputChange}
-          autoComplete='off'
-          placeholder='Select default kernel'
-          isExpanded={isOpen}
-        />
-      </TextInputGroup>
+    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+      {kernel || 'Select default kernel'}
     </MenuToggle>
   );
 
   return (
-    <>
-      {kernel && !initialOptions.includes(kernel) && (
-        <Alert
-          title='Custom kernel packages cannot be validated and can cause build issues.'
-          isInline
-          variant='warning'
-        />
-      )}
-      <FormGroup isRequired={false} label='Kernel package'>
-        <Select
-          isScrollable
-          isOpen={isOpen}
-          onOpenChange={(isOpen) => setIsOpen(isOpen)}
-          selected={kernel}
-          onSelect={onSelect}
-          toggle={toggle}
-          shouldFocusFirstItemOnOpen={false}
-        >
-          <SelectList>
-            <SelectOption key={NONE_OPTION} value={NONE_OPTION}>
-              {NONE_OPTION}
+    <FormGroup isRequired={false} label='Kernel package'>
+      <Select
+        isScrollable
+        isOpen={isOpen}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
+        selected={kernel}
+        onSelect={onSelect}
+        toggle={toggle}
+        shouldFocusFirstItemOnOpen={false}
+      >
+        <SelectList>
+          <SelectOption key={NONE_OPTION} value={NONE_OPTION}>
+            {NONE_OPTION}
+          </SelectOption>
+          {kernelOptions.map((option) => (
+            <SelectOption key={option} value={option}>
+              {option}
             </SelectOption>
-            {selectOptions.map((option) => (
-              <SelectOption
-                key={option}
-                value={option}
-                isDisabled={/not a valid kernel package name/i.test(option)}
-              >
-                {option}
-              </SelectOption>
-            ))}
-          </SelectList>
-        </Select>
-        {stepValidation.errors.kernel && (
-          <HelperText>
-            <HelperTextItem variant={'error'}>
-              {stepValidation.errors.kernel}
-            </HelperTextItem>
-          </HelperText>
-        )}
-      </FormGroup>
-    </>
+          ))}
+        </SelectList>
+      </Select>
+    </FormGroup>
   );
 };
 
