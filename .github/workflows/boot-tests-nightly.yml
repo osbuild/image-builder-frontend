@@ -85,9 +85,9 @@ jobs:
             echo "Setting up account for Playwright tests..."
             # Step 1: Create a new empty account
             curl -k -X POST https://ethel.rhsm.redhat.com/account/new -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
-            # Step 2: Attach subscriptions to the new account
+            # Step 2: Attach subscriptions to the new account (RHEL + High Availability for layered repo tests)
             curl -k -X POST https://ethel.rhsm.redhat.com/account/attach \
-              -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\", \"sku\":[\"RH00003\"],\"quantity\": 1}"
+              -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\", \"sku\":[\"RH00003\", \"RH00025\"],\"quantity\": 1}"
             # Step 3: Activate the new account by accepting Terms and Conditions
             curl -k -X POST https://ethel.rhsm.redhat.com/account/activate -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
             # Step 4: Refresh account to update subscription pools
