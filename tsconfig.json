@@ -4,7 +4,7 @@
     "module": "esnext",
     "target": "es2021",
     "jsx": "react-jsx",
-    "types": ["node", "vitest/globals"],
+    "types": ["node"],
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node",
@@ -18,14 +18,9 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "*": [
-        // Needed so we can resolve `cockpit` & `cockpit/fsinfo`
-        // types. We have stubbed those functions out for the
-        // as this is the tsconfig file for the service.
-        "./src/test/mocks/*"
-      ]
-    }
+      "@/*": ["src/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["./src"],
   "exclude": ["./playwright"]
