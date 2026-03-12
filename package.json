@@ -116,6 +116,7 @@
     "test:integration": "TZ=UTC vitest run src/test",
     "test:unit": "TZ=UTC vitest run --exclude='src/test/**' --fileParallelism",
     "test:cockpit": "src/test/cockpit-tests.sh",
+    "types": "tsc --noEmit",
     "build": "fec build",
     "build:cockpit": "webpack --config cockpit/webpack.config.ts",
     "api": "bash api/codegen.sh",
