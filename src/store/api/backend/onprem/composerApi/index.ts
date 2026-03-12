@@ -10,38 +10,32 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import TOML from 'smol-toml';
 
-import { mapOnPremToHosted } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { IMAGE_MODE } from '@/constants';
 import {
-  BlueprintItem,
   ComposeBlueprintApiArg,
   ComposeBlueprintApiResponse,
   ComposeResponse,
   ComposesResponseItem,
-  DistributionProfileItem,
   GetBlueprintComposesApiArg,
   GetBlueprintComposesApiResponse,
   GetComposesApiArg,
   GetComposesApiResponse,
   GetComposeStatusApiArg,
   GetComposeStatusApiResponse,
-  GetOscapCustomizationsApiResponse,
-  GetOscapProfilesApiResponse,
   OpenScapProfile,
 } from '@/store/api/backend';
-import { OnPremApiError, onPremQueryHandler } from '@/store/api/shared';
+import { onPremQueryHandler } from '@/store/api/shared';
 
 import { architectureEndpoints } from './architecture';
 import { blueprintEndpoints } from './blueprints';
 import { getBlueprintsPath } from './helpers';
+import { oscapEndpoints } from './oscap';
 
 import { emptyComposerApi } from '../emptyComposerApi';
 import { assertComposeResponse, assertComposeStatus } from '../typeguards';
 import {
   type ComposerCreateBlueprintRequest,
   type ComposerComposeRequest as ComposeRequest,
-  type ComposerGetOscapCustomizationsApiArg,
-  type ComposerGetOscapProfilesApiArg,
   type ComposerImageRequest,
   type ComposerCustomizations as Customizations,
   type ComposerImageTypes as ImageTypes,
@@ -52,30 +46,6 @@ import {
   type WorkerConfigFile,
   type WorkerConfigResponse,
 } from '../types';
-
-const lookupDatastreamDistro = (distribution: string) => {
-  if (distribution.startsWith('fedora')) {
-    return 'fedora';
-  }
-
-  if (distribution === 'centos-9') {
-    return 'cs9';
-  }
-
-  if (distribution === 'centos-10') {
-    return 'cs10';
-  }
-
-  if (distribution === 'rhel-9') {
-    return 'rhel9';
-  }
-
-  if (distribution === 'rhel-10') {
-    return 'rhel10';
-  }
-
-  throw new OnPremApiError(`Unsupported distribution: ${distribution}`);
-};
 
 const readComposes = async (bpID: string) => {
   const blueprintsDir = await getBlueprintsPath();
@@ -187,92 +157,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
     return {
       ...architectureEndpoints(builder),
       ...blueprintEndpoints(builder),
-      getOscapProfiles: builder.query<
-        GetOscapProfilesApiResponse,
-        ComposerGetOscapProfilesApiArg
-      >({
-        queryFn: onPremQueryHandler(async ({ queryArgs: { distribution } }) => {
-          const dsDistro = lookupDatastreamDistro(distribution);
-          const result = (await cockpit.spawn(
-            [
-              'oscap',
-              'info',
-              '--profiles',
-              `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
-            ],
-            {
-              superuser: 'try',
-            },
-          )) as string;
-
-          return result
-            .split('\n')
-            .filter((profile) => profile !== '')
-            .map((profile) => profile.split(':')[0])
-            .map((profile) => profile as DistributionProfileItem);
-        }),
-      }),
-      getOscapCustomizations: builder.query<
-        GetOscapCustomizationsApiResponse,
-        ComposerGetOscapCustomizationsApiArg
-      >({
-        queryFn: onPremQueryHandler(
-          async ({ queryArgs: { distribution, profile } }) => {
-            const dsDistro = lookupDatastreamDistro(distribution);
-            let result = (await cockpit.spawn(
-              [
-                'oscap',
-                'xccdf',
-                'generate',
-                'fix',
-                '--fix-type',
-                'blueprint',
-                '--profile',
-                profile,
-                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
-              ],
-              {
-                superuser: 'try',
-              },
-            )) as string;
-
-            const parsed = TOML.parse(result);
-            const blueprint = await mapOnPremToHosted(parsed as BlueprintItem);
-
-            result = (await cockpit.spawn(
-              [
-                'oscap',
-                'info',
-                '--profile',
-                profile,
-                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
-              ],
-              {
-                superuser: 'try',
-              },
-            )) as string;
-
-            const descriptionLine = result
-              .split('\n')
-              .filter((s) => s.includes('Description: '));
-
-            const description =
-              descriptionLine.length > 0
-                ? descriptionLine[0].split('Description: ')[1]
-                : '';
-
-            return {
-              ...blueprint.customizations,
-              openscap: {
-                profile_id: profile,
-                // the profile name is stored in the description
-                profile_name: blueprint.description,
-                profile_description: description,
-              },
-            };
-          },
-        ),
-      }),
+      ...oscapEndpoints(builder),
       composeBlueprint: builder.mutation<
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
