@@ -16,14 +16,8 @@ import {
   mapOnPremToHosted,
 } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR, IMAGE_MODE } from '@/constants';
-// We have to work around RTK query here, since it doesn't like splitting
-// out the same api into two separate apis. So, instead, we can just
-// inherit/import the `contentSourcesApi` and build on top of that.
-// This is fine since all the api endpoints for on-prem should query
-// the same unix socket. This allows us to split out the code a little
-// bit so that the `cockpitApi` doesn't become a monolith.
-import { contentSourcesApi } from '@/store/api/contentSources/onprem';
 
+import { emptyComposerApi } from './emptyComposerApi';
 import {
   type ComposerBlueprint as Blueprint,
   type ComposerCreateBlueprintApiArg,
@@ -236,7 +230,7 @@ export const toComposerComposeRequest = (
   };
 };
 
-export const composerApi = contentSourcesApi.injectEndpoints({
+export const composerApi = emptyComposerApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getArchitectures: builder.query<
