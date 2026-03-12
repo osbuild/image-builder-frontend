@@ -16,30 +16,6 @@ import {
   mapOnPremToHosted,
 } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR, IMAGE_MODE } from '@/constants';
-import { OnPremApiError, onPremQueryHandler } from '@/store/api/shared';
-
-import { emptyComposerApi } from './emptyComposerApi';
-import { assertComposeResponse, assertComposeStatus } from './typeguards';
-import {
-  type ComposerBlueprint as Blueprint,
-  type ComposerCreateBlueprintApiArg,
-  type ComposerCreateBlueprintRequest,
-  type ComposerComposeRequest as ComposeRequest,
-  type ComposerGetArchitecturesApiArg,
-  type ComposerGetOscapCustomizationsApiArg,
-  type ComposerGetOscapProfilesApiArg,
-  type ComposerImageRequest,
-  type ComposerUpdateBlueprintApiArg,
-  type ComposerCustomizations as Customizations,
-  type ComposerImageTypes as ImageTypes,
-  type PodmanImageInfo,
-  type PodmanImagesArg,
-  type PodmanImagesResponse,
-  type UpdateWorkerConfigApiArg,
-  type WorkerConfigFile,
-  type WorkerConfigResponse,
-} from './types';
-
 import {
   BlueprintItem,
   ComposeBlueprintApiArg,
@@ -67,7 +43,30 @@ import {
   GetOscapProfilesApiResponse,
   OpenScapProfile,
   UpdateBlueprintApiResponse,
-} from '../hosted/imageBuilderApi';
+} from '@/store/api/backend';
+import { OnPremApiError, onPremQueryHandler } from '@/store/api/shared';
+
+import { emptyComposerApi } from '../emptyComposerApi';
+import { assertComposeResponse, assertComposeStatus } from '../typeguards';
+import {
+  type ComposerBlueprint as Blueprint,
+  type ComposerCreateBlueprintApiArg,
+  type ComposerCreateBlueprintRequest,
+  type ComposerComposeRequest as ComposeRequest,
+  type ComposerGetArchitecturesApiArg,
+  type ComposerGetOscapCustomizationsApiArg,
+  type ComposerGetOscapProfilesApiArg,
+  type ComposerImageRequest,
+  type ComposerUpdateBlueprintApiArg,
+  type ComposerCustomizations as Customizations,
+  type ComposerImageTypes as ImageTypes,
+  type PodmanImageInfo,
+  type PodmanImagesArg,
+  type PodmanImagesResponse,
+  type UpdateWorkerConfigApiArg,
+  type WorkerConfigFile,
+  type WorkerConfigResponse,
+} from '../types';
 
 const lookupDatastreamDistro = (distribution: string) => {
   if (distribution.startsWith('fedora')) {
