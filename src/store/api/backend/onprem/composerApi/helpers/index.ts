@@ -1,0 +1,1 @@
+export { getCloudConfigs } from './getCloudConfigs';

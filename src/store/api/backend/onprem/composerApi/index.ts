@@ -28,7 +28,6 @@ import {
   DeleteBlueprintApiResponse,
   DistributionProfileItem,
   ExportBlueprintApiArg,
-  GetArchitecturesApiResponse,
   GetBlueprintApiArg,
   GetBlueprintApiResponse,
   GetBlueprintComposesApiArg,
@@ -46,6 +45,8 @@ import {
 } from '@/store/api/backend';
 import { OnPremApiError, onPremQueryHandler } from '@/store/api/shared';
 
+import { architectureEndpoints } from './architecture';
+
 import { emptyComposerApi } from '../emptyComposerApi';
 import { assertComposeResponse, assertComposeStatus } from '../typeguards';
 import {
@@ -53,7 +54,6 @@ import {
   type ComposerCreateBlueprintApiArg,
   type ComposerCreateBlueprintRequest,
   type ComposerComposeRequest as ComposeRequest,
-  type ComposerGetArchitecturesApiArg,
   type ComposerGetOscapCustomizationsApiArg,
   type ComposerGetOscapProfilesApiArg,
   type ComposerImageRequest,
@@ -144,19 +144,6 @@ const readComposes = async (bpID: string) => {
   return composes;
 };
 
-const getCloudConfigs = async () => {
-  try {
-    const worker_config = cockpit.file(
-      '/etc/osbuild-worker/osbuild-worker.toml',
-    );
-    const contents = await worker_config.read();
-    const parsed = TOML.parse(contents);
-    return Object.keys(parsed).filter((k) => k === 'aws');
-  } catch {
-    return [];
-  }
-};
-
 export const toComposerComposeRequest = (
   blueprint: ComposerCreateBlueprintRequest,
   distribution: string,
@@ -234,59 +221,7 @@ export const toComposerComposeRequest = (
 export const composerApi = emptyComposerApi.injectEndpoints({
   endpoints: (builder) => {
     return {
-      getArchitectures: builder.query<
-        GetArchitecturesApiResponse,
-        ComposerGetArchitecturesApiArg
-      >({
-        queryFn: onPremQueryHandler(async ({ queryArgs: { distribution } }) => {
-          if (distribution === IMAGE_MODE) {
-            return [
-              {
-                arch: 'aarch64',
-                image_types: ['guest-image'],
-                repositories: [],
-              },
-              {
-                arch: 'x86_64',
-                image_types: ['guest-image'],
-                repositories: [],
-              },
-            ];
-          }
-
-          const cloudImageTypes = await getCloudConfigs();
-          return [
-            {
-              arch: 'aarch64',
-              image_types: [
-                'guest-image',
-                'image-installer',
-                'network-installer',
-                'pxe-tar-xz',
-                ...cloudImageTypes,
-              ],
-              repositories: [],
-            },
-            {
-              arch: 'x86_64',
-              image_types: [
-                'rhel-edge-commit',
-                'rhel-edge-installer',
-                'edge-commit',
-                'edge-installer',
-                'guest-image',
-                'image-installer',
-                'network-installer',
-                'pxe-tar-xz',
-                'vsphere',
-                'vsphere-ova',
-                ...cloudImageTypes,
-              ],
-              repositories: [],
-            },
-          ];
-        }),
-      }),
+      ...architectureEndpoints(builder),
       getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
         queryFn: onPremQueryHandler(async ({ queryArgs: { id, version } }) => {
           const blueprintsDir = await getBlueprintsPath();
