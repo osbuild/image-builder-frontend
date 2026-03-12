@@ -84,7 +84,7 @@ export const CloudProviderConfig = ({
   const [enabled, setEnabled] = useState<boolean>(true);
 
   const [updateConfig] = useUpdateWorkerConfigMutation();
-  const { data, error, refetch, isLoading } = useGetWorkerConfigQuery({});
+  const { data, error, refetch, isLoading } = useGetWorkerConfigQuery();
 
   const initAWSConfig = useCallback(
     (config: AWSWorkerConfig | undefined) => {

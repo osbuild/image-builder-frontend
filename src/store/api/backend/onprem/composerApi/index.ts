@@ -8,7 +8,6 @@ import path from 'path';
 // We also needed to create an alias in vitest to make this work.
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
-import TOML from 'smol-toml';
 
 import { IMAGE_MODE } from '@/constants';
 import {
@@ -30,6 +29,7 @@ import { architectureEndpoints } from './architecture';
 import { blueprintEndpoints } from './blueprints';
 import { getBlueprintsPath } from './helpers';
 import { oscapEndpoints } from './oscap';
+import { workerEndpoints } from './worker';
 
 import { emptyComposerApi } from '../emptyComposerApi';
 import { assertComposeResponse, assertComposeStatus } from '../typeguards';
@@ -42,9 +42,6 @@ import {
   type PodmanImageInfo,
   type PodmanImagesArg,
   type PodmanImagesResponse,
-  type UpdateWorkerConfigApiArg,
-  type WorkerConfigFile,
-  type WorkerConfigResponse,
 } from '../types';
 
 const readComposes = async (bpID: string) => {
@@ -158,6 +155,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
       ...architectureEndpoints(builder),
       ...blueprintEndpoints(builder),
       ...oscapEndpoints(builder),
+      ...workerEndpoints(builder),
       composeBlueprint: builder.mutation<
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
@@ -295,87 +293,6 @@ export const composerApi = emptyComposerApi.injectEndpoints({
 
           throw new Error('Compose not found');
         }),
-      }),
-      getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
-        queryFn: onPremQueryHandler(async () => {
-          // we need to ensure that the file is created
-          await cockpit.spawn(['mkdir', '-p', '/etc/osbuild-worker'], {
-            superuser: 'require',
-          });
-
-          await cockpit.spawn(
-            ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
-            { superuser: 'require' },
-          );
-
-          const config = await cockpit
-            .file('/etc/osbuild-worker/osbuild-worker.toml')
-            .read();
-
-          return TOML.parse(config);
-        }),
-      }),
-      updateWorkerConfig: builder.mutation<
-        WorkerConfigResponse,
-        UpdateWorkerConfigApiArg
-      >({
-        queryFn: onPremQueryHandler(
-          async ({ queryArgs: { updateWorkerConfigRequest } }) => {
-            const workerConfig = cockpit.file(
-              '/etc/osbuild-worker/osbuild-worker.toml',
-              {
-                superuser: 'required',
-              },
-            );
-
-            const contents = await workerConfig.modify((prev: string) => {
-              if (!updateWorkerConfigRequest) {
-                return prev;
-              }
-              const merged = {
-                ...TOML.parse(prev),
-                ...updateWorkerConfigRequest,
-              } as WorkerConfigFile;
-
-              return TOML.stringify(merged);
-            });
-
-            const systemServices = [
-              'osbuild-composer.socket',
-              'osbuild-worker@*.service',
-              'osbuild-composer.service',
-            ];
-
-            await cockpit.spawn(
-              [
-                'systemctl',
-                'stop',
-                // we need to be explicit here and stop all the services first,
-                // otherwise this step is a little bit flaky
-                ...systemServices,
-              ],
-              {
-                superuser: 'require',
-              },
-            );
-
-            await cockpit.spawn(
-              [
-                'systemctl',
-                'restart',
-                // we need to restart all the services explicitly too
-                // since the config doesn't always get reloaded if we
-                // only reload the worker service
-                ...systemServices,
-              ],
-              {
-                superuser: 'require',
-              },
-            );
-
-            return TOML.parse(contents);
-          },
-        ),
       }),
       podmanImages: builder.query<PodmanImagesResponse, PodmanImagesArg>({
         queryFn: onPremQueryHandler(async () => {
