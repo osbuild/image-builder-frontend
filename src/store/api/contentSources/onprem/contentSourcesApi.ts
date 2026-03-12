@@ -78,7 +78,10 @@ export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
       }),
     }),
   }),
-  overrideExisting: false,
+  // since we are inheriting some endpoints,
+  // we want to make sure that we don't override
+  // any existing endpoints.
+  overrideExisting: 'throw',
 });
 
 export const { useSearchRpmMutation, useListSnapshotsByDateMutation } =
