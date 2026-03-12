@@ -63,6 +63,7 @@ Each config specifies:
 - **Comments should explain why, not what** - Code should be self-explanatory; use comments only to clarify intent or non-obvious decisions
 - **Focused changes** - PRs should address a single concern; avoid unrelated refactors or improvements outside the task at hand
 - **Atomic commits** - Each commit should represent a logical change
+- **Use `type` declarations, not `interface`** - Always use `type` for TypeScript type definitions
 - Use PatternFly components; follow their usage patterns
 - Follow existing file naming conventions (PascalCase for components)
 - Keep components focused and reasonably sized
