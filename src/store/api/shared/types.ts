@@ -1,4 +1,4 @@
-import { BaseQueryFn } from '@reduxjs/toolkit/query';
+import { BaseQueryFn, EndpointBuilder } from '@reduxjs/toolkit/query';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Params = Record<string, any>;
@@ -19,9 +19,16 @@ export type OnPremBaseQueryArgs = {
   params?: Params;
   headers?: Headers;
 };
+
 // The base query function type (matches what baseQuery() returns)
 export type OnPremBaseQuery = BaseQueryFn<
   OnPremBaseQueryArgs,
   unknown,
   OnPremError
+>;
+
+export type OnPremBuilder = EndpointBuilder<
+  OnPremBaseQuery,
+  string,
+  'onPremApi'
 >;
