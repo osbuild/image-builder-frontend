@@ -55,7 +55,11 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
-import { useCockpitMachinesAvailable, useGetUser } from '../../Hooks';
+import {
+  useCockpitMachinesAvailable,
+  useEffectiveBlueprintId,
+  useGetUser,
+} from '../../Hooks';
 import {
   useGetBlueprintComposesQuery,
   useGetBlueprintsQuery,
@@ -96,7 +100,7 @@ const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
-  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const effectiveBlueprintId = useEffectiveBlueprintId();
   const blueprintSearchInput =
     useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
@@ -124,7 +128,7 @@ const ImagesTable = () => {
     {
       selectFromResult: ({ data }) => ({
         selectedBlueprintVersion: data?.data.find(
-          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId,
+          (blueprint: BlueprintItem) => blueprint.id === effectiveBlueprintId,
         )?.version,
       }),
     },
@@ -137,7 +141,7 @@ const ImagesTable = () => {
   };
 
   const searchParamsGetBlueprintComposes: GetBlueprintComposesApiArg = {
-    id: selectedBlueprintId as string,
+    id: effectiveBlueprintId as string,
     limit: perPage,
     offset: perPage * (page - 1),
   };
@@ -153,7 +157,7 @@ const ImagesTable = () => {
     isLoading: isLoadingBlueprintsCompose,
     isError: isBlueprintsError,
   } = useGetBlueprintComposesQuery(searchParamsGetBlueprintComposes, {
-    skip: !selectedBlueprintId,
+    skip: !effectiveBlueprintId,
   });
 
   const {
@@ -172,15 +176,15 @@ const ImagesTable = () => {
         'edge-installer',
       ],
     },
-    { skip: !!selectedBlueprintId },
+    { skip: !!effectiveBlueprintId },
   );
 
-  const data = selectedBlueprintId ? blueprintsComposes : composesData;
-  const isSuccess = selectedBlueprintId
+  const data = effectiveBlueprintId ? blueprintsComposes : composesData;
+  const isSuccess = effectiveBlueprintId
     ? isBlueprintsSuccess
     : isComposesSuccess;
-  const isError = selectedBlueprintId ? isBlueprintsError : isComposesError;
-  const isLoading = selectedBlueprintId
+  const isError = effectiveBlueprintId ? isBlueprintsError : isComposesError;
+  const isLoading = effectiveBlueprintId
     ? isLoadingBlueprintsCompose
     : isLoadingComposes;
 
@@ -215,7 +219,7 @@ const ImagesTable = () => {
   }
 
   let composes = data?.data;
-  if (selectedBlueprintId && blueprintVersionFilter === 'latest') {
+  if (effectiveBlueprintId && blueprintVersionFilter === 'latest') {
     composes = composes?.filter((compose) => {
       return compose.blueprint_version === selectedBlueprintVersion;
     });
@@ -261,7 +265,7 @@ const ImagesTable = () => {
             <Tr>
               <Td colSpan={12}>
                 <ImagesEmptyState
-                  selectedBlueprint={selectedBlueprintId || ''}
+                  selectedBlueprint={effectiveBlueprintId || ''}
                 />
               </Td>
             </Tr>
