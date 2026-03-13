@@ -36,6 +36,35 @@ export const isServiceAvailable = async (
   return response.status() >= 200 && response.status() < 300;
 };
 
+export const getBlueprintIdByName = async (
+  page: Page,
+  blueprintName: string,
+): Promise<string> => {
+  const response = await callApi(
+    `/api/image-builder/v1/blueprints?search=${encodeURIComponent(blueprintName)}`,
+    page,
+  );
+  const body = await response.json();
+  if (!body?.data) {
+    throw new Error(
+      `Unexpected API response for blueprint search: ${JSON.stringify(body)}`,
+    );
+  }
+  if (!Array.isArray(body.data)) {
+    throw new Error(
+      `Unexpected API response for blueprint search: "data" is not an array: ${JSON.stringify(body)}`,
+    );
+  }
+  type Blueprint = { id: string; name: string };
+  const blueprint = body.data.find(
+    (bp: Blueprint) => bp.name === blueprintName,
+  );
+  if (!blueprint) {
+    throw new Error(`Blueprint "${blueprintName}" not found`);
+  }
+  return blueprint.id;
+};
+
 /**
  * Extract Authorization header from browser cookies
  * @param page - Playwright Page object
