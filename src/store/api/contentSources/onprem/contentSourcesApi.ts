@@ -1,18 +1,15 @@
-import { onPremQueryHandler } from '@/store/api/shared';
+import { isDefined, onPremQueryHandler } from '@/store/api/shared';
 
 import { emptyContentSourcesApi } from './emptyContentSourcesApi';
 import { transformPackageResponse } from './helpers';
-import type { Package, SearchRpmApiArg } from './types';
+import { assertPackagesResponse } from './typeguards';
+import type { SearchRpmApiArg } from './types';
 
 import type {
   ListSnapshotsByDateApiArg,
   ListSnapshotsByDateApiResponse,
   SearchRpmApiResponse,
 } from '../hosted/contentSourcesApi';
-
-type PackagesResponse = {
-  packages?: Package[];
-};
 
 export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -45,16 +42,12 @@ export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
           throw result.error;
         }
 
-        if (!result.data) {
+        if (!isDefined(result.data)) {
           return [];
         }
 
-        const data = result.data as PackagesResponse;
-        if (typeof data !== 'object') {
-          throw new Error('Invalid response');
-        }
-
-        return transformPackageResponse(data.packages);
+        const { packages } = assertPackagesResponse(result.data);
+        return transformPackageResponse(packages);
       }),
     }),
     // add an empty response for now

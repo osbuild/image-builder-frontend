@@ -13,3 +13,7 @@ export type Package = {
   version: string;
   release: string;
 };
+
+export type PackagesResponse = {
+  packages?: Package[];
+};
