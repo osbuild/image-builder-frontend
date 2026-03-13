@@ -10,9 +10,9 @@ import {
   rhsmApi,
 } from './api';
 import { blueprintsSlice } from './BlueprintSlice';
-import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
 import { envSlice, selectIsOnPremise } from './envSlice';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
+import { cloudProviderConfigSlice } from './slices';
 import { asDistribution } from './typeGuards';
 import wizardSlice, {
   changeArchitecture,

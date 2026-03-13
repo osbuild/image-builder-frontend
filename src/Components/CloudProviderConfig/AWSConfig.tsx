@@ -12,20 +12,17 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
-import {
-  AWSWorkerConfig,
-  WorkerConfigResponse,
-} from '@/store/api/backend/onprem';
-
-import { isAwsBucketValid, isAwsCredsPathValid } from './validators';
-
+import { AWSWorkerConfig, WorkerConfigResponse } from '@/store/api/backend';
 import {
   changeAWSBucketName,
   changeAWSCredsPath,
   reinitializeAWSConfig,
   selectAWSBucketName,
   selectAWSCredsPath,
-} from '../../store/cloudProviderConfigSlice';
+} from '@/store/slices/cloudConfig';
+
+import { isAwsBucketValid, isAwsCredsPathValid } from './validators';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 

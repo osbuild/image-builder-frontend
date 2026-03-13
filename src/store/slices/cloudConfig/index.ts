@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import type { CloudProviderConfigState } from './api/backend';
+import type { RootState } from '@/store';
+import type { CloudProviderConfigState } from '@/store/api/backend';
 
-import type { RootState } from '.';
-
-export const initialState: CloudProviderConfigState = {
+// no need to export this, it is only used internally
+const initialState: CloudProviderConfigState = {
   aws: {},
 };
 
