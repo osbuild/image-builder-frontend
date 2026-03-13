@@ -156,6 +156,7 @@ const ImagesTable = () => {
     isSuccess: isBlueprintsSuccess,
     isLoading: isLoadingBlueprintsCompose,
     isError: isBlueprintsError,
+    error: blueprintsError,
   } = useGetBlueprintComposesQuery(searchParamsGetBlueprintComposes, {
     skip: !effectiveBlueprintId,
   });
@@ -200,7 +201,21 @@ const ImagesTable = () => {
   // we create query functions for the other endpoints. We're skipping
   // this check because the query request fails, since the `cockpitApi`
   // still doesn't know how to query the composes endpoint
+  const isBlueprintNotFound =
+    effectiveBlueprintId &&
+    blueprintsError &&
+    typeof blueprintsError === 'object' &&
+    'status' in blueprintsError &&
+    blueprintsError.status === 404;
+
   if (!isOnPremise && !isSuccess) {
+    if (isBlueprintNotFound) {
+      return (
+        <Alert variant='warning' title='Blueprint not found'>
+          <p>Blueprint {effectiveBlueprintId} not found.</p>
+        </Alert>
+      );
+    }
     if (isError) {
       return (
         <Alert variant='warning' title='Service unavailable'>
