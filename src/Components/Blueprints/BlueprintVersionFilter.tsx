@@ -13,7 +13,8 @@ import {
   selectBlueprintVersionFilter,
   setBlueprintVersionFilter,
   versionFilterType,
-} from '../../store/BlueprintSlice';
+} from '@/store/slices/blueprint';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface blueprintVersionFilterProps {

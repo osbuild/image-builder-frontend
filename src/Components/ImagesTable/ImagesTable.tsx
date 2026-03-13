@@ -42,6 +42,15 @@ import {
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
+import {
+  selectBlueprintSearchInput,
+  selectBlueprintVersionFilter,
+  selectBlueprintVersionFilterAPI,
+  selectLimit,
+  selectOffset,
+  selectSelectedBlueprintId,
+  setBlueprintId,
+} from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 import ImagesEmptyState from './EmptyState';
@@ -73,15 +82,6 @@ import {
   useEffectiveBlueprintId,
   useGetUser,
 } from '../../Hooks';
-import {
-  selectBlueprintSearchInput,
-  selectBlueprintVersionFilter,
-  selectBlueprintVersionFilterAPI,
-  selectLimit,
-  selectOffset,
-  selectSelectedBlueprintId,
-  setBlueprintId,
-} from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 import { hasBootcRequest } from '../../store/typeGuards';
 import { bootcReferenceToOSDisplayLabel } from '../../Utilities/distributionToOSShortId';

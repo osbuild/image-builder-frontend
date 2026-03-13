@@ -9,9 +9,9 @@ import {
   provisioningApi,
   rhsmApi,
 } from './api';
-import { blueprintsSlice } from './BlueprintSlice';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import {
+  blueprintsSlice,
   cloudProviderConfigSlice,
   envSlice,
   selectIsOnPremise,

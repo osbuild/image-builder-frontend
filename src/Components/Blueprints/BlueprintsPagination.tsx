@@ -7,14 +7,14 @@ import {
   GetBlueprintsApiArg,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
-
 import {
   selectBlueprintSearchInput,
   selectLimit,
   selectOffset,
   setBlueprintLimit,
   setBlueprintsOffset,
-} from '../../store/BlueprintSlice';
+} from '@/store/slices/blueprint';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const BlueprintsPagination = () => {

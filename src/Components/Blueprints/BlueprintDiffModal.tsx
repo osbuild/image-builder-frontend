@@ -11,10 +11,10 @@ import {
 } from '@patternfly/react-core';
 
 import { useGetBlueprintQuery } from '@/store/api/backend';
+import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 
 import { BuildImagesButton } from './BuildImagesButton';
 
-import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 
 type blueprintDiffProps = {

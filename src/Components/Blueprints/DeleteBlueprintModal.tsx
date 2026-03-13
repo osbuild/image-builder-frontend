@@ -15,6 +15,13 @@ import {
   GetBlueprintsApiArg,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import {
+  selectBlueprintSearchInput,
+  selectLimit,
+  selectOffset,
+  selectSelectedBlueprintId,
+  setBlueprintId,
+} from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 import {
@@ -26,13 +33,6 @@ import {
   useDeleteBPWithNotification as useDeleteBlueprintMutation,
   useGetUser,
 } from '../../Hooks';
-import {
-  selectBlueprintSearchInput,
-  selectLimit,
-  selectOffset,
-  selectSelectedBlueprintId,
-  setBlueprintId,
-} from '../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface DeleteBlueprintModalProps {
