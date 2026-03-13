@@ -1,3 +1,5 @@
+import { onPremQueryHandler } from '@/store/api/shared';
+
 import { emptyContentSourcesApi } from './emptyContentSourcesApi';
 import { transformPackageResponse } from './helpers';
 import type { Package, SearchRpmApiArg } from './types';
@@ -15,19 +17,16 @@ type PackagesResponse = {
 export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
   endpoints: (builder) => ({
     searchRpm: builder.mutation<SearchRpmApiResponse, SearchRpmApiArg>({
-      queryFn: async (queryArgs, _, __, baseQuery) => {
-        const { architecture, distribution, packages } =
-          queryArgs.apiContentUnitSearchRequest;
+      queryFn: onPremQueryHandler(async ({ queryArgs, baseQuery }) => {
+        const { apiContentUnitSearchRequest: searchRequest } = queryArgs;
 
-        if (!architecture || !distribution || !packages) {
-          return { data: [] };
+        if (
+          !searchRequest.architecture ||
+          !searchRequest.distribution ||
+          !searchRequest.packages
+        ) {
+          return [];
         }
-
-        const body = {
-          packages,
-          distribution,
-          architecture,
-        };
 
         const result = await baseQuery({
           url: '/search/packages',
@@ -35,34 +34,28 @@ export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(body),
+          body: JSON.stringify({
+            packages: searchRequest.packages,
+            distribution: searchRequest.distribution,
+            architecture: searchRequest.architecture,
+          }),
         });
 
         if (result.error) {
-          return { error: result.error };
+          throw result.error;
         }
 
         if (!result.data) {
-          return { data: [] };
+          return [];
         }
 
         const data = result.data as PackagesResponse;
         if (typeof data !== 'object') {
-          return {
-            error: {
-              message: 'Invalid response',
-              body: {
-                details:
-                  'Expected a packages response object but received malformed data',
-              },
-            },
-          };
+          throw new Error('Invalid response');
         }
 
-        return {
-          data: transformPackageResponse(data.packages),
-        };
-      },
+        return transformPackageResponse(data.packages);
+      }),
     }),
     // add an empty response for now
     // just so we can step through the create

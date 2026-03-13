@@ -1,29 +1,10 @@
-import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import cockpit from 'cockpit';
 
-import type { Headers, Method, Params } from './types';
+import { OnPremBaseQuery } from './types';
 
 export const baseQuery =
-  (
-    { baseUrl }: { baseUrl: string } = { baseUrl: '' },
-  ): BaseQueryFn<
-    {
-      url: string;
-      method?: Method;
-      body?: unknown;
-      params?: Params;
-      headers?: Headers;
-    },
-    // we have to explicitly set the result type as `any`,
-    // since each of the endpoints might have a slightly
-    // different output. Unfortunately, typescript still
-    // complains if we try set the result type as `unknown`
-    // see the above comment
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    unknown
-  > =>
-  async (options) => {
+  ({ baseUrl }: { baseUrl: string } = { baseUrl: '' }): OnPremBaseQuery =>
+  async (options, _api, _extraOptions) => {
     // we need to wrap this call in a Promise rather than
     // async/await because cockpit rejects the http request
     // with two arguments (error & data/body)

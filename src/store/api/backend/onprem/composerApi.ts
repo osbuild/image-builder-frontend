@@ -16,6 +16,7 @@ import {
   mapOnPremToHosted,
 } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR, IMAGE_MODE } from '@/constants';
+import { onPremQueryHandler } from '@/store/api/shared';
 
 import { emptyComposerApi } from './emptyComposerApi';
 import {
@@ -88,7 +89,7 @@ const lookupDatastreamDistro = (distribution: string) => {
     return 'rhel10';
   }
 
-  throw 'Unknown distribution';
+  throw 'Unsupported distribution';
 };
 
 // Gets the user's $XDG_STATE_HOME directory to save blueprints in. Uses $HOME/.local/state as a fallback.
@@ -237,172 +238,152 @@ export const composerApi = emptyComposerApi.injectEndpoints({
         GetArchitecturesApiResponse,
         ComposerGetArchitecturesApiArg
       >({
-        queryFn: async ({ distribution }) => {
-          try {
-            if (distribution === IMAGE_MODE) {
-              return {
-                data: [
-                  {
-                    arch: 'aarch64',
-                    image_types: ['guest-image'],
-                    repositories: [],
-                  },
-                  {
-                    arch: 'x86_64',
-                    image_types: ['guest-image'],
-                    repositories: [],
-                  },
-                ],
-              };
-            }
-
-            const cloudImageTypes = await getCloudConfigs();
-            return {
-              data: [
-                {
-                  arch: 'aarch64',
-                  image_types: [
-                    'guest-image',
-                    'image-installer',
-                    'network-installer',
-                    'pxe-tar-xz',
-                    ...cloudImageTypes,
-                  ],
-                  repositories: [],
-                },
-                {
-                  arch: 'x86_64',
-                  image_types: [
-                    'rhel-edge-commit',
-                    'rhel-edge-installer',
-                    'edge-commit',
-                    'edge-installer',
-                    'guest-image',
-                    'image-installer',
-                    'network-installer',
-                    'pxe-tar-xz',
-                    'vsphere',
-                    'vsphere-ova',
-                    ...cloudImageTypes,
-                  ],
-                  repositories: [],
-                },
-              ],
-            };
-          } catch (error) {
-            return { error };
+        queryFn: onPremQueryHandler(async ({ queryArgs: { distribution } }) => {
+          if (distribution === IMAGE_MODE) {
+            return [
+              {
+                arch: 'aarch64',
+                image_types: ['guest-image'],
+                repositories: [],
+              },
+              {
+                arch: 'x86_64',
+                image_types: ['guest-image'],
+                repositories: [],
+              },
+            ];
           }
-        },
+
+          const cloudImageTypes = await getCloudConfigs();
+          return [
+            {
+              arch: 'aarch64',
+              image_types: [
+                'guest-image',
+                'image-installer',
+                'network-installer',
+                'pxe-tar-xz',
+                ...cloudImageTypes,
+              ],
+              repositories: [],
+            },
+            {
+              arch: 'x86_64',
+              image_types: [
+                'rhel-edge-commit',
+                'rhel-edge-installer',
+                'edge-commit',
+                'edge-installer',
+                'guest-image',
+                'image-installer',
+                'network-installer',
+                'pxe-tar-xz',
+                'vsphere',
+                'vsphere-ova',
+                ...cloudImageTypes,
+              ],
+              repositories: [],
+            },
+          ];
+        }),
       }),
       getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
-        queryFn: async ({ id, version }) => {
-          try {
-            const blueprintsDir = await getBlueprintsPath();
-            const bpPath = path.join(blueprintsDir, id, `${id}.json`);
-            const bpInfo = await fsinfo(bpPath, ['mtime'], {
-              superuser: 'try',
-            });
-            const contents = await cockpit.file(bpPath).read();
-            const parsed = JSON.parse(contents);
-            return {
-              data: {
-                ...parsed,
-                id,
-                version: version,
-                last_modified_at: new Date(bpInfo!.mtime * 1000).toString(),
-                // linting is not supported on prem
-                lint: {
-                  errors: [],
-                },
-              },
-            };
-          } catch (error) {
-            return { error };
-          }
-        },
+        queryFn: onPremQueryHandler(async ({ queryArgs: { id, version } }) => {
+          const blueprintsDir = await getBlueprintsPath();
+          const bpPath = path.join(blueprintsDir, id, `${id}.json`);
+          const bpInfo = await fsinfo(bpPath, ['mtime'], {
+            superuser: 'try',
+          });
+          const contents = await cockpit.file(bpPath).read();
+          const parsed = JSON.parse(contents);
+          return {
+            ...parsed,
+            id,
+            version: version,
+            last_modified_at: new Date(bpInfo!.mtime * 1000).toString(),
+            // linting is not supported on prem
+            lint: {
+              errors: [],
+            },
+          };
+        }),
       }),
       getBlueprints: builder.query<
         GetBlueprintsApiResponse,
         GetBlueprintsApiArg
       >({
-        queryFn: async (queryArgs) => {
-          try {
-            const { name, search, offset, limit } = queryArgs;
+        queryFn: onPremQueryHandler(async ({ queryArgs }) => {
+          const { name, search, offset, limit } = queryArgs;
 
-            const blueprintsDir = await getBlueprintsPath();
+          const blueprintsDir = await getBlueprintsPath();
 
-            // we probably don't need any more information other
-            // than the entries from the directory
-            const info = await fsinfo(blueprintsDir, ['entries'], {
-              superuser: 'try',
-            });
+          // we probably don't need any more information other
+          // than the entries from the directory
+          const info = await fsinfo(blueprintsDir, ['entries'], {
+            superuser: 'try',
+          });
 
-            const entries = Object.entries(info.entries || {});
-            let blueprints: BlueprintItem[] = await Promise.all(
-              entries.map(async ([filename]) => {
-                const file = cockpit.file(
-                  path.join(blueprintsDir, filename, `${filename}.json`),
-                );
-                const contents = await file.read();
-                const parsed = JSON.parse(contents);
-                return {
-                  ...parsed,
-                  id: filename as string,
-                  version: 1,
-                  last_modified_at: Date.now().toString(),
-                };
-              }),
-            );
+          const entries = Object.entries(info.entries || {});
+          let blueprints: BlueprintItem[] = await Promise.all(
+            entries.map(async ([filename]) => {
+              const file = cockpit.file(
+                path.join(blueprintsDir, filename, `${filename}.json`),
+              );
+              const contents = await file.read();
+              const parsed = JSON.parse(contents);
+              return {
+                ...parsed,
+                id: filename as string,
+                version: 1,
+                last_modified_at: Date.now().toString(),
+              };
+            }),
+          );
 
-            blueprints = blueprints.filter((blueprint) => {
-              if (name) {
-                return blueprint.name === name;
-              }
-
-              if (search) {
-                // TODO: maybe add other params to the search filter
-                return blueprint.name.includes(search);
-              }
-
-              return true;
-            });
-
-            let paginatedBlueprints = blueprints;
-            if (offset !== undefined && limit !== undefined) {
-              paginatedBlueprints = blueprints.slice(offset, offset + limit);
+          blueprints = blueprints.filter((blueprint) => {
+            if (name) {
+              return blueprint.name === name;
             }
 
-            let first = '';
-            let last = '';
-
-            if (blueprints.length > 0) {
-              first = blueprints[0].id;
-              last = blueprints[blueprints.length - 1].id;
+            if (search) {
+              // TODO: maybe add other params to the search filter
+              return blueprint.name.includes(search);
             }
 
-            return {
-              data: {
-                meta: { count: blueprints.length },
-                links: {
-                  // These are kind of meaningless for the on-prem
-                  // version
-                  first: first,
-                  last: last,
-                },
-                data: paginatedBlueprints,
-              },
-            };
-          } catch (error) {
-            return { error };
+            return true;
+          });
+
+          let paginatedBlueprints = blueprints;
+          if (offset !== undefined && limit !== undefined) {
+            paginatedBlueprints = blueprints.slice(offset, offset + limit);
           }
-        },
+
+          let first = '';
+          let last = '';
+
+          if (blueprints.length > 0) {
+            first = blueprints[0].id;
+            last = blueprints[blueprints.length - 1].id;
+          }
+
+          return {
+            meta: { count: blueprints.length },
+            links: {
+              // These are kind of meaningless for the on-prem
+              // version
+              first: first,
+              last: last,
+            },
+            data: paginatedBlueprints,
+          };
+        }),
       }),
       createBlueprint: builder.mutation<
         CreateBlueprintApiResponse,
         ComposerCreateBlueprintApiArg
       >({
-        queryFn: async ({ createBlueprintRequest: blueprintReq }) => {
-          try {
+        queryFn: onPremQueryHandler(
+          async ({ queryArgs: { createBlueprintRequest: blueprintReq } }) => {
             const id = uuidv4();
             const blueprintsDir = await getBlueprintsPath();
             await cockpit.spawn(
@@ -424,21 +405,19 @@ export const composerApi = emptyComposerApi.injectEndpoints({
                 }),
               );
             return {
-              data: {
-                id: id,
-              },
+              id,
             };
-          } catch (error) {
-            return { error };
-          }
-        },
+          },
+        ),
       }),
       updateBlueprint: builder.mutation<
         UpdateBlueprintApiResponse,
         ComposerUpdateBlueprintApiArg
       >({
-        queryFn: async ({ id: id, createBlueprintRequest: blueprintReq }) => {
-          try {
+        queryFn: onPremQueryHandler(
+          async ({
+            queryArgs: { id, createBlueprintRequest: blueprintReq },
+          }) => {
             const blueprintsDir = await getBlueprintsPath();
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
@@ -455,89 +434,69 @@ export const composerApi = emptyComposerApi.injectEndpoints({
                 }),
               );
             return {
-              data: {
-                id: id,
-              },
+              id,
             };
-          } catch (error) {
-            return { error };
-          }
-        },
+          },
+        ),
       }),
       deleteBlueprint: builder.mutation<
         DeleteBlueprintApiResponse,
         DeleteBlueprintApiArg
       >({
-        queryFn: async ({ id: filename }) => {
-          try {
-            const blueprintsDir = await getBlueprintsPath();
-            const filepath = path.join(blueprintsDir, filename);
+        queryFn: onPremQueryHandler(async ({ queryArgs: { id: filename } }) => {
+          const blueprintsDir = await getBlueprintsPath();
+          const filepath = path.join(blueprintsDir, filename);
 
-            await cockpit.spawn(['rm', '-r', filepath], {
-              superuser: 'try',
-            });
+          await cockpit.spawn(['rm', '-r', filepath], {
+            superuser: 'try',
+          });
 
-            return {
-              data: {},
-            };
-          } catch (error) {
-            return { error };
-          }
-        },
+          return {};
+        }),
       }),
       exportBlueprintCockpit: builder.query<Blueprint, ExportBlueprintApiArg>({
-        queryFn: async ({ id }) => {
+        queryFn: onPremQueryHandler(async ({ queryArgs: { id } }) => {
           const blueprintsDir = await getBlueprintsPath();
           const file = cockpit.file(path.join(blueprintsDir, id, `${id}.json`));
           const contents = await file.read();
           const blueprint = JSON.parse(
             contents,
           ) as ComposerCreateBlueprintRequest;
-          const onPrem = mapHostedToOnPrem(blueprint as CreateBlueprintRequest);
-          return {
-            data: onPrem,
-          };
-        },
+
+          return mapHostedToOnPrem(blueprint as CreateBlueprintRequest);
+        }),
       }),
       getOscapProfiles: builder.query<
         GetOscapProfilesApiResponse,
         ComposerGetOscapProfilesApiArg
       >({
-        queryFn: async ({ distribution }) => {
-          try {
-            const dsDistro = lookupDatastreamDistro(distribution);
-            const result = (await cockpit.spawn(
-              [
-                'oscap',
-                'info',
-                '--profiles',
-                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
-              ],
-              {
-                superuser: 'try',
-              },
-            )) as string;
+        queryFn: onPremQueryHandler(async ({ queryArgs: { distribution } }) => {
+          const dsDistro = lookupDatastreamDistro(distribution);
+          const result = (await cockpit.spawn(
+            [
+              'oscap',
+              'info',
+              '--profiles',
+              `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+            ],
+            {
+              superuser: 'try',
+            },
+          )) as string;
 
-            const profiles = result
-              .split('\n')
-              .filter((profile) => profile !== '')
-              .map((profile) => profile.split(':')[0])
-              .map((profile) => profile as DistributionProfileItem);
-
-            return {
-              data: profiles,
-            };
-          } catch (error) {
-            return { error };
-          }
-        },
+          return result
+            .split('\n')
+            .filter((profile) => profile !== '')
+            .map((profile) => profile.split(':')[0])
+            .map((profile) => profile as DistributionProfileItem);
+        }),
       }),
       getOscapCustomizations: builder.query<
         GetOscapCustomizationsApiResponse,
         ComposerGetOscapCustomizationsApiArg
       >({
-        queryFn: async ({ distribution, profile }) => {
-          try {
+        queryFn: onPremQueryHandler(
+          async ({ queryArgs: { distribution, profile } }) => {
             const dsDistro = lookupDatastreamDistro(distribution);
             let result = (await cockpit.spawn(
               [
@@ -582,27 +541,23 @@ export const composerApi = emptyComposerApi.injectEndpoints({
                 : '';
 
             return {
-              data: {
-                ...blueprint.customizations,
-                openscap: {
-                  profile_id: profile,
-                  // the profile name is stored in the description
-                  profile_name: blueprint.description,
-                  profile_description: description,
-                },
+              ...blueprint.customizations,
+              openscap: {
+                profile_id: profile,
+                // the profile name is stored in the description
+                profile_name: blueprint.description,
+                profile_description: description,
               },
             };
-          } catch (error) {
-            return { error };
-          }
-        },
+          },
+        ),
       }),
       composeBlueprint: builder.mutation<
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
       >({
-        queryFn: async ({ id: filename }, _, __, baseQuery) => {
-          try {
+        queryFn: onPremQueryHandler(
+          async ({ queryArgs: { id: filename }, baseQuery }) => {
             const blueprintsDir = await getBlueprintsPath();
             const file = cockpit.file(
               path.join(blueprintsDir, filename, `${filename}.json`),
@@ -646,140 +601,113 @@ export const composerApi = emptyComposerApi.injectEndpoints({
               });
 
               await cockpit
+                // @ts-expect-error TODO: add type guards to handle this
                 .file(path.join(blueprintsDir, filename, composeResp.data?.id))
                 .replace(JSON.stringify(crcComposeRequest));
+              // @ts-expect-error TODO: add type guards to handle this
               composes.push({ id: composeResp.data?.id });
             }
 
-            return {
-              data: composes,
-            };
-          } catch (error) {
-            return { error };
-          }
-        },
+            return composes;
+          },
+        ),
       }),
       getComposes: builder.query<GetComposesApiResponse, GetComposesApiArg>({
-        queryFn: async () => {
-          try {
-            const blueprintsDir = await getBlueprintsPath();
-            const info = await fsinfo(blueprintsDir, ['entries'], {
-              superuser: 'try',
-            });
-            let composes: ComposesResponseItem[] = [];
-            const entries = Object.entries(info.entries || {});
-            for (const entry of entries) {
-              composes = composes.concat(await readComposes(entry[0]));
-            }
-            return {
-              data: {
-                meta: {
-                  count: composes.length,
-                },
-                links: {
-                  first: composes.length > 0 ? composes[0].id : '',
-                  last:
-                    composes.length > 0 ? composes[composes.length - 1].id : '',
-                },
-                data: composes,
-              },
-            };
-          } catch (error) {
-            return { error };
+        queryFn: onPremQueryHandler(async () => {
+          const blueprintsDir = await getBlueprintsPath();
+          const info = await fsinfo(blueprintsDir, ['entries'], {
+            superuser: 'try',
+          });
+          let composes: ComposesResponseItem[] = [];
+          const entries = Object.entries(info.entries || {});
+          for (const entry of entries) {
+            composes = composes.concat(await readComposes(entry[0]));
           }
-        },
+          return {
+            meta: {
+              count: composes.length,
+            },
+            links: {
+              first: composes.length > 0 ? composes[0].id : '',
+              last: composes.length > 0 ? composes[composes.length - 1].id : '',
+            },
+            data: composes,
+          };
+        }),
       }),
       getBlueprintComposes: builder.query<
         GetBlueprintComposesApiResponse,
         GetBlueprintComposesApiArg
       >({
-        queryFn: async (queryArgs) => {
-          try {
-            const composes = await readComposes(queryArgs.id);
-            return {
-              data: {
-                meta: {
-                  count: composes.length,
-                },
-                links: {
-                  first: composes.length > 0 ? composes[0].id : '',
-                  last:
-                    composes.length > 0 ? composes[composes.length - 1].id : '',
-                },
-                data: composes,
-              },
-            };
-          } catch (error) {
-            return { error };
-          }
-        },
+        queryFn: onPremQueryHandler(async ({ queryArgs }) => {
+          const composes = await readComposes(queryArgs.id);
+          return {
+            meta: {
+              count: composes.length,
+            },
+            links: {
+              first: composes.length > 0 ? composes[0].id : '',
+              last: composes.length > 0 ? composes[composes.length - 1].id : '',
+            },
+            data: composes,
+          };
+        }),
       }),
       getComposeStatus: builder.query<
         GetComposeStatusApiResponse,
         GetComposeStatusApiArg
       >({
-        queryFn: async (queryArg, _, __, baseQuery) => {
-          try {
-            const resp = await baseQuery({
-              url: `/composes/${queryArg.composeId}`,
-              method: 'GET',
-            });
-            const blueprintsDir = await getBlueprintsPath();
-            const info = await fsinfo(blueprintsDir, ['entries'], {
-              superuser: 'try',
-            });
-            const entries = Object.entries(info.entries || {});
-            for (const bpEntry of entries) {
-              const request = await cockpit
-                .file(path.join(blueprintsDir, bpEntry[0], queryArg.composeId))
-                .read();
-              return {
-                data: {
-                  image_status: resp.data?.image_status,
-                  request: JSON.parse(request),
-                },
-              };
-            }
+        queryFn: onPremQueryHandler(async ({ queryArgs, baseQuery }) => {
+          const resp = await baseQuery({
+            url: `/composes/${queryArgs.composeId}`,
+            method: 'GET',
+          });
+          const blueprintsDir = await getBlueprintsPath();
+          const info = await fsinfo(blueprintsDir, ['entries'], {
+            superuser: 'try',
+          });
+          const entries = Object.entries(info.entries || {});
+          for (const bpEntry of entries) {
+            const request = await cockpit
+              .file(path.join(blueprintsDir, bpEntry[0], queryArgs.composeId))
+              .read();
             return {
-              data: {
-                image_status: '',
-                request: {},
-              },
+              // @ts-expect-error TODO: add type guards to handle this
+              image_status: resp.data?.image_status,
+              request: JSON.parse(request),
             };
-          } catch (error) {
-            return { error };
           }
-        },
+          return {
+            image_status: '',
+            request: {},
+          };
+        }),
       }),
       getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
-        queryFn: async () => {
-          try {
-            // we need to ensure that the file is created
-            await cockpit.spawn(['mkdir', '-p', '/etc/osbuild-worker'], {
-              superuser: 'require',
-            });
+        queryFn: onPremQueryHandler(async () => {
+          // we need to ensure that the file is created
+          await cockpit.spawn(['mkdir', '-p', '/etc/osbuild-worker'], {
+            superuser: 'require',
+          });
 
-            await cockpit.spawn(
-              ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
-              { superuser: 'require' },
-            );
+          await cockpit.spawn(
+            ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
+            { superuser: 'require' },
+          );
 
-            const config = await cockpit
-              .file('/etc/osbuild-worker/osbuild-worker.toml')
-              .read();
+          const config = await cockpit
+            .file('/etc/osbuild-worker/osbuild-worker.toml')
+            .read();
 
-            return { data: TOML.parse(config) };
-          } catch (error) {
-            return { error };
-          }
-        },
+          return TOML.parse(config);
+        }),
       }),
       updateWorkerConfig: builder.mutation<
         WorkerConfigResponse,
         UpdateWorkerConfigApiArg
       >({
-        queryFn: async ({ updateWorkerConfigRequest }) => {
-          try {
+        queryFn: onPremQueryHandler(
+          async ({ queryArgs: { updateWorkerConfigRequest } }) => {
             const workerConfig = cockpit.file(
               '/etc/osbuild-worker/osbuild-worker.toml',
               {
@@ -832,71 +760,59 @@ export const composerApi = emptyComposerApi.injectEndpoints({
               },
             );
 
-            return { data: TOML.parse(contents) };
-          } catch (error) {
-            return { error };
-          }
-        },
+            return TOML.parse(contents);
+          },
+        ),
       }),
       podmanImages: builder.query<PodmanImagesResponse, PodmanImagesArg>({
-        queryFn: async () => {
-          try {
-            const result = (await cockpit.spawn(
-              [
-                'podman',
-                'images',
-                '--filter',
-                'reference=registry.redhat.io/rhel*/rhel-bootc',
-                '--format',
-                '{{.Repository}},{{.Tag}}',
-              ],
-              {
-                superuser: 'require',
-              },
-            )) as string;
+        queryFn: onPremQueryHandler(async () => {
+          const result = (await cockpit.spawn(
+            [
+              'podman',
+              'images',
+              '--filter',
+              'reference=registry.redhat.io/rhel*/rhel-bootc',
+              '--format',
+              '{{.Repository}},{{.Tag}}',
+            ],
+            {
+              superuser: 'require',
+            },
+          )) as string;
 
-            if (!result.trim()) {
-              return {
-                data: [],
-              };
-            }
-
-            const images = result
-              .trim()
-              .split('\n')
-              .map((s) => {
-                if (!s.trim()) {
-                  return null;
-                }
-
-                const parts = s.trim().split(',');
-                if (parts.length !== 2) {
-                  // Skip malformed lines that don't match "repository,tag"
-                  return null;
-                }
-
-                const [repository, tag] = parts.map((p) => p.trim());
-                if (!repository || !tag) {
-                  return null;
-                }
-
-                return {
-                  image: `${repository}:${tag}`,
-                  repository,
-                  tag,
-                };
-              })
-              .filter((image): image is PodmanImageInfo => image !== null);
-
-            return {
-              data: images,
-            };
-          } catch (error: unknown) {
-            return {
-              error: error instanceof Error ? error.message : String(error),
-            };
+          if (!result.trim()) {
+            return [];
           }
-        },
+
+          const images = result
+            .trim()
+            .split('\n')
+            .map((s) => {
+              if (!s.trim()) {
+                return null;
+              }
+
+              const parts = s.trim().split(',');
+              if (parts.length !== 2) {
+                // Skip malformed lines that don't match "repository,tag"
+                return null;
+              }
+
+              const [repository, tag] = parts.map((p) => p.trim());
+              if (!repository || !tag) {
+                return null;
+              }
+
+              return {
+                image: `${repository}:${tag}`,
+                repository,
+                tag,
+              };
+            })
+            .filter((image): image is PodmanImageInfo => image !== null);
+
+          return images;
+        }),
       }),
     };
   },
