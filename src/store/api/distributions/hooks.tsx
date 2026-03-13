@@ -3,8 +3,8 @@ import { useEffect, useMemo } from 'react';
 import { simpleTargetNames } from '@/constants';
 import { ImageTypes } from '@/store/api/backend';
 import { useSearchRpmMutation } from '@/store/api/contentSources';
-import { selectIsOnPremise } from '@/store/envSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices/env';
 import { asDistribution, isImageType } from '@/store/typeGuards';
 import {
   selectArchitecture,

@@ -19,6 +19,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { skipToken } from '@reduxjs/toolkit/query';
 
 import { ImageTypes, useGetBlueprintQuery } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
 import {
@@ -26,7 +27,6 @@ import {
   useGetUser,
 } from '../../Hooks';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 
 type BuildImagesButtonPropTypes = {

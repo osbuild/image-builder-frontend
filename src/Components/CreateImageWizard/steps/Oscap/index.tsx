@@ -27,6 +27,7 @@ import {
 } from '@/store/api/backend';
 import { usePoliciesQuery } from '@/store/api/compliance';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import OscapOnPremSpinner from './components/OnPremSpinner';
 import OscapOnPremWarning from './components/OnPremWarning';
@@ -43,7 +44,6 @@ import {
   OSCAP_URL,
 } from '../../../../constants';
 import { useGetUser } from '../../../../Hooks';
-import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';
 import {

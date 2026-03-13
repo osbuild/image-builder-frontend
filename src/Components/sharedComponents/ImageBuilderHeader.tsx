@@ -10,10 +10,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useBackendPrefetch } from '@/store/api/backend';
+import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 
 import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
 import { useGetDocumentationUrl } from '../../Hooks';
-import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';

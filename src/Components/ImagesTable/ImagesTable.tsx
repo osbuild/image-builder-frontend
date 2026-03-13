@@ -42,6 +42,7 @@ import {
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import ImagesEmptyState from './EmptyState';
 import {
@@ -81,7 +82,6 @@ import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { hasBootcRequest } from '../../store/typeGuards';
 import { bootcReferenceToOSDisplayLabel } from '../../Utilities/distributionToOSShortId';

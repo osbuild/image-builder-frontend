@@ -25,6 +25,7 @@ import {
   useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
 } from '@/store/api/contentSources';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import CustomHelperText from './CustomHelperText';
 import PackagesTable from './PackagesTable';
@@ -35,7 +36,6 @@ import {
   ContentOrigin,
   EPEL_10_REPO_DEFINITION,
 } from '../../../../../constants';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {

@@ -16,6 +16,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 
 import AAPStep from './steps/AAP';
 import DetailsStep from './steps/Details';
@@ -72,7 +73,6 @@ import {
   RHEL_9,
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
-import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {

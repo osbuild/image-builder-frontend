@@ -13,10 +13,11 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import Registration from './components/Registration';
 
 import { useGetUser } from '../../../../Hooks';
-import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { changeOrgId } from '../../../../store/wizardSlice';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';

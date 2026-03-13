@@ -19,11 +19,12 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import { AwsAccountId } from './AwsAccountId';
 import { AwsSourcesSelect } from './AwsSourcesSelect';
 
 import { AWS_REGIONS } from '../../../../../constants';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAwsAccountId,

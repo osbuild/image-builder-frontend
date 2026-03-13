@@ -3,9 +3,10 @@ import React, { useEffect } from 'react';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { selectPathResolver } from '@/store/slices/env';
+
 import CreateImageWizard from './CreateImageWizard';
 
-import { selectPathResolver } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loadWizardState, wizardState } from '../../store/wizardSlice';
 

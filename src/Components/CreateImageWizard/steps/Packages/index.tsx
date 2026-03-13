@@ -2,10 +2,11 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import PackageRecommendations from './components/PackageRecommendations';
 import Packages from './components/Packages';
 
-import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';

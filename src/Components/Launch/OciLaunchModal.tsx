@@ -22,8 +22,8 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
+import { selectPathResolver } from '@/store/slices/env';
 
-import { selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { isOciUploadStatus } from '../../store/typeGuards';
 

@@ -5,8 +5,8 @@ import {
 } from '@reduxjs/toolkit/dist/query/react';
 
 import { errorMessage } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

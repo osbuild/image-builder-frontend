@@ -21,6 +21,7 @@ import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import {
@@ -28,7 +29,6 @@ import {
   selectBlueprintVersionFilterAPI,
   selectSelectedBlueprintId,
 } from '../../store/BlueprintSlice';
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';

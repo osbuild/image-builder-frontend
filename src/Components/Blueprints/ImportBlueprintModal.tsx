@@ -33,10 +33,10 @@ import {
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
 } from '@/store/api/contentSources';
+import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
-import { selectIsOnPremise, selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { wizardState } from '../../store/wizardSlice';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';

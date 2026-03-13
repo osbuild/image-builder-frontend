@@ -24,6 +24,7 @@ import {
 } from '@/store/api/contentSources';
 import { useGetSourceListQuery } from '@/store/api/provisioning';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import {
   DiskReviewTable,
@@ -47,7 +48,6 @@ import {
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
-import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectAapCallbackUrl,

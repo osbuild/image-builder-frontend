@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import cockpit from 'cockpit';
 
-import { selectIsOnPremise } from '../../store/envSlice';
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import { useAppSelector } from '../../store/hooks';
 
 /**

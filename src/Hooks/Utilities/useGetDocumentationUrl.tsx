@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import {
   IB_HOSTED_LIGHTSPEED_DOCUMENTATION_URL,
   IB_ON_PREMISE_OSBUILD_DOCUMENTATION_URL,
   IB_ON_PREMISE_RHEL10_DOCUMENTATION_URL,
   IB_ON_PREMISE_RHEL9_DOCUMENTATION_URL,
 } from '../../constants';
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { getHostDistro } from '../../Utilities/getHostInfo';
 
