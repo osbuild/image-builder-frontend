@@ -28,16 +28,16 @@ import {
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
 } from '@/store/api/backend';
-
-import { AWSConfig } from './AWSConfig';
-import { isAwsStepValid } from './validators';
-
 import {
   changeAWSBucketName,
   changeAWSCredsPath,
   reinitializeAWSConfig,
   selectAWSConfig,
-} from '../../store/cloudProviderConfigSlice';
+} from '@/store/slices/cloudConfig';
+
+import { AWSConfig } from './AWSConfig';
+import { isAwsStepValid } from './validators';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const ConfigError = ({
