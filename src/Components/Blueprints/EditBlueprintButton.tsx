@@ -3,8 +3,9 @@ import React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom';
 
+import { selectPathResolver } from '@/store/slices/env';
+
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
-import { selectPathResolver } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 
 export const EditBlueprintButton = () => {

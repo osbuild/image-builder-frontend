@@ -1,7 +1,8 @@
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useFlag as useUnleashFlag } from '@unleash/proxy-client-react';
 
-import { selectIsOnPremise } from '../store/envSlice';
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import { useAppSelector } from '../store/hooks';
 
 export const useGetEnvironment = process.env.IS_ON_PREMISE

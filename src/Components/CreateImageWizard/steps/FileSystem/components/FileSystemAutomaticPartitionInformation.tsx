@@ -4,12 +4,13 @@ import { Button, Content, ContentVariants } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import {
   AMPLITUDE_MODULE_NAME,
   FILE_SYSTEM_CUSTOMIZATION_URL,
 } from '../../../../../constants';
 import { useGetUser } from '../../../../../Hooks';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 
 const FileSystemAutomaticPartition = () => {

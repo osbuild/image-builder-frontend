@@ -21,8 +21,8 @@ import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { provisioningApi, rhsmApi } from '@/store/api';
 import { ImageTypes, useGetArchitecturesQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import { selectIsOnPremise } from '@/store/slices/env';
 
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addImageType,

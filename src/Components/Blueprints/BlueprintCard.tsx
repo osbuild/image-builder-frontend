@@ -11,13 +11,13 @@ import {
 } from '@patternfly/react-core';
 
 import { BlueprintItem } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
 import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 type blueprintProps = {

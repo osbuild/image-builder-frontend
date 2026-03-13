@@ -2,11 +2,12 @@ import React from 'react';
 
 import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import ActivationKeysList from './ActivationKeysList';
 import { ManualActivationKey } from './ManualActivationKey';
 import SatelliteRegistration from './SatelliteRegistration';
 
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeRegistrationType,

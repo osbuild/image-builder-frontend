@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { ChromeUser } from '@redhat-cloud-services/types';
 
-import { selectIsOnPremise } from '../../store/envSlice';
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import { useAppSelector } from '../../store/hooks';
 
 export const useGetUser = (auth: { getUser(): Promise<void | ChromeUser> }) => {

@@ -13,10 +13,11 @@ import { Outlet } from 'react-router-dom';
 
 import './LandingPage.scss';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import { NewAlert } from './NewAlert';
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppSelector } from '../../store/hooks';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';

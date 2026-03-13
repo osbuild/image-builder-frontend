@@ -24,10 +24,10 @@ import {
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {

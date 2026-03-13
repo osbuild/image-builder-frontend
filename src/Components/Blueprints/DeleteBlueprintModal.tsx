@@ -15,6 +15,7 @@ import {
   GetBlueprintsApiArg,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import {
   AMPLITUDE_MODULE_NAME,
@@ -32,7 +33,6 @@ import {
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
-import { selectIsOnPremise } from '../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface DeleteBlueprintModalProps {

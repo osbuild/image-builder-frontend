@@ -5,8 +5,8 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME, CONTENT_URL } from '@/constants';
 import { useGetUser } from '@/Hooks';
-import { selectIsOnPremise } from '@/store/envSlice';
 import { useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 const ManageRepositoriesButton = () => {
   const { analytics, auth } = useChrome();

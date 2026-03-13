@@ -38,6 +38,7 @@ import {
   VolumeGroup,
 } from '@/store/api/backend';
 import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import { parseSizeUnit } from './parseSizeUnit';
 
@@ -55,7 +56,6 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
-import { selectIsOnPremise } from '../../../store/envSlice';
 import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import {
   ComplianceType,

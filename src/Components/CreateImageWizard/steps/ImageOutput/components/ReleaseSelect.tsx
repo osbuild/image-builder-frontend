@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 
 import { Distributions } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import {
   ON_PREM_RELEASES,
@@ -24,7 +25,6 @@ import {
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeDistribution,

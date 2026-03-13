@@ -16,8 +16,8 @@ import {
   useGetComplianceCustomizationsQuery,
   useGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { asDistribution } from '../../../../../store/typeGuards';
 import {

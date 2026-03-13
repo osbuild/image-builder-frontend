@@ -8,6 +8,7 @@ import {
   useLazyGetBlueprintsQuery,
 } from '@/store/api/backend';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
@@ -16,7 +17,6 @@ import {
   UNDEFINED_GROUPS_WARNING_KEY,
   UNIQUE_VALIDATION_DELAY,
 } from '../../../constants';
-import { selectIsOnPremise } from '../../../store/envSlice';
 import { useAppSelector } from '../../../store/hooks';
 import {
   MAX_REGULAR_GID,

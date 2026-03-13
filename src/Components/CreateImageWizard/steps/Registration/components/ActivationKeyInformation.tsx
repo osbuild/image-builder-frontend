@@ -15,8 +15,8 @@ import {
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+import { selectIsOnPremise } from '@/store/slices/env';
 
-import { selectIsOnPremise } from '../../../../../store/envSlice';
 import { useAppSelector } from '../../../../../store/hooks';
 import { selectActivationKey } from '../../../../../store/wizardSlice';
 

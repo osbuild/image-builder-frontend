@@ -1,6 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
-import type { RootState } from '.';
+import type { RootState } from '@/store';
 
 const initialState = {
   isOnPremise:

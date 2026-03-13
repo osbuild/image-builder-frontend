@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import ArchSelect from './components/ArchSelect';
 import BlueprintMode from './components/BlueprintMode';
 import CentOSAcknowledgement from './components/CentOSAcknowledgement';
@@ -10,7 +12,6 @@ import ReleaseLifecycle from './components/ReleaseLifecycle';
 import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
 
-import { selectIsOnPremise } from '../../../../store/envSlice';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintName,
