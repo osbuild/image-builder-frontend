@@ -2,13 +2,14 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { selectFscMode } from '@/store/slices/wizard';
+
 import AdvancedPartitioning from './components/AdvancedPartitioning';
 import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './components/FileSystemConfiguration';
 import FileSystemPartition from './components/FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { selectFscMode } from '../../../../store/wizardSlice';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 export type FscModeType = 'automatic' | 'basic' | 'advanced';

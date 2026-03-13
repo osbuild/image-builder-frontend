@@ -11,6 +11,11 @@ import {
 
 import { Distributions } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
+import {
+  changeDistribution,
+  changeRegistrationType,
+  selectDistribution,
+} from '@/store/slices/wizard';
 
 import {
   ON_PREM_RELEASES,
@@ -26,11 +31,6 @@ import {
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeDistribution,
-  changeRegistrationType,
-  selectDistribution,
-} from '../../../../../store/wizardSlice';
 import isRhel from '../../../../../Utilities/isRhel';
 import { toMonthAndYear } from '../../../../../Utilities/time';
 

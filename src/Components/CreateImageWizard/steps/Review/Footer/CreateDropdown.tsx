@@ -22,6 +22,7 @@ import {
 } from '@/store/api/backend';
 import { setBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
+import { selectPackages } from '@/store/slices/wizard';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
@@ -30,7 +31,6 @@ import {
   useGetUser,
 } from '../../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type CreateDropdownProps = {

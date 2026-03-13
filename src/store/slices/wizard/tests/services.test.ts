@@ -12,7 +12,7 @@ import wizardReducer, {
   removeEnabledService,
   removeMaskedService,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 describe('services reducers', () => {
   describe('enabled services', () => {

@@ -11,7 +11,7 @@ import {
   serviceMiddleware,
   serviceReducer,
 } from '@/store';
-import { initialState } from '@/store/wizardSlice';
+import { initialState } from '@/store/slices/wizard';
 
 export type WizardStateOverrides = Partial<typeof initialState>;
 

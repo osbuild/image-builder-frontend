@@ -15,7 +15,7 @@ import wizardReducer, {
   removePackage,
   removePackageGroup,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 const createPackage = (
   name: string,

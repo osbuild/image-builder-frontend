@@ -16,11 +16,9 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
+import { changeKeyboard, selectKeyboard } from '@/store/slices/wizard';
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeKeyboard,
-  selectKeyboard,
-} from '../../../../../store/wizardSlice';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useLocaleValidation } from '../../../utilities/useValidation';
 import { keyboardsList } from '../data/keyboardsList';

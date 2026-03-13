@@ -9,15 +9,15 @@ import {
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
 import { Distributions } from '@/store/api/backend';
-
-import { RHEL_10 } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
 import {
   changeBlueprintMode,
   changeDistribution,
   selectIsImageMode,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { RHEL_10 } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { asDistribution } from '../../../../../store/typeGuards';
 import { getHostDistro } from '../../../../../Utilities/getHostInfo';
 
 const BlueprintMode = () => {

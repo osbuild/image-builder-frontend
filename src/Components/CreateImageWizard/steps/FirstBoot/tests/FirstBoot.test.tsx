@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/wizardSlice';
+import { initialState } from '@/store/slices/wizard';
 import { createUser, waitForAction } from '@/test/testUtils';
 
 import { openCodeEditor, renderFirstBootStep, uploadScript } from './helpers';

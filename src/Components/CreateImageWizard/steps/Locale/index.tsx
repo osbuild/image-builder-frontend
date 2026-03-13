@@ -4,18 +4,18 @@ import { Content, Form, Spinner, Title } from '@patternfly/react-core';
 
 import { useGetArchitecturesQuery } from '@/store/api/backend';
 import { useSearchLanguagePacks } from '@/store/api/distributions';
+import {
+  selectArchitecture,
+  selectDistribution,
+  selectLocaleLangpackCandidates,
+  selectVerifiedLocaleLangpacks,
+} from '@/store/slices/wizard';
 
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { asDistribution } from '../../../../store/typeGuards';
-import {
-  selectArchitecture,
-  selectDistribution,
-  selectLocaleLangpackCandidates,
-  selectVerifiedLocaleLangpacks,
-} from '../../../../store/wizardSlice';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const LocaleStep = () => {

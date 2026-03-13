@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 
 import { useListRepositoriesQuery } from '@/store/api/contentSources';
-
-import { ContentOrigin, PAGINATION_LIMIT } from '../../../constants';
-import { useAppSelector } from '../../../store/hooks';
 import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
-} from '../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { ContentOrigin, PAGINATION_LIMIT } from '../../../constants';
+import { useAppSelector } from '../../../store/hooks';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 
 /**

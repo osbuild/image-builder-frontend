@@ -14,6 +14,7 @@ import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
+import { selectOrgId } from '@/store/slices/wizard';
 
 import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
@@ -23,7 +24,6 @@ import {
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { useAppSelector } from '../../../../../store/hooks';
-import { selectOrgId } from '../../../../../store/wizardSlice';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
 

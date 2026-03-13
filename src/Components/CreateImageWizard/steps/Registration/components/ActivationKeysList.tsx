@@ -26,6 +26,14 @@ import {
   useCreateActivationKeysMutation,
   useListActivationKeysQuery,
 } from '@/store/api/rhsm';
+import {
+  changeActivationKey,
+  changeBaseUrl,
+  changeProxy,
+  changeServerUrl,
+  selectActivationKey,
+  selectRegistrationType,
+} from '@/store/slices/wizard';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 
@@ -35,14 +43,6 @@ import {
   CDN_STAGE_URL,
 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeActivationKey,
-  changeBaseUrl,
-  changeProxy,
-  changeServerUrl,
-  selectActivationKey,
-  selectRegistrationType,
-} from '../../../../../store/wizardSlice';
 import { getErrorMessage } from '../../../../../Utilities/getErrorMessage';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';

@@ -8,11 +8,12 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { useAppDispatch } from '../../../../../store/hooks';
 import {
   changePartitionMinSize,
   changePartitionUnit,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch } from '../../../../../store/hooks';
 import {
   FilesystemPartition,
   LogicalVolumeWithBase,

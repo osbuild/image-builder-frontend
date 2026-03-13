@@ -12,19 +12,18 @@ import {
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import {
   blueprintsSlice,
-  cloudProviderConfigSlice,
-  envSlice,
-  selectIsOnPremise,
-} from './slices';
-import { asDistribution } from './typeGuards';
-import wizardSlice, {
   changeArchitecture,
   changeDistribution,
   changeImageTypes,
+  cloudProviderConfigSlice,
+  envSlice,
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
-} from './wizardSlice';
+  selectIsOnPremise,
+  wizardSlice,
+} from './slices';
+import { asDistribution } from './typeGuards';
 
 export const serviceReducer = combineReducers({
   env: envSlice.reducer,
@@ -33,7 +32,7 @@ export const serviceReducer = combineReducers({
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
-  wizard: wizardSlice,
+  wizard: wizardSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,
 });
@@ -48,7 +47,7 @@ export const onPremReducer = combineReducers({
   // TODO: add other endpoints so we can remove this.
   // It's still needed to get things to work.
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
-  wizard: wizardSlice,
+  wizard: wizardSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,
 });

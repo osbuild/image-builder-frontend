@@ -20,12 +20,6 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { AwsAccountId } from './AwsAccountId';
-import { AwsSourcesSelect } from './AwsSourcesSelect';
-
-import { AWS_REGIONS } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAwsAccountId,
   changeAwsRegion,
@@ -34,7 +28,13 @@ import {
   selectAwsAccountId,
   selectAwsRegion,
   selectAwsShareMethod,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { AwsAccountId } from './AwsAccountId';
+import { AwsSourcesSelect } from './AwsSourcesSelect';
+
+import { AWS_REGIONS } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ValidatedInput } from '../../../ValidatedInput';
 import { isAwsAccountIdValid } from '../../../validators';
 

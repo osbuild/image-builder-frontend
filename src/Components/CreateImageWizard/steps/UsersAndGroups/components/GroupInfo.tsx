@@ -4,13 +4,11 @@ import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { addUserGroup, selectUserGroups } from '@/store/slices/wizard';
+
 import GroupRow from './GroupRow';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  addUserGroup,
-  selectUserGroups,
-} from '../../../../../store/wizardSlice';
 import { useUserGroupsValidation } from '../../../utilities/useValidation';
 
 type GroupInfoProps = {

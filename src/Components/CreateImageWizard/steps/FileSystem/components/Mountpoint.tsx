@@ -2,11 +2,12 @@ import React from 'react';
 
 import { Tooltip } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changePartitionMountpoint,
   selectFilesystemPartitions,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import {

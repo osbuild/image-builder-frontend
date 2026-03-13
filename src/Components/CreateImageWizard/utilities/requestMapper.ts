@@ -39,24 +39,6 @@ import {
 } from '@/store/api/backend';
 import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { parseSizeUnit } from './parseSizeUnit';
-
-import {
-  CENTOS_9,
-  FIRST_BOOT_SERVICE_DATA,
-  FIRSTBOOT_PATH,
-  FIRSTBOOT_SERVICE_PATH,
-  IMAGE_MODE,
-  RHEL_10,
-  RHEL_8,
-  RHEL_9,
-  SATELLITE_PATH,
-  SATELLITE_SERVICE_DATA,
-  SATELLITE_SERVICE_PATH,
-} from '../../../constants';
-import { RootState } from '../../../store';
-import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import {
   ComplianceType,
   initialState,
@@ -125,7 +107,25 @@ import {
   selectVerifiedLocaleLangpacks,
   UserWithAdditionalInfo,
   wizardState,
-} from '../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { parseSizeUnit } from './parseSizeUnit';
+
+import {
+  CENTOS_9,
+  FIRST_BOOT_SERVICE_DATA,
+  FIRSTBOOT_PATH,
+  FIRSTBOOT_SERVICE_PATH,
+  IMAGE_MODE,
+  RHEL_10,
+  RHEL_8,
+  RHEL_9,
+  SATELLITE_PATH,
+  SATELLITE_SERVICE_DATA,
+  SATELLITE_SERVICE_PATH,
+} from '../../../constants';
+import { RootState } from '../../../store';
+import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
 import {

@@ -34,11 +34,11 @@ import {
   useBulkImportRepositoriesMutation,
 } from '@/store/api/contentSources';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
+import { wizardState } from '@/store/slices/wizard';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { useAppSelector } from '../../store/hooks';
-import { wizardState } from '../../store/wizardSlice';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
 import {
   mapExportRequestToState,

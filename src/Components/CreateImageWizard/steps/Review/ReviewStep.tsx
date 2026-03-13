@@ -15,6 +15,26 @@ import { ArrowRightIcon } from '@patternfly/react-icons';
 
 import './ReviewStep.scss';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import {
+  selectAapRegistration,
+  selectBlueprintDescription,
+  selectBlueprintName,
+  selectDistribution,
+  selectFirewall,
+  selectHostname,
+  selectImageTypes,
+  selectIsImageMode,
+  selectKernel,
+  selectKeyboard,
+  selectLanguages,
+  selectNtpServers,
+  selectRegistrationType,
+  selectServices,
+  selectTimezone,
+  selectUserGroups,
+  selectUsers,
+  UserGroup,
+} from '@/store/slices/wizard';
 
 import {
   ContentList,
@@ -44,26 +64,6 @@ import {
 import isRhel from '../../../../../src/Utilities/isRhel';
 import { targetOptions } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
-import {
-  selectAapRegistration,
-  selectBlueprintDescription,
-  selectBlueprintName,
-  selectDistribution,
-  selectFirewall,
-  selectHostname,
-  selectImageTypes,
-  selectIsImageMode,
-  selectKernel,
-  selectKeyboard,
-  selectLanguages,
-  selectNtpServers,
-  selectRegistrationType,
-  selectServices,
-  selectTimezone,
-  selectUserGroups,
-  selectUsers,
-  UserGroup,
-} from '../../../../store/wizardSlice';
 import SecurityInformation from '../Oscap/components/SecurityInformation';
 
 const Review = () => {

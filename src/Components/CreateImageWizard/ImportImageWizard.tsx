@@ -4,11 +4,11 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { selectPathResolver } from '@/store/slices/env';
+import { loadWizardState, wizardState } from '@/store/slices/wizard';
 
 import CreateImageWizard from './CreateImageWizard';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { loadWizardState, wizardState } from '../../store/wizardSlice';
 
 const ImportImageWizard = () => {
   const dispatch = useAppDispatch();

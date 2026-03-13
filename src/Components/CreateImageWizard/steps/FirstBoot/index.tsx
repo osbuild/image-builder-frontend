@@ -12,15 +12,16 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { FIRST_BOOT_SERVICE } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   addEnabledService,
   removeEnabledService,
   selectFirstBootScript,
   selectRegistrationType,
   setFirstBootScript,
-} from '../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { FIRST_BOOT_SERVICE } from '../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import { useFirstBootValidation } from '../../utilities/useValidation';
 

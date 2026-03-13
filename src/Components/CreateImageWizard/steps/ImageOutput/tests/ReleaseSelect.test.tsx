@@ -4,7 +4,7 @@ import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
 import {
   selectDistribution,
   selectRegistrationType,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {

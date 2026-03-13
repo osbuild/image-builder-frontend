@@ -4,6 +4,11 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
+import {
+  removeDiskPartition,
+  selectDiskPartitions,
+} from '@/store/slices/wizard';
+
 import MinimumSize from './MinimumSize';
 import Mountpoint from './Mountpoint';
 import PartitionName from './PartitionName';
@@ -11,10 +16,6 @@ import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  removeDiskPartition,
-  selectDiskPartitions,
-} from '../../../../../store/wizardSlice';
 import { DiskPartition } from '../fscTypes';
 
 type DiskRowPropTypes = {

@@ -43,7 +43,7 @@ import {
   selectTemplate,
   selectUseLatest,
   selectWizardMode,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
 import {

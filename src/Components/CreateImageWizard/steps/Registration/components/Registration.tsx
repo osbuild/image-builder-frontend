@@ -3,16 +3,16 @@ import React from 'react';
 import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 
 import { selectIsOnPremise } from '@/store/slices/env';
+import {
+  changeRegistrationType,
+  selectRegistrationType,
+} from '@/store/slices/wizard';
 
 import ActivationKeysList from './ActivationKeysList';
 import { ManualActivationKey } from './ManualActivationKey';
 import SatelliteRegistration from './SatelliteRegistration';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeRegistrationType,
-  selectRegistrationType,
-} from '../../../../../store/wizardSlice';
 import { RegistrationProps } from '../registrationTypes';
 
 const Registration = ({ onErrorChange }: RegistrationProps) => {

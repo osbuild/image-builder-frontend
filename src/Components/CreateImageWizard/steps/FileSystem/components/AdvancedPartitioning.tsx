@@ -10,11 +10,6 @@ import {
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
-import FileSystemTable from './FileSystemTable';
-import VolumeGroups from './VolumeGroups';
-
-import { PARTITIONING_URL } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addDiskPartition,
   changeDiskMinsize,
@@ -22,7 +17,13 @@ import {
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import FileSystemTable from './FileSystemTable';
+import VolumeGroups from './VolumeGroups';
+
+import { PARTITIONING_URL } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const AdvancedPartitioning = () => {

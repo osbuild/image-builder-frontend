@@ -1,9 +1,29 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
-import type { ActivationKeys } from '@/store/api/rhsm';
-
+import type { FscModeType } from '@/Components/CreateImageWizard/steps/FileSystem';
+import type {
+  DiskPartition,
+  DiskPartitionBase,
+  FilesystemPartition,
+  FscDisk,
+  FSType,
+  PartitioningCustomization,
+  Units,
+} from '@/Components/CreateImageWizard/steps/FileSystem/fscTypes';
+import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+} from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
+import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/TargetEnvironment/Aws';
+import type {
+  GcpAccountType,
+  GcpShareMethod,
+} from '@/Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
+import type { V1ListSourceResponseItem } from '@/Components/CreateImageWizard/types';
+import { generateDefaultName } from '@/Components/CreateImageWizard/utilities/useGenerateDefaultName';
+import { RHEL_10, X86_64 } from '@/constants';
+import type { RootState } from '@/store';
 import type {
   CustomRepository,
   Distributions,
@@ -15,34 +35,11 @@ import type {
   Repository,
   Timezone,
   User,
-} from './api/backend';
-
-import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSystem';
-import type {
-  DiskPartition,
-  DiskPartitionBase,
-  FilesystemPartition,
-  FscDisk,
-  FSType,
-  PartitioningCustomization,
-  Units,
-} from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '../Components/CreateImageWizard/steps/Packages/packagesTypes';
-import type { AwsShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Aws';
-import type {
-  GcpAccountType,
-  GcpShareMethod,
-} from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
-import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
-import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
-import { RHEL_10, X86_64 } from '../constants';
-import isRhel from '../Utilities/isRhel';
-import { yyyyMMddFormat } from '../Utilities/time';
-
-import type { RootState } from '.';
+} from '@/store/api/backend';
+import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
+import type { ActivationKeys } from '@/store/api/rhsm';
+import isRhel from '@/Utilities/isRhel';
+import { yyyyMMddFormat } from '@/Utilities/time';
 
 // GID range for regular groups per LOGIN.DEFS(5) defaults
 export const MIN_REGULAR_GID = 1000;

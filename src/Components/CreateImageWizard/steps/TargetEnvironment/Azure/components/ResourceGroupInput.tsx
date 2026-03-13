@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAzureResourceGroup,
   selectAzureResourceGroup,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 const ResourceGroupInput = () => {
   const dispatch = useAppDispatch();

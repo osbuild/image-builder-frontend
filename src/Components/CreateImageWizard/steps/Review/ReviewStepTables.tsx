@@ -15,9 +15,6 @@ import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
 } from '@/store/api/contentSources';
-
-import { ContentOrigin } from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,
   selectDiskPartitions,
@@ -28,7 +25,10 @@ import {
   selectRecommendedRepositories,
   selectTemplate,
   UserWithAdditionalInfo,
-} from '../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { ContentOrigin } from '../../../../constants';
+import { useAppSelector } from '../../../../store/hooks';
 import { getEpelVersionForDistribution } from '../../../../Utilities/epel';
 import PackageInfoNotAvailablePopover from '../Packages/components/PackageInfoNotAvailablePopover';
 

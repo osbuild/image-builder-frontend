@@ -12,6 +12,8 @@ import { Chart, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
 
+import { selectDistribution } from '@/store/slices/wizard';
+
 import {
   RELEASE_LIFECYCLE_URL,
   RHEL_10_FULL_SUPPORT,
@@ -24,7 +26,6 @@ import {
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
-import { selectDistribution } from '../../../../../store/wizardSlice';
 import 'chartjs-adapter-moment';
 
 Chart.register(annotationPlugin);

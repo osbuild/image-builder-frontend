@@ -12,7 +12,7 @@ import wizardReducer, {
   removePartition,
   removePartitionByMountpoint,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 const createPartition = (
   overrides: Partial<FilesystemPartition> = {},

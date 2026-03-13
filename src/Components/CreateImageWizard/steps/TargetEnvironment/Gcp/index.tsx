@@ -9,7 +9,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeGcpAccountType,
   changeGcpEmail,
@@ -17,7 +16,9 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ValidatedInput } from '../../../ValidatedInput';
 import { isGcpDomainValid, isGcpEmailValid } from '../../../validators';
 

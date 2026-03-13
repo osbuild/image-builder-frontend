@@ -21,14 +21,14 @@ import {
 import { SyncAltIcon } from '@patternfly/react-icons';
 
 import { usePodmanImagesQuery } from '@/store/api/backend';
-
-import { RHEL_10_IMAGE_MODE_IMAGE } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeImageSource,
   ImageSource,
   selectImageSource,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { RHEL_10_IMAGE_MODE_IMAGE } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const CopyInlineCompact = ({ text }: { text: string }) => (
   <ClipboardCopy

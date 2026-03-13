@@ -14,7 +14,7 @@ import {
   changePayloadRepositories,
   selectCustomRepositories,
   selectPayloadRepositories,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 type RemoveRepositoryModalProps = {
   modalOpen: boolean;

@@ -6,7 +6,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 import { renderWithQueryParams } from './helpers';
 import { createDefaultFetchHandler, fetchMock } from './mocks';

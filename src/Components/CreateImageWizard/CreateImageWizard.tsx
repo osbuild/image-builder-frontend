@@ -17,6 +17,27 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
+import {
+  addImageType,
+  changeArchitecture,
+  changeDistribution,
+  changeTimezone,
+  initializeWizard,
+  selectAwsAccountId,
+  selectAwsShareMethod,
+  selectAwsSourceId,
+  selectAzureResourceGroup,
+  selectAzureSubscriptionId,
+  selectAzureTenantId,
+  selectDistribution,
+  selectGcpAccountType,
+  selectGcpEmail,
+  selectGcpShareMethod,
+  selectImageSource,
+  selectImageTypes,
+  selectIsImageMode,
+  selectTimezone,
+} from '@/store/slices/wizard';
 
 import AAPStep from './steps/AAP';
 import DetailsStep from './steps/Details';
@@ -75,27 +96,6 @@ import {
 import { useGetUser } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
-import {
-  addImageType,
-  changeArchitecture,
-  changeDistribution,
-  changeTimezone,
-  initializeWizard,
-  selectAwsAccountId,
-  selectAwsShareMethod,
-  selectAwsSourceId,
-  selectAzureResourceGroup,
-  selectAzureSubscriptionId,
-  selectAzureTenantId,
-  selectDistribution,
-  selectGcpAccountType,
-  selectGcpEmail,
-  selectGcpShareMethod,
-  selectImageSource,
-  selectImageTypes,
-  selectIsImageMode,
-  selectTimezone,
-} from '../../store/wizardSlice';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import isRhel from '../../Utilities/isRhel';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';

@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { VolumeGroup } from '@/store/api/backend';
+import { changePartitionName } from '@/store/slices/wizard';
 
 import { useAppDispatch } from '../../../../../store/hooks';
-import { changePartitionName } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import {

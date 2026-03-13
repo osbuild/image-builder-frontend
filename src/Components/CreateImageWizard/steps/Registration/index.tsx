@@ -14,12 +14,12 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { selectIsOnPremise } from '@/store/slices/env';
+import { changeOrgId } from '@/store/slices/wizard';
 
 import Registration from './components/Registration';
 
 import { useGetUser } from '../../../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { changeOrgId } from '../../../../store/wizardSlice';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const RegistrationStep = () => {

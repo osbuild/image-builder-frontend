@@ -17,7 +17,7 @@ import wizardReducer, {
   reinitializeAzure,
   reinitializeGcp,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 describe('target environment reducers', () => {
   describe('AWS', () => {

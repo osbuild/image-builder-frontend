@@ -10,7 +10,7 @@ import wizardReducer, {
   loadWizardState,
   removeImageType,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 describe('wizardSlice core reducers', () => {
   describe('initializeWizard', () => {

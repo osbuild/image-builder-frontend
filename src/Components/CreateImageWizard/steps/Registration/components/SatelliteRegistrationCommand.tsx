@@ -8,16 +8,17 @@ import {
 } from '@patternfly/react-core';
 
 import {
-  REGISTRATION_DOCS_URL,
-  SATELLITE_SERVICE,
-} from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
   addEnabledService,
   changeSatelliteRegistrationCommand,
   removeEnabledService,
   selectSatelliteRegistrationCommand,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import {
+  REGISTRATION_DOCS_URL,
+  SATELLITE_SERVICE,
+} from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';

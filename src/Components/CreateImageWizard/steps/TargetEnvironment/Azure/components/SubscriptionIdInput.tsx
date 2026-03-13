@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAzureSubscriptionId,
   selectAzureSubscriptionId,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 const SubscriptionIdInput = () => {
   const dispatch = useAppDispatch();
