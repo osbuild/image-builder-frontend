@@ -4,11 +4,11 @@ import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { validate as uuidValidate } from 'uuid';
 
+import { useAppSelector } from '@/store/hooks';
 import {
   selectSelectedBlueprintId,
   setBlueprintId,
-} from '@/store/BlueprintSlice';
-import { useAppSelector } from '@/store/hooks';
+} from '@/store/slices/blueprint';
 
 export const useEffectiveBlueprintId = (): string | undefined => {
   const dispatch = useDispatch();

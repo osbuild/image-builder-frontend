@@ -26,6 +26,15 @@ import {
   imageBuilderApi,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import {
+  selectBlueprintSearchInput,
+  selectLimit,
+  selectOffset,
+  selectSelectedBlueprintId,
+  setBlueprintId,
+  setBlueprintSearchInput,
+  setBlueprintsOffset,
+} from '@/store/slices/blueprint';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 
 import BlueprintCard from './BlueprintCard';
@@ -37,15 +46,6 @@ import {
   PAGINATION_OFFSET,
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
-import {
-  selectBlueprintSearchInput,
-  selectLimit,
-  selectOffset,
-  selectSelectedBlueprintId,
-  setBlueprintId,
-  setBlueprintSearchInput,
-  setBlueprintsOffset,
-} from '../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 type blueprintSearchProps = {

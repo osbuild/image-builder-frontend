@@ -21,14 +21,14 @@ import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
-import { selectIsOnPremise } from '@/store/slices/env';
-
-import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilterAPI,
   selectSelectedBlueprintId,
-} from '../../store/BlueprintSlice';
+} from '@/store/slices/blueprint';
+import { selectIsOnPremise } from '@/store/slices/env';
+
+import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import { useAppSelector } from '../../store/hooks';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';

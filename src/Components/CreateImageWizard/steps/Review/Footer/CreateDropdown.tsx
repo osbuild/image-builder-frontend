@@ -20,6 +20,7 @@ import {
   CreateBlueprintRequest,
   CreateBlueprintResponse,
 } from '@/store/api/backend';
+import { setBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
@@ -28,7 +29,6 @@ import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useGetUser,
 } from '../../../../../Hooks';
-import { setBlueprintId } from '../../../../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';

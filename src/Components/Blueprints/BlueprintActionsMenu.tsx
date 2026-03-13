@@ -16,9 +16,9 @@ import {
   useLazyExportBlueprintCockpitQuery,
   useLazyExportBlueprintQuery,
 } from '@/store/api/backend';
+import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 
 interface BlueprintActionsMenuProps {
