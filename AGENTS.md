@@ -13,16 +13,16 @@ React/TypeScript frontend for Red Hat's Image Builder service, running on consol
 
 ## Project Structure
 
-| Directory         | Purpose                                            |
-| ----------------- | -------------------------------------------------- |
-| `src/Components/` | React components organized by feature              |
-| `src/store/`      | Redux store, slices, and RTK Query API definitions |
-| `src/Utilities/`  | Shared utility functions                           |
-| `src/Hooks/`      | Custom React hooks                                 |
-| `src/test/`       | Vitest utilities and legacy integration tests      |
-| `api/config/`     | RTK Query codegen configuration files              |
-| `playwright/`     | Playwright E2E tests                               |
-| `cockpit/`        | Cockpit plugin build configuration                 |
+| Directory          | Purpose                                            |
+| ------------------ | -------------------------------------------------- |
+| `src/Components/`  | React components organized by feature              |
+| `src/store/slices` | Redux store, slices, and RTK Query API definitions |
+| `src/Utilities/`   | Shared utility functions                           |
+| `src/Hooks/`       | Custom React hooks                                 |
+| `src/test/`        | Vitest utilities and legacy integration tests      |
+| `api/config/`      | RTK Query codegen configuration files              |
+| `playwright/`      | Playwright E2E tests                               |
+| `cockpit/`         | Cockpit plugin build configuration                 |
 
 ## Commands
 
