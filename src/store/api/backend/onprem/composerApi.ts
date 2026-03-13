@@ -19,6 +19,7 @@ import { BLUEPRINTS_DIR, IMAGE_MODE } from '@/constants';
 import { onPremQueryHandler } from '@/store/api/shared';
 
 import { emptyComposerApi } from './emptyComposerApi';
+import { assertComposeResponse, assertComposeStatus } from './typeguards';
 import {
   type ComposerBlueprint as Blueprint,
   type ComposerCreateBlueprintApiArg,
@@ -583,7 +584,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
                 image_requests: [ir],
               };
 
-              const composeResp = await baseQuery({
+              const result = await baseQuery({
                 url: '/compose',
                 method: 'POST',
                 body: JSON.stringify(
@@ -600,12 +601,15 @@ export const composerApi = emptyComposerApi.injectEndpoints({
                 },
               });
 
+              if (result.error) {
+                throw result.error;
+              }
+
+              const { id } = assertComposeResponse(result.data);
               await cockpit
-                // @ts-expect-error TODO: add type guards to handle this
-                .file(path.join(blueprintsDir, filename, composeResp.data?.id))
+                .file(path.join(blueprintsDir, filename, id))
                 .replace(JSON.stringify(crcComposeRequest));
-              // @ts-expect-error TODO: add type guards to handle this
-              composes.push({ id: composeResp.data?.id });
+              composes.push({ id });
             }
 
             return composes;
@@ -658,29 +662,33 @@ export const composerApi = emptyComposerApi.injectEndpoints({
         GetComposeStatusApiArg
       >({
         queryFn: onPremQueryHandler(async ({ queryArgs, baseQuery }) => {
-          const resp = await baseQuery({
+          const result = await baseQuery({
             url: `/composes/${queryArgs.composeId}`,
             method: 'GET',
           });
+
+          if (result.error) {
+            throw result.error;
+          }
+
+          const data = assertComposeStatus(result.data);
           const blueprintsDir = await getBlueprintsPath();
           const info = await fsinfo(blueprintsDir, ['entries'], {
             superuser: 'try',
           });
+
           const entries = Object.entries(info.entries || {});
           for (const bpEntry of entries) {
             const request = await cockpit
               .file(path.join(blueprintsDir, bpEntry[0], queryArgs.composeId))
               .read();
             return {
-              // @ts-expect-error TODO: add type guards to handle this
-              image_status: resp.data?.image_status,
+              image_status: data.image_status,
               request: JSON.parse(request),
             };
           }
-          return {
-            image_status: '',
-            request: {},
-          };
+
+          throw new Error('Compose not found');
         }),
       }),
       getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
