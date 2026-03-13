@@ -5,6 +5,7 @@ export { useFixupBPWithNotification } from './MutationNotifications/useFixupBPWi
 export { useComposeBPWithNotification } from './MutationNotifications/useComposeBPWithNotification';
 export {
   useCockpitMachinesAvailable,
+  useEffectiveBlueprintId,
   useGetDocumentationUrl,
   useGetUser,
 } from './Utilities/';
