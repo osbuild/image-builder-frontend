@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { useGetBlueprintQuery } from '@/store/api/backend';
 import { selectPathResolver } from '@/store/slices/env';
+import { loadWizardState } from '@/store/slices/wizard';
 
 import CreateImageWizard from './CreateImageWizard';
 import { mapRequestToState } from './utilities/requestMapper';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { loadWizardState } from '../../store/wizardSlice';
 
 type EditImageWizardProps = {
   blueprintId: string;

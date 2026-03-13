@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { selectImageTypes } from '@/store/wizardSlice';
+import { selectImageTypes } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { createUser, fetchMock } from '@/test/testUtils';
 

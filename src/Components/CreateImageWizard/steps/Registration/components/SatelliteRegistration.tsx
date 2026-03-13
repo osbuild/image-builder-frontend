@@ -11,14 +11,15 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import {
+  changeSatelliteCaCertificate,
+  selectSatelliteCaCertificate,
+} from '@/store/slices/wizard';
+
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
 import { REGISTRATION_DOCS_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeSatelliteCaCertificate,
-  selectSatelliteCaCertificate,
-} from '../../../../../store/wizardSlice';
 import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '../../../utilities/useValidation';
 

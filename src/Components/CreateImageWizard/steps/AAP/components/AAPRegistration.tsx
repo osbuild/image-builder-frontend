@@ -10,8 +10,6 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-import { AAP_DOCS_URL } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAapCallbackUrl,
   changeAapHostConfigKey,
@@ -21,7 +19,10 @@ import {
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { AAP_DOCS_URL } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { useAAPValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';

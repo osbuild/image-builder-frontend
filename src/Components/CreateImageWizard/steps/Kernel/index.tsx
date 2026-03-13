@@ -3,7 +3,7 @@ import React from 'react';
 import { Alert, Content, Form, Title } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectFips } from '@/store/wizardSlice';
+import { selectFips } from '@/store/slices/wizard';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';

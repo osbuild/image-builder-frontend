@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { selectImageSource as selectImageSourceState } from '@/store/wizardSlice';
+import { selectImageSource as selectImageSourceState } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {

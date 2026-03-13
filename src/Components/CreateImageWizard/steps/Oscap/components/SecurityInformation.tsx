@@ -17,9 +17,6 @@ import {
   useGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
 import {
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
@@ -27,7 +24,10 @@ import {
   selectComplianceType,
   selectDistribution,
   selectFips,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppSelector } from '../../../../../store/hooks';
+import { asDistribution } from '../../../../../store/typeGuards';
 
 export const SecurityInformation = (): JSX.Element => {
   const release = useAppSelector(selectDistribution);

@@ -4,13 +4,14 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import { useAppDispatch } from '../../../../../store/hooks';
 import {
   removeUserGroup,
   setUserGroupGidByIndex,
   setUserGroupNameByIndex,
   UserGroup,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch } from '../../../../../store/hooks';
 import { useUserGroupsValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 

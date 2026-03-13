@@ -3,10 +3,6 @@ import React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
-
-import MaskedServicesPopover from './MaskedServicesPopover';
-
-import { useAppSelector } from '../../../../../store/hooks';
 import {
   addDisabledService,
   addEnabledService,
@@ -17,7 +13,11 @@ import {
   selectComplianceProfileID,
   selectDistribution,
   selectServices,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import MaskedServicesPopover from './MaskedServicesPopover';
+
+import { useAppSelector } from '../../../../../store/hooks';
 import LabelInput from '../../../LabelInput';
 import { useServicesValidation } from '../../../utilities/useValidation';
 import { isServiceValid } from '../../../validators';

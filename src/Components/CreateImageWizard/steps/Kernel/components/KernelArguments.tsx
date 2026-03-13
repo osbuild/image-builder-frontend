@@ -3,16 +3,16 @@ import React from 'react';
 import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
 import {
   addKernelArg,
   removeKernelArg,
   selectComplianceProfileID,
   selectDistribution,
   selectKernel,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppSelector } from '../../../../../store/hooks';
+import { asDistribution } from '../../../../../store/typeGuards';
 import LabelInput from '../../../LabelInput';
 import { useKernelValidation } from '../../../utilities/useValidation';
 import { isKernelArgumentValid } from '../../../validators';

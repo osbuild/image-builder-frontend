@@ -16,15 +16,15 @@ import {
   ApiRepositoryResponseRead,
   useCreateRepositoryMutation,
 } from '@/store/api/contentSources';
-
-import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '../../../../../constants';
-import { useAppSelector } from '../../../../../store/hooks';
 import {
   addPackage,
   addPackageGroup,
   addRecommendedRepository,
   selectDistribution,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '../../../../../constants';
+import { useAppSelector } from '../../../../../store/hooks';
 import {
   getEpelDefinitionForDistribution,
   getEpelVersionForDistribution,

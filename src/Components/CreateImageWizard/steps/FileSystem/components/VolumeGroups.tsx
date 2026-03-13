@@ -14,12 +14,6 @@ import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import { VolumeGroup } from '@/store/api/backend';
-
-import FileSystemTable from './FileSystemTable';
-import MinimumSize from './MinimumSize';
-import SizeUnit from './SizeUnit';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addLogicalVolumeToVolumeGroup,
   changeDiskPartitionName,
@@ -27,7 +21,13 @@ import {
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import FileSystemTable from './FileSystemTable';
+import MinimumSize from './MinimumSize';
+import SizeUnit from './SizeUnit';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { DiskPartition, DiskPartitionBase } from '../fscTypes';

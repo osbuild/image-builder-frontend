@@ -2,11 +2,12 @@ import React from 'react';
 
 import { Content, Radio } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changePartitioningMode,
   selectPartitioningMode,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const PartitioningMode = () => {
   const dispatch = useAppDispatch();

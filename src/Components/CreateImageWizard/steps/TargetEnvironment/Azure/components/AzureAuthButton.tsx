@@ -4,7 +4,7 @@ import { Button, FormGroup } from '@patternfly/react-core';
 
 import { isAzureTenantGUIDValid } from '@/Components/CreateImageWizard/validators';
 import { useAppSelector } from '@/store/hooks';
-import { selectAzureTenantId } from '@/store/wizardSlice';
+import { selectAzureTenantId } from '@/store/slices/wizard';
 
 const AzureAuthButton = () => {
   const tenantId = useAppSelector(selectAzureTenantId);

@@ -2,11 +2,9 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import { changeHostname, selectHostname } from '@/store/slices/wizard';
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeHostname,
-  selectHostname,
-} from '../../../../../store/wizardSlice';
 import { useHostnameValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 

@@ -9,11 +9,6 @@ import {
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
-import FileSystemTable from './FileSystemTable';
-import PartitioningMode from './PartitioningMode';
-
-import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addPartition,
   changePartitioningMode,
@@ -21,7 +16,13 @@ import {
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectPartitioningMode,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import FileSystemTable from './FileSystemTable';
+import PartitioningMode from './PartitioningMode';
+
+import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 

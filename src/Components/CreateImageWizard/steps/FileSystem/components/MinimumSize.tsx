@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { useAppDispatch } from '../../../../../store/hooks';
 import {
   changePartitionMinSize,
   changePartitionUnit,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import {

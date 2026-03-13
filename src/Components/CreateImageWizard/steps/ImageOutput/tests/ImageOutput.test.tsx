@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
-import { selectBlueprintName } from '@/store/wizardSlice';
+import { selectBlueprintName } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { clickWithWait, createUser, fetchMock } from '@/test/testUtils';
 

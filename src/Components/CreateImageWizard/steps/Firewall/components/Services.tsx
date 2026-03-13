@@ -2,14 +2,15 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import { useAppSelector } from '../../../../../store/hooks';
 import {
   addDisabledFirewallService,
   addEnabledFirewallService,
   removeDisabledFirewallService,
   removeEnabledFirewallService,
   selectFirewall,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppSelector } from '../../../../../store/hooks';
 import LabelInput from '../../../LabelInput';
 import { useFirewallValidation } from '../../../utilities/useValidation';
 import { isServiceValid } from '../../../validators';

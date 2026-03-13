@@ -15,7 +15,7 @@ import wizardReducer, {
   setUserSshKeyByIndex,
   type UserWithAdditionalInfo,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 const createUserState = (users: UserWithAdditionalInfo[]): wizardState => ({
   ...initialState,

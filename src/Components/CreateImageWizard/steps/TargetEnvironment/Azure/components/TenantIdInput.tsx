@@ -5,7 +5,10 @@ import { FormGroup } from '@patternfly/react-core';
 import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
 import { isAzureTenantGUIDValid } from '@/Components/CreateImageWizard/validators';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { changeAzureTenantId, selectAzureTenantId } from '@/store/wizardSlice';
+import {
+  changeAzureTenantId,
+  selectAzureTenantId,
+} from '@/store/slices/wizard';
 
 const TenantIdInput = () => {
   const dispatch = useAppDispatch();

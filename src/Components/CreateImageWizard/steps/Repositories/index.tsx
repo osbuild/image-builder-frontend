@@ -7,7 +7,7 @@ import { useAppSelector } from '@/store/hooks';
 import {
   selectPackages,
   selectRecommendedRepositories,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './components/Repositories';

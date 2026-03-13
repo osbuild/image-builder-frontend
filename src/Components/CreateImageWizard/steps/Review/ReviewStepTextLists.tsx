@@ -25,30 +25,6 @@ import {
 import { useGetSourceListQuery } from '@/store/api/provisioning';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import {
-  DiskReviewTable,
-  FSReviewTable,
-  PackagesTable,
-  RepositoriesTable,
-  SnapshotTable,
-  UserGroupsTable,
-} from './ReviewStepTables';
-
-import {
-  ON_PREM_RELEASES,
-  RELEASES,
-  RHEL_10,
-  RHEL_8,
-  RHEL_8_FULL_SUPPORT,
-  RHEL_8_MAINTENANCE_SUPPORT,
-  RHEL_9,
-  RHEL_9_FULL_SUPPORT,
-  RHEL_9_MAINTENANCE_SUPPORT,
-  targetOptions,
-  UNIT_GIB,
-} from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
 import {
   selectAapCallbackUrl,
   selectAapHostConfigKey,
@@ -94,7 +70,31 @@ import {
   selectUseLatest,
   selectUsers,
   UserGroup,
-} from '../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import {
+  DiskReviewTable,
+  FSReviewTable,
+  PackagesTable,
+  RepositoriesTable,
+  SnapshotTable,
+  UserGroupsTable,
+} from './ReviewStepTables';
+
+import {
+  ON_PREM_RELEASES,
+  RELEASES,
+  RHEL_10,
+  RHEL_8,
+  RHEL_8_FULL_SUPPORT,
+  RHEL_8_MAINTENANCE_SUPPORT,
+  RHEL_9,
+  RHEL_9_FULL_SUPPORT,
+  RHEL_9_MAINTENANCE_SUPPORT,
+  targetOptions,
+  UNIT_GIB,
+} from '../../../../constants';
+import { useAppSelector } from '../../../../store/hooks';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import MinimumSizePopover from '../FileSystem/components/MinimumSizePopover';
 import { FilesystemPartition } from '../FileSystem/fscTypes';

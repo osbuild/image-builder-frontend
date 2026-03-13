@@ -3,12 +3,12 @@ import React from 'react';
 import { Content, Form, Title } from '@patternfly/react-core';
 
 import { selectIsOnPremise } from '@/store/slices/env';
+import { selectDistribution } from '@/store/slices/wizard';
 
 import PackageRecommendations from './components/PackageRecommendations';
 import Packages from './components/Packages';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { selectDistribution } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 

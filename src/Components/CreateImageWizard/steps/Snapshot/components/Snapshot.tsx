@@ -20,7 +20,7 @@ import {
   selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import Templates from './Templates';

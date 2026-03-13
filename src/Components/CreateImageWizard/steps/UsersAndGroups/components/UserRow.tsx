@@ -4,9 +4,7 @@ import { Button, Checkbox } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import RemoveUserModal from './RemoveUserModal';
-
-import { useAppDispatch } from '../../../../../store/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import {
   addGroupToUserByUserIndex,
   addUser,
@@ -17,7 +15,10 @@ import {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   UserWithAdditionalInfo,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import RemoveUserModal from './RemoveUserModal';
+
 import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
 import { useUsersValidation } from '../../../utilities/useValidation';

@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAzureHyperVGeneration,
   selectAzureHyperVGeneration,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 import { HYPER_V_GENERATIONS } from '../constants';
 

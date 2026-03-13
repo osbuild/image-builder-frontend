@@ -2,12 +2,9 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import { addPort, removePort, selectFirewall } from '@/store/slices/wizard';
+
 import { useAppSelector } from '../../../../../store/hooks';
-import {
-  addPort,
-  removePort,
-  selectFirewall,
-} from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { useFirewallValidation } from '../../../utilities/useValidation';
 import { isPortValid } from '../../../validators';

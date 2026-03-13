@@ -2,11 +2,12 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { selectBlueprintMode } from '@/store/slices/wizard';
+
 import GroupInfo from './components/GroupInfo';
 import UserInfo from './components/UserInfo';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { selectBlueprintMode } from '../../../../store/wizardSlice';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 type UsersStepProps = {

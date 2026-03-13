@@ -8,8 +8,6 @@ import {
   Popover,
 } from '@patternfly/react-core';
 
-import { CDN_PROD_URL } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeActivationKey,
   changeBaseUrl,
@@ -17,7 +15,10 @@ import {
   changeServerUrl,
   selectActivationKey,
   selectOrgId,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { CDN_PROD_URL } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ValidatedInput } from '../../../ValidatedInput';
 
 const ManualRegistrationPopover = ({

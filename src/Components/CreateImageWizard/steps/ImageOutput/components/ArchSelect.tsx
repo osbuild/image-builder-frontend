@@ -11,13 +11,10 @@ import {
 
 import { ImageRequest } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
+import { changeArchitecture, selectArchitecture } from '@/store/slices/wizard';
 
 import { ARCHES } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changeArchitecture,
-  selectArchitecture,
-} from '../../../../../store/wizardSlice';
 
 const ArchSelect = () => {
   const arch = useAppSelector(selectArchitecture);

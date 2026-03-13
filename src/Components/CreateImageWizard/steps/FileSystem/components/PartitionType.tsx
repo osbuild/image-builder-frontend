@@ -8,14 +8,15 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changePartitionMountpoint,
   changePartitionType,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   FSType,
   LogicalVolumeWithBase,

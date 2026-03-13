@@ -15,6 +15,7 @@ import {
   CreateBlueprintRequest,
 } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
+import { selectPackages } from '@/store/slices/wizard';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
@@ -23,7 +24,6 @@ import {
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { useAppSelector } from '../../../../../store/hooks';
-import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type EditDropdownProps = {

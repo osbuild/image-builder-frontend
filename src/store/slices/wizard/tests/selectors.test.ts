@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { selectBlueprintMode, selectIsImageMode } from '@/store/wizardSlice';
+import { selectBlueprintMode, selectIsImageMode } from '@/store/slices/wizard';
 
 import { createMockState } from './mockWizardState';
 

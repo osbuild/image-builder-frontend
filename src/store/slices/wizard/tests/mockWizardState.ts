@@ -2,7 +2,7 @@ import type { RootState } from '@/store';
 import {
   initialState as wizardInitialState,
   type wizardState,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 
 // Minimal mock state that satisfies RootState for wizard tests
 // We only need the slices that selectors might access

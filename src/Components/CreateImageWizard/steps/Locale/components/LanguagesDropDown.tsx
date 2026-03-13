@@ -18,12 +18,13 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addLanguage,
   removeLanguage,
   selectLanguages,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useLocaleValidation } from '../../../utilities/useValidation';
 import { languagesList } from '../data/languagesList';

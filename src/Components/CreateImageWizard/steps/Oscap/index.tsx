@@ -28,24 +28,6 @@ import {
 import { usePoliciesQuery } from '@/store/api/compliance';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import OscapOnPremSpinner from './components/OnPremSpinner';
-import OscapOnPremWarning from './components/OnPremWarning';
-import PolicyDetails from './components/PolicyDetails';
-import PolicySelector from './components/PolicySelector';
-import OpenScapProfileDetails from './components/ProfileDetails';
-import ProfileSelector from './components/ProfileSelector';
-import { removeBetaFromRelease } from './removeBetaFromRelease';
-
-import {
-  AMPLITUDE_MODULE_NAME,
-  COMPLIANCE_URL,
-  FIRST_BOOT_SERVICE,
-  OSCAP_URL,
-} from '../../../../constants';
-import { useGetUser } from '../../../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { asDistribution } from '../../../../store/typeGuards';
 import {
   changeComplianceType,
   changeDisabledServices,
@@ -66,7 +48,25 @@ import {
   selectServices,
   setCompliancePolicy,
   setOscapProfile,
-} from '../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import OscapOnPremSpinner from './components/OnPremSpinner';
+import OscapOnPremWarning from './components/OnPremWarning';
+import PolicyDetails from './components/PolicyDetails';
+import PolicySelector from './components/PolicySelector';
+import OpenScapProfileDetails from './components/ProfileDetails';
+import ProfileSelector from './components/ProfileSelector';
+import { removeBetaFromRelease } from './removeBetaFromRelease';
+
+import {
+  AMPLITUDE_MODULE_NAME,
+  COMPLIANCE_URL,
+  FIRST_BOOT_SERVICE,
+  OSCAP_URL,
+} from '../../../../constants';
+import { useGetUser } from '../../../../Hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { asDistribution } from '../../../../store/typeGuards';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';

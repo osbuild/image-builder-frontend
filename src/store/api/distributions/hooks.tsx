@@ -5,7 +5,6 @@ import { ImageTypes } from '@/store/api/backend';
 import { useSearchRpmMutation } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { asDistribution, isImageType } from '@/store/typeGuards';
 import {
   selectArchitecture,
   selectDistribution,
@@ -13,7 +12,8 @@ import {
   selectIsImageMode,
   selectLocaleLangpackCandidates,
   setVerifiedLocaleLangpacks,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
+import { asDistribution, isImageType } from '@/store/typeGuards';
 import isRhel from '@/Utilities/isRhel';
 
 import { ALL_CUSTOMIZATIONS } from './constants';

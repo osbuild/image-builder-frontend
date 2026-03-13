@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/wizardSlice';
+import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { createUser } from '@/test/testUtils';
 

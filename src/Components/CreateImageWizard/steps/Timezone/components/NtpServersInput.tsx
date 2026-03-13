@@ -2,12 +2,13 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import { useAppSelector } from '../../../../../store/hooks';
 import {
   addNtpServer,
   removeNtpServer,
   selectNtpServers,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppSelector } from '../../../../../store/hooks';
 import LabelInput from '../../../LabelInput';
 import { useTimezoneValidation } from '../../../utilities/useValidation';
 import { isNtpServerValid } from '../../../validators';

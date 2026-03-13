@@ -10,14 +10,15 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintDescription,
   changeBlueprintName,
   selectBlueprintDescription,
   selectBlueprintName,
   setIsCustomName,
-} from '../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../ValidatedInput';
 

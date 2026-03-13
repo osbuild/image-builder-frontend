@@ -21,9 +21,8 @@ import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { provisioningApi, rhsmApi } from '@/store/api';
 import { ImageTypes, useGetArchitecturesQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addImageType,
   changeRegistrationType,
@@ -34,7 +33,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
-} from '../../../../../store/wizardSlice';
+} from '@/store/slices/wizard';
 
 type TargetEnvironmentCardProps = {
   title: string;

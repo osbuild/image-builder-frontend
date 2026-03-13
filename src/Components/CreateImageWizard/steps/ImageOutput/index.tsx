@@ -3,6 +3,14 @@ import React, { useEffect } from 'react';
 import { Content, Form, Title } from '@patternfly/react-core';
 
 import { selectIsOnPremise } from '@/store/slices/env';
+import {
+  changeBlueprintName,
+  selectArchitecture,
+  selectBlueprintName,
+  selectDistribution,
+  selectIsCustomName,
+  selectIsImageMode,
+} from '@/store/slices/wizard';
 
 import ArchSelect from './components/ArchSelect';
 import BlueprintMode from './components/BlueprintMode';
@@ -13,14 +21,6 @@ import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import {
-  changeBlueprintName,
-  selectArchitecture,
-  selectBlueprintName,
-  selectDistribution,
-  selectIsCustomName,
-  selectIsImageMode,
-} from '../../../../store/wizardSlice';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
@@ -52,7 +52,7 @@ const ImageOutputStep = () => {
         <DocumentationButton />
       </Content>
       {isOnPremise &&
-        // The distribution won't be defined if the blueprint is in image mode
+        // The distribution is 'image-mode' when the blueprint is in image mode
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         !distribution?.startsWith('fedora') && <BlueprintMode />}
       {isImageMode && <ImageSourceSelect />}

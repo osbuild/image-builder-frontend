@@ -23,7 +23,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectTemplate,
-} from '@/store/wizardSlice';
+} from '@/store/slices/wizard';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 
 const Templates = () => {
