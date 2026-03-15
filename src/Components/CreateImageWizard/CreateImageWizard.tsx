@@ -39,7 +39,7 @@ import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
-import UsersStep from './steps/Users';
+import UsersStep from './steps/UsersAndGroups';
 import {
   useAAPValidation,
   useAzureValidation,
