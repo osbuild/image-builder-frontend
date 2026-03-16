@@ -88,11 +88,11 @@ test('Content integration test - Content Template', async ({
     await navigateToTemplates(page);
     await page.getByRole('button', { name: 'Create template' }).click();
 
-    await page.getByRole('button', { name: 'filter architecture' }).click();
-    await page.getByRole('menuitem', { name: 'x86_64' }).click();
-
     await page.getByRole('button', { name: 'filter OS version' }).click();
     await page.getByRole('menuitem', { name: 'RHEL 10' }).click();
+
+    await page.getByRole('button', { name: 'filter architecture' }).click();
+    await page.getByRole('menuitem', { name: 'x86_64' }).click();
 
     await page.getByRole('button', { name: 'Next', exact: true }).click();
 
