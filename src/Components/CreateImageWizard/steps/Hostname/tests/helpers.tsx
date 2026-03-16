@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import {
-  clearWithWait,
+  clickWithWait,
   renderWithRedux,
   tabWithWait,
   typeWithWait,
@@ -28,8 +28,10 @@ export const enterHostname = async (
 };
 
 export const clearHostname = async (user: UserEventInstance) => {
-  const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
-  await clearWithWait(user, hostnameInput);
+  const clearButton = await screen.findByRole('button', {
+    name: /Clear hostname/i,
+  });
+  await clickWithWait(user, clearButton);
 };
 
 export const tabAway = async (user: UserEventInstance) => {
