@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Button, FormGroup } from '@patternfly/react-core';
 
-import { useAppSelector } from '../../../../../../store/hooks';
-import { selectAzureTenantId } from '../../../../../../store/wizardSlice';
+import { useAppSelector } from '@/store/hooks';
+import { selectAzureTenantId } from '@/store/wizardSlice';
 
 export const AzureAuthButton = () => {
   const tenantId = useAppSelector(selectAzureTenantId);
