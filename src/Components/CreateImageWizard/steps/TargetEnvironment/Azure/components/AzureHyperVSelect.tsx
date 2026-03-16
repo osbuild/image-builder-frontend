@@ -15,9 +15,9 @@ import {
   selectAzureHyperVGeneration,
 } from '@/store/wizardSlice';
 
-export const AzureHyperVSelect = () => {
-  const hyperVGeneration = useAppSelector(selectAzureHyperVGeneration);
+const AzureHyperVSelect = () => {
   const dispatch = useAppDispatch();
+  const hyperVGeneration = useAppSelector(selectAzureHyperVGeneration);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (
@@ -59,20 +59,20 @@ export const AzureHyperVSelect = () => {
   );
 
   return (
-    <>
-      <FormGroup isRequired label='HyperV Generation'>
-        <Select
-          isScrollable
-          isOpen={isOpen}
-          selected={hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
-          onSelect={handleSelect}
-          onOpenChange={handleToggle}
-          toggle={toggle}
-          shouldFocusFirstItemOnOpen={false}
-        >
-          <SelectList>{selectOptions}</SelectList>
-        </Select>
-      </FormGroup>
-    </>
+    <FormGroup isRequired label='HyperV Generation'>
+      <Select
+        isScrollable
+        isOpen={isOpen}
+        selected={hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
+        onSelect={handleSelect}
+        onOpenChange={handleToggle}
+        toggle={toggle}
+        shouldFocusFirstItemOnOpen={false}
+      >
+        <SelectList>{selectOptions}</SelectList>
+      </Select>
+    </FormGroup>
   );
 };
+
+export default AzureHyperVSelect;
