@@ -26,81 +26,28 @@ describe('Hostname Component', () => {
         await screen.findByRole('heading', { name: /Hostname/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Define a hostname for your image/i),
+        screen.getByText(
+          /Define the hostname to uniquely identify this image within your network environment/i,
+        ),
       ).toBeInTheDocument();
     });
-  });
 
-  describe('Validation', () => {
-    test('empty hostname is valid', async () => {
+    test('X button is not visible when hostname is empty', async () => {
       renderHostnameStep();
 
-      const hostnameInput =
-        await screen.findByPlaceholderText(/Add a hostname/i);
+      await screen.findByPlaceholderText(/Add a hostname/i);
 
-      expect(hostnameInput).toHaveValue('');
-      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /Clear hostname/i }),
+      ).not.toBeInTheDocument();
     });
 
-    test('shows error for invalid hostname starting with hyphen', async () => {
-      renderHostnameStep();
-      const user = createUser();
+    test('X button appears when hostname has a value', async () => {
+      renderHostnameStep({ hostname: 'some-host' });
 
-      await enterHostname(user, '-invalid-hostname-');
-
-      await tabAway(user);
-
-      expect(screen.getByText(/Invalid hostname/i)).toBeInTheDocument();
-    });
-
-    test('clears error when hostname becomes valid', async () => {
-      renderHostnameStep();
-      const user = createUser();
-
-      await enterHostname(user, '-invalid-');
-      await tabAway(user);
-
-      expect(screen.getByText(/Invalid hostname/i)).toBeInTheDocument();
-
-      await clearHostname(user);
-      await enterHostname(user, 'valid-hostname');
-
-      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
-    });
-
-    test('shows error for hostname exceeding 64 characters', async () => {
-      renderHostnameStep();
-      const user = createUser();
-
-      const longHostname = 'a'.repeat(65);
-      await enterHostname(user, longHostname);
-
-      await tabAway(user);
-
-      expect(screen.getByText(/Invalid hostname/i)).toBeInTheDocument();
-    });
-
-    test('accepts valid hostname at max length (64 characters)', async () => {
-      renderHostnameStep();
-      const user = createUser();
-
-      const maxHostname = 'a'.repeat(64);
-      await enterHostname(user, maxHostname);
-
-      await tabAway(user);
-
-      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
-    });
-
-    test('accepts valid hostname with hyphens', async () => {
-      renderHostnameStep();
-      const user = createUser();
-
-      await enterHostname(user, 'my-valid-hostname');
-
-      await tabAway(user);
-
-      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+      expect(
+        await screen.findByRole('button', { name: /Clear hostname/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -125,7 +72,7 @@ describe('Hostname Component', () => {
       expect(state.wizard.hostname).toBe('my-new-hostname');
     });
 
-    test('clears store when hostname is removed', async () => {
+    test('clears store when hostname is cleared via X button', async () => {
       const { store } = renderHostnameStep({ hostname: 'existing-hostname' });
       const user = createUser();
 
@@ -134,6 +81,93 @@ describe('Hostname Component', () => {
       await clearHostname(user);
 
       expect(store.getState().wizard.hostname).toBe('');
+    });
+  });
+
+  describe('Validation', () => {
+    test('shows error for hostname starting with a hyphen', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, '-invalid');
+      await tabAway(user);
+
+      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+    });
+
+    test('shows error for hostname with uppercase letters', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, 'INVALID');
+      await tabAway(user);
+
+      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+    });
+
+    test('shows error for hostname exceeding 64 characters', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, 'a'.repeat(65));
+      await tabAway(user);
+
+      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+    });
+
+    test('does not show error for valid hostname', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, 'valid-hostname');
+      await tabAway(user);
+
+      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+    });
+
+    test('accepts valid hostname at max length (64 characters)', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, 'a'.repeat(64));
+      await tabAway(user);
+
+      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+    });
+
+    test('clears error when hostname becomes valid', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, '-invalid');
+      await tabAway(user);
+      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+
+      await clearHostname(user);
+      await enterHostname(user, 'valid-hostname');
+      await tabAway(user);
+
+      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+    });
+
+    test('does not show error before interaction', async () => {
+      renderHostnameStep();
+
+      await screen.findByPlaceholderText(/Add a hostname/i);
+
+      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+    });
+
+    test('clears error when hostname is cleared via X button', async () => {
+      const user = createUser();
+      renderHostnameStep();
+
+      await enterHostname(user, '-invalid');
+      await tabAway(user);
+      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+
+      await clearHostname(user);
+      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
     });
   });
 });

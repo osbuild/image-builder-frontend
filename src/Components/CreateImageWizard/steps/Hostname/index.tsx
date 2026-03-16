@@ -13,7 +13,10 @@ const HostnameStep = () => {
       <Title headingLevel='h1' size='xl'>
         Hostname
       </Title>
-      <Content>Define a hostname for your image.</Content>
+      <Content>
+        Define the hostname to uniquely identify this image within your network
+        environment.
+      </Content>
       <HostnameInput />
     </Form>
   );
