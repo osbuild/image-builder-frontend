@@ -9,8 +9,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { AzureAuthButton } from './AzureAuthButton';
-import { AzureHyperVSelect } from './AzureHyperVSelect';
+import { AzureAuthButton } from './components/AzureAuthButton';
+import { AzureHyperVSelect } from './components/AzureHyperVSelect';
 
 import { AZURE_AUTH_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
