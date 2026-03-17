@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { createUser } from '@/test/testUtils';
 
@@ -22,7 +22,9 @@ describe('Services Component', () => {
         await screen.findByRole('heading', { name: /Systemd services/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Enable, disable and mask systemd services/i),
+        screen.getByText(
+          /Configure systemd units to manage your system.s services and startup logic/i,
+        ),
       ).toBeInTheDocument();
     });
 
@@ -38,6 +40,51 @@ describe('Services Component', () => {
       expect(
         screen.getByPlaceholderText(/Add masked service/i),
       ).toBeInTheDocument();
+    });
+
+    test('displays helper text for each service category', async () => {
+      renderServicesStep();
+
+      await screen.findByRole('heading', { name: /Systemd services/i });
+
+      expect(
+        screen.getByText(
+          /currently active and set to start automatically at boot/i,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/installed but will not start automatically at boot/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /completely blocked from being started manually or automatically/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('does not show OpenSCAP label without a compliance profile', async () => {
+      renderServicesStep();
+
+      await screen.findByRole('heading', { name: /Systemd services/i });
+
+      expect(screen.queryByText(/Added by OpenSCAP/i)).not.toBeInTheDocument();
+    });
+
+    test('shows OpenSCAP label with correct count when compliance profile is active', async () => {
+      renderServicesStep({
+        compliance: {
+          complianceType: 'openscap',
+          profileID: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          policyID: undefined,
+          policyTitle: undefined,
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/Added by OpenSCAP/i)).toBeInTheDocument();
+      });
+
+      expect(screen.getByText(/7 Added by OpenSCAP/i)).toBeInTheDocument();
     });
   });
 

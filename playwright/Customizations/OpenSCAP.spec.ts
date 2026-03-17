@@ -111,15 +111,13 @@ test('Create a blueprint with OpenSCAP customization', async ({
       frame.getByRole('gridcell', { name: 'systemd-journal-remote' }),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Systemd services' }).click();
-    await expect(
-      frame.getByText('Required by OpenSCAPcrondfirewalldsystemd-journald'),
-    ).toBeVisible();
+    await expect(frame.getByText('10 Added by OpenSCAP')).toBeVisible();
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
       frame.getByText('Masked service already exists'),
     ).toBeVisible();
-    await expect(frame.getByText('Required by OpenSCAPcupsnfs-')).toBeVisible();
+    await expect(frame.getByText('cups')).toBeVisible();
     await expect(frame.getByText('nfs-server')).toBeVisible();
     await expect(frame.getByText('rpcbind')).toBeVisible();
     await expect(frame.getByText('avahi-daemon')).toBeVisible();
@@ -156,9 +154,9 @@ test('Create a blueprint with OpenSCAP customization', async ({
 
     await frame.getByRole('button', { name: 'Kernel' }).click();
 
-    await expect(
-      frame.getByText('Required by OpenSCAPaudit_backlog_limit=8192audit='),
-    ).toBeVisible();
+    await expect(frame.getByText('2 Added by OpenSCAP')).toBeVisible();
+    await expect(frame.getByText('audit_backlog_limit=8192')).toBeVisible();
+    await expect(frame.getByText('audit=1')).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await frame.getByRole('button', { name: 'Selected (11)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
@@ -181,17 +179,13 @@ test('Create a blueprint with OpenSCAP customization', async ({
     ).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'sudo' })).toBeVisible();
     await frame.getByRole('button', { name: 'Systemd services' }).click();
-    await expect(
-      frame.getByText(
-        'Required by OpenSCAPauditdcrondfirewalldsystemd-journald',
-      ),
-    ).toBeVisible();
+    await expect(frame.getByText('11 Added by OpenSCAP')).toBeVisible();
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
       frame.getByText('Masked service already exists'),
     ).toBeVisible();
-    await expect(frame.getByText('Required by OpenSCAPcupsnfs-')).toBeVisible();
+    await expect(frame.getByText('cups')).toBeVisible();
     await expect(frame.getByText('nfs-server')).toBeVisible();
     await expect(frame.getByText('rpcbind')).toBeVisible();
     await expect(frame.getByText('avahi-daemon')).toBeVisible();

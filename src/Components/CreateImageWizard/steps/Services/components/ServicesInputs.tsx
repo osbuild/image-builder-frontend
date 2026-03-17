@@ -64,18 +64,17 @@ const ServicesInput = () => {
             (service) => !enabledRequiredByOpenSCAP.includes(service),
           )}
           requiredList={enabledRequiredByOpenSCAP}
-          requiredCategoryName='Required by OpenSCAP'
           item='Enabled service'
           addAction={addEnabledService}
           removeAction={removeEnabledService}
           stepValidation={stepValidation}
           fieldName='enabledSystemdServices'
+          chipCollapseThreshold={8}
         />
         <HelperText className='pf-v6-u-pt-sm'>
           <HelperTextItem>
             These services are currently active and set to start automatically
-            at boot. Ensure any service specified is installed by a package,
-            otherwise the image may fail to build.
+            at boot.
           </HelperTextItem>
         </HelperText>
       </FormGroup>
@@ -89,18 +88,17 @@ const ServicesInput = () => {
               !oscapProfileInfo?.services?.disabled?.includes(service),
           )}
           requiredList={disabledRequiredByOpenSCAP}
-          requiredCategoryName='Required by OpenSCAP'
           item='Disabled service'
           addAction={addDisabledService}
           removeAction={removeDisabledService}
           stepValidation={stepValidation}
           fieldName='disabledSystemdServices'
+          chipCollapseThreshold={8}
         />
         <HelperText className='pf-v6-u-pt-sm'>
           <HelperTextItem>
             These services are installed but will not start automatically at
-            boot. Ensure any service specified is installed by a package,
-            otherwise the image may fail to build.
+            boot.
           </HelperTextItem>
         </HelperText>
       </FormGroup>
@@ -113,12 +111,12 @@ const ServicesInput = () => {
             (service) => !oscapProfileInfo?.services?.masked?.includes(service),
           )}
           requiredList={maskedRequiredByOpenSCAP}
-          requiredCategoryName='Required by OpenSCAP'
           item='Masked service'
           addAction={addMaskedService}
           removeAction={removeMaskedService}
           stepValidation={stepValidation}
           fieldName='maskedSystemdServices'
+          chipCollapseThreshold={8}
         />
         <HelperText className='pf-v6-u-pt-sm'>
           <HelperTextItem>
