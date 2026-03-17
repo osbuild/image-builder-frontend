@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
 import {
@@ -14,8 +14,6 @@ import {
   selectDistribution,
   selectServices,
 } from '@/store/slices/wizard';
-
-import MaskedServicesPopover from './MaskedServicesPopover';
 
 import { useAppSelector } from '../../../../../store/hooks';
 import LabelInput from '../../../LabelInput';
@@ -73,6 +71,13 @@ const ServicesInput = () => {
           stepValidation={stepValidation}
           fieldName='enabledSystemdServices'
         />
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            These services are currently active and set to start automatically
+            at boot. Ensure any service specified is installed by a package,
+            otherwise the image may fail to build.
+          </HelperTextItem>
+        </HelperText>
       </FormGroup>
       <FormGroup isRequired={false} label='Disabled services'>
         <LabelInput
@@ -91,12 +96,15 @@ const ServicesInput = () => {
           stepValidation={stepValidation}
           fieldName='disabledSystemdServices'
         />
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            These services are installed but will not start automatically at
+            boot. Ensure any service specified is installed by a package,
+            otherwise the image may fail to build.
+          </HelperTextItem>
+        </HelperText>
       </FormGroup>
-      <FormGroup
-        isRequired={false}
-        label='Masked services'
-        labelHelp={<MaskedServicesPopover />}
-      >
+      <FormGroup isRequired={false} label='Masked services'>
         <LabelInput
           ariaLabel='Add masked service'
           placeholder='Add masked service'
@@ -112,6 +120,12 @@ const ServicesInput = () => {
           stepValidation={stepValidation}
           fieldName='maskedSystemdServices'
         />
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            These services are completely blocked from being started manually or
+            automatically.
+          </HelperTextItem>
+        </HelperText>
       </FormGroup>
     </>
   );
