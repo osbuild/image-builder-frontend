@@ -9,6 +9,7 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
+import { HYPER_V_GENERATIONS } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAzureHyperVGeneration,
@@ -19,6 +20,9 @@ const AzureHyperVSelect = () => {
   const dispatch = useAppDispatch();
   const hyperVGeneration = useAppSelector(selectAzureHyperVGeneration);
   const [isOpen, setIsOpen] = useState(false);
+
+  const shortGenerationName =
+    hyperVGeneration === 'V1' ? 'Generation 1 (BIOS)' : 'Generation 2 (UEFI)';
 
   const handleSelect = (
     _event?: React.MouseEvent,
@@ -33,43 +37,34 @@ const AzureHyperVSelect = () => {
     setIsOpen(!isOpen);
   };
 
-  const selectOptions = [
-    <SelectOption
-      key='V1'
-      value='V1'
-      description='Hyper V Generation 1 (BIOS)'
-      label='Hyper V Generation 1'
-    />,
-    <SelectOption
-      key='V2'
-      value='V2'
-      description='Hyper V Generation 2 (UEFI)'
-      label='Hyper V Generation 2'
-    />,
-  ];
-
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
     >
-      {hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
+      {shortGenerationName}
     </MenuToggle>
   );
 
   return (
-    <FormGroup isRequired label='HyperV Generation'>
+    <FormGroup isRequired label='Hyper-V generation'>
       <Select
         isScrollable
         isOpen={isOpen}
-        selected={hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
+        selected={hyperVGeneration}
         onSelect={handleSelect}
         onOpenChange={handleToggle}
         toggle={toggle}
         shouldFocusFirstItemOnOpen={false}
       >
-        <SelectList>{selectOptions}</SelectList>
+        <SelectList>
+          {HYPER_V_GENERATIONS.map((gen) => (
+            <SelectOption key={gen.value} value={gen.value}>
+              {gen.label}
+            </SelectOption>
+          ))}
+        </SelectList>
       </Select>
     </FormGroup>
   );

@@ -15,7 +15,7 @@ const SubscriptionIdInput = () => {
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
 
   return (
-    <FormGroup label='Subscription ID' isRequired>
+    <FormGroup label='Subscription ID' isRequired style={{ maxWidth: '50%' }}>
       <ValidatedInput
         aria-label='subscription id'
         value={subscriptionId || ''}
@@ -27,6 +27,7 @@ const SubscriptionIdInput = () => {
             : 'Please enter a valid subscription ID'
         }
         handleClear={() => dispatch(changeAzureSubscriptionId(''))}
+        placeholder='Enter your 36-character ID'
       />
     </FormGroup>
   );
