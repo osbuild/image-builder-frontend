@@ -48,7 +48,6 @@ const KernelArguments = () => {
         validator={isKernelArgumentValid}
         list={kernelAppend.filter((arg) => !requiredByOpenSCAP.includes(arg))}
         requiredList={requiredByOpenSCAP}
-        requiredCategoryName='Required by OpenSCAP'
         item='Kernel argument'
         addAction={addKernelArg}
         removeAction={removeKernelArg}

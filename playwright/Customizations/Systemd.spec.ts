@@ -45,13 +45,17 @@ test('Create a blueprint with Systemd customization', async ({
     await frame.getByRole('button', { name: 'Systemd services' }).click();
   });
 
-  await test.step('Enabled services: shows all chips when 4 or fewer', async () => {
+  await test.step('Enabled services: shows all chips when 8 or fewer', async () => {
     const enabledInput = frame.getByPlaceholder('Add enabled service');
     for (const service of [
       'sshd.service',
       'httpd.service',
       'nginx.service',
       'crond.service',
+      'rsyslog.service',
+      'chronyd.service',
+      'NetworkManager.service',
+      'auditd.service',
     ]) {
       await enabledInput.fill(service);
       await page.keyboard.press('Enter');
@@ -61,35 +65,39 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(frame.getByText('httpd.service')).toBeVisible();
     await expect(frame.getByText('nginx.service')).toBeVisible();
     await expect(frame.getByText('crond.service')).toBeVisible();
+    await expect(frame.getByText('rsyslog.service')).toBeVisible();
+    await expect(frame.getByText('chronyd.service')).toBeVisible();
+    await expect(frame.getByText('NetworkManager.servi...')).toBeVisible();
+    await expect(frame.getByText('auditd.service')).toBeVisible();
     await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
   });
 
-  await test.step('Enabled services: collapses and shows "X more" when more than 4', async () => {
+  await test.step('Enabled services: collapses and shows "X more" when more than 8', async () => {
     const enabledInput = frame.getByPlaceholder('Add enabled service');
-    for (const service of ['rsyslog.service', 'chronyd.service']) {
+    for (const service of ['tuned.service', 'sssd.service']) {
       await enabledInput.fill(service);
       await page.keyboard.press('Enter');
     }
 
     await expect(frame.getByText('sshd.service')).toBeVisible();
-    await expect(frame.getByText('rsyslog.service')).toBeHidden();
-    await expect(frame.getByText('chronyd.service')).toBeHidden();
+    await expect(frame.getByText('tuned.service')).toBeHidden();
+    await expect(frame.getByText('sssd.service')).toBeHidden();
     await expect(frame.getByText('2 more').first()).toBeVisible();
   });
 
   await test.step('Enabled services: expands and collapses', async () => {
     await frame.getByText('2 more').first().click();
-    await expect(frame.getByText('rsyslog.service')).toBeVisible();
-    await expect(frame.getByText('chronyd.service')).toBeVisible();
+    await expect(frame.getByText('tuned.service')).toBeVisible();
+    await expect(frame.getByText('sssd.service')).toBeVisible();
     await expect(frame.getByText('Show less').first()).toBeVisible();
 
     await frame.getByText('Show less').first().click();
-    await expect(frame.getByText('rsyslog.service')).toBeHidden();
-    await expect(frame.getByText('chronyd.service')).toBeHidden();
+    await expect(frame.getByText('tuned.service')).toBeHidden();
+    await expect(frame.getByText('sssd.service')).toBeHidden();
     await expect(frame.getByText('2 more').first()).toBeVisible();
   });
 
-  await test.step('Disabled services: collapses and shows "X more" when more than 4', async () => {
+  await test.step('Disabled services: collapses and shows "X more" when more than 8', async () => {
     const disabledInput = frame.getByPlaceholder('Add disabled service');
     for (const service of [
       'cups.service',
@@ -97,6 +105,10 @@ test('Create a blueprint with Systemd customization', async ({
       'bluetooth.service',
       'ModemManager.service',
       'postfix.service',
+      'rpcbind.service',
+      'nfs-server.service',
+      'telnet.service',
+      'vsftpd.service',
     ]) {
       await disabledInput.fill(service);
       await page.keyboard.press('Enter');
@@ -106,11 +118,15 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(frame.getByText('avahi-daemon.service')).toBeVisible();
     await expect(frame.getByText('bluetooth.service')).toBeVisible();
     await expect(frame.getByText('ModemManager.service')).toBeVisible();
-    await expect(frame.getByText('postfix.service')).toBeHidden();
+    await expect(frame.getByText('postfix.service')).toBeVisible();
+    await expect(frame.getByText('rpcbind.service')).toBeVisible();
+    await expect(frame.getByText('nfs-server.service')).toBeVisible();
+    await expect(frame.getByText('telnet.service')).toBeVisible();
+    await expect(frame.getByText('vsftpd.service')).toBeHidden();
     await expect(frame.getByText('1 more').first()).toBeVisible();
   });
 
-  await test.step('Masked services: collapses and shows "X more" when more than 4', async () => {
+  await test.step('Masked services: collapses and shows "X more" when more than 8', async () => {
     const maskedInput = frame.getByPlaceholder('Add masked service');
     for (const service of [
       'firewalld.service',
@@ -118,6 +134,10 @@ test('Create a blueprint with Systemd customization', async ({
       'nftables.service',
       'ip6tables.service',
       'ebtables.service',
+      'rsh.service',
+      'tftp.service',
+      'xinetd.service',
+      'sendmail.service',
     ]) {
       await maskedInput.fill(service);
       await page.keyboard.press('Enter');
@@ -127,7 +147,11 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(frame.getByText('iptables.service')).toBeVisible();
     await expect(frame.getByText('nftables.service')).toBeVisible();
     await expect(frame.getByText('ip6tables.service')).toBeVisible();
-    await expect(frame.getByText('ebtables.service')).toBeHidden();
+    await expect(frame.getByText('ebtables.service')).toBeVisible();
+    await expect(frame.getByText('rsh.service')).toBeVisible();
+    await expect(frame.getByText('tftp.service')).toBeVisible();
+    await expect(frame.getByText('xinetd.service')).toBeVisible();
+    await expect(frame.getByText('sendmail.service')).toBeHidden();
     await expect(frame.getByText('1 more').nth(1)).toBeVisible();
   });
 
@@ -135,6 +159,10 @@ test('Create a blueprint with Systemd customization', async ({
     // Clean up enabled services
     await frame.getByText('2 more').first().click();
     for (const service of [
+      'sssd.service',
+      'tuned.service',
+      'auditd.service',
+      'NetworkManager.servi...',
       'chronyd.service',
       'rsyslog.service',
       'crond.service',
@@ -148,6 +176,10 @@ test('Create a blueprint with Systemd customization', async ({
     // Clean up disabled services
     await frame.getByText('1 more').first().click();
     for (const service of [
+      'vsftpd.service',
+      'telnet.service',
+      'nfs-server.service',
+      'rpcbind.service',
       'postfix.service',
       'ModemManager.service',
       'bluetooth.service',
@@ -160,6 +192,10 @@ test('Create a blueprint with Systemd customization', async ({
     // Clean up masked services
     await frame.getByText('1 more').first().click();
     for (const service of [
+      'sendmail.service',
+      'xinetd.service',
+      'tftp.service',
+      'rsh.service',
       'ebtables.service',
       'ip6tables.service',
       'nftables.service',
