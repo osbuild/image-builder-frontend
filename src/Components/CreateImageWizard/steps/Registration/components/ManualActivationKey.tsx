@@ -75,7 +75,7 @@ export const ManualActivationKey = () => {
       >
         <ValidatedInput
           placeholder='Activation key'
-          ariaLabel='Activation key'
+          aria-label='Activation key'
           value={activationKey || ''}
           onChange={(_, value) => {
             dispatch(changeActivationKey(value.trim()));
@@ -90,7 +90,7 @@ export const ManualActivationKey = () => {
       >
         <ValidatedInput
           placeholder='Organization ID'
-          ariaLabel='Organization ID'
+          aria-label='Organization ID'
           value={orgId || ''}
           onChange={(_, value) => {
             dispatch(changeOrgId(value.trim()));

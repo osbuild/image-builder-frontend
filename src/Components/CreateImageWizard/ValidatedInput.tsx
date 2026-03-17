@@ -12,13 +12,9 @@ import {
 import type { StepValidation } from './utilities/useValidation';
 
 type ValidatedTextInputPropTypes = TextInputProps & {
-  dataTestId?: string;
-  ariaLabel: string | undefined;
   helperText: string | undefined;
   validator: (value: string | undefined) => boolean;
   value: string;
-  placeholder?: string;
-  isDisabled?: boolean;
 };
 
 type ValidationInputProp = TextInputProps &
@@ -154,13 +150,9 @@ export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
 };
 
 export const ValidatedInput = ({
-  dataTestId,
-  ariaLabel,
   helperText,
   validator,
   value,
-  placeholder,
-  onChange,
   ...props
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
@@ -181,13 +173,9 @@ export const ValidatedInput = ({
     <>
       <TextInput
         value={value}
-        data-testid={dataTestId}
         type='text'
-        onChange={onChange!}
         validated={handleValidation()}
-        aria-label={ariaLabel || ''}
         onBlur={handleBlur}
-        placeholder={placeholder || ''}
         {...props}
       />
       {!isPristine && !validator(value) && (

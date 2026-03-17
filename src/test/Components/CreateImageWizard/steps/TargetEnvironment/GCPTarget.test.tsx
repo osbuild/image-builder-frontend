@@ -91,7 +91,9 @@ const selectGoogleAccount = async (
     name: optionId,
   });
   await waitFor(() => user.click(googleAccountOption));
-  const principalInput = await screen.findByTestId('principal');
+  const principalInput = await screen.findByRole('textbox', {
+    name: /google principal/i,
+  });
   await waitFor(() => user.type(principalInput, value));
 };
 
@@ -131,7 +133,9 @@ describe('Step Upload to Google', () => {
   test('the google account id field is shown and required', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    const principalInput = await screen.findByTestId('principal');
+    const principalInput = await screen.findByRole('textbox', {
+      name: /google principal/i,
+    });
     expect(principalInput).toHaveValue('');
     expect(await getNextButton()).toBeDisabled();
   });
@@ -141,12 +145,22 @@ describe('Step Upload to Google', () => {
     await clickGCPTarget();
 
     await waitFor(async () =>
-      user.type(await screen.findByTestId('principal'), 'a'),
+      user.type(
+        await screen.findByRole('textbox', {
+          name: /google principal/i,
+        }),
+        'a',
+      ),
     );
     expect(await getNextButton()).toBeDisabled();
 
     await waitFor(async () =>
-      user.type(await screen.findByTestId('principal'), 'test@test.com'),
+      user.type(
+        await screen.findByRole('textbox', {
+          name: /google principal/i,
+        }),
+        'test@test.com',
+      ),
     );
     expect(await getNextButton()).toBeEnabled();
   });

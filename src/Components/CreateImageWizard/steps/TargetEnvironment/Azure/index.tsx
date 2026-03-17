@@ -67,7 +67,7 @@ const Azure = () => {
       <>
         <FormGroup label='Azure tenant GUID' isRequired>
           <ValidatedInput
-            ariaLabel='Azure tenant GUID'
+            aria-label='Azure tenant GUID'
             value={tenantId || ''}
             validator={isAzureTenantGUIDValid}
             onChange={(_event, value) => dispatch(changeAzureTenantId(value))}
@@ -81,7 +81,7 @@ const Azure = () => {
         <AzureAuthButton />
         <FormGroup label='Subscription ID' isRequired>
           <ValidatedInput
-            ariaLabel='subscription id'
+            aria-label='subscription id'
             value={subscriptionId || ''}
             validator={isAzureSubscriptionIdValid}
             onChange={(_event, value) =>
@@ -96,7 +96,7 @@ const Azure = () => {
         </FormGroup>
         <FormGroup label='Resource group' isRequired>
           <ValidatedInput
-            ariaLabel='resource group'
+            aria-label='resource group'
             value={resourceGroup || ''}
             validator={isAzureResourceGroupValid}
             onChange={(_event, value) =>

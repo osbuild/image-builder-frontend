@@ -129,8 +129,7 @@ const Gcp = () => {
             isRequired
           >
             <ValidatedInput
-              ariaLabel='google principal'
-              dataTestId='principal'
+              aria-label='google principal'
               value={gcpEmail || ''}
               validator={
                 accountType === 'domain' ? isGcpDomainValid : isGcpEmailValid

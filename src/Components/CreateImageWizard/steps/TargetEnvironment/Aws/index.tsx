@@ -188,7 +188,7 @@ const Aws = () => {
           {!isOnPremise && (
             <FormGroup label='AWS account ID' isRequired>
               <ValidatedInput
-                ariaLabel='aws account id'
+                aria-label='aws account id'
                 value={shareWithAccount || ''}
                 validator={isAwsAccountIdValid}
                 onChange={(_event, value) =>
