@@ -150,6 +150,11 @@ export const RHEL_8_MAINTENANCE_SUPPORT = ['2024-05-31', '2029-05-31'];
 
 export const ARCHES = [X86_64, AARCH64];
 
+export const HYPER_V_GENERATIONS = [
+  { value: 'V1', label: 'Hyper-V generation 1 (BIOS)' },
+  { value: 'V2', label: 'Hyper-V generation 2 (UEFI)' },
+];
+
 export const DEFAULT_AWS_REGION = 'us-east-1';
 
 // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html

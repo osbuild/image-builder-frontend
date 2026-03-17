@@ -15,7 +15,7 @@ const ResourceGroupInput = () => {
   const resourceGroup = useAppSelector(selectAzureResourceGroup);
 
   return (
-    <FormGroup label='Resource group' isRequired>
+    <FormGroup label='Resource group' isRequired style={{ maxWidth: '50%' }}>
       <ValidatedInput
         aria-label='resource group'
         value={resourceGroup || ''}
@@ -27,6 +27,7 @@ const ResourceGroupInput = () => {
             : 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
         }
         handleClear={() => dispatch(changeAzureResourceGroup(''))}
+        placeholder='Enter your resource group'
       />
     </FormGroup>
   );

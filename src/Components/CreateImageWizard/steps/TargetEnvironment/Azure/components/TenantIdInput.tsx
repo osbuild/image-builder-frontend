@@ -12,7 +12,7 @@ const TenantIdInput = () => {
   const tenantId = useAppSelector(selectAzureTenantId);
 
   return (
-    <FormGroup label='Azure tenant GUID' isRequired>
+    <FormGroup label='Azure tenant GUID' isRequired style={{ maxWidth: '50%' }}>
       <ValidatedInput
         aria-label='Azure tenant GUID'
         value={tenantId || ''}
@@ -22,6 +22,7 @@ const TenantIdInput = () => {
           !tenantId ? 'Tenant ID is required' : 'Please enter a valid tenant ID'
         }
         handleClear={() => dispatch(changeAzureTenantId(''))}
+        placeholder='Enter your 36-character GUID'
       />
     </FormGroup>
   );
