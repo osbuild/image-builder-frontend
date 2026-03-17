@@ -82,6 +82,7 @@ export const ManualActivationKey = () => {
           }}
           validator={(v) => v !== undefined && v !== ''}
           helperText='The activation key cannot be empty'
+          handleClear={() => dispatch(changeActivationKey(''))}
         />
       </FormGroup>
       <FormGroup
@@ -102,6 +103,7 @@ export const ManualActivationKey = () => {
             return /^\d+$/.test(v.trim());
           }}
           helperText='Please enter a valid Organization ID'
+          handleClear={() => dispatch(changeOrgId(''))}
         />
       </FormGroup>
     </>

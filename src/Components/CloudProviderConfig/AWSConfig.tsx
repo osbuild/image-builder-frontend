@@ -76,6 +76,7 @@ const DisabledInputGroup = ({
 };
 
 const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
+  const dispatch = useAppDispatch();
   const label = 'AWS bucket';
 
   if (isDisabled) {
@@ -95,6 +96,7 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
         helperText={
           !value ? 'AWS bucket name is required' : 'Invalid AWS bucket name'
         }
+        handleClear={() => dispatch(changeAWSBucketName(''))}
       />
     </FormGroup>
   );
@@ -128,6 +130,8 @@ const AWSCredsPath = ({
   onChange,
   isDisabled,
 }: FormGroupProps<string>) => {
+  const dispatch = useAppDispatch();
+
   const label = (
     <>
       AWS credentials filepath <CredsPathPopover />
@@ -157,6 +161,7 @@ const AWSCredsPath = ({
             ? 'Filepath for AWS credentials is required'
             : 'Invalid filepath for AWS credentials'
         }
+        handleClear={() => dispatch(changeAWSCredsPath(''))}
       />
     </FormGroup>
   );
