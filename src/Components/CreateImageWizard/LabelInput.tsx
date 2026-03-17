@@ -44,6 +44,7 @@ type LabelInputProps = (ControlledProps | UncontrolledProps) & {
   isCompact?: boolean;
   inlineChips?: boolean;
   addOnBlur?: boolean;
+  skipBlurForButtons?: boolean;
 };
 
 const LabelInput = ({
@@ -64,6 +65,7 @@ const LabelInput = ({
   currentInputValue,
   onInputValueChange,
   addOnBlur = false,
+  skipBlurForButtons = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -165,13 +167,19 @@ const LabelInput = ({
 
   const handleBlur = (e: React.FocusEvent) => {
     if (!addOnBlur) return;
-    // For controlled inputs, if focus is moving to a button (e.g. "Add user",
-    // "Next"), skip adding here. The button's click handler will commit
-    // the pending value via commitAllPendingGroupInputs instead. Adding here
-    // would insert a warning that shifts the DOM before the click fires.
-    if (isReduxControlled) {
-      const target = e.relatedTarget as HTMLElement | null;
+    const target = e.relatedTarget as HTMLElement | null;
+    if (skipBlurForButtons) {
+      // Skip for all buttons — the caller's commit handlers (e.g.
+      // commitAllPendingGroupInputs) will add the pending value instead.
+      // Adding here would insert a warning that shifts the DOM before the
+      // button click fires.
       if (target?.closest('button, a, [role="button"]')) return;
+    } else if (isReduxControlled && target?.closest('footer')) {
+      // For controlled inputs that don't skip all buttons, still skip for
+      // wizard footer buttons (Next, Back, etc.) whose beforeNext handlers
+      // commit the pending value. Adding a chip on blur here would shift
+      // the layout and prevent the footer click from registering.
+      return;
     }
     if (inputValue.trim()) {
       addItem(inputValue);

@@ -589,9 +589,10 @@ export function useHostnameValidation(): StepValidation {
   };
 }
 
-export function useKernelValidation(): StepValidation {
-  const kernel = useAppSelector(selectKernel);
-
+export function computeKernelValidation(kernel: {
+  name: string;
+  append: string[];
+}): StepValidation {
   const invalidArgs = [];
   if (kernel.append.length > 0) {
     for (const arg of kernel.append) {
@@ -617,6 +618,11 @@ export function useKernelValidation(): StepValidation {
     },
     disabledNext: kernelAppendError !== '' || duplicateKernelArgs.length > 0,
   };
+}
+
+export function useKernelValidation(): StepValidation {
+  const kernel = useAppSelector(selectKernel);
+  return computeKernelValidation(kernel);
 }
 
 export function useFirewallValidation(): StepValidation {

@@ -151,6 +151,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             isCompact
             inlineChips={true}
             addOnBlur={true}
+            skipBlurForButtons={true}
             currentInputValue={user.pendingGroupInput ?? ''}
             onInputValueChange={(value: string) =>
               setPendingGroupInputByIndex({ index, value })

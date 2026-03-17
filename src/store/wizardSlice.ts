@@ -38,7 +38,10 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
-import { isUserGroupValid } from '../Components/CreateImageWizard/validators';
+import {
+  isKernelArgumentValid,
+  isUserGroupValid,
+} from '../Components/CreateImageWizard/validators';
 import { RHEL_10, X86_64 } from '../constants';
 import isRhel from '../Utilities/isRhel';
 import { yyyyMMddFormat } from '../Utilities/time';
@@ -200,6 +203,7 @@ export type wizardState = {
   kernel: {
     name: string;
     append: string[];
+    pendingArgInput?: string;
   };
   locale: Locale;
   details: {
@@ -309,6 +313,7 @@ export const initialState: wizardState = {
   kernel: {
     name: '',
     append: [],
+    pendingArgInput: '',
   },
   locale: {
     languages: ['C.UTF-8'],
@@ -1409,6 +1414,24 @@ export const wizardSlice = createSlice({
     clearKernelAppend: (state) => {
       state.kernel.append = [];
     },
+    setPendingKernelArgInput: (state, action: PayloadAction<string>) => {
+      state.kernel.pendingArgInput = action.payload;
+    },
+    commitPendingKernelArgInput: (state) => {
+      const pending = state.kernel.pendingArgInput?.trim();
+      if (!pending) {
+        state.kernel.pendingArgInput = '';
+        return;
+      }
+
+      const isDuplicate = state.kernel.append.includes(pending);
+      const isValid = isKernelArgumentValid(pending);
+
+      if (isValid && !isDuplicate) {
+        state.kernel.append.push(pending);
+        state.kernel.pendingArgInput = '';
+      }
+    },
     addEnabledFirewallService: (state, action: PayloadAction<string>) => {
       if (
         !state.firewall.services.enabled.some(
@@ -1752,6 +1775,8 @@ export const {
   addKernelArg,
   removeKernelArg,
   clearKernelAppend,
+  setPendingKernelArgInput,
+  commitPendingKernelArgInput,
   addDisabledFirewallService,
   removeDisabledFirewallService,
   addEnabledFirewallService,

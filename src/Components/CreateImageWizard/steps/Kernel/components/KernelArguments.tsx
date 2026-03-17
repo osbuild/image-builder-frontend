@@ -12,13 +12,15 @@ import {
   selectComplianceProfileID,
   selectDistribution,
   selectKernel,
+  setPendingKernelArgInput,
 } from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { useKernelValidation } from '../../../utilities/useValidation';
 import { isKernelArgumentValid } from '../../../validators';
 
 const KernelArguments = () => {
-  const kernelAppend = useAppSelector(selectKernel).append;
+  const kernel = useAppSelector(selectKernel);
+  const kernelAppend = kernel.append;
 
   const stepValidation = useKernelValidation();
 
@@ -54,6 +56,11 @@ const KernelArguments = () => {
         removeAction={removeKernelArg}
         stepValidation={stepValidation}
         fieldName='kernelAppend'
+        addOnBlur={true}
+        currentInputValue={kernel.pendingArgInput ?? ''}
+        onInputValueChange={(value: string) =>
+          setPendingKernelArgInput(value)
+        }
       />
       <HelperText className='pf-v6-u-pt-sm'>
         <HelperTextItem>

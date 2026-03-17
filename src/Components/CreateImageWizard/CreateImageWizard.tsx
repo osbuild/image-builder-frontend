@@ -42,6 +42,7 @@ import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/UsersAndGroups';
 import {
+  computeKernelValidation,
   computeUserGroupsValidation,
   computeUsersValidation,
   useAAPValidation,
@@ -85,6 +86,7 @@ import {
   changeDistribution,
   changeTimezone,
   commitAllPendingGroupInputs,
+  commitPendingKernelArgInput,
   initializeWizard,
   selectAwsAccountId,
   selectAwsShareMethod,
@@ -100,6 +102,7 @@ import {
   selectImageSource,
   selectImageTypes,
   selectIsImageMode,
+  selectKernel,
   selectTimezone,
   selectUserGroups,
   selectUsers,
@@ -340,6 +343,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       freshGroupsValidation.disabledNext
     ) {
       setUsersStepAttemptedNext(true);
+      return false;
+    }
+    return true;
+  }, [dispatch, store]);
+
+  // Commit any pending kernel arg input and validate from fresh state
+  const commitAndValidateKernelStep = useCallback(() => {
+    dispatch(commitPendingKernelArgInput());
+    const state = store.getState() as RootState;
+    const kernel = selectKernel(state);
+    const freshValidation = computeKernelValidation(kernel);
+    if (freshValidation.disabledNext) {
       return false;
     }
     return true;
@@ -800,6 +815,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
+                    beforeNext={commitAndValidateKernelStep}
                     disableNext={kernelValidation.disabledNext}
                     optional={true}
                     isOnPremise={isOnPremise}
