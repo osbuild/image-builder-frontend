@@ -13,7 +13,11 @@ const ServicesStep = () => {
       <Title headingLevel='h1' size='xl'>
         Systemd services
       </Title>
-      <Content>Enable, disable and mask systemd services.</Content>
+      <Content>
+        Configure systemd units to manage your system’s services and startup
+        logic. Enable services to start at boot, disable them to prevent
+        automatic starting, or mask them to completely block execution.
+      </Content>
       <ServicesInput />
     </Form>
   );
