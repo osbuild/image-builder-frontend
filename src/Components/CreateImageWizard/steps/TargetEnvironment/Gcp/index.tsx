@@ -144,6 +144,7 @@ const Gcp = () => {
                     ? 'Please enter a valid domain'
                     : 'Please enter a valid e-mail address'
               }
+              handleClear={() => dispatch(changeGcpEmail(''))}
             />
           </FormGroup>
         </>

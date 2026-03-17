@@ -199,6 +199,7 @@ const Aws = () => {
                     ? 'AWS account ID is required'
                     : 'Should be 12 characters long'
                 }
+                handleClear={() => dispatch(changeAwsAccountId(''))}
               />
             </FormGroup>
           )}

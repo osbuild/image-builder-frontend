@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Button,
   HelperText,
   HelperTextItem,
   TextArea,
   TextAreaProps,
   TextInput,
+  TextInputGroup,
+  TextInputGroupMain,
+  TextInputGroupMainProps,
+  TextInputGroupUtilities,
   TextInputProps,
 } from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 
 import type { StepValidation } from './utilities/useValidation';
 
-type ValidatedTextInputPropTypes = TextInputProps & {
+type ValidatedTextInputPropTypes = Omit<
+  TextInputGroupMainProps,
+  'value' | 'type' | 'onBlur' | 'ref'
+> & {
   helperText: string | undefined;
   validator: (value: string | undefined) => boolean;
   value: string;
+  handleClear: () => void;
 };
 
 type ValidationInputProp = TextInputProps &
@@ -153,6 +163,7 @@ export const ValidatedInput = ({
   helperText,
   validator,
   value,
+  handleClear,
   ...props
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
@@ -161,23 +172,32 @@ export const ValidatedInput = ({
     setIsPristine(false);
   };
 
-  const handleValidation = () => {
-    // Prevent premature validation during user's first entry
-    if (isPristine) {
-      return 'default';
-    }
-    return validator(value) ? 'success' : 'error';
-  };
+  const validated = isPristine
+    ? undefined
+    : validator(value)
+      ? 'success'
+      : 'error';
 
   return (
     <>
-      <TextInput
-        value={value}
-        type='text'
-        validated={handleValidation()}
-        onBlur={handleBlur}
-        {...props}
-      />
+      <TextInputGroup {...(validated && { validated })}>
+        <TextInputGroupMain
+          value={value}
+          type='text'
+          onBlur={handleBlur}
+          {...props}
+        />
+        {value && (
+          <TextInputGroupUtilities>
+            <Button
+              variant='plain'
+              onClick={handleClear}
+              aria-label='Clear input'
+              icon={<TimesIcon />}
+            />
+          </TextInputGroupUtilities>
+        )}
+      </TextInputGroup>
       {!isPristine && !validator(value) && (
         <HelperText>
           <HelperTextItem variant='error'>{helperText}</HelperTextItem>

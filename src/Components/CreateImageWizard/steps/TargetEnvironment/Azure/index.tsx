@@ -76,6 +76,7 @@ const Azure = () => {
                 ? 'Tenant ID is required'
                 : 'Please enter a valid tenant ID'
             }
+            handleClear={() => dispatch(changeAzureTenantId(''))}
           />
         </FormGroup>
         <AzureAuthButton />
@@ -92,6 +93,7 @@ const Azure = () => {
                 ? 'Subscription ID is required'
                 : 'Please enter a valid subscription ID'
             }
+            handleClear={() => dispatch(changeAzureSubscriptionId(''))}
           />
         </FormGroup>
         <FormGroup label='Resource group' isRequired>
@@ -107,6 +109,7 @@ const Azure = () => {
                 ? 'Resource group is required'
                 : 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
             }
+            handleClear={() => dispatch(changeAzureResourceGroup(''))}
           />
         </FormGroup>
       </>
