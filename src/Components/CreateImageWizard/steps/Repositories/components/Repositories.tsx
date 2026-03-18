@@ -75,7 +75,7 @@ import UploadRepositoryLabel from './UploadRepositoryLabel';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
-} from '../Utilities';
+} from '../repositoriesUtilities';
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
