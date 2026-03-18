@@ -3,7 +3,7 @@ import React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { CONTENT_URL } from '../../../../constants';
+import { CONTENT_URL } from '@/constants';
 
 const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
   return (

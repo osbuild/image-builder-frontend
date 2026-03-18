@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { RepositoryIcon } from '@patternfly/react-icons';
 
-import { CONTENT_URL } from '../../../../../constants';
+import { CONTENT_URL } from '@/constants';
 
 type EmptyProps = {
   refetch: () => void;

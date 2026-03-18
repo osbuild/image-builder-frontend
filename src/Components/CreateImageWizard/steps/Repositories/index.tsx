@@ -2,15 +2,15 @@ import React from 'react';
 
 import { Alert, Content, Form, Title } from '@patternfly/react-core';
 
-import ManageRepositoriesButton from './components/ManageRepositoriesButton';
-import Repositories from './Repositories';
-
-import { useAppSelector } from '../../../../store/hooks';
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectPackages,
   selectRecommendedRepositories,
-} from '../../../../store/wizardSlice';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
+} from '@/store/wizardSlice';
+
+import ManageRepositoriesButton from './components/ManageRepositoriesButton';
+import Repositories from './Repositories';
 
 const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
