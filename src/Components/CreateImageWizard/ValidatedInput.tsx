@@ -187,16 +187,14 @@ export const ValidatedInput = ({
           onBlur={handleBlur}
           {...props}
         />
-        {value && (
-          <TextInputGroupUtilities>
-            <Button
-              variant='plain'
-              onClick={handleClear}
-              aria-label='Clear input'
-              icon={<TimesIcon />}
-            />
-          </TextInputGroupUtilities>
-        )}
+        <TextInputGroupUtilities>
+          <Button
+            variant='plain'
+            onClick={handleClear}
+            aria-label='Clear input'
+            icon={<TimesIcon />}
+          />
+        </TextInputGroupUtilities>
       </TextInputGroup>
       {!isPristine && !validator(value) && (
         <HelperText>
