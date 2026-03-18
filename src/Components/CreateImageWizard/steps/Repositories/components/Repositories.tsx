@@ -62,19 +62,20 @@ import {
 import useDebounce from '@/Utilities/useDebounce';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { BulkSelect } from './components/BulkSelect';
-import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
-import CustomEpelWarning from './components/CustomEpelWarning';
-import Empty from './components/Empty';
-import { Error } from './components/Error';
-import { Loading } from './components/Loading';
-import UploadRepositoryLabel from './components/UploadRepositoryLabel';
+import { BulkSelect } from './BulkSelect';
+import CommunityRepositoryLabel from './CommunityRepositoryLabel';
+import CustomEpelWarning from './CustomEpelWarning';
+import Empty from './Empty';
+import { Error } from './Error';
+import { Loading } from './Loading';
+import RepositoriesStatus from './RepositoriesStatus';
+import RepositoryUnavailable from './RepositoryUnavailable';
+import UploadRepositoryLabel from './UploadRepositoryLabel';
+
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
-} from './components/Utilities';
-import RepositoriesStatus from './RepositoriesStatus';
-import RepositoryUnavailable from './RepositoryUnavailable';
+} from '../Utilities';
 
 const Repositories = () => {
   const dispatch = useAppDispatch();

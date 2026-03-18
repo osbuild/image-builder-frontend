@@ -10,7 +10,7 @@ import {
 } from '@/store/wizardSlice';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
-import Repositories from './Repositories';
+import Repositories from './components/Repositories';
 
 const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
