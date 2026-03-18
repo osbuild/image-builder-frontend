@@ -138,7 +138,7 @@ import { PackageRepository } from '../steps/Packages/packagesTypes';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
-} from '../steps/Repositories/components/Utilities';
+} from '../steps/Repositories/Utilities';
 import { AwsShareMethod } from '../steps/TargetEnvironment/Aws';
 import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 
