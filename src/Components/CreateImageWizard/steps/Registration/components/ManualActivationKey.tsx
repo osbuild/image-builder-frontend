@@ -72,6 +72,7 @@ export const ManualActivationKey = () => {
         className='pf-v6-u-mb-md'
         label={'Activation key'}
         labelHelp={<ManualRegistrationPopover ref={activationKeyRef} />}
+        isRequired
       >
         <ValidatedInput
           placeholder='Activation key'
@@ -87,6 +88,7 @@ export const ManualActivationKey = () => {
       <FormGroup
         label={'Organization ID'}
         labelHelp={<ManualRegistrationPopover ref={orgIdRef} />}
+        isRequired
       >
         <ValidatedInput
           placeholder='Organization ID'
