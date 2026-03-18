@@ -1,5 +1,7 @@
-import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor, within } from '@testing-library/react';
+// NOTE: Ready for Playwright migration
+// The unit tests for this component have been migrated to co-located tests.
+// The remaining tests here are integration/E2E tests that should be migrated to Playwright.
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
@@ -24,11 +26,7 @@ import {
   interceptEditBlueprintRequest,
   renderCreateMode,
   renderEditMode,
-  verifyCancelButton,
 } from '../../wizardTestUtils';
-
-// The router is just initiliazed here, it's assigned a value in the tests
-let router: RemixRouter | undefined = undefined;
 
 const goToAzureStep = async () => {
   await clickNext();
@@ -38,17 +36,6 @@ const goToReviewStep = async () => {
   await clickNext(); // Register
   await clickRegisterLater();
   await goToReview();
-};
-
-const clickRevisitButton = async () => {
-  const user = userEvent.setup();
-  const expandable = await screen.findByTestId(
-    'target-environments-expandable',
-  );
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-target-environments',
-  );
-  await waitFor(() => user.click(revisitButton));
 };
 
 const selectAzureTarget = async () => {
@@ -86,35 +73,6 @@ const selectV1 = async () => {
 describe('Step Upload to Azure', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    router = undefined;
-  });
-
-  test('clicking Next loads Registration', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await enterTenantGuid();
-    await enterSubscriptionId();
-    await enterResourceGroup();
-    await clickNext();
-    await screen.findByRole('heading', {
-      name: 'Register',
-    });
-  });
-
-  test('clicking Back loads Image output', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await clickBack();
-    await screen.findByRole('heading', { name: 'Image output' });
-  });
-
-  test('clicking Cancel loads landing page', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await verifyCancelButton(router);
   });
 
   test('basics work', async () => {
@@ -140,18 +98,6 @@ describe('Step Upload to Azure', () => {
     await enterResourceGroup();
 
     expect(nextButton).toBeEnabled();
-  });
-
-  test('revisit step button on Review works', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await enterTenantGuid();
-    await enterSubscriptionId();
-    await enterResourceGroup();
-    await goToReviewStep();
-    await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Image output/ });
   });
 });
 
