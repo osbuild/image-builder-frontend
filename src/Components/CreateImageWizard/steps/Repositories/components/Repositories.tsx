@@ -4,10 +4,6 @@ import {
   Alert,
   Button,
   Grid,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Pagination,
   PaginationVariant,
   Panel,
@@ -23,12 +19,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import {
-  CONTENT_URL,
-  ContentOrigin,
-  PAGINATION_COUNT,
-  TEMPLATES_URL,
-} from '@/constants';
+import { CONTENT_URL, ContentOrigin, PAGINATION_COUNT } from '@/constants';
 import {
   ApiRepositoryResponseRead,
   useGetTemplateQuery,
@@ -68,6 +59,8 @@ import CustomEpelWarning from './CustomEpelWarning';
 import Empty from './Empty';
 import Error from './Error';
 import Loading from './Loading';
+import RemoveRepositoryModal from './RemoveRepositoryModal';
+import RepositoriesAddedAlert from './RepositoriesAddedAlert';
 import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 import UploadRepositoryLabel from './UploadRepositoryLabel';
@@ -520,27 +513,6 @@ const Repositories = () => {
     setFilterValue(value);
   };
 
-  const onClose = () => setModalOpen(false);
-
-  const handleRemoveAnyway = () => {
-    const itemsToRemove = new Set(reposToRemove);
-
-    dispatch(
-      changeCustomRepositories(
-        customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
-      ),
-    );
-
-    dispatch(
-      changePayloadRepositories(
-        payloadRepositories.filter(({ id }) => !itemsToRemove.has(id || '')),
-      ),
-    );
-
-    setReposToRemove([]);
-    onClose();
-  };
-
   const {
     data: selectedTemplateData,
     isError: isTemplateError,
@@ -663,23 +635,12 @@ const Repositories = () => {
   if (!isTemplateSelected) {
     return (
       <Grid>
-        <Modal isOpen={modalOpen} onClose={onClose} variant='small'>
-          <ModalHeader title='Are you sure?' titleIconVariant='warning' />
-          <ModalBody>
-            You are removing a previously added repository.
-            <br />
-            We do not recommend removing repositories if you have added packages
-            from them.
-          </ModalBody>
-          <ModalFooter>
-            <Button key='remove' variant='primary' onClick={handleRemoveAnyway}>
-              Remove anyway
-            </Button>
-            <Button key='back' variant='link' onClick={onClose}>
-              Back
-            </Button>
-          </ModalFooter>
-        </Modal>
+        <RemoveRepositoryModal
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          reposToRemove={reposToRemove}
+          setReposToRemove={setReposToRemove}
+        />
         {wizardMode === 'edit' && (
           <Alert
             title='Removing previously added repositories may lead to issues with selected packages'
@@ -916,29 +877,7 @@ const Repositories = () => {
   } else {
     return (
       <>
-        <Alert
-          variant='info'
-          isInline
-          title={
-            <>
-              The repositories seen below are from the selected content template
-              and have been added automatically. If you do not want these
-              repositories in your image, you can{' '}
-              <Button
-                component='a'
-                target='_blank'
-                variant='link'
-                isInline
-                icon={<ExternalLinkAltIcon />}
-                href={`${TEMPLATES_URL}/${templateUuid}/edit`}
-              >
-                {' '}
-                modify this content template
-              </Button>{' '}
-              or choose another snapshot option.
-            </>
-          }
-        />
+        <RepositoriesAddedAlert templateUuid={templateUuid} />
         <Grid>
           <Panel>
             <PanelMain>
