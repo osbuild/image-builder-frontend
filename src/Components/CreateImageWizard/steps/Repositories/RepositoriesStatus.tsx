@@ -18,15 +18,14 @@ import {
   ExternalLinkAltIcon,
 } from '@patternfly/react-icons';
 
+import { CONTENT_URL } from '@/constants';
 import { ApiRepositoryResponse } from '@/store/api/contentSources';
-
-import { CONTENT_URL } from '../../../../constants';
 import {
   convertStringToDate,
   timestampToDisplayString,
-} from '../../../../Utilities/time';
+} from '@/Utilities/time';
 
-import '../../../ImagesTable/ImageBuildStatus.scss';
+import '@/Components/ImagesTable/ImageBuildStatus.scss';
 
 const getLastIntrospection = (
   repoIntrospections: RepositoryStatusProps['repoIntrospections'],

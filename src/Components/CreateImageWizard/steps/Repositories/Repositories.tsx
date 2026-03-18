@@ -24,34 +24,19 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
+  CONTENT_URL,
+  ContentOrigin,
+  PAGINATION_COUNT,
+  TEMPLATES_URL,
+} from '@/constants';
+import {
   ApiRepositoryResponseRead,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useListRepositoryParametersQuery,
   useListSnapshotsByDateMutation,
 } from '@/store/api/contentSources';
-
-import { BulkSelect } from './components/BulkSelect';
-import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
-import CustomEpelWarning from './components/CustomEpelWarning';
-import Empty from './components/Empty';
-import { Error } from './components/Error';
-import { Loading } from './components/Loading';
-import UploadRepositoryLabel from './components/UploadRepositoryLabel';
-import {
-  convertSchemaToIBCustomRepo,
-  convertSchemaToIBPayloadRepo,
-} from './components/Utilities';
-import RepositoriesStatus from './RepositoriesStatus';
-import RepositoryUnavailable from './RepositoryUnavailable';
-
-import {
-  CONTENT_URL,
-  ContentOrigin,
-  PAGINATION_COUNT,
-  TEMPLATES_URL,
-} from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeCustomRepositories,
   changePayloadRepositories,
@@ -67,15 +52,29 @@ import {
   selectTemplate,
   selectUseLatest,
   selectWizardMode,
-} from '../../../../store/wizardSlice';
-import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
-import { requiredRedHatRepos } from '../../../../Utilities/requiredRedHatRepos';
+} from '@/store/wizardSlice';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
+import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
 import {
   convertStringToDate,
   timestampToDisplayStringDetailed,
-} from '../../../../Utilities/time';
-import useDebounce from '../../../../Utilities/useDebounce';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
+} from '@/Utilities/time';
+import useDebounce from '@/Utilities/useDebounce';
+import { useFlag } from '@/Utilities/useGetEnvironment';
+
+import { BulkSelect } from './components/BulkSelect';
+import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
+import CustomEpelWarning from './components/CustomEpelWarning';
+import Empty from './components/Empty';
+import { Error } from './components/Error';
+import { Loading } from './components/Loading';
+import UploadRepositoryLabel from './components/UploadRepositoryLabel';
+import {
+  convertSchemaToIBCustomRepo,
+  convertSchemaToIBPayloadRepo,
+} from './components/Utilities';
+import RepositoriesStatus from './RepositoriesStatus';
+import RepositoryUnavailable from './RepositoryUnavailable';
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
