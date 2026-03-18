@@ -11,7 +11,7 @@ import {
 
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 
-interface BulkSelectProps {
+type BulkSelectProps = {
   selected: Set<string>;
   contentList: ApiRepositoryResponseRead[];
   deselectAll: () => void;
@@ -21,16 +21,16 @@ interface BulkSelectProps {
     selected: boolean,
   ) => void;
   isDisabled: boolean;
-}
+};
 
-export function BulkSelect({
+const BulkSelect = ({
   selected,
   contentList,
   deselectAll,
   perPage,
   handleAddRemove,
   isDisabled,
-}: BulkSelectProps) {
+}: BulkSelectProps) => {
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
 
   const allChecked = !contentList.some(({ uuid }) => !selected.has(uuid!));
@@ -88,4 +88,6 @@ export function BulkSelect({
       </DropdownList>
     </Dropdown>
   );
-}
+};
+
+export default BulkSelect;

@@ -62,12 +62,12 @@ import {
 import useDebounce from '@/Utilities/useDebounce';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { BulkSelect } from './BulkSelect';
+import BulkSelect from './BulkSelect';
 import CommunityRepositoryLabel from './CommunityRepositoryLabel';
 import CustomEpelWarning from './CustomEpelWarning';
 import Empty from './Empty';
-import { Error } from './Error';
-import { Loading } from './Loading';
+import Error from './Error';
+import Loading from './Loading';
 import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 import UploadRepositoryLabel from './UploadRepositoryLabel';
@@ -75,6 +75,8 @@ import UploadRepositoryLabel from './UploadRepositoryLabel';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
+  getReadableArchitecture,
+  getReadableVersions,
 } from '../repositoriesUtilities';
 
 const Repositories = () => {
@@ -116,33 +118,6 @@ const Repositories = () => {
   const debouncedFilterValue = useDebounce(filterValue);
 
   const { data: repositoryParameters } = useListRepositoryParametersQuery();
-
-  const getReadableArchitecture = (technicalArch: string | undefined) => {
-    if (!technicalArch || !repositoryParameters?.distribution_arches) {
-      return technicalArch || '-';
-    }
-
-    const archParam = repositoryParameters.distribution_arches.find(
-      (arch) => arch.label === technicalArch,
-    );
-
-    return archParam?.name || technicalArch;
-  };
-
-  const getReadableVersions = (technicalVersions: string[] | undefined) => {
-    if (!technicalVersions || !repositoryParameters?.distribution_versions) {
-      return technicalVersions || '-';
-    }
-
-    const readableVersions = technicalVersions.map((version) => {
-      const versionParam = repositoryParameters.distribution_versions?.find(
-        (v) => v.label === version,
-      );
-      return versionParam?.name || version;
-    });
-
-    return readableVersions.join(', ');
-  };
 
   const selected = useMemo(
     () =>
@@ -862,10 +837,16 @@ const Repositories = () => {
                         {!snapshotDate ? (
                           <>
                             <Td dataLabel={'Architecture'}>
-                              {getReadableArchitecture(distribution_arch)}
+                              {getReadableArchitecture(
+                                distribution_arch,
+                                repositoryParameters,
+                              )}
                             </Td>
                             <Td dataLabel={'Version'}>
-                              {getReadableVersions(distribution_versions)}
+                              {getReadableVersions(
+                                distribution_versions,
+                                repositoryParameters,
+                              )}
                             </Td>
                             <Td dataLabel={'Packages'}>
                               {package_count || '-'}
@@ -1018,10 +999,16 @@ const Repositories = () => {
                           )}
                         </Td>
                         <Td dataLabel={'Architecture'}>
-                          {getReadableArchitecture(distribution_arch)}
+                          {getReadableArchitecture(
+                            distribution_arch,
+                            repositoryParameters,
+                          )}
                         </Td>
                         <Td dataLabel={'Version'}>
-                          {getReadableVersions(distribution_versions)}
+                          {getReadableVersions(
+                            distribution_versions,
+                            repositoryParameters,
+                          )}
                         </Td>
                         <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
                         <Td dataLabel={'Status'}>

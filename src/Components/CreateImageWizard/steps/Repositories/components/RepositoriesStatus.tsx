@@ -20,32 +20,9 @@ import {
 
 import { CONTENT_URL } from '@/constants';
 import { ApiRepositoryResponse } from '@/store/api/contentSources';
-import {
-  convertStringToDate,
-  timestampToDisplayString,
-} from '@/Utilities/time';
 
 import '@/Components/ImagesTable/ImageBuildStatus.scss';
-
-const getLastIntrospection = (
-  repoIntrospections: RepositoryStatusProps['repoIntrospections'],
-) => {
-  const currentDate = Date.now();
-  const lastIntrospectionDate = convertStringToDate(repoIntrospections);
-  const timeDeltaInSeconds = Math.floor(
-    (currentDate - lastIntrospectionDate) / 1000,
-  );
-
-  if (timeDeltaInSeconds <= 60) {
-    return 'A few seconds ago';
-  } else if (timeDeltaInSeconds <= 60 * 60) {
-    return 'A few minutes ago';
-  } else if (timeDeltaInSeconds <= 60 * 60 * 24) {
-    return 'A few hours ago';
-  } else {
-    return timestampToDisplayString(repoIntrospections);
-  }
-};
+import { getLastIntrospection } from '../repositoriesUtilities';
 
 type RepositoryStatusProps = {
   repoStatus: ApiRepositoryResponse['status'];
