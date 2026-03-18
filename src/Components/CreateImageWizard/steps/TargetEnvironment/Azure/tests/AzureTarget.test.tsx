@@ -109,7 +109,8 @@ describe('Azure Component', () => {
       const user = createUser();
 
       await fillTenantGuidValue(user, 'valid-value');
-      await clearInputValue(user, 0);
+      await clearInputValue(user, /clear azure tenant guid input/i);
+      await checkTenantGuidValue('');
 
       expect(
         screen.queryByText(/Please enter a valid tenant ID/i),
@@ -158,7 +159,8 @@ describe('Azure Component', () => {
       const user = createUser();
 
       await fillSubscriptionIdValue(user, 'valid-value');
-      await clearInputValue(user, 1);
+      await clearInputValue(user, /clear subscription id input/i);
+      await checkSubscriptionIdValue('');
 
       expect(
         screen.queryByText(/Please enter a valid subscription ID/i),
@@ -208,7 +210,8 @@ describe('Azure Component', () => {
       const user = createUser();
 
       await fillResourceGroupValue(user, 'valid-group');
-      await clearInputValue(user, 2);
+      await clearInputValue(user, /clear resource group input/i);
+      await checkResourceGroupValue('');
 
       expect(
         screen.queryByText(

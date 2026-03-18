@@ -167,6 +167,7 @@ export const ValidatedInput = ({
   ...props
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
+  const ariaLabel = props['aria-label'];
 
   const handleBlur = () => {
     setIsPristine(false);
@@ -191,7 +192,7 @@ export const ValidatedInput = ({
           <Button
             variant='plain'
             onClick={handleClear}
-            aria-label='Clear input'
+            aria-label={ariaLabel ? `Clear ${ariaLabel} input` : 'Clear input'}
             icon={<TimesIcon />}
           />
         </TextInputGroupUtilities>

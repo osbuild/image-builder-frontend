@@ -85,10 +85,10 @@ export const fillResourceGroupValue = async (
 
 export const clearInputValue = async (
   user: UserEventInstance,
-  index: number,
+  buttonLabel: RegExp,
 ) => {
-  const clearInputButton = await screen.findAllByRole('button', {
-    name: /clear input/i,
+  const clearInputButton = await screen.findByRole('button', {
+    name: buttonLabel,
   });
-  await clickWithWait(user, clearInputButton[index]);
+  await clickWithWait(user, clearInputButton);
 };
