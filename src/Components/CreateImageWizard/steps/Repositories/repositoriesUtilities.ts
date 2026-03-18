@@ -1,8 +1,15 @@
 import { ContentOrigin } from '@/constants';
 import { CustomRepository, Repository } from '@/store/api/backend';
-import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
+import {
+  ApiRepositoryParameterResponse,
+  ApiRepositoryResponse,
+  ApiRepositoryResponseRead,
+} from '@/store/api/contentSources';
+import {
+  convertStringToDate,
+  timestampToDisplayString,
+} from '@/Utilities/time';
 
-// Utility function to convert from Content Sources to Image Builder custom repo API schema
 export const convertSchemaToIBCustomRepo = (
   repo: ApiRepositoryResponseRead,
 ) => {
@@ -25,7 +32,6 @@ export const convertSchemaToIBCustomRepo = (
   return imageBuilderRepo;
 };
 
-// Utility function to convert from Content Sources to Image Builder payload repo API schema
 export const convertSchemaToIBPayloadRepo = (
   repo: ApiRepositoryResponseRead,
 ) => {
@@ -46,4 +52,57 @@ export const convertSchemaToIBPayloadRepo = (
   }
 
   return imageBuilderRepo;
+};
+
+export const getLastIntrospection = (
+  repoIntrospections: ApiRepositoryResponse['last_introspection_time'],
+) => {
+  const currentDate = Date.now();
+  const lastIntrospectionDate = convertStringToDate(repoIntrospections);
+  const timeDeltaInSeconds = Math.floor(
+    (currentDate - lastIntrospectionDate) / 1000,
+  );
+
+  if (timeDeltaInSeconds <= 60) {
+    return 'A few seconds ago';
+  } else if (timeDeltaInSeconds <= 60 * 60) {
+    return 'A few minutes ago';
+  } else if (timeDeltaInSeconds <= 60 * 60 * 24) {
+    return 'A few hours ago';
+  } else {
+    return timestampToDisplayString(repoIntrospections);
+  }
+};
+
+export const getReadableArchitecture = (
+  technicalArch: string | undefined,
+  repositoryParameters: ApiRepositoryParameterResponse | undefined,
+) => {
+  if (!technicalArch || !repositoryParameters?.distribution_arches) {
+    return technicalArch || '-';
+  }
+
+  const archParam = repositoryParameters.distribution_arches.find(
+    (arch) => arch.label === technicalArch,
+  );
+
+  return archParam?.name || technicalArch;
+};
+
+export const getReadableVersions = (
+  technicalVersions: string[] | undefined,
+  repositoryParameters: ApiRepositoryParameterResponse | undefined,
+) => {
+  if (!technicalVersions || !repositoryParameters?.distribution_versions) {
+    return technicalVersions || '-';
+  }
+
+  const readableVersions = technicalVersions.map((version) => {
+    const versionParam = repositoryParameters.distribution_versions?.find(
+      (v) => v.label === version,
+    );
+    return versionParam?.name || version;
+  });
+
+  return readableVersions.join(', ');
 };

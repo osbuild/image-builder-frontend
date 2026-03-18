@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Bullseye, EmptyState, Spinner } from '@patternfly/react-core';
 
-export const Loading = () => {
+const Loading = () => {
   return (
     <Bullseye>
       <EmptyState
@@ -13,3 +13,5 @@ export const Loading = () => {
     </Bullseye>
   );
 };
+
+export default Loading;
