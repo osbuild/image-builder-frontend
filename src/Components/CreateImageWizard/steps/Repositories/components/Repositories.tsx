@@ -53,7 +53,6 @@ import {
 import useDebounce from '@/Utilities/useDebounce';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import BulkSelect from './BulkSelect';
 import CommunityRepositoryLabel from './CommunityRepositoryLabel';
 import CustomEpelWarning from './CustomEpelWarning';
 import Empty from './Empty';
@@ -279,32 +278,6 @@ const Repositories = () => {
     dispatch(changeCustomRepositories([...customRepositories, ...customToAdd]));
     dispatch(
       changePayloadRepositories([...payloadRepositories, ...payloadToAdd]),
-    );
-  };
-
-  const clearSelected = () => {
-    const recommendedReposSet = new Set(
-      recommendedRepos.map(({ uuid }) => uuid),
-    );
-    const initiallySelected = [...selected].some(
-      (uuid) => uuid && initialSelectedState.has(uuid),
-    );
-
-    if (initiallySelected) {
-      setModalOpen(true);
-      setReposToRemove([...selected]);
-      return;
-    }
-
-    dispatch(
-      changeCustomRepositories(
-        customRepositories.filter(({ id }) => recommendedReposSet.has(id)),
-      ),
-    );
-    dispatch(
-      changePayloadRepositories(
-        payloadRepositories.filter(({ id }) => recommendedReposSet.has(id)),
-      ),
     );
   };
 
@@ -656,26 +629,6 @@ const Repositories = () => {
         )}
         <Toolbar>
           <ToolbarContent>
-            <ToolbarItem>
-              <BulkSelect
-                selected={selected}
-                contentList={contentList.filter(
-                  (r) => !isBaseOSOrAppStream(r.url!),
-                )}
-                deselectAll={clearSelected}
-                perPage={perPage}
-                handleAddRemove={handleAddRemove}
-                isDisabled={
-                  isFetching ||
-                  (!selected.size && !contentList.length) ||
-                  contentList.every(
-                    (repo) =>
-                      repo.uuid &&
-                      isRepoDisabled(repo, selected.has(repo.uuid))[0],
-                  )
-                }
-              />
-            </ToolbarItem>
             <ToolbarItem>
               <SearchInput
                 placeholder='Filter repositories'

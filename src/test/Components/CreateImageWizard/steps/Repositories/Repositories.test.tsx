@@ -71,14 +71,6 @@ const deselectFirstRepository = async () => {
   await waitFor(async () => user.click(row0Checkbox));
 };
 
-const clickBulkSelect = async () => {
-  const user = userEvent.setup();
-  const bulkSelectCheckbox = await screen.findByRole('checkbox', {
-    name: /select all/i,
-  });
-  await waitFor(async () => user.click(bulkSelectCheckbox));
-};
-
 const toggleSelected = async () => {
   const user = userEvent.setup();
   const selectedButton = await screen.findByRole('button', {
@@ -125,14 +117,6 @@ describe('Step Custom repositories', () => {
 
     firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-  });
-
-  test('correct number of repositories is fetched', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-    const select = await screen.findByTestId('bulk-select-toggle');
-    await waitFor(() => user.click(select));
-    await screen.findByText(/select page \(10 items\)/i);
   });
 
   test('press on Selected button to see selected repositories list', async () => {
@@ -316,18 +300,6 @@ describe('Repositories request generated correctly', () => {
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
-  });
-
-  test('bulk select', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-    await clickBulkSelect();
-    await goToReview();
-    const receivedRequest = (await interceptBlueprintRequest(
-      CREATE_BLUEPRINT,
-    )) as CreateBlueprintRequest;
-    expect(receivedRequest.customizations.custom_repositories).toHaveLength(6);
-    expect(receivedRequest.customizations.payload_repositories).toHaveLength(6);
   });
 });
 
