@@ -24,8 +24,6 @@ export const INSIGHTS_URL =
 export const RHC_URL = 'https://access.redhat.com/articles/rhc';
 export const RELEASE_LIFECYCLE_URL =
   'https://access.redhat.com/support/policy/updates/errata';
-export const AZURE_AUTH_URL =
-  'https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 export const COMPLIANCE_URL = '/insights/compliance/scappolicies';
 export const OSCAP_URL =
   'https://www.open-scap.org/resources/documentation/perform-vulnerability-scan-of-rhel-6-machine/';
@@ -149,11 +147,6 @@ export const RHEL_9_MAINTENANCE_SUPPORT = ['2027-05-31', '2032-05-31'];
 export const RHEL_8_MAINTENANCE_SUPPORT = ['2024-05-31', '2029-05-31'];
 
 export const ARCHES = [X86_64, AARCH64];
-
-export const HYPER_V_GENERATIONS = [
-  { value: 'V1', label: 'Hyper-V generation 1 (BIOS)' },
-  { value: 'V2', label: 'Hyper-V generation 2 (UEFI)' },
-];
 
 export const DEFAULT_AWS_REGION = 'us-east-1';
 

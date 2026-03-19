@@ -3,13 +3,12 @@ import React from 'react';
 import { Button, Content, Form, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { AZURE_AUTH_URL } from '@/constants';
-
 import AzureAuthButton from './components/AzureAuthButton';
 import AzureHyperVSelect from './components/AzureHyperVSelect';
 import ResourceGroupInput from './components/ResourceGroupInput';
 import SubscriptionIdInput from './components/SubscriptionIdInput';
 import TenantIdInput from './components/TenantIdInput';
+import { AZURE_AUTH_URL } from './constants';
 
 const Azure = () => {
   return (
