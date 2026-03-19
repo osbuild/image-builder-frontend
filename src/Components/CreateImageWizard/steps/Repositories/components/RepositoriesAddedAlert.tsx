@@ -27,6 +27,7 @@ const RepositoriesAddedAlert = ({
             variant='link'
             isInline
             icon={<ExternalLinkAltIcon />}
+            iconPosition='end'
             href={`${TEMPLATES_URL}/${templateUuid}/edit`}
           >
             {' '}
