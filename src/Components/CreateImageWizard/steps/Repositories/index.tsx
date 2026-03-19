@@ -20,14 +20,11 @@ const RepositoriesStep = () => {
     <Form>
       <CustomizationLabels customization='repositories' />
       <Title headingLevel='h1' size='xl'>
-        Repositories
+        Included repositories
       </Title>
       <Content>
-        Select the linked repositories from which you can add packages to the
-        image
-        <Content>
-          <ManageRepositoriesButton />
-        </Content>
+        Can&apos;t find a repository? Ensure it&apos;s been added on{' '}
+        <ManageRepositoriesButton label={'the Repositories page'} icon={true} />
       </Content>
       {packages.length && recommendedRepos.length ? (
         <Alert

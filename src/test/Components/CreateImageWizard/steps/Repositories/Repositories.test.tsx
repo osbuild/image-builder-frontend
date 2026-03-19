@@ -37,7 +37,7 @@ const goToRepositoriesStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await goToStep(/Repositories/);
+  await goToStep(/Included repositories/);
 };
 
 const clickRevisitButton = async () => {
@@ -204,7 +204,7 @@ describe('Step Custom repositories', () => {
     await selectFirstRepository();
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Repositories/ });
+    await screen.findByRole('heading', { name: /Included repositories/ });
   });
 });
 

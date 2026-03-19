@@ -151,7 +151,7 @@ describe('Step Packages', () => {
     await goToPackagesStep();
     await clickBack();
     await screen.findByRole('heading', {
-      name: 'Repositories',
+      name: 'Included repositories',
     });
   });
 
@@ -299,7 +299,7 @@ describe('Step Packages', () => {
     await clickFirstPackageCheckbox();
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Repositories/ });
+    await screen.findByRole('heading', { name: /Included repositories/ });
   });
 
   // Note: Pagination tests, package groups popover test, and basic module tests are
