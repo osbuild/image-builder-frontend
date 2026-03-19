@@ -16,7 +16,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { CONTENT_URL, ContentOrigin, PAGINATION_COUNT } from '@/constants';
@@ -427,10 +427,7 @@ const Repositories = () => {
   );
 
   const {
-    data: {
-      data: reposInTemplate = [],
-      meta: { count: reposInTemplateCount } = { count: 0 },
-    } = {},
+    data: { data: reposInTemplate = [] } = {},
     isError: isReposInTemplateError,
     isLoading: isReposInTemplateLoading,
     isFetching: isReposInTemplateFetching,
@@ -769,12 +766,12 @@ const Repositories = () => {
               <Table variant='compact'>
                 <Thead>
                   <Tr>
-                    <Th aria-label='Selected' />
                     <Th width={45}>Name</Th>
                     <Th width={15}>Architecture</Th>
                     <Th>Version</Th>
                     <Th width={10}>Packages</Th>
                     <Th>Status</Th>
+                    <Th aria-label='Remove repository' />
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -784,7 +781,6 @@ const Repositories = () => {
                       url = '',
                       name,
                       status = '',
-                      origin = '',
                       distribution_arch,
                       distribution_versions,
                       package_count,
@@ -794,34 +790,7 @@ const Repositories = () => {
 
                     return (
                       <Tr key={`${uuid}-${rowIndex}`}>
-                        <Td
-                          select={{
-                            isSelected: true,
-                            rowIndex: rowIndex,
-                            isDisabled: true,
-                          }}
-                        />
-                        <Td dataLabel={'Name'}>
-                          {name}
-                          {origin === ContentOrigin.UPLOAD ? (
-                            <UploadRepositoryLabel />
-                          ) : (
-                            <>
-                              <br />
-                              <Button
-                                component='a'
-                                target='_blank'
-                                variant='link'
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition='right'
-                                isInline
-                                href={url}
-                              >
-                                {url}
-                              </Button>
-                            </>
-                          )}
-                        </Td>
+                        <Td dataLabel={'Name'}>{name}</Td>
                         <Td dataLabel={'Architecture'}>
                           {getReadableArchitecture(
                             distribution_arch,
@@ -843,6 +812,16 @@ const Repositories = () => {
                             repoFailCount={failed_introspections_count}
                           />
                         </Td>
+                        <Td>
+                          <Button
+                            isDisabled={true}
+                            variant='plain'
+                            icon={<MinusCircleIcon />}
+                            aria-label='Remove repository'
+                            isInline
+                            hasNoPadding
+                          />
+                        </Td>
                       </Tr>
                     );
                   })}
@@ -850,14 +829,6 @@ const Repositories = () => {
               </Table>
             </PanelMain>
           </Panel>
-          <Pagination
-            itemCount={reposInTemplateCount ?? PAGINATION_COUNT}
-            perPage={perPage}
-            page={page}
-            onSetPage={(_, newPage) => setPage(newPage)}
-            onPerPageSelect={handlePerPageSelect}
-            variant={PaginationVariant.bottom}
-          />
         </Grid>
       </>
     );
