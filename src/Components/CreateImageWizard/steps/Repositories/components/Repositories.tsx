@@ -640,14 +640,14 @@ const Repositories = () => {
             </ToolbarItem>
             <ToolbarItem>
               <Button
-                variant='primary'
+                variant='secondary'
                 isInline
                 onClick={() => refresh()}
                 isLoading={isFetching && !isStatusPollingEnabled}
               >
                 {isFetching && !isStatusPollingEnabled
-                  ? 'Refreshing'
-                  : 'Refresh'}
+                  ? 'Refreshing repositories'
+                  : 'Refresh repositories'}
               </Button>
             </ToolbarItem>
             <ToolbarItem>
