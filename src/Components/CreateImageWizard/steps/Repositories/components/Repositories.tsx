@@ -35,8 +35,6 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
-  selectGroups,
-  selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectSnapshotDate,
@@ -69,6 +67,9 @@ import {
   convertSchemaToIBPayloadRepo,
   getReadableArchitecture,
   getReadableVersions,
+  isBaseOSOrAppStream,
+  isEPELUrl,
+  isRepoDisabled,
 } from '../repositoriesUtilities';
 
 // Until IB has full support for extended release repositories, filter them out
@@ -81,8 +82,6 @@ const Repositories = () => {
   const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
   const customRepositories = useAppSelector(selectCustomRepositories);
-  const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
   const useLatestContent = useAppSelector(selectUseLatest);
   const snapshotDate = useAppSelector(selectSnapshotDate);
 
@@ -252,7 +251,13 @@ const Repositories = () => {
       reposToAdd = (repo as ApiRepositoryResponseRead[]).filter(
         (r) =>
           r.uuid &&
-          !isRepoDisabled(r, selected.has(r.uuid))[0] &&
+          !isRepoDisabled(
+            r,
+            selected.has(r.uuid),
+            isFetching,
+            contentList,
+            selected,
+          )[0] &&
           !selected.has(r.uuid),
       );
     } else {
@@ -260,7 +265,13 @@ const Repositories = () => {
       const singleRepo = repo as ApiRepositoryResponseRead;
       if (
         singleRepo.uuid &&
-        !isRepoDisabled(singleRepo, selected.has(singleRepo.uuid))[0] &&
+        !isRepoDisabled(
+          singleRepo,
+          selected.has(singleRepo.uuid),
+          isFetching,
+          contentList,
+          selected,
+        )[0] &&
         !selected.has(singleRepo.uuid)
       ) {
         reposToAdd.push(singleRepo);
@@ -381,93 +392,6 @@ const Repositories = () => {
   ) => {
     setPage(1);
     setToggleSelected(toggleType);
-  };
-
-  const isEPELUrl = (repoUrl: string) => {
-    const epelUrls = [
-      'https://dl.fedoraproject.org/pub/epel/10/Everything/x86_64/',
-      'https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/',
-      'https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/',
-    ];
-
-    return epelUrls.includes(repoUrl);
-  };
-
-  const isBaseOSOrAppStream = (repoUrl: string) => {
-    const requiredUrls = requiredRedHatRepos(arch, version);
-    if (!requiredUrls) return false;
-    return requiredUrls.includes(repoUrl);
-  };
-
-  const isRepoDisabled = (
-    repo: ApiRepositoryResponseRead,
-    isSelected: boolean,
-  ): [boolean, string] => {
-    if (isFetching) {
-      return [true, 'Repository data is still fetching, please wait.'];
-    }
-
-    if (
-      !isSelected &&
-      isEPELUrl(repo.url!) &&
-      repo.origin === ContentOrigin.EXTERNAL
-    ) {
-      return [
-        true,
-        'Custom EPEL repositories are going to be removed soon.\n' +
-          'Please use the "Community" EPEL repositories instead.',
-      ];
-    }
-
-    const hasSelectedEPEL = contentList.some(
-      (r) => r.uuid !== repo.uuid && isEPELUrl(r.url!) && selected.has(r.uuid!),
-    );
-
-    if (isEPELUrl(repo.url!) && !isSelected && hasSelectedEPEL) {
-      return [true, 'Only one EPEL repository can be selected at a time.'];
-    }
-
-    if (
-      recommendedRepos.length > 0 &&
-      repo.url?.includes('epel') &&
-      isSelected &&
-      (packages.length || groups.length)
-    ) {
-      return [
-        true,
-        'This repository was added because of previously recommended packages added to the image.\n' +
-          'To remove the repository, its related packages must be removed first.',
-      ];
-    }
-
-    if (repo.status === 'Invalid' || repo.status === 'Unavailable') {
-      return [
-        true,
-        `Repository can't be selected. The status is still '${repo.status}'.`,
-      ];
-    }
-    if (!repo.last_introspection_time) {
-      return [
-        true,
-        `Repository can't be selected, we are still learning about it.`,
-      ];
-    }
-
-    if (!repo.snapshot && !isSelected && !useLatestContent) {
-      return [
-        true,
-        `This repository doesn't have snapshots enabled, so it cannot be selected.`,
-      ];
-    }
-
-    if (isBaseOSOrAppStream(repo.url!)) {
-      return [
-        true,
-        'This repository is pre-selected for the chosen architecture and OS version.',
-      ];
-    }
-
-    return [false, '']; // Repository is enabled
   };
 
   const handlePerPageSelect = (
@@ -722,6 +646,9 @@ const Repositories = () => {
                     const [isDisabled, disabledReason] = isRepoDisabled(
                       repo,
                       selected.has(uuid),
+                      isFetching,
+                      contentList,
+                      selected,
                     );
 
                     const snapshot = snapshotsByDate?.data?.find(
