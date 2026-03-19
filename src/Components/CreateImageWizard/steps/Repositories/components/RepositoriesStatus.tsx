@@ -43,9 +43,7 @@ const RepositoriesStatus = ({
         <Icon status='success'>
           <CheckCircleIcon />
         </Icon>{' '}
-        <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-success'>
-          {repoStatus}
-        </span>
+        {repoStatus}
       </>
     );
   } else if (repoStatus === 'Invalid' || repoStatus === 'Unavailable') {
@@ -119,9 +117,7 @@ const RepositoriesStatus = ({
                 <Icon status='danger'>
                   <ExclamationCircleIcon />
                 </Icon>{' '}
-                <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger failure-button'>
-                  {repoStatus}
-                </span>
+                {repoStatus}
               </>
             )}
             {repoStatus === 'Unavailable' && (
@@ -129,9 +125,7 @@ const RepositoriesStatus = ({
                 <Icon status='warning'>
                   <ExclamationTriangleIcon />
                 </Icon>{' '}
-                <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-warning failure-button'>
-                  {repoStatus}
-                </span>
+                {repoStatus}
               </>
             )}
           </Button>
@@ -141,10 +135,7 @@ const RepositoriesStatus = ({
   } else if (repoStatus === 'Pending') {
     return (
       <>
-        <Spinner isInline />{' '}
-        <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info'>
-          {repoStatus}
-        </span>
+        <Spinner isInline /> {repoStatus}
       </>
     );
   }
