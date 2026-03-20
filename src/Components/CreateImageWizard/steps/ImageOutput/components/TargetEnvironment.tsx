@@ -13,7 +13,7 @@ import { provisioningApi, rhsmApi } from '@/store/api';
 import { ImageTypes, useGetArchitecturesQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices/env';
+import { selectIsOnPremise } from '@/store/slices';
 import {
   addImageType,
   changeRegistrationType,
@@ -25,6 +25,10 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '@/store/slices/wizard';
+
+import Aws from './Aws';
+import Azure from './Azure';
+import Gcp from './Gcp';
 
 const TEXT_WRAP_WIDTH = '54rem';
 const PRIVATE_CLOUD_TYPES = new Set<string>(['vsphere', 'vsphere-ova']);
@@ -78,6 +82,10 @@ const TargetEnvironment = () => {
       : 'register-now-rhc';
     dispatch(changeRegistrationType(registrationType));
   }, [restrictions.registration.shouldHide, dispatch]);
+
+  useEffect(() => {
+    prefetchSources({ provider: 'aws' });
+  }, [prefetchSources]);
 
   const isOnlyNetworkInstallerSelected =
     environments.length === 1 && environments.includes('network-installer');
@@ -250,22 +258,20 @@ const TargetEnvironment = () => {
               isChecked={environments.includes('aws')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => handleToggleEnvironment('aws')}
-              // NOTE: we can add the aws cloud config options
-              // in the Checkbox `body` prop
+              body={environments.includes('aws') ? <Aws /> : undefined}
             />
           )}
           {publicClouds.includes('gcp') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='checkbox-gcp'
-              name='Google Cloud'
-              label='Google Cloud'
+              name='Google Cloud Platform'
+              label='Google Cloud Platform'
               aria-label='Google Cloud checkbox'
               isChecked={environments.includes('gcp')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => handleToggleEnvironment('gcp')}
-              // NOTE: we can add the gcp cloud config options
-              // in the Checkbox `body` prop
+              body={environments.includes('gcp') ? <Gcp /> : undefined}
             />
           )}
           {publicClouds.includes('azure') && (
@@ -278,8 +284,7 @@ const TargetEnvironment = () => {
               isChecked={environments.includes('azure')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => handleToggleEnvironment('azure')}
-              // NOTE: we can add the azure cloud config options
-              // in the Checkbox `body` prop
+              body={environments.includes('azure') ? <Azure /> : undefined}
             />
           )}
           {publicClouds.includes('oci') && (

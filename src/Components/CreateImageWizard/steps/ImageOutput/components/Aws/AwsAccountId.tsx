@@ -9,9 +9,8 @@ import {
 } from '@patternfly/react-core';
 
 import { useGetSourceUploadInfoQuery } from '@/store/api/provisioning';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeAwsAccountId, selectAwsSourceId } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 export const AwsAccountId = () => {
   const dispatch = useAppDispatch();
