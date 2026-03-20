@@ -134,13 +134,16 @@ import {
   Units,
 } from '../steps/FileSystem/fscTypes';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
+import { AwsShareMethod } from '../steps/ImageOutput/components/Aws';
+import {
+  GcpAccountType,
+  GcpShareMethod,
+} from '../steps/ImageOutput/components/Gcp';
 import { PackageRepository } from '../steps/Packages/packagesTypes';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
 } from '../steps/Repositories/repositoriesUtilities';
-import { AwsShareMethod } from '../steps/TargetEnvironment/Aws';
-import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 
 /**
  * This function maps the wizard state to a valid CreateBlueprint request object

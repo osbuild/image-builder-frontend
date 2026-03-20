@@ -129,6 +129,8 @@ export function useIsBlueprintValid(): boolean {
   const users = useUsersValidation();
   const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
+  const gcpTarget = useGcpValidation();
+  const awsTarget = useAwsValidation();
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&
@@ -143,7 +145,9 @@ export function useIsBlueprintValid(): boolean {
     !details.disabledNext &&
     !users.disabledNext &&
     !userGroups.disabledNext &&
-    !azureTarget.disabledNext
+    !azureTarget.disabledNext &&
+    !gcpTarget.disabledNext &&
+    !awsTarget.disabledNext
   );
 }
 
@@ -1153,10 +1157,16 @@ export function useDetailsValidation(): StepValidation {
 }
 
 export function useAzureValidation(): StepValidation {
+  const imageTypes = useAppSelector(selectImageTypes);
   const errors: Record<string, string> = {};
+
   const azureTenantId = useAppSelector(selectAzureTenantId);
   const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
+
+  if (!imageTypes.includes('azure')) {
+    return { errors, disabledNext: false };
+  }
 
   if (!isAzureTenantGUIDValid(azureTenantId)) {
     errors.tenantId = 'Invalid tenant id';
@@ -1174,10 +1184,16 @@ export function useAzureValidation(): StepValidation {
 }
 
 export function useGcpValidation(): StepValidation {
+  const imageTypes = useAppSelector(selectImageTypes);
   const errors: Record<string, string> = {};
+
   const gcpShareMethod = useAppSelector(selectGcpShareMethod);
   const gcpAccountType = useAppSelector(selectGcpAccountType);
   const gcpEmail = useAppSelector(selectGcpEmail);
+
+  if (!imageTypes.includes('gcp')) {
+    return { errors, disabledNext: false };
+  }
 
   if (gcpShareMethod === 'withGoogle') {
     if (gcpAccountType === 'domain') {
@@ -1195,10 +1211,17 @@ export function useGcpValidation(): StepValidation {
 }
 
 export function useAwsValidation(): StepValidation {
+  const imageTypes = useAppSelector(selectImageTypes);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const errors: Record<string, string> = {};
+
   const awsShareMethod = useAppSelector(selectAwsShareMethod);
   const awsAccountId = useAppSelector(selectAwsAccountId);
   const awsSourceId = useAppSelector(selectAwsSourceId);
+
+  if (!imageTypes.includes('aws') || isOnPremise) {
+    return { errors, disabledNext: false };
+  }
 
   if (awsShareMethod === 'manual') {
     if (!isAwsAccountIdValid(awsAccountId)) {

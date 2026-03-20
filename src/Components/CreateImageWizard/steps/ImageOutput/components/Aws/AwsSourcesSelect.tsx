@@ -17,9 +17,8 @@ import {
 import { TimesIcon } from '@patternfly/react-icons';
 
 import { useGetSourceListQuery } from '@/store/api/provisioning';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeAwsSourceId, selectAwsSourceId } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 export const AwsSourcesSelect = () => {
   const dispatch = useAppDispatch();
