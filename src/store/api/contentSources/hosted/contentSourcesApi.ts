@@ -111,6 +111,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/templates/`,
         params: {
+          search: queryArg.search,
           offset: queryArg.offset,
           limit: queryArg.limit,
           version: queryArg.version,
@@ -222,6 +223,8 @@ export type ListSnapshotsByDateApiArg = {
 export type ListTemplatesApiResponse =
   /** status 200 OK */ ApiTemplateCollectionResponseRead;
 export type ListTemplatesApiArg = {
+  /** Term to filter and retrieve items that match the specified search criteria. Search term can include name. */
+  search?: string;
   /** Starting point for retrieving a subset of results. Determines how many items to skip from the beginning of the result set. Default value:`0`. */
   offset?: number;
   /** Number of items to include in response. Use it to control the number of items, particularly when dealing with large datasets. Default value: `100`. */
