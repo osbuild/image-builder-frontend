@@ -45,6 +45,10 @@ export const closePopupsIfExist = async (page: Page) => {
       .locator('iframe[name="trustarc_cm"]')
       .contentFrame()
       .getByRole('button', { name: 'Agree and proceed with' }), // closes the EU cookies popup
+    page
+      .locator('iframe[name="trustarc_cm"]')
+      .contentFrame()
+      .getByRole('button', { name: 'Accept default' }), // closes the SSO login cookies popup
   ];
 
   for (const locator of locatorsToCheck) {

@@ -137,10 +137,23 @@ const fillAndSubmitLogin = async (
 const loginConsole = async (page: Page, user: string, password: string) => {
   await closePopupsIfExist(page);
   await page.goto('/insights/image-builder/landing');
-  await fillAndSubmitLogin(page, user, password);
+
+  try {
+    await fillAndSubmitLogin(page, user, password);
+  } catch (firstError) {
+    // Cookie consent dismissal can reset the SSO form state.
+    // Re-navigate and retry - consent should already be accepted.
+    try {
+      await page.goto('/insights/image-builder/landing');
+      await fillAndSubmitLogin(page, user, password);
+    } catch {
+      // Retry also failed — throw the original error for clearer debugging
+      throw firstError;
+    }
+  }
 
   const allImagesHeading = page.getByRole('heading', { name: 'All images' });
-  await expect(allImagesHeading).toBeVisible({ timeout: 30000 });
+  await expect(allImagesHeading).toBeVisible({ timeout: 30_000 });
   await togglePreview(page);
   await expect(allImagesHeading).toBeVisible();
 };
