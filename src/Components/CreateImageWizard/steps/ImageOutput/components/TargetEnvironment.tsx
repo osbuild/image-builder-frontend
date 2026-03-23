@@ -164,13 +164,16 @@ const TargetEnvironment = () => {
   return (
     <FormGroup
       isRequired={true}
-      label='Select target environments'
-      data-testid='target-select'
+      role='group'
+      label='Target environments'
+      fieldId='target-environments'
     >
+      <Content component='p'>Select target items for this image.</Content>
+
       {privateClouds.length > 0 && (
         <FormGroup
           label={<small>Private cloud</small>}
-          className='pf-v6-u-mt-sm'
+          className='pf-v6-u-mt-md'
           role='group'
           aria-label='Private cloud'
           fieldId='private-cloud-group'
@@ -232,6 +235,7 @@ const TargetEnvironment = () => {
       {publicClouds.length > 0 && (
         <FormGroup
           label={<small>Public cloud</small>}
+          className='pf-v6-u-mt-md'
           role='group'
           aria-label='Public cloud'
           fieldId='public-cloud-group'
@@ -300,7 +304,7 @@ const TargetEnvironment = () => {
             <small>Miscellaneous formats</small>
           )
         }
-        className='pf-v6-u-mt-sm'
+        className='pf-v6-u-mt-md'
         role='group'
         aria-label='Miscellaneous formats'
         fieldId='misc-formats-group'

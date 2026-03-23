@@ -72,7 +72,7 @@ describe('ImageOutput Step', () => {
       renderImageOutputStep();
 
       expect(
-        await screen.findByText(/select target environments/i),
+        await screen.findByRole('group', { name: /target environments/i }),
       ).toBeInTheDocument();
     });
   });

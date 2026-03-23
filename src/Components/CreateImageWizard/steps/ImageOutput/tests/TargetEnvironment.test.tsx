@@ -35,7 +35,9 @@ describe('TargetEnvironment', () => {
     test('renders target environment form group', async () => {
       renderTargetEnvironment();
 
-      expect(await screen.findByTestId('target-select')).toBeInTheDocument();
+      expect(
+        await screen.findByRole('group', { name: /target environments/i }),
+      ).toBeInTheDocument();
     });
 
     test('shows public cloud targets for x86_64', async () => {
@@ -68,7 +70,9 @@ describe('TargetEnvironment', () => {
     test('shows required indicator', async () => {
       renderTargetEnvironment();
 
-      const formGroup = await screen.findByTestId('target-select');
+      const formGroup = await screen.findByRole('group', {
+        name: /target environments/i,
+      });
       expect(formGroup).toHaveTextContent('*');
     });
   });
