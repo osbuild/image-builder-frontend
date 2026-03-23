@@ -51,19 +51,19 @@ const clickRevisitButton = async () => {
 
 const selectAwsTarget = async () => {
   const user = userEvent.setup();
-  const awsCard = await screen.findByRole('button', {
+  const awsCheckbox = await screen.findByRole('checkbox', {
     name: /Amazon Web Services/i,
   });
-  await waitFor(() => user.click(awsCard));
+  await waitFor(() => user.click(awsCheckbox));
   await clickNext();
 };
 
 const deselectAwsAndSelectGuestImage = async () => {
   const user = userEvent.setup();
-  const awsCard = await screen.findAllByRole('button', {
+  const awsCheckbox = await screen.findByRole('checkbox', {
     name: /Amazon Web Services/i,
   });
-  await waitFor(() => user.click(awsCard[1]));
+  await waitFor(() => user.click(awsCheckbox));
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });

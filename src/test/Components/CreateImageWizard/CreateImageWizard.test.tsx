@@ -28,13 +28,13 @@ const selectAllEnvironments = async () => {
   const user = userEvent.setup();
 
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Amazon Web Services/i })),
+    user.click(screen.getByRole('checkbox', { name: /Amazon Web Services/i })),
   );
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Google Cloud/i })),
+    user.click(screen.getByRole('checkbox', { name: /Google Cloud/i })),
   );
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Microsoft Azure/i })),
+    user.click(screen.getByRole('checkbox', { name: /Microsoft Azure/i })),
   );
   await waitFor(() =>
     user.click(
@@ -43,12 +43,12 @@ const selectAllEnvironments = async () => {
   );
 };
 
-const testTile = async (tile: HTMLElement) => {
+const testCheckbox = async (checkbox: HTMLElement) => {
   const user = userEvent.setup();
 
-  tile.focus();
+  checkbox.focus();
   await waitFor(() => user.keyboard(' '));
-  expect(tile).toHaveClass('pf-v6-c-card__clickable-action');
+  expect(checkbox).toBeChecked();
 };
 
 describe('Create Image Wizard', () => {
@@ -169,7 +169,7 @@ describe('Keyboard accessibility', () => {
     await renderCreateMode();
     await waitFor(async () =>
       user.click(
-        await screen.findByRole('button', { name: /Amazon Web Services/i }),
+        await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
       ),
     );
     await waitFor(() => user.keyboard('{enter}'));
@@ -178,17 +178,17 @@ describe('Keyboard accessibility', () => {
     });
   });
 
-  test('target environment tiles are keyboard selectable', async () => {
+  test('target environment checkboxes are keyboard selectable', async () => {
     await renderCreateMode();
 
-    await testTile(
-      await screen.findByRole('button', { name: /Amazon Web Services/i }),
+    await testCheckbox(
+      await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
     );
-    await testTile(
-      await screen.findByRole('button', { name: /Google Cloud/i }),
+    await testCheckbox(
+      await screen.findByRole('checkbox', { name: /Google Cloud/i }),
     );
-    await testTile(
-      await screen.findByRole('button', { name: /Microsoft Azure/i }),
+    await testCheckbox(
+      await screen.findByRole('checkbox', { name: /Microsoft Azure/i }),
     );
   });
 });

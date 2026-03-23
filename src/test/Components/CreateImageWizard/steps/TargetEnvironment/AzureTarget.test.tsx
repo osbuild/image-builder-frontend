@@ -40,19 +40,19 @@ const goToReviewStep = async () => {
 
 const selectAzureTarget = async () => {
   const user = userEvent.setup();
-  const azureCard = await screen.findByRole('button', {
+  const azureCheckbox = await screen.findByRole('checkbox', {
     name: /Microsoft Azure/i,
   });
-  await waitFor(() => user.click(azureCard));
+  await waitFor(() => user.click(azureCheckbox));
   await clickNext();
 };
 
 const deselectAzureAndSelectGuestImage = async () => {
   const user = userEvent.setup();
-  const azureCard = await screen.findByRole('button', {
+  const azureCheckbox = await screen.findByRole('checkbox', {
     name: /Microsoft Azure/i,
   });
-  await waitFor(() => user.click(azureCard));
+  await waitFor(() => user.click(azureCheckbox));
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });

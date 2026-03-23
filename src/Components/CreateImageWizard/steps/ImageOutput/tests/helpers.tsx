@@ -96,14 +96,6 @@ export const renderTargetEnvironment = (
 };
 
 // TargetEnvironment interaction helpers
-export const clickTargetCard = async (
-  user: UserEventInstance,
-  targetName: RegExp | string,
-) => {
-  const card = await screen.findByRole('button', { name: targetName });
-  await clickWithWait(user, card);
-};
-
 export const clickTargetCheckbox = async (
   user: UserEventInstance,
   checkboxLabel: RegExp | string,

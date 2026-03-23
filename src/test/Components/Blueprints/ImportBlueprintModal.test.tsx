@@ -137,7 +137,7 @@ describe('Import modal', () => {
     await waitFor(
       async () =>
         await user.click(
-          await screen.findByRole('button', { name: /Amazon Web Services/i }),
+          await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
         ),
     );
     await clickNext();
