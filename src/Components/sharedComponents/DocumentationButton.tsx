@@ -34,7 +34,12 @@ const DocumentationButton = () => {
       }}
       href={documentationURL}
     >
-      Documentation
+      {
+        // just keep it simple for on-prem for now
+        !isOnPremise
+          ? 'Deploying and managing RHEL systems'
+          : 'Deploying and managing systems'
+      }
     </Button>
   );
 };
