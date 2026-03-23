@@ -3,22 +3,19 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
+  FormGroup,
   Grid,
-  Pagination,
-  PaginationVariant,
   Panel,
   PanelMain,
   Spinner,
-  ToggleGroup,
-  ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { CONTENT_URL, ContentOrigin, PAGINATION_COUNT } from '@/constants';
+import { CONTENT_URL, ContentOrigin } from '@/constants';
 import {
   ApiRepositoryResponseRead,
   useGetTemplateQuery,
@@ -54,6 +51,7 @@ import CustomEpelWarning from './CustomEpelWarning';
 import Empty from './Empty';
 import Error from './Error';
 import Loading from './Loading';
+import RemoveRepositoryButton from './RemoveRepositoryButton';
 import RemoveRepositoryModal from './RemoveRepositoryModal';
 import RepositoriesAddedAlert from './RepositoriesAddedAlert';
 import RepositoriesStatus from './RepositoriesStatus';
@@ -66,7 +64,6 @@ import {
   convertSchemaToIBPayloadRepo,
   getReadableArchitecture,
   getReadableVersions,
-  isBaseOSOrAppStream,
   isEPELUrl,
   isRepoDisabled,
 } from '../repositoriesUtilities';
@@ -76,25 +73,21 @@ export const excludeEUSReposFilter = { extendedRelease: 'none' };
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
+
   const wizardMode = useAppSelector(selectWizardMode);
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
-  const version = releaseToVersion(distribution);
   const customRepositories = useAppSelector(selectCustomRepositories);
   const useLatestContent = useAppSelector(selectUseLatest);
   const snapshotDate = useAppSelector(selectSnapshotDate);
-
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
   const templateUuid = useAppSelector(selectTemplate);
 
+  const version = releaseToVersion(distribution);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [reposToRemove, setReposToRemove] = useState<string[]>([]);
-  const [perPage, setPerPage] = useState(10);
-  const [page, setPage] = useState(1);
-  const [toggleSelected, setToggleSelected] = useState<
-    'toggle-group-all' | 'toggle-group-selected'
-  >('toggle-group-all');
   const [isTemplateSelected, setIsTemplateSelected] = useState(false);
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
 
@@ -143,16 +136,6 @@ const Repositories = () => {
   );
 
   useEffect(() => {
-    if (
-      toggleSelected === 'toggle-group-selected' &&
-      !selected.size &&
-      !requiredRedHatRepoUUIDs.length
-    ) {
-      setToggleSelected('toggle-group-all');
-    }
-  }, [selected, toggleSelected]);
-
-  useEffect(() => {
     setIsTemplateSelected(templateUuid !== '');
   }, [templateUuid]);
 
@@ -164,8 +147,11 @@ const Repositories = () => {
       .filter((uuid): uuid is string => !!uuid);
   }, [arch, version, previousReposData]);
 
+  const hasReposToShow =
+    selected.size > 0 || requiredRedHatRepoUUIDs.length > 0;
+
   const {
-    data: { data: contentList = [], meta: { count } = { count: 0 } } = {},
+    data: { data: contentList = [] } = {},
     isError,
     isFetching,
     isLoading,
@@ -177,16 +163,13 @@ const Repositories = () => {
       ...excludeEUSReposFilter,
       contentType: 'rpm',
       origin: originParam,
-      limit: perPage,
-      offset: perPage * (page - 1),
-      uuid:
-        toggleSelected === 'toggle-group-selected'
-          ? [...selected, ...requiredRedHatRepoUUIDs].join(',')
-          : '',
+      limit: 100,
+      offset: 0,
+      uuid: [...selected, ...requiredRedHatRepoUUIDs].join(','),
     },
     {
       refetchOnMountOrArgChange: 60,
-      skip: isTemplateSelected,
+      skip: isTemplateSelected || !hasReposToShow,
       pollingInterval: isStatusPollingEnabled ? 8000 : 0,
     },
   );
@@ -382,25 +365,6 @@ const Repositories = () => {
     initialSelectedState,
   ]);
 
-  const handleToggleClick = (
-    toggleType: 'toggle-group-all' | 'toggle-group-selected',
-  ) => {
-    setPage(1);
-    setToggleSelected(toggleType);
-  };
-
-  const handlePerPageSelect = (
-    _:
-      | MouseEvent
-      | React.MouseEvent<Element, MouseEvent>
-      | React.KeyboardEvent<Element>,
-    newPerPage: number,
-    newPage: number,
-  ) => {
-    setPerPage(newPerPage);
-    setPage(newPage);
-  };
-
   const {
     data: selectedTemplateData,
     isError: isTemplateError,
@@ -420,8 +384,8 @@ const Repositories = () => {
   } = useListRepositoriesQuery(
     {
       contentType: 'rpm',
-      limit: perPage,
-      offset: perPage * (page - 1),
+      limit: 100,
+      offset: 0,
       uuid:
         selectedTemplateData && selectedTemplateData.repository_uuids
           ? selectedTemplateData.repository_uuids.join(',')
@@ -510,6 +474,7 @@ const Repositories = () => {
   }
   if (
     isLoading ||
+    previousLoading ||
     isTemplateLoading ||
     isReposInTemplateLoading ||
     isReposInTemplateFetching
@@ -534,48 +499,31 @@ const Repositories = () => {
             isInline
           />
         )}
-        <Toolbar>
-          <ToolbarContent>
-            <ToolbarItem>
-              <RepositorySearch
-                onSelectRepository={(repo) => addSelected(repo)}
-                onRemoveRepository={(repo) => removeSelected(repo)}
-                selectedRepoIds={selected}
-              />
-            </ToolbarItem>
-            <ToolbarItem>
-              <Button
-                variant='secondary'
-                isInline
-                onClick={() => refresh()}
-                isLoading={isFetching && !isStatusPollingEnabled}
-              >
-                {isFetching && !isStatusPollingEnabled
-                  ? 'Refreshing repositories'
-                  : 'Refresh repositories'}
-              </Button>
-            </ToolbarItem>
-            <ToolbarItem>
-              <ToggleGroup aria-label='Filter repositories list'>
-                <ToggleGroupItem
-                  text='All'
-                  aria-label='All repositories'
-                  buttonId='toggle-group-all'
-                  isSelected={toggleSelected === 'toggle-group-all'}
-                  onChange={() => handleToggleClick('toggle-group-all')}
+        <FormGroup label='Repositories'>
+          <Toolbar>
+            <ToolbarContent>
+              <ToolbarItem>
+                <RepositorySearch
+                  onSelectRepository={(repo) => addSelected(repo)}
+                  onRemoveRepository={(repo) => removeSelected(repo)}
+                  selectedRepoIds={selected}
                 />
-                <ToggleGroupItem
-                  text='Selected'
-                  isDisabled={!selected.size && !requiredRedHatRepoUUIDs.length}
-                  aria-label='Selected repositories'
-                  buttonId='toggle-group-selected'
-                  isSelected={toggleSelected === 'toggle-group-selected'}
-                  onChange={() => handleToggleClick('toggle-group-selected')}
-                />
-              </ToggleGroup>
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
+              </ToolbarItem>
+              <ToolbarItem>
+                <Button
+                  variant='secondary'
+                  isInline
+                  onClick={() => refresh()}
+                  isLoading={isFetching && !isStatusPollingEnabled}
+                >
+                  {isFetching && !isStatusPollingEnabled
+                    ? 'Refreshing repositories'
+                    : 'Refresh repositories'}
+                </Button>
+              </ToolbarItem>
+            </ToolbarContent>
+          </Toolbar>
+        </FormGroup>
         <Panel>
           <PanelMain>
             {previousReposNowUnavailable ? (
@@ -586,10 +534,9 @@ const Repositories = () => {
             {contentList.length === 0 ? (
               <Empty hasFilterValue={false} refetch={refresh} />
             ) : (
-              <Table variant='compact'>
+              <Table>
                 <Thead>
                   <Tr>
-                    <Th aria-label='Selected' />
                     <Th width={45}>Name</Th>
                     {!snapshotDate ? (
                       <>
@@ -604,6 +551,7 @@ const Repositories = () => {
                         <Th>Packages</Th>
                       </>
                     )}
+                    <Th aria-label='Remove repository' />
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -637,17 +585,6 @@ const Repositories = () => {
 
                     return (
                       <Tr key={`${uuid}-${rowIndex}`}>
-                        <Td
-                          select={{
-                            isSelected:
-                              selected.has(uuid) || isBaseOSOrAppStream(url),
-                            rowIndex: rowIndex,
-                            onSelect: (_, isSelecting) =>
-                              handleAddRemove(repo, isSelecting),
-                            isDisabled: isDisabled,
-                          }}
-                          title={disabledReason}
-                        />
                         <Td dataLabel={'Name'}>
                           {name}
                           {origin === ContentOrigin.UPLOAD ? (
@@ -719,6 +656,14 @@ const Repositories = () => {
                             </Td>
                           </>
                         )}
+                        <Td>
+                          <RemoveRepositoryButton
+                            repo={repo}
+                            isDisabled={isDisabled}
+                            disabledReason={disabledReason}
+                            onRemove={(repo) => handleAddRemove(repo, false)}
+                          />
+                        </Td>
                       </Tr>
                     );
                   })}
@@ -727,14 +672,6 @@ const Repositories = () => {
             )}
           </PanelMain>
         </Panel>
-        <Pagination
-          itemCount={count ?? PAGINATION_COUNT}
-          perPage={perPage}
-          page={page}
-          onSetPage={(_, newPage) => setPage(newPage)}
-          onPerPageSelect={handlePerPageSelect}
-          variant={PaginationVariant.bottom}
-        />
       </Grid>
     );
   } else {
@@ -744,7 +681,7 @@ const Repositories = () => {
         <Grid>
           <Panel>
             <PanelMain>
-              <Table variant='compact'>
+              <Table>
                 <Thead>
                   <Tr>
                     <Th width={45}>Name</Th>
@@ -752,7 +689,6 @@ const Repositories = () => {
                     <Th>Version</Th>
                     <Th width={10}>Packages</Th>
                     <Th>Status</Th>
-                    <Th aria-label='Remove repository' />
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -791,16 +727,6 @@ const Repositories = () => {
                             repoUrl={url}
                             repoIntrospections={last_introspection_time}
                             repoFailCount={failed_introspections_count}
-                          />
-                        </Td>
-                        <Td>
-                          <Button
-                            isDisabled={true}
-                            variant='plain'
-                            icon={<MinusCircleIcon />}
-                            aria-label='Remove repository'
-                            isInline
-                            hasNoPadding
                           />
                         </Td>
                       </Tr>
