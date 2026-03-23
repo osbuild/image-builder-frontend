@@ -8,7 +8,6 @@ import {
   PaginationVariant,
   Panel,
   PanelMain,
-  SearchInput,
   Spinner,
   ToggleGroup,
   ToggleGroupItem,
@@ -48,7 +47,6 @@ import {
   convertStringToDate,
   timestampToDisplayStringDetailed,
 } from '@/Utilities/time';
-import useDebounce from '@/Utilities/useDebounce';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import CommunityRepositoryLabel from './CommunityRepositoryLabel';
@@ -59,6 +57,7 @@ import Loading from './Loading';
 import RemoveRepositoryModal from './RemoveRepositoryModal';
 import RepositoriesAddedAlert from './RepositoriesAddedAlert';
 import RepositoriesStatus from './RepositoriesStatus';
+import RepositorySearch from './RepositorySearch';
 import RepositoryUnavailable from './RepositoryUnavailable';
 import UploadRepositoryLabel from './UploadRepositoryLabel';
 
@@ -91,7 +90,6 @@ const Repositories = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [reposToRemove, setReposToRemove] = useState<string[]>([]);
-  const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState<
@@ -108,8 +106,6 @@ const Repositories = () => {
     if (isLayeredReposEnabled) origins.push(ContentOrigin.REDHAT);
     return origins.join(',');
   }, [isLayeredReposEnabled]);
-
-  const debouncedFilterValue = useDebounce(filterValue);
 
   const { data: repositoryParameters } = useListRepositoryParametersQuery();
 
@@ -183,7 +179,6 @@ const Repositories = () => {
       origin: originParam,
       limit: perPage,
       offset: perPage * (page - 1),
-      search: debouncedFilterValue,
       uuid:
         toggleSelected === 'toggle-group-selected'
           ? [...selected, ...requiredRedHatRepoUUIDs].join(',')
@@ -406,15 +401,6 @@ const Repositories = () => {
     setPage(newPage);
   };
 
-  const handleFilterRepositories = (
-    e: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    e.preventDefault();
-    setPage(1);
-    setFilterValue(value);
-  };
-
   const {
     data: selectedTemplateData,
     isError: isTemplateError,
@@ -551,12 +537,10 @@ const Repositories = () => {
         <Toolbar>
           <ToolbarContent>
             <ToolbarItem>
-              <SearchInput
-                placeholder='Filter repositories'
-                aria-label='Filter repositories'
-                onChange={handleFilterRepositories}
-                value={filterValue}
-                onClear={() => setFilterValue('')}
+              <RepositorySearch
+                onSelectRepository={(repo) => addSelected(repo)}
+                onRemoveRepository={(repo) => removeSelected(repo)}
+                selectedRepoIds={selected}
               />
             </ToolbarItem>
             <ToolbarItem>
@@ -600,10 +584,7 @@ const Repositories = () => {
               ''
             )}
             {contentList.length === 0 ? (
-              <Empty
-                hasFilterValue={!!debouncedFilterValue}
-                refetch={refresh}
-              />
+              <Empty hasFilterValue={false} refetch={refresh} />
             ) : (
               <Table variant='compact'>
                 <Thead>
