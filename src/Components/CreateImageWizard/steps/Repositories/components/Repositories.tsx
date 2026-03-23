@@ -44,7 +44,6 @@ import {
   convertStringToDate,
   timestampToDisplayStringDetailed,
 } from '@/Utilities/time';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import CommunityRepositoryLabel from './CommunityRepositoryLabel';
 import CustomEpelWarning from './CustomEpelWarning';
@@ -88,17 +87,9 @@ const Repositories = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [reposToRemove, setReposToRemove] = useState<string[]>([]);
-  const [isTemplateSelected, setIsTemplateSelected] = useState(false);
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
 
-  const isLayeredReposEnabled = useFlag('image-builder.layered-repos.enabled');
-
-  const originParam = useMemo(() => {
-    const origins = [ContentOrigin.CUSTOM];
-    origins.push(ContentOrigin.COMMUNITY);
-    if (isLayeredReposEnabled) origins.push(ContentOrigin.REDHAT);
-    return origins.join(',');
-  }, [isLayeredReposEnabled]);
+  const isTemplateSelected = templateUuid !== '';
 
   const { data: repositoryParameters } = useListRepositoryParametersQuery();
 
@@ -121,23 +112,18 @@ const Repositories = () => {
     data: { data: previousReposData = [] } = {},
     isLoading: previousLoading,
     isSuccess: previousSuccess,
-    refetch: refetchIntial,
+    refetch: refetchInitial,
   } = useListRepositoriesQuery(
     {
       availableForArch: arch,
       availableForVersion: version,
       ...excludeEUSReposFilter,
-      origin: originParam,
       limit: 999, // O.O Oh dear, if possible this whole call should be removed
       offset: 0,
       uuid: [...initialSelectedState].join(','),
     },
     { refetchOnMountOrArgChange: false, skip: isTemplateSelected },
   );
-
-  useEffect(() => {
-    setIsTemplateSelected(templateUuid !== '');
-  }, [templateUuid]);
 
   const requiredRedHatRepoUUIDs = useMemo(() => {
     const requiredUrls = requiredRedHatRepos(arch, version) || [];
@@ -162,7 +148,6 @@ const Repositories = () => {
       availableForVersion: version,
       ...excludeEUSReposFilter,
       contentType: 'rpm',
-      origin: originParam,
       limit: 100,
       offset: 0,
       uuid: [...selected, ...requiredRedHatRepoUUIDs].join(','),
@@ -175,11 +160,9 @@ const Repositories = () => {
   );
 
   useEffect(() => {
-    if (contentList.some((repo) => repo.status === 'Pending')) {
-      setIsStatusPollingEnabled(true);
-    } else {
-      setIsStatusPollingEnabled(false);
-    }
+    setIsStatusPollingEnabled(
+      contentList.some((repo) => repo.status === 'Pending'),
+    );
   }, [contentList]);
 
   // Auto-swap custom EPEL repos, due to their deletion, to their community counterparts on initial load
@@ -214,132 +197,51 @@ const Repositories = () => {
   }, [isLoading]);
 
   const refresh = () => {
-    // In case the user deletes an intially selected repository.
+    // In case the user deletes an initially selected repository.
     // Refetching will react to both added and removed repositories.
     refetchMain();
-    refetchIntial();
+    refetchInitial();
   };
 
-  const addSelected = (
-    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
-  ) => {
-    let reposToAdd: ApiRepositoryResponseRead[] = [];
-    // Check if array of items
-    if ((repo as ApiRepositoryResponseRead[]).length) {
-      reposToAdd = (repo as ApiRepositoryResponseRead[]).filter(
-        (r) =>
-          r.uuid &&
-          !isRepoDisabled(
-            r,
-            selected.has(r.uuid),
-            isFetching,
-            contentList,
-            selected,
-          )[0] &&
-          !selected.has(r.uuid),
-      );
-    } else {
-      // Then it should be a single item
-      const singleRepo = repo as ApiRepositoryResponseRead;
-      if (
-        singleRepo.uuid &&
-        !isRepoDisabled(
-          singleRepo,
-          selected.has(singleRepo.uuid),
-          isFetching,
-          contentList,
-          selected,
-        )[0] &&
-        !selected.has(singleRepo.uuid)
-      ) {
-        reposToAdd.push(singleRepo);
-      }
-    }
+  const addSelected = (repo: ApiRepositoryResponseRead) => {
+    const customToAdd = convertSchemaToIBCustomRepo(repo);
+    const payloadToAdd = convertSchemaToIBPayloadRepo(repo);
 
-    const customToAdd = reposToAdd.map((repo) =>
-      convertSchemaToIBCustomRepo(repo!),
-    );
-
-    const payloadToAdd = reposToAdd.map((repo) =>
-      convertSchemaToIBPayloadRepo(repo!),
-    );
-
-    dispatch(changeCustomRepositories([...customRepositories, ...customToAdd]));
-    dispatch(
-      changePayloadRepositories([...payloadRepositories, ...payloadToAdd]),
-    );
+    dispatch(changeCustomRepositories([...customRepositories, customToAdd]));
+    dispatch(changePayloadRepositories([...payloadRepositories, payloadToAdd]));
   };
 
   const removeSelected = (
     repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
   ) => {
-    if ((repo as ApiRepositoryResponseRead[]).length) {
-      const itemsToRemove = new Set(
-        (repo as ApiRepositoryResponseRead[]).map(({ uuid }) => uuid),
-      );
+    const itemsToRemove = Array.isArray(repo)
+      ? new Set(repo.map(({ uuid }) => uuid))
+      : new Set([repo.uuid]);
 
-      dispatch(
-        changeCustomRepositories(
-          customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
-        ),
-      );
+    dispatch(
+      changeCustomRepositories(
+        customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
+      ),
+    );
 
-      dispatch(
-        changePayloadRepositories(
-          payloadRepositories.filter(({ id }) => !itemsToRemove.has(id)),
-        ),
-      );
+    dispatch(
+      changePayloadRepositories(
+        payloadRepositories.filter(({ id }) => !itemsToRemove.has(id)),
+      ),
+    );
+  };
 
+  const handleRemove = (repo: ApiRepositoryResponseRead) => {
+    const isInitiallySelected =
+      repo.uuid && initialSelectedState.has(repo.uuid);
+
+    if (isInitiallySelected) {
+      setModalOpen(true);
+      setReposToRemove([repo.uuid as string]);
       return;
     }
 
-    const uuidToRemove = (repo as ApiRepositoryResponseRead).uuid;
-    if (uuidToRemove) {
-      dispatch(
-        changeCustomRepositories(
-          customRepositories.filter(({ id }) => uuidToRemove !== id),
-        ),
-      );
-      dispatch(
-        changePayloadRepositories(
-          payloadRepositories.filter(({ id }) => uuidToRemove !== id),
-        ),
-      );
-    }
-  };
-
-  const handleAddRemove = (
-    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
-    selected: boolean,
-  ) => {
-    if (selected) return addSelected(repo);
-    if ((repo as ApiRepositoryResponseRead[]).length) {
-      const initiallySelectedItems = (repo as ApiRepositoryResponseRead[]).map(
-        ({ uuid }) => uuid,
-      );
-
-      const hasSome = initiallySelectedItems.some(
-        (uuid) => uuid && initialSelectedState.has(uuid),
-      );
-
-      if (hasSome) {
-        setModalOpen(true);
-        setReposToRemove(initiallySelectedItems as string[]);
-        return;
-      }
-    } else {
-      const isInitiallySelected =
-        (repo as ApiRepositoryResponseRead).uuid &&
-        initialSelectedState.has(
-          (repo as ApiRepositoryResponseRead).uuid || '',
-        );
-      if (isInitiallySelected) {
-        setModalOpen(true);
-        setReposToRemove([(repo as ApiRepositoryResponseRead).uuid as string]);
-        return;
-      }
-    }
-    return removeSelected(repo);
+    removeSelected(repo);
   };
 
   const previousReposNowUnavailable: number = useMemo(() => {
@@ -472,6 +374,7 @@ const Repositories = () => {
   ) {
     return <Error />;
   }
+
   if (
     isLoading ||
     previousLoading ||
@@ -526,10 +429,8 @@ const Repositories = () => {
         </FormGroup>
         <Panel>
           <PanelMain>
-            {previousReposNowUnavailable ? (
+            {previousReposNowUnavailable > 0 && (
               <RepositoryUnavailable quantity={previousReposNowUnavailable} />
-            ) : (
-              ''
             )}
             {contentList.length === 0 ? (
               <Empty hasFilterValue={false} refetch={refresh} />
@@ -661,7 +562,7 @@ const Repositories = () => {
                             repo={repo}
                             isDisabled={isDisabled}
                             disabledReason={disabledReason}
-                            onRemove={(repo) => handleAddRemove(repo, false)}
+                            onRemove={handleRemove}
                           />
                         </Td>
                       </Tr>
