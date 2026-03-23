@@ -1,4 +1,7 @@
-import { screen, waitFor, within } from '@testing-library/react';
+// NOTE: Ready for Playwright migration
+// The unit tests for this component have been migrated to co-located tests.
+// The remaining tests here are integration/E2E tests that should be migrated to Playwright.
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -16,10 +19,8 @@ import {
 } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
-  clickBack,
   clickNext,
   clickRegisterLater,
-  clickReviewAndFinish,
   goToReview,
   goToStep,
   interceptBlueprintRequest,
@@ -40,173 +41,26 @@ const goToRepositoriesStep = async () => {
   await goToStep(/Included repositories/);
 };
 
-const clickRevisitButton = async () => {
+const selectRepository = async (repoName: string) => {
   const user = userEvent.setup();
-  const expandable = await screen.findByTestId('content-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-custom-repositories',
-  );
-  await waitFor(() => user.click(revisitButton));
+  const searchbox = await screen.findByRole('textbox', {
+    name: /type to filter/i,
+  });
+  await waitFor(() => user.clear(searchbox));
+  await waitFor(() => user.type(searchbox, repoName));
+  const repoOption = await screen.findByRole('option', {
+    name: new RegExp(repoName, 'i'),
+  });
+  await waitFor(() => user.click(repoOption));
 };
 
-const getFirstRepoCheckbox = async () =>
-  await screen.findByRole('checkbox', {
-    name: /select row 0/i,
-  });
-
-const getSecondRepoCheckbox = async () =>
-  await screen.findByRole('checkbox', {
-    name: /select row 1/i,
-  });
-
 const selectFirstRepository = async () => {
-  const user = userEvent.setup();
-  const row0Checkbox = await getFirstRepoCheckbox();
-  await waitFor(async () => user.click(row0Checkbox));
+  await selectRepository('01-test-valid-repo');
 };
 
 const deselectFirstRepository = async () => {
-  const user = userEvent.setup();
-  const row0Checkbox = await getFirstRepoCheckbox();
-  await waitFor(async () => user.click(row0Checkbox));
+  await selectRepository('01-test-valid-repo');
 };
-
-const toggleSelected = async () => {
-  const user = userEvent.setup();
-  const selectedButton = await screen.findByRole('button', {
-    name: /selected repositories/i,
-  });
-  await waitFor(async () => user.click(selectedButton));
-};
-
-const toggleAll = async () => {
-  const user = userEvent.setup();
-  const allButton = await screen.findByRole('button', {
-    name: /all repositories/i,
-  });
-  await waitFor(() => user.click(allButton));
-};
-
-const searchForRepository = async (searchTerm: string) => {
-  const user = userEvent.setup();
-  const searchInput = await screen.findByRole('textbox', {
-    name: /filter repositories/i,
-  });
-  await waitFor(() => user.type(searchInput, searchTerm));
-};
-
-describe('Step Custom repositories', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const user = userEvent.setup();
-
-  test('selected repositories stored in and retrieved from form state', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-
-    let firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
-
-    expect(firstRepoCheckbox.checked).toEqual(false);
-    await waitFor(() => user.click(firstRepoCheckbox));
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-
-    await clickNext();
-    await clickBack();
-
-    firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-  });
-
-  test('press on Selected button to see selected repositories list', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-
-    const firstRepoCheckbox =
-      (await getFirstRepoCheckbox()) as HTMLInputElement;
-
-    expect(firstRepoCheckbox.checked).toEqual(false);
-    await waitFor(() => user.click(firstRepoCheckbox));
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-
-    await toggleSelected();
-
-    expect(firstRepoCheckbox.checked).toEqual(true);
-
-    await clickNext();
-    await clickBack();
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-  });
-
-  test('press on All button to see all repositories list', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-
-    const firstRepoCheckbox =
-      (await getFirstRepoCheckbox()) as HTMLInputElement;
-    const secondRepoCheckbox =
-      (await getSecondRepoCheckbox()) as HTMLInputElement;
-
-    expect(firstRepoCheckbox.checked).toEqual(false);
-    expect(secondRepoCheckbox.checked).toEqual(false);
-    await waitFor(() => user.click(firstRepoCheckbox));
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-    expect(secondRepoCheckbox.checked).toEqual(false);
-
-    await toggleAll();
-
-    expect(firstRepoCheckbox.checked).toEqual(true);
-    expect(secondRepoCheckbox.checked).toEqual(false);
-
-    await clickNext();
-    await clickBack();
-
-    expect(firstRepoCheckbox.checked).toEqual(true);
-    await waitFor(() => expect(secondRepoCheckbox.checked).toEqual(false));
-  });
-
-  test('filter through selected repositories', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-
-    const firstRepoCheckbox =
-      (await getFirstRepoCheckbox()) as HTMLInputElement;
-
-    expect(firstRepoCheckbox.checked).toEqual(false);
-    await waitFor(() => user.click(firstRepoCheckbox));
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-
-    await toggleSelected();
-    expect(firstRepoCheckbox.checked).toEqual(true);
-    await searchForRepository('13lk3');
-    expect(firstRepoCheckbox.checked).toEqual(true);
-
-    await clickNext();
-    await clickBack();
-    expect(firstRepoCheckbox.checked).toEqual(true);
-    await waitFor(() => user.click(firstRepoCheckbox));
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(false));
-  });
-
-  test('clicking Review and finish leads to Review', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-    await clickReviewAndFinish();
-    await screen.findByRole('heading', {
-      name: /Review/,
-    });
-  });
-
-  test('revisit step button on Review works', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-    await selectFirstRepository();
-    await goToReview();
-    await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Included repositories/ });
-  });
-});
 
 describe('Repositories request generated correctly', () => {
   beforeEach(() => {
@@ -236,13 +90,7 @@ describe('Repositories request generated correctly', () => {
   });
 
   const selectNginxRepository = async () => {
-    const user = userEvent.setup();
-    const search = await screen.findByLabelText('Filter repositories');
-    await waitFor(() => user.type(search, 'nginx stable repo'));
-    await waitFor(
-      () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument,
-    );
-    await selectFirstRepository();
+    await selectRepository('nginx stable repo');
   };
 
   const expectedNginxRepository: Repository = {
@@ -336,12 +184,12 @@ describe('Repositories edit mode', () => {
       /Removing previously added repositories may lead to issues with selected packages/i,
     );
 
-    await toggleSelected();
+    const removeButtons = await screen.findAllByRole('button', {
+      name: /remove repository/i,
+    });
+    const firstRemoveButton = removeButtons[0];
 
-    const repoCheckbox = await getFirstRepoCheckbox();
-    await waitFor(() => expect(repoCheckbox).toBeChecked());
-
-    await waitFor(() => user.click(repoCheckbox));
+    await waitFor(() => user.click(firstRemoveButton));
     await screen.findByText(/Are you sure?/);
     const removeAnywayBtn = await screen.findByRole('button', {
       name: /Remove anyway/,
@@ -352,6 +200,6 @@ describe('Repositories edit mode', () => {
       expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument(),
     );
 
-    await waitFor(() => expect(repoCheckbox).not.toBeChecked());
+    await waitFor(() => expect(removeButtons[0]).not.toBeInTheDocument());
   });
 });

@@ -2,6 +2,7 @@ import createFetchMock from 'vitest-fetch-mock';
 
 import { Architectures, BlueprintsResponse } from '@/store/api/backend';
 import {
+  ApiRepositoryResponseRead,
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
   ApiTemplateResponseRead,
@@ -74,13 +75,46 @@ export const createBlueprintsHandler = (
 };
 
 // Content sources repositories handler
-export const createRepositoriesHandler = (): FetchHandler => {
+export type RepositoriesHandlerOptions = {
+  repositories?: ApiRepositoryResponseRead[] | undefined;
+};
+
+export const createRepositoriesHandler = (
+  options: RepositoriesHandlerOptions = {},
+): FetchHandler => {
+  const { repositories = [] } = options;
+
   return ({ url, method }: FetchRequest) => {
     if (
       url.startsWith(CONTENT_SOURCES_URL + '/repositories') &&
       method === 'GET'
     ) {
-      return JSON.stringify(emptyListResponse);
+      const urlObj = new URL(url);
+      const searchParam = urlObj.searchParams.get('search');
+      const uuidParam = urlObj.searchParams.get('uuid');
+
+      let filteredRepos = repositories;
+
+      if (uuidParam) {
+        const uuids = uuidParam.split(',');
+        filteredRepos = repositories.filter((repo) =>
+          uuids.includes(repo.uuid || ''),
+        );
+      }
+
+      if (searchParam) {
+        const searchLower = searchParam.toLowerCase();
+        filteredRepos = filteredRepos.filter(
+          (repo) =>
+            repo.name?.toLowerCase().includes(searchLower) ||
+            repo.url?.toLowerCase().includes(searchLower),
+        );
+      }
+
+      return JSON.stringify({
+        data: filteredRepos,
+        meta: { count: filteredRepos.length, limit: 100, offset: 0 },
+      });
     }
     return null;
   };

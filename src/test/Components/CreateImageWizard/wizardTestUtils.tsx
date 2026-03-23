@@ -209,11 +209,16 @@ export const goToOscapStep = async () => {
 export const selectCustomRepo = async () => {
   const user = userEvent.setup();
   await clickBack();
-  const customRepoCheckbox = await screen.findByRole('checkbox', {
-    name: /select row 0/i,
-  });
 
-  await waitFor(() => user.click(customRepoCheckbox));
+  const searchInput = await screen.findByRole('textbox', {
+    name: /type to filter/i,
+  });
+  await waitFor(() => user.click(searchInput));
+  await waitFor(() => user.type(searchInput, 'repo'));
+
+  const firstResult = await screen.findByRole('option', { name: /repo/i });
+  await waitFor(() => user.click(firstResult));
+
   await clickNext();
 };
 

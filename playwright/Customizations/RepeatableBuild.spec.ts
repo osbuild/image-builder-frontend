@@ -127,23 +127,18 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame.getByRole('button', { name: /Repositories/i }).click();
     await expect(frame.getByText(/Loading/i)).toBeHidden();
     await frame.getByRole('textbox').fill(repositoryName);
-    await expect(frame.getByRole('row')).toHaveCount(2);
+    await expect(frame.getByRole('row')).toHaveCount(3); // two base distro repos + header
     await expect(
-      frame.getByRole('gridcell', { name: repositoryName }),
+      frame.getByRole('option', { name: repositoryName }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('checkbox', { name: /Select row/i }),
+      frame.getByRole('option', { name: repositoryName }),
     ).toBeDisabled();
     await expect(
-      frame
-        .getByRole('row')
-        .filter({ hasText: repositoryName })
-        .locator('td')
-        .first(),
-    ).toHaveAttribute(
-      'title',
-      /This repository doesn't have snapshots enabled/,
-    );
+      frame.getByText(
+        /This repository doesn't have snapshots enabled, so it cannot be selected./i,
+      ),
+    ).toBeVisible();
   });
 
   await test.step('Check Repeatable build step behaviour with no repos', async () => {
@@ -160,10 +155,9 @@ test('Create a blueprint with Repeatable build customization', async ({
     await expect(
       frame.getByRole('columnheader', { name: 'Snapshot date' }),
     ).toBeVisible();
+    await frame.getByRole('textbox').fill('EPEL 10 Everything x86_64');
     await frame
-      .getByRole('row')
-      .filter({ hasText: /EPEL/i })
-      .getByLabel('Select row')
+      .getByRole('option', { name: 'EPEL 10 Everything x86_64' })
       .click();
     await frame.getByRole('button', { name: /Review and finish/i }).click();
     await expect(
@@ -178,31 +172,6 @@ test('Create a blueprint with Repeatable build customization', async ({
     await expect(
       frame.getByRole('gridcell', { name: 'EPEL 10 Everything x86_64' }),
     ).toBeVisible();
-  });
-
-  await test.step('Check Repeatable build step behaviour with bulk select', async () => {
-    await frame.getByTestId('revisit-custom-repositories').click();
-    await expect(
-      frame.getByRole('columnheader', { name: 'Snapshot date' }),
-    ).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Select all' }).click();
-    await frame.getByRole('button', { name: /Review and finish/i }).click();
-    await expect(
-      frame.getByTestId('content-expandable').getByText(/Repeatable build/i),
-    ).toBeVisible();
-    await expect(frame.getByText(/State as of 2025-12-24/i)).toBeVisible();
-    await frame.getByRole('button', { name: 'Snapshot method' }).click();
-    await expect(
-      frame.getByText(/Repositories as of 2025-12-24/i),
-    ).toBeVisible();
-    await expect(frame.getByText(/Loading/i)).toBeHidden();
-    await expect(
-      frame.getByRole('gridcell', { name: 'EPEL 10 Everything x86_64' }),
-    ).toBeVisible();
-    await expect(
-      frame.getByRole('gridcell', { name: 'EPEL 9 Everything x86_64' }),
-    ).toBeHidden();
-    expect(await frame.getByRole('row').count()).toBeGreaterThan(2); // at least one row + header
   });
 
   await test.step('Check Repeatable build with content template', async () => {
