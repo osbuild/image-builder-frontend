@@ -2,15 +2,12 @@ import React, { useEffect } from 'react';
 
 import {
   Alert,
-  Button,
   Checkbox,
   Content,
   EmptyState,
   FormGroup,
-  Popover,
   Spinner,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
 import { provisioningApi, rhsmApi } from '@/store/api';
 import { ImageTypes, useGetArchitecturesQuery } from '@/store/api/backend';
@@ -164,38 +161,21 @@ const TargetEnvironment = () => {
         >
           {supportedEnvironments.includes('vsphere-ova') && (
             <Checkbox
+              className='pf-v6-u-mb-sm'
               name='vsphere-checkbox-ova'
               aria-label='VMware vSphere checkbox OVA'
               id='vsphere-checkbox-ova'
               isDisabled={isOnlyNetworkInstallerSelected}
-              label={
-                <>
-                  VMware vSphere - Open virtualization format (.ova){' '}
-                  <Popover
-                    maxWidth='30rem'
-                    position='right'
-                    bodyContent={
-                      <Content>
-                        <Content>
-                          An OVA file is a virtual appliance used by
-                          virtualization platforms such as VMware vSphere. It is
-                          a package that contains files used to describe a
-                          virtual machine, which includes a VMDK image, OVF
-                          descriptor file and a manifest file.
-                        </Content>
-                      </Content>
-                    }
-                  >
-                    <Button
-                      icon={<HelpIcon />}
-                      variant='plain'
-                      aria-label='About OVA file'
-                      isInline
-                      hasNoPadding
-                    />
-                  </Popover>
-                </>
+              description={
+                <Content component='small' style={{ maxWidth: '54rem' }}>
+                  An OVA file is a virtual appliance used by virtualization
+                  platforms such as VMware vSphere. It is a package that
+                  contains files used to describe a virtual machine, which
+                  includes a VMDK image, OVF descriptor file and a manifest
+                  file.
+                </Content>
               }
+              label='VMware vSphere - Open virtualization format (.ova)'
               onChange={() => {
                 handleToggleEnvironment('vsphere-ova');
               }}
@@ -204,38 +184,20 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments.includes('vsphere') && (
             <Checkbox
-              className='pf-v6-u-mt-sm'
+              className='pf-v6-u-mb-sm'
               name='vsphere-checkbox-vmdk'
               aria-label='VMware vSphere checkbox VMDK'
               id='vsphere-checkbox-vmdk'
               isDisabled={isOnlyNetworkInstallerSelected}
-              label={
-                <>
-                  VMware vSphere - Virtual disk (.vmdk){' '}
-                  <Popover
-                    maxWidth='30rem'
-                    position='right'
-                    bodyContent={
-                      <Content>
-                        <Content>
-                          A VMDK file is a virtual disk that stores the contents
-                          of a virtual machine. This disk has to be imported
-                          into vSphere using govc import.vmdk, use the OVA
-                          version when using the vSphere UI.
-                        </Content>
-                      </Content>
-                    }
-                  >
-                    <Button
-                      icon={<HelpIcon />}
-                      variant='plain'
-                      aria-label='About VMDK file'
-                      isInline
-                      hasNoPadding
-                    />
-                  </Popover>
-                </>
+              description={
+                <Content component='small' style={{ maxWidth: '54rem' }}>
+                  A VMDK file is a virtual disk that stores the contents of a
+                  virtual machine. This disk has to be imported into vSphere
+                  using govc import.vmdk, use the OVA version when using the
+                  vSphere UI.
+                </Content>
               }
+              label={'VMware vSphere - Virtual disk (.vmdk)'}
               onChange={() => {
                 handleToggleEnvironment('vsphere');
               }}
@@ -314,6 +276,7 @@ const TargetEnvironment = () => {
       >
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
+            className='pf-v6-u-mb-sm'
             label='Virtualization - Guest image (.qcow2)'
             isChecked={environments.includes('guest-image')}
             onChange={() => {
@@ -323,10 +286,20 @@ const TargetEnvironment = () => {
             id='checkbox-guest-image'
             name='Virtualization guest image'
             isDisabled={isOnlyNetworkInstallerSelected}
+            description={
+              <Content component='small' style={{ maxWidth: '54rem' }}>
+                A deployment-ready virtual disk format used by virtualization
+                software like QEMU and KVM. It allows for efficient storage
+                usage by only writing the changes made to the disk image rather
+                than the entire image, ensuring the file only consumes physical
+                storage as data is written.
+              </Content>
+            }
           />
         )}
         {supportedEnvironments?.includes('image-installer') && (
           <Checkbox
+            className='pf-v6-u-mb-sm'
             label='Bare metal - Installer (.iso)'
             isChecked={environments.includes('image-installer')}
             onChange={() => {
@@ -336,38 +309,21 @@ const TargetEnvironment = () => {
             id='checkbox-image-installer'
             name='Bare metal installer'
             isDisabled={isOnlyNetworkInstallerSelected}
+            description={
+              <Content component='small' style={{ maxWidth: '54rem' }}>
+                This is a standard bootable image used to install RHEL directly
+                onto physical hardware or &ldquo;bare metal&rdquo; servers. It
+                contains the necessary installer and kernel to initialize a
+                system from scratch, ensuring the OS is configured correctly for
+                your specific hardware environment.
+              </Content>
+            }
           />
         )}
         {supportedEnvironments?.includes('network-installer') && (
           <Checkbox
-            label={
-              <>
-                Network - Installer (.iso){' '}
-                <Popover
-                  maxWidth='30rem'
-                  position='right'
-                  bodyContent={
-                    <Content>
-                      <Content>
-                        This is a lightweight image that differs from a standard
-                        &quot;full&quot; ISO by requiring an active network
-                        connection to pull the latest software directly from
-                        package repositories, as no OS packages are stored
-                        locally on the image.
-                      </Content>
-                    </Content>
-                  }
-                >
-                  <Button
-                    icon={<HelpIcon />}
-                    variant='plain'
-                    aria-label='About Network installer'
-                    isInline
-                    hasNoPadding
-                  />
-                </Popover>
-              </>
-            }
+            className='pf-v6-u-mb-sm'
+            label={'Network - Installer (.iso)'}
             isChecked={environments.includes('network-installer')}
             onChange={() => {
               handleToggleEnvironment('network-installer');
@@ -375,37 +331,20 @@ const TargetEnvironment = () => {
             id='checkbox-network-installer'
             name='Network - Installer'
             isDisabled={isOtherEnvironmentSelected}
+            description={
+              <Content component='small' style={{ maxWidth: '54rem' }}>
+                This is a lightweight image that differs from a standard
+                &quot;full&quot; ISO by requiring an active network connection
+                to pull the latest software directly from package repositories,
+                as no OS packages are stored locally on the image.
+              </Content>
+            }
           />
         )}
         {supportedEnvironments?.includes('pxe-tar-xz') && (
           <Checkbox
-            label={
-              <>
-                Network - PXE boot (.tar.xz){' '}
-                <Popover
-                  maxWidth='30rem'
-                  position='right'
-                  bodyContent={
-                    <Content>
-                      <Content>
-                        A PXE boot image is a compressed archive containing the
-                        kernel, initramfs, and root filesystem needed to boot a
-                        system over the network using the Preboot Execution
-                        Environment (PXE) protocol.
-                      </Content>
-                    </Content>
-                  }
-                >
-                  <Button
-                    icon={<HelpIcon />}
-                    variant='plain'
-                    aria-label='About PXE boot'
-                    isInline
-                    hasNoPadding
-                  />
-                </Popover>
-              </>
-            }
+            className='pf-v6-u-mb-sm'
+            label={'Network - PXE boot (.tar.xz)'}
             isChecked={environments.includes('pxe-tar-xz')}
             onChange={() => {
               handleToggleEnvironment('pxe-tar-xz');
@@ -414,58 +353,19 @@ const TargetEnvironment = () => {
             id='checkbox-pxe-boot'
             name='PXE boot image'
             isDisabled={isOnlyNetworkInstallerSelected}
+            description={
+              <Content component='small' style={{ maxWidth: '54rem' }}>
+                A PXE boot image is a compressed archive containing the kernel,
+                initramfs, and root filesystem needed to boot a system over the
+                network using the Preboot Execution Environment (PXE) protocol.
+              </Content>
+            }
           />
         )}
         {supportedEnvironments?.includes('wsl') && (
           <Checkbox
-            label={
-              <>
-                WSL - Windows Subsystem for Linux (.wsl){' '}
-                <Popover
-                  maxWidth='30rem'
-                  position='right'
-                  headerContent={
-                    <Content>
-                      <Content>
-                        WSL is not officially supported by Red Hat
-                      </Content>
-                    </Content>
-                  }
-                  bodyContent={
-                    <Content>
-                      <Content>
-                        You can use RHEL on Microsoft&apos;s Windows Subsystem
-                        for Linux (WSL) for development and learning use cases.
-                        Red Hat supports WSL under the Validated Software
-                        Pattern and Third Party Component Support Policy, which
-                        does not include production use cases.
-                      </Content>
-                    </Content>
-                  }
-                  footerContent={
-                    <Button
-                      component='a'
-                      target='_blank'
-                      variant='link'
-                      icon={<ExternalLinkAltIcon />}
-                      iconPosition='right'
-                      isInline
-                      href='https://access.redhat.com/articles/7115538'
-                    >
-                      Learn more about Red Hat&apos;s WSL support
-                    </Button>
-                  }
-                >
-                  <Button
-                    icon={<HelpIcon />}
-                    variant='plain'
-                    aria-label='About WSL file'
-                    isInline
-                    hasNoPadding
-                  />
-                </Popover>
-              </>
-            }
+            className='pf-v6-u-mb-sm'
+            label={'WSL - Windows Subsystem for Linux (.wsl)'}
             isChecked={environments.includes('wsl')}
             onChange={() => {
               handleToggleEnvironment('wsl');
@@ -474,6 +374,15 @@ const TargetEnvironment = () => {
             id='checkbox-wsl'
             name='WSL'
             isDisabled={isOnlyNetworkInstallerSelected}
+            description={
+              <Content component='small' style={{ maxWidth: '54rem' }}>
+                You can use RHEL on Microsoft&apos;s Windows Subsystem for Linux
+                (WSL) for development and learning use cases. Red Hat supports
+                WSL under the Validated Software Pattern and Third Party
+                Component Support Policy, which does not include production use
+                cases.
+              </Content>
+            }
           />
         )}
       </FormGroup>
