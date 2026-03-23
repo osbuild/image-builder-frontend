@@ -126,10 +126,17 @@ const LabelInput = ({
     setOnStepInputErrorText('');
   };
 
+  const commitInputValue = (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed) {
+      addItem(trimmed);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      addItem(value);
+      commitInputValue(value);
     }
   };
 
@@ -154,6 +161,7 @@ const LabelInput = ({
           onChange={onTextInputChange}
           value={inputValue}
           onKeyDown={(e) => handleKeyDown(e, inputValue)}
+          onBlur={() => commitInputValue(inputValue)}
         >
           {totalItems > 0 && (
             <LabelGroup
