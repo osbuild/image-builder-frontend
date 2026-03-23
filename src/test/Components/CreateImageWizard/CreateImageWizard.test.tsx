@@ -98,16 +98,10 @@ describe('Keyboard accessibility', () => {
   test('autofocus on each step first input element', async () => {
     await renderCreateMode();
 
-    // Image output
+    // Image output - select environments and fill cloud configs (all inline now)
     await selectAllEnvironments();
-    await clickNext();
 
-    // Target environment aws
-    //expect(
-    //  await screen.findByRole('radio', {
-    //    name: /use an account configured from sources\./i,
-    //  })
-    //).toHaveFocus();
+    // AWS config (inline on Image output step)
     await selectSourcesOption();
     const awsSourceDropdown = await getSourceDropdown();
     await waitFor(() => user.click(awsSourceDropdown));
@@ -116,23 +110,15 @@ describe('Keyboard accessibility', () => {
     });
     await waitFor(() => user.click(awsSource));
 
-    await clickNext();
-
-    // Target environment google
-    //expect(
-    //  await screen.findByRole('radio', {
-    //    name: /share image with a google account/i,
-    //  })
-    //).toHaveFocus();
+    // Google config (inline on Image output step)
     await waitFor(async () =>
       user.type(
         await screen.findByRole('textbox', { name: /google principal/i }),
         'test@test.com',
       ),
     );
-    await clickNext();
 
-    // Target environment azure
+    // Azure config (inline on Image output step)
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();

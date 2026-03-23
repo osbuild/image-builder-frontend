@@ -27,9 +27,6 @@ describe('EditImageWizard', () => {
     const outputNavItem = within(navigation).getByRole('button', {
       name: /image output/i,
     });
-    const targetNavItem = within(navigation).getByRole('button', {
-      name: /target environment/i,
-    });
     const registerNavItem = within(navigation).getByRole('button', {
       name: /register/i,
     });
@@ -58,7 +55,6 @@ describe('EditImageWizard', () => {
     // Assert that all validation items are enabled
     expect(heading).toBeInTheDocument();
     expect(outputNavItem).toBeEnabled();
-    expect(targetNavItem).toBeEnabled();
     expect(registerNavItem).toBeEnabled();
     expect(scapNavItem).toBeEnabled();
     expect(fscNavItem).toBeEnabled();
