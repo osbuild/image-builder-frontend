@@ -95,7 +95,6 @@ export const renderTargetEnvironment = (
   });
 };
 
-// TargetEnvironment interaction helpers
 export const clickTargetCheckbox = async (
   user: UserEventInstance,
   checkboxLabel: RegExp | string,

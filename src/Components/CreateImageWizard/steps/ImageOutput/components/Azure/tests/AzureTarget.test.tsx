@@ -44,21 +44,6 @@ const MOCK_ORG_ID = '5';
 
 describe('Azure Component', () => {
   describe('Rendering', () => {
-    test('displays step title and description', async () => {
-      renderAzureStep();
-
-      expect(
-        await screen.findByRole('heading', {
-          name: /Target environment - Microsoft Azure/i,
-        }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          /Upon build, Image Builder sends the image to the selected authorized Azure account./i,
-        ),
-      ).toBeInTheDocument();
-    });
-
     test('displays step components', async () => {
       renderAzureStep();
 

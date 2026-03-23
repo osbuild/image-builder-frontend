@@ -88,10 +88,12 @@ const selectGoogleAccount = async (
   value: string = GCP_ACCOUNT,
 ) => {
   const user = userEvent.setup();
-  const googleAccountOption = await screen.findByRole('radio', {
-    name: optionId,
+  const accountTypeToggle = await screen.findByRole('button', {
+    name: /Google account|Select account type/i,
   });
-  await waitFor(() => user.click(googleAccountOption));
+  await waitFor(() => user.click(accountTypeToggle));
+  const option = await screen.findByRole('option', { name: optionId });
+  await waitFor(() => user.click(option));
   const principalInput = await screen.findByRole('textbox', {
     name: /google principal/i,
   });
@@ -236,7 +238,10 @@ describe('GCP image type request generated correctly', () => {
   test('share image with domain', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('Google Workspace domain', GCP_DOMAIN);
+    await selectGoogleAccount(
+      'Google Workspace domain or Cloud Identity domain',
+      GCP_DOMAIN,
+    );
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
@@ -254,7 +259,7 @@ describe('GCP image type request generated correctly', () => {
     await renderCreateMode();
     await clickGCPTarget();
     const shareWithInsightOption = await screen.findByRole('radio', {
-      name: /Share image with Red Hat Lightspeed only/i,
+      name: /Share with Red Hat Lightspeed only/i,
     });
 
     await waitFor(() => user.click(shareWithInsightOption));
@@ -271,7 +276,10 @@ describe('GCP image type request generated correctly', () => {
   test('after selecting and deselecting gcp', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('Google Workspace domain', GCP_DOMAIN);
+    await selectGoogleAccount(
+      'Google Workspace domain or Cloud Identity domain',
+      GCP_DOMAIN,
+    );
     await clickBack();
     await deselectGcpAndSelectGuestImage();
     await goToReviewStep();

@@ -95,7 +95,6 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     ).toBeVisible();
     await frame.getByRole('checkbox', { name: /amazon web services/i }).click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
     await registerLater(frame);
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'Back', exact: true }).click();
