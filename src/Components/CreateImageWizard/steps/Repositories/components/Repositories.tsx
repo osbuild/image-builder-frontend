@@ -432,8 +432,8 @@ const Repositories = () => {
             {previousReposNowUnavailable > 0 && (
               <RepositoryUnavailable quantity={previousReposNowUnavailable} />
             )}
-            {contentList.length === 0 ? (
-              <Empty hasFilterValue={false} refetch={refresh} />
+            {!hasReposToShow || contentList.length === 0 ? (
+              <Empty />
             ) : (
               <Table>
                 <Thead>
