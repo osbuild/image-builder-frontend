@@ -6,9 +6,16 @@ import * as serviceQueries from './hosted/imageBuilderApi';
 import * as composerQueries from './onprem/composerApi';
 import { composerApi } from './onprem/enhancedComposerApi';
 
-export const useGetArchitecturesQuery = process.env.IS_ON_PREMISE
-  ? composerQueries.useGetArchitecturesQuery
-  : serviceQueries.useGetArchitecturesQuery;
+// NOTE: We cast to the composer query type because it accepts
+// 'image-mode' as a distribution (needed for on-prem). Casting to
+// the service query type breaks selectFromResult inference due to
+// different API slice generics. The response shape is identical
+// (composer imports GetArchitecturesApiResponse from hosted).
+export const useGetArchitecturesQuery = (
+  process.env.IS_ON_PREMISE
+    ? composerQueries.useGetArchitecturesQuery
+    : serviceQueries.useGetArchitecturesQuery
+) as typeof composerQueries.useGetArchitecturesQuery;
 
 export const useGetBlueprintQuery = process.env.IS_ON_PREMISE
   ? composerQueries.useGetBlueprintQuery
