@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import {
   Alert,
@@ -26,6 +26,10 @@ import {
   selectImageTypes,
 } from '@/store/slices/wizard';
 
+const PRIVATE_CLOUD_TYPES = new Set<string>(['vsphere', 'vsphere-ova']);
+const PUBLIC_CLOUD_TYPES = new Set<string>(['aws', 'azure', 'gcp', 'oci']);
+const EMPTY_ENVIRONMENTS: string[] = [];
+
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
@@ -35,15 +39,25 @@ const TargetEnvironment = () => {
     selectedImageTypes: environments,
   });
 
-  // NOTE: We're using 'image-mode' as a dummy distribution for the
-  // on-prem frontend, this is one of the few cases where we
-  // can't work around the type error. This is fine because
-  // on-prem can handle this, while the hosted service should
-  // never receive 'image-mode' as a distribution
-  // @ts-expect-error see above note
-  const { data, isFetching, isError } = useGetArchitecturesQuery({
-    distribution: distribution,
-  });
+  const {
+    isError,
+    isFetching,
+    environments: supportedEnvironments,
+  } = useGetArchitecturesQuery(
+    {
+      distribution,
+    },
+    {
+      selectFromResult: ({ data, isFetching, isError }) => ({
+        isError,
+        isFetching,
+        environments:
+          data?.find((elem) => elem.arch === arch)?.image_types ??
+          // this is defined as a const for referential stability
+          EMPTY_ENVIRONMENTS,
+      }),
+    },
+  );
 
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
@@ -64,26 +78,46 @@ const TargetEnvironment = () => {
     dispatch(changeRegistrationType(registrationType));
   }, [restrictions.registration.shouldHide, dispatch]);
 
-  const supportedEnvironments = data?.find(
-    (elem) => elem.arch === arch,
-  )?.image_types;
-
   const isOnlyNetworkInstallerSelected =
     environments.length === 1 && environments.includes('network-installer');
 
   const isOtherEnvironmentSelected =
     environments.length >= 1 && !environments.includes('network-installer');
 
+  const privateClouds = useMemo(
+    () =>
+      supportedEnvironments.filter((env): env is ImageTypes =>
+        PRIVATE_CLOUD_TYPES.has(env),
+      ),
+    [supportedEnvironments],
+  );
+
+  const publicClouds = useMemo(
+    () =>
+      supportedEnvironments.filter((env): env is ImageTypes =>
+        PUBLIC_CLOUD_TYPES.has(env),
+      ),
+    [supportedEnvironments],
+  );
+
+  const miscFormats = useMemo(
+    () =>
+      supportedEnvironments.filter(
+        // Technically unknown values that aren't private or public clouds would get
+        // incorrectly narrowed here, but this is fine since we only render known
+        // values with the checkboxes and anything else gets discarded
+        (env): env is ImageTypes =>
+          !PRIVATE_CLOUD_TYPES.has(env) && !PUBLIC_CLOUD_TYPES.has(env),
+      ),
+    [supportedEnvironments],
+  );
+
   useEffect(() => {
     if (isOnPremise) return;
-    supportedEnvironments
-      ?.filter((env): env is 'aws' | 'gcp' | 'azure' =>
-        ['aws', 'gcp', 'azure'].includes(env),
-      )
-      .forEach((provider) => {
-        prefetchSources({ provider });
-      });
-  }, [isOnPremise, prefetchSources, supportedEnvironments]);
+    publicClouds
+      .filter((env): env is 'aws' | 'azure' | 'gcp' => env !== 'oci')
+      .forEach((provider) => prefetchSources({ provider }));
+  }, [isOnPremise, publicClouds, prefetchSources]);
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
@@ -102,24 +136,6 @@ const TargetEnvironment = () => {
       dispatch(addImageType(environment));
     }
   };
-
-  const publicCloudsSupported = () => {
-    return (
-      supportedEnvironments?.includes('aws') ||
-      supportedEnvironments?.includes('gcp') ||
-      supportedEnvironments?.includes('azure') ||
-      supportedEnvironments?.includes('oci')
-    );
-  };
-
-  const privateCloudsSupported = () => {
-    return (
-      supportedEnvironments?.includes('vsphere') ||
-      supportedEnvironments?.includes('vsphere-ova')
-    );
-  };
-
-  const showMiscLabel = publicCloudsSupported() || privateCloudsSupported();
 
   if (isFetching) {
     return (
@@ -150,8 +166,7 @@ const TargetEnvironment = () => {
       label='Select target environments'
       data-testid='target-select'
     >
-      {(supportedEnvironments?.includes('vsphere') ||
-        supportedEnvironments?.includes('vsphere-ova')) && (
+      {privateClouds.length > 0 && (
         <FormGroup
           label={<small>Private cloud</small>}
           className='pf-v6-u-mt-sm'
@@ -159,7 +174,7 @@ const TargetEnvironment = () => {
           aria-label='Private cloud'
           fieldId='private-cloud-group'
         >
-          {supportedEnvironments.includes('vsphere-ova') && (
+          {privateClouds.includes('vsphere-ova') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='vsphere-checkbox-ova'
@@ -182,7 +197,7 @@ const TargetEnvironment = () => {
               }}
             />
           )}
-          {supportedEnvironments.includes('vsphere') && (
+          {privateClouds.includes('vsphere') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='vsphere-checkbox-vmdk'
@@ -207,14 +222,14 @@ const TargetEnvironment = () => {
         </FormGroup>
       )}
 
-      {publicCloudsSupported() && (
+      {publicClouds.length > 0 && (
         <FormGroup
           label={<small>Public cloud</small>}
           role='group'
           aria-label='Public cloud'
           fieldId='public-cloud-group'
         >
-          {supportedEnvironments?.includes('aws') && (
+          {publicClouds.includes('aws') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='checkbox-aws'
@@ -228,7 +243,7 @@ const TargetEnvironment = () => {
               // in the Checkbox `body` prop
             />
           )}
-          {supportedEnvironments?.includes('gcp') && (
+          {publicClouds.includes('gcp') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='checkbox-gcp'
@@ -242,7 +257,7 @@ const TargetEnvironment = () => {
               // in the Checkbox `body` prop
             />
           )}
-          {supportedEnvironments?.includes('azure') && (
+          {publicClouds.includes('azure') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='checkbox-azure'
@@ -256,7 +271,7 @@ const TargetEnvironment = () => {
               // in the Checkbox `body` prop
             />
           )}
-          {supportedEnvironments?.includes('oci') && (
+          {publicClouds.includes('oci') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='checkbox-oci'
@@ -272,13 +287,18 @@ const TargetEnvironment = () => {
       )}
 
       <FormGroup
-        label={showMiscLabel ? <small>Miscellaneous formats</small> : undefined}
+        label={
+          privateClouds.length === 0 &&
+          publicClouds.length === 0 ? undefined : (
+            <small>Miscellaneous formats</small>
+          )
+        }
         className='pf-v6-u-mt-sm'
         role='group'
         aria-label='Miscellaneous formats'
         fieldId='misc-formats-group'
       >
-        {supportedEnvironments?.includes('guest-image') && (
+        {miscFormats.includes('guest-image') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-guest-image'
@@ -301,7 +321,7 @@ const TargetEnvironment = () => {
             }}
           />
         )}
-        {supportedEnvironments?.includes('image-installer') && (
+        {miscFormats.includes('image-installer') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-image-installer'
@@ -324,7 +344,7 @@ const TargetEnvironment = () => {
             }}
           />
         )}
-        {supportedEnvironments?.includes('network-installer') && (
+        {miscFormats.includes('network-installer') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-network-installer'
@@ -346,7 +366,7 @@ const TargetEnvironment = () => {
             }}
           />
         )}
-        {supportedEnvironments?.includes('pxe-tar-xz') && (
+        {miscFormats.includes('pxe-tar-xz') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-pxe-boot'
@@ -367,7 +387,7 @@ const TargetEnvironment = () => {
             }}
           />
         )}
-        {supportedEnvironments?.includes('wsl') && (
+        {miscFormats.includes('wsl') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-wsl'
@@ -391,6 +411,7 @@ const TargetEnvironment = () => {
           />
         )}
       </FormGroup>
+
       {isOnlyNetworkInstallerSelected && (
         <Alert
           variant='info'
