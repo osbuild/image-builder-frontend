@@ -285,7 +285,7 @@ const TargetEnvironment = () => {
     );
   };
 
-  const showOtherLabel = publicCloudsSupported() || privateCloudsSupported();
+  const showMiscLabel = publicCloudsSupported() || privateCloudsSupported();
 
   if (isFetching) {
     return (
@@ -416,7 +416,7 @@ const TargetEnvironment = () => {
         </FormGroup>
       )}
       <FormGroup
-        label={showOtherLabel ? <small>Other</small> : undefined}
+        label={showMiscLabel ? <small>Miscellaneous formats</small> : undefined}
         className='pf-v6-u-mt-sm'
       >
         {supportedEnvironments?.includes('guest-image') && (
