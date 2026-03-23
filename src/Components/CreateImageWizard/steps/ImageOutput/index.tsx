@@ -46,10 +46,8 @@ const ImageOutputStep = () => {
         Image output
       </Title>
       <Content>
-        Image builder enables you to create customized blueprints, create custom
-        images from the blueprints, and push them to target environments.
-        <br />
-        <DocumentationButton />
+        Select the release, architecture, and a target environment to build your
+        image. Learn more about <DocumentationButton />
       </Content>
       {isOnPremise &&
         // The distribution is 'image-mode' when the blueprint is in image mode

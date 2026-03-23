@@ -43,7 +43,7 @@ describe('ImageOutput Step', () => {
 
       expect(
         screen.getByText(
-          /image builder enables you to create customized blueprints/i,
+          /Select the release, architecture, and a target environment/i,
         ),
       ).toBeInTheDocument();
     });
@@ -52,7 +52,7 @@ describe('ImageOutput Step', () => {
       renderImageOutputStep();
 
       expect(
-        await screen.findByRole('link', { name: /documentation/i }),
+        await screen.findByRole('link', { name: /Deploying and managing/i }),
       ).toBeInTheDocument();
     });
 
