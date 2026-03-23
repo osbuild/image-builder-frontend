@@ -1,20 +1,14 @@
-import React, { MouseEventHandler, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Alert,
   Button,
-  Card,
-  CardHeader,
   Checkbox,
   Content,
   EmptyState,
-  Flex,
-  FlexItem,
   FormGroup,
-  Gallery,
   Popover,
   Spinner,
-  Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
@@ -34,175 +28,6 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '@/store/slices/wizard';
-
-type TargetEnvironmentCardProps = {
-  title: string;
-  imageSrc: string;
-  imageAlt: string;
-  isClicked: boolean;
-  isDisabled?: boolean;
-  handleOnClick: () => void;
-  onMouseEnter?: MouseEventHandler<HTMLElement> | undefined;
-};
-
-const TargetEnvironmentCard = ({
-  title,
-  imageSrc,
-  imageAlt,
-  handleOnClick,
-  onMouseEnter,
-  isClicked,
-  isDisabled = false,
-}: TargetEnvironmentCardProps) => {
-  return (
-    <Card
-      style={{ textAlign: 'center' } as React.CSSProperties}
-      onMouseUp={onMouseEnter}
-      isClicked={isClicked}
-      isDisabled={isDisabled}
-      isClickable
-      isLarge
-      onClick={isDisabled ? undefined : handleOnClick}
-    >
-      <CardHeader
-        selectableActions={{
-          name: title,
-          selectableActionId: title.toLowerCase(),
-          selectableActionAriaLabel: title.toLowerCase(),
-          ...(!isDisabled && { onClickAction: handleOnClick }),
-        }}
-      >
-        <Flex direction={{ default: 'column' }}>
-          <FlexItem>
-            <img className='provider-icon' src={imageSrc} alt={imageAlt} />
-          </FlexItem>
-          <FlexItem>
-            <Title headingLevel='h5' size='md'>
-              {title}
-            </Title>
-          </FlexItem>
-        </Flex>
-      </CardHeader>
-    </Card>
-  );
-};
-
-type PublicCloudTargetsProps = {
-  supportedEnvironments: string[] | undefined;
-  environments: ImageTypes[];
-  handleToggleEnvironment: (environment: ImageTypes) => void;
-  prefetchSources: (arg: { provider: 'aws' | 'azure' | 'gcp' }) => void;
-  isDisabled?: boolean;
-};
-
-const PublicCloudTargets = ({
-  supportedEnvironments,
-  environments,
-  handleToggleEnvironment,
-  prefetchSources,
-  isDisabled = false,
-}: PublicCloudTargetsProps) => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-
-  if (isOnPremise) {
-    return (
-      <>
-        {supportedEnvironments?.includes('aws') && (
-          <Checkbox
-            label='Amazon Web Services'
-            isChecked={environments.includes('aws')}
-            onChange={() => handleToggleEnvironment('aws')}
-            aria-label='Amazon Web Services checkbox'
-            id='checkbox-aws'
-            name='Amazon Web Services'
-            isDisabled={isDisabled}
-          />
-        )}
-        {supportedEnvironments?.includes('gcp') && (
-          <Checkbox
-            label='Google Cloud'
-            isChecked={environments.includes('gcp')}
-            onChange={() => handleToggleEnvironment('gcp')}
-            aria-label='Google Cloud checkbox'
-            id='checkbox-gcp'
-            name='Google Cloud'
-            isDisabled={isDisabled}
-          />
-        )}
-        {supportedEnvironments?.includes('azure') && (
-          <Checkbox
-            label='Microsoft Azure'
-            isChecked={environments.includes('azure')}
-            onChange={() => handleToggleEnvironment('azure')}
-            aria-label='Microsoft Azure checkbox'
-            id='checkbox-azure'
-            name='Microsoft Azure'
-            isDisabled={isDisabled}
-          />
-        )}
-        {supportedEnvironments?.includes('oci') && (
-          <Checkbox
-            label='Oracle Cloud Infrastructure'
-            isChecked={environments.includes('oci')}
-            onChange={() => handleToggleEnvironment('oci')}
-            aria-label='Oracle Cloud Infrastructure checkbox'
-            id='checkbox-oci'
-            name='Oracle Cloud Infrastructure'
-            isDisabled={isDisabled}
-          />
-        )}
-      </>
-    );
-  }
-
-  return (
-    <Gallery hasGutter>
-      {supportedEnvironments?.includes('aws') && (
-        <TargetEnvironmentCard
-          title='Amazon Web Services'
-          imageSrc='/apps/frontend-assets/partners-icons/aws-logomark.svg'
-          imageAlt='Amazon Web Services logo'
-          handleOnClick={() => handleToggleEnvironment('aws')}
-          onMouseEnter={() => prefetchSources({ provider: 'aws' })}
-          isClicked={environments.includes('aws')}
-          isDisabled={isDisabled}
-        />
-      )}
-      {supportedEnvironments?.includes('gcp') && (
-        <TargetEnvironmentCard
-          title='Google Cloud'
-          imageSrc='/apps/frontend-assets/partners-icons/google-cloud-logomark.svg'
-          imageAlt='Google Cloud logo'
-          handleOnClick={() => handleToggleEnvironment('gcp')}
-          onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
-          isClicked={environments.includes('gcp')}
-          isDisabled={isDisabled}
-        />
-      )}
-      {supportedEnvironments?.includes('azure') && (
-        <TargetEnvironmentCard
-          title='Microsoft Azure'
-          imageSrc='/apps/frontend-assets/partners-icons/microsoft-azure-logomark.svg'
-          imageAlt='Microsoft Azure logo'
-          handleOnClick={() => handleToggleEnvironment('azure')}
-          onMouseEnter={() => prefetchSources({ provider: 'azure' })}
-          isClicked={environments.includes('azure')}
-          isDisabled={isDisabled}
-        />
-      )}
-      {supportedEnvironments?.includes('oci') && (
-        <TargetEnvironmentCard
-          title='Oracle Cloud Infrastructure'
-          imageSrc='/apps/frontend-assets/partners-icons/oracle-short.svg'
-          imageAlt='Oracle Cloud Infrastructure logo'
-          handleOnClick={() => handleToggleEnvironment('oci')}
-          isClicked={environments.includes('oci')}
-          isDisabled={isDisabled}
-        />
-      )}
-    </Gallery>
-  );
-};
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
@@ -224,6 +49,7 @@ const TargetEnvironment = () => {
   });
 
   const dispatch = useAppDispatch();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
 
@@ -250,6 +76,17 @@ const TargetEnvironment = () => {
 
   const isOtherEnvironmentSelected =
     environments.length >= 1 && !environments.includes('network-installer');
+
+  useEffect(() => {
+    if (isOnPremise) return;
+    supportedEnvironments
+      ?.filter((env): env is 'aws' | 'gcp' | 'azure' =>
+        ['aws', 'gcp', 'azure'].includes(env),
+      )
+      .forEach((provider) => {
+        prefetchSources({ provider });
+      });
+  }, [isOnPremise, prefetchSources, supportedEnvironments]);
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
@@ -318,13 +155,56 @@ const TargetEnvironment = () => {
     >
       {publicCloudsSupported() && (
         <FormGroup label={<small>Public cloud</small>}>
-          <PublicCloudTargets
-            supportedEnvironments={supportedEnvironments}
-            environments={environments}
-            handleToggleEnvironment={handleToggleEnvironment}
-            prefetchSources={prefetchSources}
-            isDisabled={isOnlyNetworkInstallerSelected}
-          />
+          {supportedEnvironments?.includes('aws') && (
+            <Checkbox
+              label='Amazon Web Services'
+              isChecked={environments.includes('aws')}
+              onChange={() => handleToggleEnvironment('aws')}
+              aria-label='Amazon Web Services checkbox'
+              id='checkbox-aws'
+              name='Amazon Web Services'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              // NOTE: we can add the aws cloud config options
+              // in the Checkbox `body` prop
+            />
+          )}
+          {supportedEnvironments?.includes('gcp') && (
+            <Checkbox
+              label='Google Cloud'
+              isChecked={environments.includes('gcp')}
+              onChange={() => handleToggleEnvironment('gcp')}
+              aria-label='Google Cloud checkbox'
+              id='checkbox-gcp'
+              name='Google Cloud'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              // NOTE: we can add the gcp cloud config options
+              // in the Checkbox `body` prop
+            />
+          )}
+          {supportedEnvironments?.includes('azure') && (
+            <Checkbox
+              label='Microsoft Azure'
+              isChecked={environments.includes('azure')}
+              onChange={() => handleToggleEnvironment('azure')}
+              aria-label='Microsoft Azure checkbox'
+              id='checkbox-azure'
+              name='Microsoft Azure'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              // NOTE: we can add the azure cloud config options
+              // in the Checkbox `body` prop
+            />
+          )}
+          {supportedEnvironments?.includes('oci') && (
+            <Checkbox
+              label='Oracle Cloud Infrastructure'
+              isChecked={environments.includes('oci')}
+              onChange={() => handleToggleEnvironment('oci')}
+              aria-label='Oracle Cloud Infrastructure checkbox'
+              id='checkbox-oci'
+              name='Oracle Cloud Infrastructure'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
         </FormGroup>
       )}
       {(supportedEnvironments?.includes('vsphere') ||

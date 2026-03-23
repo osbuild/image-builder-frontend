@@ -4,11 +4,7 @@ import { selectImageTypes } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { createUser, fetchMock } from '@/test/testUtils';
 
-import {
-  clickTargetCard,
-  clickTargetCheckbox,
-  renderTargetEnvironment,
-} from './helpers';
+import { clickTargetCheckbox, renderTargetEnvironment } from './helpers';
 import {
   createCustomArchitecturesHandler,
   createDefaultFetchHandler,
@@ -46,20 +42,20 @@ describe('TargetEnvironment', () => {
       renderTargetEnvironment();
 
       expect(
-        await screen.findByRole('button', { name: /Amazon Web Services/i }),
+        await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: /Google Cloud/i }),
+        screen.getByRole('checkbox', { name: /Google Cloud/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: /Microsoft Azure/i }),
+        screen.getByRole('checkbox', { name: /Microsoft Azure/i }),
       ).toBeInTheDocument();
     });
 
     test('shows other target options', async () => {
       renderTargetEnvironment();
 
-      await screen.findByRole('button', { name: /Amazon Web Services/i });
+      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
 
       expect(
         screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
@@ -78,31 +74,31 @@ describe('TargetEnvironment', () => {
   });
 
   describe('Target selection', () => {
-    test('clicking AWS card properly adds and removes aws from image types', async () => {
+    test('clicking AWS checkbox properly adds and removes aws from image types', async () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await clickTargetCard(user, /Amazon Web Services/i);
+      await clickTargetCheckbox(user, /Amazon Web Services/i);
       expect(selectImageTypes(store.getState())).toContain('aws');
 
-      await clickTargetCard(user, /Amazon Web Services/i);
+      await clickTargetCheckbox(user, /Amazon Web Services/i);
       expect(selectImageTypes(store.getState())).not.toContain('aws');
     });
 
-    test('clicking Google Cloud card adds gcp to image types', async () => {
+    test('clicking Google Cloud checkbox adds gcp to image types', async () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await clickTargetCard(user, /Google Cloud/i);
+      await clickTargetCheckbox(user, /Google Cloud/i);
 
       expect(selectImageTypes(store.getState())).toContain('gcp');
     });
 
-    test('clicking Azure card adds azure to image types', async () => {
+    test('clicking Azure checkbox adds azure to image types', async () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await clickTargetCard(user, /Microsoft Azure/i);
+      await clickTargetCheckbox(user, /Microsoft Azure/i);
 
       expect(selectImageTypes(store.getState())).toContain('azure');
     });
@@ -111,7 +107,7 @@ describe('TargetEnvironment', () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await screen.findByRole('button', { name: /Amazon Web Services/i });
+      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
       await clickTargetCheckbox(user, /Virtualization guest image/i);
       expect(selectImageTypes(store.getState())).toContain('guest-image');
 
@@ -123,7 +119,7 @@ describe('TargetEnvironment', () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await screen.findByRole('button', { name: /Amazon Web Services/i });
+      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
       await clickTargetCheckbox(user, /Bare metal installer/i);
 
       expect(selectImageTypes(store.getState())).toContain('image-installer');
@@ -133,8 +129,8 @@ describe('TargetEnvironment', () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await clickTargetCard(user, /Amazon Web Services/i);
-      await clickTargetCard(user, /Google Cloud/i);
+      await clickTargetCheckbox(user, /Amazon Web Services/i);
+      await clickTargetCheckbox(user, /Google Cloud/i);
       await clickTargetCheckbox(user, /Virtualization guest image/i);
 
       const imageTypes = selectImageTypes(store.getState());
@@ -149,7 +145,7 @@ describe('TargetEnvironment', () => {
       const user = createUser();
       renderTargetEnvironment();
 
-      await screen.findByRole('button', { name: /Amazon Web Services/i });
+      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
       const checkbox = screen.getByRole('checkbox', {
         name: /Virtualization guest image/i,
       });
