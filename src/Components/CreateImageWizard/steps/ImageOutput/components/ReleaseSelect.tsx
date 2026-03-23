@@ -137,7 +137,7 @@ const ReleaseSelect = () => {
       data-testid='release_select'
       style={
         {
-          minWidth: '50%',
+          minWidth: '20rem',
           maxWidth: '100%',
         } as React.CSSProperties
       }

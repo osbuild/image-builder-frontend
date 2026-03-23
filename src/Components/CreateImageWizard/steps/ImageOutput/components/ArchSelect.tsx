@@ -60,7 +60,7 @@ const ArchSelect = () => {
       isExpanded={isOpen}
       style={
         {
-          minWidth: '50%',
+          minWidth: '8rem',
           maxWidth: '100%',
         } as React.CSSProperties
       }
