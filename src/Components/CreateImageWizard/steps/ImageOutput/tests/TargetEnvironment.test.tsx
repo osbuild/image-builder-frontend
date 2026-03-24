@@ -168,7 +168,7 @@ describe('TargetEnvironment', () => {
     test('disables other targets when network installer is selected', async () => {
       renderTargetEnvironment({ imageTypes: ['network-installer'] });
 
-      await screen.findByRole('checkbox', { name: /Network - Installer/i });
+      await screen.findByRole('checkbox', { name: /Network installer/i });
 
       expect(
         screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
@@ -192,7 +192,7 @@ describe('TargetEnvironment', () => {
       renderTargetEnvironment({ imageTypes: ['guest-image'] });
 
       const networkInstallerCheckbox = await screen.findByRole('checkbox', {
-        name: /Network - Installer/i,
+        name: /Network installer/i,
       });
 
       expect(networkInstallerCheckbox).toBeDisabled();
@@ -202,7 +202,7 @@ describe('TargetEnvironment', () => {
       renderTargetEnvironment();
 
       const networkInstallerCheckbox = await screen.findByRole('checkbox', {
-        name: /Network - Installer/i,
+        name: /Network installer/i,
       });
 
       expect(networkInstallerCheckbox).toBeEnabled();

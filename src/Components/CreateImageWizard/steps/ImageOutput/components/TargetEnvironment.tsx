@@ -162,10 +162,10 @@ const TargetEnvironment = () => {
           {supportedEnvironments.includes('vsphere-ova') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
-              name='vsphere-checkbox-ova'
-              aria-label='VMware vSphere checkbox OVA'
               id='vsphere-checkbox-ova'
-              isDisabled={isOnlyNetworkInstallerSelected}
+              name='vsphere-checkbox-ova'
+              label='VMware vSphere - Open virtualization format (.ova)'
+              aria-label='VMware vSphere checkbox OVA'
               description={
                 <Content component='small' style={{ maxWidth: '54rem' }}>
                   An OVA file is a virtual appliance used by virtualization
@@ -175,20 +175,20 @@ const TargetEnvironment = () => {
                   file.
                 </Content>
               }
-              label='VMware vSphere - Open virtualization format (.ova)'
+              isChecked={environments.includes('vsphere-ova')}
+              isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => {
                 handleToggleEnvironment('vsphere-ova');
               }}
-              isChecked={environments.includes('vsphere-ova')}
             />
           )}
           {supportedEnvironments.includes('vsphere') && (
             <Checkbox
               className='pf-v6-u-mb-sm'
-              name='vsphere-checkbox-vmdk'
-              aria-label='VMware vSphere checkbox VMDK'
               id='vsphere-checkbox-vmdk'
-              isDisabled={isOnlyNetworkInstallerSelected}
+              name='vsphere-checkbox-vmdk'
+              label='VMware vSphere - Virtual disk (.vmdk)'
+              aria-label='VMware vSphere checkbox VMDK'
               description={
                 <Content component='small' style={{ maxWidth: '54rem' }}>
                   A VMDK file is a virtual disk that stores the contents of a
@@ -197,11 +197,11 @@ const TargetEnvironment = () => {
                   vSphere UI.
                 </Content>
               }
-              label={'VMware vSphere - Virtual disk (.vmdk)'}
+              isChecked={environments.includes('vsphere')}
+              isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => {
                 handleToggleEnvironment('vsphere');
               }}
-              isChecked={environments.includes('vsphere')}
             />
           )}
         </FormGroup>
@@ -216,52 +216,56 @@ const TargetEnvironment = () => {
         >
           {supportedEnvironments?.includes('aws') && (
             <Checkbox
-              label='Amazon Web Services'
-              isChecked={environments.includes('aws')}
-              onChange={() => handleToggleEnvironment('aws')}
-              aria-label='Amazon Web Services checkbox'
+              className='pf-v6-u-mb-sm'
               id='checkbox-aws'
               name='Amazon Web Services'
+              label='Amazon Web Services'
+              aria-label='Amazon Web Services checkbox'
+              isChecked={environments.includes('aws')}
               isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('aws')}
               // NOTE: we can add the aws cloud config options
               // in the Checkbox `body` prop
             />
           )}
           {supportedEnvironments?.includes('gcp') && (
             <Checkbox
-              label='Google Cloud'
-              isChecked={environments.includes('gcp')}
-              onChange={() => handleToggleEnvironment('gcp')}
-              aria-label='Google Cloud checkbox'
+              className='pf-v6-u-mb-sm'
               id='checkbox-gcp'
               name='Google Cloud'
+              label='Google Cloud'
+              aria-label='Google Cloud checkbox'
+              isChecked={environments.includes('gcp')}
               isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('gcp')}
               // NOTE: we can add the gcp cloud config options
               // in the Checkbox `body` prop
             />
           )}
           {supportedEnvironments?.includes('azure') && (
             <Checkbox
-              label='Microsoft Azure'
-              isChecked={environments.includes('azure')}
-              onChange={() => handleToggleEnvironment('azure')}
-              aria-label='Microsoft Azure checkbox'
+              className='pf-v6-u-mb-sm'
               id='checkbox-azure'
               name='Microsoft Azure'
+              label='Microsoft Azure'
+              aria-label='Microsoft Azure checkbox'
+              isChecked={environments.includes('azure')}
               isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('azure')}
               // NOTE: we can add the azure cloud config options
               // in the Checkbox `body` prop
             />
           )}
           {supportedEnvironments?.includes('oci') && (
             <Checkbox
-              label='Oracle Cloud Infrastructure'
-              isChecked={environments.includes('oci')}
-              onChange={() => handleToggleEnvironment('oci')}
-              aria-label='Oracle Cloud Infrastructure checkbox'
+              className='pf-v6-u-mb-sm'
               id='checkbox-oci'
               name='Oracle Cloud Infrastructure'
+              label='Oracle Cloud Infrastructure'
+              aria-label='Oracle Cloud Infrastructure checkbox'
+              isChecked={environments.includes('oci')}
               isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('oci')}
             />
           )}
         </FormGroup>
@@ -277,15 +281,10 @@ const TargetEnvironment = () => {
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
-            label='Virtualization - Guest image (.qcow2)'
-            isChecked={environments.includes('guest-image')}
-            onChange={() => {
-              handleToggleEnvironment('guest-image');
-            }}
-            aria-label='Virtualization guest image checkbox'
             id='checkbox-guest-image'
             name='Virtualization guest image'
-            isDisabled={isOnlyNetworkInstallerSelected}
+            label='Virtualization - Guest image (.qcow2)'
+            aria-label='Virtualization guest image checkbox'
             description={
               <Content component='small' style={{ maxWidth: '54rem' }}>
                 A deployment-ready virtual disk format used by virtualization
@@ -295,20 +294,20 @@ const TargetEnvironment = () => {
                 storage as data is written.
               </Content>
             }
+            isChecked={environments.includes('guest-image')}
+            isDisabled={isOnlyNetworkInstallerSelected}
+            onChange={() => {
+              handleToggleEnvironment('guest-image');
+            }}
           />
         )}
         {supportedEnvironments?.includes('image-installer') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
-            label='Bare metal - Installer (.iso)'
-            isChecked={environments.includes('image-installer')}
-            onChange={() => {
-              handleToggleEnvironment('image-installer');
-            }}
-            aria-label='Bare metal installer checkbox'
             id='checkbox-image-installer'
             name='Bare metal installer'
-            isDisabled={isOnlyNetworkInstallerSelected}
+            label='Bare metal - Installer (.iso)'
+            aria-label='Bare metal installer checkbox'
             description={
               <Content component='small' style={{ maxWidth: '54rem' }}>
                 This is a standard bootable image used to install RHEL directly
@@ -318,19 +317,20 @@ const TargetEnvironment = () => {
                 your specific hardware environment.
               </Content>
             }
+            isChecked={environments.includes('image-installer')}
+            isDisabled={isOnlyNetworkInstallerSelected}
+            onChange={() => {
+              handleToggleEnvironment('image-installer');
+            }}
           />
         )}
         {supportedEnvironments?.includes('network-installer') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
-            label={'Network - Installer (.iso)'}
-            isChecked={environments.includes('network-installer')}
-            onChange={() => {
-              handleToggleEnvironment('network-installer');
-            }}
             id='checkbox-network-installer'
             name='Network - Installer'
-            isDisabled={isOtherEnvironmentSelected}
+            label='Network - Installer (.iso)'
+            aria-label='Network installer checkbox'
             description={
               <Content component='small' style={{ maxWidth: '54rem' }}>
                 This is a lightweight image that differs from a standard
@@ -339,20 +339,20 @@ const TargetEnvironment = () => {
                 as no OS packages are stored locally on the image.
               </Content>
             }
+            isChecked={environments.includes('network-installer')}
+            isDisabled={isOtherEnvironmentSelected}
+            onChange={() => {
+              handleToggleEnvironment('network-installer');
+            }}
           />
         )}
         {supportedEnvironments?.includes('pxe-tar-xz') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
-            label={'Network - PXE boot (.tar.xz)'}
-            isChecked={environments.includes('pxe-tar-xz')}
-            onChange={() => {
-              handleToggleEnvironment('pxe-tar-xz');
-            }}
-            aria-label='PXE boot image checkbox'
             id='checkbox-pxe-boot'
             name='PXE boot image'
-            isDisabled={isOnlyNetworkInstallerSelected}
+            label='Network - PXE boot (.tar.xz)'
+            aria-label='PXE boot image checkbox'
             description={
               <Content component='small' style={{ maxWidth: '54rem' }}>
                 A PXE boot image is a compressed archive containing the kernel,
@@ -360,20 +360,20 @@ const TargetEnvironment = () => {
                 network using the Preboot Execution Environment (PXE) protocol.
               </Content>
             }
+            isChecked={environments.includes('pxe-tar-xz')}
+            isDisabled={isOnlyNetworkInstallerSelected}
+            onChange={() => {
+              handleToggleEnvironment('pxe-tar-xz');
+            }}
           />
         )}
         {supportedEnvironments?.includes('wsl') && (
           <Checkbox
             className='pf-v6-u-mb-sm'
-            label={'WSL - Windows Subsystem for Linux (.wsl)'}
-            isChecked={environments.includes('wsl')}
-            onChange={() => {
-              handleToggleEnvironment('wsl');
-            }}
-            aria-label='windows subsystem for linux checkbox'
             id='checkbox-wsl'
             name='WSL'
-            isDisabled={isOnlyNetworkInstallerSelected}
+            label='WSL - Windows Subsystem for Linux (.wsl)'
+            aria-label='Windows Subsystem for Linux checkbox'
             description={
               <Content component='small' style={{ maxWidth: '54rem' }}>
                 You can use RHEL on Microsoft&apos;s Windows Subsystem for Linux
@@ -383,6 +383,11 @@ const TargetEnvironment = () => {
                 cases.
               </Content>
             }
+            isChecked={environments.includes('wsl')}
+            isDisabled={isOnlyNetworkInstallerSelected}
+            onChange={() => {
+              handleToggleEnvironment('wsl');
+            }}
           />
         )}
       </FormGroup>
