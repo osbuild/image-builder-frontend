@@ -1,6 +1,7 @@
 import { BaseQueryApi } from '@reduxjs/toolkit/query';
 
-import { OnPremBaseQuery, OnPremBaseQueryArgs } from './types';
+import { toOnPremError } from './errors';
+import { OnPremBaseQuery, OnPremBaseQueryArgs, OnPremError } from './types';
 
 type QueryFnContext<QueryArg> = {
   queryArgs: QueryArg;
@@ -17,16 +18,12 @@ export const onPremQueryHandler = <ResultType, QueryArg>(
     api: QueryFnContext<QueryArg>['api'],
     extraOptions: QueryFnContext<QueryArg>['extraOptions'],
     baseQuery: (args: OnPremBaseQueryArgs) => ReturnType<OnPremBaseQuery>,
-  ): Promise<{ data: ResultType } | { error: string }> => {
+  ): Promise<{ data: ResultType } | { error: OnPremError }> => {
     try {
       const data = await fn({ queryArgs, api, extraOptions, baseQuery });
       return { data };
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        return { error: error.message };
-      }
-
-      return { error: String(error) };
+      return { error: toOnPremError(error) };
     }
   };
 };

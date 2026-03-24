@@ -12,12 +12,12 @@ import { useAppSelector } from '../../store/hooks';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getErrorDescription = (err: any, isOnPremise: boolean) => {
   if (isOnPremise) {
-    // If details are present, assume it's coming from composer
-    if (err.body) {
+    // If body details are present, assume it's coming from composer
+    if (err?.body?.details) {
       return `${err.message}: ${err.body.details}`;
     }
 
-    return JSON.stringify(err);
+    return err.message || JSON.stringify(err);
   }
 
   if (err.status) {
