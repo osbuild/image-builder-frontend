@@ -153,60 +153,6 @@ const TargetEnvironment = () => {
       label='Select target environments'
       data-testid='target-select'
     >
-      {publicCloudsSupported() && (
-        <FormGroup label={<small>Public cloud</small>}>
-          {supportedEnvironments?.includes('aws') && (
-            <Checkbox
-              label='Amazon Web Services'
-              isChecked={environments.includes('aws')}
-              onChange={() => handleToggleEnvironment('aws')}
-              aria-label='Amazon Web Services checkbox'
-              id='checkbox-aws'
-              name='Amazon Web Services'
-              isDisabled={isOnlyNetworkInstallerSelected}
-              // NOTE: we can add the aws cloud config options
-              // in the Checkbox `body` prop
-            />
-          )}
-          {supportedEnvironments?.includes('gcp') && (
-            <Checkbox
-              label='Google Cloud'
-              isChecked={environments.includes('gcp')}
-              onChange={() => handleToggleEnvironment('gcp')}
-              aria-label='Google Cloud checkbox'
-              id='checkbox-gcp'
-              name='Google Cloud'
-              isDisabled={isOnlyNetworkInstallerSelected}
-              // NOTE: we can add the gcp cloud config options
-              // in the Checkbox `body` prop
-            />
-          )}
-          {supportedEnvironments?.includes('azure') && (
-            <Checkbox
-              label='Microsoft Azure'
-              isChecked={environments.includes('azure')}
-              onChange={() => handleToggleEnvironment('azure')}
-              aria-label='Microsoft Azure checkbox'
-              id='checkbox-azure'
-              name='Microsoft Azure'
-              isDisabled={isOnlyNetworkInstallerSelected}
-              // NOTE: we can add the azure cloud config options
-              // in the Checkbox `body` prop
-            />
-          )}
-          {supportedEnvironments?.includes('oci') && (
-            <Checkbox
-              label='Oracle Cloud Infrastructure'
-              isChecked={environments.includes('oci')}
-              onChange={() => handleToggleEnvironment('oci')}
-              aria-label='Oracle Cloud Infrastructure checkbox'
-              id='checkbox-oci'
-              name='Oracle Cloud Infrastructure'
-              isDisabled={isOnlyNetworkInstallerSelected}
-            />
-          )}
-        </FormGroup>
-      )}
       {(supportedEnvironments?.includes('vsphere') ||
         supportedEnvironments?.includes('vsphere-ova')) && (
         <FormGroup
@@ -295,6 +241,62 @@ const TargetEnvironment = () => {
           )}
         </FormGroup>
       )}
+
+      {publicCloudsSupported() && (
+        <FormGroup label={<small>Public cloud</small>}>
+          {supportedEnvironments?.includes('aws') && (
+            <Checkbox
+              label='Amazon Web Services'
+              isChecked={environments.includes('aws')}
+              onChange={() => handleToggleEnvironment('aws')}
+              aria-label='Amazon Web Services checkbox'
+              id='checkbox-aws'
+              name='Amazon Web Services'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              // NOTE: we can add the aws cloud config options
+              // in the Checkbox `body` prop
+            />
+          )}
+          {supportedEnvironments?.includes('gcp') && (
+            <Checkbox
+              label='Google Cloud'
+              isChecked={environments.includes('gcp')}
+              onChange={() => handleToggleEnvironment('gcp')}
+              aria-label='Google Cloud checkbox'
+              id='checkbox-gcp'
+              name='Google Cloud'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              // NOTE: we can add the gcp cloud config options
+              // in the Checkbox `body` prop
+            />
+          )}
+          {supportedEnvironments?.includes('azure') && (
+            <Checkbox
+              label='Microsoft Azure'
+              isChecked={environments.includes('azure')}
+              onChange={() => handleToggleEnvironment('azure')}
+              aria-label='Microsoft Azure checkbox'
+              id='checkbox-azure'
+              name='Microsoft Azure'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              // NOTE: we can add the azure cloud config options
+              // in the Checkbox `body` prop
+            />
+          )}
+          {supportedEnvironments?.includes('oci') && (
+            <Checkbox
+              label='Oracle Cloud Infrastructure'
+              isChecked={environments.includes('oci')}
+              onChange={() => handleToggleEnvironment('oci')}
+              aria-label='Oracle Cloud Infrastructure checkbox'
+              id='checkbox-oci'
+              name='Oracle Cloud Infrastructure'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
+        </FormGroup>
+      )}
+
       <FormGroup
         label={showMiscLabel ? <small>Miscellaneous formats</small> : undefined}
         className='pf-v6-u-mt-sm'
