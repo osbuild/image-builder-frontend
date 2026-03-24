@@ -16,7 +16,7 @@ import {
   mapOnPremToHosted,
 } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR, IMAGE_MODE } from '@/constants';
-import { onPremQueryHandler } from '@/store/api/shared';
+import { OnPremApiError, onPremQueryHandler } from '@/store/api/shared';
 
 import { emptyComposerApi } from './emptyComposerApi';
 import { assertComposeResponse, assertComposeStatus } from './typeguards';
@@ -90,7 +90,7 @@ const lookupDatastreamDistro = (distribution: string) => {
     return 'rhel10';
   }
 
-  throw 'Unsupported distribution';
+  throw new OnPremApiError(`Unsupported distribution: ${distribution}`);
 };
 
 // Gets the user's $XDG_STATE_HOME directory to save blueprints in. Uses $HOME/.local/state as a fallback.

@@ -5,6 +5,12 @@ export type Params = Record<string, any>;
 export type Method = 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH'; // We can add more if we need
 export type Headers = { [name: string]: string };
 
+export type OnPremError = {
+  message: string;
+  problem?: string;
+  body?: unknown;
+};
+
 // The request options type
 export type OnPremBaseQueryArgs = {
   url: string;
@@ -14,4 +20,8 @@ export type OnPremBaseQueryArgs = {
   headers?: Headers;
 };
 // The base query function type (matches what baseQuery() returns)
-export type OnPremBaseQuery = BaseQueryFn<OnPremBaseQueryArgs>;
+export type OnPremBaseQuery = BaseQueryFn<
+  OnPremBaseQueryArgs,
+  unknown,
+  OnPremError
+>;
