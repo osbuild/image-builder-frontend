@@ -172,7 +172,7 @@ const TargetEnvironment = () => {
 
       {privateClouds.length > 0 && (
         <FormGroup
-          label={<small>Private cloud</small>}
+          label='Private cloud'
           className='pf-v6-u-mt-md'
           role='group'
           aria-label='Private cloud'
@@ -234,7 +234,7 @@ const TargetEnvironment = () => {
 
       {publicClouds.length > 0 && (
         <FormGroup
-          label={<small>Public cloud</small>}
+          label='Public cloud'
           className='pf-v6-u-mt-md'
           role='group'
           aria-label='Public cloud'
@@ -299,10 +299,9 @@ const TargetEnvironment = () => {
 
       <FormGroup
         label={
-          privateClouds.length === 0 &&
-          publicClouds.length === 0 ? undefined : (
-            <small>Miscellaneous formats</small>
-          )
+          privateClouds.length > 0 || publicClouds.length > 0
+            ? 'Miscellaneous formats'
+            : undefined
         }
         className='pf-v6-u-mt-md'
         role='group'
