@@ -1,14 +1,17 @@
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { FIRST_BOOT_SERVICE } from '@/constants';
 import { createUser, waitForAction } from '@/test/testUtils';
 
-import { openCodeEditor, renderFirstBootStep, uploadScript } from './helpers';
+import { renderFirstBootStep, uploadScript } from './helpers';
 
 const VALID_SCRIPT = `#!/bin/bash
 echo "Hello, World!"`;
 
 const SCRIPT_WITHOUT_SHEBANG = `echo "Hello, World!"`;
+
+const CRLF_SCRIPT = '#!/bin/bash\r\necho "line1"\r\necho "line2"';
+const LF_SCRIPT = '#!/bin/bash\necho "line1"\necho "line2"';
 
 describe('FirstBoot Component', () => {
   describe('Rendering', () => {
@@ -35,11 +38,13 @@ describe('FirstBoot Component', () => {
       ).toBeInTheDocument();
     });
 
-    test('displays start from scratch button initially', async () => {
+    test('displays helper text for supported script types', async () => {
       renderFirstBootStep();
 
       expect(
-        await screen.findByRole('button', { name: /Start from scratch/i }),
+        await screen.findByText(
+          /Supports bash shell, python, or Ansible playbooks/i,
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -49,7 +54,6 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep();
       const user = createUser();
 
-      await openCodeEditor(user);
       await uploadScript(user, SCRIPT_WITHOUT_SHEBANG);
 
       expect(await screen.findByText(/Missing shebang/i)).toBeInTheDocument();
@@ -59,7 +63,6 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep();
       const user = createUser();
 
-      await openCodeEditor(user);
       await uploadScript(user, VALID_SCRIPT);
 
       expect(screen.queryByText(/Missing shebang/i)).not.toBeInTheDocument();
@@ -67,6 +70,14 @@ describe('FirstBoot Component', () => {
   });
 
   describe('Initial State', () => {
+    test('displays empty state with Start from scratch button', async () => {
+      renderFirstBootStep();
+
+      expect(
+        await screen.findByRole('button', { name: /Start from scratch/i }),
+      ).toBeInTheDocument();
+    });
+
     test('does not show empty state when script is pre-populated', async () => {
       renderFirstBootStep({
         firstBoot: {
@@ -84,39 +95,54 @@ describe('FirstBoot Component', () => {
     });
   });
 
-  describe('Registration Message', () => {
-    test('shows registration message when not using register-later', async () => {
-      renderFirstBootStep({
-        registration: {
-          ...initialState.registration,
-          registrationType: 'register-now-insights',
-        },
-      });
+  describe('File Upload Component', () => {
+    test('displays file upload with placeholder text', async () => {
+      renderFirstBootStep();
 
       expect(
-        await screen.findByText(
-          /The first boot script will run after registration is done/i,
-        ),
+        await screen.findByPlaceholderText(/Drag and drop a file or upload/i),
       ).toBeInTheDocument();
     });
 
-    test('does not show registration message when using register-later', async () => {
-      renderFirstBootStep({
-        registration: {
-          ...initialState.registration,
-          registrationType: 'register-later',
-        },
-      });
+    test('displays upload button', async () => {
+      renderFirstBootStep();
 
-      await screen.findByRole('heading', {
-        name: /First boot configuration/i,
+      const uploadButton = await screen.findByRole('button', {
+        name: 'Upload',
+      });
+      expect(uploadButton).toBeInTheDocument();
+    });
+  });
+
+  describe('Custom Controls', () => {
+    test('displays revert button', async () => {
+      renderFirstBootStep({
+        firstBoot: { script: VALID_SCRIPT },
       });
 
       expect(
-        screen.queryByText(
-          /The first boot script will run after registration is done/i,
-        ),
-      ).not.toBeInTheDocument();
+        await screen.findByRole('button', { name: /Revert changes/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('revert restores uploaded script', async () => {
+      const { store } = renderFirstBootStep();
+      const user = createUser();
+
+      await uploadScript(user, VALID_SCRIPT);
+
+      await waitForAction(() => {
+        expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
+      });
+
+      const revertButton = screen.getByRole('button', {
+        name: /Revert changes/i,
+      });
+      await waitForAction(() => user.click(revertButton));
+
+      await waitForAction(() => {
+        expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
+      });
     });
   });
 
@@ -127,13 +153,36 @@ describe('FirstBoot Component', () => {
 
       expect(store.getState().wizard.firstBoot.script).toBe('');
 
-      await openCodeEditor(user);
       await uploadScript(user, VALID_SCRIPT);
 
-      // The FileReader processes the file asynchronously, so we need to wait
-      // for the state to be updated after the upload completes
       await waitForAction(() => {
         expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
+      });
+    });
+
+    test('adds first boot service when script is uploaded', async () => {
+      const { store } = renderFirstBootStep();
+      const user = createUser();
+
+      await uploadScript(user, VALID_SCRIPT);
+
+      await waitForAction(() => {
+        expect(store.getState().wizard.services.enabled).toContain(
+          FIRST_BOOT_SERVICE,
+        );
+      });
+    });
+
+    test('normalizes CRLF line endings to LF', async () => {
+      const { store } = renderFirstBootStep();
+      const user = createUser();
+
+      await uploadScript(user, CRLF_SCRIPT);
+
+      await waitForAction(() => {
+        const storedScript = store.getState().wizard.firstBoot.script;
+        expect(storedScript).toBe(LF_SCRIPT);
+        expect(storedScript).not.toContain('\r\n');
       });
     });
   });

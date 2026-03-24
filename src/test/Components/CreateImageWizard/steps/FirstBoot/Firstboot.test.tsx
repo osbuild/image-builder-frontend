@@ -72,14 +72,6 @@ const selectSimplifiedOscapProfile = async () => {
   await waitFor(() => user.click(simplifiedProfile));
 };
 
-const openCodeEditor = async (): Promise<void> => {
-  const user = userEvent.setup();
-  const startBtn = await screen.findByRole('button', {
-    name: /Start from scratch/i,
-  });
-  await waitFor(() => user.click(startBtn));
-};
-
 const uploadFile = async (scriptName: string): Promise<void> => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
@@ -124,7 +116,6 @@ describe('First Boot step', () => {
   test('should validate shebang', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
-    await openCodeEditor();
     await uploadFile(SCRIPT_WITHOUT_SHEBANG);
     expect(await screen.findByText(/Missing shebang/i)).toBeInTheDocument();
     expect(await getNextButton()).toBeDisabled();
@@ -149,7 +140,6 @@ describe('First boot request generated correctly', () => {
     await enterBlueprintName();
     await clickRegisterLater();
     await goToFirstBootStep();
-    await openCodeEditor();
     await uploadFile(SCRIPT);
     await goToReview();
     // informational modal pops up in the first test only as it's tied
@@ -180,7 +170,6 @@ describe('First boot request generated correctly', () => {
     await clickRegisterLater();
     await selectSimplifiedOscapProfile();
     await goToStep(/First boot/);
-    await openCodeEditor();
     await uploadFile(SCRIPT);
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -214,7 +203,6 @@ describe('First boot request generated correctly', () => {
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
     await goToStep(/First boot/);
-    await openCodeEditor();
     await uploadFile(SCRIPT_DOS);
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);

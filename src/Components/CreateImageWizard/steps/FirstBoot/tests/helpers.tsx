@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 
 import {
-  clickWithWait,
   renderWithRedux,
   type UserEventInstance,
   waitForAction,
@@ -16,13 +15,6 @@ export const renderFirstBootStep = (
   wizardStateOverrides: WizardStateOverrides = {},
 ) => {
   return renderWithRedux(<FirstBootStep />, wizardStateOverrides);
-};
-
-export const openCodeEditor = async (user: UserEventInstance) => {
-  const startBtn = await screen.findByRole('button', {
-    name: /Start from scratch/i,
-  });
-  await clickWithWait(user, startBtn);
 };
 
 export const uploadScript = async (

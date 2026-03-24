@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
-import { CodeEditor, Language } from '@patternfly/react-code-editor';
+import {
+  CodeEditor,
+  CodeEditorControl,
+  Language,
+} from '@patternfly/react-code-editor';
 import {
   Alert,
   Content,
+  DropEvent,
+  FileUpload,
   Form,
   FormGroup,
   FormHelperText,
@@ -11,6 +17,7 @@ import {
   HelperTextItem,
   Title,
 } from '@patternfly/react-core';
+import { UndoIcon } from '@patternfly/react-icons';
 
 import { useFirstBootValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
@@ -25,11 +32,24 @@ import {
 } from '@/store/slices/wizard';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
+// Inline <style> needed because sassPrefix wraps SCSS in .imageBuilder,
+// but the wizard Modal renders in a portal outside that wrapper.
+const editorStyles = `
+.first-boot-editor .pf-v6-c-code-editor__header-content {
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+.first-boot-editor .pf-v6-c-code-editor__controls {
+  flex: 1;
+  justify-content: flex-end;
+}
+.first-boot-editor button[aria-label='Upload code'] {
+  display: none;
+}`;
+
 const detectScriptType = (scriptString: string): Language => {
   const lines = scriptString.split('\n');
 
   if (lines[0].startsWith('#!')) {
-    // Extract the path from the shebang
     const path = lines[0].slice(2);
 
     if (path.includes('bin/bash') || path.includes('bin/sh')) {
@@ -44,7 +64,6 @@ const detectScriptType = (scriptString: string): Language => {
       return Language.yaml;
     }
   }
-  // default
   return Language.shell;
 };
 
@@ -57,6 +76,59 @@ const FirstBootStep = () => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
+
+  const initialScriptRef = useRef(selectedScript);
+  const [filename, setFilename] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadedScript, setUploadedScript] = useState('');
+
+  const handleScriptChange = (newScript: string) => {
+    if (!selectedScript && !!newScript) {
+      dispatch(addEnabledService(FIRST_BOOT_SERVICE));
+    } else if (!!selectedScript && !newScript) {
+      dispatch(removeEnabledService(FIRST_BOOT_SERVICE));
+    }
+    // In case the user is on windows
+    dispatch(setFirstBootScript(newScript.replace(/\r\n/g, '\n')));
+  };
+
+  const handleFileInputChange = (_event: DropEvent, file: File) => {
+    setFilename(file.name);
+  };
+
+  const handleDataChange = (_event: DropEvent, value: string) => {
+    const normalizedValue = value.replace(/\r\n/g, '\n');
+    setUploadedScript(normalizedValue);
+    handleScriptChange(value);
+  };
+
+  const handleClear = () => {
+    setFilename('');
+    setUploadedScript('');
+    handleScriptChange('');
+  };
+
+  const handleFileReadStarted = () => {
+    setIsLoading(true);
+  };
+
+  const handleFileReadFinished = () => {
+    setIsLoading(false);
+  };
+
+  const handleRevert = () => {
+    handleScriptChange(uploadedScript || initialScriptRef.current);
+  };
+
+  const customControls = [
+    <CodeEditorControl
+      key='revert-button'
+      icon={<UndoIcon />}
+      aria-label='Revert changes'
+      onClick={handleRevert}
+      tooltipProps={{ content: 'Revert changes' }}
+    />,
+  ];
 
   return (
     <Wrapper>
@@ -91,26 +163,43 @@ const FirstBootStep = () => {
         </Content>
       </Alert>
       <FormGroup>
+        <FileUpload
+          id='first-boot-script-upload'
+          type='text'
+          filename={filename}
+          filenamePlaceholder='Drag and drop a file or upload'
+          onFileInputChange={handleFileInputChange}
+          onDataChange={handleDataChange}
+          onReadStarted={handleFileReadStarted}
+          onReadFinished={handleFileReadFinished}
+          onClearClick={handleClear}
+          isLoading={isLoading}
+          allowEditingUploadedText={false}
+          browseButtonText='Upload'
+          hideDefaultPreview
+        />
+      </FormGroup>
+      <FormGroup>
         <CodeEditor
-          isUploadEnabled
-          isDownloadEnabled
-          isCopyEnabled
-          isLanguageLabelVisible
+          className='first-boot-editor'
           language={language}
-          onCodeChange={(code) => {
-            if (!selectedScript && !!code) {
-              dispatch(addEnabledService(FIRST_BOOT_SERVICE));
-            } else if (!!selectedScript && !code) {
-              dispatch(removeEnabledService(FIRST_BOOT_SERVICE));
-            }
-            // In case the user is on windows
-            dispatch(setFirstBootScript(code.replace('\r\n', '\n')));
-          }}
+          onCodeChange={(code) => handleScriptChange(code)}
           code={selectedScript}
           height='35vh'
-          emptyStateButton='Browse'
+          isCopyEnabled
+          isDownloadEnabled
+          isUploadEnabled
+          emptyStateBody='Drag a file here, upload files, or start from scratch.'
+          emptyStateButton='Upload files'
           emptyStateLink='Start from scratch'
+          customControls={customControls}
         />
+        <style>{editorStyles}</style>
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            Supports bash shell, python, or Ansible playbooks
+          </HelperTextItem>
+        </HelperText>
         {errors.script && (
           <FormHelperText>
             <HelperText>
