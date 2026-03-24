@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import { initialState } from '@/store/slices/wizard';
 import { createUser, waitForAction } from '@/test/testUtils';
 
-import { openCodeEditor, renderFirstBootStep, uploadScript } from './helpers';
+import { renderFirstBootStep, uploadScript } from './helpers';
 
 const VALID_SCRIPT = `#!/bin/bash
 echo "Hello, World!"`;
@@ -21,7 +21,7 @@ describe('FirstBoot Component', () => {
         }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Configure the image with a custom script/i),
+        screen.getByText(/Add a custom script to be executed/i),
       ).toBeInTheDocument();
     });
 
@@ -35,11 +35,21 @@ describe('FirstBoot Component', () => {
       ).toBeInTheDocument();
     });
 
-    test('displays start from scratch button initially', async () => {
+    test('displays upload button', async () => {
       renderFirstBootStep();
 
       expect(
-        await screen.findByRole('button', { name: /Start from scratch/i }),
+        await screen.findByRole('button', { name: /Upload/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('displays helper text for supported script types', async () => {
+      renderFirstBootStep();
+
+      expect(
+        await screen.findByText(
+          /Supports bash shell, python, or Ansible playbooks/i,
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -49,7 +59,6 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep();
       const user = createUser();
 
-      await openCodeEditor(user);
       await uploadScript(user, SCRIPT_WITHOUT_SHEBANG);
 
       expect(await screen.findByText(/Missing shebang/i)).toBeInTheDocument();
@@ -59,7 +68,6 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep();
       const user = createUser();
 
-      await openCodeEditor(user);
       await uploadScript(user, VALID_SCRIPT);
 
       expect(screen.queryByText(/Missing shebang/i)).not.toBeInTheDocument();
@@ -127,11 +135,8 @@ describe('FirstBoot Component', () => {
 
       expect(store.getState().wizard.firstBoot.script).toBe('');
 
-      await openCodeEditor(user);
       await uploadScript(user, VALID_SCRIPT);
 
-      // The FileReader processes the file asynchronously, so we need to wait
-      // for the state to be updated after the upload completes
       await waitForAction(() => {
         expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
       });

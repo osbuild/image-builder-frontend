@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { CodeEditor, Language } from '@patternfly/react-code-editor';
 import {
   Alert,
   Content,
+  DropEvent,
+  FileUpload,
   Form,
   FormGroup,
   FormHelperText,
@@ -25,35 +26,52 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import { useFirstBootValidation } from '../../utilities/useValidation';
 
-const detectScriptType = (scriptString: string): Language => {
-  const lines = scriptString.split('\n');
-
-  if (lines[0].startsWith('#!')) {
-    // Extract the path from the shebang
-    const path = lines[0].slice(2);
-
-    if (path.includes('bin/bash') || path.includes('bin/sh')) {
-      return Language.shell;
-    }
-
-    if (path.includes('bin/python') || path.includes('bin/python3')) {
-      return Language.python;
-    }
-
-    if (path.includes('ansible-playbook')) {
-      return Language.yaml;
-    }
-  }
-  // default
-  return Language.shell;
-};
-
 const FirstBootStep = () => {
   const dispatch = useAppDispatch();
   const selectedScript = useAppSelector(selectFirstBootScript);
   const registrationType = useAppSelector(selectRegistrationType);
-  const language = detectScriptType(selectedScript);
   const { errors } = useFirstBootValidation();
+
+  const [filename, setFilename] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleScriptChange = (newScript: string) => {
+    if (!selectedScript && !!newScript) {
+      dispatch(addEnabledService(FIRST_BOOT_SERVICE));
+    } else if (!!selectedScript && !newScript) {
+      dispatch(removeEnabledService(FIRST_BOOT_SERVICE));
+    }
+    // In case the user is on windows
+    dispatch(setFirstBootScript(newScript.replace('\r\n', '\n')));
+  };
+
+  const handleFileInputChange = (_event: DropEvent, file: File) => {
+    setFilename(file.name);
+  };
+
+  const handleTextChange = (
+    _event: React.ChangeEvent<HTMLTextAreaElement>,
+    value: string,
+  ) => {
+    handleScriptChange(value);
+  };
+
+  const handleDataChange = (_event: DropEvent, value: string) => {
+    handleScriptChange(value);
+  };
+
+  const handleClear = () => {
+    setFilename('');
+    handleScriptChange('');
+  };
+
+  const handleFileReadStarted = () => {
+    setIsLoading(true);
+  };
+
+  const handleFileReadFinished = () => {
+    setIsLoading(false);
+  };
 
   return (
     <Form>
@@ -62,8 +80,8 @@ const FirstBootStep = () => {
         First boot configuration
       </Title>
       <Content>
-        Configure the image with a custom script that will execute on its first
-        boot.
+        Add a custom script to be executed when the image boots for the first
+        time.
         {registrationType !== 'register-later' && (
           <> First boot script will run after registration is done.</>
         )}
@@ -83,26 +101,27 @@ const FirstBootStep = () => {
         </Content>
       </Alert>
       <FormGroup>
-        <CodeEditor
-          isUploadEnabled
-          isDownloadEnabled
-          isCopyEnabled
-          isLanguageLabelVisible
-          language={language}
-          onCodeChange={(code) => {
-            if (!selectedScript && !!code) {
-              dispatch(addEnabledService(FIRST_BOOT_SERVICE));
-            } else if (!!selectedScript && !code) {
-              dispatch(removeEnabledService(FIRST_BOOT_SERVICE));
-            }
-            // In case the user is on windows
-            dispatch(setFirstBootScript(code.replace('\r\n', '\n')));
-          }}
-          code={selectedScript}
-          height='35vh'
-          emptyStateButton='Browse'
-          emptyStateLink='Start from scratch'
+        <FileUpload
+          id='first-boot-script-upload'
+          type='text'
+          value={selectedScript}
+          filename={filename}
+          filenamePlaceholder='Drag and drop a file or upload one'
+          onFileInputChange={handleFileInputChange}
+          onDataChange={handleDataChange}
+          onTextChange={handleTextChange}
+          onReadStarted={handleFileReadStarted}
+          onReadFinished={handleFileReadFinished}
+          onClearClick={handleClear}
+          isLoading={isLoading}
+          allowEditingUploadedText={false}
+          browseButtonText='Upload'
         />
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            Supports bash shell, python, or Ansible playbooks
+          </HelperTextItem>
+        </HelperText>
         {errors.script && (
           <FormHelperText>
             <HelperText>
