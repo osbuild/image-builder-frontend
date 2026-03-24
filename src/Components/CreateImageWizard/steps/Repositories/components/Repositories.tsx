@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import {
-  Alert,
   Button,
   FormGroup,
   Grid,
@@ -36,7 +35,6 @@ import {
   selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
-  selectWizardMode,
 } from '@/store/slices/wizard';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
@@ -73,7 +71,6 @@ export const excludeEUSReposFilter = { extendedRelease: 'none' };
 const Repositories = () => {
   const dispatch = useAppDispatch();
 
-  const wizardMode = useAppSelector(selectWizardMode);
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const customRepositories = useAppSelector(selectCustomRepositories);
@@ -394,14 +391,6 @@ const Repositories = () => {
           reposToRemove={reposToRemove}
           setReposToRemove={setReposToRemove}
         />
-        {wizardMode === 'edit' && (
-          <Alert
-            title='Removing previously added repositories may lead to issues with selected packages'
-            variant='warning'
-            isPlain
-            isInline
-          />
-        )}
         <FormGroup label='Repositories'>
           <Toolbar>
             <ToolbarContent>

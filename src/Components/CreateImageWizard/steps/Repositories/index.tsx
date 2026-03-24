@@ -7,12 +7,14 @@ import { useAppSelector } from '@/store/hooks';
 import {
   selectPackages,
   selectRecommendedRepositories,
+  selectWizardMode,
 } from '@/store/slices/wizard';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './components/Repositories';
 
 const RepositoriesStep = () => {
+  const wizardMode = useAppSelector(selectWizardMode);
   const packages = useAppSelector(selectPackages);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
@@ -26,6 +28,13 @@ const RepositoriesStep = () => {
         Can&apos;t find a repository? Ensure it&apos;s been added on{' '}
         <ManageRepositoriesButton label={'the Repositories page'} icon={true} />
       </Content>
+      {wizardMode === 'edit' && (
+        <Alert
+          title='Removing previously added repositories may lead to issues with selected packages'
+          variant='warning'
+          isInline
+        />
+      )}
       {packages.length && recommendedRepos.length ? (
         <Alert
           title="Why can't I remove a selected repository?"
