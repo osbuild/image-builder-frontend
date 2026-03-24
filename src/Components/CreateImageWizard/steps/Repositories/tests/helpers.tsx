@@ -28,7 +28,7 @@ export const typeIntoSearchBox = async (
   searchTerm: string,
 ) => {
   const searchbox = await screen.findByRole('textbox', {
-    name: /type to filter/i,
+    name: /filter repositories/i,
   });
   await typeWithWait(user, searchbox, searchTerm);
 };

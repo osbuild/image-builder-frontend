@@ -211,7 +211,7 @@ export const selectCustomRepo = async () => {
   await clickBack();
 
   const searchInput = await screen.findByRole('textbox', {
-    name: /type to filter/i,
+    name: /filter repositories/i,
   });
   await waitFor(() => user.click(searchInput));
   await waitFor(() => user.type(searchInput, 'repo'));

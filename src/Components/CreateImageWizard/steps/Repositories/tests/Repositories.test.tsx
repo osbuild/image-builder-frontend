@@ -45,7 +45,7 @@ describe('Repositories Component', () => {
     test('displays search bar and refresh button', async () => {
       renderRepositoriesStep();
       expect(
-        await screen.findByRole('textbox', { name: /type to filter/i }),
+        await screen.findByRole('textbox', { name: /filter repositories/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: /clear search/i }),
