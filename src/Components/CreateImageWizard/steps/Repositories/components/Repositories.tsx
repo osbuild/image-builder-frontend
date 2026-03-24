@@ -30,6 +30,8 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
+  selectGroups,
+  selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectSnapshotDate,
@@ -78,6 +80,8 @@ const Repositories = () => {
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
+  const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
   const templateUuid = useAppSelector(selectTemplate);
 
   const version = releaseToVersion(distribution);
@@ -465,12 +469,18 @@ const Repositories = () => {
                       isFetching,
                       contentList,
                       selected,
+                      recommendedRepos,
+                      packages,
+                      groups,
+                      useLatestContent,
+                      arch,
+                      version,
                     );
 
                     const snapshot = snapshotsByDate?.data?.find(
                       (s) => s.repository_uuid === uuid,
                     );
-                    const packages =
+                    const snapshotPackages =
                       snapshot?.match?.content_counts?.['rpm.package'];
 
                     return (
@@ -525,7 +535,7 @@ const Repositories = () => {
                             </Td>
                             <Td dataLabel={'Packages'}>
                               {!isSnapshotsLoading ? (
-                                packages && snapshot.match?.uuid ? (
+                                snapshotPackages && snapshot.match?.uuid ? (
                                   <Button
                                     component='a'
                                     target='_blank'
@@ -535,7 +545,7 @@ const Repositories = () => {
                                     isInline
                                     href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
                                   >
-                                    {packages}
+                                    {snapshotPackages}
                                   </Button>
                                 ) : (
                                   '-'
