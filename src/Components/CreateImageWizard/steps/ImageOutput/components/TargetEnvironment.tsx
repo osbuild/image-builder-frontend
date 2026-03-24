@@ -26,6 +26,7 @@ import {
   selectImageTypes,
 } from '@/store/slices/wizard';
 
+const TEXT_WRAP_WIDTH = '54rem';
 const PRIVATE_CLOUD_TYPES = new Set<string>(['vsphere', 'vsphere-ova']);
 const PUBLIC_CLOUD_TYPES = new Set<string>(['aws', 'azure', 'gcp', 'oci']);
 const EMPTY_ENVIRONMENTS: string[] = [];
@@ -182,7 +183,10 @@ const TargetEnvironment = () => {
               label='VMware vSphere - Open virtualization format (.ova)'
               aria-label='VMware vSphere checkbox OVA'
               description={
-                <Content component='small' style={{ maxWidth: '54rem' }}>
+                <Content
+                  component='small'
+                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
+                >
                   An OVA file is a virtual appliance used by virtualization
                   platforms such as VMware vSphere. It is a package that
                   contains files used to describe a virtual machine, which
@@ -205,7 +209,10 @@ const TargetEnvironment = () => {
               label='VMware vSphere - Virtual disk (.vmdk)'
               aria-label='VMware vSphere checkbox VMDK'
               description={
-                <Content component='small' style={{ maxWidth: '54rem' }}>
+                <Content
+                  component='small'
+                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
+                >
                   A VMDK file is a virtual disk that stores the contents of a
                   virtual machine. This disk has to be imported into vSphere
                   using govc import.vmdk, use the OVA version when using the
@@ -306,7 +313,7 @@ const TargetEnvironment = () => {
             label='Virtualization - Guest image (.qcow2)'
             aria-label='Virtualization guest image checkbox'
             description={
-              <Content component='small' style={{ maxWidth: '54rem' }}>
+              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
                 A deployment-ready virtual disk format used by virtualization
                 software like QEMU and KVM. It allows for efficient storage
                 usage by only writing the changes made to the disk image rather
@@ -329,7 +336,7 @@ const TargetEnvironment = () => {
             label='Bare metal - Installer (.iso)'
             aria-label='Bare metal installer checkbox'
             description={
-              <Content component='small' style={{ maxWidth: '54rem' }}>
+              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
                 This is a standard bootable image used to install RHEL directly
                 onto physical hardware or &ldquo;bare metal&rdquo; servers. It
                 contains the necessary installer and kernel to initialize a
@@ -352,7 +359,7 @@ const TargetEnvironment = () => {
             label='Network - Installer (.iso)'
             aria-label='Network installer checkbox'
             description={
-              <Content component='small' style={{ maxWidth: '54rem' }}>
+              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
                 This is a lightweight image that differs from a standard
                 &quot;full&quot; ISO by requiring an active network connection
                 to pull the latest software directly from package repositories,
@@ -374,7 +381,7 @@ const TargetEnvironment = () => {
             label='Network - PXE boot (.tar.xz)'
             aria-label='PXE boot image checkbox'
             description={
-              <Content component='small' style={{ maxWidth: '54rem' }}>
+              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
                 A PXE boot image is a compressed archive containing the kernel,
                 initramfs, and root filesystem needed to boot a system over the
                 network using the Preboot Execution Environment (PXE) protocol.
@@ -395,7 +402,7 @@ const TargetEnvironment = () => {
             label='WSL - Windows Subsystem for Linux (.wsl)'
             aria-label='Windows Subsystem for Linux checkbox'
             description={
-              <Content component='small' style={{ maxWidth: '54rem' }}>
+              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
                 You can use RHEL on Microsoft&apos;s Windows Subsystem for Linux
                 (WSL) for development and learning use cases. Red Hat supports
                 WSL under the Validated Software Pattern and Third Party
@@ -416,7 +423,7 @@ const TargetEnvironment = () => {
         <Alert
           variant='info'
           className='pf-v6-u-mt-lg'
-          style={{ maxWidth: '54rem' }}
+          style={{ maxWidth: TEXT_WRAP_WIDTH }}
           isInline
           title='Network installer image selection'
         >
