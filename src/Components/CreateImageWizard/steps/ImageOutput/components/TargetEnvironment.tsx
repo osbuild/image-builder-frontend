@@ -158,6 +158,9 @@ const TargetEnvironment = () => {
         <FormGroup
           label={<small>Private cloud</small>}
           className='pf-v6-u-mt-sm'
+          role='group'
+          aria-label='Private cloud'
+          fieldId='private-cloud-group'
         >
           {supportedEnvironments.includes('vsphere-ova') && (
             <Checkbox
@@ -243,7 +246,12 @@ const TargetEnvironment = () => {
       )}
 
       {publicCloudsSupported() && (
-        <FormGroup label={<small>Public cloud</small>}>
+        <FormGroup
+          label={<small>Public cloud</small>}
+          role='group'
+          aria-label='Public cloud'
+          fieldId='public-cloud-group'
+        >
           {supportedEnvironments?.includes('aws') && (
             <Checkbox
               label='Amazon Web Services'
@@ -300,6 +308,9 @@ const TargetEnvironment = () => {
       <FormGroup
         label={showMiscLabel ? <small>Miscellaneous formats</small> : undefined}
         className='pf-v6-u-mt-sm'
+        role='group'
+        aria-label='Miscellaneous formats'
+        fieldId='misc-formats-group'
       >
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
