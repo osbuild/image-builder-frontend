@@ -1,20 +1,10 @@
 import { ContentOrigin } from '@/constants';
-import { store } from '@/store';
 import { CustomRepository, Repository } from '@/store/api/backend';
 import {
   ApiRepositoryParameterResponse,
   ApiRepositoryResponse,
   ApiRepositoryResponseRead,
 } from '@/store/api/contentSources';
-import {
-  selectArchitecture,
-  selectDistribution,
-  selectGroups,
-  selectPackages,
-  selectRecommendedRepositories,
-  selectUseLatest,
-} from '@/store/slices';
-import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
 import {
   convertStringToDate,
@@ -128,12 +118,11 @@ export const isEPELUrl = (repoUrl: string) => {
   return epelUrls.includes(repoUrl);
 };
 
-export const isBaseOSOrAppStream = (repoUrl: string) => {
-  const state = store.getState();
-  const arch = selectArchitecture(state);
-  const distribution = selectDistribution(state);
-  const version = releaseToVersion(distribution);
-
+export const isBaseOSOrAppStream = (
+  repoUrl: string,
+  arch: string,
+  version: string,
+) => {
   const requiredUrls = requiredRedHatRepos(arch, version);
   if (!requiredUrls) return false;
   return requiredUrls.includes(repoUrl);
@@ -145,13 +134,13 @@ export const isRepoDisabled = (
   isFetching: boolean,
   contentList: ApiRepositoryResponseRead[],
   selected: Set<string>,
+  recommendedRepos: ApiRepositoryResponseRead[],
+  packages: { name: string; summary: string }[],
+  groups: { name: string; description: string; package_list?: string[] }[],
+  useLatestContent: boolean,
+  arch: string,
+  version: string,
 ): [boolean, string] => {
-  const state = store.getState();
-  const recommendedRepos = selectRecommendedRepositories(state);
-  const packages = selectPackages(state);
-  const groups = selectGroups(state);
-  const useLatestContent = selectUseLatest(state);
-
   if (isFetching) {
     return [true, 'Repository data is still fetching, please wait.'];
   }
@@ -209,7 +198,7 @@ export const isRepoDisabled = (
     ];
   }
 
-  if (isBaseOSOrAppStream(repo.url!)) {
+  if (isBaseOSOrAppStream(repo.url!, arch, version)) {
     return [
       true,
       'This repository is pre-selected for the chosen architecture and OS version.',

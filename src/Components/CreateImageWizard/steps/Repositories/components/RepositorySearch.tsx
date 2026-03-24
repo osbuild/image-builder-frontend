@@ -19,7 +19,14 @@ import {
   useListRepositoriesQuery,
 } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
-import { selectArchitecture, selectDistribution } from '@/store/slices';
+import {
+  selectArchitecture,
+  selectDistribution,
+  selectGroups,
+  selectPackages,
+  selectRecommendedRepositories,
+  selectUseLatest,
+} from '@/store/slices';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import useDebounce from '@/Utilities/useDebounce';
 import { useFlag } from '@/Utilities/useGetEnvironment';
@@ -43,6 +50,10 @@ const RepositorySearch = ({
 }: RepositorySearchProps) => {
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
+  const recommendedRepos = useAppSelector(selectRecommendedRepositories);
+  const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
+  const useLatestContent = useAppSelector(selectUseLatest);
   const version = releaseToVersion(distribution);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -181,6 +192,12 @@ const RepositorySearch = ({
               isFetching,
               repositories,
               selectedRepoIds,
+              recommendedRepos,
+              packages,
+              groups,
+              useLatestContent,
+              arch,
+              version,
             );
 
             return (
