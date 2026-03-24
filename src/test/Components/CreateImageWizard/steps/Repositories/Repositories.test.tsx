@@ -44,7 +44,7 @@ const goToRepositoriesStep = async () => {
 const selectRepository = async (repoName: string) => {
   const user = userEvent.setup();
   const searchbox = await screen.findByRole('textbox', {
-    name: /type to filter/i,
+    name: /filter repositories/i,
   });
   await waitFor(() => user.clear(searchbox));
   await waitFor(() => user.type(searchbox, repoName));

@@ -141,6 +141,7 @@ const RepositorySearch = ({
           autoComplete='off'
           isExpanded={isOpen}
           icon={<SearchIcon />}
+          aria-label='Filter repositories'
         />
         <TextInputGroupUtilities>
           <Button
