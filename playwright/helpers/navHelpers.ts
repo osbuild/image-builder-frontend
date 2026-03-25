@@ -9,6 +9,7 @@ import {
 } from './helpers';
 
 import {
+  type ImageTarget,
   selectArch,
   selectDistro,
   selectTarget,
@@ -17,13 +18,13 @@ import {
 /**
  * Opens the wizard, fills out the "Image Output" step according to the parameters, and navigates to the optional steps
  * @param page - the page object
- * @param target - the target to select (qcow2, iso, wsl, ova, vmdk)
+ * @param target - the target to select (qcow2, iso, wsl, ova, vmdk, azure)
  * @param distro - the distribution to select (rhel10, rhel9, rhel8)
  * @param arch - the architecture to select (x86_64, aarch64)
  */
 export const fillInImageOutput = async (
   page: Page | FrameLocator,
-  target?: 'qcow2' | 'iso' | 'wsl' | 'ova' | 'vmdk',
+  target?: ImageTarget,
   distro?: 'rhel10' | 'rhel9' | 'rhel8',
   arch?: 'x86_64' | 'aarch64',
 ) => {
