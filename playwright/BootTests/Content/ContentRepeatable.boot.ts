@@ -143,8 +143,7 @@ test('Content integration test - Repeatable build - URL source', async ({
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
-    await expect(frame.getByRole('button', { name: '- 1 of 1' })).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: repositoryName }).click();
   });
 
   await test.step('Select the package', async () => {
