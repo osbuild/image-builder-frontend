@@ -1,13 +1,15 @@
 import { FrameLocator, Page } from '@playwright/test';
 
+export type ImageTarget = 'qcow2' | 'iso' | 'wsl' | 'ova' | 'vmdk' | 'azure';
+
 export const selectTarget = async (
   page: Page | FrameLocator,
-  target: 'qcow2' | 'iso' | 'wsl' | 'ova' | 'vmdk',
+  target: ImageTarget,
 ) => {
   /**
    * Select the target.
    * @param page - the page object
-   * @param target - the target to select (qcow2, iso, wsl, ova, vmdk)
+   * @param target - the target to select (qcow2, iso, wsl, ova, vmdk, azure)
    */
   switch (target) {
     case 'qcow2':
@@ -30,6 +32,9 @@ export const selectTarget = async (
       await page
         .getByRole('checkbox', { name: 'VMware vSphere - Virtual disk' })
         .click();
+      break;
+    case 'azure':
+      await page.getByRole('checkbox', { name: /Microsoft Azure/ }).click();
       break;
   }
 };
