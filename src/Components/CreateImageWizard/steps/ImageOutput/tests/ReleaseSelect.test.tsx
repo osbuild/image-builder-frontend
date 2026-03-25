@@ -43,6 +43,19 @@ describe('ReleaseSelect', () => {
       expect(screen.getByText('Release')).toBeInTheDocument();
       expect(screen.getByText('*')).toBeInTheDocument();
     });
+
+    test('shows helper text', () => {
+      renderReleaseSelect();
+
+      expect(
+        screen.getByText(/latest version is selected by default/i),
+      ).toBeInTheDocument();
+
+      const toggle = screen.getByTestId('release_select');
+      expect(toggle).toHaveAccessibleDescription(
+        /latest version is selected by default/i,
+      );
+    });
   });
 
   describe('Dropdown behavior', () => {
