@@ -2,6 +2,9 @@ import React, { ReactElement, useState } from 'react';
 
 import {
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -135,6 +138,7 @@ const ReleaseSelect = () => {
       onClick={onToggleClick}
       isExpanded={isOpen}
       data-testid='release_select'
+      aria-describedby='release-select-helper'
       style={
         {
           minWidth: '20rem',
@@ -176,6 +180,13 @@ const ReleaseSelect = () => {
             )}
         </SelectList>
       </Select>
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem id='release-select-helper'>
+            The latest version is selected by default.
+          </HelperTextItem>
+        </HelperText>
+      </FormHelperText>
     </FormGroup>
   );
 };
