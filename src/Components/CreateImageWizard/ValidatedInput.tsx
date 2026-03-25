@@ -181,21 +181,25 @@ export const ValidatedInput = ({
 
   return (
     <>
-      <TextInputGroup {...(validated && { validated })}>
+      <TextInputGroup {...(validated === 'error' && { validated })}>
         <TextInputGroupMain
           value={value}
           type='text'
           onBlur={handleBlur}
           {...props}
         />
-        <TextInputGroupUtilities>
-          <Button
-            variant='plain'
-            onClick={handleClear}
-            aria-label={ariaLabel ? `Clear ${ariaLabel} input` : 'Clear input'}
-            icon={<TimesIcon />}
-          />
-        </TextInputGroupUtilities>
+        {value && (
+          <TextInputGroupUtilities>
+            <Button
+              variant='plain'
+              onClick={handleClear}
+              aria-label={
+                ariaLabel ? `Clear ${ariaLabel} input` : 'Clear input'
+              }
+              icon={<TimesIcon />}
+            />
+          </TextInputGroupUtilities>
+        )}
       </TextInputGroup>
       {!isPristine && !validator(value) && (
         <HelperText>
