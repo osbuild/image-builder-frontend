@@ -87,9 +87,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
-    // Wait for the repository to be filtered by checking theres only one item in the list
-    await expect(frame.getByRole('button', { name: '- 1 of 1' })).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: repositoryName }).click();
   });
 
   await test.step('Select the package', async () => {
@@ -228,13 +226,12 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
-    // Wait for the repository to be filtered by checking theres only one item in the list
-    await expect(frame.getByRole('button', { name: '- 1 of 1' })).toBeVisible();
-    // Make sure the repository is not pending anymore and is ready
-    await expect(frame.getByRole('gridcell', { name: 'Valid' })).toBeVisible({
+    await expect(
+      frame.getByRole('option', { name: repositoryName }),
+    ).toBeEnabled({
       timeout: 180000,
     });
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: repositoryName }).click();
   });
 
   await test.step('Select the package', async () => {
@@ -336,9 +333,7 @@ test('Content integration test - Non repeatable build - Community repository', a
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
-    // Wait for the repository to be filtered by checking theres only one item in the list
-    await expect(frame.getByRole('button', { name: '- 1 of 1' })).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: repositoryName }).click();
   });
 
   await test.step('Select the package', async () => {
