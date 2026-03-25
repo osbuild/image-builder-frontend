@@ -12,14 +12,6 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { Distributions } from '@/store/api/backend';
-import { selectIsOnPremise } from '@/store/slices/env';
-import {
-  changeDistribution,
-  changeRegistrationType,
-  selectDistribution,
-} from '@/store/slices/wizard';
-
 import {
   ON_PREM_RELEASES,
   RELEASES,
@@ -32,10 +24,17 @@ import {
   RHEL_9,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
-} from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import isRhel from '../../../../../Utilities/isRhel';
-import { toMonthAndYear } from '../../../../../Utilities/time';
+} from '@/constants';
+import { Distributions } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices/env';
+import {
+  changeDistribution,
+  changeRegistrationType,
+  selectDistribution,
+} from '@/store/slices/wizard';
+import isRhel from '@/Utilities/isRhel';
+import { toMonthAndYear } from '@/Utilities/time';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
