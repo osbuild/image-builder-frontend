@@ -200,9 +200,9 @@ describe('Import modal', () => {
     // Timezone
     await clickNext();
     await screen.findByRole('heading', { name: /Timezone/ });
-    const timezoneDropDown =
-      await screen.findByPlaceholderText(/Select a timezone/i);
-    expect(timezoneDropDown).toHaveValue('US/Eastern');
+    expect(
+      await screen.findByRole('button', { name: 'US/Eastern' }),
+    ).toBeInTheDocument();
     await screen.findByText(/^0\.north-america\.pool/i);
     await screen.findByText(/^1\.north-america\.pool/i);
 
@@ -289,16 +289,19 @@ describe('Import modal', () => {
     expect(
       await screen.findByText('Invalid NTP servers: invalid-ntp-server'),
     ).toBeInTheDocument();
-    const timezoneDropdown =
-      await screen.findByPlaceholderText(/select a timezone/i);
-    await waitFor(() => user.click(timezoneDropdown));
+    const timezoneToggle = await screen.findByRole('button', {
+      name: 'invalid-timezone',
+    });
+    await waitFor(() => user.click(timezoneToggle));
 
-    const timezoneOptions = await screen.findAllByRole('option');
+    const timezoneOptions = await screen.findAllByRole('menuitem');
     expect(timezoneOptions[0]).toHaveTextContent(/Etc\/UTC.*Default/i);
 
-    await waitFor(() => user.clear(timezoneDropdown));
-    await waitFor(() => user.type(timezoneDropdown, 'Etc/UTC'));
-    const defaultTimezone = await screen.findByText('Etc/UTC');
+    const searchInput = await screen.findByLabelText(/Filter timezone/i);
+    await waitFor(() => user.type(searchInput, 'Etc/UTC'));
+    const defaultTimezone = await screen.findByRole('menuitem', {
+      name: /Etc\/UTC/i,
+    });
     await waitFor(() => user.click(defaultTimezone));
     await waitFor(async () =>
       user.click(

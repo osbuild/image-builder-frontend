@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import {
+  Divider,
   FormGroup,
   HelperText,
   HelperTextItem,
   Label,
+  Menu,
+  MenuContainer,
+  MenuContent,
+  MenuItem,
+  MenuList,
+  MenuSearch,
+  MenuSearchInput,
   MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectList,
-  SelectOption,
-  TextInputGroup,
-  TextInputGroupMain,
+  SearchInput,
 } from '@patternfly/react-core';
 
 import { changeTimezone, selectTimezone } from '@/store/slices/wizard';
@@ -29,127 +32,123 @@ const TimezoneDropDown = () => {
 
   const [errorText, setErrorText] = useState(stepValidation.errors['timezone']);
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] = useState<string[]>(timezones);
+  const [searchValue, setSearchValue] = useState('');
 
-  useEffect(() => {
-    let filteredTimezones = timezones;
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-    if (filterValue) {
-      const normalizedFilter = filterValue
+  const handleSearchChange = (value: string) => {
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+    setSearchValue(value);
+  };
+
+  const onSelect = (
+    _event: React.MouseEvent | undefined,
+    itemId: string | number | undefined,
+  ) => {
+    if (itemId && typeof itemId === 'string') {
+      dispatch(changeTimezone(itemId));
+      setErrorText('');
+      setSearchValue('');
+      setIsOpen(false);
+    }
+  };
+
+  const sortedTimezones = useMemo(() => {
+    let filtered = timezones;
+
+    if (searchValue) {
+      const normalizedFilter = searchValue
         .toLowerCase()
         .replace(/[_/]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
 
-      filteredTimezones = timezones.filter((timezone: string) => {
-        const normalizedTimezone = timezone
+      filtered = timezones.filter((tz) => {
+        const normalizedTimezone = tz
           .toLowerCase()
           .replace(/[_/]/g, ' ')
           .replace(/\s+/g, ' ');
         return normalizedTimezone.includes(normalizedFilter);
       });
-
-      if (!isOpen) {
-        setIsOpen(true);
-      }
     }
 
-    const sortedTimezones = [...filteredTimezones].sort((a, b) => {
+    return [...filtered].sort((a, b) => {
       if (a === DEFAULT_TIMEZONE) return -1;
       if (b === DEFAULT_TIMEZONE) return 1;
       return 0;
     });
+  }, [searchValue]);
 
-    setSelectOptions(sortedTimezones);
-
-    // This useEffect hook should run *only* on when the filter value changes.
-    // eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue]);
-
-  const onInputClick = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-    } else if (!inputValue) {
-      setIsOpen(false);
-    }
-  };
-
-  const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
-    if (value && typeof value === 'string') {
-      setInputValue(value);
-      setFilterValue('');
-      setErrorText('');
-      dispatch(changeTimezone(value));
-      setIsOpen(false);
-    }
-  };
-
-  const onTextInputChange = (_event: React.FormEvent, value: string) => {
-    setInputValue(value);
-    setFilterValue(value);
-
-    if (value !== timezone) {
-      dispatch(changeTimezone(''));
-    }
-  };
-
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (
     <MenuToggle
       ref={toggleRef}
-      variant='typeahead'
-      onClick={onToggleClick}
+      onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
+      isFullWidth
+      data-testid='timezone-toggle'
     >
-      <TextInputGroup isPlain>
-        <TextInputGroupMain
-          value={timezone ? timezone : inputValue}
-          onClick={onInputClick}
-          onChange={onTextInputChange}
-          autoComplete='off'
-          placeholder='Select a timezone'
-          isExpanded={isOpen}
-        />
-      </TextInputGroup>
+      {timezone || 'Select a timezone'}
     </MenuToggle>
+  );
+
+  const menu = (
+    <Menu
+      ref={menuRef}
+      onSelect={onSelect}
+      activeItemId={timezone || ''}
+      isScrollable
+    >
+      <MenuSearch>
+        <MenuSearchInput>
+          <SearchInput
+            value={searchValue}
+            aria-label='Filter timezone'
+            onChange={(_event, value) => handleSearchChange(value)}
+            onClear={(event) => {
+              // prevents setIsOpen(isOpen) from closing the Wizard
+              event.stopPropagation();
+              handleSearchChange('');
+            }}
+          />
+        </MenuSearchInput>
+      </MenuSearch>
+      <Divider />
+      <MenuContent maxMenuHeight='300px'>
+        <MenuList>
+          {sortedTimezones.map((option) => (
+            <MenuItem key={option} itemId={option}>
+              {option}{' '}
+              {option === DEFAULT_TIMEZONE && (
+                <Label color='blue' isCompact>
+                  Default
+                </Label>
+              )}
+            </MenuItem>
+          ))}
+          {searchValue && sortedTimezones.length === 0 && (
+            <MenuItem isDisabled key='no-results'>
+              {`No results found for "${searchValue}"`}
+            </MenuItem>
+          )}
+        </MenuList>
+      </MenuContent>
+    </Menu>
   );
 
   return (
     <FormGroup isRequired={false} label='Timezone'>
-      <Select
-        isScrollable
+      <MenuContainer
+        menu={menu}
+        menuRef={menuRef}
+        toggle={toggle}
+        toggleRef={toggleRef}
         isOpen={isOpen}
         onOpenChange={(isOpen) => setIsOpen(isOpen)}
-        selected={timezone}
-        onSelect={onSelect}
-        toggle={toggle}
-        shouldFocusFirstItemOnOpen={false}
-      >
-        <SelectList>
-          {selectOptions.length > 0 ? (
-            selectOptions.map((option) => (
-              <SelectOption key={option} value={option}>
-                {option}{' '}
-                {option === DEFAULT_TIMEZONE && (
-                  <Label color='blue' isCompact>
-                    Default
-                  </Label>
-                )}
-              </SelectOption>
-            ))
-          ) : (
-            <SelectOption isDisabled>
-              {`No results found for "${filterValue}"`}
-            </SelectOption>
-          )}
-        </SelectList>
-      </Select>
+        onOpenChangeKeys={['Escape']}
+      />
       {errorText && (
         <HelperText>
           <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>

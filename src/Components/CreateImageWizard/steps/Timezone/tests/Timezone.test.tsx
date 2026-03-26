@@ -4,7 +4,6 @@ import { createUser } from '@/test/testUtils';
 
 import {
   addNtpServer,
-  clearTimezone,
   openTimezoneDropdown,
   removeNtpServer,
   renderTimezoneStep,
@@ -42,7 +41,7 @@ describe('Timezone Component', () => {
       renderTimezoneStep();
 
       expect(
-        await screen.findByPlaceholderText(/Select a timezone/i),
+        await screen.findByRole('button', { name: /Select a timezone/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByPlaceholderText(/Add NTP servers/i),
@@ -58,7 +57,7 @@ describe('Timezone Component', () => {
       await openTimezoneDropdown(user);
 
       expect(
-        screen.getByRole('option', { name: /Etc\/UTC/i }),
+        screen.getByRole('menuitem', { name: /Etc\/UTC/i }),
       ).toBeInTheDocument();
     });
 
@@ -69,22 +68,23 @@ describe('Timezone Component', () => {
       await openTimezoneDropdown(user);
       await selectTimezoneOption(user, /Europe\/Amsterdam/i);
 
-      const dropdown = await screen.findByPlaceholderText(/Select a timezone/i);
-      expect(dropdown).toHaveValue('Europe/Amsterdam');
+      expect(
+        await screen.findByRole('button', { name: 'Europe/Amsterdam' }),
+      ).toBeInTheDocument();
     });
 
     test('filters timezones by search term', async () => {
       renderTimezoneStep();
       const user = createUser();
 
-      await clearTimezone(user);
+      await openTimezoneDropdown(user);
       await typeTimezone(user, 'Europe');
 
       expect(
-        screen.getByRole('option', { name: /Europe\/Amsterdam/i }),
+        screen.getByRole('menuitem', { name: /Europe\/Amsterdam/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('option', { name: /Europe\/London/i }),
+        screen.getByRole('menuitem', { name: /Europe\/London/i }),
       ).toBeInTheDocument();
     });
 
@@ -92,12 +92,12 @@ describe('Timezone Component', () => {
       renderTimezoneStep();
       const user = createUser();
 
-      await clearTimezone(user);
+      await openTimezoneDropdown(user);
       await typeTimezone(user, 'foo');
 
       expect(screen.getByText(/no results found/i)).toBeInTheDocument();
 
-      const option = await screen.findByRole('option', {
+      const option = await screen.findByRole('menuitem', {
         name: /no results found/i,
       });
       expect(option).toBeDisabled();
@@ -181,8 +181,9 @@ describe('Timezone Component', () => {
         },
       });
 
-      const dropdown = await screen.findByPlaceholderText(/Select a timezone/i);
-      expect(dropdown).toHaveValue('Europe/Amsterdam');
+      expect(
+        await screen.findByRole('button', { name: 'Europe/Amsterdam' }),
+      ).toBeInTheDocument();
     });
 
     test('renders with pre-populated NTP servers from state', async () => {

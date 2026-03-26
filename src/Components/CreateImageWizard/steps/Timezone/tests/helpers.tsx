@@ -3,7 +3,6 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import {
-  clearWithWait,
   clickWithWait,
   renderWithRedux,
   typeWithWait,
@@ -20,28 +19,25 @@ export const renderTimezoneStep = (
 };
 
 export const openTimezoneDropdown = async (user: UserEventInstance) => {
-  const dropdown = await screen.findByPlaceholderText(/Select a timezone/i);
-  await clickWithWait(user, dropdown);
+  const toggle = await screen.findByRole('button', {
+    name: /Select a timezone/i,
+  });
+  await clickWithWait(user, toggle);
 };
 
 export const typeTimezone = async (
   user: UserEventInstance,
   timezone: string,
 ) => {
-  const dropdown = await screen.findByPlaceholderText(/Select a timezone/i);
-  await typeWithWait(user, dropdown, timezone);
-};
-
-export const clearTimezone = async (user: UserEventInstance) => {
-  const dropdown = await screen.findByPlaceholderText(/Select a timezone/i);
-  await clearWithWait(user, dropdown);
+  const searchInput = await screen.findByLabelText(/Filter timezone/i);
+  await typeWithWait(user, searchInput, timezone);
 };
 
 export const selectTimezoneOption = async (
   user: UserEventInstance,
   optionName: string | RegExp,
 ) => {
-  const option = await screen.findByRole('option', { name: optionName });
+  const option = await screen.findByRole('menuitem', { name: optionName });
   await clickWithWait(user, option);
 };
 
