@@ -56,24 +56,17 @@ const TimezoneDropDown = () => {
     }
   };
 
+  const normalizeTimezoneString = (value: string): string =>
+    value.toLowerCase().replace(/[_/]/g, ' ').replace(/\s+/g, ' ').trim();
+
   const sortedTimezones = useMemo(() => {
-    let filtered = timezones;
+    const normalizedFilter = normalizeTimezoneString(searchValue);
 
-    if (searchValue) {
-      const normalizedFilter = searchValue
-        .toLowerCase()
-        .replace(/[_/]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-
-      filtered = timezones.filter((tz) => {
-        const normalizedTimezone = tz
-          .toLowerCase()
-          .replace(/[_/]/g, ' ')
-          .replace(/\s+/g, ' ');
-        return normalizedTimezone.includes(normalizedFilter);
-      });
-    }
+    const filtered = normalizedFilter
+      ? timezones.filter((tz) =>
+          normalizeTimezoneString(tz).includes(normalizedFilter),
+        )
+      : timezones;
 
     return [...filtered].sort((a, b) => {
       if (a === DEFAULT_TIMEZONE) return -1;
