@@ -34,12 +34,14 @@ import {
   useBulkImportRepositoriesMutation,
 } from '@/store/api/contentSources';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
-import { wizardState } from '@/store/slices/wizard';
+import { loadWizardState, wizardState } from '@/store/slices/wizard';
+import { openWizardModal } from '@/store/slices/wizardModal';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import {
   mapExportRequestToState,
   mapToCustomRepositories,
@@ -61,7 +63,9 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
+  const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
     React.useState<wizardState>();
@@ -250,6 +254,20 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const navigate = useNavigate();
   const resolvePath = useAppSelector(selectPathResolver);
 
+  const handleReviewAndFinish = () => {
+    if (!importedBlueprint) return;
+
+    if (isWizardRevampEnabled) {
+      dispatch(loadWizardState(importedBlueprint));
+      dispatch(openWizardModal('import'));
+      setShowImportModal(false);
+    } else {
+      navigate(resolvePath('imagewizard/import'), {
+        state: { blueprint: importedBlueprint },
+      });
+    }
+  };
+
   const variantSwitch = () => {
     switch (true) {
       case isRejected || isInvalidFormat:
@@ -344,11 +362,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
         <Button
           type='button'
           isDisabled={isRejected || isInvalidFormat || !fileContent}
-          onClick={() =>
-            navigate(resolvePath(`imagewizard/import`), {
-              state: { blueprint: importedBlueprint },
-            })
-          }
+          onClick={handleReviewAndFinish}
         >
           Review and finish
         </Button>

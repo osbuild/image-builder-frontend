@@ -36,6 +36,7 @@ import {
   setBlueprintsOffset,
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
+import { openWizardModal } from '@/store/slices/wizardModal';
 
 import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
@@ -47,6 +48,7 @@ import {
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
@@ -65,6 +67,7 @@ const BlueprintsSidebar = () => {
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const resolvePath = useAppSelector(selectPathResolver);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -107,7 +110,16 @@ const BlueprintsSidebar = () => {
       <EmptyBlueprintState
         icon={PlusCircleIcon}
         action={
-          <Link to={resolvePath('imagewizard')}>Create image blueprint</Link>
+          isWizardRevampEnabled ? (
+            <Button
+              variant='link'
+              onClick={() => dispatch(openWizardModal('create'))}
+            >
+              Create image blueprint
+            </Button>
+          ) : (
+            <Link to={resolvePath('imagewizard')}>Create image blueprint</Link>
+          )
         }
         titleText='No blueprints'
         bodyText='Create a blueprint and optionally build related images.'

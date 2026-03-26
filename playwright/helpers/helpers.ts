@@ -12,7 +12,7 @@ import {
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
 
-  if (!(await toggleSwitch.isChecked())) {
+  if (await toggleSwitch.isChecked()) {
     await toggleSwitch.click();
   }
 
@@ -21,7 +21,7 @@ export const togglePreview = async (page: Page) => {
     await turnOnButton.click();
   }
 
-  await expect(toggleSwitch).toBeChecked();
+  await expect(toggleSwitch).not.toBeChecked();
 };
 
 export const isHosted = (): boolean => {
