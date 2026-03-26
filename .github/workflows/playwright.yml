@@ -38,7 +38,7 @@ jobs:
         uses: ./.github/actions/setup-node-cached
 
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium --only-shell
 
       # This prevents an error related to minimum watchers when running the front-end and playwright
       - name: Increase file watchers limit
