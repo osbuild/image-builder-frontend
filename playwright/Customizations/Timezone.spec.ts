@@ -45,6 +45,15 @@ test('Create a blueprint with Timezone customization', async ({
     await frame.getByRole('button', { name: 'Timezone' }).click();
   });
 
+  await test.step('Select the Timezone', async () => {
+    await frame.getByTestId('timezone-toggle').click();
+    await frame.getByLabel('Filter timezone').fill('Canada');
+    await frame.getByRole('menuitem', { name: 'Canada/Saskatchewan' }).click();
+    await frame.getByText('Canada/Saskatchewan', { exact: true }).click();
+    await frame.getByLabel('Filter timezone').fill('Europe');
+    await frame.getByRole('menuitem', { name: 'Europe/Stockholm' }).click();
+  });
+
   await test.step('Shows all NTP chips when 4 or fewer', async () => {
     const ntpInput = frame.getByPlaceholder('Add NTP servers');
     for (const server of [
@@ -122,13 +131,7 @@ test('Create a blueprint with Timezone customization', async ({
       .click();
   });
 
-  await test.step('Select and fill the Timezone step', async () => {
-    await frame.getByPlaceholder('Select a timezone').fill('Canada');
-    await frame.getByRole('option', { name: 'Canada/Saskatchewan' }).click();
-    await frame.getByPlaceholder('Select a timezone').fill('');
-    await frame.getByPlaceholder('Select a timezone').fill('Europe');
-    await frame.getByRole('option', { name: 'Europe/Stockholm' }).click();
-
+  await test.step('Fill NTP servers with validation', async () => {
     await frame.getByPlaceholder('Add NTP servers').fill('0.nl.pool.ntp.org');
     await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
@@ -167,14 +170,13 @@ test('Create a blueprint with Timezone customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit Timezone step').click();
     await expect(frame.getByText('Canada/Saskatchewan')).toBeHidden();
-    await expect(frame.getByPlaceholder('Select a timezone')).toHaveValue(
-      'Europe/Stockholm',
-    );
-    await frame.getByPlaceholder('Select a timezone').fill('Europe');
-    await frame.getByRole('option', { name: 'Europe/Oslo' }).click();
-    await expect(frame.getByPlaceholder('Select a timezone')).toHaveValue(
-      'Europe/Oslo',
-    );
+    await expect(
+      frame.getByText('Europe/Stockholm', { exact: true }),
+    ).toBeVisible();
+    await frame.getByText('Europe/Stockholm', { exact: true }).click();
+    await frame.getByLabel('Filter timezone').fill('Europe');
+    await frame.getByRole('menuitem', { name: 'Europe/Oslo' }).click();
+    await expect(frame.getByText('Europe/Oslo', { exact: true })).toBeVisible();
     await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
     await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeHidden();
@@ -208,9 +210,7 @@ test('Create a blueprint with Timezone customization', async ({
   await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Timezone' }).click();
-    await expect(frame.getByPlaceholder('Select a timezone')).toHaveValue(
-      'Europe/Oslo',
-    );
+    await expect(frame.getByText('Europe/Oslo', { exact: true })).toBeVisible();
     await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
     await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeHidden();
