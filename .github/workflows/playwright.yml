@@ -34,16 +34,10 @@ jobs:
           # Set the PR URL as an output using the environment file
           echo "pr_url=$pr_url" >> $GITHUB_ENV
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
+      - name: Setup Node.js with cached dependencies
+        uses: ./.github/actions/setup-node-cached
 
-      - name: Install front-end dependencies
-        run: npm ci
-
-      - name: Install playwright
+      - name: Install Playwright
         run: npx playwright install --with-deps
 
       # This prevents an error related to minimum watchers when running the front-end and playwright
