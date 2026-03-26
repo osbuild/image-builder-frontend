@@ -46,6 +46,9 @@ test('Create a blueprint with Timezone customization', async ({
   });
 
   await test.step('Select the Timezone', async () => {
+    await expect(
+      frame.getByText('Select a timezone and define NTP servers'),
+    ).toBeVisible();
     await frame.getByTestId('timezone-toggle').click();
     await frame.getByLabel('Filter timezone').fill('Canada');
     await frame.getByRole('menuitem', { name: 'Canada/Saskatchewan' }).click();
