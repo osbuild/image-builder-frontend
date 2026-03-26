@@ -21,6 +21,7 @@ import {
   selectDistribution,
   selectImageTypes,
   selectIsOnPremise,
+  wizardModalSlice,
   wizardSlice,
 } from './slices';
 import { asDistribution } from './typeGuards';
@@ -33,6 +34,7 @@ export const serviceReducer = combineReducers({
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
   wizard: wizardSlice.reducer,
+  wizardModal: wizardModalSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,
 });
@@ -48,6 +50,7 @@ export const onPremReducer = combineReducers({
   // It's still needed to get things to work.
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   wizard: wizardSlice.reducer,
+  wizardModal: wizardModalSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,
 });

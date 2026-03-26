@@ -11,6 +11,10 @@ export const mockRootState: RootState = {
     isOnPremise: false,
   },
   wizard: { ...wizardInitialState },
+  wizardModal: {
+    isModalOpen: false,
+    mode: 'create',
+  },
   blueprints: {
     selectedBlueprintId: undefined,
     searchInput: undefined,

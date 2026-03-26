@@ -12,10 +12,12 @@ import { useNavigate } from 'react-router-dom';
 import { useBackendPrefetch } from '@/store/api/backend';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 import { selectDistribution } from '@/store/slices/wizard';
+import { openWizardModal } from '@/store/slices/wizardModal';
 
 import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
 import { useGetDocumentationUrl } from '../../Hooks';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
 
@@ -70,8 +72,10 @@ export const ImageBuilderHeader = ({
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const resolvePath = useAppSelector(selectPathResolver);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
@@ -116,7 +120,11 @@ export const ImageBuilderHeader = ({
                   <Button
                     variant='primary'
                     data-testid='blueprints-create-button'
-                    onClick={() => navigate(resolvePath('imagewizard'))}
+                    onClick={() =>
+                      isWizardRevampEnabled
+                        ? dispatch(openWizardModal('create'))
+                        : navigate(resolvePath('imagewizard'))
+                    }
                     onMouseEnter={() =>
                       prefetchTargets({
                         distribution: distribution,
