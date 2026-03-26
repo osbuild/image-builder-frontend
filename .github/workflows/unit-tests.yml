@@ -19,13 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 22
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
-    - name: Install dependencies
-      run: npm ci
+    - name: Setup Node.js with cached dependencies
+      uses: ./.github/actions/setup-node-cached
     - name: Run integration tests
       run: npm run test:coverage
     - name: Upload coverage to Codecov
@@ -40,13 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 22
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
-    - name: Install dependencies
-      run: npm ci
+    - name: Setup Node.js with cached dependencies
+      uses: ./.github/actions/setup-node-cached
     - name: Run integration tests with cockpit
       run: npm run test:cockpit
 
@@ -55,12 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 22
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
-    - name: Install dependencies
-      run: npm ci
+    - name: Setup Node.js with cached dependencies
+      uses: ./.github/actions/setup-node-cached
     - name: Run unit tests
       run: npm run test:unit

@@ -20,8 +20,8 @@ jobs:
         with:
           ref: ${{ github.event.inputs.commit_hash || 'refs/heads/master' }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup Node.js with cached dependencies
+        uses: ./.github/actions/setup-node-cached
 
       - name: Build
         env:
