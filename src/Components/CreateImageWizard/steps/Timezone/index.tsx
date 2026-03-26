@@ -5,7 +5,6 @@ import { Content, Form, Title } from '@patternfly/react-core';
 import NtpServersInput from './components/NtpServersInput';
 import TimezoneDropDown from './components/TimezoneDropDown';
 
-import { DEFAULT_TIMEZONE } from '../../../../constants';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const TimezoneStep = () => {
@@ -16,9 +15,8 @@ const TimezoneStep = () => {
         Timezone
       </Title>
       <Content>
-        Select a timezone for your image. The default timezone is &apos;
-        {DEFAULT_TIMEZONE}&apos;. You can also configure NTP servers - multiple
-        servers can be added.
+        Select a timezone and define NTP servers to ensure your image maintains
+        accurate system time upon deployment.
       </Content>
       <TimezoneDropDown />
       <NtpServersInput />

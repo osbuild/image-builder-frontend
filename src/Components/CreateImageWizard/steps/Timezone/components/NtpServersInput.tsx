@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
 import {
   addNtpServer,
@@ -31,6 +31,12 @@ const NtpServersInput = () => {
         stepValidation={stepValidation}
         fieldName='ntpServers'
       />
+      <HelperText className='pf-v6-u-pt-sm'>
+        <HelperTextItem>
+          Specify NTP servers by hostname or IP address. Examples:
+          server.example.com, 172.16.254.1
+        </HelperTextItem>
+      </HelperText>
     </FormGroup>
   );
 };

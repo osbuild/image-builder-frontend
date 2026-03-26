@@ -33,7 +33,7 @@ describe('Timezone Component', () => {
         await screen.findByRole('heading', { name: /Timezone/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Select a timezone for your image/i),
+        screen.getByText(/Select a timezone and define NTP servers/i),
       ).toBeInTheDocument();
     });
 
@@ -45,6 +45,26 @@ describe('Timezone Component', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByPlaceholderText(/Add NTP servers/i),
+      ).toBeInTheDocument();
+    });
+
+    test('displays timezone helper text', async () => {
+      renderTimezoneStep();
+
+      expect(
+        await screen.findByText(
+          /Network time servers for system clock synchronization/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('displays NTP servers helper text', async () => {
+      renderTimezoneStep();
+
+      expect(
+        await screen.findByText(
+          /Specify NTP servers by hostname or IP address/i,
+        ),
       ).toBeInTheDocument();
     });
   });
