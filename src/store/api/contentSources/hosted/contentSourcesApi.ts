@@ -754,7 +754,7 @@ export type ConfigDistributionArch = {
   name?: string | undefined;
 };
 export type ConfigDistributionMinorVersion = {
-  feature_names?: string[] | undefined;
+  extended_release_streams?: string[] | undefined;
   label?: string | undefined;
   major?: string | undefined;
   name?: string | undefined;
@@ -765,19 +765,25 @@ export type ConfigDistributionVersion = {
   /** Human-readable form of the version */
   name?: string | undefined;
 };
-export type ConfigExtendedReleaseFeature = {
+export type ApiExtendedReleaseArchitecture = {
+  entitled?: boolean | undefined;
+  label?: string | undefined;
+  name?: string | undefined;
+};
+export type ApiExtendedReleaseStream = {
+  architectures?: ApiExtendedReleaseArchitecture[] | undefined;
   label?: string | undefined;
   name?: string | undefined;
 };
 export type ApiRepositoryParameterResponse = {
   /** Architectures available for repository creation */
   distribution_arches?: ConfigDistributionArch[] | undefined;
-  /** Minor versions available for repository creation (filtered by subscriptions) */
+  /** Minor versions available for repository creation */
   distribution_minor_versions?: ConfigDistributionMinorVersion[] | undefined;
   /** Versions available for repository creation */
   distribution_versions?: ConfigDistributionVersion[] | undefined;
-  /** Extended release features available (filtered by subscriptions) */
-  extended_release_features?: ConfigExtendedReleaseFeature[] | undefined;
+  /** Extended release streams available */
+  extended_release_streams?: ApiExtendedReleaseStream[] | undefined;
 };
 export type ApiPackageSourcesResponse = {
   /** Architecture of the module */
