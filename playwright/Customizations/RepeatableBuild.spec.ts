@@ -43,6 +43,9 @@ test('Create a blueprint with Repeatable build customization', async ({
     'https://jlsherrill.fedorapeople.org/fake-repos/really-empty/';
   const templateName = 'content-template-test-' + uuidv4().slice(0, 8);
 
+  // Here we want to be sure that the repository is deleted due to URL exclusivity per repository
+  await deleteRepository(page, repositoryUrl);
+
   // Delete the blueprint after the run fixture
   cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteRepository(page, repositoryName));
