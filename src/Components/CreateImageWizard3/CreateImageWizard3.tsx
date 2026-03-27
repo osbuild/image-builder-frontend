@@ -15,6 +15,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 
 import { useGetBlueprintQuery } from '@/store/api/backend';
+import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -77,6 +78,8 @@ import {
   useServicesValidation,
   useSnapshotValidation,
   useTimezoneValidation,
+  useUserGroupsValidation,
+  useUsersValidation,
 } from '../CreateImageWizard/utilities/useValidation';
 
 export const CreateImageWizard3 = () => {
@@ -108,6 +111,12 @@ export const CreateImageWizard3 = () => {
   const servicesValidation = useServicesValidation();
   const firewallValidation = useFirewallValidation();
   const firstBootValidation = useFirstBootValidation();
+  const usersValidation = useUsersValidation();
+  const userGroupsValidation = useUserGroupsValidation();
+
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: targetEnvironments,
+  });
 
   useEffect(() => {
     const hasUrlParams =
@@ -250,7 +259,10 @@ export const CreateImageWizard3 = () => {
               disableNext={
                 detailsValidation.disabledNext ||
                 registrationValidation.disabledNext ||
-                snapshotValidation.disabledNext
+                snapshotValidation.disabledNext ||
+                (restrictions.users.required &&
+                  (usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext))
               }
               isOnPremise={isOnPremise}
             />
@@ -264,20 +276,35 @@ export const CreateImageWizard3 = () => {
               Your selections below may automatically add required
               configurations in subsequent steps.
             </Content>
-            <DetailsStep />
-            <Divider />
-            <ImageOutputStep />
-            <Divider />
-            <RegistrationStep />
-            <Divider />
-            <RepeatableBuildStep />
-            <Divider />
-            <OscapStep />
+            {[
+              <DetailsStep key='details' />,
+              <ImageOutputStep key='image-output' />,
+              !restrictions.registration.shouldHide && (
+                <RegistrationStep key='registration' />
+              ),
+              !restrictions.repositories.shouldHide && (
+                <RepeatableBuildStep key='repeatable-build' />
+              ),
+              !(
+                restrictions.openscap.shouldHide && restrictions.fips.shouldHide
+              ) && <OscapStep key='oscap' />,
+              restrictions.users.required && <UsersStep key='users' />,
+            ]
+              .filter(Boolean)
+              .flatMap((component, index, array) =>
+                index < array.length - 1
+                  ? [component, <Divider key={`divider-${index}`} />]
+                  : [component],
+              )}
           </Form>
         </WizardStep>
         <WizardStep
           name='Repositories and packages'
           id='content-step'
+          isHidden={
+            restrictions.repositories.shouldHide &&
+            restrictions.packages.shouldHide
+          }
           footer={
             <CustomWizardFooter disableNext={false} isOnPremise={isOnPremise} />
           }
@@ -292,14 +319,36 @@ export const CreateImageWizard3 = () => {
               own custom content. The selections on this page may automatically
               add required configurations in subsequent steps.
             </Content>
-            <RepositoriesStep />
-            <Divider />
-            <PackagesStep />
+            {[
+              !restrictions.repositories.shouldHide && (
+                <RepositoriesStep key='repositories' />
+              ),
+              !restrictions.packages.shouldHide && (
+                <PackagesStep key='packages' />
+              ),
+            ]
+              .filter(Boolean)
+              .flatMap((component, index, array) =>
+                index < array.length - 1
+                  ? [component, <Divider key={`divider-${index}`} />]
+                  : [component],
+              )}
           </Form>
         </WizardStep>
         <WizardStep
           name='Advanced settings'
           id='advance-settings-step'
+          isHidden={
+            restrictions.filesystem.shouldHide &&
+            restrictions.timezone.shouldHide &&
+            restrictions.locale.shouldHide &&
+            restrictions.hostname.shouldHide &&
+            restrictions.kernel.shouldHide &&
+            restrictions.services.shouldHide &&
+            restrictions.firewall.shouldHide &&
+            (restrictions.users.shouldHide || restrictions.users.required) &&
+            restrictions.firstBoot.shouldHide
+          }
           footer={
             <CustomWizardFooter
               disableNext={
@@ -310,7 +359,12 @@ export const CreateImageWizard3 = () => {
                 kernelValidation.disabledNext ||
                 servicesValidation.disabledNext ||
                 firewallValidation.disabledNext ||
-                firstBootValidation.disabledNext
+                firstBootValidation.disabledNext ||
+                (!(
+                  restrictions.users.shouldHide || restrictions.users.required
+                ) &&
+                  (usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext))
               }
               isOnPremise={isOnPremise}
             />
@@ -326,23 +380,37 @@ export const CreateImageWizard3 = () => {
               configurations like kernel and file systems, and security rules
               including firewall and user access.
             </Content>
-            <FileSystemStep />
-            <Divider />
-            <TimezoneStep />
-            <Divider />
-            <LocaleStep />
-            <Divider />
-            <HostnameStep />
-            <Divider />
-            <KernelStep />
-            <Divider />
-            <ServicesStep />
-            <Divider />
-            <FirewallStep />
-            <Divider />
-            <UsersStep />
-            <Divider />
-            <FirstBootStep />
+            {[
+              !restrictions.filesystem.shouldHide && (
+                <FileSystemStep key='filesystem' />
+              ),
+              !restrictions.timezone.shouldHide && (
+                <TimezoneStep key='timezone' />
+              ),
+              !restrictions.locale.shouldHide && <LocaleStep key='locale' />,
+              !restrictions.hostname.shouldHide && (
+                <HostnameStep key='hostname' />
+              ),
+              !restrictions.kernel.shouldHide && <KernelStep key='kernel' />,
+              !restrictions.services.shouldHide && (
+                <ServicesStep key='services' />
+              ),
+              !restrictions.firewall.shouldHide && (
+                <FirewallStep key='firewall' />
+              ),
+              !(
+                restrictions.users.shouldHide || restrictions.users.required
+              ) && <UsersStep key='users' />,
+              !restrictions.firstBoot.shouldHide && (
+                <FirstBootStep key='firstboot' />
+              ),
+            ]
+              .filter(Boolean)
+              .flatMap((component, index, array) =>
+                index < array.length - 1
+                  ? [component, <Divider key={`divider-${index}`} />]
+                  : [component],
+              )}
           </Form>
         </WizardStep>
         <WizardStep
