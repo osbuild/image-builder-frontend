@@ -15,12 +15,16 @@ import {
 
 import { useGetBlueprintQuery } from '@/store/api/backend';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
+import { selectIsOnPremise } from '@/store/slices/env';
 import { loadWizardState } from '@/store/slices/wizard';
 import {
   closeWizardModal,
   selectIsWizardModalOpen,
   selectWizardModalMode,
 } from '@/store/slices/wizardModal';
+
+import CustomWizardFooter from './components/CustomWizardFooter';
+import ReviewWizardFooter from './components/ReviewWizardFooter';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import DetailsStep from '../CreateImageWizard/steps/Details';
@@ -41,17 +45,44 @@ import RepeatableBuildStep from '../CreateImageWizard/steps/Snapshot';
 import TimezoneStep from '../CreateImageWizard/steps/Timezone';
 import UsersStep from '../CreateImageWizard/steps/UsersAndGroups';
 import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
+import {
+  useDetailsValidation,
+  useFilesystemValidation,
+  useFirewallValidation,
+  useFirstBootValidation,
+  useHostnameValidation,
+  useKernelValidation,
+  useLocaleValidation,
+  useRegistrationValidation,
+  useServicesValidation,
+  useSnapshotValidation,
+  useTimezoneValidation,
+} from '../CreateImageWizard/utilities/useValidation';
 
 export const CreateImageWizard3 = () => {
   const dispatch = useAppDispatch();
   const showWizardModal = useAppSelector(selectIsWizardModalOpen);
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
     { id: blueprintId || '' },
     { skip: !(mode === 'edit' && !!blueprintId) },
   );
+
+  // Validation hooks
+  const detailsValidation = useDetailsValidation();
+  const registrationValidation = useRegistrationValidation();
+  const snapshotValidation = useSnapshotValidation();
+  const filesystemValidation = useFilesystemValidation();
+  const timezoneValidation = useTimezoneValidation();
+  const localeValidation = useLocaleValidation();
+  const hostnameValidation = useHostnameValidation();
+  const kernelValidation = useKernelValidation();
+  const servicesValidation = useServicesValidation();
+  const firewallValidation = useFirewallValidation();
+  const firstBootValidation = useFirstBootValidation();
 
   useEffect(() => {
     if (mode === 'edit' && blueprintId && blueprintDetails) {
@@ -102,7 +133,21 @@ export const CreateImageWizard3 = () => {
           />
         }
       >
-        <WizardStep name='Base settings' id='base-settings-step'>
+        <WizardStep
+          name='Base settings'
+          id='base-settings-step'
+          footer={
+            <CustomWizardFooter
+              disableBack={true}
+              disableNext={
+                detailsValidation.disabledNext ||
+                registrationValidation.disabledNext ||
+                snapshotValidation.disabledNext
+              }
+              isOnPremise={isOnPremise}
+            />
+          }
+        >
           <Form>
             <Title headingLevel='h1' size='xl'>
               Basic image settings
@@ -122,7 +167,13 @@ export const CreateImageWizard3 = () => {
             <OscapStep />
           </Form>
         </WizardStep>
-        <WizardStep name='Repositories and packages' id='content-step'>
+        <WizardStep
+          name='Repositories and packages'
+          id='content-step'
+          footer={
+            <CustomWizardFooter disableNext={false} isOnPremise={isOnPremise} />
+          }
+        >
           <Form>
             <Title headingLevel='h1' size='xl'>
               Repositories and packages
@@ -138,7 +189,25 @@ export const CreateImageWizard3 = () => {
             <PackagesStep />
           </Form>
         </WizardStep>
-        <WizardStep name='Advanced settings' id='advance-settings-step'>
+        <WizardStep
+          name='Advanced settings'
+          id='advance-settings-step'
+          footer={
+            <CustomWizardFooter
+              disableNext={
+                filesystemValidation.disabledNext ||
+                timezoneValidation.disabledNext ||
+                localeValidation.disabledNext ||
+                hostnameValidation.disabledNext ||
+                kernelValidation.disabledNext ||
+                servicesValidation.disabledNext ||
+                firewallValidation.disabledNext ||
+                firstBootValidation.disabledNext
+              }
+              isOnPremise={isOnPremise}
+            />
+          }
+        >
           <Form>
             <Title headingLevel='h1' size='xl'>
               Advanced settings
@@ -168,7 +237,11 @@ export const CreateImageWizard3 = () => {
             <FirstBootStep />
           </Form>
         </WizardStep>
-        <WizardStep name='Review' id='review-step'>
+        <WizardStep
+          name='Review'
+          id='review-step'
+          footer={<ReviewWizardFooter />}
+        >
           <Form>
             <Title headingLevel='h1' size='xl'>
               Review image configuration
