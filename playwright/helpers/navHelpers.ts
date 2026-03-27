@@ -1,6 +1,12 @@
 import { expect, FrameLocator, Page } from '@playwright/test';
 
-import { getHostArch, getHostDistroName, isHosted, sleep } from './helpers';
+import {
+  getHostArch,
+  getHostDistroName,
+  isHosted,
+  sleep,
+  togglePreview,
+} from './helpers';
 
 import {
   selectArch,
@@ -74,6 +80,7 @@ export const navigateToLandingPageFunc = async (page: Page) => {
     await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible(
       { timeout: 30000 },
     );
+    await togglePreview(page);
   } else {
     await page.goto('/cockpit-image-builder');
     await expect(
