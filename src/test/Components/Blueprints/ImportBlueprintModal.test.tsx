@@ -303,7 +303,7 @@ describe('Import modal', () => {
     await waitFor(async () =>
       user.click(
         await screen.findByRole('button', {
-          name: /close invalid-ntp-server/i,
+          name: /remove invalid-ntp-server/i,
         }),
       ),
     );
@@ -348,7 +348,7 @@ describe('Import modal', () => {
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close invalid\$kernel\$argum.../i,
+          name: /remove invalid\$kernel\$argum.../i,
         }),
       ),
     );
@@ -369,19 +369,19 @@ describe('Import modal', () => {
       ),
     ).toBeInTheDocument();
     await waitFor(() =>
-      user.click(screen.getByRole('button', { name: /close invalid-port/i })),
+      user.click(screen.getByRole('button', { name: /remove invalid-port/i })),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-disabled-s.../i,
+          name: /remove --invalid-disabled-s.../i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-enabled-se.../i,
+          name: /remove --invalid-enabled-se.../i,
         }),
       ),
     );
@@ -406,20 +406,20 @@ describe('Import modal', () => {
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-enabled-se.../i,
+          name: /remove --invalid-enabled-se.../i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-disabled-s.../i,
+          name: /remove --invalid-disabled-s.../i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close --invalid-masked-ser.../i }),
+        screen.getByRole('button', { name: /remove --invalid-masked-ser.../i }),
       ),
     );
 

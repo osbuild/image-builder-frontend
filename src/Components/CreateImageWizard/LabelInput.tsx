@@ -176,7 +176,7 @@ const LabelInput = ({
                   color='blue'
                   isCompact={isCompact}
                   onClose={(e) => handleRemoveItem(e, labelItem)}
-                  closeBtnAriaLabel={`Close ${labelItem}`}
+                  closeBtnAriaLabel={`Remove ${labelItem}`}
                 >
                   <Truncate
                     content={labelItem}

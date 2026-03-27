@@ -55,7 +55,7 @@ export const removeNtpServer = async (
   server: string,
 ) => {
   const removeButton = await screen.findByRole('button', {
-    name: `Close ${server}`,
+    name: `Remove ${server}`,
   });
   await clickWithWait(user, removeButton);
 };

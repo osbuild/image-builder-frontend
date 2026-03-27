@@ -75,7 +75,7 @@ test('Import a blueprint with invalid customization', async ({
     await frame.getByRole('button', { name: 'error Timezone' }).click();
     await expect(frame.getByText('Includes duplicate NTP')).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame.getByRole('button', { name: 'Close ntp/' }).first().click();
+    await frame.getByRole('button', { name: 'Remove ntp/' }).first().click();
     await frame.getByRole('button', { name: 'Next' }).click();
 
     await expect(frame.getByText('Unknown languages: random:')).toBeVisible();
@@ -97,13 +97,19 @@ test('Import a blueprint with invalid customization', async ({
     await expect(frame.getByText('Includes duplicate disabled')).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
     await frame
-      .getByRole('button', { name: 'Close 2020:port' })
+      .getByRole('button', { name: 'Remove 2020:port' })
       .first()
       .click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame.getByRole('button', { name: 'Close service1' }).first().click();
+    await frame
+      .getByRole('button', { name: 'Remove service1' })
+      .first()
+      .click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame.getByRole('button', { name: 'Close service2' }).first().click();
+    await frame
+      .getByRole('button', { name: 'Remove service2' })
+      .first()
+      .click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
   });
 
@@ -113,11 +119,11 @@ test('Import a blueprint with invalid customization', async ({
     await expect(frame.getByText('Includes duplicate disabled')).toBeVisible();
     await expect(frame.getByText('Includes duplicate masked')).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame.getByRole('button', { name: 'Close auditd' }).first().click();
+    await frame.getByRole('button', { name: 'Remove auditd' }).first().click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame.getByRole('button', { name: 'Close sssd' }).first().click();
+    await frame.getByRole('button', { name: 'Remove sssd' }).first().click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await frame.getByRole('button', { name: 'Close masked' }).first().click();
+    await frame.getByRole('button', { name: 'Remove masked' }).first().click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 

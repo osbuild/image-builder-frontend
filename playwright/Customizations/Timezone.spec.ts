@@ -93,10 +93,10 @@ test('Create a blueprint with Timezone customization', async ({
     await frame.getByText('2 more').click();
 
     await frame
-      .getByRole('button', { name: 'Close 0.uk.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.uk.pool.ntp.org' })
       .click();
     await frame
-      .getByRole('button', { name: 'Close 0.us.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.us.pool.ntp.org' })
       .click();
 
     await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
@@ -109,16 +109,16 @@ test('Create a blueprint with Timezone customization', async ({
 
   await test.step('Clean up chip collapse test chips', async () => {
     await frame
-      .getByRole('button', { name: 'Close 0.fr.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.fr.pool.ntp.org' })
       .click();
     await frame
-      .getByRole('button', { name: 'Close 0.de.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.de.pool.ntp.org' })
       .click();
     await frame
-      .getByRole('button', { name: 'Close 0.cz.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.cz.pool.ntp.org' })
       .click();
     await frame
-      .getByRole('button', { name: 'Close 0.nl.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.nl.pool.ntp.org' })
       .click();
   });
 
@@ -149,7 +149,7 @@ test('Create a blueprint with Timezone customization', async ({
     await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
     await frame
-      .getByRole('button', { name: 'Close 0.cz.pool.ntp.org' })
+      .getByRole('button', { name: 'Remove 0.cz.pool.ntp.org' })
       .click();
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeHidden();
     await frame.getByRole('button', { name: 'Review and finish' }).click();

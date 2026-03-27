@@ -54,7 +54,7 @@ export const removeKernelArgument = async (
   argument: string,
 ) => {
   const removeButton = await screen.findByRole('button', {
-    name: `Close ${argument}`,
+    name: `Remove ${argument}`,
   });
   await clickWithWait(user, removeButton);
 };

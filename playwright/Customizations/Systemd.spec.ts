@@ -170,7 +170,7 @@ test('Create a blueprint with Systemd customization', async ({
       'httpd.service',
       'sshd.service',
     ]) {
-      await frame.getByRole('button', { name: `Close ${service}` }).click();
+      await frame.getByRole('button', { name: `Remove ${service}` }).click();
     }
 
     // Clean up disabled services
@@ -186,7 +186,7 @@ test('Create a blueprint with Systemd customization', async ({
       'avahi-daemon.service',
       'cups.service',
     ]) {
-      await frame.getByRole('button', { name: `Close ${service}` }).click();
+      await frame.getByRole('button', { name: `Remove ${service}` }).click();
     }
 
     // Clean up masked services
@@ -202,7 +202,7 @@ test('Create a blueprint with Systemd customization', async ({
       'iptables.service',
       'firewalld.service',
     ]) {
-      await frame.getByRole('button', { name: `Close ${service}` }).click();
+      await frame.getByRole('button', { name: `Remove ${service}` }).click();
     }
   });
 
@@ -269,13 +269,13 @@ test('Create a blueprint with Systemd customization', async ({
     await frame.getByPlaceholder('Add masked service').press('Enter');
 
     await frame
-      .getByRole('button', { name: 'Close systemd-m.service' })
+      .getByRole('button', { name: 'Remove systemd-m.service' })
       .click();
     await frame
-      .getByRole('button', { name: 'Close systemd-en.service' })
+      .getByRole('button', { name: 'Remove systemd-en.service' })
       .click();
     await frame
-      .getByRole('button', { name: 'Close systemd-dis.service' })
+      .getByRole('button', { name: 'Remove systemd-dis.service' })
       .click();
 
     await expect(frame.getByText('enabled-service')).toBeVisible();
