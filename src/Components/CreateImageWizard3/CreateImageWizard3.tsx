@@ -10,7 +10,9 @@ import {
   Title,
   Wizard,
   WizardHeader,
+  WizardNavItem,
   WizardStep,
+  WizardStepType,
 } from '@patternfly/react-core';
 import { useSearchParams } from 'react-router-dom';
 
@@ -82,7 +84,7 @@ import {
   useUsersValidation,
 } from '../CreateImageWizard/utilities/useValidation';
 
-export const CreateImageWizard3 = () => {
+const CreateImageWizard3 = () => {
   const dispatch = useAppDispatch();
   const showWizardModal = useAppSelector(selectIsWizardModalOpen);
   const mode = useAppSelector(selectWizardModalMode);
@@ -117,6 +119,27 @@ export const CreateImageWizard3 = () => {
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
+
+  const usersHaveErrors =
+    usersValidation.disabledNext || userGroupsValidation.disabledNext;
+
+  const baseSettingsHasErrors =
+    detailsValidation.disabledNext ||
+    registrationValidation.disabledNext ||
+    snapshotValidation.disabledNext ||
+    (restrictions.users.required && usersHaveErrors);
+
+  const advancedSettingsHasErrors =
+    filesystemValidation.disabledNext ||
+    timezoneValidation.disabledNext ||
+    localeValidation.disabledNext ||
+    hostnameValidation.disabledNext ||
+    kernelValidation.disabledNext ||
+    servicesValidation.disabledNext ||
+    firewallValidation.disabledNext ||
+    firstBootValidation.disabledNext ||
+    (!(restrictions.users.shouldHide || restrictions.users.required) &&
+      usersHaveErrors);
 
   useEffect(() => {
     const hasUrlParams =
@@ -212,6 +235,29 @@ export const CreateImageWizard3 = () => {
     }
   };
 
+  const CustomStatusNavItem = (
+    step: WizardStepType,
+    activeStep: WizardStepType,
+    _steps: WizardStepType[],
+    goToStepByIndex: (index: number) => void,
+  ) => {
+    const status = (step.id !== activeStep.id && step.status) || 'default';
+
+    return (
+      <WizardNavItem
+        key={step.id}
+        id={step.id}
+        content={step.name}
+        isCurrent={activeStep.id === step.id}
+        isDisabled={step.isDisabled || (mode !== 'edit' && !step.isVisited)}
+        isVisited={step.isVisited || false}
+        stepIndex={step.index}
+        onClick={() => goToStepByIndex(step.index)}
+        status={status}
+      />
+    );
+  };
+
   const REVIEW_STEP_INDEX = 4;
   const startIndex = mode === 'edit' ? REVIEW_STEP_INDEX : 1;
 
@@ -253,17 +299,12 @@ export const CreateImageWizard3 = () => {
         <WizardStep
           name='Base settings'
           id='base-settings-step'
+          navItem={CustomStatusNavItem}
+          status={baseSettingsHasErrors ? 'error' : 'default'}
           footer={
             <CustomWizardFooter
               disableBack={true}
-              disableNext={
-                detailsValidation.disabledNext ||
-                registrationValidation.disabledNext ||
-                snapshotValidation.disabledNext ||
-                (restrictions.users.required &&
-                  (usersValidation.disabledNext ||
-                    userGroupsValidation.disabledNext))
-              }
+              disableNext={baseSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
           }
@@ -302,6 +343,8 @@ export const CreateImageWizard3 = () => {
         <WizardStep
           name='Repositories and packages'
           id='content-step'
+          navItem={CustomStatusNavItem}
+          status='default'
           isHidden={
             restrictions.repositories.shouldHide &&
             restrictions.packages.shouldHide
@@ -329,6 +372,8 @@ export const CreateImageWizard3 = () => {
         <WizardStep
           name='Advanced settings'
           id='advance-settings-step'
+          navItem={CustomStatusNavItem}
+          status={advancedSettingsHasErrors ? 'error' : 'default'}
           isHidden={
             restrictions.filesystem.shouldHide &&
             restrictions.timezone.shouldHide &&
@@ -342,21 +387,7 @@ export const CreateImageWizard3 = () => {
           }
           footer={
             <CustomWizardFooter
-              disableNext={
-                filesystemValidation.disabledNext ||
-                timezoneValidation.disabledNext ||
-                localeValidation.disabledNext ||
-                hostnameValidation.disabledNext ||
-                kernelValidation.disabledNext ||
-                servicesValidation.disabledNext ||
-                firewallValidation.disabledNext ||
-                firstBootValidation.disabledNext ||
-                (!(
-                  restrictions.users.shouldHide || restrictions.users.required
-                ) &&
-                  (usersValidation.disabledNext ||
-                    userGroupsValidation.disabledNext))
-              }
+              disableNext={advancedSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
           }
@@ -408,6 +439,8 @@ export const CreateImageWizard3 = () => {
         <WizardStep
           name='Review'
           id='review-step'
+          navItem={CustomStatusNavItem}
+          status='default'
           footer={<ReviewWizardFooter />}
         >
           <Form>
