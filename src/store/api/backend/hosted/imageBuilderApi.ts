@@ -880,9 +880,16 @@ export type BlueprintExportResponse = {
 export type ComposeResponse = {
   id: string;
 };
+export type BootcBody = {
+  /** Image name from the bootc distributions list. Must match an image_name
+    returned by GET /distributions?kind=bootc.
+     */
+  reference: string;
+};
 export type ClientId = "api" | "ui" | "mcp";
 export type ComposeRequest = {
   distribution: Distributions;
+  bootc?: BootcBody | undefined;
   image_name?: string | undefined;
   image_description?: string | undefined;
   client_id?: ClientId | undefined;
