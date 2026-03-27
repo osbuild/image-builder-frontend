@@ -7,6 +7,7 @@ import {
   LabelGroup,
   TextInputGroup,
   TextInputGroupMain,
+  Truncate,
 } from '@patternfly/react-core/dist/esm';
 import { UnknownAction } from 'redux';
 
@@ -175,10 +176,12 @@ const LabelInput = ({
                   color='blue'
                   isCompact={isCompact}
                   onClose={(e) => handleRemoveItem(e, labelItem)}
+                  closeBtnAriaLabel={`Close ${labelItem}`}
                 >
-                  {labelItem.length > truncateLength
-                    ? `${labelItem.slice(0, truncateLength)}...`
-                    : labelItem}
+                  <Truncate
+                    content={labelItem}
+                    maxCharsDisplayed={truncateLength}
+                  />
                 </Label>
               ))}
             </LabelGroup>

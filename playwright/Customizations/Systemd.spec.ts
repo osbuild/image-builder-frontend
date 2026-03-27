@@ -67,7 +67,7 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(frame.getByText('crond.service')).toBeVisible();
     await expect(frame.getByText('rsyslog.service')).toBeVisible();
     await expect(frame.getByText('chronyd.service')).toBeVisible();
-    await expect(frame.getByText('NetworkManager.servi...')).toBeVisible();
+    await expect(frame.getByText('NetworkManager.servi')).toBeVisible(); // truncated
     await expect(frame.getByText('auditd.service')).toBeVisible();
     await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
   });
@@ -162,7 +162,7 @@ test('Create a blueprint with Systemd customization', async ({
       'sssd.service',
       'tuned.service',
       'auditd.service',
-      'NetworkManager.servi...',
+      'NetworkManager.service',
       'chronyd.service',
       'rsyslog.service',
       'crond.service',

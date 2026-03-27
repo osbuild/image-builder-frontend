@@ -181,7 +181,7 @@ test('Create a blueprint with Kernel customization', async ({
     ).toBeVisible();
     await expect(frame.getByText('rootwait')).toBeVisible();
     await expect(frame.getByText('console=tty0')).toBeVisible();
-    await expect(frame.getByText('console=ttyS0,115200...')).toBeVisible();
+    await expect(frame.getByText('console=ttyS0,115200')).toBeVisible(); //truncated
     await expect(frame.getByText('new=argument')).toBeVisible();
     await expect(frame.getByText('xxnosmp')).toBeHidden();
     await frame.getByRole('button', { name: 'Cancel' }).click();
