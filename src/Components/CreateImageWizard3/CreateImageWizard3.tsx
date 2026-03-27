@@ -12,13 +12,25 @@ import {
   WizardHeader,
   WizardStep,
 } from '@patternfly/react-core';
+import { useSearchParams } from 'react-router-dom';
 
 import { useGetBlueprintQuery } from '@/store/api/backend';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { loadWizardState } from '@/store/slices/wizard';
+import {
+  addImageType,
+  changeArchitecture,
+  changeDistribution,
+  changeTimezone,
+  initializeWizard,
+  loadWizardState,
+  selectDistribution,
+  selectImageTypes,
+  selectTimezone,
+} from '@/store/slices/wizard';
 import {
   closeWizardModal,
+  openWizardModal,
   selectIsWizardModalOpen,
   selectWizardModalMode,
 } from '@/store/slices/wizardModal';
@@ -26,7 +38,15 @@ import {
 import CustomWizardFooter from './components/CustomWizardFooter';
 import ReviewWizardFooter from './components/ReviewWizardFooter';
 
+import {
+  AARCH64,
+  DEFAULT_TIMEZONE,
+  RHEL_10,
+  RHEL_8,
+  RHEL_9,
+} from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import DetailsStep from '../CreateImageWizard/steps/Details';
 import FileSystemStep from '../CreateImageWizard/steps/FileSystem';
 import FirewallStep from '../CreateImageWizard/steps/Firewall';
@@ -65,11 +85,16 @@ export const CreateImageWizard3 = () => {
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
     { id: blueprintId || '' },
     { skip: !(mode === 'edit' && !!blueprintId) },
   );
+
+  const distribution = useAppSelector(selectDistribution);
+  const timezone = useAppSelector(selectTimezone);
+  const targetEnvironments = useAppSelector(selectImageTypes);
 
   // Validation hooks
   const detailsValidation = useDetailsValidation();
@@ -85,14 +110,96 @@ export const CreateImageWizard3 = () => {
   const firstBootValidation = useFirstBootValidation();
 
   useEffect(() => {
+    const hasUrlParams =
+      searchParams.has('release') ||
+      searchParams.has('target') ||
+      searchParams.has('arch');
+
+    if (hasUrlParams && !showWizardModal) {
+      dispatch(openWizardModal('create'));
+      return;
+    }
+
+    if (mode === 'create' && showWizardModal) {
+      dispatch(initializeWizard());
+      if (searchParams.get('release') === 'rhel8') {
+        dispatch(changeDistribution(RHEL_8));
+      }
+      if (searchParams.get('release') === 'rhel9') {
+        dispatch(changeDistribution(RHEL_9));
+      }
+      if (searchParams.get('release') === 'rhel10') {
+        dispatch(changeDistribution(RHEL_10));
+      }
+      if (searchParams.get('arch') === AARCH64) {
+        dispatch(changeArchitecture(AARCH64));
+      }
+      if (searchParams.get('target') === 'iso') {
+        dispatch(addImageType('image-installer'));
+      }
+      if (searchParams.get('target') === 'qcow2') {
+        dispatch(addImageType('guest-image'));
+      }
+
+      const initializeHostDistro = async () => {
+        const distro = await getHostDistro();
+        dispatch(changeDistribution(distro));
+      };
+
+      const initializeHostArch = async () => {
+        const arch = await getHostArch();
+        dispatch(changeArchitecture(arch));
+      };
+
+      if (isOnPremise) {
+        if (!searchParams.get('release')) {
+          initializeHostDistro();
+        }
+        if (!searchParams.get('arch')) {
+          initializeHostArch();
+        }
+      }
+    }
+    // This useEffect hook should run *only* when the modal opens in create mode
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, showWizardModal]);
+
+  useEffect(() => {
     if (mode === 'edit' && blueprintId && blueprintDetails) {
       const editBlueprintState = mapRequestToState(blueprintDetails);
       dispatch(loadWizardState(editBlueprintState));
     }
   }, [mode, blueprintId, blueprintDetails, dispatch]);
 
+  useEffect(() => {
+    if (mode !== 'create') {
+      return;
+    }
+
+    const defaultTimezone =
+      distribution === RHEL_10 || targetEnvironments.includes('azure')
+        ? DEFAULT_TIMEZONE
+        : 'America/New_York';
+
+    if (!timezone) {
+      dispatch(changeTimezone(defaultTimezone));
+    }
+  }, [distribution, targetEnvironments, mode, dispatch]);
+
   const handleClose = () => {
     dispatch(closeWizardModal());
+
+    if (
+      searchParams.has('release') ||
+      searchParams.has('target') ||
+      searchParams.has('arch')
+    ) {
+      const params = new URLSearchParams(searchParams);
+      params.delete('release');
+      params.delete('target');
+      params.delete('arch');
+      setSearchParams(params);
+    }
   };
 
   const REVIEW_STEP_INDEX = 4;
