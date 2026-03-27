@@ -188,6 +188,7 @@ export const CreateImageWizard3 = () => {
 
   const handleClose = () => {
     dispatch(closeWizardModal());
+    dispatch(initializeWizard());
 
     if (
       searchParams.has('release') ||
