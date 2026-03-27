@@ -87,8 +87,8 @@ test('Create a blueprint with Kernel customization', async ({
   await test.step('Collapse controls disappear when items drop below threshold', async () => {
     await frame.getByText('2 more').click();
 
-    await frame.getByRole('button', { name: 'Close debug' }).click();
-    await frame.getByRole('button', { name: 'Close console=tty0' }).click();
+    await frame.getByRole('button', { name: 'Remove debug' }).click();
+    await frame.getByRole('button', { name: 'Remove console=tty0' }).click();
 
     await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
     await expect(frame.getByText('Show less')).toBeHidden();
@@ -99,10 +99,10 @@ test('Create a blueprint with Kernel customization', async ({
   });
 
   await test.step('Clean up chip collapse test chips', async () => {
-    await frame.getByRole('button', { name: 'Close splash' }).click();
-    await frame.getByRole('button', { name: 'Close quiet' }).click();
-    await frame.getByRole('button', { name: 'Close nosmp' }).click();
-    await frame.getByRole('button', { name: 'Close rootwait' }).click();
+    await frame.getByRole('button', { name: 'Remove splash' }).click();
+    await frame.getByRole('button', { name: 'Remove quiet' }).click();
+    await frame.getByRole('button', { name: 'Remove nosmp' }).click();
+    await frame.getByRole('button', { name: 'Remove rootwait' }).click();
   });
 
   await test.step('Select and fill the Kernel step', async () => {
@@ -145,7 +145,7 @@ test('Create a blueprint with Kernel customization', async ({
     await frame.getByRole('option', { name: 'kernel-debug' }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('new=argument');
     await frame.getByPlaceholder('Add kernel argument').press('Enter');
-    await frame.getByRole('button', { name: 'Close xxnosmp' }).click();
+    await frame.getByRole('button', { name: 'Remove xxnosmp' }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })

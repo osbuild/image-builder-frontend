@@ -48,7 +48,7 @@ export const removeService = async (
   service: string,
 ) => {
   const removeButton = await screen.findByRole('button', {
-    name: `Close ${service}`,
+    name: `Remove ${service}`,
   });
   await clickWithWait(user, removeButton);
 };

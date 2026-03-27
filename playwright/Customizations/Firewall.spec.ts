@@ -175,10 +175,10 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByPlaceholder('Enter firewalld service').nth(1).fill('y');
     await page.keyboard.press('Enter');
 
-    await frame.getByRole('button', { name: 'Close 80:tcp' }).click();
-    await frame.getByRole('button', { name: 'Close 443:udp' }).click();
-    await frame.getByRole('button', { name: 'Close cloud-init' }).click();
-    await frame.getByRole('button', { name: 'Close telnet.socket' }).click();
+    await frame.getByRole('button', { name: 'Remove 80:tcp' }).click();
+    await frame.getByRole('button', { name: 'Remove 443:udp' }).click();
+    await frame.getByRole('button', { name: 'Remove cloud-init' }).click();
+    await frame.getByRole('button', { name: 'Remove telnet.socket' }).click();
 
     await expect(frame.getByText('90:tcp')).toBeVisible();
     await expect(frame.getByText('x').nth(0)).toBeVisible();
@@ -293,8 +293,8 @@ test('Firewall fields collapse chips with show less / more', async ({
   await test.step('Ports: collapse controls disappear when items drop below threshold', async () => {
     await frame.getByText('2 more').click();
 
-    await frame.getByRole('button', { name: 'Close 5432:tcp' }).click();
-    await frame.getByRole('button', { name: 'Close 3000:tcp' }).click();
+    await frame.getByRole('button', { name: 'Remove 5432:tcp' }).click();
+    await frame.getByRole('button', { name: 'Remove 3000:tcp' }).click();
 
     await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
     await expect(frame.getByText('Show less')).toBeHidden();

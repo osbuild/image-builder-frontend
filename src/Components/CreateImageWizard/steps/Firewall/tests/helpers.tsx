@@ -48,7 +48,7 @@ export const addDisabledService = async (
 
 export const removeItem = async (user: UserEventInstance, item: string) => {
   const removeButton = await screen.findByRole('button', {
-    name: `Close ${item}`,
+    name: `Remove ${item}`,
   });
   await clickWithWait(user, removeButton);
 };
