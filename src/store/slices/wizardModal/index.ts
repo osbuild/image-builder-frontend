@@ -29,8 +29,8 @@ export const wizardModalSlice = createSlice({
       state.isModalOpen = true;
       state.mode = action.payload;
     },
-    closeWizardModal: (state) => {
-      state.isModalOpen = false;
+    closeWizardModal: () => {
+      return initialState;
     },
   },
 });
