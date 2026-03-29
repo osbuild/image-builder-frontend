@@ -59,7 +59,7 @@
     "chart.js": "4.5.1",
     "chartjs-adapter-moment": "1.0.1",
     "chartjs-plugin-annotation": "3.1.0",
-    "copy-webpack-plugin": "13.0.1",
+    "copy-webpack-plugin": "14.0.0",
     "css-loader": "7.1.4",
     "eslint": "9.39.2",
     "eslint-plugin-import": "2.32.0",
