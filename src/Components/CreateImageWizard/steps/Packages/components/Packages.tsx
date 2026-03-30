@@ -13,8 +13,6 @@ import {
   Tab,
   Tabs,
   TabTitleText,
-  ToggleGroup,
-  ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -84,18 +82,16 @@ const Packages = () => {
     uuid: template,
   });
 
-  const {
-    data: { data: reposInTemplate = [] } = {},
-    isLoading: isLoadingReposInTemplate,
-  } = useListRepositoriesQuery({
-    contentType: 'rpm',
-    limit: 100,
-    offset: 0,
-    uuid:
-      templateData && templateData.repository_uuids
-        ? templateData.repository_uuids.join(',')
-        : '',
-  });
+  const { data: { data: reposInTemplate = [] } = {} } =
+    useListRepositoriesQuery({
+      contentType: 'rpm',
+      limit: 100,
+      offset: 0,
+      uuid:
+        templateData && templateData.repository_uuids
+          ? templateData.repository_uuids.join(',')
+          : '',
+    });
 
   const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
     useGetArchitecturesQuery({
@@ -120,9 +116,6 @@ const Packages = () => {
       origin: ContentOrigin.EXTERNAL,
     });
 
-  const [currentlyRemovedPackages, setCurrentlyRemovedPackages] = useState<
-    IBPackageWithRepositoryInfo[]
-  >([]);
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
   const [isSelectingPackage, setIsSelectingPackage] = useState<
     IBPackageWithRepositoryInfo | undefined
@@ -132,7 +125,6 @@ const Packages = () => {
   >();
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
-  const [toggleSelected, setToggleSelected] = useState('toggle-available');
   const [activeTabKey, setActiveTabKey] = useState(Repos.INCLUDED);
   const [packageType, setPackageType] = useState<'packages' | 'groups'>(
     'packages',
@@ -157,13 +149,6 @@ const Packages = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm.trim());
   const debouncedSearchTermLengthOf1 = debouncedSearchTerm.length === 1;
-
-  const showPackages =
-    packageType === 'packages' ||
-    (toggleSelected === 'toggle-selected' && debouncedSearchTerm === '');
-  const showGroups =
-    packageType === 'groups' ||
-    (toggleSelected === 'toggle-selected' && debouncedSearchTerm === '');
 
   const [
     searchRecommendedRpms,
@@ -472,34 +457,19 @@ const Packages = () => {
       ['asc', 'desc', 'asc', 'asc'],
     );
 
-    if (toggleSelected === 'toggle-available') {
-      if (activeTabKey === Repos.INCLUDED) {
-        return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
-      }
-      return unpackedData.filter((pkg) => pkg.repository === 'recommended');
-    } else {
-      const selectedPackages = [...packages];
-      if (currentlyRemovedPackages.length > 0) {
-        selectedPackages.push(...currentlyRemovedPackages);
-      }
-      if (activeTabKey === Repos.INCLUDED) {
-        return selectedPackages;
-      } else {
-        return [];
-      }
+    if (activeTabKey === Repos.INCLUDED) {
+      return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
     }
+    return unpackedData.filter((pkg) => pkg.repository === 'recommended');
   }, [
-    currentlyRemovedPackages,
     dataCustomPackages,
     dataDistroPackages,
     dataRecommendedPackages,
-    debouncedSearchTerm,
     isSuccessCustomPackages,
     isSuccessDistroPackages,
     isSuccessRecommendedPackages,
-    packages,
-    toggleSelected,
     activeTabKey,
+    debouncedSearchTerm,
   ]);
 
   const transformedGroups = useMemo(() => {
@@ -536,49 +506,21 @@ const Packages = () => {
       );
     }
 
-    if (toggleSelected === 'toggle-available') {
-      if (activeTabKey === Repos.INCLUDED) {
-        return combinedGroupData.filter(
-          (pkg) => pkg.repository !== 'recommended',
-        );
-      } else {
-        return combinedGroupData.filter(
-          (pkg) => pkg.repository === 'recommended',
-        );
-      }
-    } else {
-      const selectedGroups = [...groups];
-      if (activeTabKey === Repos.INCLUDED) {
-        return selectedGroups;
-      } else {
-        return [];
-      }
+    if (activeTabKey === Repos.INCLUDED) {
+      return combinedGroupData.filter(
+        (pkg) => pkg.repository !== 'recommended',
+      );
     }
+    return combinedGroupData.filter((pkg) => pkg.repository === 'recommended');
   }, [
     dataDistroGroups,
     dataCustomGroups,
     dataRecommendedGroups,
-    debouncedSearchTerm,
     isSuccessDistroGroups,
     isSuccessCustomGroups,
     isSuccessRecommendedGroups,
-    groups,
-    toggleSelected,
     activeTabKey,
   ]);
-
-  const handleFilterToggleClick = (
-    event:
-      | MouseEvent
-      | React.KeyboardEvent<Element>
-      | React.MouseEvent<HTMLElement, MouseEvent>,
-    _selected: boolean,
-  ) => {
-    const id = (event.currentTarget as HTMLElement).id;
-    setCurrentlyRemovedPackages([]);
-    setPage(1);
-    setToggleSelected(id);
-  };
 
   const handleSetPage = (
     _:
@@ -608,7 +550,6 @@ const Packages = () => {
   ) => {
     if (tabIndex === undefined) return;
     if (tabIndex !== activeTabKey) {
-      setCurrentlyRemovedPackages([]);
       setPage(1);
       setActiveTabKey(tabIndex as Repos);
     }
@@ -683,7 +624,6 @@ const Packages = () => {
                 setIsSelectingPackage={setIsSelectingPackage}
                 setIsSelectingGroup={setIsSelectingGroup}
                 setActiveTabKey={setActiveTabKey}
-                setToggleSelected={setToggleSelected}
                 activeStream={activeStream}
                 setActiveStream={setActiveStream}
                 setActiveSortIndex={setActiveSortIndex}
@@ -691,40 +631,10 @@ const Packages = () => {
                 setPage={setPage}
               />
             </ToolbarItem>
-            <ToolbarItem>
-              <ToggleGroup>
-                <ToggleGroupItem
-                  text='Available'
-                  buttonId='toggle-available'
-                  isSelected={toggleSelected === 'toggle-available'}
-                  onChange={handleFilterToggleClick}
-                />
-                <ToggleGroupItem
-                  text={`Selected${
-                    packages.length + groups.length === 0
-                      ? ''
-                      : packages.length + groups.length <= 100
-                        ? ` (${packages.length + groups.length})`
-                        : ' (100+)'
-                  }`}
-                  buttonId='toggle-selected'
-                  isSelected={toggleSelected === 'toggle-selected'}
-                  onChange={handleFilterToggleClick}
-                />
-              </ToggleGroup>
-            </ToolbarItem>
             <ToolbarItem variant='pagination'>
               <Pagination
                 data-testid='packages-pagination-top'
-                itemCount={
-                  searchTerm === '' && toggleSelected === 'toggle-available'
-                    ? 0
-                    : showPackages && showGroups
-                      ? transformedPackages.length + transformedGroups.length
-                      : showPackages
-                        ? transformedPackages.length
-                        : transformedGroups.length
-                }
+                itemCount={packages.length + groups.length}
                 perPage={perPage}
                 page={page}
                 onSetPage={handleSetPage}
@@ -768,7 +678,6 @@ const Packages = () => {
         setIsRepoModalOpen={setIsRepoModalOpen}
         setIsSelectingPackage={setIsSelectingPackage}
         setActiveStream={setActiveStream}
-        setCurrentlyRemovedPackages={setCurrentlyRemovedPackages}
         packages={packages}
         groups={groups}
         modules={modules}
@@ -777,39 +686,14 @@ const Packages = () => {
         setActiveSortIndex={setActiveSortIndex}
         activeSortDirection={activeSortDirection}
         setActiveSortDirection={setActiveSortDirection}
-        transformedPackages={transformedPackages}
         activeStream={activeStream}
         perPage={perPage}
         page={page}
-        showGroups={showGroups}
-        showPackages={showPackages}
-        transformedGroups={transformedGroups}
-        toggleSelected={toggleSelected}
-        isLoadingRecommendedPackages={isLoadingRecommendedPackages}
-        isLoadingDistroPackages={isLoadingDistroPackages}
-        isLoadingCustomPackages={isLoadingCustomPackages}
-        isLoadingRecommendedGroups={isLoadingRecommendedGroups}
-        isLoadingDistroGroups={isLoadingDistroGroups}
-        isLoadingCustomGroups={isLoadingCustomGroups}
-        isLoadingReposInTemplate={isLoadingReposInTemplate}
-        isSuccessRecommendedPackages={isSuccessRecommendedPackages}
         isSelectingPackage={isSelectingPackage}
-        debouncedSearchTerm={debouncedSearchTerm}
-        activeTabKey={activeTabKey}
-        setActiveTabKey={setActiveTabKey}
-        template={template}
       />
       <Pagination
         data-testid='packages-pagination-bottom'
-        itemCount={
-          searchTerm === '' && toggleSelected === 'toggle-available'
-            ? 0
-            : showPackages && showGroups
-              ? transformedPackages.length + transformedGroups.length
-              : showPackages
-                ? transformedPackages.length
-                : transformedGroups.length
-        }
+        itemCount={packages.length + groups.length}
         perPage={perPage}
         page={page}
         onSetPage={handleSetPage}
