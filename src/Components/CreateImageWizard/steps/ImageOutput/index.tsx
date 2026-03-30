@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
-import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeBlueprintName,
   selectArchitecture,
@@ -25,7 +24,6 @@ import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
   const dispatch = useAppDispatch();
   const isImageMode = useAppSelector(selectIsImageMode);
   const blueprintName = useAppSelector(selectBlueprintName);
@@ -49,10 +47,7 @@ const ImageOutputStep = () => {
         Select the release, architecture, and a target environment to build your
         image. Learn more about <DocumentationButton />
       </Content>
-      {isOnPremise &&
-        // The distribution is 'image-mode' when the blueprint is in image mode
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        !distribution?.startsWith('fedora') && <BlueprintMode />}
+      {!(distribution as string).startsWith('fedora') && <BlueprintMode />}
       {isImageMode && <ImageSourceSelect />}
       {!isImageMode && (
         <>

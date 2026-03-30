@@ -90,6 +90,7 @@ export {
   useComposeImageMutation,
   useExportBlueprintQuery,
   useFixupBlueprintMutation,
+  useGetDistributionsQuery,
   useGetPackagesQuery,
   useLazyExportBlueprintQuery,
   useLazyGetPackagesQuery,
