@@ -244,7 +244,7 @@ const PackagesTable = ({
   ]);
 
   return (
-    <Table variant='compact' data-testid='packages-table'>
+    <Table data-testid='packages-table'>
       <Thead>
         <Tr>
           <Th width={10} aria-label='Expanded' />
