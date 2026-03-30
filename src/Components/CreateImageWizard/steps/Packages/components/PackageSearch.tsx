@@ -60,7 +60,6 @@ type PackageSearchProps = {
   ) => void;
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   setActiveTabKey: (value: Repos) => void;
-  setToggleSelected: (value: string) => void;
   activeStream: string;
   setActiveStream: (value: string) => void;
   setActiveSortIndex: (value: number) => void;
@@ -87,7 +86,6 @@ const PackageSearch = ({
   setIsSelectingPackage,
   setIsSelectingGroup,
   setActiveTabKey,
-  setToggleSelected,
   activeStream,
   setActiveStream,
   setActiveSortIndex,
@@ -190,7 +188,6 @@ const PackageSearch = ({
     setSearchTerm(value);
     setIsOpen(true);
     setActiveTabKey(Repos.INCLUDED);
-    setToggleSelected('toggle-available');
     setActiveStream('');
     setActiveSortIndex(0);
     setActiveSortDirection('asc');
