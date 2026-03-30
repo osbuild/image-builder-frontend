@@ -276,6 +276,7 @@ export const CreateImageWizard3 = () => {
               Your selections below may automatically add required
               configurations in subsequent steps.
             </Content>
+            {/* Conditionally render steps with dividers between them */}
             {[
               <DetailsStep key='details' />,
               <ImageOutputStep key='image-output' />,
@@ -319,20 +320,10 @@ export const CreateImageWizard3 = () => {
               own custom content. The selections on this page may automatically
               add required configurations in subsequent steps.
             </Content>
-            {[
-              !restrictions.repositories.shouldHide && (
-                <RepositoriesStep key='repositories' />
-              ),
-              !restrictions.packages.shouldHide && (
-                <PackagesStep key='packages' />
-              ),
-            ]
-              .filter(Boolean)
-              .flatMap((component, index, array) =>
-                index < array.length - 1
-                  ? [component, <Divider key={`divider-${index}`} />]
-                  : [component],
-              )}
+            {!restrictions.repositories.shouldHide && <RepositoriesStep />}
+            {!restrictions.repositories.shouldHide &&
+              !restrictions.packages.shouldHide && <Divider />}
+            {!restrictions.packages.shouldHide && <PackagesStep />}
           </Form>
         </WizardStep>
         <WizardStep
@@ -380,6 +371,7 @@ export const CreateImageWizard3 = () => {
               configurations like kernel and file systems, and security rules
               including firewall and user access.
             </Content>
+            {/* Conditionally render steps with dividers between them */}
             {[
               !restrictions.filesystem.shouldHide && (
                 <FileSystemStep key='filesystem' />
