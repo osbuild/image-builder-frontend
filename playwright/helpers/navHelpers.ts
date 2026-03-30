@@ -7,13 +7,12 @@ import {
   sleep,
   togglePreview,
 } from './helpers';
-
 import {
   type ImageTarget,
   selectArch,
   selectDistro,
   selectTarget,
-} from '../BootTests/helpers/targetChooser';
+} from './targetChooser';
 
 /**
  * Opens the wizard, fills out the "Image Output" step according to the parameters, and navigates to the optional steps
