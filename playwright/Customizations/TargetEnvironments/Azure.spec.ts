@@ -1,14 +1,11 @@
 import { expect } from '@playwright/test';
+import { selectTarget } from 'playwright/helpers/targetChooser';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
 import { ensureAuthenticated } from '../../helpers/login';
-import {
-  fillInImageOutput,
-  ibFrame,
-  navigateToLandingPage,
-} from '../../helpers/navHelpers';
+import { ibFrame, navigateToLandingPage } from '../../helpers/navHelpers';
 import {
   createBlueprint,
   deleteBlueprint,
@@ -31,7 +28,9 @@ test('Create a blueprint with Azure target', async ({ page, cleanup }) => {
   const frame = ibFrame(page);
 
   await test.step('Select Azure target and verify field behavior', async () => {
-    await fillInImageOutput(frame, 'azure');
+    await page.getByRole('button', { name: 'Create image blueprint' }).click();
+
+    await selectTarget(frame, 'azure');
 
     const nextButton = frame.getByRole('button', { name: 'Next' });
     await expect(nextButton).toBeDisabled();
@@ -82,7 +81,10 @@ test('Create a blueprint with Azure target', async ({ page, cleanup }) => {
 
   await test.step('Edit blueprint and verify Azure config persisted', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByRole('button', { name: 'Azure', exact: true }).click();
+    await frame
+      .getByLabel('Wizard steps')
+      .getByRole('button', { name: 'Image output' })
+      .click();
 
     const tenantInput = frame.getByRole('textbox', {
       name: /azure tenant guid/i,
@@ -120,7 +122,10 @@ test('Create a blueprint with Azure target', async ({ page, cleanup }) => {
 
   await test.step('Re-edit and verify V1 persisted', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByRole('button', { name: 'Azure', exact: true }).click();
+    await frame
+      .getByLabel('Wizard steps')
+      .getByRole('button', { name: 'Image output' })
+      .click();
 
     await expect(
       frame.getByRole('button', { name: /Generation 1/i }),
@@ -148,7 +153,9 @@ test('Deselecting Azure removes its config from the blueprint', async ({
   const frame = ibFrame(page);
 
   await test.step('Select Azure and fill in fields', async () => {
-    await fillInImageOutput(frame, 'azure');
+    await page.getByRole('button', { name: 'Create image blueprint' }).click();
+
+    await selectTarget(frame, 'azure');
 
     await frame
       .getByRole('textbox', { name: /azure tenant guid/i })
@@ -159,18 +166,21 @@ test('Deselecting Azure removes its config from the blueprint', async ({
     await frame
       .getByRole('textbox', { name: /resource group/i })
       .fill(RESOURCE_GROUP);
+
+    await frame.getByRole('button', { name: 'Next' }).click();
   });
 
   await test.step('Go back and deselect Azure', async () => {
     await frame
-      .getByRole('button', { name: 'Image output', exact: true })
+      .getByLabel('Wizard steps')
+      .getByRole('button', { name: 'Image output' })
       .click();
 
-    await frame.getByRole('checkbox', { name: /Microsoft Azure/ }).click();
+    await selectTarget(frame, 'azure');
 
     await expect(
-      frame.getByRole('button', { name: 'Azure', exact: true }),
-    ).toBeHidden();
+      frame.getByRole('checkbox', { name: 'Microsoft Azure' }),
+    ).not.toBeChecked();
   });
 
   await test.step('Select Guest Image and continue', async () => {

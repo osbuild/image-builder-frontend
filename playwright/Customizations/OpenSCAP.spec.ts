@@ -4,11 +4,11 @@ import * as path from 'path';
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { selectDistro } from '../BootTests/helpers/targetChooser';
 import { test } from '../fixtures/cleanup';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import { ibFrame, navigateToLandingPage } from '../helpers/navHelpers';
+import { selectDistro } from '../helpers/targetChooser';
 import {
   createBlueprint,
   deleteBlueprint,
