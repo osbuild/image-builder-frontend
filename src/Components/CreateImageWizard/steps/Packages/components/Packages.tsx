@@ -6,7 +6,6 @@ import {
   MenuToggleElement,
   Pagination,
   PaginationVariant,
-  SearchInput,
   Select,
   SelectList,
   SelectOption,
@@ -46,6 +45,7 @@ import {
 } from '@/store/slices/wizard';
 
 import CustomHelperText from './CustomHelperText';
+import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
 import { IncludedReposPopover, OtherReposPopover } from './RepoPopovers';
 import RepositoryModal from './RepositoryModal';
@@ -567,27 +567,6 @@ const Packages = () => {
     activeTabKey,
   ]);
 
-  const handleSearch = async (
-    event: React.FormEvent<HTMLInputElement>,
-    selection: string,
-  ) => {
-    setSearchTerm(selection);
-    setActiveTabKey(Repos.INCLUDED);
-    setToggleSelected('toggle-available');
-    setActiveStream('');
-    setActiveSortIndex(0);
-    setActiveSortDirection('asc');
-    setPage(1);
-  };
-
-  const handleClear = async () => {
-    setSearchTerm('');
-    setActiveTabKey(Repos.INCLUDED);
-    setActiveStream('');
-    setActiveSortIndex(0);
-    setActiveSortDirection('asc');
-  };
-
   const handleFilterToggleClick = (
     event:
       | MouseEvent
@@ -685,13 +664,30 @@ const Packages = () => {
               </FormGroup>
             </ToolbarItem>
             <ToolbarItem>
-              <SearchInput
-                type='text'
-                aria-label='Search packages'
-                data-testid='packages-search-input'
-                value={searchTerm}
-                onChange={handleSearch}
-                onClear={() => handleClear()}
+              <PackageSearch
+                packageType={packageType}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                transformedPackages={transformedPackages}
+                transformedGroups={transformedGroups}
+                isLoadingDistroPackages={isLoadingDistroPackages}
+                isLoadingCustomPackages={isLoadingCustomPackages}
+                isLoadingRecommendedPackages={isLoadingRecommendedPackages}
+                isLoadingDistroGroups={isLoadingDistroGroups}
+                isLoadingCustomGroups={isLoadingCustomGroups}
+                isLoadingRecommendedGroups={isLoadingRecommendedGroups}
+                debouncedSearchTerm={debouncedSearchTerm}
+                isSuccessEpelRepo={isSuccessEpelRepo}
+                epelRepo={epelRepo}
+                setIsRepoModalOpen={setIsRepoModalOpen}
+                setIsSelectingPackage={setIsSelectingPackage}
+                setIsSelectingGroup={setIsSelectingGroup}
+                setActiveTabKey={setActiveTabKey}
+                setToggleSelected={setToggleSelected}
+                setActiveStream={setActiveStream}
+                setActiveSortIndex={setActiveSortIndex}
+                setActiveSortDirection={setActiveSortDirection}
+                setPage={setPage}
               />
             </ToolbarItem>
             <ToolbarItem>
