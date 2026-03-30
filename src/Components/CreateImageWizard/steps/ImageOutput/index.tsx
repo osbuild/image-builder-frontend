@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 
-import { Content, Form, Title } from '@patternfly/react-core';
+import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
 
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  changeArchitecture,
   changeBlueprintName,
   selectArchitecture,
   selectBlueprintName,
@@ -21,17 +22,20 @@ import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
   const dispatch = useAppDispatch();
   const isImageMode = useAppSelector(selectIsImageMode);
   const blueprintName = useAppSelector(selectBlueprintName);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const isCustomName = useAppSelector(selectIsCustomName);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageModeEnabled = useFlag('image-builder.image-mode.enabled');
+  const isHostedImageMode = isImageMode && !isOnPremise;
 
   useEffect(() => {
     const defaultName = generateDefaultName(distribution, arch);
@@ -39,6 +43,12 @@ const ImageOutputStep = () => {
       dispatch(changeBlueprintName(defaultName));
     }
   }, [dispatch, distribution, arch, isCustomName]);
+
+  useEffect(() => {
+    if (isHostedImageMode) {
+      dispatch(changeArchitecture('x86_64'));
+    }
+  }, [dispatch, isHostedImageMode]);
 
   return (
     <Form>
@@ -49,11 +59,10 @@ const ImageOutputStep = () => {
         Select the release, architecture, and a target environment to build your
         image. Learn more about <DocumentationButton />
       </Content>
-      {isOnPremise &&
-        // The distribution is 'image-mode' when the blueprint is in image mode
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        !distribution?.startsWith('fedora') && <BlueprintMode />}
-      {isImageMode && <ImageSourceSelect />}
+      {isImageModeEnabled && !(distribution as string).startsWith('fedora') && (
+        <BlueprintMode />
+      )}
+      {isImageModeEnabled && isImageMode && <ImageSourceSelect />}
       {!isImageMode && (
         <>
           <ReleaseSelect />
@@ -61,7 +70,11 @@ const ImageOutputStep = () => {
           <ReleaseLifecycle />
         </>
       )}
-      <ArchSelect />
+      {isHostedImageMode ? (
+        <FormGroup label='Architecture'>x86_64</FormGroup>
+      ) : (
+        <ArchSelect />
+      )}
       <TargetEnvironment />
     </Form>
   );

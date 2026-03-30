@@ -39,8 +39,8 @@ export const useFlagWithEphemDefault = (
 
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
-    // case '<flag>':
-    //   return true;
+    case 'image-builder.image-mode.enabled':
+      return true;
     default:
       return false;
   }

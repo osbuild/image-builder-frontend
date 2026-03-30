@@ -10,9 +10,15 @@ import {
 } from '@patternfly/react-core';
 
 import { rhsmApi } from '@/store/api';
-import { ImageTypes, useGetArchitecturesQuery } from '@/store/api/backend';
+import {
+  BootcDistributionItem,
+  ImageTypes,
+  useGetArchitecturesQuery,
+  useGetDistributionsQuery,
+} from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices';
 import {
   addImageType,
   changeRegistrationType,
@@ -23,6 +29,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
+  selectIsImageMode,
 } from '@/store/slices/wizard';
 
 import Aws from './Aws';
@@ -34,24 +41,36 @@ const PRIVATE_CLOUD_TYPES = new Set<string>(['vsphere', 'vsphere-ova']);
 const PUBLIC_CLOUD_TYPES = new Set<string>(['aws', 'azure', 'gcp', 'oci']);
 const EMPTY_ENVIRONMENTS: string[] = [];
 
+const bootcTypeToImageType: Record<string, string> = {
+  ec2: 'aws',
+  azure: 'azure',
+  gcp: 'gcp',
+  qcow2: 'guest-image',
+};
+
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
+  const isImageMode = useAppSelector(selectIsImageMode);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
   });
 
+  const skipArchitectures = isImageMode && !isOnPremise;
+
   const {
-    isError,
-    isFetching,
-    environments: supportedEnvironments,
+    isError: isArchError,
+    isFetching: isArchFetching,
+    environments: archEnvironments,
   } = useGetArchitecturesQuery(
     {
       distribution,
     },
     {
+      skip: skipArchitectures,
       selectFromResult: ({ data, isFetching, isError }) => ({
         isError,
         isFetching,
@@ -61,6 +80,35 @@ const TargetEnvironment = () => {
           EMPTY_ENVIRONMENTS,
       }),
     },
+  );
+
+  const {
+    data: bootcDistributionsRaw,
+    isError: isBootcError,
+    isFetching: isBootcFetching,
+  } = useGetDistributionsQuery(
+    { kind: 'bootc', arch },
+    { skip: !isImageMode || isOnPremise },
+  );
+  const bootcDistributions = bootcDistributionsRaw as
+    | BootcDistributionItem[]
+    | undefined;
+
+  const isFetching = isArchFetching || isBootcFetching;
+  const isError = isArchError || isBootcError;
+
+  const supportedEnvironments = useMemo(
+    () =>
+      skipArchitectures
+        ? [
+            ...new Set(
+              bootcDistributions
+                ?.map((d) => bootcTypeToImageType[d.type])
+                .filter(Boolean) ?? EMPTY_ENVIRONMENTS,
+            ),
+          ]
+        : archEnvironments,
+    [skipArchitectures, bootcDistributions, archEnvironments],
   );
 
   const dispatch = useAppDispatch();
@@ -152,6 +200,22 @@ const TargetEnvironment = () => {
         Target environments couldn&apos;t be loaded, please refresh the page or
         try again later.
       </Alert>
+    );
+  }
+
+  if (supportedEnvironments.length === 0) {
+    return (
+      <FormGroup
+        isRequired={true}
+        role='group'
+        label='Target environments'
+        fieldId='target-environments'
+      >
+        <Content component='p'>
+          No target environments are currently available for the selected
+          architecture.
+        </Content>
+      </FormGroup>
     );
   }
 

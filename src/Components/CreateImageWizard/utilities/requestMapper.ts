@@ -687,13 +687,14 @@ export const mapExportRequestToState = (
     distribution: request.distribution,
     customizations: request.customizations,
     image_requests: image_requests,
+    bootc: request.bootc,
   };
 
   return {
     wizardMode,
-    // API needs to be updated first
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    blueprintMode: request.distribution ? 'package' : 'image',
+    blueprintMode: isImageModeDistribution(request.distribution)
+      ? 'image'
+      : 'package',
     metadata: getMetadata(request.metadata),
     env: initialState.env,
     registration: initialState.registration,

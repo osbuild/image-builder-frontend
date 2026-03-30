@@ -20,10 +20,16 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
-import { usePodmanImagesQuery } from '@/store/api/backend';
+import {
+  BootcDistributionItem,
+  useGetDistributionsQuery,
+  usePodmanImagesQuery,
+} from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeImageSource,
   ImageSource,
+  selectArchitecture,
   selectImageSource,
 } from '@/store/slices/wizard';
 
@@ -58,7 +64,7 @@ const InfoMessageContent = ({ source }: { source: string }) => {
   );
 };
 
-const ImageSourceSelect = () => {
+const PodmanImageSourceSelect = () => {
   const dispatch = useAppDispatch();
   const imageSource = useAppSelector(selectImageSource);
   const [isOpen, setIsOpen] = useState(false);
@@ -226,6 +232,122 @@ const ImageSourceSelect = () => {
       </Flex>
     </FormGroup>
   );
+};
+
+const BootcImageSourceSelect = () => {
+  const dispatch = useAppDispatch();
+  const arch = useAppSelector(selectArchitecture);
+  const imageSource = useAppSelector(selectImageSource);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const {
+    data: distributions,
+    isLoading,
+    isError,
+  } = useGetDistributionsQuery({ kind: 'bootc', arch });
+
+  const bootcDistributions = distributions as
+    | BootcDistributionItem[]
+    | undefined;
+
+  // Deduplicate by name — the API returns one entry per target type,
+  // but the dropdown should show one entry per base image.
+  const uniqueDistributions = bootcDistributions?.reduce<
+    BootcDistributionItem[]
+  >((acc, item) => {
+    if (!acc.some((d) => d.name === item.name)) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+
+  const selectedItem = uniqueDistributions?.find(
+    (d) => d.image_name === imageSource,
+  );
+
+  const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
+    dispatch(changeImageSource(selection as string));
+    setIsOpen(false);
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => {
+    if (isLoading) {
+      return (
+        <MenuToggle
+          ref={toggleRef}
+          isDisabled
+          style={
+            {
+              maxWidth: '100%',
+            } as React.CSSProperties
+          }
+        >
+          <Spinner size='sm' /> Loading bootc images...
+        </MenuToggle>
+      );
+    }
+
+    return (
+      <MenuToggle
+        ref={toggleRef}
+        onClick={() => setIsOpen(!isOpen)}
+        isExpanded={isOpen}
+        style={
+          {
+            maxWidth: '100%',
+          } as React.CSSProperties
+        }
+      >
+        {selectedItem ? selectedItem.name : 'Select a bootc image'}
+      </MenuToggle>
+    );
+  };
+
+  return (
+    <FormGroup label='Image source' isRequired>
+      {isError && (
+        <Alert
+          title='Error loading bootc images'
+          variant='danger'
+          className='pf-v6-u-mb-md'
+        >
+          Unable to load available bootc images. Please try again later.
+        </Alert>
+      )}
+      <Select
+        isOpen={isOpen}
+        selected={imageSource}
+        onSelect={onSelect}
+        onOpenChange={(open) => setIsOpen(open)}
+        toggle={toggle}
+        shouldFocusToggleOnSelect
+      >
+        <SelectList>
+          {uniqueDistributions && uniqueDistributions.length > 0 ? (
+            uniqueDistributions.map((item) => (
+              <SelectOption key={item.image_name} value={item.image_name}>
+                {item.name}
+              </SelectOption>
+            ))
+          ) : (
+            <SelectOption isDisabled>
+              No bootc images available for {arch}
+            </SelectOption>
+          )}
+        </SelectList>
+      </Select>
+    </FormGroup>
+  );
+};
+
+const ImageSourceSelect = () => {
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+
+  if (isOnPremise) {
+    return <PodmanImageSourceSelect />;
+  }
+
+  return <BootcImageSourceSelect />;
 };
 
 export default ImageSourceSelect;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Content,
@@ -9,9 +9,11 @@ import {
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
 import { Distributions } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeBlueprintMode,
   changeDistribution,
+  selectDistribution,
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
@@ -22,10 +24,14 @@ import { getHostDistro } from '../../../../../Utilities/getHostInfo';
 
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
+  const distribution = useAppSelector(selectDistribution);
   const [defaultDistro, setDefaultDistro] = useState<Distributions>(RHEL_10);
+  const previousDistro = useRef<Distributions>(RHEL_10);
 
   useEffect(() => {
+    if (!isOnPremise) return;
     const fetchDefaultDistro = async () => {
       try {
         const distro = await getHostDistro();
@@ -38,7 +44,7 @@ const BlueprintMode = () => {
     };
 
     fetchDefaultDistro();
-  }, []);
+  }, [isOnPremise]);
 
   return (
     <FormGroup label='Image type' isRequired>
@@ -50,7 +56,11 @@ const BlueprintMode = () => {
           isSelected={!isImageMode}
           onChange={() => {
             dispatch(changeBlueprintMode('package'));
-            dispatch(changeDistribution(defaultDistro));
+            dispatch(
+              changeDistribution(
+                isOnPremise ? defaultDistro : previousDistro.current,
+              ),
+            );
           }}
           aria-describedby='blueprint-mode-description'
         />
@@ -60,6 +70,9 @@ const BlueprintMode = () => {
           buttonId='blueprint-mode-image'
           isSelected={isImageMode}
           onChange={() => {
+            if (!isOnPremise) {
+              previousDistro.current = distribution as Distributions;
+            }
             dispatch(changeBlueprintMode('image'));
             dispatch(changeDistribution('image-mode'));
           }}

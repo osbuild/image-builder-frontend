@@ -180,6 +180,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 name: blueprintFromFile.name,
                 description: blueprintFromFile.description,
                 distribution: blueprintFromFile.distribution,
+                bootc: blueprintFromFile.bootc,
                 customizations: blueprintFromFile.customizations,
                 metadata: blueprintFromFile.metadata,
                 content_sources: blueprintFromFile.content_sources,
