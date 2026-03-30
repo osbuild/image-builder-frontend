@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 
 import {
   Button,
+  Content,
+  Divider,
   FormGroup,
   MenuToggle,
   MenuToggleElement,
@@ -19,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { Module } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices/env';
 import {
   addModule,
   addPackage,
@@ -36,7 +39,6 @@ import {
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-  Repos,
 } from '../packagesTypes';
 
 type PackageSearchProps = {
@@ -59,12 +61,13 @@ type PackageSearchProps = {
     value: IBPackageWithRepositoryInfo | undefined,
   ) => void;
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
-  setActiveTabKey: (value: Repos) => void;
   activeStream: string;
   setActiveStream: (value: string) => void;
   setActiveSortIndex: (value: number) => void;
   setActiveSortDirection: (value: 'asc' | 'desc') => void;
   setPage: (value: number) => void;
+  isSearchingOtherRepos: boolean;
+  setIsSearchingOtherRepos: (value: boolean) => void;
 };
 
 const PackageSearch = ({
@@ -85,14 +88,16 @@ const PackageSearch = ({
   setIsRepoModalOpen,
   setIsSelectingPackage,
   setIsSelectingGroup,
-  setActiveTabKey,
   activeStream,
   setActiveStream,
   setActiveSortIndex,
   setActiveSortDirection,
   setPage,
+  isSearchingOtherRepos,
+  setIsSearchingOtherRepos,
 }: PackageSearchProps) => {
   const dispatch = useDispatch();
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
   const modules = useAppSelector(selectModules);
@@ -187,11 +192,13 @@ const PackageSearch = ({
   const onTextInputChange = (_event: React.FormEvent, value: string) => {
     setSearchTerm(value);
     setIsOpen(true);
-    setActiveTabKey(Repos.INCLUDED);
     setActiveStream('');
     setActiveSortIndex(0);
     setActiveSortDirection('asc');
     setPage(1);
+    if (value === '') {
+      setIsSearchingOtherRepos(false);
+    }
   };
 
   const onToggleClick = () => {
@@ -201,10 +208,10 @@ const PackageSearch = ({
   const onClearButtonClick = () => {
     setSearchTerm('');
     setIsOpen(false);
-    setActiveTabKey(Repos.INCLUDED);
     setActiveStream('');
     setActiveSortIndex(0);
     setActiveSortDirection('asc');
+    setIsSearchingOtherRepos(false);
   };
 
   const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
@@ -394,12 +401,38 @@ const PackageSearch = ({
                 {group.name}
               </SelectOption>
             ))
+          ) : !isSearchingOtherRepos && !isOnPremise ? (
+            <>
+              <SelectOption isDisabled>
+                No {packageTypeLabel} found in included repositories
+              </SelectOption>
+              <Divider />
+              <SelectOption
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSearchingOtherRepos(true);
+                }}
+              >
+                Search in other repositories
+              </SelectOption>
+            </>
           ) : (
             <SelectOption isDisabled>
               No {packageTypeLabel} found for &quot;{debouncedSearchTerm}&quot;
             </SelectOption>
           )}
         </SelectList>
+        {isSearchingOtherRepos &&
+          (sortedPackages.length > 0 || transformedGroups.length > 0) && (
+            <>
+              <Divider />
+              <Content style={{ padding: '8px 16px' }}>
+                <Content component='small'>
+                  Showing results from other repositories (EPEL)
+                </Content>
+              </Content>
+            </>
+          )}
       </Select>
     </FormGroup>
   );
