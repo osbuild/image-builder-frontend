@@ -684,6 +684,7 @@ const Packages = () => {
                 setIsSelectingGroup={setIsSelectingGroup}
                 setActiveTabKey={setActiveTabKey}
                 setToggleSelected={setToggleSelected}
+                activeStream={activeStream}
                 setActiveStream={setActiveStream}
                 setActiveSortIndex={setActiveSortIndex}
                 setActiveSortDirection={setActiveSortDirection}
