@@ -582,15 +582,9 @@ const Packages = () => {
       <PackagesTable
         isSuccessEpelRepo={isSuccessEpelRepo}
         epelRepo={epelRepo}
-        setIsRepoModalOpen={setIsRepoModalOpen}
-        setIsSelectingPackage={setIsSelectingPackage}
-        setActiveStream={setActiveStream}
         packages={packages}
         groups={groups}
-        modules={modules}
-        setIsSelectingGroup={setIsSelectingGroup}
         activeStream={activeStream}
-        isSelectingPackage={isSelectingPackage}
       />
     </>
   );

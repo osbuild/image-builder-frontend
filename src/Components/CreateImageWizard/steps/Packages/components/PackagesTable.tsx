@@ -22,12 +22,8 @@ import {
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
-import { Module } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import {
-  addModule,
-  addPackage,
-  addPackageGroup,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -37,6 +33,7 @@ import {
 
 import EmptySearch from './EmptySearch';
 import PackageInfoNotAvailablePopover from './PackageInfoNotAvailablePopover';
+import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
 import { useAppSelector } from '../../../../../store/hooks';
@@ -49,109 +46,47 @@ import { getPackageUniqueKey } from '../packagesUtilities';
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;
   epelRepo: ApiRepositoryCollectionResponseRead | undefined;
-  setIsRepoModalOpen: (value: boolean) => void;
-  setIsSelectingPackage: (
-    value: IBPackageWithRepositoryInfo | undefined,
-  ) => void;
-  setActiveStream: (value: string) => void;
   packages: IBPackageWithRepositoryInfo[];
   groups: GroupWithRepositoryInfo[];
-  modules: Module[];
-  setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   activeStream: string;
-  isSelectingPackage: IBPackageWithRepositoryInfo | undefined;
 };
 
 const PackagesTable = ({
   isSuccessEpelRepo,
   epelRepo,
-  setIsRepoModalOpen,
-  setIsSelectingPackage,
-  setActiveStream,
   packages,
   groups,
-  modules,
-  setIsSelectingGroup,
   activeStream,
-  isSelectingPackage,
 }: PackagesTableProps) => {
   const dispatch = useDispatch();
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
 
-  const handleSelect = (
-    pkg: IBPackageWithRepositoryInfo,
-    _: number,
-    isSelecting: boolean,
-  ) => {
-    if (isSelecting) {
-      if (
-        isSuccessEpelRepo &&
-        epelRepo &&
-        epelRepo.data &&
-        pkg.repository === 'recommended' &&
-        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-      ) {
-        setIsRepoModalOpen(true);
-        setIsSelectingPackage(pkg);
-      } else {
-        dispatch(addPackage(pkg));
-        if (pkg.type === 'module') {
-          setActiveStream(pkg.stream || '');
-          dispatch(
-            addModule({
-              name: pkg.module_name || '',
-              stream: pkg.stream || '',
-            }),
-          );
-        }
-      }
-    } else {
-      dispatch(removePackage(pkg.name));
-      if (pkg.type === 'module' && pkg.module_name) {
-        dispatch(removeModule(pkg.module_name));
-      }
-      if (
-        isSuccessEpelRepo &&
-        epelRepo &&
-        epelRepo.data &&
-        packages.filter((pkg) => pkg.repository === 'recommended').length ===
-          1 &&
-        groups.filter((grp) => grp.repository === 'recommended').length === 0
-      ) {
-        dispatch(removeRecommendedRepository(epelRepo.data[0]));
-      }
+  const handleRemovePackage = (pkg: IBPackageWithRepositoryInfo) => {
+    dispatch(removePackage(pkg.name));
+    if (pkg.type === 'module' && pkg.module_name) {
+      dispatch(removeModule(pkg.module_name));
+    }
+    if (
+      isSuccessEpelRepo &&
+      epelRepo &&
+      epelRepo.data &&
+      packages.filter((p) => p.repository === 'recommended').length === 1 &&
+      groups.filter((grp) => grp.repository === 'recommended').length === 0
+    ) {
+      dispatch(removeRecommendedRepository(epelRepo.data[0]));
     }
   };
 
-  const handleGroupSelect = (
-    grp: GroupWithRepositoryInfo,
-    _: number,
-    isSelecting: boolean,
-  ) => {
-    if (isSelecting) {
-      if (
-        isSuccessEpelRepo &&
-        epelRepo &&
-        epelRepo.data &&
-        grp.repository === 'recommended' &&
-        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-      ) {
-        setIsRepoModalOpen(true);
-        setIsSelectingGroup(grp);
-      } else {
-        dispatch(addPackageGroup(grp));
-      }
-    } else {
-      dispatch(removePackageGroup(grp.name));
-      if (
-        isSuccessEpelRepo &&
-        epelRepo &&
-        epelRepo.data &&
-        groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
-        packages.filter((pkg) => pkg.repository === 'recommended').length === 0
-      ) {
-        dispatch(removeRecommendedRepository(epelRepo.data[0]));
-      }
+  const handleRemoveGroup = (grp: GroupWithRepositoryInfo) => {
+    dispatch(removePackageGroup(grp.name));
+    if (
+      isSuccessEpelRepo &&
+      epelRepo &&
+      epelRepo.data &&
+      groups.filter((g) => g.repository === 'recommended').length === 1 &&
+      packages.filter((pkg) => pkg.repository === 'recommended').length === 0
+    ) {
+      dispatch(removeRecommendedRepository(epelRepo.data[0]));
     }
   };
 
@@ -230,64 +165,6 @@ const PackagesTable = ({
     return orderBy(groups, ['name'], ['asc']);
   }, [groups]);
 
-  const isPackageSelected = (pkg: IBPackageWithRepositoryInfo) => {
-    let isSelected = false;
-
-    if (!pkg.type || pkg.type === 'package') {
-      const isModuleWithSameName = modules.some(
-        (module) => module.name === pkg.name,
-      );
-      isSelected =
-        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
-        !isModuleWithSameName;
-    }
-
-    if (pkg.type === 'module') {
-      // the package is selected if its module stream matches one in enabled_modules
-      isSelected =
-        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
-        modules.some(
-          (m) => m.name === pkg.module_name && m.stream === pkg.stream,
-        );
-    }
-
-    return isSelected;
-  };
-
-  /**
-   * Determines if the package's (or group's) select is disabled.
-   *
-   * Select should be disabled:
-   * - if the item is a module
-   * - and the module is added to enabled_modules
-   * - but the stream doesn't match the stream in enabled_modules
-   *
-   * @param pkg Package
-   * @returns Package (or group) is / is not selected
-   */
-  const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
-    const isModuleDisabledByPackage =
-      pkg.type === 'module' &&
-      packages.some(
-        (p) => (!p.type || p.type === 'package') && p.name === pkg.module_name,
-      );
-
-    const isPackageDisabledByModule =
-      (!pkg.type || pkg.type === 'package') &&
-      modules.some((module) => module.name === pkg.name);
-
-    const isModuleStreamConflict =
-      pkg.type === 'module' &&
-      modules.some((module) => module.name === pkg.module_name) &&
-      !modules.some((m) => m.stream === pkg.stream);
-
-    return (
-      isModuleDisabledByPackage ||
-      isPackageDisabledByModule ||
-      isModuleStreamConflict
-    );
-  };
-
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
 
@@ -305,14 +182,6 @@ const PackagesTable = ({
                 onToggle: () =>
                   setGroupsExpanded(grp.name, !isGroupExpanded(grp.name)),
                 expandId: `${grp.name}-expandable`,
-              }}
-            />
-            <Td
-              select={{
-                isSelected: groups.some((g) => g.name === grp.name),
-                rowIndex: rowIndex,
-                onSelect: (event, isSelecting) =>
-                  handleGroupSelect(grp, rowIndex, isSelecting),
               }}
             />
             <Td>
@@ -359,6 +228,14 @@ const PackagesTable = ({
             </Td>
             <Td>N/A</Td>
             <Td>N/A</Td>
+            <Td>
+              <RemovePackageButton
+                item={grp}
+                onRemove={(item) =>
+                  handleRemoveGroup(item as GroupWithRepositoryInfo)
+                }
+              />
+            </Td>
           </Tr>
           <Tr isExpanded={isGroupExpanded(grp.name)}>
             <Td colSpan={5}>
@@ -398,24 +275,18 @@ const PackagesTable = ({
                 expandId: `${pkg.name}-expandable`,
               }}
             />
-            <Td
-              select={{
-                isSelected: isPackageSelected(pkg),
-                rowIndex: rowIndex,
-                onSelect: (event, isSelecting) =>
-                  handleSelect(pkg, rowIndex, isSelecting),
-                isDisabled: isSelectDisabled(pkg),
-              }}
-              title={
-                isSelectDisabled(pkg)
-                  ? 'Disabled due to the package(s) you selected. You cannot select packages from different application stream versions.'
-                  : ''
-              }
-            />
             <Td>{pkg.name}</Td>
             <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
             <Td>
               <RetirementDate date={pkg.end_date} />
+            </Td>
+            <Td>
+              <RemovePackageButton
+                item={pkg}
+                onRemove={(item) =>
+                  handleRemovePackage(item as IBPackageWithRepositoryInfo)
+                }
+              />
             </Td>
           </Tr>
           <Tr isExpanded={isPkgExpanded(pkg)}>
@@ -453,7 +324,6 @@ const PackagesTable = ({
   }, [
     packages.length,
     groups.length,
-    isSelectingPackage,
     recommendedRepositories,
     expandedPkgs,
     expandedGroups,
@@ -466,10 +336,10 @@ const PackagesTable = ({
       <Thead>
         <Tr>
           <Th aria-label='Expanded' />
-          <Th aria-label='Selected' />
           <Th width={30}>Name</Th>
           <Th width={20}>Application stream</Th>
           <Th width={30}>Retirement date</Th>
+          <Th aria-label='Remove package' />
         </Tr>
       </Thead>
       {bodyContent}
