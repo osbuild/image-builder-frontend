@@ -125,10 +125,6 @@ const Packages = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStream, setActiveStream] = useState<string>('');
-  const [activeSortIndex, setActiveSortIndex] = useState<number>(0);
-  const [activeSortDirection, setActiveSortDirection] = useState<
-    'asc' | 'desc'
-  >('asc');
   const [
     searchCustomRpms,
     {
@@ -570,8 +566,6 @@ const Packages = () => {
                 setIsSelectingGroup={setIsSelectingGroup}
                 activeStream={activeStream}
                 setActiveStream={setActiveStream}
-                setActiveSortIndex={setActiveSortIndex}
-                setActiveSortDirection={setActiveSortDirection}
                 isSearchingOtherRepos={isSearchingOtherRepos}
                 setIsSearchingOtherRepos={setIsSearchingOtherRepos}
               />
@@ -595,10 +589,6 @@ const Packages = () => {
         groups={groups}
         modules={modules}
         setIsSelectingGroup={setIsSelectingGroup}
-        activeSortIndex={activeSortIndex}
-        setActiveSortIndex={setActiveSortIndex}
-        activeSortDirection={activeSortDirection}
-        setActiveSortDirection={setActiveSortDirection}
         activeStream={activeStream}
         isSelectingPackage={isSelectingPackage}
       />

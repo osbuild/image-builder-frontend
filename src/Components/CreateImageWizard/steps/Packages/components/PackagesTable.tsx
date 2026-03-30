@@ -58,10 +58,6 @@ type PackagesTableProps = {
   groups: GroupWithRepositoryInfo[];
   modules: Module[];
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
-  activeSortIndex: number;
-  setActiveSortIndex: (value: number) => void;
-  activeSortDirection: 'asc' | 'desc';
-  setActiveSortDirection: (value: 'asc' | 'desc') => void;
   activeStream: string;
   isSelectingPackage: IBPackageWithRepositoryInfo | undefined;
 };
@@ -76,10 +72,6 @@ const PackagesTable = ({
   groups,
   modules,
   setIsSelectingGroup,
-  activeSortIndex,
-  setActiveSortIndex,
-  activeSortDirection,
-  setActiveSortDirection,
   activeStream,
   isSelectingPackage,
 }: PackagesTableProps) => {
@@ -162,22 +154,6 @@ const PackagesTable = ({
       }
     }
   };
-
-  const getSortParams = (columnIndex: number) => ({
-    sortBy: {
-      index: activeSortIndex,
-      direction: activeSortDirection,
-    },
-    onSort: (
-      _event: React.MouseEvent,
-      index: number,
-      direction: 'asc' | 'desc',
-    ) => {
-      setActiveSortIndex(index);
-      setActiveSortDirection(direction);
-    },
-    columnIndex,
-  });
 
   const initialExpandedPkgs: string[] = [];
   const [expandedPkgs, setExpandedPkgs] = useState(initialExpandedPkgs);
@@ -483,8 +459,6 @@ const PackagesTable = ({
     expandedGroups,
     sortedPackages,
     sortedGroups,
-    activeSortDirection,
-    activeSortIndex,
   ]);
 
   return (
@@ -493,15 +467,9 @@ const PackagesTable = ({
         <Tr>
           <Th aria-label='Expanded' />
           <Th aria-label='Selected' />
-          <Th sort={getSortParams(0)} width={30}>
-            Name
-          </Th>
-          <Th sort={getSortParams(2)} width={20}>
-            Application stream
-          </Th>
-          <Th sort={getSortParams(3)} width={30}>
-            Retirement date
-          </Th>
+          <Th width={30}>Name</Th>
+          <Th width={20}>Application stream</Th>
+          <Th width={30}>Retirement date</Th>
         </Tr>
       </Thead>
       {bodyContent}

@@ -63,8 +63,6 @@ type PackageSearchProps = {
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   activeStream: string;
   setActiveStream: (value: string) => void;
-  setActiveSortIndex: (value: number) => void;
-  setActiveSortDirection: (value: 'asc' | 'desc') => void;
   isSearchingOtherRepos: boolean;
   setIsSearchingOtherRepos: (value: boolean) => void;
 };
@@ -89,8 +87,6 @@ const PackageSearch = ({
   setIsSelectingGroup,
   activeStream,
   setActiveStream,
-  setActiveSortIndex,
-  setActiveSortDirection,
   isSearchingOtherRepos,
   setIsSearchingOtherRepos,
 }: PackageSearchProps) => {
@@ -191,8 +187,6 @@ const PackageSearch = ({
     setSearchTerm(value);
     setIsOpen(true);
     setActiveStream('');
-    setActiveSortIndex(0);
-    setActiveSortDirection('asc');
     if (value === '') {
       setIsSearchingOtherRepos(false);
     }
@@ -206,8 +200,6 @@ const PackageSearch = ({
     setSearchTerm('');
     setIsOpen(false);
     setActiveStream('');
-    setActiveSortIndex(0);
-    setActiveSortDirection('asc');
     setIsSearchingOtherRepos(false);
   };
 
