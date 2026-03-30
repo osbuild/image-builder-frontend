@@ -1,15 +1,6 @@
 import React, { ReactElement, useMemo, useState } from 'react';
 
-import {
-  Button,
-  Content,
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Popover,
-} from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { Content } from '@patternfly/react-core';
 import {
   ExpandableRowContent,
   Table,
@@ -32,7 +23,6 @@ import {
 } from '@/store/slices/wizard';
 
 import EmptySearch from './EmptySearch';
-import PackageInfoNotAvailablePopover from './PackageInfoNotAvailablePopover';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
@@ -41,7 +31,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from '../packagesTypes';
-import { getPackageUniqueKey } from '../packagesUtilities';
 
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;
@@ -60,6 +49,20 @@ const PackagesTable = ({
 }: PackagesTableProps) => {
   const dispatch = useDispatch();
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
+
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const isGroupExpanded = (name: string) => expandedGroups.has(name);
+
+  const setGroupsExpanded = (name: string, isExpanding: boolean) => {
+    const newSet = new Set(expandedGroups);
+    if (isExpanding) {
+      newSet.add(name);
+    } else {
+      newSet.delete(name);
+    }
+    setExpandedGroups(newSet);
+  };
 
   const handleRemovePackage = (pkg: IBPackageWithRepositoryInfo) => {
     dispatch(removePackage(pkg.name));
@@ -89,39 +92,6 @@ const PackagesTable = ({
       dispatch(removeRecommendedRepository(epelRepo.data[0]));
     }
   };
-
-  const initialExpandedPkgs: string[] = [];
-  const [expandedPkgs, setExpandedPkgs] = useState(initialExpandedPkgs);
-
-  const setPkgExpanded = (
-    pkg: IBPackageWithRepositoryInfo,
-    isExpanding: boolean,
-  ) =>
-    setExpandedPkgs((prevExpanded) => {
-      const pkgKey = getPackageUniqueKey(pkg);
-      const otherExpandedPkgs = prevExpanded.filter((key) => key !== pkgKey);
-      return isExpanding ? [...otherExpandedPkgs, pkgKey] : otherExpandedPkgs;
-    });
-
-  const isPkgExpanded = (pkg: IBPackageWithRepositoryInfo) =>
-    expandedPkgs.includes(getPackageUniqueKey(pkg));
-
-  const initialExpandedGroups: GroupWithRepositoryInfo['name'][] = [];
-  const [expandedGroups, setExpandedGroups] = useState(initialExpandedGroups);
-
-  const setGroupsExpanded = (
-    group: GroupWithRepositoryInfo['name'],
-    isExpanding: boolean,
-  ) =>
-    setExpandedGroups((prevExpanded) => {
-      const otherExpandedGroups = prevExpanded.filter((g) => g !== group);
-      return isExpanding
-        ? [...otherExpandedGroups, group]
-        : otherExpandedGroups;
-    });
-
-  const isGroupExpanded = (group: GroupWithRepositoryInfo['name']) =>
-    expandedGroups.includes(group);
 
   const sortedPackages = useMemo(() => {
     if (packages.length < 1 || !Array.isArray(packages)) {
@@ -184,48 +154,7 @@ const PackagesTable = ({
                 expandId: `${grp.name}-expandable`,
               }}
             />
-            <Td>
-              @{grp.name}{' '}
-              <Popover
-                minWidth='25rem'
-                headerContent='Included packages'
-                bodyContent={
-                  <div
-                    style={
-                      grp.package_list?.length
-                        ? { height: '40em', overflow: 'scroll' }
-                        : {}
-                    }
-                  >
-                    {grp.package_list?.length ? (
-                      <Table
-                        variant='compact'
-                        data-testid='group-included-packages-table'
-                      >
-                        <Tbody>
-                          {grp.package_list.map((pkg: string) => (
-                            <Tr key={`details-${pkg}`}>
-                              <Td>{pkg}</Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    ) : (
-                      <Content>This group has no packages</Content>
-                    )}
-                  </div>
-                }
-              >
-                <Button
-                  icon={<HelpIcon />}
-                  variant='plain'
-                  aria-label='About included packages'
-                  isInline
-                  size='sm'
-                  hasNoPadding
-                />
-              </Popover>
-            </Td>
+            <Td>@{grp.name}</Td>
             <Td>N/A</Td>
             <Td>N/A</Td>
             <Td>
@@ -240,19 +169,30 @@ const PackagesTable = ({
           <Tr isExpanded={isGroupExpanded(grp.name)}>
             <Td colSpan={5}>
               <ExpandableRowContent>
-                {
-                  <DescriptionList>
-                    <DescriptionListGroup>
-                      <DescriptionListTerm>
-                        Description
-                        <PackageInfoNotAvailablePopover />
-                      </DescriptionListTerm>
-                      <DescriptionListDescription>
-                        {grp.description ? grp.description : 'Not available'}
-                      </DescriptionListDescription>
-                    </DescriptionListGroup>
-                  </DescriptionList>
-                }
+                <div
+                  style={
+                    grp.package_list?.length
+                      ? { height: '40em', overflow: 'scroll' }
+                      : {}
+                  }
+                >
+                  {grp.package_list?.length ? (
+                    <Table
+                      variant='compact'
+                      data-testid='group-included-packages-table'
+                    >
+                      <Tbody>
+                        {grp.package_list.map((pkg: string) => (
+                          <Tr key={`details-${pkg}`}>
+                            <Td>{pkg}</Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  ) : (
+                    <Content>This group has no packages</Content>
+                  )}
+                </div>
               </ExpandableRowContent>
             </Td>
           </Tr>
@@ -261,20 +201,12 @@ const PackagesTable = ({
     );
 
     rows = rows.concat(
-      sortedPackages.map((pkg, rowIndex) => (
+      sortedPackages.map((pkg) => (
         <Tbody
           key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
-          isExpanded={isPkgExpanded(pkg)}
         >
           <Tr data-testid='package-row'>
-            <Td
-              expand={{
-                rowIndex: rowIndex,
-                isExpanded: isPkgExpanded(pkg),
-                onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
-                expandId: `${pkg.name}-expandable`,
-              }}
-            />
+            <Td />
             <Td>{pkg.name}</Td>
             <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
             <Td>
@@ -287,25 +219,6 @@ const PackagesTable = ({
                   handleRemovePackage(item as IBPackageWithRepositoryInfo)
                 }
               />
-            </Td>
-          </Tr>
-          <Tr isExpanded={isPkgExpanded(pkg)}>
-            <Td colSpan={5}>
-              <ExpandableRowContent>
-                {
-                  <DescriptionList>
-                    <DescriptionListGroup>
-                      <DescriptionListTerm>
-                        Description
-                        <PackageInfoNotAvailablePopover />
-                      </DescriptionListTerm>
-                      <DescriptionListDescription>
-                        {pkg.summary ? pkg.summary : 'Not available'}
-                      </DescriptionListDescription>
-                    </DescriptionListGroup>
-                  </DescriptionList>
-                }
-              </ExpandableRowContent>
             </Td>
           </Tr>
         </Tbody>
@@ -325,7 +238,6 @@ const PackagesTable = ({
     packages.length,
     groups.length,
     recommendedRepositories,
-    expandedPkgs,
     expandedGroups,
     sortedPackages,
     sortedGroups,
