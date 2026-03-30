@@ -75,7 +75,8 @@ const Packages = () => {
     uuid: template,
   });
 
-  const { data: { data: reposInTemplate = [] } = {} } =
+  const EMPTY_ARRAY: never[] = useMemo(() => [], []);
+  const { data: { data: reposInTemplate = EMPTY_ARRAY } = {} } =
     useListRepositoriesQuery({
       contentType: 'rpm',
       limit: 100,
@@ -92,12 +93,11 @@ const Packages = () => {
     });
 
   const distroUrls = useMemo(() => {
-    return (
-      distroRepositories
-        ?.find((archItem) => archItem.arch === arch)
-        ?.repositories.filter((repo) => !!repo.baseurl)
-        .map((repo) => repo.baseurl!) ?? []
-    );
+    const urls = distroRepositories
+      ?.find((archItem) => archItem.arch === arch)
+      ?.repositories.filter((repo) => !!repo.baseurl)
+      .map((repo) => repo.baseurl!);
+    return urls ?? EMPTY_ARRAY;
   }, [distroRepositories, arch]);
 
   const epelRepoUrlByDistribution =
