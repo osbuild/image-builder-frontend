@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 
 import {
   Button,
+  FormGroup,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -12,17 +13,22 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import { SearchIcon, TimesIcon } from '@patternfly/react-icons';
+import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
+import { Module } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import {
+  addModule,
   addPackage,
   addPackageGroup,
+  removeModule,
   removePackage,
   removePackageGroup,
   removeRecommendedRepository,
   selectGroups,
+  selectModules,
   selectPackages,
   selectRecommendedRepositories,
 } from '@/store/slices/wizard';
@@ -55,6 +61,7 @@ type PackageSearchProps = {
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   setActiveTabKey: (value: Repos) => void;
   setToggleSelected: (value: string) => void;
+  activeStream: string;
   setActiveStream: (value: string) => void;
   setActiveSortIndex: (value: number) => void;
   setActiveSortDirection: (value: 'asc' | 'desc') => void;
@@ -81,6 +88,7 @@ const PackageSearch = ({
   setIsSelectingGroup,
   setActiveTabKey,
   setToggleSelected,
+  activeStream,
   setActiveStream,
   setActiveSortIndex,
   setActiveSortDirection,
@@ -89,15 +97,85 @@ const PackageSearch = ({
   const dispatch = useDispatch();
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
+  const modules = useAppSelector(selectModules);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const sortedPackages = useMemo(() => {
+    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
+      return [];
+    }
+
+    return orderBy(
+      transformedPackages,
+      [
+        (pkg) => (activeStream && pkg.stream === activeStream ? 0 : 1),
+        'name',
+        (pkg) => {
+          if (!pkg.stream) return '';
+          const parts = pkg.stream
+            .split('.')
+            .map((part: string) => parseInt(part, 10) || 0);
+          return parts
+            .map((p: number) => p.toString().padStart(10, '0'))
+            .join('.');
+        },
+        (pkg) => pkg.end_date || '9999-12-31',
+        (pkg) => pkg.repository || '',
+        (pkg) => pkg.module_name || '',
+      ],
+      ['asc', 'asc', 'desc', 'asc', 'asc', 'asc'],
+    );
+  }, [transformedPackages, activeStream]);
+
+  const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
+    const isModuleDisabledByPackage =
+      pkg.type === 'module' &&
+      packages.some(
+        (p) => (!p.type || p.type === 'package') && p.name === pkg.module_name,
+      );
+
+    const isPackageDisabledByModule =
+      (!pkg.type || pkg.type === 'package') &&
+      modules.some((module: Module) => module.name === pkg.name);
+
+    const isModuleStreamConflict =
+      pkg.type === 'module' &&
+      modules.some((module: Module) => module.name === pkg.module_name) &&
+      !modules.some((m: Module) => m.stream === pkg.stream);
+
+    return (
+      isModuleDisabledByPackage ||
+      isPackageDisabledByModule ||
+      isModuleStreamConflict
+    );
+  };
+
+  const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
+    const parts = [];
+    if (pkg.stream) {
+      parts.push(pkg.stream);
+    }
+    if (pkg.end_date) {
+      const retirementDate = new Date(pkg.end_date);
+      const formattedDate =
+        retirementDate.toLocaleString('en-US', { month: 'short' }) +
+        ' ' +
+        retirementDate.getFullYear();
+      parts.push(formattedDate);
+    }
+    if (pkg.summary) {
+      parts.push(pkg.summary);
+    }
+    return parts.join(', ');
+  };
+
   const packageTypeLabel =
     packageType === 'packages' ? 'packages' : 'package groups';
 
-  const selectedPackageNames = useMemo(
-    () => packages.map((p) => p.name),
+  const selectedPackageKeys = useMemo(
+    () => packages.map((p) => `${p.name}|||${p.stream || ''}`),
     [packages],
   );
   const selectedGroupNames = useMemo(() => groups.map((g) => g.name), [groups]);
@@ -136,10 +214,34 @@ const PackageSearch = ({
     if (!value || typeof value !== 'string') return;
 
     if (packageType === 'packages') {
-      const pkg = transformedPackages.find((p) => p.name === value);
+      const [name, stream] = value.split('|||');
+      const pkg = sortedPackages.find(
+        (p) => p.name === name && (p.stream || '') === stream,
+      );
       if (!pkg) return;
 
-      const isSelected = packages.some((p) => p.name === pkg.name);
+      let isSelected = false;
+
+      if (!pkg.type || pkg.type === 'package') {
+        const isModuleWithSameName = modules.some(
+          (module: Module) => module.name === pkg.name,
+        );
+        isSelected =
+          packages.some(
+            (p) => p.name === pkg.name && p.stream === pkg.stream,
+          ) && !isModuleWithSameName;
+      }
+
+      if (pkg.type === 'module') {
+        isSelected =
+          packages.some(
+            (p) => p.name === pkg.name && p.stream === pkg.stream,
+          ) &&
+          modules.some(
+            (m: Module) =>
+              m.name === pkg.module_name && m.stream === pkg.stream,
+          );
+      }
 
       if (!isSelected) {
         if (
@@ -153,9 +255,21 @@ const PackageSearch = ({
           setIsSelectingPackage(pkg);
         } else {
           dispatch(addPackage(pkg));
+          if (pkg.type === 'module') {
+            setActiveStream(pkg.stream || '');
+            dispatch(
+              addModule({
+                name: pkg.module_name || '',
+                stream: pkg.stream || '',
+              }),
+            );
+          }
         }
       } else {
         dispatch(removePackage(pkg.name));
+        if (pkg.type === 'module' && pkg.module_name) {
+          dispatch(removeModule(pkg.module_name));
+        }
         if (
           isSuccessEpelRepo &&
           epelRepo &&
@@ -236,58 +350,61 @@ const PackageSearch = ({
   );
 
   return (
-    <Select
-      isScrollable
-      isOpen={isOpen}
-      selected={
-        packageType === 'packages' ? selectedPackageNames : selectedGroupNames
-      }
-      onSelect={onSelect}
-      onOpenChange={(isOpen) => setIsOpen(isOpen)}
-      toggle={toggle}
-      shouldFocusFirstItemOnOpen={false}
-    >
-      <SelectList>
-        {!debouncedSearchTerm ? (
-          <SelectOption isDisabled>
-            Start typing to search {packageTypeLabel}
-          </SelectOption>
-        ) : isLoadingDistroPackages ||
-          isLoadingCustomPackages ||
-          isLoadingRecommendedPackages ||
-          isLoadingDistroGroups ||
-          isLoadingCustomGroups ||
-          isLoadingRecommendedGroups ? (
-          <SelectOption isDisabled>
-            Searching {packageTypeLabel}...
-          </SelectOption>
-        ) : packageType === 'packages' && transformedPackages.length > 0 ? (
-          transformedPackages.slice(0, 50).map((pkg) => (
-            <SelectOption
-              key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
-              value={pkg.name}
-              description={pkg.summary}
-            >
-              {pkg.name}
+    <FormGroup label='Packages'>
+      <Select
+        isScrollable
+        isOpen={isOpen}
+        selected={
+          packageType === 'packages' ? selectedPackageKeys : selectedGroupNames
+        }
+        onSelect={onSelect}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
+        toggle={toggle}
+        shouldFocusFirstItemOnOpen={false}
+      >
+        <SelectList>
+          {!debouncedSearchTerm ? (
+            <SelectOption isDisabled>
+              Start typing to search {packageTypeLabel}
             </SelectOption>
-          ))
-        ) : packageType === 'groups' && transformedGroups.length > 0 ? (
-          transformedGroups.slice(0, 50).map((group) => (
-            <SelectOption
-              key={`${group.name}-${group.repository}`}
-              value={group.name}
-              description={group.description}
-            >
-              {group.name}
+          ) : isLoadingDistroPackages ||
+            isLoadingCustomPackages ||
+            isLoadingRecommendedPackages ||
+            isLoadingDistroGroups ||
+            isLoadingCustomGroups ||
+            isLoadingRecommendedGroups ? (
+            <SelectOption isDisabled>
+              Searching {packageTypeLabel}...
             </SelectOption>
-          ))
-        ) : (
-          <SelectOption isDisabled>
-            No {packageTypeLabel} found for &quot;{debouncedSearchTerm}&quot;
-          </SelectOption>
-        )}
-      </SelectList>
-    </Select>
+          ) : packageType === 'packages' && sortedPackages.length > 0 ? (
+            sortedPackages.slice(0, 50).map((pkg) => (
+              <SelectOption
+                key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
+                value={`${pkg.name}|||${pkg.stream || ''}`}
+                description={getPackageDescription(pkg)}
+                isDisabled={isSelectDisabled(pkg)}
+              >
+                {pkg.name}
+              </SelectOption>
+            ))
+          ) : packageType === 'groups' && transformedGroups.length > 0 ? (
+            transformedGroups.slice(0, 50).map((group) => (
+              <SelectOption
+                key={`${group.name}-${group.repository}`}
+                value={group.name}
+                description={group.description}
+              >
+                {group.name}
+              </SelectOption>
+            ))
+          ) : (
+            <SelectOption isDisabled>
+              No {packageTypeLabel} found for &quot;{debouncedSearchTerm}&quot;
+            </SelectOption>
+          )}
+        </SelectList>
+      </Select>
+    </FormGroup>
   );
 };
 
