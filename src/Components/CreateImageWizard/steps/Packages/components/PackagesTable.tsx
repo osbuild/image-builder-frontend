@@ -206,7 +206,7 @@ const PackagesTable = ({
           key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
         >
           <Tr data-testid='package-row'>
-            <Td />
+            <Td>&nbsp;</Td>
             <Td>{pkg.name}</Td>
             <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
             <Td>
@@ -247,10 +247,10 @@ const PackagesTable = ({
     <Table variant='compact' data-testid='packages-table'>
       <Thead>
         <Tr>
-          <Th aria-label='Expanded' />
-          <Th width={30}>Name</Th>
-          <Th width={20}>Application stream</Th>
-          <Th width={30}>Retirement date</Th>
+          <Th width={10} aria-label='Expanded' />
+          <Th width={40}>Name</Th>
+          <Th width={25}>Application stream</Th>
+          <Th width={25}>Retirement date</Th>
           <Th aria-label='Remove package' />
         </Tr>
       </Thead>
