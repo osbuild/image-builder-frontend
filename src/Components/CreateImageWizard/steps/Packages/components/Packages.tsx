@@ -4,8 +4,6 @@ import {
   FormGroup,
   MenuToggle,
   MenuToggleElement,
-  Pagination,
-  PaginationVariant,
   Select,
   SelectList,
   SelectOption,
@@ -118,8 +116,6 @@ const Packages = () => {
   const [isSelectingGroup, setIsSelectingGroup] = useState<
     GroupWithRepositoryInfo | undefined
   >();
-  const [perPage, setPerPage] = useState(10);
-  const [page, setPage] = useState(1);
   const [packageType, setPackageType] = useState<'packages' | 'groups'>(
     'packages',
   );
@@ -504,28 +500,6 @@ const Packages = () => {
     isSearchingOtherRepos,
   ]);
 
-  const handleSetPage = (
-    _:
-      | MouseEvent
-      | React.MouseEvent<Element, MouseEvent>
-      | React.KeyboardEvent<Element>,
-    newPage: number,
-  ) => {
-    setPage(newPage);
-  };
-
-  const handlePerPageSelect = (
-    _:
-      | MouseEvent
-      | React.MouseEvent<Element, MouseEvent>
-      | React.KeyboardEvent<Element>,
-    newPerPage: number,
-    newPage: number,
-  ) => {
-    setPerPage(newPerPage);
-    setPage(newPage);
-  };
-
   return (
     <>
       <RepositoryModal
@@ -598,20 +572,8 @@ const Packages = () => {
                 setActiveStream={setActiveStream}
                 setActiveSortIndex={setActiveSortIndex}
                 setActiveSortDirection={setActiveSortDirection}
-                setPage={setPage}
                 isSearchingOtherRepos={isSearchingOtherRepos}
                 setIsSearchingOtherRepos={setIsSearchingOtherRepos}
-              />
-            </ToolbarItem>
-            <ToolbarItem variant='pagination'>
-              <Pagination
-                data-testid='packages-pagination-top'
-                itemCount={packages.length + groups.length}
-                perPage={perPage}
-                page={page}
-                onSetPage={handleSetPage}
-                onPerPageSelect={handlePerPageSelect}
-                isCompact
               />
             </ToolbarItem>
           </ToolbarContent>
@@ -638,18 +600,7 @@ const Packages = () => {
         activeSortDirection={activeSortDirection}
         setActiveSortDirection={setActiveSortDirection}
         activeStream={activeStream}
-        perPage={perPage}
-        page={page}
         isSelectingPackage={isSelectingPackage}
-      />
-      <Pagination
-        data-testid='packages-pagination-bottom'
-        itemCount={packages.length + groups.length}
-        perPage={perPage}
-        page={page}
-        onSetPage={handleSetPage}
-        onPerPageSelect={handlePerPageSelect}
-        variant={PaginationVariant.bottom}
       />
     </>
   );

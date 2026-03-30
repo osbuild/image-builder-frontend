@@ -65,7 +65,6 @@ type PackageSearchProps = {
   setActiveStream: (value: string) => void;
   setActiveSortIndex: (value: number) => void;
   setActiveSortDirection: (value: 'asc' | 'desc') => void;
-  setPage: (value: number) => void;
   isSearchingOtherRepos: boolean;
   setIsSearchingOtherRepos: (value: boolean) => void;
 };
@@ -92,7 +91,6 @@ const PackageSearch = ({
   setActiveStream,
   setActiveSortIndex,
   setActiveSortDirection,
-  setPage,
   isSearchingOtherRepos,
   setIsSearchingOtherRepos,
 }: PackageSearchProps) => {
@@ -195,7 +193,6 @@ const PackageSearch = ({
     setActiveStream('');
     setActiveSortIndex(0);
     setActiveSortDirection('asc');
-    setPage(1);
     if (value === '') {
       setIsSearchingOtherRepos(false);
     }
