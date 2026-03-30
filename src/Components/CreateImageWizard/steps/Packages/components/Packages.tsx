@@ -1,9 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import {
+  FormGroup,
+  MenuToggle,
+  MenuToggleElement,
   Pagination,
   PaginationVariant,
   SearchInput,
+  Select,
+  SelectList,
+  SelectOption,
   Stack,
   Tab,
   Tabs,
@@ -128,6 +134,11 @@ const Packages = () => {
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
   const [activeTabKey, setActiveTabKey] = useState(Repos.INCLUDED);
+  const [packageType, setPackageType] = useState<'packages' | 'groups'>(
+    'packages',
+  );
+  const [isPackageTypeDropdownOpen, setIsPackageTypeDropdownOpen] =
+    useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStream, setActiveStream] = useState<string>('');
@@ -146,15 +157,13 @@ const Packages = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm.trim());
   const debouncedSearchTermLengthOf1 = debouncedSearchTerm.length === 1;
-  const debouncedSearchTermIsGroup = debouncedSearchTerm.startsWith('@');
 
-  // While it's searching for packages or groups, only show either packages or groups, without mixing the two.
   const showPackages =
-    (debouncedSearchTerm && !debouncedSearchTermIsGroup) ||
-    toggleSelected === 'toggle-selected';
+    packageType === 'packages' ||
+    (toggleSelected === 'toggle-selected' && debouncedSearchTerm === '');
   const showGroups =
-    (debouncedSearchTerm && debouncedSearchTermIsGroup) ||
-    toggleSelected === 'toggle-selected';
+    packageType === 'groups' ||
+    (toggleSelected === 'toggle-selected' && debouncedSearchTerm === '');
 
   const [
     searchRecommendedRpms,
@@ -207,7 +216,7 @@ const Packages = () => {
   ] = useSearchRepositoryModuleStreamsMutation();
 
   useEffect(() => {
-    if (debouncedSearchTermIsGroup) {
+    if (packageType === 'groups') {
       return;
     }
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
@@ -280,19 +289,19 @@ const Packages = () => {
     arch,
     template,
     distribution,
-    debouncedSearchTermIsGroup,
+    packageType,
     snapshotDate,
     distroUrls,
   ]);
 
   useEffect(() => {
-    if (!debouncedSearchTermIsGroup) {
+    if (packageType === 'packages') {
       return;
     }
     if (isSuccessDistroRepositories) {
       searchDistroGroups({
         apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm.substring(1),
+          search: debouncedSearchTerm,
           urls: distroUrls,
           date: snapshotDate
             ? new Date(convertStringToDate(snapshotDate)).toISOString()
@@ -303,7 +312,7 @@ const Packages = () => {
     if (activeTabKey === Repos.INCLUDED && customRepositories.length > 0) {
       searchCustomGroups({
         apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm.substring(1),
+          search: debouncedSearchTerm,
           uuids: customRepositories.flatMap((repo) => {
             return repo.id;
           }),
@@ -315,7 +324,7 @@ const Packages = () => {
     } else if (activeTabKey === Repos.OTHER && isSuccessEpelRepo) {
       searchRecommendedGroups({
         apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm.substring(1),
+          search: debouncedSearchTerm,
           urls: [epelRepoUrlByDistribution],
           date: snapshotDate
             ? new Date(convertStringToDate(snapshotDate)).toISOString()
@@ -331,7 +340,7 @@ const Packages = () => {
     debouncedSearchTerm,
     activeTabKey,
     epelRepoUrlByDistribution,
-    debouncedSearchTermIsGroup,
+    packageType,
     arch,
     distroRepositories,
     isSuccessDistroRepositories,
@@ -640,9 +649,44 @@ const Packages = () => {
         <Stack>
           <ToolbarContent>
             <ToolbarItem>
+              <FormGroup label='Package type'>
+                <Select
+                  id='package-type-select'
+                  isOpen={isPackageTypeDropdownOpen}
+                  selected={packageType}
+                  onSelect={(_event, value) => {
+                    setPackageType(value as 'packages' | 'groups');
+                    setIsPackageTypeDropdownOpen(false);
+                  }}
+                  onOpenChange={(isOpen) =>
+                    setIsPackageTypeDropdownOpen(isOpen)
+                  }
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      onClick={() =>
+                        setIsPackageTypeDropdownOpen(!isPackageTypeDropdownOpen)
+                      }
+                      isExpanded={isPackageTypeDropdownOpen}
+                    >
+                      {packageType === 'packages'
+                        ? 'Individual packages'
+                        : 'Package groups'}
+                    </MenuToggle>
+                  )}
+                >
+                  <SelectList>
+                    <SelectOption value='packages'>
+                      Individual packages
+                    </SelectOption>
+                    <SelectOption value='groups'>Package groups</SelectOption>
+                  </SelectList>
+                </Select>
+              </FormGroup>
+            </ToolbarItem>
+            <ToolbarItem>
               <SearchInput
                 type='text'
-                placeholder='Search packages'
                 aria-label='Search packages'
                 data-testid='packages-search-input'
                 value={searchTerm}
@@ -694,7 +738,7 @@ const Packages = () => {
           </ToolbarContent>
           <ToolbarContent>
             <CustomHelperText
-              hide={!debouncedSearchTermLengthOf1 || debouncedSearchTermIsGroup}
+              hide={!debouncedSearchTermLengthOf1}
               textValue='The search value must be greater than 1 character'
             />
           </ToolbarContent>
