@@ -63,8 +63,6 @@ type PackagesTableProps = {
   activeSortDirection: 'asc' | 'desc';
   setActiveSortDirection: (value: 'asc' | 'desc') => void;
   activeStream: string;
-  perPage: number;
-  page: number;
   isSelectingPackage: IBPackageWithRepositoryInfo | undefined;
 };
 
@@ -83,8 +81,6 @@ const PackagesTable = ({
   activeSortDirection,
   setActiveSortDirection,
   activeStream,
-  perPage,
-  page,
   isSelectingPackage,
 }: PackagesTableProps) => {
   const dispatch = useDispatch();
@@ -166,9 +162,6 @@ const PackagesTable = ({
       }
     }
   };
-
-  const computeStart = () => perPage * (page - 1);
-  const computeEnd = () => perPage * page;
 
   const getSortParams = (columnIndex: number) => ({
     sortBy: {
@@ -323,7 +316,7 @@ const PackagesTable = ({
     let rows: ReactElement[] = [];
 
     rows = rows.concat(
-      sortedGroups.slice(computeStart(), computeEnd()).map((grp, rowIndex) => (
+      sortedGroups.map((grp, rowIndex) => (
         <Tbody
           key={`${grp.name}-${grp.repository || 'default'}`}
           isExpanded={isGroupExpanded(grp.name)}
@@ -415,63 +408,61 @@ const PackagesTable = ({
     );
 
     rows = rows.concat(
-      sortedPackages
-        .slice(computeStart(), computeEnd())
-        .map((pkg, rowIndex) => (
-          <Tbody
-            key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
-            isExpanded={isPkgExpanded(pkg)}
-          >
-            <Tr data-testid='package-row'>
-              <Td
-                expand={{
-                  rowIndex: rowIndex,
-                  isExpanded: isPkgExpanded(pkg),
-                  onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
-                  expandId: `${pkg.name}-expandable`,
-                }}
-              />
-              <Td
-                select={{
-                  isSelected: isPackageSelected(pkg),
-                  rowIndex: rowIndex,
-                  onSelect: (event, isSelecting) =>
-                    handleSelect(pkg, rowIndex, isSelecting),
-                  isDisabled: isSelectDisabled(pkg),
-                }}
-                title={
-                  isSelectDisabled(pkg)
-                    ? 'Disabled due to the package(s) you selected. You cannot select packages from different application stream versions.'
-                    : ''
+      sortedPackages.map((pkg, rowIndex) => (
+        <Tbody
+          key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
+          isExpanded={isPkgExpanded(pkg)}
+        >
+          <Tr data-testid='package-row'>
+            <Td
+              expand={{
+                rowIndex: rowIndex,
+                isExpanded: isPkgExpanded(pkg),
+                onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
+                expandId: `${pkg.name}-expandable`,
+              }}
+            />
+            <Td
+              select={{
+                isSelected: isPackageSelected(pkg),
+                rowIndex: rowIndex,
+                onSelect: (event, isSelecting) =>
+                  handleSelect(pkg, rowIndex, isSelecting),
+                isDisabled: isSelectDisabled(pkg),
+              }}
+              title={
+                isSelectDisabled(pkg)
+                  ? 'Disabled due to the package(s) you selected. You cannot select packages from different application stream versions.'
+                  : ''
+              }
+            />
+            <Td>{pkg.name}</Td>
+            <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
+            <Td>
+              <RetirementDate date={pkg.end_date} />
+            </Td>
+          </Tr>
+          <Tr isExpanded={isPkgExpanded(pkg)}>
+            <Td colSpan={5}>
+              <ExpandableRowContent>
+                {
+                  <DescriptionList>
+                    <DescriptionListGroup>
+                      <DescriptionListTerm>
+                        Description
+                        <PackageInfoNotAvailablePopover />
+                      </DescriptionListTerm>
+                      <DescriptionListDescription>
+                        {pkg.summary ? pkg.summary : 'Not available'}
+                      </DescriptionListDescription>
+                    </DescriptionListGroup>
+                  </DescriptionList>
                 }
-              />
-              <Td>{pkg.name}</Td>
-              <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
-              <Td>
-                <RetirementDate date={pkg.end_date} />
-              </Td>
-            </Tr>
-            <Tr isExpanded={isPkgExpanded(pkg)}>
-              <Td colSpan={5}>
-                <ExpandableRowContent>
-                  {
-                    <DescriptionList>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>
-                          Description
-                          <PackageInfoNotAvailablePopover />
-                        </DescriptionListTerm>
-                        <DescriptionListDescription>
-                          {pkg.summary ? pkg.summary : 'Not available'}
-                        </DescriptionListDescription>
-                      </DescriptionListGroup>
-                    </DescriptionList>
-                  }
-                </ExpandableRowContent>
-              </Td>
-            </Tr>
-          </Tbody>
-        )),
+              </ExpandableRowContent>
+            </Td>
+          </Tr>
+        </Tbody>
+      )),
     );
     return rows;
   };
@@ -484,8 +475,6 @@ const PackagesTable = ({
     // Would need significant rewrite to fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    page,
-    perPage,
     packages.length,
     groups.length,
     isSelectingPackage,
