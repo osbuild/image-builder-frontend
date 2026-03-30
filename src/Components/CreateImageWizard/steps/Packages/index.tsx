@@ -19,22 +19,17 @@ const PackagesStep = () => {
     <Form>
       <CustomizationLabels customization='packages' />
       <Title headingLevel='h1' size='xl'>
-        Additional packages
+        Packages
       </Title>
       <Content>
-        Blueprints created with Images include all required packages.
+        Search and add individual packages to include in your image. You can
+        select packages from the repositories included in the previous step.
       </Content>
       <Content>
-        {isOnPremise ? (
+        {isOnPremise && (
           <>
             Search for exact matches by specifying the whole package name, or
             glob using asterisk wildcards (*) before or after the package name.
-          </>
-        ) : (
-          <>
-            Search for package groups by starting your search with the
-            &apos;@&apos; character. A single &apos;@&apos; as search input
-            lists all available package groups.
           </>
         )}
       </Content>
