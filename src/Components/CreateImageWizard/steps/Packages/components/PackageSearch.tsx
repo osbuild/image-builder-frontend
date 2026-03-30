@@ -4,6 +4,10 @@ import {
   Button,
   Content,
   Divider,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateBody,
+  EmptyStateFooter,
   FormGroup,
   MenuToggle,
   MenuToggleElement,
@@ -36,6 +40,7 @@ import {
   selectRecommendedRepositories,
 } from '@/store/slices/wizard';
 
+import ManageRepositoriesButton from '../../Repositories/components/ManageRepositoriesButton';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
@@ -391,20 +396,30 @@ const PackageSearch = ({
               </SelectOption>
             ))
           ) : !isSearchingOtherRepos && !isOnPremise ? (
-            <>
-              <SelectOption isDisabled>
-                No {packageTypeLabel} found in included repositories
-              </SelectOption>
-              <Divider />
-              <SelectOption
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsSearchingOtherRepos(true);
-                }}
-              >
-                Search in other repositories
-              </SelectOption>
-            </>
+            <EmptyState variant='sm'>
+              <EmptyStateBody>
+                No results for &quot;{debouncedSearchTerm}&quot; in selected
+                repositories. If you know the name of your repository, make sure
+                it&apos;s included on the{' '}
+                <ManageRepositoriesButton
+                  label='Repositories page'
+                  icon={true}
+                />
+              </EmptyStateBody>
+              <EmptyStateFooter>
+                <EmptyStateActions>
+                  <Button
+                    variant='secondary'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsSearchingOtherRepos(true);
+                    }}
+                  >
+                    Search repositories outside of this image
+                  </Button>
+                </EmptyStateActions>
+              </EmptyStateFooter>
+            </EmptyState>
           ) : (
             <SelectOption isDisabled>
               No {packageTypeLabel} found for &quot;{debouncedSearchTerm}&quot;
