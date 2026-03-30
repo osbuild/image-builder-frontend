@@ -10,9 +10,6 @@ import {
   SelectList,
   SelectOption,
   Stack,
-  Tab,
-  Tabs,
-  TabTitleText,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -45,7 +42,6 @@ import {
 import CustomHelperText from './CustomHelperText';
 import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
-import { IncludedReposPopover, OtherReposPopover } from './RepoPopovers';
 import RepositoryModal from './RepositoryModal';
 
 import {
@@ -61,7 +57,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   ItemWithSources,
-  Repos,
 } from '../packagesTypes';
 
 const Packages = () => {
@@ -113,7 +108,7 @@ const Packages = () => {
   const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
     useListRepositoriesQuery({
       url: epelRepoUrlByDistribution,
-      origin: ContentOrigin.EXTERNAL,
+      origin: ContentOrigin.COMMUNITY,
     });
 
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
@@ -125,12 +120,12 @@ const Packages = () => {
   >();
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
-  const [activeTabKey, setActiveTabKey] = useState(Repos.INCLUDED);
   const [packageType, setPackageType] = useState<'packages' | 'groups'>(
     'packages',
   );
   const [isPackageTypeDropdownOpen, setIsPackageTypeDropdownOpen] =
     useState(false);
+  const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeStream, setActiveStream] = useState<string>('');
@@ -234,49 +229,53 @@ const Packages = () => {
         });
       }
     }
-    if (debouncedSearchTerm.length > 2) {
-      if (activeTabKey === Repos.INCLUDED && customRepositories.length > 0) {
-        searchCustomRpms({
-          apiContentUnitSearchRequest: {
-            search: debouncedSearchTerm,
-            uuids: customRepositories.flatMap((repo) => {
-              return repo.id;
-            }),
-            limit: 500,
-            include_package_sources: true,
-            date: snapshotDate
-              ? new Date(convertStringToDate(snapshotDate)).toISOString()
-              : undefined,
-          },
-        });
-      } else {
-        searchRecommendedRpms({
-          apiContentUnitSearchRequest: {
-            search: debouncedSearchTerm,
-            urls: [epelRepoUrlByDistribution],
-            date: snapshotDate
-              ? new Date(convertStringToDate(snapshotDate)).toISOString()
-              : undefined,
-          },
-        });
-      }
+    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
+      searchCustomRpms({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          uuids: customRepositories.flatMap((repo) => {
+            return repo.id;
+          }),
+          limit: 500,
+          include_package_sources: true,
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
+    }
+    if (
+      debouncedSearchTerm.length > 2 &&
+      isSearchingOtherRepos &&
+      !isOnPremise
+    ) {
+      searchRecommendedRpms({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          urls: [epelRepoUrlByDistribution],
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
     }
   }, [
     customRepositories,
     searchCustomRpms,
     searchDistroRpms,
-    debouncedSearchTerm,
-    activeTabKey,
     searchRecommendedRpms,
-    epelRepoUrlByDistribution,
+    debouncedSearchTerm,
     isSuccessDistroRepositories,
-    distroRepositories,
     arch,
     template,
     distribution,
     packageType,
     snapshotDate,
     distroUrls,
+    isOnPremise,
+    reposInTemplate,
+    isSearchingOtherRepos,
+    epelRepoUrlByDistribution,
   ]);
 
   useEffect(() => {
@@ -294,7 +293,7 @@ const Packages = () => {
         },
       });
     }
-    if (activeTabKey === Repos.INCLUDED && customRepositories.length > 0) {
+    if (customRepositories.length > 0) {
       searchCustomGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
@@ -306,7 +305,8 @@ const Packages = () => {
             : undefined,
         },
       });
-    } else if (activeTabKey === Repos.OTHER && isSuccessEpelRepo) {
+    }
+    if (isSearchingOtherRepos && !isOnPremise) {
       searchRecommendedGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
@@ -323,15 +323,15 @@ const Packages = () => {
     searchCustomGroups,
     searchRecommendedGroups,
     debouncedSearchTerm,
-    activeTabKey,
-    epelRepoUrlByDistribution,
     packageType,
     arch,
     distroRepositories,
     isSuccessDistroRepositories,
-    isSuccessEpelRepo,
     snapshotDate,
     distroUrls,
+    isSearchingOtherRepos,
+    isOnPremise,
+    epelRepoUrlByDistribution,
   ]);
 
   useEffect(() => {
@@ -382,7 +382,7 @@ const Packages = () => {
     let transformedCustomData: ItemWithSources[] = [];
     let transformedRecommendedData: ItemWithSources[] = [];
 
-    if (isSuccessDistroPackages) {
+    if (isSuccessDistroPackages && !isSearchingOtherRepos) {
       transformedDistroData = dataDistroPackages.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
@@ -391,7 +391,7 @@ const Packages = () => {
       }));
     }
 
-    if (isSuccessCustomPackages) {
+    if (isSuccessCustomPackages && !isSearchingOtherRepos) {
       transformedCustomData = dataCustomPackages.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
@@ -400,27 +400,18 @@ const Packages = () => {
       }));
     }
 
-    let combinedPackageData = transformedDistroData.concat(
-      transformedCustomData,
-    );
-
-    if (
-      debouncedSearchTerm !== '' &&
-      combinedPackageData.length === 0 &&
-      isSuccessRecommendedPackages &&
-      activeTabKey === Repos.OTHER
-    ) {
-      transformedRecommendedData = dataRecommendedPackages!.map((values) => ({
+    if (isSuccessRecommendedPackages && isSearchingOtherRepos) {
+      transformedRecommendedData = dataRecommendedPackages.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
         repository: 'recommended',
         sources: values.package_sources,
       }));
-
-      combinedPackageData = combinedPackageData.concat(
-        transformedRecommendedData,
-      );
     }
+
+    const combinedPackageData = transformedDistroData
+      .concat(transformedCustomData)
+      .concat(transformedRecommendedData);
 
     let unpackedData: IBPackageWithRepositoryInfo[] =
       combinedPackageData.flatMap((item) => {
@@ -457,10 +448,7 @@ const Packages = () => {
       ['asc', 'desc', 'asc', 'asc'],
     );
 
-    if (activeTabKey === Repos.INCLUDED) {
-      return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
-    }
-    return unpackedData.filter((pkg) => pkg.repository === 'recommended');
+    return unpackedData;
   }, [
     dataCustomPackages,
     dataDistroPackages,
@@ -468,14 +456,13 @@ const Packages = () => {
     isSuccessCustomPackages,
     isSuccessDistroPackages,
     isSuccessRecommendedPackages,
-    activeTabKey,
-    debouncedSearchTerm,
+    isSearchingOtherRepos,
   ]);
 
   const transformedGroups = useMemo(() => {
     let combinedGroupData: GroupWithRepositoryInfo[] = [];
 
-    if (isSuccessDistroGroups) {
+    if (isSuccessDistroGroups && !isSearchingOtherRepos) {
       combinedGroupData = combinedGroupData.concat(
         dataDistroGroups!.map((values) => ({
           name: values.id!,
@@ -485,7 +472,7 @@ const Packages = () => {
         })),
       );
     }
-    if (isSuccessCustomGroups) {
+    if (isSuccessCustomGroups && !isSearchingOtherRepos) {
       combinedGroupData = combinedGroupData.concat(
         dataCustomGroups!.map((values) => ({
           name: values.id!,
@@ -495,7 +482,7 @@ const Packages = () => {
         })),
       );
     }
-    if (isSuccessRecommendedGroups) {
+    if (isSuccessRecommendedGroups && isSearchingOtherRepos) {
       combinedGroupData = combinedGroupData.concat(
         dataRecommendedGroups!.map((values) => ({
           name: values.id!,
@@ -506,12 +493,7 @@ const Packages = () => {
       );
     }
 
-    if (activeTabKey === Repos.INCLUDED) {
-      return combinedGroupData.filter(
-        (pkg) => pkg.repository !== 'recommended',
-      );
-    }
-    return combinedGroupData.filter((pkg) => pkg.repository === 'recommended');
+    return combinedGroupData;
   }, [
     dataDistroGroups,
     dataCustomGroups,
@@ -519,7 +501,7 @@ const Packages = () => {
     isSuccessDistroGroups,
     isSuccessCustomGroups,
     isSuccessRecommendedGroups,
-    activeTabKey,
+    isSearchingOtherRepos,
   ]);
 
   const handleSetPage = (
@@ -542,17 +524,6 @@ const Packages = () => {
   ) => {
     setPerPage(newPerPage);
     setPage(newPage);
-  };
-
-  const handleTabClick = (
-    event?: React.MouseEvent,
-    tabIndex?: string | number,
-  ) => {
-    if (tabIndex === undefined) return;
-    if (tabIndex !== activeTabKey) {
-      setPage(1);
-      setActiveTabKey(tabIndex as Repos);
-    }
   };
 
   return (
@@ -623,12 +594,13 @@ const Packages = () => {
                 setIsRepoModalOpen={setIsRepoModalOpen}
                 setIsSelectingPackage={setIsSelectingPackage}
                 setIsSelectingGroup={setIsSelectingGroup}
-                setActiveTabKey={setActiveTabKey}
                 activeStream={activeStream}
                 setActiveStream={setActiveStream}
                 setActiveSortIndex={setActiveSortIndex}
                 setActiveSortDirection={setActiveSortDirection}
                 setPage={setPage}
+                isSearchingOtherRepos={isSearchingOtherRepos}
+                setIsSearchingOtherRepos={setIsSearchingOtherRepos}
               />
             </ToolbarItem>
             <ToolbarItem variant='pagination'>
@@ -651,27 +623,6 @@ const Packages = () => {
           </ToolbarContent>
         </Stack>
       </Toolbar>
-
-      <Tabs
-        activeKey={activeTabKey}
-        onSelect={handleTabClick}
-        aria-label='Repositories tabs on packages step'
-      >
-        <Tab
-          eventKey='included-repos'
-          title={<TabTitleText>Included repos</TabTitleText>}
-          actions={!isOnPremise ? <IncludedReposPopover /> : undefined}
-          aria-label='Included repositories'
-        />
-        {!isOnPremise && (
-          <Tab
-            eventKey='other-repos'
-            title={<TabTitleText>Other repos</TabTitleText>}
-            actions={<OtherReposPopover />}
-            aria-label='Other repositories'
-          />
-        )}
-      </Tabs>
       <PackagesTable
         isSuccessEpelRepo={isSuccessEpelRepo}
         epelRepo={epelRepo}
