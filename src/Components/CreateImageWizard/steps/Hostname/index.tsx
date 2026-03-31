@@ -8,7 +8,12 @@ import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabe
 
 const HostnameStep = () => {
   return (
-    <Form>
+    <Form
+      onSubmit={(event) => {
+        // this prevents from reloading the wizard on pressing enter
+        event.preventDefault();
+      }}
+    >
       <CustomizationLabels customization='hostname' />
       <Title headingLevel='h1' size='xl'>
         Hostname
