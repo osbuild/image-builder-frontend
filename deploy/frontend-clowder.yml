@@ -74,6 +74,17 @@ objects:
               href: /insights/image-builder
               icon: InsightsIcon
               product: Red Hat Insights
+      widgetRegistry:
+        - scope: landing
+          module: ./ImageBuilderWidget
+          config:
+            title: "Image Builder"
+            icon: RhelIcon
+          defaults:
+            w: 1
+            h: 4
+            maxH: 10
+            minH: 1
       envName: ${ENV_NAME}
       title: Image-builder
       deploymentRepo: https://github.com/RedHatInsights/image-builder-frontend
