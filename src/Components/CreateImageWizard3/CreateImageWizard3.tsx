@@ -28,7 +28,9 @@ import {
   initializeWizard,
   loadWizardState,
   selectDistribution,
+  selectImageSource,
   selectImageTypes,
+  selectIsImageMode,
   selectTimezone,
 } from '@/store/slices/wizard';
 import {
@@ -69,10 +71,13 @@ import TimezoneStep from '../CreateImageWizard/steps/Timezone';
 import UsersStep from '../CreateImageWizard/steps/UsersAndGroups';
 import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 import {
+  useAwsValidation,
+  useAzureValidation,
   useDetailsValidation,
   useFilesystemValidation,
   useFirewallValidation,
   useFirstBootValidation,
+  useGcpValidation,
   useHostnameValidation,
   useKernelValidation,
   useLocaleValidation,
@@ -90,6 +95,8 @@ const CreateImageWizard3 = () => {
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageMode = useAppSelector(selectIsImageMode);
+  const imageSource = useAppSelector(selectImageSource);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
@@ -102,6 +109,9 @@ const CreateImageWizard3 = () => {
   const targetEnvironments = useAppSelector(selectImageTypes);
 
   // Validation hooks
+  const awsValidation = useAwsValidation();
+  const gcpValidation = useGcpValidation();
+  const azureValidation = useAzureValidation();
   const detailsValidation = useDetailsValidation();
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
@@ -124,6 +134,11 @@ const CreateImageWizard3 = () => {
     usersValidation.disabledNext || userGroupsValidation.disabledNext;
 
   const baseSettingsHasErrors =
+    targetEnvironments.length === 0 ||
+    (isImageMode && !imageSource) ||
+    awsValidation.disabledNext ||
+    gcpValidation.disabledNext ||
+    azureValidation.disabledNext ||
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     snapshotValidation.disabledNext ||
