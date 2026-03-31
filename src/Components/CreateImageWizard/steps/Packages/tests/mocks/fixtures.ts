@@ -10,6 +10,10 @@ export const mockSearchResults: ApiSearchRpmResponse[] = [
   { package_name: 'testPkg', summary: 'test package summary' },
 ];
 
+export const mockEpelSearch: ApiSearchRpmResponse[] = [
+  { package_name: 'asdf', summary: 'summary for asdf package' },
+];
+
 export const mockModuleSearchResults: ApiSearchRpmResponse[] = [
   {
     package_name: 'testModule',

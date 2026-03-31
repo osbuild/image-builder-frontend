@@ -191,8 +191,8 @@ const PackageSearch = ({
   const onTextInputChange = (_event: React.FormEvent, value: string) => {
     setSearchTerm(value);
     setIsOpen(true);
-    setActiveStream('');
     if (value === '') {
+      setActiveStream('');
       setIsSearchingOtherRepos(false);
     }
   };

@@ -29,29 +29,47 @@ export const typeIntoSearchBox = async (
   searchTerm: string,
 ) => {
   const searchbox = await screen.findByRole('textbox', {
-    name: /search packages/i,
+    name: /search package/i,
   });
   await typeWithWait(user, searchbox, searchTerm);
 };
 
+export const clickOnSearchBox = async (user: UserEventInstance) => {
+  const searchbox = await screen.findByRole('textbox', {
+    name: /search package/i,
+  });
+  await clickWithWait(user, searchbox);
+};
+
 export const clearSearchInput = async (user: UserEventInstance) => {
   const searchbox = await screen.findByRole('textbox', {
-    name: /search packages/i,
+    name: /search package/i,
   });
   await clearWithWait(user, searchbox);
 };
 
-export const clickPackageCheckbox = async (
-  user: UserEventInstance,
-  rowIndex: number,
-) => {
-  const checkbox = await screen.findByRole('checkbox', {
-    name: new RegExp(`select row ${rowIndex}`, 'i'),
+export const switchToPackageGroups = async (user: UserEventInstance) => {
+  const dropdownButton = await screen.findByRole('button', {
+    name: /individual packages/i,
   });
-  await clickWithWait(user, checkbox);
+  await clickWithWait(user, dropdownButton);
+  const groupsOption = await screen.findByText(/package groups/i);
+  await clickWithWait(user, groupsOption);
 };
 
-export const clickSelectedButton = async (user: UserEventInstance) => {
-  const selectedBtn = await screen.findByRole('button', { name: /selected/i });
-  await clickWithWait(user, selectedBtn);
+export const openPackageDetails = async (user: UserEventInstance) => {
+  const expandableButton = await screen.findByRole('button', {
+    name: /details/i,
+  });
+  await clickWithWait(user, expandableButton);
+};
+
+export const selectPkgOption = async (
+  user: UserEventInstance,
+  name: string,
+) => {
+  const options = await screen.findAllByRole('option', {
+    name: new RegExp(name, 'i'),
+  });
+  await clickWithWait(user, options[0]);
 };

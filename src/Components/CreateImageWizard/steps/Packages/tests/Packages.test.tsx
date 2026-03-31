@@ -1,19 +1,27 @@
 import { screen, waitFor, within } from '@testing-library/react';
 
 import { server } from '@/test/mocks/server';
-import { clickWithWait, createUser } from '@/test/testUtils';
+import {
+  clearWithWait,
+  clickWithWait,
+  createUser,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import {
   clearSearchInput,
-  clickPackageCheckbox,
-  clickSelectedButton,
+  clickOnSearchBox,
+  openPackageDetails,
   renderPackagesStep,
+  selectPkgOption,
+  switchToPackageGroups,
   typeIntoSearchBox,
 } from './helpers';
 import {
   createDefaultFetchHandler,
   createFetchHandler,
   fetchMock,
+  mockEpelSearch,
   mockGroupSearchResults,
   mockModuleSearchResults,
   mockSearchResults,
@@ -75,7 +83,7 @@ describe('Packages Component', () => {
       await waitFor(() => {
         expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
       });
-      await screen.findByRole('cell', { name: /test-lib/ });
+      await screen.findByRole('option', { name: /test-lib/ });
     });
 
     test('shows loading spinner while searching for groups', async () => {
@@ -99,8 +107,9 @@ describe('Packages Component', () => {
       renderPackagesStep();
       const user = createUser();
 
-      // Use @ prefix to search for groups
-      await typeIntoSearchBox(user, '@group');
+      await switchToPackageGroups(user);
+
+      await typeIntoSearchBox(user, 'grouper');
 
       expect(await screen.findByText(/searching/i)).toBeInTheDocument();
 
@@ -109,28 +118,27 @@ describe('Packages Component', () => {
       await waitFor(() => {
         expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
       });
-      await screen.findByText(/@grouper/i);
+      await screen.findByRole('option', { name: /grouper/i });
     });
   });
 
   describe('Search Functionality', () => {
-    test('displays search bar and toggle buttons', async () => {
+    test('displays package type dropdown and search bar', async () => {
       renderPackagesStep();
       expect(
+        await screen.findByRole('button', { name: /individual packages/i }),
+      ).toBeInTheDocument();
+      expect(
         await screen.findByRole('textbox', { name: /search packages/i }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /available/i }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /selected/i }),
       ).toBeInTheDocument();
     });
 
     test('shows default empty state', async () => {
       renderPackagesStep();
       expect(
-        await screen.findByText(/search for additional packages/i),
+        await screen.findByRole('heading', {
+          name: /there are no selected packages/i,
+        }),
       ).toBeInTheDocument();
     });
 
@@ -141,7 +149,9 @@ describe('Packages Component', () => {
       await typeIntoSearchBox(user, 't');
 
       expect(
-        await screen.findByText('The search value is too short'),
+        await screen.findByText(
+          'The search value must be greater than 1 character',
+        ),
       ).toBeInTheDocument();
     });
 
@@ -152,7 +162,9 @@ describe('Packages Component', () => {
 
       await typeIntoSearchBox(user, 'asdf');
 
-      expect(screen.getByText('No results found')).toBeInTheDocument();
+      expect(
+        screen.getByText(/No results for "asdf" in selected repositories/),
+      ).toBeInTheDocument();
     });
 
     test('displays search results sorted by relevance', async () => {
@@ -163,141 +175,125 @@ describe('Packages Component', () => {
       await typeIntoSearchBox(user, 'test');
 
       // Wait for results to appear
-      await screen.findByRole('cell', { name: /test-lib/ });
+      await screen.findByRole('option', { name: /test-lib/ });
 
-      const rows = await screen.findAllByTestId('package-row');
-      expect(rows).toHaveLength(3);
-      expect(rows[0]).toHaveTextContent('test');
-      expect(rows[1]).toHaveTextContent('test-lib');
-      expect(rows[2]).toHaveTextContent('testPkg');
+      const options = await screen.findAllByRole('option');
+      expect(options).toHaveLength(3);
+      expect(options[0]).toHaveTextContent(/test/);
+      expect(options[1]).toHaveTextContent(/test-lib/);
+      expect(options[2]).toHaveTextContent(/testPkg/);
+    });
+
+    test('searches other repositories when no results', async () => {
+      renderPackagesStep();
+      const user = createUser();
+
+      const searchInput = await screen.findByRole('textbox', {
+        name: /search packages/i,
+      });
+
+      await clearWithWait(user, searchInput);
+      await typeWithWait(user, searchInput, 'asdf');
+
+      expect(
+        await screen.findByText(
+          /no results for "asdf" in selected repositories/i,
+        ),
+      ).toBeInTheDocument();
+
+      const searchOutsideButton = await screen.findByRole('button', {
+        name: /search repositories outside of this image/i,
+      });
+
+      // Mock EPEL results for the next search after clicking the button
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockEpelSearch,
+        }),
+      );
+
+      await clickWithWait(user, searchOutsideButton);
+
+      expect(
+        await screen.findByRole('option', { name: /asdf/ }),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByText(
+          /showing results from other repositories \(epel\)/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('shows final state with no results in other repositories', async () => {
+      renderPackagesStep();
+      const user = createUser();
+
+      const searchInput = await screen.findByRole('textbox', {
+        name: /search packages/i,
+      });
+
+      await clearWithWait(user, searchInput);
+      await typeWithWait(user, searchInput, 'asdf');
+
+      expect(
+        await screen.findByText(
+          /no results for "asdf" in selected repositories/i,
+        ),
+      ).toBeInTheDocument();
+
+      const searchOutsideButton = await screen.findByRole('button', {
+        name: /search repositories outside of this image/i,
+      });
+      await clickWithWait(user, searchOutsideButton);
+
+      expect(
+        await screen.findByText(/no packages found for "asdf"/i),
+      ).toBeInTheDocument();
     });
   });
 
   describe('Package Selection', () => {
-    test('selecting a package checks the checkbox', async () => {
+    test('selecting a package adds it to the table', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
-      await screen.findByRole('cell', { name: /test-lib/ });
+      const option = await screen.findByRole('option', { name: /test-lib/ });
 
-      const checkbox = await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
-      expect(checkbox).not.toBeChecked();
-
-      await clickWithWait(user, checkbox);
-      expect(checkbox).toBeChecked();
+      await clickWithWait(user, option);
+      expect(
+        await screen.findByRole('cell', { name: /test-lib/ }),
+      ).toBeVisible();
     });
 
-    test('selected packages appear in Selected view', async () => {
-      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
-      renderPackagesStep();
-      const user = createUser();
-
-      // Search and select a package
-      await typeIntoSearchBox(user, 'test');
-
-      await screen.findByRole('cell', { name: /test-lib/ });
-      await clickPackageCheckbox(user, 0);
-
-      // Toggle to Selected view
-      await clickSelectedButton(user);
-
-      // Verify the selected package is shown
-      const rows = await screen.findAllByTestId('package-row');
-      expect(rows).toHaveLength(1);
-      expect(rows[0]).toHaveTextContent('test');
-    });
-
-    test('deselecting a package unchecks the checkbox', async () => {
+    test('deselecting a package removes it from the table', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
 
-      await screen.findByRole('cell', { name: /test-lib/ });
+      const option = await screen.findByRole('option', { name: /test-lib/ });
 
-      const checkbox = await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
-
-      // Select then deselect
-      await clickWithWait(user, checkbox);
-      expect(checkbox).toBeChecked();
-
-      await clickWithWait(user, checkbox);
-      expect(checkbox).not.toBeChecked();
-    });
-  });
-
-  describe('Pagination', () => {
-    test('shows correct item count after search', async () => {
-      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
-      renderPackagesStep();
-      const user = createUser();
-
-      await typeIntoSearchBox(user, 'test');
-
-      await screen.findByRole('cell', { name: /test-lib/ });
-
-      const topPagination = await screen.findByTestId(
-        'packages-pagination-top',
-      );
-      expect(topPagination).toHaveTextContent('of 3');
-
-      const bottomPagination = await screen.findByTestId(
-        'packages-pagination-bottom',
-      );
-      expect(bottomPagination).toHaveTextContent('of 3');
-    });
-
-    test('shows correct item count after toggling to selected', async () => {
-      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
-      renderPackagesStep();
-      const user = createUser();
-
-      await typeIntoSearchBox(user, 'test');
-      await screen.findByRole('cell', { name: /test-lib/ });
-      await clickPackageCheckbox(user, 0);
-
-      await clickSelectedButton(user);
-
-      const topPagination = await screen.findByTestId(
-        'packages-pagination-top',
-      );
-      expect(topPagination).toHaveTextContent('of 1');
-
-      const bottomPagination = await screen.findByTestId(
-        'packages-pagination-bottom',
-      );
-      expect(bottomPagination).toHaveTextContent('of 1');
-    });
-
-    test('shows zero item count after clearing search input', async () => {
-      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
-      renderPackagesStep();
-      const user = createUser();
-
-      await typeIntoSearchBox(user, 'test');
-
-      await screen.findByRole('cell', { name: /test-lib/ });
-      await clickPackageCheckbox(user, 0);
+      await clickWithWait(user, option);
+      expect(
+        await screen.findByRole('cell', { name: /test-lib/ }),
+      ).toBeVisible();
 
       await clearSearchInput(user);
+      await typeIntoSearchBox(user, 'test');
 
-      // Wait for the empty state to appear
-      expect(
-        screen.getByText(/search for additional packages/i),
-      ).toBeInTheDocument();
-
-      const topPagination = await screen.findByTestId(
-        'packages-pagination-top',
+      const optionAgain = await screen.findByRole('option', {
+        name: /test-lib/,
+      });
+      await clickWithWait(user, optionAgain);
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('cell', { name: /test-lib/ }),
+        ).not.toBeInTheDocument(),
       );
-      expect(topPagination).toHaveTextContent('of 0');
     });
   });
 
@@ -312,15 +308,13 @@ describe('Packages Component', () => {
       await typeIntoSearchBox(user, 'testModule');
 
       // Wait for module streams to appear
-      await screen.findByText('1.22');
-      await screen.findByText('1.24');
+      await screen.findByText(/1\.22/);
+      await screen.findByText(/1\.24/);
 
-      const rows = await screen.findAllByRole('row');
-      // Remove header row
-      const dataRows = rows.slice(1);
-      expect(dataRows).toHaveLength(2);
-      expect(dataRows[0]).toHaveTextContent('1.24');
-      expect(dataRows[1]).toHaveTextContent('1.22');
+      const options = await screen.findAllByRole('option');
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent(/1\.24/);
+      expect(options[1]).toHaveTextContent(/1\.22/);
     });
 
     test('displays retirement dates for module streams', async () => {
@@ -333,16 +327,15 @@ describe('Packages Component', () => {
       await typeIntoSearchBox(user, 'testModule');
 
       // Wait for module streams to appear
-      await screen.findByText('1.22');
-      await screen.findByText('1.24');
+      await screen.findByText(/1\.22/);
+      await screen.findByText(/1\.24/);
 
-      const rows = await screen.findAllByRole('row');
-      const dataRows = rows.slice(1);
+      const options = await screen.findAllByRole('option');
 
       // Stream 1.24 has end_date: '2027-05-01'
-      expect(dataRows[0]).toHaveTextContent('May 2027');
+      expect(options[0]).toHaveTextContent(/May 2027/);
       // Stream 1.22 has end_date: '2025-05-01'
-      expect(dataRows[1]).toHaveTextContent('May 2025');
+      expect(options[1]).toHaveTextContent(/May 2025/);
     });
 
     test('selecting a module stream disables other streams', async () => {
@@ -355,35 +348,33 @@ describe('Packages Component', () => {
       await typeIntoSearchBox(user, 'testModule');
 
       // Wait for module streams to appear
-      await screen.findByText('1.22');
-      await screen.findByText('1.24');
+      await screen.findByText(/1\.22/);
+      await screen.findByText(/1\.24/);
 
       // Select the first module stream (1.24)
-      const checkbox = await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
-      await clickWithWait(user, checkbox);
-      expect(checkbox).toBeChecked();
+      const options = await screen.findAllByRole('option');
+      await clickWithWait(user, options[0]);
 
       // The other stream (1.22) should be disabled
-      const otherCheckbox = await screen.findByRole('checkbox', {
-        name: /select row 1/i,
-      });
-      expect(otherCheckbox).toBeDisabled();
+      await clickOnSearchBox(user);
+      expect(options[1]).toBeDisabled();
     });
   });
 
   describe('Package Groups', () => {
-    test('searches for groups with @ prefix', async () => {
+    test('searches for groups with "Package groups" option', async () => {
       fetchMock.mockResponse(
         createFetchHandler({ groups: mockGroupSearchResults }),
       );
       renderPackagesStep();
       const user = createUser();
 
-      await typeIntoSearchBox(user, '@grouper');
+      await switchToPackageGroups(user);
+      await typeIntoSearchBox(user, 'grouper');
 
-      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: /grouper/i }),
+      ).toBeInTheDocument();
     });
 
     test('selecting a group checks the checkbox', async () => {
@@ -393,34 +384,33 @@ describe('Packages Component', () => {
       renderPackagesStep();
       const user = createUser();
 
-      await typeIntoSearchBox(user, '@grouper');
+      await switchToPackageGroups(user);
+      await typeIntoSearchBox(user, 'grouper');
 
-      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
+      expect(screen.getByText(/grouper/i)).toBeInTheDocument();
 
       // Select the group
-      const checkbox = await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
-      await clickWithWait(user, checkbox);
-      expect(checkbox).toBeChecked();
+      await selectPkgOption(user, 'grouper');
+      expect(
+        await screen.findByRole('cell', { name: /grouper/i }),
+      ).toBeInTheDocument();
     });
 
-    test('shows included packages in popover', async () => {
+    test('shows included packages in expanded row', async () => {
       fetchMock.mockResponse(
         createFetchHandler({ groups: mockGroupSearchResults }),
       );
       renderPackagesStep();
       const user = createUser();
 
-      await typeIntoSearchBox(user, '@grouper');
+      await switchToPackageGroups(user);
+      await typeIntoSearchBox(user, 'grouper');
 
-      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
+      expect(screen.getByText(/grouper/i)).toBeInTheDocument();
+      await selectPkgOption(user, 'grouper');
 
-      // Click the help icon to open the popover
-      const popoverBtn = await screen.findByRole('button', {
-        name: /about included packages/i,
-      });
-      await clickWithWait(user, popoverBtn);
+      // Click the expandable button to open group details
+      await openPackageDetails(user);
 
       // Verify the included packages table appears
       const table = await screen.findByTestId('group-included-packages-table');
@@ -443,10 +433,10 @@ describe('Packages Component', () => {
       expect(store.getState().wizard.packages).toHaveLength(0);
 
       await typeIntoSearchBox(user, 'test');
-      await screen.findByRole('cell', { name: /test-lib/ });
+      await screen.findByRole('option', { name: /test-lib/ });
 
       // Select the first package (sorted by relevance: 'test')
-      await clickPackageCheckbox(user, 0);
+      await selectPkgOption(user, 'test');
 
       // Verify Redux state was updated
       const packages = store.getState().wizard.packages;
@@ -460,13 +450,14 @@ describe('Packages Component', () => {
       const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
-      await screen.findByRole('cell', { name: /test-lib/ });
+      await screen.findByRole('option', { name: /test-lib/ });
 
       // Select then deselect
-      await clickPackageCheckbox(user, 0);
+      await selectPkgOption(user, 'test');
       expect(store.getState().wizard.packages).toHaveLength(1);
 
-      await clickPackageCheckbox(user, 0);
+      await clickOnSearchBox(user);
+      await selectPkgOption(user, 'test');
       expect(store.getState().wizard.packages).toHaveLength(0);
     });
 
@@ -476,12 +467,14 @@ describe('Packages Component', () => {
       const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
-      await screen.findByRole('cell', { name: /test-lib/ });
+      await screen.findByRole('option', { name: /test-lib/ });
 
       // Select all three packages
-      await clickPackageCheckbox(user, 0); // test
-      await clickPackageCheckbox(user, 1); // test-lib
-      await clickPackageCheckbox(user, 2); // testPkg
+      await selectPkgOption(user, 'test');
+      await clickOnSearchBox(user);
+      await selectPkgOption(user, 'test-lib');
+      await clickOnSearchBox(user);
+      await selectPkgOption(user, 'testPkg');
 
       await waitFor(() => {
         const packages = store.getState().wizard.packages;
@@ -504,10 +497,11 @@ describe('Packages Component', () => {
       // Initial state should have no groups
       expect(store.getState().wizard.groups).toHaveLength(0);
 
-      await typeIntoSearchBox(user, '@grouper');
-      expect(screen.getByText(/@grouper/i)).toBeInTheDocument();
+      await switchToPackageGroups(user);
+      await typeIntoSearchBox(user, 'grouper');
+      expect(screen.getByText(/grouper/i)).toBeInTheDocument();
 
-      await clickPackageCheckbox(user, 0);
+      await selectPkgOption(user, 'grouper');
 
       const groups = store.getState().wizard.groups;
       expect(groups).toHaveLength(1);
@@ -525,10 +519,11 @@ describe('Packages Component', () => {
       expect(store.getState().wizard.enabled_modules).toHaveLength(0);
 
       await typeIntoSearchBox(user, 'testModule');
-      await screen.findByText('1.24');
+      await screen.findByText(/1\.24/);
 
       // Select the first stream (1.24)
-      await clickPackageCheckbox(user, 0);
+      const options = await screen.findAllByRole('option');
+      await clickWithWait(user, options[0]);
 
       const modules = store.getState().wizard.enabled_modules;
       expect(modules).toHaveLength(1);
@@ -551,13 +546,9 @@ describe('Packages Component', () => {
           },
         ],
       });
-      const user = createUser();
 
       // Verify initial Redux state has preloaded packages
       expect(store.getState().wizard.packages).toHaveLength(2);
-
-      // Toggle to Selected view
-      await clickSelectedButton(user);
 
       // Verify packages appear in UI
       const rows = await screen.findAllByTestId('package-row');
@@ -576,15 +567,14 @@ describe('Packages Component', () => {
       // Search and select all packages (in reverse order to verify sorting)
       await typeIntoSearchBox(user, 'test');
 
-      await screen.findByRole('cell', { name: /test-lib/ });
+      await screen.findByRole('option', { name: /test-lib/ });
 
       // Select packages in reverse alphabetical order
-      await clickPackageCheckbox(user, 2); // testPkg
-      await clickPackageCheckbox(user, 1); // test-lib
-      await clickPackageCheckbox(user, 0); // test
-
-      // Toggle to Selected view
-      await clickSelectedButton(user);
+      await selectPkgOption(user, 'testPkg');
+      await clickOnSearchBox(user);
+      await selectPkgOption(user, 'test-lib');
+      await clickOnSearchBox(user);
+      await selectPkgOption(user, 'test');
 
       // Verify all packages are shown and sorted
       const rows = await screen.findAllByTestId('package-row');
@@ -596,10 +586,6 @@ describe('Packages Component', () => {
 
     test('shows empty state when no packages selected', async () => {
       renderPackagesStep();
-      const user = createUser();
-
-      // Toggle to Selected view without selecting anything
-      await clickSelectedButton(user);
 
       await screen.findByText(/there are no selected packages/i);
     });

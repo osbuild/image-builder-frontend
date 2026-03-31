@@ -187,10 +187,6 @@ describe('Import modal', () => {
 
     // Packages step
     await clickNext();
-    const selectedToggle = await screen.findByRole('button', {
-      name: /selected/i,
-    });
-    await waitFor(() => user.click(selectedToggle));
     await screen.findByText('tmux');
     await screen.findByText('openssh-server');
 
