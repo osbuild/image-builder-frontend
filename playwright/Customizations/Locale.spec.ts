@@ -68,7 +68,6 @@ test('Create a blueprint with Locale customization', async ({
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill('langpacks-ru');
-    await frame.getByRole('button', { name: 'Selected' }).click();
     await expect(frame.getByText('langpacks-ru')).toHaveCount(0);
   });
 

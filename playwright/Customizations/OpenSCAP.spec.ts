@@ -74,7 +74,6 @@ test('Create a blueprint with OpenSCAP customization', async ({
     // NOTE: fsc check was removed since we now hide steps when
     // none of the image types support the customization
     await frame.getByRole('button', { name: 'Additional packages' }).click();
-    await expect(frame.getByRole('button', { name: /Selected/ })).toBeVisible();
   });
 
   await test.step('Select OpenSCAP profile, and check if dependencies are preselected', async () => {
@@ -90,7 +89,6 @@ test('Create a blueprint with OpenSCAP customization', async ({
       })
       .click();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
-    await frame.getByRole('button', { name: 'Selected (9)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'chrony' })).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'cronie' })).toBeVisible();
@@ -158,7 +156,6 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(frame.getByText('audit_backlog_limit=8192')).toBeVisible();
     await expect(frame.getByText('audit=1')).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
-    await frame.getByRole('button', { name: 'Selected (11)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
     await expect(
       frame.getByRole('gridcell', { name: 'audit-libs' }),
