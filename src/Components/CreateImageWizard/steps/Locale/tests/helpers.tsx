@@ -23,15 +23,13 @@ export const searchForLanguage = async (
   user: UserEventInstance,
   search: string,
 ) => {
-  const languagesDropdown =
-    await screen.findByPlaceholderText(/select a language/i);
-  await typeWithWait(user, languagesDropdown, search);
+  const input = await screen.findByPlaceholderText(/select a language/i);
+  await typeWithWait(user, input, search);
 };
 
 export const clearLanguageSearch = async (user: UserEventInstance) => {
-  const languagesDropdown =
-    await screen.findByPlaceholderText(/select a language/i);
-  await clearWithWait(user, languagesDropdown);
+  const input = await screen.findByPlaceholderText(/select a language/i);
+  await clearWithWait(user, input);
 };
 
 export const selectLanguageOption = async (
@@ -46,15 +44,13 @@ export const searchForKeyboard = async (
   user: UserEventInstance,
   search: string,
 ) => {
-  const keyboardDropdown =
-    await screen.findByPlaceholderText(/select a keyboard/i);
-  await typeWithWait(user, keyboardDropdown, search);
+  const input = await screen.findByPlaceholderText(/select a keyboard/i);
+  await typeWithWait(user, input, search);
 };
 
 export const clearKeyboardSearch = async (user: UserEventInstance) => {
-  const keyboardDropdown =
-    await screen.findByPlaceholderText(/select a keyboard/i);
-  await clearWithWait(user, keyboardDropdown);
+  const input = await screen.findByPlaceholderText(/select a keyboard/i);
+  await clearWithWait(user, input);
 };
 
 export const selectKeyboardOption = async (

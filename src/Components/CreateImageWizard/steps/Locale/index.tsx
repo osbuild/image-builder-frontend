@@ -49,7 +49,10 @@ const LocaleStep = () => {
       <Title headingLevel='h1' size='xl'>
         Locale
       </Title>
-      <Content>Select the locale for your image.</Content>
+      <Content>
+        Define the primary languages and keyboard settings for your image to
+        ensure proper system localization and user interface support.
+      </Content>
       <LanguagesDropDown />
       {isLoading && (
         <Content>

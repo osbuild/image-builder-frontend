@@ -211,9 +211,9 @@ describe('Import modal', () => {
     await screen.findByRole('heading', { name: /Locale/ });
     await screen.findByText('English - United States (en_US.UTF-8)');
     await screen.findByText('Japanese - Japan (ja_JP.UTF-8)');
-    const keyboardDropDown =
-      await screen.findByPlaceholderText(/Select a keyboard/i);
-    expect(keyboardDropDown).toHaveValue('us');
+    const keyboardInput =
+      await screen.findByPlaceholderText(/select a keyboard/i);
+    expect(keyboardInput).toHaveValue('us');
 
     // Hostname
     await clickNext();

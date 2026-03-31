@@ -190,6 +190,9 @@ const LanguagesDropDown = () => {
           )}
         </SelectList>
       </Select>
+      <HelperText>
+        <HelperTextItem>Search by country, language or UTF code</HelperTextItem>
+      </HelperText>
       {unknownLanguages.length > 0 && (
         <HelperText>
           <HelperTextItem
