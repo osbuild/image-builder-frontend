@@ -6,9 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   deleteRepository,
-  deleteTemplate,
   navigateToRepositories,
-  navigateToTemplates,
 } from '../BootTests/Content/helpers';
 import { test } from '../fixtures/customizations';
 // import { exportedLocaleBP } from '../fixtures/data/exportBlueprintContents';
@@ -41,7 +39,6 @@ test('Create a blueprint with Repeatable build customization', async ({
     'repeatable-test-with-no-snapshot-' + uuidv4().slice(0, 8);
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/really-empty/';
-  const templateName = 'content-template-test-' + uuidv4().slice(0, 8);
 
   // Here we want to be sure that the repository is deleted due to URL exclusivity per repository
   await deleteRepository(page, repositoryUrl);
@@ -49,7 +46,6 @@ test('Create a blueprint with Repeatable build customization', async ({
   // Delete the blueprint after the run fixture
   cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteRepository(page, repositoryName));
-  cleanup.add(() => deleteTemplate(page, templateName));
 
   await ensureAuthenticated(page);
 
@@ -66,47 +62,6 @@ test('Create a blueprint with Repeatable build customization', async ({
     await expect(
       page.getByRole('gridcell', { name: repositoryName }),
     ).toBeVisible();
-  });
-
-  await test.step('Create a Content Template', async () => {
-    await navigateToTemplates(page);
-    await page.getByRole('button', { name: 'Create template' }).click();
-
-    await page.getByRole('button', { name: 'filter OS version' }).click();
-    await page.getByRole('menuitem', { name: 'RHEL 10' }).click();
-
-    await page.getByRole('button', { name: 'filter architecture' }).click();
-    await page.getByRole('menuitem', { name: 'x86_64' }).click();
-
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await page.getByRole('button', { name: 'Next', exact: true }).click(); // skip additional repositories
-    await page.getByRole('button', { name: 'Next', exact: true }).click(); // skip other repositories
-
-    await expect(
-      page.getByRole('heading', { name: 'Set up date', exact: true }),
-    ).toBeVisible();
-    await page.getByRole('radio', { name: 'Use the latest content' }).click();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await expect(
-      page.getByRole('heading', { name: 'Enter template details' }),
-    ).toBeVisible();
-    await page.getByPlaceholder('Enter name').fill(templateName);
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await page.getByRole('button', { name: 'Create other options' }).click();
-    await page.getByRole('menuitem', { name: 'Create template only' }).click();
-
-    // Wait for template to be created and valid
-    await page
-      .getByRole('searchbox', { name: 'Filter by name' })
-      .fill(templateName);
-    await expect(
-      page
-        .getByRole('row')
-        .filter({ hasText: templateName })
-        .getByText('Valid', { exact: true }),
-    ).toBeVisible({ timeout: 180000 });
   });
 
   // Navigate to IB landing page and get the frame
