@@ -16,11 +16,13 @@ type RemovePackageButtonProps = {
 };
 
 const RemovePackageButton = ({ item, onRemove }: RemovePackageButtonProps) => {
+  const packageType = 'package_list' in item ? 'package group' : 'package';
+
   return (
     <Button
       variant='plain'
       icon={<MinusCircleIcon />}
-      aria-label='Remove package'
+      aria-label={`Remove ${packageType}`}
       onClick={() => onRemove(item)}
       isInline
       hasNoPadding
