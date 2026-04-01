@@ -18,14 +18,14 @@ type NewAlertPropTypes = {
 
 export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
   const isAlertDismissed = window.localStorage.getItem(
-    'imageBuilder.newFeatureNewCustomizationsAlertDismissed',
+    'imageBuilder.newFeatureNewCustomizationsAlertDismissed', // TODO: update when new feature
   );
   const [displayAlert, setDisplayAlert] = useState(!isAlertDismissed);
 
   const dismissAlert = () => {
     setDisplayAlert(false);
     window.localStorage.setItem(
-      'imageBuilder.newFeatureNewCustomizationsAlertDismissed',
+      'imageBuilder.newFeatureNewCustomizationsAlertDismissed', // TODO: update when new feature
       'true',
     );
   };
@@ -41,7 +41,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
         data-testid='new-in-image-builder-banner'
         isExpandable
         style={{ margin: '0 0 16px 0' }}
-        title='New in image builder: more customizations'
+        title='New in image builder: ...' // TODO: update when new feature
         actionClose={
           <Flex>
             <FlexItem>
@@ -55,20 +55,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
           </Flex>
         }
       >
-        <Content>
-          <Content>
-            New options for blueprint customization are now available:
-          </Content>
-          <Content component='ul'>
-            <Content component='li'>Users</Content>
-            <Content component='li'>Timezone</Content>
-            <Content component='li'>Locale</Content>
-            <Content component='li'>Hostname</Content>
-            <Content component='li'>Kernel</Content>
-            <Content component='li'>Firewall</Content>
-            <Content component='li'>Systemd services</Content>
-          </Content>
-        </Content>
+        <Content>{/* New feature alert content */}</Content>
       </Alert>
     );
   } else {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   PageSection,
@@ -13,12 +13,8 @@ import { Outlet } from 'react-router-dom';
 
 import './LandingPage.scss';
 
-import { selectIsOnPremise } from '@/store/slices/env';
-
-import { NewAlert } from './NewAlert';
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
-import { useAppSelector } from '../../store/hooks';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import CreateImageWizard3 from '../CreateImageWizard3/CreateImageWizard3';
@@ -26,8 +22,10 @@ import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
-  const [showAlert, setShowAlert] = useState(true);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
+  // New feature alert
+  // const [showAlert, setShowAlert] = useState(true);
+  // const isOnPremise = useAppSelector(selectIsOnPremise);
+
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
@@ -35,7 +33,8 @@ export const LandingPage = () => {
     <>
       <PageSection hasBodyWrapper={false}>
         {serviceUnavailable && <ServiceUnavailableAlert />}
-        {!isOnPremise && showAlert && <NewAlert setShowAlert={setShowAlert} />}
+        {/* New feature alert */}
+        {/*!isOnPremise && showAlert && <NewAlert setShowAlert={setShowAlert} />*/}
         <Sidebar hasBorder className='pf-v6-u-background-color-100'>
           <SidebarPanel
             variant='sticky'
