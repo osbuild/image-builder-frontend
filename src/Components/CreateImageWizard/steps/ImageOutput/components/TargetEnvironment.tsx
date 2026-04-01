@@ -190,6 +190,7 @@ const TargetEnvironment = () => {
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='vsphere-checkbox-ova'
+              isLabelWrapped
               name='vsphere-checkbox-ova'
               label='VMware vSphere - Open virtualization format (.ova)'
               aria-label='VMware vSphere checkbox OVA'
@@ -216,6 +217,7 @@ const TargetEnvironment = () => {
             <Checkbox
               className='pf-v6-u-mb-sm'
               id='vsphere-checkbox-vmdk'
+              isLabelWrapped
               name='vsphere-checkbox-vmdk'
               label='VMware vSphere - Virtual disk (.vmdk)'
               aria-label='VMware vSphere checkbox VMDK'
@@ -317,6 +319,7 @@ const TargetEnvironment = () => {
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-guest-image'
+            isLabelWrapped
             name='Virtualization guest image'
             label='Virtualization - Guest image (.qcow2)'
             aria-label='Virtualization guest image checkbox'
@@ -340,6 +343,7 @@ const TargetEnvironment = () => {
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-image-installer'
+            isLabelWrapped
             name='Bare metal installer'
             label='Bare metal - Installer (.iso)'
             aria-label='Bare metal installer checkbox'
@@ -363,6 +367,7 @@ const TargetEnvironment = () => {
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-network-installer'
+            isLabelWrapped
             name='Network - Installer'
             label='Network - Installer (.iso)'
             aria-label='Network installer checkbox'
@@ -385,6 +390,7 @@ const TargetEnvironment = () => {
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-pxe-boot'
+            isLabelWrapped
             name='PXE boot image'
             label='Network - PXE boot (.tar.xz)'
             aria-label='PXE boot image checkbox'
@@ -406,6 +412,7 @@ const TargetEnvironment = () => {
           <Checkbox
             className='pf-v6-u-mb-sm'
             id='checkbox-wsl'
+            isLabelWrapped
             name='WSL'
             label='WSL - Windows Subsystem for Linux (.wsl)'
             aria-label='Windows Subsystem for Linux checkbox'
