@@ -19,6 +19,8 @@ import {
   removePackage,
   removePackageGroup,
   removeRecommendedRepository,
+  selectGroups,
+  selectPackages,
   selectRecommendedRepositories,
 } from '@/store/slices/wizard';
 
@@ -35,20 +37,18 @@ import {
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;
   epelRepo: ApiRepositoryCollectionResponseRead | undefined;
-  packages: IBPackageWithRepositoryInfo[];
-  groups: GroupWithRepositoryInfo[];
   activeStream: string;
 };
 
 const PackagesTable = ({
   isSuccessEpelRepo,
   epelRepo,
-  packages,
-  groups,
   activeStream,
 }: PackagesTableProps) => {
   const dispatch = useDispatch();
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
+  const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
