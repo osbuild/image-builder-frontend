@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -9,6 +9,9 @@ import {
   EmptyStateBody,
   EmptyStateFooter,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -22,8 +25,16 @@ import { SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import { orderBy } from 'lodash';
 import { useDispatch } from 'react-redux';
 
-import { Module } from '@/store/api/backend';
-import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
+import { EPEL_10_REPO_DEFINITION } from '@/constants';
+import { Module, useGetArchitecturesQuery } from '@/store/api/backend';
+import {
+  ApiRepositoryCollectionResponseRead,
+  useGetTemplateQuery,
+  useListRepositoriesQuery,
+  useSearchPackageGroupMutation,
+  useSearchRepositoryModuleStreamsMutation,
+  useSearchRpmMutation,
+} from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -34,31 +45,31 @@ import {
   removePackage,
   removePackageGroup,
   removeRecommendedRepository,
+  selectArchitecture,
+  selectCustomRepositories,
+  selectDistribution,
   selectGroups,
   selectModules,
   selectPackages,
   selectRecommendedRepositories,
+  selectSnapshotDate,
+  selectTemplate,
+  selectWizardMode,
 } from '@/store/slices/wizard';
+import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
+import { asDistribution } from '../../../../../store/typeGuards';
+import { convertStringToDate } from '../../../../../Utilities/time';
+import useDebounce from '../../../../../Utilities/useDebounce';
 import ManageRepositoriesButton from '../../Repositories/components/ManageRepositoriesButton';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
+  ItemWithSources,
 } from '../packagesTypes';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  transformedPackages: IBPackageWithRepositoryInfo[];
-  transformedGroups: GroupWithRepositoryInfo[];
-  isLoadingDistroPackages: boolean;
-  isLoadingCustomPackages: boolean;
-  isLoadingRecommendedPackages: boolean;
-  isLoadingDistroGroups: boolean;
-  isLoadingCustomGroups: boolean;
-  isLoadingRecommendedGroups: boolean;
-  debouncedSearchTerm: string;
   isSuccessEpelRepo: boolean;
   epelRepo: ApiRepositoryCollectionResponseRead | undefined;
   setIsRepoModalOpen: (value: boolean) => void;
@@ -68,23 +79,10 @@ type PackageSearchProps = {
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   activeStream: string;
   setActiveStream: (value: string) => void;
-  isSearchingOtherRepos: boolean;
-  setIsSearchingOtherRepos: (value: boolean) => void;
 };
 
 const PackageSearch = ({
   packageType,
-  searchTerm,
-  setSearchTerm,
-  transformedPackages,
-  transformedGroups,
-  isLoadingDistroPackages,
-  isLoadingCustomPackages,
-  isLoadingRecommendedPackages,
-  isLoadingDistroGroups,
-  isLoadingCustomGroups,
-  isLoadingRecommendedGroups,
-  debouncedSearchTerm,
   isSuccessEpelRepo,
   epelRepo,
   setIsRepoModalOpen,
@@ -92,17 +90,426 @@ const PackageSearch = ({
   setIsSelectingGroup,
   activeStream,
   setActiveStream,
-  isSearchingOtherRepos,
-  setIsSearchingOtherRepos,
 }: PackageSearchProps) => {
   const dispatch = useDispatch();
+
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
   const modules = useAppSelector(selectModules);
+  const customRepositories = useAppSelector(selectCustomRepositories);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
+  const template = useAppSelector(selectTemplate);
+  const snapshotDate = useAppSelector(selectSnapshotDate);
+  const wizardMode = useAppSelector(selectWizardMode);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const epelRepoUrlByDistribution =
+    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
+
+  const { data: templateData } = useGetTemplateQuery({
+    uuid: template,
+  });
+
+  const EMPTY_ARRAY: never[] = useMemo(() => [], []);
+  const { data: { data: reposInTemplate = EMPTY_ARRAY } = {} } =
+    useListRepositoriesQuery({
+      contentType: 'rpm',
+      limit: 100,
+      offset: 0,
+      uuid:
+        templateData && templateData.repository_uuids
+          ? templateData.repository_uuids.join(',')
+          : '',
+    });
+
+  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
+    useGetArchitecturesQuery({
+      distribution: asDistribution(distribution),
+    });
+
+  const distroUrls = useMemo(() => {
+    const urls = distroRepositories
+      ?.find((archItem) => archItem.arch === arch)
+      ?.repositories.filter((repo) => !!repo.baseurl)
+      .map((repo) => repo.baseurl!);
+    return urls ?? EMPTY_ARRAY;
+  }, [distroRepositories, arch]);
+
+  const [
+    searchCustomRpms,
+    {
+      data: dataCustomPackages,
+      isSuccess: isSuccessCustomPackages,
+      isLoading: isLoadingCustomPackages,
+    },
+  ] = useSearchRpmMutation();
+
+  const debouncedSearchTerm = useDebounce(searchTerm.trim());
+
+  const [
+    searchRecommendedRpms,
+    {
+      data: dataRecommendedPackages,
+      isSuccess: isSuccessRecommendedPackages,
+      isLoading: isLoadingRecommendedPackages,
+    },
+  ] = useSearchRpmMutation();
+
+  const [
+    searchDistroRpms,
+    {
+      data: dataDistroPackages,
+      isSuccess: isSuccessDistroPackages,
+      isLoading: isLoadingDistroPackages,
+    },
+  ] = useSearchRpmMutation();
+
+  const [
+    searchDistroGroups,
+    {
+      data: dataDistroGroups,
+      isSuccess: isSuccessDistroGroups,
+      isLoading: isLoadingDistroGroups,
+    },
+  ] = useSearchPackageGroupMutation();
+
+  const [
+    searchCustomGroups,
+    {
+      data: dataCustomGroups,
+      isSuccess: isSuccessCustomGroups,
+      isLoading: isLoadingCustomGroups,
+    },
+  ] = useSearchPackageGroupMutation();
+
+  const [
+    searchRecommendedGroups,
+    {
+      data: dataRecommendedGroups,
+      isSuccess: isSuccessRecommendedGroups,
+      isLoading: isLoadingRecommendedGroups,
+    },
+  ] = useSearchPackageGroupMutation();
+
+  const [
+    searchModulesInfo,
+    { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
+  ] = useSearchRepositoryModuleStreamsMutation();
+
+  useEffect(() => {
+    if (packageType === 'groups') {
+      return;
+    }
+    if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
+      if (isOnPremise) {
+        searchDistroRpms({
+          apiContentUnitSearchRequest: {
+            packages: [debouncedSearchTerm],
+            architecture: arch,
+            distribution,
+          },
+        });
+      } else {
+        searchDistroRpms({
+          apiContentUnitSearchRequest: {
+            search: debouncedSearchTerm,
+            urls:
+              template === ''
+                ? distroUrls
+                : reposInTemplate
+                    .filter((r) => r.org_id === '-1' && !!r.url)
+                    .flatMap((r) =>
+                      r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!,
+                    ),
+            limit: 500,
+            include_package_sources: true,
+            date: snapshotDate
+              ? new Date(convertStringToDate(snapshotDate)).toISOString()
+              : undefined,
+          },
+        });
+      }
+    }
+    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
+      searchCustomRpms({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          uuids: customRepositories.flatMap((repo) => {
+            return repo.id;
+          }),
+          limit: 500,
+          include_package_sources: true,
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
+    }
+    if (
+      debouncedSearchTerm.length > 2 &&
+      isSearchingOtherRepos &&
+      !isOnPremise
+    ) {
+      searchRecommendedRpms({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          urls: [epelRepoUrlByDistribution],
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
+    }
+  }, [
+    customRepositories,
+    searchCustomRpms,
+    searchDistroRpms,
+    searchRecommendedRpms,
+    debouncedSearchTerm,
+    isSuccessDistroRepositories,
+    arch,
+    template,
+    distribution,
+    packageType,
+    snapshotDate,
+    distroUrls,
+    isOnPremise,
+    reposInTemplate,
+    isSearchingOtherRepos,
+    epelRepoUrlByDistribution,
+  ]);
+
+  useEffect(() => {
+    if (packageType === 'packages') {
+      return;
+    }
+    if (isSuccessDistroRepositories) {
+      searchDistroGroups({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          urls: distroUrls,
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
+    }
+    if (customRepositories.length > 0) {
+      searchCustomGroups({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          uuids: customRepositories.flatMap((repo) => {
+            return repo.id;
+          }),
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
+    }
+    if (isSearchingOtherRepos && !isOnPremise) {
+      searchRecommendedGroups({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          urls: [epelRepoUrlByDistribution],
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
+        },
+      });
+    }
+  }, [
+    customRepositories,
+    searchDistroGroups,
+    searchCustomGroups,
+    searchRecommendedGroups,
+    debouncedSearchTerm,
+    packageType,
+    arch,
+    distroRepositories,
+    isSuccessDistroRepositories,
+    snapshotDate,
+    distroUrls,
+    isSearchingOtherRepos,
+    isOnPremise,
+    epelRepoUrlByDistribution,
+  ]);
+
+  useEffect(() => {
+    if (
+      wizardMode !== 'create' &&
+      isSuccessDistroRepositories &&
+      modules.length > 0
+    ) {
+      searchModulesInfo({
+        apiSearchModuleStreamsRequest: {
+          rpm_names: modules.map((module) => module.name),
+          urls: [...distroUrls, epelRepoUrlByDistribution],
+          uuids: [],
+        },
+      });
+    }
+  }, [isSuccessDistroRepositories, modules, distroUrls]);
+
+  useEffect(() => {
+    if (!isSuccessModulesInfo) return;
+
+    dataModulesInfo.forEach((module) => {
+      const enabledModule = modules.find((m) => m.name === module.module_name);
+
+      module.streams
+        ?.find((stream) => stream.stream === enabledModule?.stream)
+        ?.package_names?.forEach((packageName) => {
+          const existingPackage = packages.find(
+            (pkg) => pkg.name === packageName,
+          );
+
+          if (existingPackage && module.module_name && enabledModule) {
+            dispatch(
+              addPackage({
+                ...existingPackage,
+                type: 'module',
+                module_name: module.module_name,
+                stream: enabledModule.stream,
+              }),
+            );
+          }
+        });
+    });
+  }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
+
+  const transformedPackages = useMemo(() => {
+    let transformedDistroData: ItemWithSources[] = [];
+    let transformedCustomData: ItemWithSources[] = [];
+    let transformedRecommendedData: ItemWithSources[] = [];
+
+    if (isSuccessDistroPackages && !isSearchingOtherRepos) {
+      transformedDistroData = dataDistroPackages.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'distro',
+        sources: values.package_sources,
+      }));
+    }
+
+    if (isSuccessCustomPackages && !isSearchingOtherRepos) {
+      transformedCustomData = dataCustomPackages.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'custom',
+        sources: values.package_sources,
+      }));
+    }
+
+    if (isSuccessRecommendedPackages && isSearchingOtherRepos) {
+      transformedRecommendedData = dataRecommendedPackages.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'recommended',
+        sources: values.package_sources,
+      }));
+    }
+
+    const combinedPackageData = transformedDistroData
+      .concat(transformedCustomData)
+      .concat(transformedRecommendedData);
+
+    let unpackedData: IBPackageWithRepositoryInfo[] =
+      combinedPackageData.flatMap((item) => {
+        // Spread modules into separate rows by application stream
+        if (item.sources) {
+          return item.sources.map((source) => ({
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+            type: source.type,
+            module_name: source.name,
+            stream: source.stream,
+            end_date: source.end_date,
+          }));
+        }
+        return [
+          {
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+          },
+        ];
+      });
+
+    // group by name, but sort by application stream in descending order
+    unpackedData = orderBy(
+      unpackedData,
+      [
+        'name',
+        (pkg) => pkg.stream || '',
+        (pkg) => pkg.repository || '',
+        (pkg) => pkg.module_name || '',
+      ],
+      ['asc', 'desc', 'asc', 'asc'],
+    );
+
+    return unpackedData;
+  }, [
+    dataCustomPackages,
+    dataDistroPackages,
+    dataRecommendedPackages,
+    isSuccessCustomPackages,
+    isSuccessDistroPackages,
+    isSuccessRecommendedPackages,
+    isSearchingOtherRepos,
+  ]);
+
+  const transformedGroups = useMemo(() => {
+    let combinedGroupData: GroupWithRepositoryInfo[] = [];
+
+    if (isSuccessDistroGroups && !isSearchingOtherRepos) {
+      combinedGroupData = combinedGroupData.concat(
+        dataDistroGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'distro',
+          package_list: values.package_list!,
+        })),
+      );
+    }
+    if (isSuccessCustomGroups && !isSearchingOtherRepos) {
+      combinedGroupData = combinedGroupData.concat(
+        dataCustomGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'custom',
+          package_list: values.package_list!,
+        })),
+      );
+    }
+    if (isSuccessRecommendedGroups && isSearchingOtherRepos) {
+      combinedGroupData = combinedGroupData.concat(
+        dataRecommendedGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'recommended',
+          package_list: values.package_list!,
+        })),
+      );
+    }
+
+    return combinedGroupData;
+  }, [
+    dataDistroGroups,
+    dataCustomGroups,
+    dataRecommendedGroups,
+    isSuccessDistroGroups,
+    isSuccessCustomGroups,
+    isSuccessRecommendedGroups,
+    isSearchingOtherRepos,
+  ]);
 
   const sortedPackages = useMemo(() => {
     if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
@@ -438,6 +845,15 @@ const PackageSearch = ({
             </>
           )}
       </Select>
+      {debouncedSearchTerm.length === 1 && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant='error'>
+              The search value must be greater than 1 character
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };
