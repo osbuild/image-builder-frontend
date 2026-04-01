@@ -439,7 +439,7 @@ describe('Packages request generated correctly', () => {
     await selectFirstPkgOption('grouper'); // select
     await waitFor(async () =>
       user.click(
-        await screen.findByRole('button', { name: /remove package/i }),
+        await screen.findByRole('button', { name: /remove package group/i }),
       ),
     );
     await goToReview();
