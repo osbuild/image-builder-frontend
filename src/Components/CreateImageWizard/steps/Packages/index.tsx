@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Content, Form, Label, Title } from '@patternfly/react-core';
+import { Content, Label, Title } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
@@ -39,7 +39,7 @@ const PackagesStep = () => {
     oscapProfileInfo?.packages?.filter(Boolean).length ?? 0;
 
   return (
-    <Form>
+    <>
       <CustomizationLabels customization='packages' />
       <Title
         headingLevel='h1'
@@ -67,7 +67,7 @@ const PackagesStep = () => {
       </Content>
       <Packages />
       {!isOnPremise && isRhel(distribution) && <PackageRecommendations />}
-    </Form>
+    </>
   );
 };
 
