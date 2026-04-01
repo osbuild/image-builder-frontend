@@ -47,6 +47,7 @@ rpmbuild
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/reports/
 .env
 .auth
 /image-downloads/

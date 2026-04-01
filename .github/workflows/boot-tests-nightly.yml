@@ -9,6 +9,11 @@ on:
         description: 'Pull Request number to run tests against'
         required: false
         type: number
+      test_ci_watch:
+        description: 'Test the CI Watch analysis pipeline (skips real tests, fakes a failure)'
+        required: false
+        type: boolean
+        default: false
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
@@ -23,6 +28,7 @@ jobs:
       - buildspec-override:true
     permissions:
       pull-requests: read
+      actions: write
 
     steps:
       - name: Get PR details if triggered by workflow_dispatch with pr_number
@@ -47,28 +53,35 @@ jobs:
           ref: ${{ env.pr_head_sha || github.ref }}
 
       - name: Setup Node.js with cached dependencies
+        if: ${{ !inputs.test_ci_watch }}
         uses: ./.github/actions/setup-node-cached
 
       - name: Install Playwright
+        if: ${{ !inputs.test_ci_watch }}
         run: npx playwright install chromium --only-shell
 
       # This prevents an error related to minimum watchers when running the front-end and playwright
       - name: Increase file watchers limit
+        if: ${{ !inputs.test_ci_watch }}
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
       - name: Update /etc/hosts
+        if: ${{ !inputs.test_ci_watch }}
         run: sudo npm run patch:hosts
 
       - name: Start front-end server
+        if: ${{ !inputs.test_ci_watch }}
         run: |
           npm run start:federated &
           npx wait-on http://localhost:8003/apps/image-builder/
 
       - name: Run testing proxy
+        if: ${{ !inputs.test_ci_watch }}
         run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name frontend-development-proxy quay.io/redhat-user-workloads/hcc-platex-services-tenant/frontend-development-proxy
 
       - name: Run front-end Playwright tests
         id: playwright-tests
+        if: ${{ !inputs.test_ci_watch }}
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
@@ -76,11 +89,26 @@ jobs:
 
       - name: Store front-end Test report
         uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ always() && !inputs.test_ci_watch }}
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 10
+
+      # CI Watch test mode — download a real playwright report from a failed run and fail
+      - name: Download test report and simulate failure
+        id: fake-tests
+        if: ${{ inputs.test_ci_watch }}
+        run: |
+          echo "Downloading playwright report from run 23778946770..."
+          gh api repos/osbuild/image-builder-frontend/actions/artifacts/6200439122/zip > /tmp/playwright-report.zip
+          mkdir -p playwright-report
+          unzip -o /tmp/playwright-report.zip -d playwright-report
+          rm /tmp/playwright-report.zip
+          echo "Downloaded report, simulating test failure"
+          exit 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify Slack on success
         uses: slackapi/slack-github-action@v2.1.1
@@ -131,28 +159,15 @@ jobs:
             }
 
       - name: Notify Slack on failure
+        id: slack-failure
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ failure() && github.event_name == 'schedule' && github.run_attempt == '1' }}
+        if: ${{ failure() && (github.event_name == 'schedule' || inputs.test_ci_watch) && github.run_attempt == '1' }}
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "attachments": [
-                {
-                  "color": "#d72839",
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+            channel: ${{ vars.TEST_SLACK_CHANNEL_ID }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
 
       - name: Notify Slack on failure (Frontend)
         uses: slackapi/slack-github-action@v2.1.1
@@ -177,3 +192,88 @@ jobs:
                 }
               ]
             }
+
+      # Save the Slack message timestamp so later rerun attempts can thread replies
+      - name: Save Slack message ts
+        if: ${{ failure() && (github.event_name == 'schedule' || inputs.test_ci_watch) && github.run_attempt == '1' }}
+        run: echo "${{ steps.slack-failure.outputs.ts }}" > slack-ts.txt
+
+      - name: Upload Slack ts artifact
+        if: ${{ failure() && (github.event_name == 'schedule' || inputs.test_ci_watch) && github.run_attempt == '1' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: slack-ts
+          path: slack-ts.txt
+          overwrite: true
+
+      # On rerun attempts, retrieve the original message ts
+      - name: Download Slack ts artifact
+        if: ${{ failure() && (github.event_name == 'schedule' || inputs.test_ci_watch) && github.run_attempt != '1' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: slack-ts
+        continue-on-error: true
+
+      - name: Read Slack message ts
+        id: slack-ts
+        if: ${{ failure() && (github.event_name == 'schedule' || inputs.test_ci_watch) }}
+        run: |
+          if [ -f slack-ts.txt ]; then
+            echo "ts=$(cat slack-ts.txt)" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Analyze failures with Claude (via Vertex AI)
+      - name: Install Claude Code
+        if: ${{ failure() && (steps.playwright-tests.conclusion == 'failure' || inputs.test_ci_watch) && (github.event_name == 'schedule' || inputs.test_ci_watch) }}
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Set up GCP credentials
+        if: ${{ failure() && (steps.playwright-tests.conclusion == 'failure' || inputs.test_ci_watch) && (github.event_name == 'schedule' || inputs.test_ci_watch) }}
+        run: |
+          echo '${{ secrets.ANTHROPIC_VERTEX_CREDENTIALS }}' > /tmp/gcp-credentials.json
+
+      - name: Analyze test failures
+        if: ${{ failure() && (steps.playwright-tests.conclusion == 'failure' || inputs.test_ci_watch) && (github.event_name == 'schedule' || inputs.test_ci_watch) }}
+        run: |
+          mkdir -p reports
+          claude --print \
+            --model "${MODEL:-claude-sonnet-4-6}" \
+            --allowedTools "Read,Glob,Grep,Write" \
+            "$(cat ci-watch-instructions.md)
+
+            The GitHub Actions run URL is: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
+            This is attempt ${{ github.run_attempt }}."
+        env:
+          CLAUDE_CODE_USE_VERTEX: "1"
+          CLOUD_ML_REGION: us-east5
+          ANTHROPIC_VERTEX_PROJECT_ID: ${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-credentials.json
+
+      # Post Claude's analysis as a thread reply
+      - name: Post analysis to Slack
+        if: ${{ failure() && (steps.playwright-tests.conclusion == 'failure' || inputs.test_ci_watch) && (github.event_name == 'schedule' || inputs.test_ci_watch) && steps.slack-ts.outputs.ts }}
+        run: |
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg channel "$SLACK_CHANNEL_ID" \
+              --arg thread_ts "${{ steps.slack-ts.outputs.ts }}" \
+              --arg text "$(cat reports/latest.md)" \
+              '{channel: $channel, thread_ts: $thread_ts, text: $text}')"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ vars.TEST_SLACK_CHANNEL_ID }}
+
+      # Rerun failed jobs if classified as a flake (disabled during test_ci_watch)
+      - name: Rerun if flake
+        if: ${{ failure() && steps.playwright-tests.conclusion == 'failure' && github.event_name == 'schedule' && github.run_attempt <= 3 }}
+        run: |
+          if [ -f reports/classification.txt ] && [ "$(cat reports/classification.txt)" = "FLAKE" ]; then
+            echo "Classified as FLAKE — rerunning failed jobs (attempt ${{ github.run_attempt }})"
+            gh run rerun ${{ github.run_id }} --failed
+          else
+            echo "Classified as $(cat reports/classification.txt 2>/dev/null || echo 'UNKNOWN') — not rerunning"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
