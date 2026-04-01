@@ -276,6 +276,10 @@ const CreateImageWizard3 = () => {
     );
   }
 
+  const handleFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+
   return (
     <Modal
       isOpen={showWizardModal}
@@ -353,7 +357,7 @@ const CreateImageWizard3 = () => {
             <CustomWizardFooter disableNext={false} isOnPremise={isOnPremise} />
           }
         >
-          <Form>
+          <Form onSubmit={handleFormSubmit}>
             <Title headingLevel='h1' size='xl'>
               Repositories and packages
             </Title>
