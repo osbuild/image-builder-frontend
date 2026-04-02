@@ -109,7 +109,7 @@ test('Create a blueprint with Disk customization', async ({
       .getByRole('row', {
         name: '/tmp/usb xfs 1 GiB',
       })
-      .getByLabel('Partition name input')
+      .getByRole('textbox', { name: 'Partition name input' })
       .fill('lv2');
     await frame
       .getByRole('row', {

@@ -6,7 +6,6 @@ import {
   HelperTextItem,
   TextArea,
   TextAreaProps,
-  TextInput,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupMainProps,
@@ -44,11 +43,8 @@ type ValidationInputProp = TextInputProps &
     warning?: string | undefined;
     forceErrorDisplay?: boolean;
     isDisabled?: boolean;
+    handleClear?: () => void;
   };
-
-type ErrorMessageProps = {
-  errorMessage: string;
-};
 
 type ValidationResult = 'default' | 'success' | 'error';
 
@@ -65,6 +61,7 @@ export const ValidatedInputAndTextArea = ({
   isDisabled = false,
   warning = undefined,
   forceErrorDisplay = false,
+  handleClear,
 }: ValidationInputProp) => {
   const errorMessage = stepValidation.errors[fieldName] || '';
   const hasError = errorMessage !== '';
@@ -109,16 +106,33 @@ export const ValidatedInputAndTextArea = ({
           isDisabled={isDisabled}
         />
       ) : (
-        <TextInput
-          value={value}
-          onChange={onChange}
-          validated={validated}
-          onBlur={handleBlur}
-          placeholder={placeholder || ''}
-          aria-label={ariaLabel}
-          data-testid={dataTestId}
+        <TextInputGroup
+          {...(validated === 'error' && { validated })}
           isDisabled={isDisabled}
-        />
+        >
+          <TextInputGroupMain
+            value={value}
+            type='text'
+            onBlur={handleBlur}
+            onChange={onChange}
+            placeholder={placeholder || ''}
+            aria-label={ariaLabel}
+            data-testid={dataTestId}
+          />
+          {value && (
+            <TextInputGroupUtilities>
+              <Button
+                variant='plain'
+                onClick={handleClear}
+                aria-label={
+                  ariaLabel ? `Clear ${ariaLabel} input` : 'Clear input'
+                }
+                icon={<TimesIcon />}
+                tabIndex={-1} // Remove from tab order to maintain clean keyboard navigation between fields
+              />
+            </TextInputGroupUtilities>
+          )}
+        </TextInputGroup>
       )}
       {warning !== undefined && warning !== '' && (
         <HelperText>
@@ -126,7 +140,9 @@ export const ValidatedInputAndTextArea = ({
         </HelperText>
       )}
       {validated === 'error' && hasError && (
-        <ErrorMessage errorMessage={errorMessage} />
+        <HelperText>
+          <HelperTextItem variant='error'>{errorMessage}</HelperTextItem>
+        </HelperText>
       )}
     </>
   );
@@ -149,14 +165,6 @@ const getValidationState = (
       : 'success';
 
   return validated;
-};
-
-export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
-  return (
-    <HelperText>
-      <HelperTextItem variant='error'>{errorMessage}</HelperTextItem>
-    </HelperText>
-  );
 };
 
 export const ValidatedInput = ({
@@ -197,6 +205,7 @@ export const ValidatedInput = ({
                 ariaLabel ? `Clear ${ariaLabel} input` : 'Clear input'
               }
               icon={<TimesIcon />}
+              tabIndex={-1} // Remove from tab order to maintain clean keyboard navigation between fields
             />
           </TextInputGroupUtilities>
         )}

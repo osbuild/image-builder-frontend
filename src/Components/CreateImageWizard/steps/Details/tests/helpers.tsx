@@ -23,7 +23,7 @@ export const enterBlueprintName = async (
   name: string,
 ) => {
   const input = await screen.findByRole('textbox', {
-    name: /blueprint name/i,
+    name: /name/i,
   });
   await clearWithWait(user, input);
   await typeWithWait(user, input, name);
@@ -34,7 +34,7 @@ export const enterBlueprintDescription = async (
   description: string,
 ) => {
   const input = await screen.findByRole('textbox', {
-    name: /blueprint description/i,
+    name: /description/i,
   });
   await clearWithWait(user, input);
   await typeWithWait(user, input, description);
@@ -42,14 +42,14 @@ export const enterBlueprintDescription = async (
 
 export const clearBlueprintName = async (user: UserEventInstance) => {
   const input = await screen.findByRole('textbox', {
-    name: /blueprint name/i,
+    name: /name/i,
   });
   await clearWithWait(user, input);
 };
 
 export const clearBlueprintDescription = async (user: UserEventInstance) => {
   const input = await screen.findByRole('textbox', {
-    name: /blueprint description/i,
+    name: /description/i,
   });
   await clearWithWait(user, input);
 };
