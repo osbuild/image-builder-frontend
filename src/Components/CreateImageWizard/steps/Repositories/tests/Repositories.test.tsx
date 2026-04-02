@@ -1,7 +1,9 @@
 import { screen, waitFor } from '@testing-library/react';
 
+import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
+import { CreateBlueprintRequest } from '@/store/api/backend';
 import { server } from '@/test/mocks/server';
-import { createUser } from '@/test/testUtils';
+import { createTestStore, createUser } from '@/test/testUtils';
 
 import {
   removeRepo,
@@ -357,5 +359,259 @@ describe('Repositories Component', () => {
         }),
       ).toBeInTheDocument();
     });
+  });
+});
+
+const createStoreWithRepositoriesState = (wizardStateOverrides = {}) => {
+  return createTestStore({
+    imageTypes: ['guest-image'],
+    registration: {
+      registrationType: 'register-later',
+      activationKey: undefined,
+      orgId: undefined,
+      satelliteRegistration: {
+        command: undefined,
+        caCert: undefined,
+      },
+    },
+    ...wizardStateOverrides,
+  });
+};
+
+const MOCK_ORG_ID = '5';
+
+describe('Request Payload Generation', () => {
+  test('generates correct custom_repositories from state', () => {
+    const store = createStoreWithRepositoriesState({
+      repositories: {
+        customRepositories: [
+          {
+            name: '01-test-valid-repo',
+            id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+            baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+            check_gpg: true,
+            check_repo_gpg: false,
+            gpgkey: [
+              '-----BEGIN PGP PUBLIC KEY BLOCK-----\ntest-key\n-----END PGP PUBLIC KEY BLOCK-----',
+            ],
+          },
+        ],
+        payloadRepositories: [
+          {
+            id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+            baseurl: 'http://valid.link.to.repo.org/x86_64/',
+            rhsm: false,
+            check_gpg: true,
+            check_repo_gpg: false,
+            gpgkey:
+              '-----BEGIN PGP PUBLIC KEY BLOCK-----\ntest-key\n-----END PGP PUBLIC KEY BLOCK-----',
+          },
+        ],
+        redHatRepositories: [],
+        recommendedRepositories: [],
+      },
+    });
+
+    const request = mapRequestFromState(
+      store,
+      MOCK_ORG_ID,
+    ) as CreateBlueprintRequest;
+
+    expect(request.customizations.custom_repositories).toHaveLength(1);
+    expect(request.customizations.custom_repositories![0]).toEqual({
+      name: '01-test-valid-repo',
+      id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+      baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+      check_gpg: true,
+      check_repo_gpg: false,
+      gpgkey: [
+        '-----BEGIN PGP PUBLIC KEY BLOCK-----\ntest-key\n-----END PGP PUBLIC KEY BLOCK-----',
+      ],
+    });
+  });
+
+  test('generates correct payload_repositories from state', () => {
+    const store = createStoreWithRepositoriesState({
+      repositories: {
+        customRepositories: [
+          {
+            name: '01-test-valid-repo',
+            id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+            baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+          },
+        ],
+        payloadRepositories: [
+          {
+            id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+            baseurl: 'http://valid.link.to.repo.org/x86_64/',
+            rhsm: false,
+            check_gpg: true,
+            check_repo_gpg: false,
+            gpgkey:
+              '-----BEGIN PGP PUBLIC KEY BLOCK-----\ntest-key\n-----END PGP PUBLIC KEY BLOCK-----',
+          },
+        ],
+        redHatRepositories: [],
+        recommendedRepositories: [],
+      },
+    });
+
+    const request = mapRequestFromState(
+      store,
+      MOCK_ORG_ID,
+    ) as CreateBlueprintRequest;
+
+    expect(request.customizations.payload_repositories).toHaveLength(1);
+    expect(request.customizations.payload_repositories![0]).toEqual({
+      id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+      baseurl: 'http://valid.link.to.repo.org/x86_64/',
+      rhsm: false,
+      check_gpg: true,
+      check_repo_gpg: false,
+      gpgkey:
+        '-----BEGIN PGP PUBLIC KEY BLOCK-----\ntest-key\n-----END PGP PUBLIC KEY BLOCK-----',
+    });
+  });
+
+  test('module_hotfixes is correctly mapped in payload', () => {
+    const store = createStoreWithRepositoriesState({
+      repositories: {
+        customRepositories: [
+          {
+            name: 'nginx-repo',
+            id: 'f087f9ad-dfe6-4627-9d53-447d1a997de5',
+            baseurl: ['http://nginx.org/packages/centos/9/x86_64/'],
+            module_hotfixes: true,
+            check_gpg: true,
+            check_repo_gpg: false,
+          },
+        ],
+        payloadRepositories: [
+          {
+            id: 'f087f9ad-dfe6-4627-9d53-447d1a997de5',
+            baseurl: 'http://nginx.org/packages/centos/9/x86_64/',
+            rhsm: false,
+            module_hotfixes: true,
+            check_gpg: true,
+            check_repo_gpg: false,
+          },
+        ],
+        redHatRepositories: [],
+        recommendedRepositories: [],
+      },
+    });
+
+    const request = mapRequestFromState(
+      store,
+      MOCK_ORG_ID,
+    ) as CreateBlueprintRequest;
+
+    expect(request.customizations.custom_repositories![0].module_hotfixes).toBe(
+      true,
+    );
+    expect(
+      request.customizations.payload_repositories![0].module_hotfixes,
+    ).toBe(true);
+  });
+
+  test('empty repositories returns undefined in payload', () => {
+    const store = createStoreWithRepositoriesState({
+      repositories: {
+        customRepositories: [],
+        payloadRepositories: [],
+        redHatRepositories: [],
+        recommendedRepositories: [],
+      },
+    });
+
+    const request = mapRequestFromState(
+      store,
+      MOCK_ORG_ID,
+    ) as CreateBlueprintRequest;
+
+    expect(request.customizations.custom_repositories).toBeUndefined();
+    expect(request.customizations.payload_repositories).toBeUndefined();
+  });
+
+  test('empty baseurl array is converted to undefined in payload', () => {
+    const store = createStoreWithRepositoriesState({
+      repositories: {
+        customRepositories: [
+          {
+            name: 'repo-with-empty-baseurl',
+            id: '12345678-1234-1234-1234-123456789012',
+            baseurl: [],
+          },
+        ],
+        payloadRepositories: [
+          {
+            id: '12345678-1234-1234-1234-123456789012',
+            baseurl: '',
+            rhsm: false,
+          },
+        ],
+        redHatRepositories: [],
+        recommendedRepositories: [],
+      },
+    });
+
+    const request = mapRequestFromState(
+      store,
+      MOCK_ORG_ID,
+    ) as CreateBlueprintRequest;
+
+    expect(
+      request.customizations.custom_repositories![0].baseurl,
+    ).toBeUndefined();
+  });
+
+  test('multiple repositories are correctly mapped', () => {
+    const store = createStoreWithRepositoriesState({
+      repositories: {
+        customRepositories: [
+          {
+            name: '01-test-valid-repo',
+            id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+            baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+          },
+          {
+            name: '04-test-another-valid-repo',
+            id: '34718648-0946-4b09-abef-3a20647f2b1f',
+            baseurl: ['http://also.valid.link.to.repo.org/x86_64/'],
+          },
+        ],
+        payloadRepositories: [
+          {
+            id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+            baseurl: 'http://valid.link.to.repo.org/x86_64/',
+            rhsm: false,
+          },
+          {
+            id: '34718648-0946-4b09-abef-3a20647f2b1f',
+            baseurl: 'http://also.valid.link.to.repo.org/x86_64/',
+            rhsm: false,
+          },
+        ],
+        redHatRepositories: [],
+        recommendedRepositories: [],
+      },
+    });
+
+    const request = mapRequestFromState(
+      store,
+      MOCK_ORG_ID,
+    ) as CreateBlueprintRequest;
+
+    expect(request.customizations.custom_repositories).toHaveLength(2);
+    expect(request.customizations.payload_repositories).toHaveLength(2);
+    expect(
+      request.customizations.custom_repositories!.map((r) => r.name),
+    ).toEqual(['01-test-valid-repo', '04-test-another-valid-repo']);
+    expect(
+      request.customizations.payload_repositories!.map((r) => r.id),
+    ).toEqual([
+      'ae39f556-6986-478a-95d1-f9c7e33d066c',
+      '34718648-0946-4b09-abef-3a20647f2b1f',
+    ]);
   });
 });
