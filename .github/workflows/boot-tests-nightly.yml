@@ -246,7 +246,7 @@ jobs:
         env:
           CLAUDE_CODE_USE_VERTEX: "1"
           CLOUD_ML_REGION: us-east5
-          ANTHROPIC_VERTEX_PROJECT_ID: ${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}
+          ANTHROPIC_VERTEX_PROJECT_ID: ${{ secrets.ANTHROPIC_VERTEX_PROJECT_ID }}
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-credentials.json
 
       # Post Claude's analysis as a thread reply
