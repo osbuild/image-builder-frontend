@@ -1,0 +1,12 @@
+// non-scrollable widgets using flex
+.landing-edge, .landing-rhel, .landing-ansible, .landing-openshift, .landing-quay, .landing-openshiftAi, .landing-acs, .landing-imageBuilder, [class*="landing-landing-./EdgeWidget"], [class*="landing-landing-./RhelWidget"], [class*="landing-landing-./AnsibleWidget"], [class*="landing-landing-./OpenShiftWidget"], [class*="landing-landing-./QuayWidget"], [class*="landing-landing-./OpenShiftAiWidget"], [class*="landing-landing-./AcsWidget"], [class*="landing-landing-./ImageBuilderWidget"] { 
+  display: flex; 
+  overflow: hidden;
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
