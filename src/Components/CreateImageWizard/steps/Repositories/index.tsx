@@ -9,6 +9,7 @@ import {
   selectRecommendedRepositories,
   selectWizardMode,
 } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './components/Repositories';
@@ -18,15 +19,26 @@ const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='repositories' />
-      <Title headingLevel='h1' size='xl'>
-        Included repositories
-      </Title>
       <Content>
-        Can&apos;t find a repository? Ensure it&apos;s been added on{' '}
-        <ManageRepositoriesButton label={'the Repositories page'} icon={true} />
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          Included repositories
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Can&apos;t find a repository? Ensure it&apos;s been added on{' '}
+          <ManageRepositoriesButton
+            label={'the Repositories page'}
+            icon={true}
+          />
+        </Content>
       </Content>
       {wizardMode === 'edit' && (
         <Alert
@@ -50,7 +62,7 @@ const RepositoriesStep = () => {
         ''
       )}
       <Repositories />
-    </Form>
+    </Wrapper>
   );
 };
 
