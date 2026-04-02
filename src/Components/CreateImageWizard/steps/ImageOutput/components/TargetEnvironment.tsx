@@ -173,10 +173,74 @@ const TargetEnvironment = () => {
     <FormGroup
       isRequired={true}
       role='group'
-      label='Target environments'
+      label={<span className='pf-v6-u-font-size-md'>Target environments</span>}
       fieldId='target-environments'
     >
-      <Content component='p'>Select target items for this image.</Content>
+      <Content component='p'>
+        Select one or more target environments for this image.
+      </Content>
+
+      {publicClouds.length > 0 && (
+        <FormGroup
+          label='Public cloud'
+          className='pf-v6-u-mt-md'
+          role='group'
+          aria-label='Public cloud'
+          fieldId='public-cloud-group'
+        >
+          {publicClouds.includes('aws') && (
+            <Checkbox
+              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
+              id='checkbox-aws'
+              name='Amazon Web Services'
+              label='Amazon Web Services'
+              aria-label='Amazon Web Services checkbox'
+              isChecked={environments.includes('aws')}
+              isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('aws')}
+              body={environments.includes('aws') ? <Aws /> : undefined}
+            />
+          )}
+          {publicClouds.includes('gcp') && (
+            <Checkbox
+              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
+              id='checkbox-gcp'
+              name='Google Cloud Platform'
+              label='Google Cloud Platform'
+              aria-label='Google Cloud checkbox'
+              isChecked={environments.includes('gcp')}
+              isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('gcp')}
+              body={environments.includes('gcp') ? <Gcp /> : undefined}
+            />
+          )}
+          {publicClouds.includes('azure') && (
+            <Checkbox
+              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
+              id='checkbox-azure'
+              name='Microsoft Azure'
+              label='Microsoft Azure'
+              aria-label='Microsoft Azure checkbox'
+              isChecked={environments.includes('azure')}
+              isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('azure')}
+              body={environments.includes('azure') ? <Azure /> : undefined}
+            />
+          )}
+          {publicClouds.includes('oci') && (
+            <Checkbox
+              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
+              id='checkbox-oci'
+              name='Oracle Cloud Infrastructure'
+              label='Oracle Cloud Infrastructure'
+              aria-label='Oracle Cloud Infrastructure checkbox'
+              isChecked={environments.includes('oci')}
+              isDisabled={isOnlyNetworkInstallerSelected}
+              onChange={() => handleToggleEnvironment('oci')}
+            />
+          )}
+        </FormGroup>
+      )}
 
       {privateClouds.length > 0 && (
         <FormGroup
@@ -188,7 +252,7 @@ const TargetEnvironment = () => {
         >
           {privateClouds.includes('vsphere-ova') && (
             <Checkbox
-              className='pf-v6-u-mb-sm'
+              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='vsphere-checkbox-ova'
               isLabelWrapped
               name='vsphere-checkbox-ova'
@@ -215,7 +279,7 @@ const TargetEnvironment = () => {
           )}
           {privateClouds.includes('vsphere') && (
             <Checkbox
-              className='pf-v6-u-mb-sm'
+              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='vsphere-checkbox-vmdk'
               isLabelWrapped
               name='vsphere-checkbox-vmdk'
@@ -242,68 +306,6 @@ const TargetEnvironment = () => {
         </FormGroup>
       )}
 
-      {publicClouds.length > 0 && (
-        <FormGroup
-          label='Public cloud'
-          className='pf-v6-u-mt-md'
-          role='group'
-          aria-label='Public cloud'
-          fieldId='public-cloud-group'
-        >
-          {publicClouds.includes('aws') && (
-            <Checkbox
-              className='pf-v6-u-mb-sm'
-              id='checkbox-aws'
-              name='Amazon Web Services'
-              label='Amazon Web Services'
-              aria-label='Amazon Web Services checkbox'
-              isChecked={environments.includes('aws')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => handleToggleEnvironment('aws')}
-              body={environments.includes('aws') ? <Aws /> : undefined}
-            />
-          )}
-          {publicClouds.includes('gcp') && (
-            <Checkbox
-              className='pf-v6-u-mb-sm'
-              id='checkbox-gcp'
-              name='Google Cloud Platform'
-              label='Google Cloud Platform'
-              aria-label='Google Cloud checkbox'
-              isChecked={environments.includes('gcp')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => handleToggleEnvironment('gcp')}
-              body={environments.includes('gcp') ? <Gcp /> : undefined}
-            />
-          )}
-          {publicClouds.includes('azure') && (
-            <Checkbox
-              className='pf-v6-u-mb-sm'
-              id='checkbox-azure'
-              name='Microsoft Azure'
-              label='Microsoft Azure'
-              aria-label='Microsoft Azure checkbox'
-              isChecked={environments.includes('azure')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => handleToggleEnvironment('azure')}
-              body={environments.includes('azure') ? <Azure /> : undefined}
-            />
-          )}
-          {publicClouds.includes('oci') && (
-            <Checkbox
-              className='pf-v6-u-mb-sm'
-              id='checkbox-oci'
-              name='Oracle Cloud Infrastructure'
-              label='Oracle Cloud Infrastructure'
-              aria-label='Oracle Cloud Infrastructure checkbox'
-              isChecked={environments.includes('oci')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => handleToggleEnvironment('oci')}
-            />
-          )}
-        </FormGroup>
-      )}
-
       <FormGroup
         label={
           privateClouds.length > 0 || publicClouds.length > 0
@@ -317,7 +319,7 @@ const TargetEnvironment = () => {
       >
         {miscFormats.includes('guest-image') && (
           <Checkbox
-            className='pf-v6-u-mb-sm'
+            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
             id='checkbox-guest-image'
             isLabelWrapped
             name='Virtualization guest image'
@@ -341,7 +343,7 @@ const TargetEnvironment = () => {
         )}
         {miscFormats.includes('image-installer') && (
           <Checkbox
-            className='pf-v6-u-mb-sm'
+            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
             id='checkbox-image-installer'
             isLabelWrapped
             name='Bare metal installer'
@@ -365,7 +367,7 @@ const TargetEnvironment = () => {
         )}
         {miscFormats.includes('network-installer') && (
           <Checkbox
-            className='pf-v6-u-mb-sm'
+            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
             id='checkbox-network-installer'
             isLabelWrapped
             name='Network - Installer'
@@ -388,7 +390,7 @@ const TargetEnvironment = () => {
         )}
         {miscFormats.includes('pxe-tar-xz') && (
           <Checkbox
-            className='pf-v6-u-mb-sm'
+            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
             id='checkbox-pxe-boot'
             isLabelWrapped
             name='PXE boot image'
@@ -410,7 +412,7 @@ const TargetEnvironment = () => {
         )}
         {miscFormats.includes('wsl') && (
           <Checkbox
-            className='pf-v6-u-mb-sm'
+            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
             id='checkbox-wsl'
             isLabelWrapped
             name='WSL'
