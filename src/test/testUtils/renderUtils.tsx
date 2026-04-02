@@ -28,10 +28,19 @@ export const renderWithRedux = (
   wizardStateOverrides: WizardStateOverrides = {},
   options: RenderWithReduxOptions = {},
 ): RenderWithReduxResult => {
+  const store = createTestStore(wizardStateOverrides, options);
+  const view = render(<Provider store={store}>{component}</Provider>);
+  return { ...view, store };
+};
+
+export const createTestStore = (
+  wizardStateOverrides: WizardStateOverrides = {},
+  options: RenderWithReduxOptions = {},
+): EnhancedStore<RootState> => {
   const { preloadedState } = options;
   const isOnPremise = preloadedState?.env?.isOnPremise;
 
-  const store = configureStore({
+  return configureStore({
     // this makes typescript quite unhappy. I think it should
     // be fine for now since this is just for our test suite.
     // @ts-expect-error see above note
@@ -45,8 +54,4 @@ export const renderWithRedux = (
       ...preloadedState,
     },
   });
-
-  const view = render(<Provider store={store}>{component}</Provider>);
-
-  return { ...view, store };
 };
