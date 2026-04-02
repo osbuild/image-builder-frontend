@@ -80,3 +80,82 @@ export const getAuthHeaders = async (
   }
   return {};
 };
+
+type RepositoryRequest = {
+  name: string;
+  url: string;
+  snapshot?: boolean;
+  distribution_arch?: string;
+  distribution_versions?: string[];
+};
+
+type RepositoryResponse = {
+  uuid: string;
+  name: string;
+  url: string;
+};
+
+export const createRepositoryViaApi = async (
+  page: Page,
+  repository: RepositoryRequest,
+): Promise<RepositoryResponse> => {
+  const headers = await getAuthHeaders(page);
+  const response = await page
+    .context()
+    .request.post('/api/content-sources/v1/repositories/', {
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+      },
+      data: repository,
+    });
+
+  if (response.status() !== 201) {
+    const body = await response.text();
+    throw new Error(
+      `Failed to create repository, status: ${response.status()}, body: ${body}`,
+    );
+  }
+
+  return response.json();
+};
+
+export const deleteRepositoryViaApi = async (
+  page: Page,
+  uuid: string,
+): Promise<void> => {
+  const headers = await getAuthHeaders(page);
+  const response = await page
+    .context()
+    .request.delete(`/api/content-sources/v1/repositories/${uuid}`, {
+      headers,
+    });
+
+  if (response.status() !== 204 && response.status() !== 404) {
+    throw new Error(
+      `Failed to delete repository ${uuid}, status: ${response.status()}`,
+    );
+  }
+};
+
+export const deleteRepositoryByUrlViaApi = async (
+  page: Page,
+  url: string,
+): Promise<void> => {
+  const headers = await getAuthHeaders(page);
+  const response = await page
+    .context()
+    .request.get(
+      `/api/content-sources/v1/repositories/?url=${encodeURIComponent(url)}`,
+      { headers },
+    );
+
+  if (response.status() !== 200) {
+    return;
+  }
+
+  const body = await response.json();
+  if (body.data && body.data.length > 0) {
+    await deleteRepositoryViaApi(page, body.data[0].uuid);
+  }
+};
