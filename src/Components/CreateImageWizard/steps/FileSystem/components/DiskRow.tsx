@@ -68,6 +68,7 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
               vg.logical_volumes.length === 1 &&
               vg.logical_volumes.some((lv) => lv.id === partition.id),
           )}
+          aria-label='Remove partition'
         />
       </Td>
     </Tr>

@@ -114,38 +114,25 @@ test('Create a blueprint with Filesystem customization', async ({
 
   await test.step('Fill manually selected partitions', async () => {
     await expect(
-      frame
-        .getByRole('row', { name: '/ xfs 10 GiB' })
-        .getByRole('textbox')
-        .first(),
+      frame.getByRole('textbox', { name: 'Mount point input' }).first(),
     ).toBeDisabled();
     const closeRootButton = frame
-      .getByRole('row', {
-        name: '/ xfs 10 GiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .first();
     await expect(closeRootButton).toBeDisabled();
 
     await frame.getByRole('button', { name: 'Add partition' }).click();
     await frame
-      .getByRole('row', { name: '/home xfs 1 GiB' })
-      .getByRole('textbox')
-      .first()
+      .getByRole('textbox', { name: 'Mount point input' })
+      .last()
       .fill('/tmp/usb');
-    await frame
-      .getByRole('gridcell', { name: '1', exact: true })
-      .getByPlaceholder('Define minimum size')
-      .fill('15');
-    await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
+    await frame.getByPlaceholder('Define minimum size').last().fill('15');
+    await frame.getByRole('button', { name: 'GiB' }).last().click();
     await frame.getByRole('option', { name: 'MiB' }).click();
 
     const closeTmpButton = frame
-      .getByRole('row', {
-        name: '/tmp/usb xfs 15 MiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .last();
 
     await expect(closeTmpButton).toBeEnabled();
   });
@@ -176,32 +163,20 @@ test('Create a blueprint with Filesystem customization', async ({
       .click();
 
     const closeRootButton = frame
-      .getByRole('row', {
-        name: '/ xfs 10 GiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .first();
     await expect(closeRootButton).toBeDisabled();
 
     const closeTmpButton = frame
-      .getByRole('row', {
-        name: '/tmp/usb xfs 15 MiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .last();
     await expect(closeTmpButton).toBeEnabled();
 
-    await frame
-      .getByRole('gridcell', { name: '15', exact: true })
-      .getByPlaceholder('Define minimum size')
-      .fill('20');
+    await frame.getByPlaceholder('Define minimum size').last().fill('20');
 
     await frame
-      .getByRole('row', {
-        name: '/tmp/usb xfs 20 MiB',
-      })
-      .getByRole('textbox')
-      .first()
+      .getByRole('textbox', { name: 'Mount point input' })
+      .last()
       .fill('/usr/test');
     await expect(
       frame.getByText(
@@ -262,27 +237,19 @@ test('Create a blueprint with Filesystem customization', async ({
     ).toBeChecked();
 
     const closeRootButton = frame
-      .getByRole('row', {
-        name: '/ xfs 10 GiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .first();
     await expect(closeRootButton).toBeDisabled();
 
     const closeTmpButton = frame
-      .getByRole('row', {
-        name: '/srv/data xfs 20 GiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .last();
     await expect(closeTmpButton).toBeEnabled();
 
-    const size = frame
-      .getByRole('gridcell', { name: '20', exact: true })
-      .getByPlaceholder('Define minimum size');
+    const size = frame.getByPlaceholder('Define minimum size').last();
     await expect(size).toHaveValue('20');
 
-    const unitButton = frame.getByRole('button', { name: 'GiB' }).nth(1);
+    const unitButton = frame.getByRole('button', { name: 'GiB' }).last();
     await expect(unitButton).toBeVisible();
 
     await frame.getByRole('button', { name: 'Cancel' }).click();

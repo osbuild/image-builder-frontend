@@ -63,11 +63,8 @@ test('Import a blueprint with invalid customization', async ({
     await expect(closeRootButton).toBeEnabled();
     await closeRootButton.click();
     const closeRootButton2 = frame
-      .getByRole('row', {
-        name: '/ xfs 10 GiB',
-      })
-      .getByRole('button')
-      .nth(1);
+      .getByRole('button', { name: 'Remove partition' })
+      .first();
     await expect(closeRootButton2).toBeDisabled();
   });
 

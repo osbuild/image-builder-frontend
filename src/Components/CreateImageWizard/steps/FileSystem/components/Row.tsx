@@ -46,6 +46,7 @@ const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
           isDisabled={isRemovingDisabled}
+          aria-label='Remove partition'
         />
       </Td>
     </Tr>
