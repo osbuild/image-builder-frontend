@@ -236,13 +236,13 @@ jobs:
         if: ${{ failure() && (steps.playwright-tests.conclusion == 'failure' || inputs.test_ci_watch) && (github.event_name == 'schedule' || inputs.test_ci_watch) }}
         run: |
           mkdir -p reports
-          claude --print \
+          cat ci-watch-instructions.md > /tmp/prompt.md
+          echo "" >> /tmp/prompt.md
+          echo "The GitHub Actions run URL is: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/" >> /tmp/prompt.md
+          echo "This is attempt ${{ github.run_attempt }}." >> /tmp/prompt.md
+          cat /tmp/prompt.md | claude --print \
             --model "${MODEL:-claude-sonnet-4-6}" \
-            --allowedTools "Read,Glob,Grep,Write" \
-            "$(cat ci-watch-instructions.md)
-
-            The GitHub Actions run URL is: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
-            This is attempt ${{ github.run_attempt }}."
+            --allowedTools "Read,Glob,Grep,Write"
         env:
           CLAUDE_CODE_USE_VERTEX: "1"
           CLOUD_ML_REGION: us-east5
