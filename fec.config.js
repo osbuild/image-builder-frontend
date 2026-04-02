@@ -113,6 +113,10 @@ module.exports = {
   moduleFederation: {
     exposes: {
       './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
+      './ImageBuilderWidget': path.resolve(
+        __dirname,
+        './src/Components/Widgets/image-builder-widget.tsx'
+      ),
     },
     shared: [{ 'react-router-dom': { singleton: true, version: '*' } }],
     exclude: ['react-router-dom'],
