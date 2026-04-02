@@ -70,7 +70,7 @@ describe('Step Review', () => {
     await goToReview();
     await clickBack();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: 'Image details',
     });
   });
 

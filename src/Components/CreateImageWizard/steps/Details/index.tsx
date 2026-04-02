@@ -1,14 +1,6 @@
 import React from 'react';
 
-import {
-  Content,
-  Form,
-  FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  Title,
-} from '@patternfly/react-core';
+import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
 
 import {
   changeBlueprintDescription,
@@ -47,14 +39,12 @@ const DetailsStep = () => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
-        Details
+        Image details
       </Title>
       <Content>
-        Enter a name to identify your blueprint. If no name is entered, the
-        images created from this blueprint will use the name of the parent
-        blueprint.
+        Enter a name and description to identify your deployment-ready image.
       </Content>
-      <FormGroup isRequired label='Blueprint name' fieldId='blueprint-name'>
+      <FormGroup isRequired label='Name' fieldId='blueprint-name'>
         <ValidatedInputAndTextArea
           ariaLabel='blueprint name'
           dataTestId='blueprint'
@@ -64,21 +54,11 @@ const DetailsStep = () => {
           stepValidation={stepValidation}
           fieldName='name'
           isRequired={true}
+          handleClear={() => dispatch(changeBlueprintName(''))}
         />
-        <FormHelperText>
-          <HelperText>
-            <HelperTextItem>
-              The name can be 2-100 characters with at least two letters or
-              numbers
-            </HelperTextItem>
-          </HelperText>
-        </FormHelperText>
       </FormGroup>
 
-      <FormGroup
-        label='Blueprint description'
-        fieldId='blueprint-description-name'
-      >
+      <FormGroup label='Description' fieldId='blueprint-description-name'>
         <ValidatedInputAndTextArea
           ariaLabel='blueprint description'
           dataTestId='blueprint description'
@@ -87,6 +67,7 @@ const DetailsStep = () => {
           placeholder='Add description'
           stepValidation={stepValidation}
           fieldName='description'
+          handleClear={() => dispatch(changeBlueprintDescription(''))}
         />
       </FormGroup>
     </Form>

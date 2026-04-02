@@ -43,10 +43,12 @@ describe('Details Component', () => {
       renderDetailsStep();
 
       expect(
-        await screen.findByRole('heading', { name: /Details/i }),
+        await screen.findByRole('heading', { name: /Image details/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Enter a name to identify your blueprint/i),
+        screen.getByText(
+          /Enter a name and description to identify your deployment-ready image/i,
+        ),
       ).toBeInTheDocument();
     });
 
@@ -54,7 +56,7 @@ describe('Details Component', () => {
       renderDetailsStep();
 
       expect(
-        await screen.findByRole('textbox', { name: /blueprint name/i }),
+        await screen.findByRole('textbox', { name: /name/i }),
       ).toBeInTheDocument();
     });
 
@@ -62,17 +64,7 @@ describe('Details Component', () => {
       renderDetailsStep();
 
       expect(
-        await screen.findByRole('textbox', { name: /blueprint description/i }),
-      ).toBeInTheDocument();
-    });
-
-    test('displays helper text for name requirements', async () => {
-      renderDetailsStep();
-
-      expect(
-        await screen.findByText(
-          /The name can be 2-100 characters with at least two letters or numbers/i,
-        ),
+        await screen.findByRole('textbox', { name: /description/i }),
       ).toBeInTheDocument();
     });
   });

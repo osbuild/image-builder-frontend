@@ -99,9 +99,15 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'Back', exact: true }).click();
 
-    await expect(frame.getByRole('heading', { name: 'Details' })).toBeVisible();
-    await frame.getByTestId('blueprint').fill(blueprintName);
-    await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
+    await expect(
+      frame.getByRole('heading', { name: 'Image details' }),
+    ).toBeVisible();
+    await frame
+      .getByRole('textbox', { name: 'blueprint name' })
+      .fill(blueprintName);
+    await expect(
+      frame.getByRole('textbox', { name: 'blueprint name' }),
+    ).toHaveValue(blueprintName);
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
