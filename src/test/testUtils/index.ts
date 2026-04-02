@@ -39,6 +39,7 @@ export {
 
 export {
   renderWithRedux,
+  createTestStore,
   type RenderWithReduxOptions,
   type RenderWithReduxResult,
   type WizardStateOverrides,
