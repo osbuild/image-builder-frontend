@@ -52,40 +52,23 @@ const goToPackagesStep = async () => {
   await selectGuestImageTarget();
   await clickNext(); // Registration
   await clickRegisterLater();
-  await goToStep(/Additional packages/);
+  await goToStep(/Packages/);
 };
 
 const typeIntoSearchBox = async (searchTerm: string) => {
   const user = userEvent.setup();
   const searchbox = await screen.findByRole('textbox', {
-    name: /search packages/i,
+    name: /search package/i,
   });
   await waitFor(() => user.type(searchbox, searchTerm));
 };
 
-const getAllCheckboxes = async () => {
-  const pkgTable = await screen.findByTestId('packages-table');
-  await screen.findAllByTestId('package-row');
-
-  const checkboxes = await within(pkgTable).findAllByRole('checkbox', {
-    name: /select row/i,
-  });
-
-  return checkboxes;
-};
-
-const clickFirstPackageCheckbox = async () => {
+const selectFirstPkgOption = async (name: string) => {
   const user = userEvent.setup();
-  const row0Checkbox = await screen.findByRole('checkbox', {
-    name: /select row 0/i,
+  const options = await screen.findAllByRole('option', {
+    name: new RegExp(name, 'i'),
   });
-  await waitFor(() => user.click(row0Checkbox));
-};
-
-const toggleSelected = async () => {
-  const user = userEvent.setup();
-  const selected = await screen.findByRole('button', { name: /selected/i });
-  await waitFor(() => user.click(selected));
+  await waitFor(() => user.click(options[0]));
 };
 
 const checkRecommendationsEmptyState = async () => {
@@ -106,14 +89,6 @@ const addAllRecommendations = async () => {
   const user = userEvent.setup();
   const addAllBtn = await screen.findByText(/add all packages/i);
   await waitFor(async () => user.click(addAllBtn));
-};
-
-const deselectRecommendation = async () => {
-  const user = userEvent.setup();
-  const row1Checkbox = await screen.findByRole('checkbox', {
-    name: /select row 0/i,
-  });
-  await waitFor(async () => user.click(row1Checkbox));
 };
 
 const clickRevisitButton = async () => {
@@ -177,93 +152,17 @@ describe('Step Packages', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await typeIntoSearchBox('test');
-    await screen.findByRole('cell', { name: /test-lib/ }); // wait until packages get rendered
+    const pkgOption = await screen.findByRole('option', { name: /test-lib/ });
+    await waitFor(() => user.click(pkgOption));
 
-    const checkboxes = await getAllCheckboxes();
-    let firstPkgCheckbox = checkboxes[0] as HTMLInputElement;
-
-    expect(firstPkgCheckbox.checked).toEqual(false);
-    await waitFor(() => user.click(firstPkgCheckbox));
-    await waitFor(() => expect(firstPkgCheckbox.checked).toEqual(true));
+    expect(await screen.findByRole('cell', { name: /test-lib/ })).toBeVisible();
     await clickNext();
     await clickBack();
-    firstPkgCheckbox = checkboxes[0] as HTMLInputElement;
-    expect(firstPkgCheckbox.checked).toEqual(true);
+    expect(await screen.findByRole('cell', { name: /test-lib/ })).toBeVisible();
   });
-
-  //  test('Removing packages should not immediately remove them, only uncheck checkboxes', async () => {
-  //    await renderCreateMode();
-  //    await goToPackagesStep();
-  //    await typeIntoSearchBox('test');
-  //
-  //    const checkboxes = await getAllCheckboxes();
-  //    const firstPkgCheckbox = checkboxes[0] as HTMLInputElement;
-  //    const secondPkgCheckbox = checkboxes[1] as HTMLInputElement;
-  //    const thirdPkgCheckbox = checkboxes[2] as HTMLInputElement;
-  //
-  //    // Select multiple packages
-  //    expect(firstPkgCheckbox.checked).toBe(false);
-  //    expect(secondPkgCheckbox.checked).toBe(false);
-  //    expect(thirdPkgCheckbox.checked).toBe(false);
-  //    user.click(firstPkgCheckbox);
-  //    user.click(secondPkgCheckbox);
-  //    user.click(thirdPkgCheckbox);
-  //    await waitFor(() => expect(firstPkgCheckbox.checked).toBe(true));
-  //    await waitFor(() => expect(secondPkgCheckbox.checked).toBe(true));
-  //    await waitFor(() => expect(thirdPkgCheckbox.checked).toBe(true));
-  //
-  //    await toggleSelected();
-  //
-  //    // Deselect packages
-  //    user.click(firstPkgCheckbox);
-  //    await waitFor(() => expect(firstPkgCheckbox.checked).toBe(false));
-  //    user.click(secondPkgCheckbox);
-  //    await waitFor(() => expect(secondPkgCheckbox.checked).toBe(false));
-  //
-  //    // Ensure packages remain but are unchecked
-  //    const packageRows = await getRows();
-  //    expect(packageRows.length).toBeGreaterThan(2);
-  //
-  //    // Toggle next and back
-  //    await clickNext();
-  //    await clickBack();
-  //    await toggleSelected();
-  //
-  //    // Ensure packages are removed
-  //    const updatedRows = await getRows();
-  //    expect(updatedRows.length).toBe(1);
-  //  });
 
   // Note: "no results" and "too short" tests are now covered by unit tests in:
   // src/Components/CreateImageWizard/steps/Packages/tests/Packages.test.tsx
-
-  //  test('should display relevant results in selected first', async () => {
-  //    await renderCreateMode();
-  //    await goToPackagesStep();
-  //    await selectCustomRepo();
-  //    await typeIntoSearchBox('test');
-  //
-  //    const checkboxes = await getAllCheckboxes();
-  //
-  //    user.click(checkboxes[0]);
-  //    user.click(checkboxes[1]);
-  //
-  //    await clearSearchInput();
-  //    await typeIntoSearchBox('mock');
-  //    await screen.findByText(/mock-lib/);
-  //
-  //    user.click(checkboxes[0]);
-  //    user.click(checkboxes[1]);
-  //
-  //    await toggleSelected();
-  //    await clearSearchInput();
-  //    await typeIntoSearchBox('test');
-  //
-  //    await toggleSelected();
-  //    const availablePackages = await getRows();
-  //    expect(availablePackages[0]).toHaveTextContent('test');
-  //    expect(availablePackages[1]).toHaveTextContent('test-lib');
-  //  });
 
   test('should display recommendations', async () => {
     await renderCreateMode();
@@ -271,7 +170,7 @@ describe('Step Packages', () => {
     await goToPackagesStep();
     await checkRecommendationsEmptyState();
     await typeIntoSearchBox('test');
-    await clickFirstPackageCheckbox();
+    await selectFirstPkgOption('test');
 
     await screen.findByText('recommendedPackage1');
     await screen.findByText('recommendedPackage2');
@@ -284,9 +183,8 @@ describe('Step Packages', () => {
     await goToPackagesStep();
     await checkRecommendationsEmptyState();
     await typeIntoSearchBox('test');
-    await clickFirstPackageCheckbox();
+    await selectFirstPkgOption('test');
     await addSingleRecommendation();
-    await toggleSelected();
 
     const pkgTable = await screen.findByTestId('packages-table');
     await within(pkgTable).findByText('recommendedPackage1');
@@ -296,7 +194,7 @@ describe('Step Packages', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await typeIntoSearchBox('test');
-    await clickFirstPackageCheckbox();
+    await selectFirstPkgOption('test');
     await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Included repositories/ });
@@ -325,59 +223,57 @@ describe('Step Packages', () => {
       await screen.findAllByText('betaModule');
       await screen.findAllByText('gammaModule');
 
-      let rows = await screen.findAllByRole('row');
-      rows.shift();
-      expect(rows).toHaveLength(6);
+      let options = await screen.findAllByRole('option');
+      await waitFor(() => expect(options).toHaveLength(6));
 
-      expect(rows[0]).toHaveTextContent('alphaModule');
-      expect(rows[0]).toHaveTextContent('3.0');
-      expect(rows[1]).toHaveTextContent('alphaModule');
-      expect(rows[1]).toHaveTextContent('2.0');
-      expect(rows[2]).toHaveTextContent('betaModule');
-      expect(rows[2]).toHaveTextContent('4.0');
-      expect(rows[3]).toHaveTextContent('betaModule');
-      expect(rows[3]).toHaveTextContent('2.0');
+      expect(options[0]).toHaveTextContent('alphaModule');
+      expect(options[0]).toHaveTextContent('3.0');
+      expect(options[1]).toHaveTextContent('alphaModule');
+      expect(options[1]).toHaveTextContent('2.0');
+      expect(options[2]).toHaveTextContent('betaModule');
+      expect(options[2]).toHaveTextContent('4.0');
+      expect(options[3]).toHaveTextContent('betaModule');
+      expect(options[3]).toHaveTextContent('2.0');
 
-      // Select betaModule with stream 2.0 (row index 3)
-      const betaModule20Checkbox = await screen.findByRole('checkbox', {
-        name: /select row 3/i,
+      // Select betaModule with stream 2.0
+      const betaModule20Option = await screen.findByRole('option', {
+        name: /betaModule 2\.0/i,
       });
 
-      await waitFor(() => user.click(betaModule20Checkbox));
-      expect(betaModule20Checkbox).toBeChecked();
+      await waitFor(() => user.click(betaModule20Option));
+      expect(
+        await screen.findByRole('cell', {
+          name: /betaModule/i,
+        }),
+      ).toBeVisible();
+      expect(
+        await screen.findByRole('cell', {
+          name: /2\.0/i,
+        }),
+      ).toBeVisible();
 
       // After selection, the active stream (2.0) should be prioritized
       // All modules with stream 2.0 should move to the top, maintaining alphabetical order
-      rows = await screen.findAllByRole('row');
-      rows.shift();
-      expect(rows[0]).toHaveTextContent('alphaModule');
-      expect(rows[0]).toHaveTextContent('2.0');
-      expect(rows[1]).toHaveTextContent('betaModule');
-      expect(rows[1]).toHaveTextContent('2.0');
-      expect(rows[2]).toHaveTextContent('gammaModule');
-      expect(rows[2]).toHaveTextContent('2.0');
-      expect(rows[3]).toHaveTextContent('alphaModule');
-      expect(rows[3]).toHaveTextContent('3.0');
-      expect(rows[4]).toHaveTextContent('betaModule');
-      expect(rows[4]).toHaveTextContent('4.0');
-      expect(rows[5]).toHaveTextContent('gammaModule');
-      expect(rows[5]).toHaveTextContent('1.5');
-
-      // Verify that only the selected module is checked
-      const updatedBetaModule20Checkbox = await screen.findByRole('checkbox', {
-        name: /select row 1/i, // betaModule 2.0 is now at position 1
-      });
-      expect(updatedBetaModule20Checkbox).toBeChecked();
-
-      // Verify that only one checkbox is checked
-      const allCheckboxes = await screen.findAllByRole('checkbox', {
-        name: /select row [0-9]/i,
-      });
-      const checkedCheckboxes = allCheckboxes.filter(
-        (cb) => (cb as HTMLInputElement).checked,
+      await typeIntoSearchBox('sortingTest');
+      options = await screen.findAllByRole('option');
+      expect(options[0]).toHaveTextContent(
+        /alphamodule2\.0, dec 2025, alpha module for sorting tests/i,
       );
-      expect(checkedCheckboxes).toHaveLength(1);
-      expect(checkedCheckboxes[0]).toBe(updatedBetaModule20Checkbox);
+      expect(options[1]).toHaveTextContent(
+        /betamodule2\.0, jun 2025, beta module for sorting tests/i,
+      );
+      expect(options[2]).toHaveTextContent(
+        /gammamodule2\.0, aug 2025, gamma module for sorting tests/i,
+      );
+      expect(options[3]).toHaveTextContent(
+        /alphamodule3\.0, dec 2027, alpha module for sorting tests/i,
+      );
+      expect(options[4]).toHaveTextContent(
+        /betamodule4\.0, jun 2028, beta module for sorting tests/i,
+      );
+      expect(options[5]).toHaveTextContent(
+        /gammamodule1\.5, aug 2026, gamma module for sorting tests/i,
+      );
     });
 
     test('unselecting a module does not cause jumping but may reset sort to default', async () => {
@@ -388,42 +284,26 @@ describe('Step Packages', () => {
       await selectCustomRepo();
       await typeIntoSearchBox('sortingTest');
       await screen.findAllByText('betaModule');
-      const betaModule20Checkbox = await screen.findByRole('checkbox', {
-        name: /select row 3/i,
+      const betaModule20Option = await screen.findByRole('option', {
+        name: /betaModule 2\.0/i,
       });
-      await waitFor(() => user.click(betaModule20Checkbox));
-      expect(betaModule20Checkbox).toBeChecked();
-      let rows = await screen.findAllByRole('row');
-      rows.shift();
-      expect(rows[0]).toHaveTextContent('alphaModule');
-      expect(rows[0]).toHaveTextContent('2.0');
-      expect(rows[1]).toHaveTextContent('betaModule');
-      expect(rows[1]).toHaveTextContent('2.0');
+      await waitFor(() => user.click(betaModule20Option));
 
-      const updatedBetaModule20Checkbox = await screen.findByRole('checkbox', {
-        name: /select row 1/i,
-      });
-      await waitFor(() => user.click(updatedBetaModule20Checkbox));
-      expect(updatedBetaModule20Checkbox).not.toBeChecked();
+      await typeIntoSearchBox('sortingTest');
+      const options = await screen.findAllByRole('option');
+      expect(options[0]).toHaveTextContent(/alphamodule2\.0/i);
+      expect(options[1]).toHaveTextContent(/betamodule2\.0/i);
 
-      // After unselection, the sort may reset to default or stay the same
-      // The important thing is that we don't get jumping/reordering during the interaction
-      rows = await screen.findAllByRole('row');
-      rows.shift(); // Remove header row
-      const allCheckboxes = await screen.findAllByRole('checkbox', {
-        name: /select row [0-9]/i,
-      });
-      const checkedCheckboxes = allCheckboxes.filter(
-        (cb) => (cb as HTMLInputElement).checked,
-      );
-      expect(checkedCheckboxes).toHaveLength(0);
+      await typeIntoSearchBox('sortingTest');
+      await waitFor(() => user.click(betaModule20Option));
 
       // The key test: the table should have a consistent, predictable order
       // Either the original alphabetical order OR the stream-sorted order
       // What we don't want is jumping around during the selection/unselection process
-      expect(rows).toHaveLength(6); // Still have all 6 modules
-      const moduleNames = rows.map((row) => {
-        const match = row.textContent.match(/(\w+Module)/);
+      await typeIntoSearchBox('sortingTest');
+      expect(options).toHaveLength(6); // Still have all 6 modules
+      const moduleNames = options.map((option) => {
+        const match = option.textContent.match(/(\w+Module)/);
         return match ? match[1] : '';
       });
       expect(moduleNames).toContain('alphaModule');
@@ -443,7 +323,7 @@ describe('Packages request generated correctly', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await typeIntoSearchBox('test'); // search for 'test' package
-    await clickFirstPackageCheckbox(); // select
+    await selectFirstPkgOption('test'); // select
     await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -465,8 +345,12 @@ describe('Packages request generated correctly', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await typeIntoSearchBox('test'); // search for 'test' package
-    await clickFirstPackageCheckbox(); // select
-    await clickFirstPackageCheckbox(); // deselect
+    await selectFirstPkgOption('test'); // select
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /remove package/i }),
+      ),
+    );
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -479,10 +363,7 @@ describe('Packages request generated correctly', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await typeIntoSearchBox('testModule'); // search for 'test' package
-    const moduleCheckbox = await screen.findByRole('checkbox', {
-      name: /select row 0/i,
-    });
-    await waitFor(() => user.click(moduleCheckbox));
+    await selectFirstPkgOption('testModule');
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -502,12 +383,12 @@ describe('Packages request generated correctly', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await typeIntoSearchBox('testModule'); // search for 'test' package
-    const moduleCheckbox = await screen.findByRole('checkbox', {
-      name: /select row 0/i,
-    });
-    await waitFor(() => user.click(moduleCheckbox)); // select
-    await toggleSelected();
-    await clickFirstPackageCheckbox(); // deselect
+    await selectFirstPkgOption('testModule');
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /remove package/i }),
+      ),
+    );
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -519,8 +400,16 @@ describe('Packages request generated correctly', () => {
   test('with custom groups', async () => {
     await renderCreateMode();
     await goToPackagesStep();
-    await typeIntoSearchBox('@grouper'); // search for '@grouper' package group
-    await clickFirstPackageCheckbox(); // select
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /individual packages/i }),
+      ),
+    );
+    await waitFor(async () =>
+      user.click(await screen.findByText(/package groups/i)),
+    );
+    await typeIntoSearchBox('grouper'); // search for 'grouper' package group
+    await selectFirstPkgOption('grouper'); // select
     await goToReview();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -538,10 +427,21 @@ describe('Packages request generated correctly', () => {
   test('deselecting a group removes it from the request', async () => {
     await renderCreateMode();
     await goToPackagesStep();
-    await typeIntoSearchBox('@grouper'); // search for '@grouper' package group
-    await clickFirstPackageCheckbox(); // select
-    await toggleSelected();
-    await clickFirstPackageCheckbox(); // deselect
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /individual packages/i }),
+      ),
+    );
+    await waitFor(async () =>
+      user.click(await screen.findByText(/package groups/i)),
+    );
+    await typeIntoSearchBox('grouper'); // search for 'grouper' package group
+    await selectFirstPkgOption('grouper'); // select
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /remove package group/i }),
+      ),
+    );
     await goToReview();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -559,7 +459,7 @@ describe('Packages request generated correctly', () => {
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
-      await clickFirstPackageCheckbox(); // select
+      await selectFirstPkgOption('test'); // select
       await addSingleRecommendation();
       await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -581,7 +481,7 @@ describe('Packages request generated correctly', () => {
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
-      await clickFirstPackageCheckbox(); // select
+      await selectFirstPkgOption('test'); // select
       await addAllRecommendations();
       await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -603,10 +503,15 @@ describe('Packages request generated correctly', () => {
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
-      await clickFirstPackageCheckbox(); // select
+      await selectFirstPkgOption('test'); // select
       await addSingleRecommendation();
-      await toggleSelected();
-      await deselectRecommendation();
+      await waitFor(async () =>
+        user.click(
+          (
+            await screen.findAllByRole('button', { name: /remove package/i })
+          )[0],
+        ),
+      );
       await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 

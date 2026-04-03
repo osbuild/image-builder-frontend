@@ -1,9 +1,15 @@
 import React from 'react';
 
-import { Content, Form, Title } from '@patternfly/react-core';
+import { Content, Label, Title } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
+import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { selectDistribution } from '@/store/slices/wizard';
+import {
+  selectComplianceProfileID,
+  selectDistribution,
+} from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
 
 import PackageRecommendations from './components/PackageRecommendations';
 import Packages from './components/Packages';
@@ -15,32 +21,53 @@ import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabe
 const PackagesStep = () => {
   const distribution = useAppSelector(selectDistribution);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const release = useAppSelector(selectDistribution);
+  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+
+  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
+    {
+      distribution: asDistribution(release),
+      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
+      profile: complianceProfileID,
+    },
+    {
+      skip: !complianceProfileID,
+    },
+  );
+
+  const requiredByOpenSCAPCount =
+    oscapProfileInfo?.packages?.filter(Boolean).length ?? 0;
+
   return (
-    <Form>
+    <>
       <CustomizationLabels customization='packages' />
-      <Title headingLevel='h1' size='xl'>
-        Additional packages
+      <Title
+        headingLevel='h1'
+        size='xl'
+        className='pf-v6-u-display-flex pf-v6-u-align-items-center'
+      >
+        Packages
+        {requiredByOpenSCAPCount > 0 && (
+          <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
+            {requiredByOpenSCAPCount} Added by OpenSCAP
+          </Label>
+        )}
       </Title>
       <Content>
-        Blueprints created with Images include all required packages.
+        Search and add individual packages to include in your image. You can
+        select packages from the repositories included in the previous step.
       </Content>
       <Content>
-        {isOnPremise ? (
+        {isOnPremise && (
           <>
             Search for exact matches by specifying the whole package name, or
             glob using asterisk wildcards (*) before or after the package name.
-          </>
-        ) : (
-          <>
-            Search for package groups by starting your search with the
-            &apos;@&apos; character. A single &apos;@&apos; as search input
-            lists all available package groups.
           </>
         )}
       </Content>
       <Packages />
       {!isOnPremise && isRhel(distribution) && <PackageRecommendations />}
-    </Form>
+    </>
   );
 };
 
