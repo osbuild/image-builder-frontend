@@ -1,6 +1,20 @@
 import { emptyImageBuilderApi as api } from "./emptyImageBuilderApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
+    getDistributions: build.query<
+      GetDistributionsApiResponse,
+      GetDistributionsApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/distributions`,
+        params: {
+          kind: queryArg.kind,
+          distro: queryArg.distro,
+          arch: queryArg.arch,
+          type: queryArg["type"],
+        },
+      }),
+    }),
     getArchitectures: build.query<
       GetArchitecturesApiResponse,
       GetArchitecturesApiArg
@@ -167,6 +181,24 @@ const injectedRtkApi = api.injectEndpoints({
   overrideExisting: false,
 });
 export { injectedRtkApi as imageBuilderApi };
+export type GetDistributionsApiResponse =
+  /** status 200 A list of distributions. The items in the array depend on the 'kind' parameter.
+   */ DistributionsResponse;
+export type GetDistributionsApiArg = {
+  /** Kind of distributions to return. When set to 'bootc', returns bootc/image-mode
+    distributions (each with id, name, type, arch, and image). Defaults to classic distributions.
+     */
+  kind?: DistributionKind;
+  /** Filter bootc distributions by distribution name. Only applies when kind=bootc.
+   */
+  distro?: string;
+  /** Filter bootc distributions by CPU architecture. Only applies when kind=bootc.
+   */
+  arch?: string;
+  /** Filter bootc distributions by image type. Only applies when kind=bootc.
+   */
+  type?: string;
+};
 export type GetArchitecturesApiResponse =
   /** status 200 a list of available architectures and their associated image types */ Architectures;
 export type GetArchitecturesApiArg = {
@@ -315,6 +347,24 @@ export type FixupBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
 };
+export type DistributionItem = {
+  description: string;
+  name: string;
+};
+export type BootcDistributionItem = {
+  id: string;
+  distro: string;
+  name: string;
+  type: string;
+  arch: string;
+  /** part of the container image name used as the base for composing */
+  image_name: string;
+};
+export type DistributionsResponse = (
+  | DistributionItem
+  | BootcDistributionItem
+)[];
+export type DistributionKind = "bootc";
 export type Repository = {
   /** An ID referring to a repository defined in content sources can be used instead of
     'baseurl', 'mirrorlist' or 'metalink'.
@@ -1010,6 +1060,8 @@ export type RecommendPackageRequest = {
   distribution: string;
 };
 export const {
+  useGetDistributionsQuery,
+  useLazyGetDistributionsQuery,
   useGetArchitecturesQuery,
   useLazyGetArchitecturesQuery,
   useGetBlueprintsQuery,

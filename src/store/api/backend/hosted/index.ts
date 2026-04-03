@@ -10,6 +10,7 @@ export {
   useGetBlueprintComposesQuery,
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
+  useGetDistributionsQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
   useGetOscapCustomizationsForPolicyQuery,
