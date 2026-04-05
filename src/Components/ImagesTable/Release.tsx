@@ -7,7 +7,11 @@ type ReleaseProps = {
 };
 
 const Release = ({ release }: ReleaseProps) => {
-  const releaseDisplayValue = {
+  if (release === 'image-mode') {
+    return null;
+  }
+
+  const releaseDisplayValue: Record<string, string> = {
     'rhel-8': 'RHEL 8',
     'rhel-8-nightly': 'RHEL 8',
     'rhel-84': 'RHEL 8.4',

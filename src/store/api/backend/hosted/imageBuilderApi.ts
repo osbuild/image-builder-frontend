@@ -389,7 +389,8 @@ export type Distributions =
   | "fedora-41"
   | "fedora-42"
   | "fedora-43"
-  | "fedora-44";
+  | "fedora-44"
+  | "image-mode";
 export type ListResponseMeta = {
   count: number;
 };
@@ -411,6 +412,12 @@ export type BlueprintsResponse = {
 };
 export type CreateBlueprintResponse = {
   id: string;
+};
+export type BootcBody = {
+  /** Image name from the bootc distributions list. Must match an image_name
+    returned by GET /distributions?kind=bootc.
+     */
+  reference: string;
 };
 export type ImageTypes =
   | "aws"
@@ -837,6 +844,7 @@ export type CreateBlueprintRequest = {
   name: string;
   description?: string | undefined;
   distribution: Distributions;
+  bootc?: BootcBody | undefined;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
   image_requests: ImageRequest[];
@@ -857,6 +865,7 @@ export type BlueprintResponse = {
   description: string;
   lint: BlueprintLint;
   distribution: Distributions;
+  bootc?: BootcBody | undefined;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
   image_requests: ImageRequest[];
@@ -866,6 +875,7 @@ export type BlueprintExportResponse = {
   name: string;
   description: string;
   distribution: Distributions;
+  bootc?: BootcBody | undefined;
   customizations: Customizations;
   metadata: BlueprintMetadata;
   /** List of custom repositories including all the repository details needed in order
@@ -879,12 +889,6 @@ export type BlueprintExportResponse = {
 };
 export type ComposeResponse = {
   id: string;
-};
-export type BootcBody = {
-  /** Image name from the bootc distributions list. Must match an image_name
-    returned by GET /distributions?kind=bootc.
-     */
-  reference: string;
 };
 export type ClientId = "api" | "ui" | "mcp";
 export type ComposeRequest = {
