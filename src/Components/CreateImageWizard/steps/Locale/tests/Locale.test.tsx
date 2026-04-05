@@ -48,11 +48,13 @@ describe('Locale Component', () => {
         await screen.findByRole('heading', { name: /Locale/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Select the locale for your image/i),
+        screen.getByText(
+          /Define the primary languages and keyboard settings for your image/i,
+        ),
       ).toBeInTheDocument();
     });
 
-    test('displays language and keyboard dropdowns', async () => {
+    test('displays dropdowns with helper texts', async () => {
       renderLocaleStep();
 
       expect(
@@ -60,6 +62,12 @@ describe('Locale Component', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByPlaceholderText(/select a keyboard/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Search by country, language or UTF code/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Suggested depending on your language selections/i),
       ).toBeInTheDocument();
     });
   });
@@ -113,9 +121,9 @@ describe('Locale Component', () => {
 
       await clearLanguageSearch(user);
 
-      const languagesDropdown =
+      const languageInput =
         await screen.findByPlaceholderText(/select a language/i);
-      expect(languagesDropdown).toHaveValue('');
+      expect(languageInput).toHaveValue('');
     });
   });
 
@@ -207,9 +215,9 @@ describe('Locale Component', () => {
 
       await clearKeyboardSearch(user);
 
-      const keyboardDropdown =
+      const keyboardInput =
         await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardDropdown).toHaveValue('');
+      expect(keyboardInput).toHaveValue('');
     });
   });
 
@@ -221,9 +229,9 @@ describe('Locale Component', () => {
       await searchForKeyboard(user, 'us');
       await selectKeyboardOption(user, 'us');
 
-      const keyboardDropdown =
+      const keyboardInput =
         await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardDropdown).toHaveValue('us');
+      expect(keyboardInput).toHaveValue('us');
     });
   });
 
@@ -252,9 +260,9 @@ describe('Locale Component', () => {
         },
       });
 
-      const keyboardDropdown =
+      const keyboardInput =
         await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardDropdown).toHaveValue('de');
+      expect(keyboardInput).toHaveValue('de');
     });
   });
 

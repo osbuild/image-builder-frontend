@@ -149,6 +149,11 @@ const KeyboardDropDown = () => {
           )}
         </SelectList>
       </Select>
+      <HelperText>
+        <HelperTextItem>
+          Suggested depending on your language selections
+        </HelperTextItem>
+      </HelperText>
       {errorText && (
         <HelperText>
           <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
