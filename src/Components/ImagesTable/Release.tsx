@@ -54,6 +54,7 @@ const Release = ({ release }: ReleaseProps) => {
     'fedora-42': 'Fedora 42',
     'fedora-43': 'Fedora 43',
     'fedora-44': 'Fedora 44',
+    'image-mode': 'Image mode',
   };
 
   return <p>{releaseDisplayValue[release]}</p>;
