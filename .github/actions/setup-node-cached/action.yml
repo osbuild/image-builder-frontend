@@ -11,14 +11,14 @@ runs:
 
     - name: Restore npm cache
       id: cache-npm
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v5
       with:
         path: ~/.npm
         key: npm-cache-${{ hashFiles('package-lock.json') }}
 
     - name: Restore node_modules cache
       id: cache-node-modules
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -30,7 +30,7 @@ runs:
 
     - name: Save node_modules cache
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
