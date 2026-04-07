@@ -29,7 +29,6 @@ export const mockRootState: RootState = {
   contentSourcesApi: {} as RootState['contentSourcesApi'],
   imageBuilderApi: {} as RootState['imageBuilderApi'],
   rhsmApi: {} as RootState['rhsmApi'],
-  provisioningApi: {} as RootState['provisioningApi'],
   complianceApi: {} as RootState['complianceApi'],
 };
 

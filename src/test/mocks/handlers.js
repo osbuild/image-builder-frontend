@@ -5,7 +5,6 @@ import {
   CONTENT_SOURCES_API,
   CREATE_BLUEPRINT,
   IMAGE_BUILDER_API,
-  PROVISIONING_API,
   RHSM_API,
 } from '../../constants';
 import {
@@ -39,26 +38,9 @@ import {
   mockRepositoryParameters,
   mockRepositoryResults,
 } from '../fixtures/repositories';
-import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 import { mockTemplateResults, testingTemplates } from '../fixtures/templates';
 
 export const handlers = [
-  http.get(`${PROVISIONING_API}/sources`, ({ request }) => {
-    const url = new URL(request.url);
-    const provider = url.searchParams.get('provider');
-    return HttpResponse.json(mockSourcesByProvider(provider));
-  }),
-  http.get(
-    `${PROVISIONING_API}/sources/:sourceId/upload_info`,
-    ({ params }) => {
-      const { sourceId } = params;
-      if (sourceId === '666' || sourceId === '667' || sourceId === '123') {
-        return HttpResponse.json(mockUploadInfo(sourceId));
-      } else {
-        return new HttpResponse(null, { status: 404 });
-      }
-    },
-  ),
   http.post(`${CONTENT_SOURCES_API}/rpms/names`, async ({ request }) => {
     const { search, urls } = await request.json();
     return HttpResponse.json(mockSourcesPackagesResults(search, urls));

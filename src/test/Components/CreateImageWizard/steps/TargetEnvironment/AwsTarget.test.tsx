@@ -1,18 +1,12 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
 
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
 
-import {
-  CREATE_BLUEPRINT,
-  EDIT_BLUEPRINT,
-  PROVISIONING_API,
-} from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { awsCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { server } from '../../../../mocks/server';
 import {
   blueprintRequest,
   clickBack,
@@ -22,7 +16,6 @@ import {
   goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
-  openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
   verifyCancelButton,
@@ -78,32 +71,6 @@ const enterAccountId = async () => {
   await waitFor(async () => user.type(awsAccountIdTextbox, '123123123123'));
 };
 
-const chooseSourcesOption = async () => {
-  const user = userEvent.setup();
-  const sourceRadio = await screen.findByRole('radio', {
-    name: /use an account configured from sources\./i,
-  });
-  await waitFor(() => user.click(sourceRadio));
-};
-
-const getSourceDropdown = async () => {
-  const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
-  await waitFor(() => expect(sourceDropdown).toBeEnabled());
-
-  return sourceDropdown;
-};
-
-const selectSource = async () => {
-  const user = userEvent.setup();
-  const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
-  await waitFor(async () => user.click(sourceTexbox));
-
-  const sourceOption = await screen.findByRole('option', {
-    name: /my_source/i,
-  });
-  await waitFor(async () => user.click(sourceOption));
-};
-
 let router: RemixRouter | undefined = undefined;
 
 describe('Step Upload to AWS', () => {
@@ -111,8 +78,6 @@ describe('Step Upload to AWS', () => {
     vi.clearAllMocks();
     router = undefined;
   });
-
-  const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
@@ -140,21 +105,6 @@ describe('Step Upload to AWS', () => {
     await verifyCancelButton(router);
   });
 
-  test('component renders error state correctly', async () => {
-    server.use(
-      http.get(`${PROVISIONING_API}/sources`, () => {
-        return new HttpResponse(null, { status: 500 });
-      }),
-    );
-    await renderCreateMode();
-    await selectAwsTarget();
-    await goToAwsStep();
-    await chooseSourcesOption();
-    await screen.findByText(
-      /sources cannot be reached, try again later or enter an aws account id manually\./i,
-    );
-  });
-
   test('validation works', async () => {
     await renderCreateMode();
     await selectAwsTarget();
@@ -165,31 +115,6 @@ describe('Step Upload to AWS', () => {
 
     await enterAccountId();
     expect(nextButton).toBeEnabled();
-
-    await chooseSourcesOption();
-    await waitFor(() => expect(nextButton).toBeDisabled());
-
-    await getSourceDropdown();
-    await selectSource();
-    await waitFor(() => expect(nextButton).toBeEnabled());
-  });
-
-  test('compose request share_with_sources field is correct', async () => {
-    await renderCreateMode();
-    await selectAwsTarget();
-    await goToAwsStep();
-    await chooseSourcesOption();
-    await getSourceDropdown();
-    await selectSource();
-    await goToReviewStep();
-
-    // informational modal pops up in the first test only as it's tied
-    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-    await openAndDismissSaveAndBuildModal();
-    const createBlueprintBtn = await screen.findByRole('button', {
-      name: /Create blueprint/,
-    });
-    await waitFor(() => user.click(createBlueprintBtn));
   });
 
   test('revisit step button on Review works', async () => {
@@ -206,34 +131,6 @@ describe('Step Upload to AWS', () => {
 describe('AWS image type request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  test('using a source', async () => {
-    await renderCreateMode();
-    await selectAwsTarget();
-    await goToAwsStep();
-    await chooseSourcesOption();
-    await selectSource();
-    await goToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedImageRequest: ImageRequest = {
-      architecture: 'x86_64',
-      image_type: 'aws',
-      upload_request: {
-        options: {
-          share_with_sources: ['123'],
-        },
-        type: 'aws',
-      },
-    };
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      image_requests: [expectedImageRequest],
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
   });
 
   test('using an account id', async () => {
@@ -267,8 +164,7 @@ describe('AWS image type request generated correctly', () => {
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
-    await chooseSourcesOption();
-    await selectSource();
+    await enterAccountId();
     await clickBack();
     await deselectAwsAndSelectGuestImage();
     await goToReviewStep();

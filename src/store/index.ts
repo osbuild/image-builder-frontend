@@ -6,7 +6,6 @@ import {
   composerApi,
   contentSourcesApi,
   imageBuilderApi,
-  provisioningApi,
   rhsmApi,
 } from './api';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
@@ -31,7 +30,6 @@ export const serviceReducer = combineReducers({
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
-  [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
   wizard: wizardSlice.reducer,
   wizardModal: wizardModalSlice.reducer,
@@ -43,7 +41,6 @@ export const onPremReducer = combineReducers({
   env: envSlice.reducer,
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
-  [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
   [composerApi.reducerPath]: composerApi.reducer,
   // TODO: add other endpoints so we can remove this.
@@ -128,7 +125,6 @@ export const serviceMiddleware = (getDefaultMiddleware: Function) =>
       contentSourcesApi.middleware,
       imageBuilderApi.middleware,
       rhsmApi.middleware,
-      provisioningApi.middleware,
       complianceApi.middleware,
     );
 
@@ -142,7 +138,6 @@ export const onPremMiddleware = (getDefaultMiddleware: Function) =>
     // It's still needed to get things to work.
     contentSourcesApi.middleware,
     rhsmApi.middleware,
-    provisioningApi.middleware,
     complianceApi.middleware,
     imageBuilderApi.middleware,
     composerApi.middleware,

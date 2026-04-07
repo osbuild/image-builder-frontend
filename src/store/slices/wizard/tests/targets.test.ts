@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import wizardReducer, {
   changeAwsAccountId,
   changeAwsRegion,
-  changeAwsShareMethod,
   changeAwsSourceId,
   changeAzureHyperVGeneration,
   changeAzureResourceGroup,
@@ -29,26 +28,6 @@ describe('target environment reducers', () => {
         );
 
         expect(result.aws.accountId).toBe('123456789012');
-      });
-    });
-
-    describe('changeAwsShareMethod', () => {
-      it('should update share method to sources', () => {
-        const result = wizardReducer(
-          initialState,
-          changeAwsShareMethod('sources'),
-        );
-
-        expect(result.aws.shareMethod).toBe('sources');
-      });
-
-      it('should update share method to manual', () => {
-        const result = wizardReducer(
-          initialState,
-          changeAwsShareMethod('manual'),
-        );
-
-        expect(result.aws.shareMethod).toBe('manual');
       });
     });
 

@@ -22,7 +22,6 @@ import {
   useGetTemplateQuery,
   useListSnapshotsByDateMutation,
 } from '@/store/api/contentSources';
-import { useGetSourceListQuery } from '@/store/api/provisioning';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -34,8 +33,6 @@ import {
   selectArchitecture,
   selectAwsAccountId,
   selectAwsRegion,
-  selectAwsShareMethod,
-  selectAwsSourceId,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
@@ -246,23 +243,8 @@ export const MinSize = ({ partitions }: MinSizeProps) => {
 };
 
 export const TargetEnvAWSList = () => {
-  const { isSuccess } = useGetSourceListQuery({
-    provider: 'aws',
-  });
   const awsAccountId = useAppSelector(selectAwsAccountId);
-  const awsShareMethod = useAppSelector(selectAwsShareMethod);
-  const sourceId = useAppSelector(selectAwsSourceId);
   const region = useAppSelector(selectAwsRegion);
-  const { source } = useGetSourceListQuery(
-    {
-      provider: 'aws',
-    },
-    {
-      selectFromResult: ({ data }) => ({
-        source: data?.data?.find((source) => source?.id === sourceId),
-      }),
-    },
-  );
 
   return (
     <Content>
@@ -280,12 +262,6 @@ export const TargetEnvAWSList = () => {
           Shared to account
         </Content>
         <Content component={ContentVariants.dd}>{awsAccountId}</Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          {awsShareMethod === 'sources' ? 'Source' : null}
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {isSuccess && awsShareMethod === 'sources' ? source?.name : null}
-        </Content>
         <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Default region
         </Content>

@@ -20,7 +20,6 @@ module.exports = defineConfig([
       '**/imageBuilderApi.ts',
       '**/hosted/contentSourcesApi.ts',
       '**/rhsmApi.ts',
-      '**/provisioningApi.ts',
       '**/complianceApi.ts',
       '**/types/generated.ts',
     ],

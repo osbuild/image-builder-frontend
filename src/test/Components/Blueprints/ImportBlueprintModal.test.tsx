@@ -111,13 +111,6 @@ describe('Import modal', () => {
     );
   });
 
-  const getSourceDropdown = async () => {
-    const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
-    await waitFor(() => expect(sourceDropdown).toBeEnabled());
-
-    return sourceDropdown;
-  };
-
   test('should enable button on toml blueprint and go to wizard', async () => {
     await setUp();
     await uploadFile(`blueprints.toml`, ONPREM_BLUEPRINT_TOML);
@@ -133,28 +126,19 @@ describe('Import modal', () => {
       ).toBeInTheDocument(),
     );
 
-    // Image output
+    // Image output - select AWS and fill in account ID (inline)
     await waitFor(
       async () =>
         await user.click(
           await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
         ),
     );
-    await clickNext();
-
-    // Target environment aws
-    const radioButton = await screen.findByRole('radio', {
-      name: /use an account configured from sources\./i,
-    });
-    await waitFor(() => user.click(radioButton));
-    const awsSourceDropdown = await getSourceDropdown();
-    await waitFor(() => expect(awsSourceDropdown).toBeEnabled());
-    await waitFor(() => user.click(awsSourceDropdown));
-    const awsSource = await screen.findByRole('option', {
-      name: /my_source/i,
-    });
-    await waitFor(() => user.click(awsSource));
-
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', { name: /aws account id/i }),
+        '123456789012',
+      ),
+    );
     await clickNext();
 
     // Registration

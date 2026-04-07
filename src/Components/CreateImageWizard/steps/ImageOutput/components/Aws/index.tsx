@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 
 import {
-  Button,
   Form,
   FormGroup,
-  Gallery,
-  GalleryItem,
-  HelperText,
-  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
-  Radio,
   Select,
   SelectOption,
   TextInput,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { AWS_REGIONS } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -23,36 +16,14 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeAwsAccountId,
   changeAwsRegion,
-  changeAwsShareMethod,
-  changeAwsSourceId,
   selectAwsAccountId,
   selectAwsRegion,
-  selectAwsShareMethod,
 } from '@/store/slices/wizard';
-
-import { AwsAccountId } from './AwsAccountId';
-import { AwsSourcesSelect } from './AwsSourcesSelect';
 
 import { ValidatedInput } from '../../../../ValidatedInput';
 import { isAwsAccountIdValid } from '../../../../validators';
 
-export type AwsShareMethod = 'manual' | 'sources';
-
-const SourcesButton = () => {
-  return (
-    <Button
-      component='a'
-      target='_blank'
-      variant='link'
-      icon={<ExternalLinkAltIcon />}
-      iconPosition='right'
-      isInline
-      href={'settings/sources'}
-    >
-      Create and manage sources here
-    </Button>
-  );
-};
+export type AwsShareMethod = 'manual';
 
 type FormGroupProps<T> = {
   value: string;
@@ -107,108 +78,47 @@ const Aws = () => {
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
-  const shareMethod = useAppSelector(selectAwsShareMethod);
   const shareWithAccount = useAppSelector(selectAwsAccountId);
   const region = useAppSelector(selectAwsRegion);
 
   return (
     <Form className='pf-v6-u-pb-md'>
-      {!isOnPremise && (
-        <>
-          <FormGroup label='Share method:'>
-            <Radio
-              id='share-with-source'
-              label='Use an account configured from Sources.'
-              name='aws-share-method-type'
-              description='Use a configured source to launch environments directly from the console.'
-              isChecked={shareMethod === 'sources'}
-              onChange={() => {
-                dispatch(changeAwsSourceId(undefined));
-                dispatch(changeAwsAccountId(''));
-                dispatch(changeAwsShareMethod('sources'));
-              }}
-            />
-            <Radio
-              id='share-with-account'
-              label='Manually enter an account ID.'
-              name='aws-share-method-type'
-              isChecked={shareMethod === 'manual'}
-              onChange={() => {
-                dispatch(changeAwsSourceId(undefined));
-                dispatch(changeAwsAccountId(''));
-                dispatch(changeAwsShareMethod('manual'));
-              }}
+      <>
+        {!isOnPremise && (
+          <FormGroup label='AWS account ID' isRequired>
+            <ValidatedInput
+              aria-label='aws account id'
+              value={shareWithAccount || ''}
+              validator={isAwsAccountIdValid}
+              onChange={(_event, value) => dispatch(changeAwsAccountId(value))}
+              helperText={
+                !shareWithAccount
+                  ? 'AWS account ID is required'
+                  : 'Should be 12 characters long'
+              }
+              handleClear={() => dispatch(changeAwsAccountId(''))}
             />
           </FormGroup>
-        </>
-      )}
-      {shareMethod === 'sources' && (
-        <>
-          <AwsSourcesSelect />
-          <SourcesButton />
-          <Gallery hasGutter>
-            <GalleryItem>
-              <FormGroup label='Default region' isRequired>
-                <TextInput
-                  readOnlyVariant='default'
-                  isRequired
-                  id='someid'
-                  value='us-east-1'
-                />
-              </FormGroup>
-              <HelperText>
-                <HelperTextItem component='div' variant='default'>
-                  Images are built in the default region but can be copied to
-                  other regions later.
-                </HelperTextItem>
-              </HelperText>
-            </GalleryItem>
-            <GalleryItem>
-              <AwsAccountId />
-            </GalleryItem>
-          </Gallery>
-        </>
-      )}
-      {shareMethod === 'manual' && (
-        <>
-          {!isOnPremise && (
-            <FormGroup label='AWS account ID' isRequired>
-              <ValidatedInput
-                aria-label='aws account id'
-                value={shareWithAccount || ''}
-                validator={isAwsAccountIdValid}
-                onChange={(_event, value) =>
-                  dispatch(changeAwsAccountId(value))
-                }
-                helperText={
-                  !shareWithAccount
-                    ? 'AWS account ID is required'
-                    : 'Should be 12 characters long'
-                }
-                handleClear={() => dispatch(changeAwsAccountId(''))}
-              />
-            </FormGroup>
-          )}
-          {!isOnPremise && (
-            <FormGroup label='Default region' isRequired>
-              <TextInput
-                value={'us-east-1'}
-                type='text'
-                aria-label='default region'
-                readOnlyVariant='default'
-              />
-            </FormGroup>
-          )}
-          {isOnPremise && (
-            <FormGroup label='Region' isRequired>
-              <AWSRegion
-                value={region || ''}
-                onChange={(v) => dispatch(changeAwsRegion(v))}
-              />
-            </FormGroup>
-          )}
-        </>
-      )}
+        )}
+        {!isOnPremise && (
+          <FormGroup label='Default region' isRequired>
+            <TextInput
+              value={'us-east-1'}
+              type='text'
+              aria-label='default region'
+              readOnlyVariant='default'
+            />
+          </FormGroup>
+        )}
+        {isOnPremise && (
+          <FormGroup label='Region' isRequired>
+            <AWSRegion
+              value={region || ''}
+              onChange={(v) => dispatch(changeAwsRegion(v))}
+            />
+          </FormGroup>
+        )}
+      </>
     </Form>
   );
 };

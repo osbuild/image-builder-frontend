@@ -51,8 +51,6 @@ import {
   selectArchitecture,
   selectAwsAccountId,
   selectAwsRegion,
-  selectAwsShareMethod,
-  selectAwsSourceId,
   selectAzureHyperVGeneration,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
@@ -834,8 +832,6 @@ const getImageOptions = (
   const isOnPremise = selectIsOnPremise(state);
   switch (imageType) {
     case 'aws':
-      if (selectAwsShareMethod(state) === 'sources')
-        return { share_with_sources: [selectAwsSourceId(state) || ''] };
       if (!isOnPremise)
         return { share_with_accounts: [selectAwsAccountId(state)] };
 

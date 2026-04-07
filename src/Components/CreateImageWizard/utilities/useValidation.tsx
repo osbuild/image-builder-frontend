@@ -18,8 +18,6 @@ import {
   selectAapTlsConfirmation,
   selectActivationKey,
   selectAwsAccountId,
-  selectAwsShareMethod,
-  selectAwsSourceId,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
@@ -1215,22 +1213,14 @@ export function useAwsValidation(): StepValidation {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const errors: Record<string, string> = {};
 
-  const awsShareMethod = useAppSelector(selectAwsShareMethod);
   const awsAccountId = useAppSelector(selectAwsAccountId);
-  const awsSourceId = useAppSelector(selectAwsSourceId);
 
   if (!imageTypes.includes('aws') || isOnPremise) {
     return { errors, disabledNext: false };
   }
 
-  if (awsShareMethod === 'manual') {
-    if (!isAwsAccountIdValid(awsAccountId)) {
-      errors.accountId = 'Invalid account id';
-    }
-  } else {
-    if (awsSourceId === undefined) {
-      errors.sourceId = 'Invalid source id';
-    }
+  if (!isAwsAccountIdValid(awsAccountId)) {
+    errors.accountId = 'Invalid account id';
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };

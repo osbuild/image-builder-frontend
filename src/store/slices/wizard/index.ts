@@ -379,14 +379,6 @@ export const selectAwsAccountId = (state: RootState): string => {
   return state.wizard.aws.accountId;
 };
 
-export const selectAwsSourceId = (state: RootState): string | undefined => {
-  return state.wizard.aws.sourceId;
-};
-
-export const selectAwsShareMethod = (state: RootState) => {
-  return state.wizard.aws.shareMethod;
-};
-
 export const selectAwsRegion = (state: RootState) => {
   return state.wizard.aws.region;
 };

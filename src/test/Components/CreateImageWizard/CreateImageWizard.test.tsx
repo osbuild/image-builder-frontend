@@ -9,21 +9,6 @@ import {
   renderCreateMode,
 } from './wizardTestUtils';
 
-const getSourceDropdown = async () => {
-  const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
-  await waitFor(() => expect(sourceDropdown).toBeEnabled());
-
-  return sourceDropdown;
-};
-
-const selectSourcesOption = async () => {
-  const user = userEvent.setup();
-  const sourcesOption = await screen.findByRole('radio', {
-    name: /use an account configured from sources\./i,
-  });
-  await waitFor(async () => user.click(sourcesOption));
-};
-
 const selectAllEnvironments = async () => {
   const user = userEvent.setup();
 
@@ -102,13 +87,12 @@ describe('Keyboard accessibility', () => {
     await selectAllEnvironments();
 
     // AWS config (inline on Image output step)
-    await selectSourcesOption();
-    const awsSourceDropdown = await getSourceDropdown();
-    await waitFor(() => user.click(awsSourceDropdown));
-    const awsSource = await screen.findByRole('option', {
-      name: /my_source/i,
-    });
-    await waitFor(() => user.click(awsSource));
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', { name: /aws account id/i }),
+        '123456789012',
+      ),
+    );
 
     // Google config (inline on Image output step)
     await waitFor(async () =>

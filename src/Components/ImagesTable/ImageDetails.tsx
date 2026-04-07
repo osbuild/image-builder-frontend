@@ -1,14 +1,12 @@
 import React from 'react';
 
 import {
-  Alert,
   Button,
   ClipboardCopy,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
-  Popover,
   Skeleton,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -19,12 +17,10 @@ import {
   GcpUploadRequestOptions,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-import { useGetSourceListQuery } from '@/store/api/provisioning';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
 import { useGetUser } from '../../Hooks';
-import { extractProvisioningList } from '../../store/helpers';
 import { useAppSelector } from '../../store/hooks';
 import {
   isAwsUploadRequestOptions,
@@ -34,68 +30,6 @@ import {
   isGcpUploadStatus,
   isOciUploadStatus,
 } from '../../store/typeGuards';
-
-const SourceNotFoundPopover = () => {
-  return (
-    <Popover
-      position='bottom'
-      bodyContent={
-        <>
-          <Alert
-            variant='danger'
-            title='Source name cannot be loaded'
-            className='pf-v6-u-pb-md'
-            isInline
-            isPlain
-          />
-          <p>
-            The information about the source cannot be loaded. Please check the
-            source was not removed and try again later.
-          </p>
-          <br />
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            icon={<ExternalLinkAltIcon />}
-            iconPosition='right'
-            isInline
-            href={'settings/sources'}
-          >
-            Manage sources here
-          </Button>
-        </>
-      }
-    >
-      <Button variant='link' className='pf-v6-u-p-0 pf-v6-u-font-size-sm'>
-        <div className='failure-button'>Source name cannot be loaded</div>
-      </Button>
-    </Popover>
-  );
-};
-
-type AwsSourceNamePropTypes = {
-  id: string;
-};
-
-const AwsSourceName = ({ id }: AwsSourceNamePropTypes) => {
-  const { data: rawSources, isSuccess } = useGetSourceListQuery({
-    provider: 'aws',
-  });
-
-  if (!isSuccess) {
-    return <Skeleton />;
-  }
-
-  const sources = extractProvisioningList(rawSources);
-
-  const sourcename = sources?.find((source) => source?.id === id);
-  if (sourcename) {
-    return <p>{sourcename.name}</p>;
-  }
-
-  return <SourceNotFoundPopover />;
-};
 
 export const parseGcpSharedWith = (
   sharedWith: GcpUploadRequestOptions['share_with_accounts'],
@@ -165,14 +99,6 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
             {compose.request.image_requests[0].architecture}
           </DescriptionListDescription>
         </DescriptionListGroup>
-        {options.share_with_sources?.[0] && (
-          <DescriptionListGroup>
-            <DescriptionListTerm>Source</DescriptionListTerm>
-            <DescriptionListDescription>
-              <AwsSourceName id={options.share_with_sources[0]} />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-        )}
         {options.share_with_accounts?.[0] && (
           <DescriptionListGroup>
             <DescriptionListTerm>Shared with</DescriptionListTerm>

@@ -9,11 +9,10 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { provisioningApi, rhsmApi } from '@/store/api';
+import { rhsmApi } from '@/store/api';
 import { ImageTypes, useGetArchitecturesQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices';
 import {
   addImageType,
   changeRegistrationType,
@@ -65,8 +64,6 @@ const TargetEnvironment = () => {
   );
 
   const dispatch = useAppDispatch();
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-  const prefetchSources = provisioningApi.usePrefetch('getSourceList');
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
 
   useEffect(() => {
@@ -82,10 +79,6 @@ const TargetEnvironment = () => {
       : 'register-now-rhc';
     dispatch(changeRegistrationType(registrationType));
   }, [restrictions.registration.shouldHide, dispatch]);
-
-  useEffect(() => {
-    prefetchSources({ provider: 'aws' });
-  }, [prefetchSources]);
 
   const isOnlyNetworkInstallerSelected =
     environments.length === 1 && environments.includes('network-installer');
@@ -120,13 +113,6 @@ const TargetEnvironment = () => {
       ),
     [supportedEnvironments],
   );
-
-  useEffect(() => {
-    if (isOnPremise) return;
-    publicClouds
-      .filter((env): env is 'aws' | 'azure' | 'gcp' => env !== 'oci')
-      .forEach((provider) => prefetchSources({ provider }));
-  }, [isOnPremise, publicClouds, prefetchSources]);
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
