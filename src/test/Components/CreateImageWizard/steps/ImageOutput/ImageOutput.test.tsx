@@ -3,7 +3,16 @@
 // Redux State → mapRequestFromState() → API Request. They could be replaced by unit
 // tests for the request mapper functions (mapRequestToState/mapRequestFromState) which
 // would be faster and more focused than full integration tests.
-import { EDIT_BLUEPRINT } from '../../../../../constants';
+import { screen, within } from '@testing-library/react';
+
+import { CreateBlueprintRequest } from '@/store/api/backend';
+import { clickWithWait, createUser } from '@/test/testUtils';
+
+import {
+  CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
+  RHEL_10,
+} from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   aarch64CreateBlueprintRequest,
@@ -13,8 +22,14 @@ import {
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import {
+  blueprintRequest,
+  enterBlueprintName,
+  goToReview,
+  interceptBlueprintRequest,
   interceptEditBlueprintRequest,
+  renderCreateMode,
   renderEditMode,
+  selectGuestImageTarget,
 } from '../../wizardTestUtils';
 
 describe('Image output edit mode', () => {
@@ -79,6 +94,106 @@ describe('Image output edit mode', () => {
       `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = aarch64CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
+const selectNetworkInstaller = async () => {
+  const user = createUser();
+  const checkbox = await screen.findByRole('checkbox', {
+    name: /Network installer checkbox/i,
+  });
+  await clickWithWait(user, checkbox);
+  return checkbox;
+};
+
+describe('Network installer target', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('selecting network-installer shows alert and disables other checkboxes', async () => {
+    await renderCreateMode();
+    const networkInstallerCheckbox = await selectNetworkInstaller();
+
+    await screen.findByText(
+      /This image type requires specific, minimal configuration for remote installation/i,
+    );
+    const guestImageCheckbox = await screen.findByRole('checkbox', {
+      name: /Virtualization guest image/i,
+    });
+    expect(guestImageCheckbox).toBeDisabled();
+
+    const bareMetalCheckbox = await screen.findByRole('checkbox', {
+      name: /Bare metal installer/i,
+    });
+    expect(bareMetalCheckbox).toBeDisabled();
+
+    expect(networkInstallerCheckbox).toBeChecked();
+    expect(networkInstallerCheckbox).toBeEnabled();
+  });
+
+  test('selecting another target first disables network-installer', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+
+    const networkInstallerCheckbox = await screen.findByRole('checkbox', {
+      name: /Network installer checkbox/i,
+    });
+    expect(networkInstallerCheckbox).toBeDisabled();
+  });
+
+  test('selecting network-installer only shows base settings, advanced settings, and review steps', async () => {
+    await renderCreateMode();
+    await selectNetworkInstaller();
+
+    const navigation = await screen.findByRole('navigation', {
+      name: /wizard steps/i,
+    });
+
+    const stepButtons = within(navigation).getAllByRole('button');
+    expect(stepButtons).toHaveLength(3);
+
+    expect(
+      within(navigation).getByRole('button', { name: /base settings/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(navigation).getByRole('button', { name: /advanced settings/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(navigation).getByRole('button', { name: /review/i }),
+    ).toBeInTheDocument();
+  });
+
+  test('can create a blueprint with network-installer', async () => {
+    await renderCreateMode();
+    await selectNetworkInstaller();
+    await enterBlueprintName('Red Velvet');
+
+    await goToReview();
+
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      distribution: RHEL_10,
+      customizations: {
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+      },
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'network-installer',
+          upload_request: {
+            options: {},
+            type: 'aws.s3',
+          },
+        },
+      ],
+    };
+
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });

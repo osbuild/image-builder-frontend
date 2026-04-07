@@ -5,6 +5,8 @@ import wizardReducer, {
   changeArchitecture,
   changeDistribution,
   changeImageTypes,
+  clearLocale,
+  clearTimezone,
   initializeWizard,
   initialState,
   loadWizardState,
@@ -230,6 +232,54 @@ describe('wizardSlice core reducers', () => {
 
         expect(result.isoPayloadReference).toBeUndefined();
       });
+    });
+  });
+
+  describe('clearLocale', () => {
+    it('should reset languages and keyboard', () => {
+      const stateWithLocale: wizardState = {
+        ...initialState,
+        locale: {
+          languages: ['en_US.UTF-8', 'fr_FR.UTF-8'],
+          keyboard: 'us',
+        },
+      };
+
+      const result = wizardReducer(stateWithLocale, clearLocale());
+
+      expect(result.locale.languages).toEqual([]);
+      expect(result.locale.keyboard).toBe('');
+    });
+
+    it('should be a no-op on already empty locale state', () => {
+      const result = wizardReducer(initialState, clearLocale());
+
+      expect(result.locale.languages).toEqual([]);
+      expect(result.locale.keyboard).toBe('');
+    });
+  });
+
+  describe('clearTimezone', () => {
+    it('should reset timezone and ntpservers', () => {
+      const stateWithTimezone: wizardState = {
+        ...initialState,
+        timezone: {
+          timezone: 'America/New_York',
+          ntpservers: ['0.pool.ntp.org', '1.pool.ntp.org'],
+        },
+      };
+
+      const result = wizardReducer(stateWithTimezone, clearTimezone());
+
+      expect(result.timezone.timezone).toBe('');
+      expect(result.timezone.ntpservers).toEqual([]);
+    });
+
+    it('should be a no-op on already empty timezone state', () => {
+      const result = wizardReducer(initialState, clearTimezone());
+
+      expect(result.timezone.timezone).toBe('');
+      expect(result.timezone.ntpservers).toEqual([]);
     });
   });
 });

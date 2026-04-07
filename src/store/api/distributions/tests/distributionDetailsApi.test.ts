@@ -50,7 +50,7 @@ describe('DISTRO_DETAILS configuration', () => {
   });
 
   describe('network-installer restrictions', () => {
-    it('should only allow locale and fips for network-installer', () => {
+    it('should only allow fips and locale for network-installer', () => {
       const networkInstallerSupported =
         DISTRO_DETAILS['network-installer'].supported_blueprint_options;
 

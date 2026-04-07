@@ -247,6 +247,7 @@ describe('useCustomizationRestrictions hook logic', () => {
       expect(result.packages.shouldHide).toBe(true);
       expect(result.filesystem.shouldHide).toBe(true);
       expect(result.kernel.shouldHide).toBe(true);
+      expect(result.timezone.shouldHide).toBe(true);
       expect(result.users.shouldHide).toBe(true);
     });
 
