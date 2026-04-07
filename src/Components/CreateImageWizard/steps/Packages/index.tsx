@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Content, Label, Title } from '@patternfly/react-core';
+import { Content, Form, Label, Title } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
@@ -10,6 +10,7 @@ import {
   selectDistribution,
 } from '@/store/slices/wizard';
 import { asDistribution } from '@/store/typeGuards';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import PackageRecommendations from './components/PackageRecommendations';
 import Packages from './components/Packages';
@@ -23,6 +24,10 @@ const PackagesStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const release = useAppSelector(selectDistribution);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
+
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
     {
@@ -39,7 +44,7 @@ const PackagesStep = () => {
     oscapProfileInfo?.packages?.filter(Boolean).length ?? 0;
 
   return (
-    <>
+    <Wrapper>
       <CustomizationLabels customization='packages' />
       <Title
         headingLevel='h1'
@@ -67,7 +72,7 @@ const PackagesStep = () => {
       </Content>
       <Packages />
       {!isOnPremise && isRhel(distribution) && <PackageRecommendations />}
-    </>
+    </Wrapper>
   );
 };
 
