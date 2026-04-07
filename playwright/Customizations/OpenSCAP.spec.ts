@@ -111,7 +111,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
       frame.getByRole('gridcell', { name: 'systemd-journal-remote' }),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Systemd services' }).click();
-    await expect(frame.getByText('10 Added by OpenSCAP')).toBeVisible();
+    await expect(frame.getByText('11 Added by OpenSCAP')).toBeVisible();
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
