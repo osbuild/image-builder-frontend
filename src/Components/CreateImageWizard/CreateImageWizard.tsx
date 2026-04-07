@@ -34,6 +34,8 @@ import {
   changeProxy,
   changeServerUrl,
   changeTimezone,
+  clearLocale,
+  clearTimezone,
   initializeWizard,
   loadWizardState,
   selectDistribution,
@@ -121,6 +123,7 @@ const CreateImageWizard = () => {
   const { userData } = useGetUser(auth);
   const hasTrackedInitialStepRef = useRef(false);
   const hasTrackedWizardOpenedRef = useRef(false);
+  const isHostDistroDetected = useRef(!isOnPremise);
 
   const {
     data: blueprintDetails,
@@ -247,6 +250,7 @@ const CreateImageWizard = () => {
     const initializeHostDistro = async () => {
       const distro = await getHostDistro();
       dispatch(changeDistribution(distro));
+      isHostDistroDetected.current = true;
     };
 
     const initializeHostArch = async () => {
@@ -297,15 +301,33 @@ const CreateImageWizard = () => {
       return;
     }
 
+    if (restrictions.locale.shouldHide) {
+      dispatch(clearLocale());
+    }
+
+    if (restrictions.timezone.shouldHide) {
+      if (timezone) {
+        dispatch(clearTimezone());
+      }
+      return;
+    }
+
     const defaultTimezone =
       distribution === RHEL_10 || targetEnvironments.includes('azure')
         ? DEFAULT_TIMEZONE
         : 'America/New_York';
 
-    if (!timezone) {
+    if (!timezone && isHostDistroDetected.current) {
       dispatch(changeTimezone(defaultTimezone));
     }
-  }, [distribution, targetEnvironments, mode, dispatch]);
+  }, [
+    distribution,
+    targetEnvironments,
+    mode,
+    dispatch,
+    restrictions,
+    timezone,
+  ]);
 
   useEffect(() => {
     if (!isOnPremise && showWizardModal && !hasTrackedWizardOpenedRef.current) {

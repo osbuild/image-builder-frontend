@@ -1463,6 +1463,10 @@ export const wizardSlice = createSlice({
     clearLanguages: (state) => {
       state.locale.languages = [];
     },
+    clearLocale: (state) => {
+      state.locale.languages = [];
+      state.locale.keyboard = '';
+    },
     changeKeyboard: (state, action: PayloadAction<string>) => {
       state.locale.keyboard = action.payload;
     },
@@ -1612,6 +1616,10 @@ export const wizardSlice = createSlice({
           state.timezone.ntpservers.splice(index, 1);
         }
       }
+    },
+    clearTimezone: (state) => {
+      state.timezone.timezone = '';
+      state.timezone.ntpservers = [];
     },
     changeHostname: (state, action: PayloadAction<string>) => {
       state.hostname = action.payload;
@@ -1841,6 +1849,7 @@ export const {
   removeLanguage,
   replaceLanguage,
   clearLanguages,
+  clearLocale,
   changeKeyboard,
   changeBlueprintName,
   setIsCustomName,
@@ -1874,6 +1883,7 @@ export const {
   changeAapTlsConfirmation,
   addNtpServer,
   removeNtpServer,
+  clearTimezone,
   changeHostname,
   addPort,
   removePort,
