@@ -22,12 +22,16 @@ import {
   addImageType,
   changeArchitecture,
   changeDistribution,
+  changeKeyboard,
   changeTimezone,
+  clearLanguages,
   initializeWizard,
   selectDistribution,
   selectImageSource,
   selectImageTypes,
   selectIsImageMode,
+  selectKeyboard,
+  selectLanguages,
   selectTimezone,
 } from '@/store/slices/wizard';
 
@@ -232,6 +236,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   const distribution = useAppSelector(selectDistribution);
   const timezone = useAppSelector(selectTimezone);
+  const languages = useAppSelector(selectLanguages);
+  const keyboard = useAppSelector(selectKeyboard);
 
   // Image Output
   const targetEnvironments = useAppSelector(selectImageTypes);
@@ -306,6 +312,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       return;
     }
 
+    if (restrictions.timezone.shouldHide) {
+      if (timezone) {
+        dispatch(changeTimezone(''));
+      }
+      return;
+    }
+
     const defaultTimezone =
       distribution === RHEL_10 || targetEnvironments.includes('azure')
         ? DEFAULT_TIMEZONE
@@ -314,7 +327,29 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     if (!timezone) {
       dispatch(changeTimezone(defaultTimezone));
     }
-  }, [distribution, targetEnvironments, isEdit, dispatch]);
+  }, [
+    distribution,
+    targetEnvironments,
+    isEdit,
+    dispatch,
+    restrictions.timezone.shouldHide,
+    timezone,
+  ]);
+
+  useEffect(() => {
+    if (isEdit) {
+      return;
+    }
+
+    if (restrictions.locale.shouldHide) {
+      if (languages && languages.length > 0) {
+        dispatch(clearLanguages());
+      }
+      if (keyboard) {
+        dispatch(changeKeyboard(''));
+      }
+    }
+  }, [isEdit, dispatch, restrictions.locale.shouldHide, languages, keyboard]);
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
   // for original code see https://github.com/patternfly/patternfly-react/blob/184c55f8d10e1d94ffd72e09212db56c15387c5e/packages/react-core/src/components/Wizard/WizardNavInternal.tsx#L128

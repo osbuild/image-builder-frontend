@@ -38,6 +38,7 @@ import {
   VolumeGroup,
 } from '@/store/api/backend';
 import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
+import { DISTRO_DETAILS } from '@/store/api/distributions/constants';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   ComplianceType,
@@ -1139,12 +1140,36 @@ const getModules = (state: RootState) => {
   return undefined;
 };
 
+const noTypeSupportsOption = (
+  state: RootState,
+  option: 'timezone' | 'locale',
+): boolean => {
+  const imageTypes = selectImageTypes(state);
+  return (
+    imageTypes.length > 0 &&
+    imageTypes.every((type) => {
+      if (!(type in DISTRO_DETAILS)) {
+        return false;
+      }
+      const details = DISTRO_DETAILS[type];
+      return (
+        details.supported_blueprint_options !== undefined &&
+        !details.supported_blueprint_options.includes(option)
+      );
+    })
+  );
+};
+
 const getTimezone = (state: RootState) => {
   const timezone = selectTimezone(state);
   const ntpservers = selectNtpServers(state);
   const isImageMode = selectIsImageMode(state);
 
   if (isImageMode) {
+    return undefined;
+  }
+
+  if (noTypeSupportsOption(state, 'timezone')) {
     return undefined;
   }
 
@@ -1201,6 +1226,10 @@ const getLocale = (state: RootState) => {
   const isImageMode = selectIsImageMode(state);
 
   if (isImageMode) {
+    return undefined;
+  }
+
+  if (noTypeSupportsOption(state, 'locale')) {
     return undefined;
   }
 

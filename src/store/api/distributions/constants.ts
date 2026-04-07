@@ -69,7 +69,7 @@ export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {
   },
   'network-installer': {
     name: 'network-installer',
-    supported_blueprint_options: ['locale', 'fips'],
+    supported_blueprint_options: ['fips'],
   },
   'pxe-tar-xz': {
     name: 'pxe-tar-xz',
