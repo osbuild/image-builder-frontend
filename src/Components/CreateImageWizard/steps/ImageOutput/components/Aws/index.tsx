@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 
 import {
+  Flex,
+  FlexItem,
   Form,
   FormGroup,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -85,30 +89,42 @@ const Aws = () => {
     <Form className='pf-v6-u-pb-md'>
       <>
         {!isOnPremise && (
-          <FormGroup label='AWS account ID' isRequired>
-            <ValidatedInput
-              aria-label='aws account id'
-              value={shareWithAccount || ''}
-              validator={isAwsAccountIdValid}
-              onChange={(_event, value) => dispatch(changeAwsAccountId(value))}
-              helperText={
-                !shareWithAccount
-                  ? 'AWS account ID is required'
-                  : 'Should be 12 characters long'
-              }
-              handleClear={() => dispatch(changeAwsAccountId(''))}
-            />
-          </FormGroup>
-        )}
-        {!isOnPremise && (
-          <FormGroup label='Default region' isRequired>
-            <TextInput
-              value={'us-east-1'}
-              type='text'
-              aria-label='default region'
-              readOnlyVariant='default'
-            />
-          </FormGroup>
+          <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+            <FlexItem>
+              <FormGroup label='AWS account ID' isRequired>
+                <ValidatedInput
+                  aria-label='aws account id'
+                  value={shareWithAccount || ''}
+                  validator={isAwsAccountIdValid}
+                  onChange={(_event, value) =>
+                    dispatch(changeAwsAccountId(value))
+                  }
+                  helperText={
+                    !shareWithAccount
+                      ? 'AWS account ID is required'
+                      : 'Should be 12 characters long'
+                  }
+                  handleClear={() => dispatch(changeAwsAccountId(''))}
+                />
+              </FormGroup>
+            </FlexItem>
+            <FlexItem>
+              <FormGroup label='Default region' isRequired>
+                <TextInput
+                  value={'us-east-1'}
+                  type='text'
+                  aria-label='default region'
+                  readOnlyVariant='default'
+                />
+              </FormGroup>
+              <HelperText className='pf-v6-u-pt-sm'>
+                <HelperTextItem>
+                  Images are built in the default region but can be copied to
+                  other regions later.
+                </HelperTextItem>
+              </HelperText>
+            </FlexItem>
+          </Flex>
         )}
         {isOnPremise && (
           <FormGroup label='Region' isRequired>
