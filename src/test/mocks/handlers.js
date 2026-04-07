@@ -133,7 +133,7 @@ export const handlers = [
     return HttpResponse.json(mockPopularRepo(repo_id));
   }),
   http.get(`${CONTENT_SOURCES_API}/repository_parameters`, () => {
-    return HttpResponse.json(mockRepositoryParameters());
+    return HttpResponse.json(mockRepositoryParameters);
   }),
   http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
     return HttpResponse.json(composesEndpoint(new URL(request.url)));

@@ -16,17 +16,19 @@ type RequestTypes = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
 export function spyOnRequest(pathname: string, method: RequestTypes) {
   return new Promise((resolve) => {
-    const listener = async ({ request: req }: { request: Request }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const listener = async (event: any) => {
+      const req = event.request;
       const url = new URL(req.url);
       if (url.pathname === pathname && req.method === method) {
         const requestData = await req.clone().json();
         resolve(requestData);
         // Cleanup listener after successful intercept
-        server.events.removeListener('request:match', listener);
+        server.events.removeListener('*', listener);
       }
     };
 
-    server.events.on('request:match', listener);
+    server.events.on('*', listener);
   });
 }
 
