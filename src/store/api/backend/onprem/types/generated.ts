@@ -165,6 +165,8 @@ export type ImageTypes =
   | "live-installer"
   | "minimal-raw"
   | "network-installer"
+  | "everything-network-installer"
+  | "server-network-installer"
   | "oci"
   | "pxe-tar-xz"
   | "vsphere"
