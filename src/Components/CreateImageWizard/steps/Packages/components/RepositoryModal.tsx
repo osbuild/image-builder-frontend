@@ -9,7 +9,6 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { useDispatch } from 'react-redux';
 
 import {
   ApiRepositoryCollectionResponseRead,
@@ -24,7 +23,7 @@ import {
 } from '@/store/slices/wizard';
 
 import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '../../../../../constants';
-import { useAppSelector } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   getEpelDefinitionForDistribution,
   getEpelVersionForDistribution,
@@ -53,7 +52,7 @@ const RepositoryModal = ({
   isSelectingGroup,
   epelRepo,
 }: RepositoryModalProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const distribution = useAppSelector(selectDistribution);
 
   const [createRepository, { isLoading: createLoading }] =

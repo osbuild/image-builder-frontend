@@ -11,7 +11,6 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import { orderBy } from 'lodash';
-import { useDispatch } from 'react-redux';
 
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import {
@@ -28,7 +27,7 @@ import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
-import { useAppSelector } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
@@ -45,7 +44,7 @@ const PackagesTable = ({
   epelRepo,
   activeStream,
 }: PackagesTableProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);

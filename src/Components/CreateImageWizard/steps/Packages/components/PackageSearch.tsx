@@ -23,7 +23,6 @@ import {
 } from '@patternfly/react-core';
 import { SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import { orderBy } from 'lodash';
-import { useDispatch } from 'react-redux';
 
 import { EPEL_10_REPO_DEFINITION } from '@/constants';
 import { Module, useGetArchitecturesQuery } from '@/store/api/backend';
@@ -35,7 +34,7 @@ import {
   useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
 } from '@/store/api/contentSources';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   addModule,
@@ -91,7 +90,7 @@ const PackageSearch = ({
   activeStream,
   setActiveStream,
 }: PackageSearchProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const distribution = useAppSelector(selectDistribution);

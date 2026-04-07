@@ -18,7 +18,6 @@ import {
 import { HelpIcon, OptimizeIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { useDispatch } from 'react-redux';
 
 import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/components/Repositories';
 import { useRecommendPackageMutation } from '@/store/api/backend';
@@ -35,14 +34,14 @@ import {
 } from '@/store/slices/wizard';
 
 import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../../constants';
-import { useAppSelector } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const { analytics, isBeta } = useChrome();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
