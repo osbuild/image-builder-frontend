@@ -9,6 +9,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
+import { useTargetEnvironmentCategories } from '@/Hooks';
 import { rhsmApi } from '@/store/api';
 import {
   BootcDistributionItem,
@@ -37,8 +38,6 @@ import Azure from './Azure';
 import Gcp from './Gcp';
 
 const TEXT_WRAP_WIDTH = '54rem';
-const PRIVATE_CLOUD_TYPES = new Set<string>(['vsphere', 'vsphere-ova']);
-const PUBLIC_CLOUD_TYPES = new Set<string>(['aws', 'azure', 'gcp', 'oci']);
 const EMPTY_ENVIRONMENTS: string[] = [];
 
 const bootcTypeToImageType: Record<string, string> = {
@@ -133,33 +132,8 @@ const TargetEnvironment = () => {
   const isOtherEnvironmentSelected =
     environments.length >= 1 && !environments.includes('network-installer');
 
-  const privateClouds = useMemo(
-    () =>
-      supportedEnvironments.filter((env): env is ImageTypes =>
-        PRIVATE_CLOUD_TYPES.has(env),
-      ),
-    [supportedEnvironments],
-  );
-
-  const publicClouds = useMemo(
-    () =>
-      supportedEnvironments.filter((env): env is ImageTypes =>
-        PUBLIC_CLOUD_TYPES.has(env),
-      ),
-    [supportedEnvironments],
-  );
-
-  const miscFormats = useMemo(
-    () =>
-      supportedEnvironments.filter(
-        // Technically unknown values that aren't private or public clouds would get
-        // incorrectly narrowed here, but this is fine since we only render known
-        // values with the checkboxes and anything else gets discarded
-        (env): env is ImageTypes =>
-          !PRIVATE_CLOUD_TYPES.has(env) && !PUBLIC_CLOUD_TYPES.has(env),
-      ),
-    [supportedEnvironments],
-  );
+  const { privateClouds, publicClouds, miscFormats } =
+    useTargetEnvironmentCategories(supportedEnvironments);
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {

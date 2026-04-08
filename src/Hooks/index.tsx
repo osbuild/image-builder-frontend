@@ -8,4 +8,5 @@ export {
   useEffectiveBlueprintId,
   useGetDocumentationUrl,
   useGetUser,
+  useTargetEnvironmentCategories,
 } from './Utilities/';
