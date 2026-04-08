@@ -2,14 +2,13 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { useAppSelector } from '@/store/hooks';
 import {
   selectBlueprintDescription,
   selectBlueprintName,
 } from '@/store/slices/wizard';
 
-import Review from './ReviewStep';
-
-import { useAppSelector } from '../../../../store/hooks';
+import Review from './components/ReviewStep';
 
 const ReviewStep = () => {
   const blueprintName = useAppSelector(selectBlueprintName);

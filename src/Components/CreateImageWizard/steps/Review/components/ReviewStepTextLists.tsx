@@ -89,13 +89,13 @@ import {
   RHEL_9_MAINTENANCE_SUPPORT,
   targetOptions,
   UNIT_GIB,
-} from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
-import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
-import MinimumSizePopover from '../FileSystem/components/MinimumSizePopover';
-import { FilesystemPartition } from '../FileSystem/fscTypes';
-import { getConversionFactor } from '../FileSystem/fscUtilities';
-import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
+} from '../../../../../constants';
+import { useAppSelector } from '../../../../../store/hooks';
+import { toMonthAndYear, yyyyMMddFormat } from '../../../../../Utilities/time';
+import MinimumSizePopover from '../../FileSystem/components/MinimumSizePopover';
+import { FilesystemPartition } from '../../FileSystem/fscTypes';
+import { getConversionFactor } from '../../FileSystem/fscUtilities';
+import { MajorReleasesLifecyclesChart } from '../../ImageOutput/components/ReleaseLifecycle';
 
 const ExpirationWarning = () => {
   return (

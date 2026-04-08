@@ -61,10 +61,10 @@ import {
   UsersList,
 } from './ReviewStepTextLists';
 
-import isRhel from '../../../../../src/Utilities/isRhel';
-import { targetOptions } from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
-import SecurityInformation from '../Oscap/components/SecurityInformation';
+import { targetOptions } from '../../../../../constants';
+import { useAppSelector } from '../../../../../store/hooks';
+import isRhel from '../../../../../Utilities/isRhel';
+import SecurityInformation from '../../Oscap/components/SecurityInformation';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();

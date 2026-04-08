@@ -27,10 +27,10 @@ import {
   UserWithAdditionalInfo,
 } from '@/store/slices/wizard';
 
-import { ContentOrigin } from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
-import { getEpelVersionForDistribution } from '../../../../Utilities/epel';
-import PackageInfoNotAvailablePopover from '../Packages/components/PackageInfoNotAvailablePopover';
+import { ContentOrigin } from '../../../../../constants';
+import { useAppSelector } from '../../../../../store/hooks';
+import { getEpelVersionForDistribution } from '../../../../../Utilities/epel';
+import PackageInfoNotAvailablePopover from '../../Packages/components/PackageInfoNotAvailablePopover';
 
 type repoPropType = {
   repoUuid: string | undefined;
