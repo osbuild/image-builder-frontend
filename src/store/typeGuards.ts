@@ -18,14 +18,14 @@ import { Bootc } from './api/backend/onprem';
 import { IMAGE_MODE, targetOptions } from '../constants';
 
 export const isGcpUploadRequestOptions = (
-  options: UploadRequest['options'],
-): options is GcpUploadRequestOptions => {
+  _options: UploadRequest['options'],
+): _options is GcpUploadRequestOptions => {
   return true;
 };
 
 export const isAwsUploadRequestOptions = (
-  options: UploadRequest['options'],
-): options is AwsUploadRequestOptions => {
+  _options: UploadRequest['options'],
+): _options is AwsUploadRequestOptions => {
   return true;
 };
 
