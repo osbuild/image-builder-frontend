@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import {
   DescriptionListDescription,
@@ -8,7 +8,7 @@ import {
 
 type ReviewGroupProps = {
   heading: string;
-  description?: string | undefined;
+  description?: string | ReactNode | undefined;
   className?: string | undefined;
 };
 

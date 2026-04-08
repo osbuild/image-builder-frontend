@@ -228,26 +228,6 @@ const Review = () => {
               <TargetEnvOciList />
             </StackItem>
           )}
-          {environments.includes('vsphere') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  {targetOptions.vsphere} (.vmdk)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
-          {environments.includes('vsphere-ova') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  {targetOptions['vsphere-ova']} (.ova)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
           {environments.includes('guest-image') && (
             <StackItem>
               <Content>

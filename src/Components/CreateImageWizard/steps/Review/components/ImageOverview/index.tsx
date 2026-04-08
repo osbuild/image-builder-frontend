@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { Card, CardBody } from '@patternfly/react-core';
 
 import { ON_PREM_RELEASES, RELEASES } from '@/constants';
+import { useTargetEnvironmentCategories } from '@/Hooks';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
@@ -10,10 +11,13 @@ import {
   selectBlueprintName,
   selectDistribution,
   selectImageSource,
+  selectImageTypes,
   selectIsImageMode,
   selectIsOnPremise,
 } from '@/store/slices';
 import { useFlag } from '@/Utilities/useGetEnvironment';
+
+import { PrivateClouds } from './components';
 
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 
@@ -27,6 +31,10 @@ const ImageOverview = () => {
   const imageSource = useAppSelector(selectImageSource);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
+
+  const { privateClouds } = useTargetEnvironmentCategories(
+    useAppSelector(selectImageTypes),
+  );
 
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
@@ -64,6 +72,7 @@ const ImageOverview = () => {
             description={arch}
           />
           <ReviewGroup heading='Target environments' />
+          <PrivateClouds environments={privateClouds} />
         </ReviewList>
       </CardBody>
     </Card>

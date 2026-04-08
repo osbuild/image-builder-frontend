@@ -66,4 +66,41 @@ describe('ImageOverview', () => {
 
     expect(screen.getByText('Target environments')).toBeInTheDocument();
   });
+
+  describe('Private clouds', () => {
+    test('displays vsphere when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['vsphere'],
+      });
+
+      expect(screen.getByText('Private cloud')).toBeInTheDocument();
+      expect(screen.getByText('VMware vSphere (.vmdk)')).toBeInTheDocument();
+    });
+
+    test('displays vsphere-ova when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['vsphere-ova'],
+      });
+
+      expect(screen.getByText('Private cloud')).toBeInTheDocument();
+      expect(screen.getByText('VMware vSphere (.ova)')).toBeInTheDocument();
+    });
+
+    test('displays multiple private clouds when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['vsphere', 'vsphere-ova'],
+      });
+
+      expect(screen.getByText('VMware vSphere (.vmdk)')).toBeInTheDocument();
+      expect(screen.getByText('VMware vSphere (.ova)')).toBeInTheDocument();
+    });
+
+    test('does not display private cloud section when none selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['aws'],
+      });
+
+      expect(screen.queryByText('Private cloud')).not.toBeInTheDocument();
+    });
+  });
 });
