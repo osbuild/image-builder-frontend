@@ -7,7 +7,6 @@ import {
   CodeBlockCode,
   Content,
   ContentVariants,
-  FormGroup,
   Icon,
   Popover,
 } from '@patternfly/react-core';
@@ -30,16 +29,12 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
   selectActivationKey,
-  selectArchitecture,
   selectAwsAccountId,
   selectAwsRegion,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
-  selectBlueprintDescription,
-  selectBlueprintName,
   selectCustomRepositories,
-  selectDistribution,
   selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
@@ -48,8 +43,6 @@ import {
   selectGcpEmail,
   selectGroups,
   selectHostname,
-  selectImageSource,
-  selectIsImageMode,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -77,25 +70,12 @@ import {
   UserGroupsTable,
 } from './ReviewStepTables';
 
-import {
-  ON_PREM_RELEASES,
-  RELEASES,
-  RHEL_10,
-  RHEL_8,
-  RHEL_8_FULL_SUPPORT,
-  RHEL_8_MAINTENANCE_SUPPORT,
-  RHEL_9,
-  RHEL_9_FULL_SUPPORT,
-  RHEL_9_MAINTENANCE_SUPPORT,
-  targetOptions,
-  UNIT_GIB,
-} from '../../../../../constants';
+import { targetOptions, UNIT_GIB } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
-import { toMonthAndYear, yyyyMMddFormat } from '../../../../../Utilities/time';
+import { yyyyMMddFormat } from '../../../../../Utilities/time';
 import MinimumSizePopover from '../../FileSystem/components/MinimumSizePopover';
 import { FilesystemPartition } from '../../FileSystem/fscTypes';
 import { getConversionFactor } from '../../FileSystem/fscUtilities';
-import { MajorReleasesLifecyclesChart } from '../../ImageOutput/components/ReleaseLifecycle';
 
 const ExpirationWarning = () => {
   return (
@@ -108,55 +88,6 @@ const ExpirationWarning = () => {
   );
 };
 
-export const ImageOutputList = () => {
-  const isImageMode = useAppSelector(selectIsImageMode);
-  const distribution = useAppSelector(selectDistribution);
-  const imageSource = useAppSelector(selectImageSource);
-  const arch = useAppSelector(selectArchitecture);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-  const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
-
-  return (
-    <Content>
-      {!isImageMode && (distribution === RHEL_8 || distribution === RHEL_9) && (
-        <>
-          <Content component='p' className='pf-v6-u-font-size-sm'>
-            {RELEASES.get(distribution)} will be supported through{' '}
-            {toMonthAndYear(
-              distribution === RHEL_8
-                ? RHEL_8_FULL_SUPPORT[1]
-                : RHEL_9_FULL_SUPPORT[1],
-            )}
-            , with optional ELS support through{' '}
-            {toMonthAndYear(
-              distribution === RHEL_8
-                ? RHEL_8_MAINTENANCE_SUPPORT[1]
-                : RHEL_9_MAINTENANCE_SUPPORT[1],
-            )}
-            . Consider building an image with {RELEASES.get(RHEL_10)} to extend
-            the support period.
-          </Content>
-          <FormGroup label='Release lifecycle'>
-            <MajorReleasesLifecyclesChart />
-          </FormGroup>
-          <br />
-        </>
-      )}
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          {!isImageMode ? 'Release' : 'Container image'}
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {!isImageMode ? releases.get(distribution) : imageSource}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Architecture
-        </Content>
-        <Content component={ContentVariants.dd}>{arch}</Content>
-      </Content>
-    </Content>
-  );
-};
 export const FSCList = () => {
   const fscMode = useAppSelector(selectFscMode);
   const partitions = useAppSelector(selectFilesystemPartitions);
@@ -726,42 +657,6 @@ export const RegisterNowList = () => {
         </Alert>
       )}
     </>
-  );
-};
-
-export const DetailsList = () => {
-  const blueprintName = useAppSelector(selectBlueprintName);
-  const blueprintDescription = useAppSelector(selectBlueprintDescription);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        {blueprintName && (
-          <>
-            <Content
-              component={ContentVariants.dt}
-              className='pf-v6-u-min-width'
-            >
-              Blueprint name
-            </Content>
-            <Content component={ContentVariants.dd}>{blueprintName}</Content>
-          </>
-        )}
-        {blueprintDescription && (
-          <>
-            <Content
-              component={ContentVariants.dt}
-              className='pf-v6-u-min-width'
-            >
-              Description
-            </Content>
-            <Content component={ContentVariants.dd}>
-              {blueprintDescription}
-            </Content>
-          </>
-        )}
-      </Content>
-    </Content>
   );
 };
 

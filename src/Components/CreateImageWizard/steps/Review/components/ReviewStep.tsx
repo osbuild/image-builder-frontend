@@ -17,8 +17,6 @@ import './ReviewStep.scss';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import {
   selectAapRegistration,
-  selectBlueprintDescription,
-  selectBlueprintName,
   selectDistribution,
   selectFirewall,
   selectHostname,
@@ -38,13 +36,11 @@ import {
 
 import {
   ContentList,
-  DetailsList,
   FirewallList,
   FirstBootList,
   FSCList,
   GroupsList,
   HostnameList,
-  ImageOutputList,
   KernelList,
   LocaleList,
   RegisterAapList,
@@ -71,8 +67,6 @@ const Review = () => {
 
   const isImageMode = useAppSelector(selectIsImageMode);
   const aapRegistration = useAppSelector(selectAapRegistration);
-  const blueprintName = useAppSelector(selectBlueprintName);
-  const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
   const environments = useAppSelector(selectImageTypes);
   const registrationType = useAppSelector(selectRegistrationType);
@@ -88,12 +82,10 @@ const Review = () => {
   const kernel = useAppSelector(selectKernel);
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
-  const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(true);
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
   const [isExpandedContent, setIsExpandedContent] = useState(true);
   const [isExpandedRegistration, setIsExpandedRegistration] = useState(true);
-  const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(true);
   const [isExpandedSecurityDetail, setIsExpandedSecurityDetail] =
     useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
@@ -112,8 +104,6 @@ const Review = () => {
 
   const onToggleAap = (isExpandedAap: boolean) =>
     setIsExpandedAap(isExpandedAap);
-  const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
-    setIsExpandedImageOutput(isExpandedImageOutput);
   const onToggleTargetEnvs = (isExpandedTargetEnvs: boolean) =>
     setIsExpandedTargetEnvs(isExpandedTargetEnvs);
   const onToggleFSC = (isExpandedFSC: boolean) =>
@@ -122,8 +112,6 @@ const Review = () => {
     setIsExpandedContent(isExpandedContent);
   const onToggleRegistration = (isExpandedRegistration: boolean) =>
     setIsExpandedRegistration(isExpandedRegistration);
-  const onToggleImageDetail = (isExpandedImageDetail: boolean) =>
-    setIsExpandedImageDetail(isExpandedImageDetail);
   const onToggleSecurityDetails = (isExpandedSecurityDetail: boolean) =>
     setIsExpandedSecurityDetail(isExpandedSecurityDetail);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
@@ -206,21 +194,6 @@ const Review = () => {
 
   return (
     <>
-      <ExpandableSection
-        toggleContent={composeExpandable(
-          'Image output',
-          'revisit-image-output',
-          'step-image-output',
-        )}
-        onToggle={(_event, isExpandedImageOutput) =>
-          onToggleImageOutput(isExpandedImageOutput)
-        }
-        isExpanded={isExpandedImageOutput}
-        isIndented
-        data-testid='image-output-expandable'
-      >
-        <ImageOutputList />
-      </ExpandableSection>
       <ExpandableSection
         toggleContent={composeExpandable(
           'Target environments',
@@ -573,23 +546,6 @@ const Review = () => {
           data-testid='firstboot-expandable'
         >
           <FirstBootList />
-        </ExpandableSection>
-      )}
-      {(blueprintName || blueprintDescription) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Details',
-            'revisit-details',
-            'step-details',
-          )}
-          onToggle={(_event, isExpandedImageDetail) =>
-            onToggleImageDetail(isExpandedImageDetail)
-          }
-          isExpanded={isExpandedImageDetail}
-          isIndented
-          data-testid='image-details-expandable'
-        >
-          <DetailsList />
         </ExpandableSection>
       )}
     </>

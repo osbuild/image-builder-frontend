@@ -9,7 +9,7 @@ import {
 } from '@/store/slices';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { ReadyToBuildAlert, Review } from './components';
+import { ImageOverview, ReadyToBuildAlert, Review } from './components';
 
 import { useIsBlueprintValid } from '../../utilities/useValidation';
 
@@ -37,6 +37,7 @@ const ReviewStep = () => {
   return (
     <Form>
       <FormHeader />
+      <ImageOverview />
       <Review />
     </Form>
   );

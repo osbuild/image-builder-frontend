@@ -238,10 +238,6 @@ describe('Blueprints', () => {
         {},
         routes,
       );
-      const blueprintDetails = await screen.findByTestId(
-        'image-details-expandable',
-      );
-      await waitFor(() => user.click(blueprintDetails));
       await screen.findByText(editedBlueprintName);
     });
     test('redirect to index page when blueprint is invalid', async () => {
