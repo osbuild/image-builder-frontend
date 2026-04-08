@@ -10,13 +10,10 @@ import {
   Icon,
   Popover,
 } from '@patternfly/react-core';
-import {
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  TimesCircleIcon,
-} from '@patternfly/react-icons';
+import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { UNIT_GIB } from '@/constants';
 import {
   useGetTemplateQuery,
   useListSnapshotsByDateMutation,
@@ -29,18 +26,11 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
   selectActivationKey,
-  selectAwsAccountId,
-  selectAwsRegion,
-  selectAzureResourceGroup,
-  selectAzureSubscriptionId,
-  selectAzureTenantId,
   selectCustomRepositories,
   selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
   selectFscMode,
-  selectGcpAccountType,
-  selectGcpEmail,
   selectGroups,
   selectHostname,
   selectKernel,
@@ -70,23 +60,11 @@ import {
   UserGroupsTable,
 } from './ReviewStepTables';
 
-import { targetOptions, UNIT_GIB } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
 import { yyyyMMddFormat } from '../../../../../Utilities/time';
 import MinimumSizePopover from '../../FileSystem/components/MinimumSizePopover';
 import { FilesystemPartition } from '../../FileSystem/fscTypes';
 import { getConversionFactor } from '../../FileSystem/fscUtilities';
-
-const ExpirationWarning = () => {
-  return (
-    <Content className='pf-v6-u-font-size-sm pf-v6-u-text-color-status-warning'>
-      <Icon status='warning' isInline>
-        <ExclamationTriangleIcon />
-      </Icon>{' '}
-      Expires 14 days after creation
-    </Content>
-  );
-};
 
 export const FSCList = () => {
   const fscMode = useAppSelector(selectFscMode);
@@ -170,127 +148,6 @@ export const MinSize = ({ partitions }: MinSizeProps) => {
   }
 
   return <Content component={ContentVariants.dd}> {minSize} </Content>;
-};
-
-export const TargetEnvAWSList = () => {
-  const awsAccountId = useAppSelector(selectAwsAccountId);
-  const region = useAppSelector(selectAwsRegion);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.h3}>{targetOptions.aws}</Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Image type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          Red Hat hosted image
-          <br />
-          <ExpirationWarning />
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Shared to account
-        </Content>
-        <Content component={ContentVariants.dd}>{awsAccountId}</Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Default region
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {region || 'us-east-1'}
-        </Content>
-      </Content>
-    </Content>
-  );
-};
-
-export const TargetEnvGCPList = () => {
-  const accountType = useAppSelector(selectGcpAccountType);
-  const email = useAppSelector(selectGcpEmail);
-  return (
-    <Content>
-      <Content component={ContentVariants.h3}>{targetOptions.gcp}</Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Image type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          Red Hat hosted image
-          <br />
-          <ExpirationWarning />
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Account type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {accountType === 'group'
-            ? 'Google group'
-            : accountType === 'serviceAccount'
-              ? 'Service account'
-              : accountType === 'user'
-                ? 'Google account'
-                : 'Domain'}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          {accountType === 'domain' ? 'Domain' : 'Principal'}
-        </Content>
-        <Content component={ContentVariants.dd}>{email || accountType}</Content>
-      </Content>
-    </Content>
-  );
-};
-
-export const TargetEnvAzureList = () => {
-  const tenantId = useAppSelector(selectAzureTenantId);
-  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
-  const subscriptionId = useAppSelector(selectAzureSubscriptionId);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.h3}>{targetOptions.azure}</Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Image type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          Red Hat hosted image
-          <br />
-          <ExpirationWarning />
-        </Content>
-        <>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Azure tenant ID
-          </Content>
-          <Content component={ContentVariants.dd}>{tenantId || ''}</Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Subscription ID
-          </Content>
-          <Content component={ContentVariants.dd}>
-            {subscriptionId || ''}
-          </Content>
-        </>
-        <Content component={ContentVariants.dt}>Resource group</Content>
-        <Content component={ContentVariants.dd}>
-          {azureResourceGroup || ''}
-        </Content>
-      </Content>
-    </Content>
-  );
-};
-
-export const TargetEnvOciList = () => {
-  return (
-    <Content>
-      <Content component={ContentVariants.h3}>{targetOptions.oci}</Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Object Storage URL
-        </Content>
-        <Content component={ContentVariants.dd}>
-          The URL for the built image will be ready to copy
-        </Content>
-      </Content>
-    </Content>
-  );
 };
 
 export const TargetEnvOtherList = () => {

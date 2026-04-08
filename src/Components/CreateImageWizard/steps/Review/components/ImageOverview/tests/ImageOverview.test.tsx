@@ -103,4 +103,80 @@ describe('ImageOverview', () => {
       expect(screen.queryByText('Private cloud')).not.toBeInTheDocument();
     });
   });
+
+  describe('Public clouds', () => {
+    test('displays AWS details when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['aws'],
+        aws: {
+          accountId: '123456789012',
+          shareMethod: 'manual',
+          source: undefined,
+          region: 'us-west-2',
+        },
+      });
+
+      expect(screen.getByText('Public cloud')).toBeInTheDocument();
+      expect(screen.getByText('Amazon Web Services')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Shared with account: 123456789012/),
+      ).toBeInTheDocument();
+      expect(screen.getByText(/Region: us-west-2/)).toBeInTheDocument();
+    });
+
+    test('displays GCP details when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['gcp'],
+        gcp: {
+          accountType: 'user',
+          email: 'test@example.com',
+        },
+      });
+
+      expect(screen.getByText('Google Cloud Platform')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Account type: Google account/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Principal: test@example.com/),
+      ).toBeInTheDocument();
+    });
+
+    test('displays Azure details when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['azure'],
+        azure: {
+          tenantId: 'tenant-123',
+          subscriptionId: 'sub-456',
+          resourceGroup: 'my-resource-group',
+          hyperVGeneration: 'V2',
+        },
+      });
+
+      expect(screen.getByText('Microsoft Azure')).toBeInTheDocument();
+      expect(screen.getByText(/Tenant ID: tenant-123/)).toBeInTheDocument();
+      expect(screen.getByText(/Subscription ID: sub-456/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Resource group: my-resource-group/),
+      ).toBeInTheDocument();
+    });
+
+    test('displays OCI when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['oci'],
+      });
+
+      expect(
+        screen.getByText('Oracle Cloud Infrastructure'),
+      ).toBeInTheDocument();
+    });
+
+    test('does not display public cloud section when none selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['vsphere'],
+      });
+
+      expect(screen.queryByText('Public cloud')).not.toBeInTheDocument();
+    });
+  });
 });

@@ -48,10 +48,6 @@ import {
   RegisterNowList,
   RegisterSatelliteList,
   ServicesList,
-  TargetEnvAWSList,
-  TargetEnvAzureList,
-  TargetEnvGCPList,
-  TargetEnvOciList,
   TargetEnvOtherList,
   TimezoneList,
   UsersList,
@@ -208,26 +204,6 @@ const Review = () => {
         data-testid='target-environments-expandable'
       >
         <Stack hasGutter>
-          {environments.includes('aws') && (
-            <StackItem>
-              <TargetEnvAWSList />
-            </StackItem>
-          )}
-          {environments.includes('gcp') && (
-            <StackItem>
-              <TargetEnvGCPList />
-            </StackItem>
-          )}
-          {environments.includes('azure') && (
-            <StackItem>
-              <TargetEnvAzureList />
-            </StackItem>
-          )}
-          {environments.includes('oci') && (
-            <StackItem>
-              <TargetEnvOciList />
-            </StackItem>
-          )}
           {environments.includes('guest-image') && (
             <StackItem>
               <Content>

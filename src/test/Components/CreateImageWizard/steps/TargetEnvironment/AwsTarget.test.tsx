@@ -33,13 +33,11 @@ const goToReviewStep = async () => {
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
-  const expandable = await screen.findByTestId(
-    'target-environments-expandable',
-  );
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-target-environments',
-  );
-  await waitFor(() => user.click(revisitButton));
+  const heading = screen.getByRole('heading', { name: 'Image overview' });
+  // eslint-disable-next-line testing-library/no-node-access
+  const card = heading.closest('.pf-v6-c-card') as HTMLElement;
+  const editButton = within(card).getByRole('button', { name: /Edit/i });
+  await waitFor(() => user.click(editButton));
 };
 
 const selectAwsTarget = async () => {
