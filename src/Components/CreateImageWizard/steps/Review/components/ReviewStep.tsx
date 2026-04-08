@@ -2,13 +2,9 @@ import React, { useState } from 'react';
 
 import {
   Button,
-  Content,
-  ContentVariants,
   ExpandableSection,
   Split,
   SplitItem,
-  Stack,
-  StackItem,
   useWizardContext,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
@@ -48,12 +44,10 @@ import {
   RegisterNowList,
   RegisterSatelliteList,
   ServicesList,
-  TargetEnvOtherList,
   TimezoneList,
   UsersList,
 } from './ReviewStepTextLists';
 
-import { targetOptions } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
 import isRhel from '../../../../../Utilities/isRhel';
 import SecurityInformation from '../../Oscap/components/SecurityInformation';
@@ -78,7 +72,6 @@ const Review = () => {
   const kernel = useAppSelector(selectKernel);
 
   const [isExpandedAap, setIsExpandedAap] = useState(true);
-  const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(true);
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
   const [isExpandedContent, setIsExpandedContent] = useState(true);
   const [isExpandedRegistration, setIsExpandedRegistration] = useState(true);
@@ -100,8 +93,6 @@ const Review = () => {
 
   const onToggleAap = (isExpandedAap: boolean) =>
     setIsExpandedAap(isExpandedAap);
-  const onToggleTargetEnvs = (isExpandedTargetEnvs: boolean) =>
-    setIsExpandedTargetEnvs(isExpandedTargetEnvs);
   const onToggleFSC = (isExpandedFSC: boolean) =>
     setIsExpandedFSC(isExpandedFSC);
   const onToggleContent = (isExpandedContent: boolean) =>
@@ -190,72 +181,6 @@ const Review = () => {
 
   return (
     <>
-      <ExpandableSection
-        toggleContent={composeExpandable(
-          'Target environments',
-          'revisit-target-environments',
-          'step-image-output',
-        )}
-        onToggle={(_event, isExpandedTargetEnvs) =>
-          onToggleTargetEnvs(isExpandedTargetEnvs)
-        }
-        isExpanded={isExpandedTargetEnvs}
-        isIndented
-        data-testid='target-environments-expandable'
-      >
-        <Stack hasGutter>
-          {environments.includes('guest-image') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  {targetOptions['guest-image']} (.qcow2)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
-          {environments.includes('image-installer') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  {targetOptions['image-installer']} (.iso)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
-          {environments.includes('network-installer') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  {targetOptions['network-installer']} (.iso)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
-          {environments.includes('pxe-tar-xz') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  {targetOptions['pxe-tar-xz']} (.tar.xz)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
-          {environments.includes('wsl') && (
-            <StackItem>
-              <Content>
-                <Content component={ContentVariants.h3}>
-                  WSL - {targetOptions.wsl} (.wsl)
-                </Content>
-                <TargetEnvOtherList />
-              </Content>
-            </StackItem>
-          )}
-        </Stack>
-      </ExpandableSection>
       {isRhel(distribution) && !restrictions.registration.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(

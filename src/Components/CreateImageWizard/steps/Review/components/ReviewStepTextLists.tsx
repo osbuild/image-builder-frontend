@@ -150,21 +150,6 @@ export const MinSize = ({ partitions }: MinSizeProps) => {
   return <Content component={ContentVariants.dd}> {minSize} </Content>;
 };
 
-export const TargetEnvOtherList = () => {
-  return (
-    <>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Image type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          Built image will be available for download
-        </Content>
-      </Content>
-    </>
-  );
-};
-
 export const ContentList = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const customRepositories = useAppSelector(selectCustomRepositories);

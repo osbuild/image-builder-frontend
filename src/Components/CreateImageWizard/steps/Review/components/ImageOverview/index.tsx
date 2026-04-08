@@ -17,7 +17,7 @@ import {
 } from '@/store/slices';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { PrivateClouds, PublicClouds } from './components';
+import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 
@@ -32,9 +32,8 @@ const ImageOverview = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
 
-  const { publicClouds, privateClouds } = useTargetEnvironmentCategories(
-    useAppSelector(selectImageTypes),
-  );
+  const { publicClouds, privateClouds, miscFormats } =
+    useTargetEnvironmentCategories(useAppSelector(selectImageTypes));
 
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
@@ -74,6 +73,7 @@ const ImageOverview = () => {
           <ReviewGroup heading='Target environments' />
           <PrivateClouds environments={privateClouds} />
           <PublicClouds environments={publicClouds} />
+          <MiscFormats environments={miscFormats} />
         </ReviewList>
       </CardBody>
     </Card>

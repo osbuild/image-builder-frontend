@@ -179,4 +179,55 @@ describe('ImageOverview', () => {
       expect(screen.queryByText('Public cloud')).not.toBeInTheDocument();
     });
   });
+
+  describe('Miscellaneous formats', () => {
+    test('displays guest-image when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['guest-image'],
+      });
+
+      expect(screen.getByText('Miscellaneous formats')).toBeInTheDocument();
+      expect(screen.getByText('Virtualization (.qcow2)')).toBeInTheDocument();
+    });
+
+    test('displays image-installer when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['image-installer'],
+      });
+
+      expect(screen.getByText('Baremetal (.iso)')).toBeInTheDocument();
+    });
+
+    test('displays wsl when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['wsl'],
+      });
+
+      expect(
+        screen.getByText('Windows Subsystem for Linux (.tar.gz)'),
+      ).toBeInTheDocument();
+    });
+
+    test('displays multiple misc formats when selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['guest-image', 'image-installer', 'wsl'],
+      });
+
+      expect(screen.getByText('Virtualization (.qcow2)')).toBeInTheDocument();
+      expect(screen.getByText('Baremetal (.iso)')).toBeInTheDocument();
+      expect(
+        screen.getByText('Windows Subsystem for Linux (.tar.gz)'),
+      ).toBeInTheDocument();
+    });
+
+    test('does not display misc formats section when none selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['aws'],
+      });
+
+      expect(
+        screen.queryByText('Miscellaneous formats'),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
