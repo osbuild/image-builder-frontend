@@ -9,14 +9,19 @@ import {
 } from '@/store/slices';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import Review from './components/ReviewStep';
+import { ReadyToBuildAlert, Review } from './components';
+
+import { useIsBlueprintValid } from '../../utilities/useValidation';
 
 const FormHeader = () => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
+  const isValid = useIsBlueprintValid();
 
-  if (isWizardRevampEnabled) return null;
+  if (isWizardRevampEnabled) {
+    return isValid ? <ReadyToBuildAlert /> : null;
+  }
 
   return (
     <>
