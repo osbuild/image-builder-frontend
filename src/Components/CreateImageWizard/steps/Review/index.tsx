@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { useSecuritySummary } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppSelector } from '@/store/hooks';
 import {
@@ -44,6 +45,7 @@ const FormHeader = () => {
 
 const ReviewStep = () => {
   const environments = useAppSelector(selectImageTypes);
+  const security = useSecuritySummary();
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -55,7 +57,7 @@ const ReviewStep = () => {
       <ImageOverview />
       <Registration restrictions={restrictions} />
       <RepeatableBuild restrictions={restrictions} />
-      <Security restrictions={restrictions} />
+      <Security restrictions={restrictions} security={security} />
       <Review />
     </Form>
   );

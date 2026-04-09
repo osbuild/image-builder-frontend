@@ -145,3 +145,5 @@ export type {
   Bootc,
   LocalUploadStatus,
 } from './onprem';
+
+export { useSecuritySummary } from './hooks';

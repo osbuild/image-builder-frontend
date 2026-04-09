@@ -7,16 +7,25 @@ import { selectFips, selectIsOnPremise } from '@/store/slices';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { FIPSDetails, SecurityDetails } from './components';
+import { isSecurityConfigured, SecuritySummary } from './types';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
 import { ReviewCardProps } from '../types';
 
-const Security = ({ restrictions }: ReviewCardProps) => {
+type SecurityCardProps = ReviewCardProps & {
+  security?: SecuritySummary | undefined;
+};
+
+const Security = ({ restrictions, security }: SecurityCardProps) => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const { enabled: fipsEnabled } = useAppSelector(selectFips);
 
   if (restrictions.openscap.shouldHide && restrictions.fips.shouldHide) {
+    return null;
+  }
+
+  if (!isSecurityConfigured(security) && !fipsEnabled) {
     return null;
   }
 
@@ -35,7 +44,10 @@ const Security = ({ restrictions }: ReviewCardProps) => {
           <FIPSDetails
             shouldHide={restrictions.fips.shouldHide || !fipsEnabled}
           />
-          <SecurityDetails shouldHide={restrictions.openscap.shouldHide} />
+          <SecurityDetails
+            shouldHide={restrictions.openscap.shouldHide}
+            security={security}
+          />
         </ReviewList>
       </CardBody>
     </Card>

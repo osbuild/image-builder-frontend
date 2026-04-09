@@ -3,39 +3,20 @@ import React from 'react';
 import { Alert, Content, Form, Label, Title } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
-import {
-  selectComplianceProfileID,
-  selectDistribution,
-  selectFips,
-} from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
+import { selectFips } from '@/store/slices/wizard';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';
 
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
-
 const KernelStep = () => {
-  const release = useAppSelector(selectDistribution);
-  const complianceProfileID = useAppSelector(selectComplianceProfileID);
-
-  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
-    {
-      distribution: asDistribution(release),
-      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: complianceProfileID,
-    },
-    {
-      skip: !complianceProfileID,
-    },
-  );
-
-  const requiredByOpenSCAPCount =
-    oscapProfileInfo?.kernel?.append?.split(' ').filter(Boolean).length ?? 0;
-
   const fips = useAppSelector(selectFips);
+
+  const {
+    kernel: { append: requiredByOpenSCAP },
+  } = useSecuritySummary();
 
   return (
     <Form>
@@ -46,9 +27,9 @@ const KernelStep = () => {
         className='pf-v6-u-display-flex pf-v6-u-align-items-center'
       >
         Kernel
-        {requiredByOpenSCAPCount > 0 && (
+        {requiredByOpenSCAP.length > 0 && (
           <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-            {requiredByOpenSCAPCount} Added by OpenSCAP
+            {requiredByOpenSCAP.length} Added by OpenSCAP
           </Label>
         )}
       </Title>

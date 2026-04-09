@@ -1,24 +1,29 @@
 import React from 'react';
 
+import { Label, LabelGroup } from '@patternfly/react-core';
+
 import { useAppSelector } from '@/store/hooks';
-import {
-  selectCompliancePolicyTitle,
-  selectComplianceProfileID,
-  selectComplianceType,
-} from '@/store/slices';
+import { selectComplianceType } from '@/store/slices';
 
 import { ReviewGroup } from '../../shared';
-import { Hideable } from '../../types';
+import type { Hideable } from '../../types';
+import { isSecurityConfigured, SecuritySummary } from '../types';
 
-export const SecurityDetails = ({ shouldHide }: Hideable) => {
+type SecurityDetailProps = Hideable & {
+  security?: SecuritySummary | undefined;
+};
+
+export const SecurityDetails = ({
+  shouldHide,
+  security,
+}: SecurityDetailProps) => {
   const complianceType = useAppSelector(selectComplianceType);
-  const profile = useAppSelector(selectComplianceProfileID);
-  const policy = useAppSelector(selectCompliancePolicyTitle);
 
-  if (shouldHide) {
+  if (shouldHide || !isSecurityConfigured(security)) {
     return null;
   }
 
+  const { title, packages, services } = security;
   return (
     <>
       <ReviewGroup
@@ -27,12 +32,19 @@ export const SecurityDetails = ({ shouldHide }: Hideable) => {
             ? 'OpenSCAP profile'
             : 'Compliance policy'
         }
-        description={profile ?? policy}
+        description={title}
       />
-      {
-        // TODO: figure out how to check what items were added for the policy
-      }
-      <ReviewGroup heading='Added items' description={profile} />
+      {(packages.length > 0 || services.total > 0) && (
+        <ReviewGroup
+          heading='Added items'
+          description={
+            <LabelGroup>
+              {packages.length > 0 && <Label>{packages.length} packages</Label>}
+              {services.total > 0 && <Label>{services.total} services</Label>}
+            </LabelGroup>
+          }
+        />
+      )}
     </>
   );
 };
