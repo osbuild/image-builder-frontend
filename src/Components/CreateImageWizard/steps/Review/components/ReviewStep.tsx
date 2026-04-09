@@ -42,7 +42,6 @@ import {
 } from './ReviewStepTextLists';
 
 import { useAppSelector } from '../../../../../store/hooks';
-import SecurityInformation from '../../Oscap/components/SecurityInformation';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -62,8 +61,6 @@ const Review = () => {
 
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
   const [isExpandedContent, setIsExpandedContent] = useState(true);
-  const [isExpandedSecurityDetail, setIsExpandedSecurityDetail] =
-    useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
   const [isExpandedHostname, setIsExpandedHostname] = useState(true);
@@ -82,8 +79,6 @@ const Review = () => {
     setIsExpandedFSC(isExpandedFSC);
   const onToggleContent = (isExpandedContent: boolean) =>
     setIsExpandedContent(isExpandedContent);
-  const onToggleSecurityDetails = (isExpandedSecurityDetail: boolean) =>
-    setIsExpandedSecurityDetail(isExpandedSecurityDetail);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
     setIsExpandedTimezone(isExpandedTimezone);
   const onToggleLocale = (isExpandedLocale: boolean) =>
@@ -164,23 +159,6 @@ const Review = () => {
 
   return (
     <>
-      {!(restrictions.openscap.shouldHide && restrictions.fips.shouldHide) && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Security',
-            'revisit-compliance',
-            'step-oscap',
-          )}
-          onToggle={(_event, isExpandedSecurityDetail) =>
-            onToggleSecurityDetails(isExpandedSecurityDetail)
-          }
-          isExpanded={isExpandedSecurityDetail}
-          isIndented
-          data-testid='compliance-detail-expandable'
-        >
-          <SecurityInformation />
-        </ExpandableSection>
-      )}
       {!restrictions.filesystem.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(

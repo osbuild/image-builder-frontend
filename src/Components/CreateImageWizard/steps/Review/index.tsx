@@ -17,6 +17,7 @@ import {
   Registration,
   RepeatableBuild,
   Review,
+  Security,
 } from './components';
 
 import { useIsBlueprintValid } from '../../utilities/useValidation';
@@ -54,6 +55,7 @@ const ReviewStep = () => {
       <ImageOverview />
       <Registration restrictions={restrictions} />
       <RepeatableBuild restrictions={restrictions} />
+      <Security restrictions={restrictions} />
       <Review />
     </Form>
   );
