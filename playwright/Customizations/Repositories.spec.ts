@@ -82,7 +82,7 @@ test('Create blueprint with repository and test edit mode removal', async ({
 
   await test.step('Edit blueprint and verify repository is displayed', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByTestId('revisit-custom-repositories').click();
+    await frame.getByRole('button', { name: 'Repositories' }).click();
 
     await expect(
       frame.getByRole('gridcell', { name: repositoryName }),

@@ -645,6 +645,23 @@ export const selectAapTlsConfigured = createSelector(
   },
 );
 
+// Derived selector for getting all repositories
+export const selectAllRepositoryIds = createSelector(
+  [
+    selectCustomRepositories,
+    selectPayloadRepositories,
+    selectRecommendedRepositories,
+  ],
+  (custom, payload, recommended) =>
+    Array.from(
+      new Set([
+        ...custom.map(({ id }) => id).flat(1),
+        ...payload.map(({ id }) => id),
+        ...recommended.map(({ uuid }) => uuid),
+      ]),
+    ),
+);
+
 export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,

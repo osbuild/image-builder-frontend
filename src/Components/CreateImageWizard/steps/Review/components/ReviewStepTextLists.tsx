@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 
 import {
-  Alert,
   Button,
   CodeBlock,
   CodeBlockCode,
@@ -14,26 +13,18 @@ import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { UNIT_GIB } from '@/constants';
-import { useListSnapshotsByDateMutation } from '@/store/api/contentSources';
-import { selectIsOnPremise } from '@/store/slices/env';
 import {
-  selectCustomRepositories,
   selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
   selectFscMode,
-  selectGroups,
   selectHostname,
   selectKernel,
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
-  selectPackages,
-  selectRecommendedRepositories,
   selectServices,
-  selectSnapshotDate,
   selectTimezone,
-  selectUseLatest,
   selectUsers,
   UserGroup,
 } from '@/store/slices/wizard';
@@ -41,13 +32,10 @@ import {
 import {
   DiskReviewTable,
   FSReviewTable,
-  PackagesTable,
-  RepositoriesTable,
   UserGroupsTable,
 } from './ReviewStepTables';
 
 import { useAppSelector } from '../../../../../store/hooks';
-import { yyyyMMddFormat } from '../../../../../Utilities/time';
 import MinimumSizePopover from '../../FileSystem/components/MinimumSizePopover';
 import { FilesystemPartition } from '../../FileSystem/fscTypes';
 import { getConversionFactor } from '../../FileSystem/fscUtilities';
@@ -134,126 +122,6 @@ export const MinSize = ({ partitions }: MinSizeProps) => {
   }
 
   return <Content component={ContentVariants.dd}> {minSize} </Content>;
-};
-
-export const ContentList = () => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-  const customRepositories = useAppSelector(selectCustomRepositories);
-  const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
-  const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
-  const snapshotDate = useAppSelector(selectSnapshotDate);
-  const useLatest = useAppSelector(selectUseLatest);
-
-  const customAndRecommendedRepositoryUUIDS = useMemo(
-    () =>
-      [
-        ...customRepositories.map(({ id }) => id),
-        ...recommendedRepositories.map(({ uuid }) => uuid),
-      ] as string[],
-    [customRepositories, recommendedRepositories],
-  );
-
-  const [listSnapshotsByDate] = useListSnapshotsByDateMutation();
-
-  useEffect(() => {
-    if (!snapshotDate && !useLatest) return;
-
-    listSnapshotsByDate({
-      apiListSnapshotByDateRequest: {
-        repository_uuids: customAndRecommendedRepositoryUUIDS,
-        date: useLatest
-          ? yyyyMMddFormat(new Date()) + 'T00:00:00Z'
-          : snapshotDate,
-      },
-    });
-  }, [
-    customAndRecommendedRepositoryUUIDS,
-    listSnapshotsByDate,
-    snapshotDate,
-    useLatest,
-  ]);
-
-  const duplicatePackages = packages.filter(
-    (item, index) => packages.indexOf(item) !== index,
-  );
-
-  return (
-    <>
-      <Content>
-        <Content component={ContentVariants.dl} className='review-step-dl'>
-          {!isOnPremise && (
-            <>
-              <Content
-                component={ContentVariants.dt}
-                className='pf-v6-u-min-width'
-              >
-                Repositories
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {customRepositories.length + recommendedRepositories.length >
-                0 ? (
-                  <Popover
-                    position='bottom'
-                    headerContent='Repositories'
-                    hasAutoWidth
-                    minWidth='30rem'
-                    bodyContent={<RepositoriesTable />}
-                  >
-                    <Button
-                      variant='link'
-                      aria-label='About custom repositories'
-                      className='popover-button pf-v6-u-p-0'
-                    >
-                      {customRepositories.length +
-                        recommendedRepositories.length || 0}
-                    </Button>
-                  </Popover>
-                ) : (
-                  0
-                )}
-              </Content>
-            </>
-          )}
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Additional packages
-          </Content>
-          <Content component={ContentVariants.dd}>
-            {packages.length > 0 || groups.length > 0 ? (
-              <Popover
-                position='bottom'
-                headerContent='Additional packages'
-                hasAutoWidth
-                minWidth='60rem'
-                bodyContent={<PackagesTable />}
-              >
-                <Button
-                  variant='link'
-                  aria-label='About packages'
-                  className='popover-button pf-v6-u-p-0'
-                >
-                  {packages.length + groups.length}
-                </Button>
-              </Popover>
-            ) : (
-              0
-            )}
-          </Content>
-        </Content>
-      </Content>
-      {duplicatePackages.length > 0 && (
-        <Alert
-          title='Can not guarantee where some selected packages will come from'
-          variant='warning'
-          isInline
-        >
-          Some of the packages added to this image belong to multiple added
-          repositories. We can not guarantee which repository the package will
-          come from.
-        </Alert>
-      )}
-    </>
-  );
 };
 
 export const TimezoneList = () => {

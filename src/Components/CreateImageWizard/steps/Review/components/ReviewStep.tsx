@@ -28,7 +28,6 @@ import {
 } from '@/store/slices/wizard';
 
 import {
-  ContentList,
   FirewallList,
   FirstBootList,
   FSCList,
@@ -60,7 +59,6 @@ const Review = () => {
   const kernel = useAppSelector(selectKernel);
 
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
-  const [isExpandedContent, setIsExpandedContent] = useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
   const [isExpandedHostname, setIsExpandedHostname] = useState(true);
@@ -77,8 +75,6 @@ const Review = () => {
 
   const onToggleFSC = (isExpandedFSC: boolean) =>
     setIsExpandedFSC(isExpandedFSC);
-  const onToggleContent = (isExpandedContent: boolean) =>
-    setIsExpandedContent(isExpandedContent);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
     setIsExpandedTimezone(isExpandedTimezone);
   const onToggleLocale = (isExpandedLocale: boolean) =>
@@ -172,23 +168,6 @@ const Review = () => {
           data-testid='file-system-configuration-expandable'
         >
           <FSCList />
-        </ExpandableSection>
-      )}
-      {!restrictions.repositories.shouldHide && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Content',
-            'revisit-custom-repositories',
-            'wizard-custom-repositories',
-          )}
-          onToggle={(_event, isExpandedContent) =>
-            onToggleContent(isExpandedContent)
-          }
-          isExpanded={isExpandedContent}
-          isIndented
-          data-testid='content-expandable'
-        >
-          <ContentList />
         </ExpandableSection>
       )}
       {!restrictions.users.shouldHide && users.length > 0 && (

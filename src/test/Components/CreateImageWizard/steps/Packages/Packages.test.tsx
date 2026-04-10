@@ -93,16 +93,13 @@ const addAllRecommendations = async () => {
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
-  const expandable = await screen.findByTestId('content-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-custom-repositories',
-  );
-  await waitFor(() => user.click(revisitButton));
-  await waitFor(() =>
-    expect(
-      screen.queryByRole('button', { name: /Create blueprint/ }),
-    ).not.toBeInTheDocument(),
-  );
+  const heading = screen.getByRole('heading', {
+    name: 'Repositories and packages',
+  });
+  // eslint-disable-next-line testing-library/no-node-access
+  const card = heading.closest('.pf-v6-c-card') as HTMLElement;
+  const editButton = within(card).getByRole('button', { name: /Edit/i });
+  await waitFor(() => user.click(editButton));
 };
 
 describe('Step Packages', () => {
@@ -197,7 +194,7 @@ describe('Step Packages', () => {
     await selectFirstPkgOption('test');
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Included repositories/ });
+    await screen.findByRole('heading', { name: /Enable repeatable build/ });
   });
 
   // Note: Pagination tests, package groups popover test, and basic module tests are

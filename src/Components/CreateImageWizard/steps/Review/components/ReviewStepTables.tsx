@@ -1,81 +1,15 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import {
-  Alert,
-  Content,
-  Panel,
-  PanelMain,
-  Spinner,
-} from '@patternfly/react-core';
+import { Content, Panel, PanelMain } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { useListRepositoriesQuery } from '@/store/api/contentSources';
 import {
-  selectCustomRepositories,
   selectDiskPartitions,
-  selectDistribution,
   selectFilesystemPartitions,
-  selectGroups,
-  selectPackages,
-  selectRecommendedRepositories,
   UserWithAdditionalInfo,
 } from '@/store/slices/wizard';
 
-import { ContentOrigin } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
-import { getEpelVersionForDistribution } from '../../../../../Utilities/epel';
-import PackageInfoNotAvailablePopover from '../../Packages/components/PackageInfoNotAvailablePopover';
-
-type repoPropType = {
-  repoUuid: string | undefined;
-};
-
-const RepoName = ({ repoUuid }: repoPropType) => {
-  const originParam = useMemo(() => {
-    const origins = [ContentOrigin.ALL];
-    origins.push(ContentOrigin.COMMUNITY);
-    return origins.join(',');
-  }, []);
-
-  const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery(
-    {
-      // @ts-ignore if repoUrl is undefined the query is going to get skipped, so it's safe to ignore the linter here
-      uuid: repoUuid ?? '',
-      contentType: 'rpm',
-      origin: originParam,
-    },
-    { skip: !repoUuid },
-  );
-
-  const errorLoading = () => {
-    return (
-      <Alert
-        variant='danger'
-        isInline
-        isPlain
-        title='Error loading repository name'
-      />
-    );
-  };
-
-  return (
-    <>
-      {/*
-        this might be a tad bit hacky
-        "isSuccess" indicates only that the query fetched successfuly, but it
-        doesn't differentiate between a scenario when the repository was found
-        in the response and when it was not
-        for this reason I've split the "isSuccess" into two paths:
-        - query finished and the repo was found -> render the name of the repo
-        - query finished, but the repo was not found -> render an error
-      */}
-      {isSuccess && data.data?.[0]?.name && <p>{data.data[0].name}</p>}
-      {isSuccess && !data.data?.[0]?.name && errorLoading()}
-      {isFetching && <Spinner size='md' />}
-      {isError && errorLoading()}
-    </>
-  );
-};
 
 export const FSReviewTable = () => {
   const partitions = useAppSelector(selectFilesystemPartitions);
@@ -175,80 +109,6 @@ export const DiskReviewTable = () => {
               </React.Fragment>
             );
           })}
-      </PanelMain>
-    </Panel>
-  );
-};
-
-export const PackagesTable = () => {
-  const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
-
-  return (
-    <Panel isScrollable>
-      <PanelMain maxHeight='30ch'>
-        <Table aria-label='Packages table' variant='compact'>
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>
-                Description <PackageInfoNotAvailablePopover />
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {packages.map((pkg, pkgIndex) => (
-              <Tr key={pkgIndex}>
-                <Td>{pkg.name}</Td>
-                <Td>{pkg.summary ? pkg.summary : 'Not available'}</Td>
-              </Tr>
-            ))}
-            {groups.map((grp, grpIndex) => (
-              <Tr key={grpIndex}>
-                <Td>@{grp.name}</Td>
-                <Td>{grp.description ? grp.description : 'Not available'}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </PanelMain>
-    </Panel>
-  );
-};
-
-export const RepositoriesTable = () => {
-  const distribution = useAppSelector(selectDistribution);
-  const repositoriesList = useAppSelector(selectCustomRepositories);
-  const recommendedRepositoriesList = useAppSelector(
-    selectRecommendedRepositories,
-  );
-  return (
-    <Panel isScrollable>
-      <PanelMain maxHeight='30ch'>
-        <Table aria-label='Custom repositories table' variant='compact'>
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {repositoriesList.map((repo, repoIndex) => (
-              <Tr key={repoIndex + 1}>
-                <Td className='pf-m-width-60'>
-                  <RepoName repoUuid={repo.id} />
-                </Td>
-              </Tr>
-            ))}
-            {recommendedRepositoriesList.length > 0 && (
-              <Tr key={0}>
-                <Td className='pf-m-width-60'>
-                  EPEL {getEpelVersionForDistribution(distribution)} Everything
-                  x86_64
-                </Td>
-              </Tr>
-            )}
-          </Tbody>
-        </Table>
       </PanelMain>
     </Panel>
   );

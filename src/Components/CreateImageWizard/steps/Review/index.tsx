@@ -13,6 +13,7 @@ import {
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
+  ContentOverview,
   ImageOverview,
   ReadyToBuildAlert,
   Registration,
@@ -58,6 +59,10 @@ const ReviewStep = () => {
       <Registration restrictions={restrictions} />
       <RepeatableBuild restrictions={restrictions} />
       <Security restrictions={restrictions} security={security} />
+      <ContentOverview
+        restrictions={restrictions}
+        oscapPackages={security.packages}
+      />
       <Review />
     </Form>
   );
