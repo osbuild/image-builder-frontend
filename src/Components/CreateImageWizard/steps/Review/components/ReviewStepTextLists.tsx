@@ -14,10 +14,7 @@ import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { UNIT_GIB } from '@/constants';
-import {
-  useGetTemplateQuery,
-  useListSnapshotsByDateMutation,
-} from '@/store/api/contentSources';
+import { useListSnapshotsByDateMutation } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   selectCustomRepositories,
@@ -33,10 +30,8 @@ import {
   selectNtpServers,
   selectPackages,
   selectRecommendedRepositories,
-  selectRedHatRepositories,
   selectServices,
   selectSnapshotDate,
-  selectTemplate,
   selectTimezone,
   selectUseLatest,
   selectUsers,
@@ -48,7 +43,6 @@ import {
   FSReviewTable,
   PackagesTable,
   RepositoriesTable,
-  SnapshotTable,
   UserGroupsTable,
 } from './ReviewStepTables';
 
@@ -150,8 +144,6 @@ export const ContentList = () => {
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
-  const template = useAppSelector(selectTemplate);
-  const redHatRepositories = useAppSelector(selectRedHatRepositories);
 
   const customAndRecommendedRepositoryUUIDS = useMemo(
     () =>
@@ -162,8 +154,7 @@ export const ContentList = () => {
     [customRepositories, recommendedRepositories],
   );
 
-  const [listSnapshotsByDate, { data, isSuccess, isLoading }] =
-    useListSnapshotsByDateMutation();
+  const [listSnapshotsByDate] = useListSnapshotsByDateMutation();
 
   useEffect(() => {
     if (!snapshotDate && !useLatest) return;
@@ -187,91 +178,10 @@ export const ContentList = () => {
     (item, index) => packages.indexOf(item) !== index,
   );
 
-  const noRepositoriesSelected =
-    customAndRecommendedRepositoryUUIDS.length === 0 &&
-    redHatRepositories.length === 0;
-
-  const hasSnapshotDateAfter = data?.data?.some(({ is_after }) => is_after);
-
-  const { data: templateData, isLoading: isTemplateLoading } =
-    useGetTemplateQuery(
-      {
-        uuid: template,
-      },
-      { refetchOnMountOrArgChange: true, skip: template === '' },
-    );
-
-  const snapshottingText = useMemo(() => {
-    switch (true) {
-      case isLoading || isTemplateLoading:
-        return '';
-      case useLatest:
-        return 'Use latest';
-      case !!snapshotDate:
-        return `State as of ${yyyyMMddFormat(new Date(snapshotDate))}`;
-      case !!template:
-        return `Use a content template: ${templateData?.name}`;
-      default:
-        return '';
-    }
-  }, [isLoading, isTemplateLoading, useLatest, snapshotDate, template]);
-
   return (
     <>
       <Content>
         <Content component={ContentVariants.dl} className='review-step-dl'>
-          {!isOnPremise && (
-            <>
-              <Content
-                component={ContentVariants.dt}
-                className='pf-v6-u-min-width'
-              >
-                Repeatable build
-              </Content>
-              <Content component={ContentVariants.dd}>
-                <Popover
-                  position='bottom'
-                  headerContent={
-                    useLatest
-                      ? 'Use the latest repository content'
-                      : template
-                        ? 'Use content from the content template'
-                        : `Repositories as of ${yyyyMMddFormat(
-                            new Date(snapshotDate),
-                          )}`
-                  }
-                  hasAutoWidth
-                  minWidth='60rem'
-                  bodyContent={
-                    <SnapshotTable snapshotForDate={data?.data || []} />
-                  }
-                >
-                  <Button
-                    variant='link'
-                    isInline
-                    aria-label='Snapshot method'
-                    className='popover-button pf-v6-u-p-0'
-                    isDisabled={noRepositoriesSelected}
-                  >
-                    {snapshottingText}
-                  </Button>
-                </Popover>
-                {!useLatest &&
-                !isLoading &&
-                isSuccess &&
-                hasSnapshotDateAfter ? (
-                  <Alert
-                    variant='warning'
-                    isInline
-                    isPlain
-                    title='A snapshot for this date is not available for some repositories.'
-                  />
-                ) : (
-                  ''
-                )}
-              </Content>
-            </>
-          )}
           {!isOnPremise && (
             <>
               <Content

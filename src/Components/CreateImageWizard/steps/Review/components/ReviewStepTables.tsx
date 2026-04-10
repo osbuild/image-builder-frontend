@@ -3,18 +3,13 @@ import React, { useMemo } from 'react';
 import {
   Alert,
   Content,
-  EmptyState,
   Panel,
   PanelMain,
   Spinner,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import {
-  ApiSnapshotForDate,
-  useGetTemplateQuery,
-  useListRepositoriesQuery,
-} from '@/store/api/contentSources';
+import { useListRepositoriesQuery } from '@/store/api/contentSources';
 import {
   selectCustomRepositories,
   selectDiskPartitions,
@@ -23,7 +18,6 @@ import {
   selectGroups,
   selectPackages,
   selectRecommendedRepositories,
-  selectTemplate,
   UserWithAdditionalInfo,
 } from '@/store/slices/wizard';
 
@@ -184,115 +178,6 @@ export const DiskReviewTable = () => {
       </PanelMain>
     </Panel>
   );
-};
-
-const Error = () => {
-  return (
-    <Alert title='Repositories unavailable' variant='danger' isPlain isInline>
-      Repositories cannot be reached, try again later.
-    </Alert>
-  );
-};
-
-const Loading = () => {
-  return (
-    <EmptyState
-      headingLevel='h4'
-      icon={Spinner}
-      titleText='Loading'
-    ></EmptyState>
-  );
-};
-
-export const SnapshotTable = ({
-  snapshotForDate,
-}: {
-  snapshotForDate: ApiSnapshotForDate[];
-}) => {
-  const template = useAppSelector(selectTemplate);
-
-  const { data: templateData } = useGetTemplateQuery(
-    {
-      uuid: template,
-    },
-    { refetchOnMountOrArgChange: true, skip: template === '' },
-  );
-
-  const originParam = useMemo(() => {
-    const origins = [ContentOrigin.REDHAT + ',' + ContentOrigin.CUSTOM];
-    origins.push(ContentOrigin.COMMUNITY);
-    return origins.join(',');
-  }, []);
-
-  const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
-    uuid:
-      snapshotForDate.length > 0
-        ? snapshotForDate.map(({ repository_uuid }) => repository_uuid).join()
-        : template && templateData && templateData.repository_uuids
-          ? templateData.repository_uuids.join(',')
-          : '',
-    origin: originParam, // Make sure to show redhat, external, and shared epel (if enabled)
-  });
-
-  const isAfterSet = new Set(
-    snapshotForDate
-      .filter(({ is_after }) => is_after)
-      .map(({ repository_uuid }) => repository_uuid),
-  );
-
-  const stringToDateToMMDDYYYY = (strDate: string) => {
-    const date = new Date(strDate);
-    return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date
-      .getDate()
-      .toString()
-      .padStart(2, '0')}/${date.getFullYear()}`;
-  };
-
-  if (isError) return <Error />;
-
-  if (isLoading) return <Loading />;
-
-  if (isSuccess) {
-    return (
-      <Panel isScrollable>
-        <PanelMain maxHeight='30ch'>
-          <Table aria-label='Packages table' variant='compact'>
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Last snapshot date</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {data.data?.map(({ uuid, name, last_snapshot }, pkgIndex) => (
-                <Tr key={pkgIndex}>
-                  <Td>{name}</Td>
-                  <Td>
-                    {uuid && isAfterSet.has(uuid) ? (
-                      <Alert
-                        title={
-                          last_snapshot?.created_at
-                            ? stringToDateToMMDDYYYY(last_snapshot.created_at)
-                            : 'N/A'
-                        }
-                        variant='warning'
-                        isPlain
-                        isInline
-                      />
-                    ) : last_snapshot?.created_at ? (
-                      stringToDateToMMDDYYYY(last_snapshot.created_at)
-                    ) : (
-                      'N/A'
-                    )}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </PanelMain>
-      </Panel>
-    );
-  }
 };
 
 export const PackagesTable = () => {

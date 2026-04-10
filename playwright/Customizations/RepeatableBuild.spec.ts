@@ -102,14 +102,14 @@ test('Create a blueprint with Repeatable build customization', async ({
   await test.step('Check Repeatable build step behaviour with no repos', async () => {
     await frame.getByRole('button', { name: /Review and finish/i }).click();
     await expect(
-      frame.getByTestId('content-expandable').getByText(/Repeatable build/i),
+      frame.getByRole('heading', { name: 'Enable repeatable build' }),
     ).toBeVisible();
-    await expect(frame.getByText(/State as of 2025-12-24/i)).toBeVisible();
-    await expect(frame.getByText(/State as of 2025-12-24/i)).toBeDisabled();
+    await expect(frame.getByText('Enabled')).toBeVisible();
+    await expect(frame.getByText('2025-12-24')).toBeVisible();
   });
 
   await test.step('Check Repeatable build step behaviour with 1 repo', async () => {
-    await frame.getByTestId('revisit-custom-repositories').click();
+    await frame.getByRole('button', { name: 'Repositories' }).click();
     await expect(
       frame.getByRole('columnheader', { name: 'Snapshot date' }),
     ).toBeVisible();
@@ -119,17 +119,10 @@ test('Create a blueprint with Repeatable build customization', async ({
       .click();
     await frame.getByRole('button', { name: /Review and finish/i }).click();
     await expect(
-      frame.getByTestId('content-expandable').getByText(/Repeatable build/i),
+      frame.getByRole('heading', { name: 'Enable repeatable build' }),
     ).toBeVisible();
-    await expect(frame.getByText(/State as of 2025-12-24/i)).toBeVisible();
-    await frame.getByRole('button', { name: 'Snapshot method' }).click();
-    await expect(
-      frame.getByText(/Repositories as of 2025-12-24/i),
-    ).toBeVisible();
-    await expect(frame.getByText(/Loading/i)).toBeHidden();
-    await expect(
-      frame.getByRole('gridcell', { name: 'EPEL 10 Everything x86_64' }),
-    ).toBeVisible();
+    await expect(frame.getByText('2025-12-24')).toBeVisible();
+    await expect(frame.getByText('EPEL 10 Everything x86_64')).toBeVisible();
   });
 
   await test.step('Check Repeatable build with content template', async () => {
@@ -142,7 +135,7 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame.getByRole('menuitem').first().click();
     await frame.getByRole('button', { name: /Review and finish/i }).click();
     await expect(
-      frame.getByTestId('content-expandable').getByText(/Repeatable build/i),
+      frame.getByRole('heading', { name: 'Enable repeatable build' }),
     ).toBeVisible();
     await expect(frame.getByText(/Use a content template/i)).toBeVisible();
   });
