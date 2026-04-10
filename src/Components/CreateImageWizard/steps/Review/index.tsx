@@ -15,6 +15,7 @@ import {
   ImageOverview,
   ReadyToBuildAlert,
   Registration,
+  RepeatableBuild,
   Review,
 } from './components';
 
@@ -52,6 +53,7 @@ const ReviewStep = () => {
       <FormHeader />
       <ImageOverview />
       <Registration restrictions={restrictions} />
+      <RepeatableBuild restrictions={restrictions} />
       <Review />
     </Form>
   );
