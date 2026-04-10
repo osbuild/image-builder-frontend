@@ -18,14 +18,12 @@ import {
   useGetTemplateQuery,
   useListSnapshotsByDateMutation,
 } from '@/store/api/contentSources';
-import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
-  selectActivationKey,
   selectCustomRepositories,
   selectFilesystemPartitions,
   selectFirewall,
@@ -37,11 +35,9 @@ import {
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
-  selectOrgId,
   selectPackages,
   selectRecommendedRepositories,
   selectRedHatRepositories,
-  selectRegistrationType,
   selectServices,
   selectSnapshotDate,
   selectTemplate,
@@ -354,34 +350,6 @@ export const ContentList = () => {
   );
 };
 
-export const RegisterLaterList = () => {
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Registration type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          Register the system later
-        </Content>
-      </Content>
-    </Content>
-  );
-};
-
-export const RegisterSatelliteList = () => {
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Register Satellite
-        </Content>
-        <Content component={ContentVariants.dd}>Enabled</Content>
-      </Content>
-    </Content>
-  );
-};
-
 export const RegisterAapList = () => {
   const callbackUrl = useAppSelector(selectAapCallbackUrl);
   const hostConfigKey = useAppSelector(selectAapHostConfigKey);
@@ -418,87 +386,6 @@ export const RegisterAapList = () => {
         <Content component={ContentVariants.dd}>{getTlsStatus()}</Content>
       </Content>
     </Content>
-  );
-};
-
-export const RegisterNowList = () => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-
-  const orgId = useAppSelector(selectOrgId);
-  const activationKey = useAppSelector(selectActivationKey);
-  const registrationType = useAppSelector(selectRegistrationType);
-
-  const { isError } = useShowActivationKeyQuery(
-    // @ts-ignore type of 'activationKey' might not be strictly compatible with the expected type for 'name'.
-    { name: activationKey },
-    {
-      skip: !activationKey || isOnPremise,
-    },
-  );
-
-  return (
-    <>
-      <Content className='pf-v6-u-pb-sm'>
-        <Content component={ContentVariants.dl} className='review-step-dl'>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Registration method
-          </Content>
-          <Content
-            component={ContentVariants.dd}
-            data-testid='review-registration'
-          >
-            <Content component='ul' isPlainList>
-              {registrationType.startsWith('register-now') && (
-                <Content component='li'>
-                  <Icon status='success'>
-                    <CheckCircleIcon />
-                  </Icon>{' '}
-                  Register with Red Hat Subscription Manager (RHSM)
-                  <br />
-                </Content>
-              )}
-              {(registrationType === 'register-now-insights' ||
-                registrationType === 'register-now-rhc') && (
-                <Content component='li'>
-                  <Icon status='success'>
-                    <CheckCircleIcon />
-                  </Icon>{' '}
-                  Connect to Red Hat Lightspeed
-                  <br />
-                </Content>
-              )}
-              {registrationType === 'register-now-rhc' && (
-                <Content component='li'>
-                  <Icon status='success'>
-                    <CheckCircleIcon />
-                  </Icon>{' '}
-                  Use remote host configuration (rhc) utility
-                  <br />
-                </Content>
-              )}
-            </Content>
-          </Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Organization ID
-          </Content>
-          <Content component={ContentVariants.dd}>{orgId}</Content>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Activation key
-          </Content>
-          <Content component={ContentVariants.dd}>{activationKey}</Content>
-        </Content>
-      </Content>
-      {isError && (
-        <Alert
-          title='Information about the activation key unavailable'
-          variant='danger'
-          isInline
-        >
-          Information about the activation key cannot be loaded. Please check
-          the key was not removed and try again later.
-        </Alert>
-      )}
-    </>
   );
 };
 

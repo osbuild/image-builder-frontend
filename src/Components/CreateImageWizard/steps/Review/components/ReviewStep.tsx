@@ -13,7 +13,6 @@ import './ReviewStep.scss';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import {
   selectAapRegistration,
-  selectDistribution,
   selectFirewall,
   selectHostname,
   selectImageTypes,
@@ -22,7 +21,6 @@ import {
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
-  selectRegistrationType,
   selectServices,
   selectTimezone,
   selectUserGroups,
@@ -40,16 +38,12 @@ import {
   KernelList,
   LocaleList,
   RegisterAapList,
-  RegisterLaterList,
-  RegisterNowList,
-  RegisterSatelliteList,
   ServicesList,
   TimezoneList,
   UsersList,
 } from './ReviewStepTextLists';
 
 import { useAppSelector } from '../../../../../store/hooks';
-import isRhel from '../../../../../Utilities/isRhel';
 import SecurityInformation from '../../Oscap/components/SecurityInformation';
 
 const Review = () => {
@@ -57,9 +51,7 @@ const Review = () => {
 
   const isImageMode = useAppSelector(selectIsImageMode);
   const aapRegistration = useAppSelector(selectAapRegistration);
-  const distribution = useAppSelector(selectDistribution);
   const environments = useAppSelector(selectImageTypes);
-  const registrationType = useAppSelector(selectRegistrationType);
   const hostname = useAppSelector(selectHostname);
   const languages = useAppSelector(selectLanguages);
   const keyboard = useAppSelector(selectKeyboard);
@@ -74,7 +66,6 @@ const Review = () => {
   const [isExpandedAap, setIsExpandedAap] = useState(true);
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
   const [isExpandedContent, setIsExpandedContent] = useState(true);
-  const [isExpandedRegistration, setIsExpandedRegistration] = useState(true);
   const [isExpandedSecurityDetail, setIsExpandedSecurityDetail] =
     useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
@@ -97,8 +88,6 @@ const Review = () => {
     setIsExpandedFSC(isExpandedFSC);
   const onToggleContent = (isExpandedContent: boolean) =>
     setIsExpandedContent(isExpandedContent);
-  const onToggleRegistration = (isExpandedRegistration: boolean) =>
-    setIsExpandedRegistration(isExpandedRegistration);
   const onToggleSecurityDetails = (isExpandedSecurityDetail: boolean) =>
     setIsExpandedSecurityDetail(isExpandedSecurityDetail);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
@@ -181,28 +170,6 @@ const Review = () => {
 
   return (
     <>
-      {isRhel(distribution) && !restrictions.registration.shouldHide && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Registration',
-            'revisit-registration',
-            'step-register',
-          )}
-          onToggle={(_event, isExpandedRegistration) =>
-            onToggleRegistration(isExpandedRegistration)
-          }
-          isExpanded={isExpandedRegistration}
-          isIndented
-          data-testid='registration-expandable'
-        >
-          {registrationType === 'register-later' && <RegisterLaterList />}
-          {registrationType === 'register-satellite' && (
-            <RegisterSatelliteList />
-          )}
-          {registrationType.startsWith('register-now') && <RegisterNowList />}
-        </ExpandableSection>
-      )}
-
       {!(restrictions.openscap.shouldHide && restrictions.fips.shouldHide) && (
         <ExpandableSection
           toggleContent={composeExpandable(

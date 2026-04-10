@@ -108,7 +108,8 @@ const registrationModes = [
         );
       }
     },
-    expectedReviewText: 'Register with Red Hat',
+    expectedReviewText:
+      'Enable predictive analytics and management capabilities',
     expectedHiddenText: 'Register the system later',
   },
   {
@@ -117,7 +118,7 @@ const registrationModes = [
       await frame.getByRole('radio', { name: 'Register later' }).check();
     },
     expectedReviewText: 'Register the system later',
-    expectedHiddenText: 'Register with Red Hat',
+    expectedHiddenText: 'Activation key',
   },
   {
     name: 'satellite',
@@ -133,8 +134,8 @@ const registrationModes = [
         'satellite_cert.pem',
       );
     },
-    expectedReviewText: 'Register SatelliteEnabled',
-    expectedHiddenText: 'Register with Red Hat',
+    expectedReviewText: 'Register with satellite',
+    expectedHiddenText: 'Activation key',
   },
 ];
 
@@ -201,12 +202,12 @@ registrationModes.forEach(
               'Enable predictive analytics',
             );
             const insightsReviewStep = frame.getByText(
-              'Connect to Red Hat Lightspeed',
+              'Enable predictive analytics and management capabilities',
             );
             // Test enabling/disabling remote remediations
             const rhcSwitch = frame.getByText('Enable remote remediations');
             const rhcReviewStep = frame.getByText(
-              'Use remote host configuration',
+              'Enable remote remediations and system management with automation',
             );
 
             // insights on, rhc off
@@ -220,7 +221,9 @@ registrationModes.forEach(
               frame.getByText('Register the system later'),
             ).toBeHidden();
             await expect(
-              frame.getByText('Register with Red Hat'),
+              frame.getByText(
+                'Enable predictive analytics and management capabilities',
+              ),
             ).toBeVisible();
             // Check activation key display based on environment
             if (isHosted()) {
@@ -250,7 +253,9 @@ registrationModes.forEach(
               frame.getByText('Register the system later'),
             ).toBeHidden();
             await expect(
-              frame.getByText('Register with Red Hat'),
+              frame.getByText(
+                'Register with Red Hat Subscription Manager (RHSM)',
+              ),
             ).toBeVisible();
             // Check activation key display based on environment
             if (isHosted()) {
@@ -278,7 +283,14 @@ registrationModes.forEach(
               frame.getByText('Register the system later'),
             ).toBeHidden();
             await expect(
-              frame.getByText('Register with Red Hat'),
+              frame.getByText(
+                'Enable predictive analytics and management capabilities',
+              ),
+            ).toBeVisible();
+            await expect(
+              frame.getByText(
+                'Enable remote remediations and system management with automation',
+              ),
             ).toBeVisible();
             // Check activation key display based on environment
             if (isHosted()) {
@@ -370,7 +382,7 @@ registrationModes.forEach(
 
         await test.step('Edit blueprint and verify registration persisted', async () => {
           await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-          await frame.getByTestId('revisit-registration').click();
+          await frame.getByRole('button', { name: 'Register' }).click();
 
           // Verify the original registration mode is still selected
           if (name === 'automatic') {
