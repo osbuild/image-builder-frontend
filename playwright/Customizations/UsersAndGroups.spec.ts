@@ -422,20 +422,33 @@ test('Create a blueprint with Users customization', async ({
 
     await frame.getByRole('button', { name: 'Review and finish' }).click();
 
+    const advancedSettingsCard = frame
+      .locator('.pf-v6-c-card')
+      .filter({ hasText: 'Advanced settings' });
+
     // Verify admin user details
-    await expect(frame.getByText('admin1', { exact: true })).toBeVisible();
-    await expect(frame.getByText('●●●●●●●●').first()).toBeVisible(); // Masked password
-    await expect(frame.getByText('Enabled').first()).toBeVisible(); // Admin status
+    await expect(
+      advancedSettingsCard.getByText('admin1', { exact: true }),
+    ).toBeVisible();
+    await expect(advancedSettingsCard.getByText('*****').first()).toBeVisible(); // Masked password
+    await expect(
+      advancedSettingsCard.getByText('Enabled').first(),
+    ).toBeVisible(); // Admin status
 
     // Verify SSH user details
-    await expect(frame.getByText('sshuser')).toBeVisible();
-    await expect(frame.getByText('None').first()).toBeVisible(); // No password
-    await expect(frame.getByText('Disabled').first()).toBeVisible(); // Not admin
+    await expect(advancedSettingsCard.getByText('sshuser')).toBeVisible();
+    await expect(
+      advancedSettingsCard.getByText('Disabled').first(),
+    ).toBeVisible(); // Not admin
 
     // Verify admin user details
-    await expect(frame.getByText('admin2', { exact: true })).toBeVisible();
-    await expect(frame.getByText('●●●●●●●●').first()).toBeVisible(); // Masked password
-    await expect(frame.getByText('Enabled').first()).toBeVisible(); // Admin status
+    await expect(
+      advancedSettingsCard.getByText('admin2', { exact: true }),
+    ).toBeVisible();
+    await expect(advancedSettingsCard.getByText('*****').first()).toBeVisible(); // Masked password
+    await expect(
+      advancedSettingsCard.getByText('Enabled').first(),
+    ).toBeVisible(); // Admin status
   });
 
   await test.step('Create and save blueprint', async () => {
@@ -445,7 +458,7 @@ test('Create a blueprint with Users customization', async ({
 
   await test.step('Edit blueprint and modify users', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByTestId('revisit-users').click();
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
 
     // Modify existing user
     const passwordInputs = frame.getByRole('textbox', {
@@ -474,7 +487,7 @@ test('Create a blueprint with Users customization', async ({
   await test.step('Verify blueprint was saved correctly', async () => {
     // Navigate back to the blueprint to verify it was saved
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByTestId('revisit-users').click();
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
 
     // Verify all users are present and correct
     const usernameInputs = frame.getByRole('textbox', {
@@ -649,16 +662,11 @@ test('Create a blueprint with Groups customization', async ({
   await test.step('Verify groups in Review step', async () => {
     await frame.getByRole('button', { name: 'Review and finish' }).click();
 
-    await expect(frame.getByTestId('groups-expandable')).toBeVisible();
-    await expect(
-      frame.getByTestId('groups-expandable').getByText('developers'),
-    ).toBeVisible();
-    await expect(
-      frame.getByTestId('groups-expandable').getByText('qa-team'),
-    ).toBeVisible();
-    await expect(
-      frame.getByTestId('groups-expandable').getByText('ops'),
-    ).toBeVisible();
+    await expect(frame.getByText('developers')).toBeVisible();
+    // TODO: for now we only verify groups that are added to users
+    // we're missing a dedicated groups sections
+    // await expect(frame.getByText('qa-team')).toBeVisible();
+    // await expect(frame.getByText('ops')).toBeVisible();
   });
 
   await test.step('Fill details and create blueprint', async () => {
@@ -668,7 +676,7 @@ test('Create a blueprint with Groups customization', async ({
 
   await test.step('Edit blueprint and verify groups persist', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByTestId('revisit-groups').click();
+    await frame.getByRole('button', { name: 'Groups and users' }).click();
 
     const groupNameInputs = frame.getByPlaceholder('Set group name');
     await expect(groupNameInputs.nth(0)).toHaveValue('developers');

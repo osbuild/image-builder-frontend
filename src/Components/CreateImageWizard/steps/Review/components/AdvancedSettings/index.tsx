@@ -12,6 +12,7 @@ import {
   Locale,
   Services,
   Timezone,
+  Users,
 } from './components';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
@@ -60,6 +61,7 @@ const AdvancedSettingsOverview = ({
             oscapServices={oscapServices}
           />
           <Firewall shouldHide={restrictions.firewall.shouldHide} />
+          <Users shouldHide={restrictions.users.shouldHide} />
         </ReviewList>
       </CardBody>
     </Card>

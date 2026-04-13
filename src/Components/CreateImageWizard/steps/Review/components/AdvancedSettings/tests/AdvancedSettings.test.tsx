@@ -8,6 +8,8 @@ import {
 } from '@/store/slices/wizard/tests/mocks';
 import { renderWithRedux } from '@/test/testUtils';
 
+import { adminUser, developerUser, guestUser } from './mocks';
+
 import { createDefaultRestrictions } from '../../tests/helpers';
 import AdvancedSettingsOverview from '../index';
 
@@ -655,6 +657,153 @@ describe('AdvancedSettingsOverview', () => {
       // Oscap services use grey (default), user services use blue
       expect(auditdLabel).not.toHaveClass('pf-m-blue');
       expect(httpdLabel).toHaveClass('pf-m-blue');
+    });
+  });
+
+  describe('Users', () => {
+    test('does not render users section when no users configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [],
+        },
+      );
+
+      expect(screen.queryByText('Users')).not.toBeInTheDocument();
+    });
+
+    test('displays user count when users are configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser, developerUser],
+        },
+      );
+
+      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+    });
+
+    test('does not display user columns when no users configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [],
+        },
+      );
+
+      expect(screen.queryByText('Username')).not.toBeInTheDocument();
+      expect(screen.queryByText('Password')).not.toBeInTheDocument();
+      expect(screen.queryByText('SSH key')).not.toBeInTheDocument();
+      expect(screen.queryByText('Groups')).not.toBeInTheDocument();
+      expect(screen.queryByText('Administrator')).not.toBeInTheDocument();
+    });
+
+    test('displays all column headings when users are configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser],
+        },
+      );
+
+      expect(screen.getByText('Username')).toBeInTheDocument();
+      expect(screen.getByText('Password')).toBeInTheDocument();
+      expect(screen.getByText('SSH key')).toBeInTheDocument();
+      expect(screen.getByText('Groups')).toBeInTheDocument();
+      expect(screen.getByText('Administrator')).toBeInTheDocument();
+    });
+
+    test('displays usernames', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser, developerUser],
+        },
+      );
+
+      expect(screen.getByText('admin')).toBeInTheDocument();
+      expect(screen.getByText('developer')).toBeInTheDocument();
+    });
+
+    test('displays masked passwords', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser, developerUser],
+        },
+      );
+
+      // All passwords should be masked as *****
+      const maskedPasswords = screen.getAllByText('*****');
+      expect(maskedPasswords).toHaveLength(2);
+    });
+
+    test('displays administrator status', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser, developerUser],
+        },
+      );
+
+      // One admin (Enabled) and one non-admin (Disabled) under Administrator column
+      const adminColumn = screen.getByText('Administrator').closest('div');
+      expect(adminColumn).toHaveTextContent('Enabled');
+      expect(adminColumn).toHaveTextContent('Disabled');
+    });
+
+    test('displays SSH keys', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [{ ...adminUser, ssh_key: 'ssh-rsa AAAA' }],
+        },
+      );
+
+      expect(screen.getByText('SSH key')).toBeInTheDocument();
+      expect(screen.getByText('ssh-rsa AAAA')).toBeInTheDocument();
+    });
+
+    test('displays groups', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [{ ...adminUser, groups: ['wheel', 'docker'] }],
+        },
+      );
+
+      expect(screen.getByText('Groups')).toBeInTheDocument();
+      expect(screen.getByText('wheeldocker')).toBeInTheDocument();
+    });
+
+    test('displays multiple users with all their data', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [
+            { ...adminUser, ssh_key: 'ssh-rsa adminkey', groups: ['wheel'] },
+            { ...developerUser, ssh_key: 'ssh-rsa devkey', groups: ['docker'] },
+            guestUser,
+          ],
+        },
+      );
+
+      expect(screen.getByText('3')).toBeInTheDocument();
+      expect(screen.getByText('admin')).toBeInTheDocument();
+      expect(screen.getByText('developer')).toBeInTheDocument();
+      expect(screen.getByText('guest')).toBeInTheDocument();
+      expect(screen.getAllByText('*****')).toHaveLength(3);
     });
   });
 
