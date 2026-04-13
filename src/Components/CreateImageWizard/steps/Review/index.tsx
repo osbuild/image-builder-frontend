@@ -67,6 +67,7 @@ const ReviewStep = () => {
       <AdvancedSettingsOverview
         restrictions={restrictions}
         oscapKernelArgs={security.kernel.append}
+        oscapServices={security.services}
       />
       <Review />
     </Form>

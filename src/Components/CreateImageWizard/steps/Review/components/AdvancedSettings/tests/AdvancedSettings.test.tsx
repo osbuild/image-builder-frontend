@@ -504,4 +504,157 @@ describe('AdvancedSettingsOverview', () => {
       expect(quietLabel).toHaveClass('pf-m-blue');
     });
   });
+
+  describe('Services', () => {
+    test('displays all service sections with empty messages by default', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: [],
+            disabled: [],
+            masked: [],
+          },
+        },
+      );
+
+      expect(screen.getByText('Enabled systemd services')).toBeInTheDocument();
+      expect(screen.getByText('Disabled systemd services')).toBeInTheDocument();
+      expect(screen.getByText('Masked systemd services')).toBeInTheDocument();
+      expect(screen.getAllByText('No services selected')).toHaveLength(3);
+    });
+
+    test('displays enabled services', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: ['httpd', 'sshd'],
+            disabled: [],
+            masked: [],
+          },
+        },
+      );
+
+      expect(screen.getByText('httpd')).toBeInTheDocument();
+      expect(screen.getByText('sshd')).toBeInTheDocument();
+    });
+
+    test('displays disabled services', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: [],
+            disabled: ['bluetooth', 'cups'],
+            masked: [],
+          },
+        },
+      );
+
+      expect(screen.getByText('bluetooth')).toBeInTheDocument();
+      expect(screen.getByText('cups')).toBeInTheDocument();
+    });
+
+    test('displays masked services', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: [],
+            disabled: [],
+            masked: ['firewalld'],
+          },
+        },
+      );
+
+      expect(screen.getByText('firewalld')).toBeInTheDocument();
+    });
+
+    test('displays user-selected services with blue labels', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: ['httpd'],
+            disabled: ['cups'],
+            masked: ['firewalld'],
+          },
+        },
+      );
+
+      const httpdLabel = screen.getByText('httpd').closest('.pf-v6-c-label');
+      const cupsLabel = screen.getByText('cups').closest('.pf-v6-c-label');
+      const firewalldLabel = screen
+        .getByText('firewalld')
+        .closest('.pf-v6-c-label');
+
+      expect(httpdLabel).toHaveClass('pf-m-blue');
+      expect(cupsLabel).toHaveClass('pf-m-blue');
+      expect(firewalldLabel).toHaveClass('pf-m-blue');
+    });
+
+    test('displays oscap services with default (grey) labels', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview
+          restrictions={createDefaultRestrictions()}
+          oscapServices={{
+            enabled: ['auditd', 'rsyslog'],
+            disabled: ['autofs'],
+            masked: ['nfs-server'],
+          }}
+        />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: ['auditd'],
+            disabled: ['autofs'],
+            masked: ['nfs-server'],
+          },
+        },
+      );
+
+      const auditdLabel = screen.getByText('auditd').closest('.pf-v6-c-label');
+      const autofsLabel = screen.getByText('autofs').closest('.pf-v6-c-label');
+      const nfsLabel = screen.getByText('nfs-server').closest('.pf-v6-c-label');
+
+      // Oscap services use grey (default)
+      expect(auditdLabel).not.toHaveClass('pf-m-blue');
+      expect(autofsLabel).not.toHaveClass('pf-m-blue');
+      expect(nfsLabel).not.toHaveClass('pf-m-blue');
+    });
+
+    test('displays mixed services with correct label colors', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview
+          restrictions={createDefaultRestrictions()}
+          oscapServices={{
+            enabled: ['auditd'],
+            disabled: [],
+            masked: [],
+          }}
+        />,
+        {
+          imageTypes: ['guest-image'],
+          services: {
+            enabled: ['auditd', 'httpd'],
+            disabled: [],
+            masked: [],
+          },
+        },
+      );
+
+      const auditdLabel = screen.getByText('auditd').closest('.pf-v6-c-label');
+      const httpdLabel = screen.getByText('httpd').closest('.pf-v6-c-label');
+
+      // Oscap services use grey (default), user services use blue
+      expect(auditdLabel).not.toHaveClass('pf-m-blue');
+      expect(httpdLabel).toHaveClass('pf-m-blue');
+    });
+  });
 });

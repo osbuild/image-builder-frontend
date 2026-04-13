@@ -257,7 +257,7 @@ test('Create a blueprint with Systemd customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit Systemd services step').click();
+    await frame.getByRole('button', { name: 'Systemd services' }).click();
 
     await frame
       .getByPlaceholder('Add disabled service')

@@ -15,7 +15,6 @@ import {
   selectFirewall,
   selectImageTypes,
   selectIsImageMode,
-  selectServices,
   selectUserGroups,
   selectUsers,
   UserGroup,
@@ -25,7 +24,6 @@ import {
   FirewallList,
   FirstBootList,
   GroupsList,
-  ServicesList,
   UsersList,
 } from './ReviewStepTextLists';
 
@@ -37,12 +35,10 @@ const Review = () => {
   const isImageMode = useAppSelector(selectIsImageMode);
   const environments = useAppSelector(selectImageTypes);
   const firewall = useAppSelector(selectFirewall);
-  const services = useAppSelector(selectServices);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
 
   const [isExpandedFirewall, setIsExpandedFirewall] = useState(true);
-  const [isExpandedServices, setIsExpandedServices] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
   const [isExpandedGroups, setIsExpandedGroups] = useState(true);
@@ -53,8 +49,6 @@ const Review = () => {
 
   const onToggleFirewall = (isExpandedFirewall: boolean) =>
     setIsExpandedFirewall(isExpandedFirewall);
-  const onToggleServices = (isExpandedServices: boolean) =>
-    setIsExpandedServices(isExpandedServices);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
   const onToggleUsers = (isExpandedUsers: boolean) =>
@@ -174,26 +168,6 @@ const Review = () => {
             data-testid='firewall-expandable'
           >
             <FirewallList />
-          </ExpandableSection>
-        )}
-      {!restrictions.services.shouldHide &&
-        (services.enabled.length > 0 ||
-          services.disabled.length > 0 ||
-          services.masked.length > 0) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Systemd services',
-              'revisit-services',
-              'wizard-services',
-            )}
-            onToggle={(_event, isExpandedServices) =>
-              onToggleServices(isExpandedServices)
-            }
-            isExpanded={isExpandedServices}
-            isIndented
-            data-testid='services-expandable'
-          >
-            <ServicesList />
           </ExpandableSection>
         )}
       {!restrictions.firstBoot.shouldHide && (

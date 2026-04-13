@@ -4,18 +4,33 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { Filesystem, Hostname, Kernel, Locale, Timezone } from './components';
+import {
+  Filesystem,
+  Hostname,
+  Kernel,
+  Locale,
+  Services,
+  Timezone,
+} from './components';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
 import { ReviewCardProps } from '../types';
 
+type OscapServices = {
+  enabled: string[];
+  disabled: string[];
+  masked: string[];
+};
+
 type AdvancedSettingsOverviewProps = ReviewCardProps & {
   oscapKernelArgs?: string[];
+  oscapServices?: OscapServices;
 };
 
 const AdvancedSettingsOverview = ({
   restrictions,
   oscapKernelArgs = [],
+  oscapServices,
 }: AdvancedSettingsOverviewProps) => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
@@ -38,6 +53,10 @@ const AdvancedSettingsOverview = ({
           <Kernel
             shouldHide={restrictions.kernel.shouldHide}
             oscapKernelArgs={oscapKernelArgs}
+          />
+          <Services
+            shouldHide={restrictions.services.shouldHide}
+            oscapServices={oscapServices}
           />
         </ReviewList>
       </CardBody>

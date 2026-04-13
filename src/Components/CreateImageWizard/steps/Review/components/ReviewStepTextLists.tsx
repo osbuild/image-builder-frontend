@@ -15,7 +15,6 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import {
   selectFirewall,
   selectFirstBootScript,
-  selectServices,
   selectUsers,
   UserGroup,
 } from '@/store/slices/wizard';
@@ -148,53 +147,6 @@ export const FirewallList = () => {
               <CodeBlockCode>
                 {firewall.services.disabled.join(' ')}
               </CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-      </Content>
-    </Content>
-  );
-};
-
-export const ServicesList = () => {
-  const services = useAppSelector(selectServices);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Enabled
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {services.enabled.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>{services.enabled.join(' ')}</CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Disabled
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {services.disabled.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>{services.disabled.join(' ')}</CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Masked
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {services.masked.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>{services.masked.join(' ')}</CodeBlockCode>
             </CodeBlock>
           ) : (
             'None'
