@@ -2,8 +2,6 @@ import React from 'react';
 
 import {
   Button,
-  CodeBlock,
-  CodeBlockCode,
   Content,
   ContentVariants,
   Icon,
@@ -13,7 +11,6 @@ import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {
-  selectFirewall,
   selectFirstBootScript,
   selectUsers,
   UserGroup,
@@ -103,57 +100,6 @@ export const GroupsList = ({ groups }: { groups: UserGroup[] }) => {
         ))}
       </Tbody>
     </Table>
-  );
-};
-
-export const FirewallList = () => {
-  const firewall = useAppSelector(selectFirewall);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Ports
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {firewall.ports.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>{firewall.ports.join(' ')}</CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Enabled services
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {firewall.services.enabled.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>
-                {firewall.services.enabled.join(' ')}
-              </CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Disabled services
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {firewall.services.disabled.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>
-                {firewall.services.disabled.join(' ')}
-              </CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-      </Content>
-    </Content>
   );
 };
 

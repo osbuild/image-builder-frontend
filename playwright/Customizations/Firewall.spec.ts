@@ -166,7 +166,7 @@ test('Create a blueprint with Firewall customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit Firewall step').click();
+    await frame.getByRole('button', { name: 'Firewall' }).click();
 
     await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('90:tcp');
     await page.keyboard.press('Enter');

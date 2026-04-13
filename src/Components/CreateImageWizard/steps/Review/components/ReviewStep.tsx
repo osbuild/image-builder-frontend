@@ -12,7 +12,6 @@ import { ArrowRightIcon } from '@patternfly/react-icons';
 import './ReviewStep.scss';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import {
-  selectFirewall,
   selectImageTypes,
   selectIsImageMode,
   selectUserGroups,
@@ -20,12 +19,7 @@ import {
   UserGroup,
 } from '@/store/slices/wizard';
 
-import {
-  FirewallList,
-  FirstBootList,
-  GroupsList,
-  UsersList,
-} from './ReviewStepTextLists';
+import { FirstBootList, GroupsList, UsersList } from './ReviewStepTextLists';
 
 import { useAppSelector } from '../../../../../store/hooks';
 
@@ -34,11 +28,9 @@ const Review = () => {
 
   const isImageMode = useAppSelector(selectIsImageMode);
   const environments = useAppSelector(selectImageTypes);
-  const firewall = useAppSelector(selectFirewall);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
 
-  const [isExpandedFirewall, setIsExpandedFirewall] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
   const [isExpandedGroups, setIsExpandedGroups] = useState(true);
@@ -47,8 +39,6 @@ const Review = () => {
     selectedImageTypes: environments,
   });
 
-  const onToggleFirewall = (isExpandedFirewall: boolean) =>
-    setIsExpandedFirewall(isExpandedFirewall);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
   const onToggleUsers = (isExpandedUsers: boolean) =>
@@ -148,26 +138,6 @@ const Review = () => {
             data-testid='groups-expandable'
           >
             <GroupsList groups={filterNonEmptyGroups(userGroups)} />
-          </ExpandableSection>
-        )}
-      {!restrictions.firewall.shouldHide &&
-        (firewall.ports.length > 0 ||
-          firewall.services.disabled.length > 0 ||
-          firewall.services.enabled.length > 0) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Firewall',
-              'revisit-firewall',
-              'wizard-firewall',
-            )}
-            onToggle={(_event, isExpandedFirewall) =>
-              onToggleFirewall(isExpandedFirewall)
-            }
-            isExpanded={isExpandedFirewall}
-            isIndented
-            data-testid='firewall-expandable'
-          >
-            <FirewallList />
           </ExpandableSection>
         )}
       {!restrictions.firstBoot.shouldHide && (

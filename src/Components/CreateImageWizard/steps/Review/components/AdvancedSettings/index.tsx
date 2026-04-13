@@ -6,6 +6,7 @@ import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
   Filesystem,
+  Firewall,
   Hostname,
   Kernel,
   Locale,
@@ -58,6 +59,7 @@ const AdvancedSettingsOverview = ({
             shouldHide={restrictions.services.shouldHide}
             oscapServices={oscapServices}
           />
+          <Firewall shouldHide={restrictions.firewall.shouldHide} />
         </ReviewList>
       </CardBody>
     </Card>

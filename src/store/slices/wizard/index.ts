@@ -633,6 +633,16 @@ export const selectLocaleLangpackCandidates = createSelector(
   },
 );
 
+export const selectFirewallEnabled = createSelector(
+  [selectFirewall],
+  (firewall) => {
+    if (firewall.ports.length > 0) return true;
+    if (firewall.services.enabled.length > 0) return true;
+    if (firewall.services.disabled.length > 0) return true;
+    return false;
+  },
+);
+
 // Derived selector for checking if we're in image mode
 export const selectIsImageMode = createSelector(
   [selectBlueprintMode],

@@ -657,4 +657,189 @@ describe('AdvancedSettingsOverview', () => {
       expect(httpdLabel).toHaveClass('pf-m-blue');
     });
   });
+
+  describe('Firewall', () => {
+    test('does not render firewall when no configuration', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: [],
+            services: {
+              enabled: [],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      expect(screen.queryByText('Firewall')).not.toBeInTheDocument();
+    });
+
+    test('displays firewall as enabled when ports are configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: ['22/tcp', '443/tcp'],
+            services: {
+              enabled: [],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Firewall')).toBeInTheDocument();
+      expect(screen.getByText('Enabled')).toBeInTheDocument();
+    });
+
+    test('displays firewall as enabled when services are configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: [],
+            services: {
+              enabled: ['httpd'],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Enabled')).toBeInTheDocument();
+    });
+
+    test('displays ports column', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: ['22/tcp', '443/tcp', '8080/tcp'],
+            services: {
+              enabled: [],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Ports')).toBeInTheDocument();
+      expect(screen.getByText('22/tcp')).toBeInTheDocument();
+      expect(screen.getByText('443/tcp')).toBeInTheDocument();
+      expect(screen.getByText('8080/tcp')).toBeInTheDocument();
+    });
+
+    test('displays enabled services column', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: [],
+            services: {
+              enabled: ['httpd', 'sshd'],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Enabled services')).toBeInTheDocument();
+      expect(screen.getByText('httpd')).toBeInTheDocument();
+      expect(screen.getByText('sshd')).toBeInTheDocument();
+    });
+
+    test('displays disabled services column', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: [],
+            services: {
+              enabled: [],
+              disabled: ['cups', 'bluetooth'],
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Disabled services')).toBeInTheDocument();
+      expect(screen.getByText('cups')).toBeInTheDocument();
+      expect(screen.getByText('bluetooth')).toBeInTheDocument();
+    });
+
+    test('pads shorter columns with placeholder', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: ['22/tcp', '443/tcp', '8080/tcp'],
+            services: {
+              enabled: ['httpd'],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      // 3 ports, 1 enabled service, 0 disabled services
+      // Should have 2 placeholders in enabled column and 3 in disabled column
+      const placeholders = screen.getAllByText('--');
+      expect(placeholders).toHaveLength(5);
+    });
+
+    test('displays all three columns with configuration', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: ['22/tcp'],
+            services: {
+              enabled: ['httpd', 'sshd'],
+              disabled: ['cups'],
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Ports')).toBeInTheDocument();
+      expect(screen.getByText('Enabled services')).toBeInTheDocument();
+      expect(screen.getByText('Disabled services')).toBeInTheDocument();
+
+      expect(screen.getByText('22/tcp')).toBeInTheDocument();
+      expect(screen.getByText('httpd')).toBeInTheDocument();
+      expect(screen.getByText('sshd')).toBeInTheDocument();
+      expect(screen.getByText('cups')).toBeInTheDocument();
+    });
+
+    test('does not display any firewall content when firewall is disabled', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firewall: {
+            ports: [],
+            services: {
+              enabled: [],
+              disabled: [],
+            },
+          },
+        },
+      );
+
+      expect(screen.queryByText('Firewall')).not.toBeInTheDocument();
+      expect(screen.queryByText('Ports')).not.toBeInTheDocument();
+      expect(screen.queryByText('Enabled services')).not.toBeInTheDocument();
+      expect(screen.queryByText('Disabled services')).not.toBeInTheDocument();
+    });
+  });
 });
