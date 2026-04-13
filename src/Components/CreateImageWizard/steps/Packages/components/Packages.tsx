@@ -196,6 +196,20 @@ const Packages = () => {
     }
   };
 
+  const handleDropdownOpened = (hasRecommendations: boolean) => {
+    if (!isOnPremise) {
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME} - Package Search Dropdown Opened`,
+        {
+          module: AMPLITUDE_MODULE_NAME,
+          isPreview: isBeta(),
+          selectedPackages: packages.map((pkg) => pkg.name),
+          recommendationsShown: hasRecommendations,
+        },
+      );
+    }
+  };
+
   return (
     <>
       <RepositoryModal
@@ -257,6 +271,7 @@ const Packages = () => {
                 isLoadingRecommendations || isLoadingDescriptions
               }
               onRecommendationSelected={handleRecommendationSelected}
+              onDropdownOpened={handleDropdownOpened}
             />
           </ToolbarItem>
         </ToolbarContent>

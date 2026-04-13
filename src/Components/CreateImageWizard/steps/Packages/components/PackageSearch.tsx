@@ -79,6 +79,7 @@ type PackageSearchProps = {
   recommendations: PackageRecommendation[];
   isLoadingRecommendations: boolean;
   onRecommendationSelected: (packageName: string) => void;
+  onDropdownOpened: (hasRecommendations: boolean) => void;
 };
 
 const PackageSearch = ({
@@ -93,6 +94,7 @@ const PackageSearch = ({
   recommendations,
   isLoadingRecommendations,
   onRecommendationSelected,
+  onDropdownOpened,
 }: PackageSearchProps) => {
   const dispatch = useAppDispatch();
 
@@ -805,7 +807,14 @@ const PackageSearch = ({
           packageType === 'packages' ? selectedPackageKeys : selectedGroupNames
         }
         onSelect={onSelect}
-        onOpenChange={(isOpen) => setIsOpen(isOpen)}
+        onOpenChange={(isOpen) => {
+          if (isOpen && packageType === 'packages') {
+            onDropdownOpened(
+              sortedPackages.some((pkg) => pkg.isRecommendation),
+            );
+          }
+          setIsOpen(isOpen);
+        }}
         toggle={toggle}
         shouldFocusFirstItemOnOpen={false}
       >
