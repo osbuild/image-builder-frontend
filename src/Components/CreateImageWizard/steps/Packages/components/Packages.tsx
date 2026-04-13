@@ -7,7 +7,6 @@ import {
   Select,
   SelectList,
   SelectOption,
-  Stack,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -68,58 +67,54 @@ const Packages = () => {
         epelRepo={epelRepo}
       />
       <Toolbar>
-        <Stack>
-          <ToolbarContent>
-            <ToolbarItem>
-              <FormGroup label='Package type'>
-                <Select
-                  id='package-type-select'
-                  isOpen={isPackageTypeDropdownOpen}
-                  selected={packageType}
-                  onSelect={(_event, value) => {
-                    setPackageType(value as 'packages' | 'groups');
-                    setIsPackageTypeDropdownOpen(false);
-                  }}
-                  onOpenChange={(isOpen) =>
-                    setIsPackageTypeDropdownOpen(isOpen)
-                  }
-                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                    <MenuToggle
-                      ref={toggleRef}
-                      onClick={() =>
-                        setIsPackageTypeDropdownOpen(!isPackageTypeDropdownOpen)
-                      }
-                      isExpanded={isPackageTypeDropdownOpen}
-                    >
-                      {packageType === 'packages'
-                        ? 'Individual packages'
-                        : 'Package groups'}
-                    </MenuToggle>
-                  )}
-                >
-                  <SelectList>
-                    <SelectOption value='packages'>
-                      Individual packages
-                    </SelectOption>
-                    <SelectOption value='groups'>Package groups</SelectOption>
-                  </SelectList>
-                </Select>
-              </FormGroup>
-            </ToolbarItem>
-            <ToolbarItem>
-              <PackageSearch
-                packageType={packageType}
-                isSuccessEpelRepo={isSuccessEpelRepo}
-                epelRepo={epelRepo}
-                setIsRepoModalOpen={setIsRepoModalOpen}
-                setIsSelectingPackage={setIsSelectingPackage}
-                setIsSelectingGroup={setIsSelectingGroup}
-                activeStream={activeStream}
-                setActiveStream={setActiveStream}
-              />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Stack>
+        <ToolbarContent>
+          <ToolbarItem>
+            <FormGroup label='Package type'>
+              <Select
+                id='package-type-select'
+                isOpen={isPackageTypeDropdownOpen}
+                selected={packageType}
+                onSelect={(_event, value) => {
+                  setPackageType(value as 'packages' | 'groups');
+                  setIsPackageTypeDropdownOpen(false);
+                }}
+                onOpenChange={(isOpen) => setIsPackageTypeDropdownOpen(isOpen)}
+                toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                  <MenuToggle
+                    ref={toggleRef}
+                    onClick={() =>
+                      setIsPackageTypeDropdownOpen(!isPackageTypeDropdownOpen)
+                    }
+                    isExpanded={isPackageTypeDropdownOpen}
+                  >
+                    {packageType === 'packages'
+                      ? 'Individual packages'
+                      : 'Package groups'}
+                  </MenuToggle>
+                )}
+              >
+                <SelectList>
+                  <SelectOption value='packages'>
+                    Individual packages
+                  </SelectOption>
+                  <SelectOption value='groups'>Package groups</SelectOption>
+                </SelectList>
+              </Select>
+            </FormGroup>
+          </ToolbarItem>
+          <ToolbarItem>
+            <PackageSearch
+              packageType={packageType}
+              isSuccessEpelRepo={isSuccessEpelRepo}
+              epelRepo={epelRepo}
+              setIsRepoModalOpen={setIsRepoModalOpen}
+              setIsSelectingPackage={setIsSelectingPackage}
+              setIsSelectingGroup={setIsSelectingGroup}
+              activeStream={activeStream}
+              setActiveStream={setActiveStream}
+            />
+          </ToolbarItem>
+        </ToolbarContent>
       </Toolbar>
       <PackagesTable
         isSuccessEpelRepo={isSuccessEpelRepo}

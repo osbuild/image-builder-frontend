@@ -46,31 +46,34 @@ const PackagesStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='packages' />
-      <Title
-        headingLevel='h1'
-        size='xl'
-        className='pf-v6-u-display-flex pf-v6-u-align-items-center'
-      >
-        Packages
-        {requiredByOpenSCAPCount > 0 && (
-          <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-            {requiredByOpenSCAPCount} Added by OpenSCAP
-          </Label>
-        )}
-      </Title>
       <Content>
-        Search and add individual packages to include in your image. You can
-        select packages from the repositories included in the previous step.
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          className='pf-v6-u-display-flex pf-v6-u-align-items-center'
+        >
+          Packages
+          {requiredByOpenSCAPCount > 0 && (
+            <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
+              {requiredByOpenSCAPCount} Added by OpenSCAP
+            </Label>
+          )}
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Search and add individual packages to include in your image. You can
+          select packages from the repositories included in the previous step.
+        </Content>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          {isOnPremise && (
+            <>
+              Search for exact matches by specifying the whole package name, or
+              glob using asterisk wildcards (*) before or after the package
+              name.
+            </>
+          )}
+        </Content>
+        <Packages />
       </Content>
-      <Content>
-        {isOnPremise && (
-          <>
-            Search for exact matches by specifying the whole package name, or
-            glob using asterisk wildcards (*) before or after the package name.
-          </>
-        )}
-      </Content>
-      <Packages />
       {!isOnPremise && isRhel(distribution) && <PackageRecommendations />}
     </Wrapper>
   );
