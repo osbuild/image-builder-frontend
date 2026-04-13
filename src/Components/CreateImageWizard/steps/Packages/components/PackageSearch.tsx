@@ -9,9 +9,6 @@ import {
   EmptyStateBody,
   EmptyStateFooter,
   FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -771,6 +768,12 @@ const PackageSearch = ({
             <SelectOption isDisabled>
               Start typing to search {packageTypeLabel}
             </SelectOption>
+          ) : packageType === 'packages' && debouncedSearchTerm.length === 1 ? (
+            <EmptyState variant='sm'>
+              <EmptyStateBody>
+                The search value must be greater than 1 character
+              </EmptyStateBody>
+            </EmptyState>
           ) : isLoadingDistroPackages ||
             isLoadingCustomPackages ||
             isLoadingRecommendedPackages ||
@@ -844,15 +847,6 @@ const PackageSearch = ({
             </>
           )}
       </Select>
-      {debouncedSearchTerm.length === 1 && (
-        <FormHelperText>
-          <HelperText>
-            <HelperTextItem variant='error'>
-              The search value must be greater than 1 character
-            </HelperTextItem>
-          </HelperText>
-        </FormHelperText>
-      )}
     </FormGroup>
   );
 };
