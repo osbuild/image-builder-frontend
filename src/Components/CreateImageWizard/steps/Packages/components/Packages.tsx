@@ -30,6 +30,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectPackages,
+  selectWizardMode,
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
@@ -48,6 +49,7 @@ import {
 const Packages = () => {
   const { analytics, isBeta } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const wizardMode = useAppSelector(selectWizardMode);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const version = releaseToVersion(distribution);
@@ -87,6 +89,18 @@ const Packages = () => {
   const [isPackageTypeDropdownOpen, setIsPackageTypeDropdownOpen] =
     useState(false);
   const [activeStream, setActiveStream] = useState<string>('');
+
+  useEffect(() => {
+    if (!isOnPremise && wizardMode === 'edit') {
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME} - Additional Packages Revisited in Edit`,
+        {
+          module: AMPLITUDE_MODULE_NAME,
+          isPreview: isBeta(),
+        },
+      );
+    }
+  }, []);
 
   const [
     fetchRecommendedPackages,
