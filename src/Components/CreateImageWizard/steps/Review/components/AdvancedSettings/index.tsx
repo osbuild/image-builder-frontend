@@ -7,6 +7,7 @@ import { useFlag } from '@/Utilities/useGetEnvironment';
 import {
   Filesystem,
   Firewall,
+  Firstboot,
   Hostname,
   Kernel,
   Locale,
@@ -62,6 +63,7 @@ const AdvancedSettingsOverview = ({
           />
           <Firewall shouldHide={restrictions.firewall.shouldHide} />
           <Users shouldHide={restrictions.users.shouldHide} />
+          <Firstboot shouldHide={restrictions.firstBoot.shouldHide} />
         </ReviewList>
       </CardBody>
     </Card>

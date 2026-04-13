@@ -660,6 +660,50 @@ describe('AdvancedSettingsOverview', () => {
     });
   });
 
+  describe('Firstboot', () => {
+    const firstBootScript = `#! /bin/bash
+
+echo 'Hello there, General Kenobi!'`;
+
+    test('does not display when script is empty', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firstBoot: { script: '' },
+        },
+      );
+
+      expect(
+        screen.queryByText('First boot configuration'),
+      ).not.toBeInTheDocument();
+    });
+
+    test('displays heading when script is configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firstBoot: { script: firstBootScript },
+        },
+      );
+
+      expect(screen.getByText('First boot configuration')).toBeInTheDocument();
+    });
+
+    test('displays configured status when script is set', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          firstBoot: { script: firstBootScript },
+        },
+      );
+
+      expect(screen.getByText('Configured')).toBeInTheDocument();
+    });
+  });
+
   describe('Users', () => {
     test('does not render users section when no users configured', () => {
       renderWithRedux(

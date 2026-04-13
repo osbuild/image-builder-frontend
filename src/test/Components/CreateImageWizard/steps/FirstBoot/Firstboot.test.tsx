@@ -94,10 +94,11 @@ const uploadFile = async (scriptName: string): Promise<void> => {
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
-  const expandable = await screen.findByTestId('firstboot-expandable');
-  const revisitButton =
-    await within(expandable).findByTestId('revisit-first-boot');
-  await waitFor(() => user.click(revisitButton));
+  const heading = screen.getByRole('heading', { name: 'Advanced settings' });
+  // eslint-disable-next-line testing-library/no-node-access
+  const card = heading.closest('.pf-v6-c-card') as HTMLElement;
+  const editButton = within(card).getByRole('button', { name: /Edit/i });
+  await waitFor(() => user.click(editButton));
 };
 
 describe('First Boot step', () => {
@@ -137,7 +138,7 @@ describe('First Boot step', () => {
     await goToFirstBootStep();
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /First boot/ });
+    await screen.findByRole('heading', { name: /File system configuration/ });
   });
 });
 

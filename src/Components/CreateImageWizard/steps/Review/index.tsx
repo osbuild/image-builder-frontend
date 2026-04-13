@@ -19,7 +19,6 @@ import {
   ReadyToBuildAlert,
   Registration,
   RepeatableBuild,
-  Review,
   Security,
 } from './components';
 
@@ -69,7 +68,6 @@ const ReviewStep = () => {
         oscapKernelArgs={security.kernel.append}
         oscapServices={security.services}
       />
-      <Review />
     </Form>
   );
 };

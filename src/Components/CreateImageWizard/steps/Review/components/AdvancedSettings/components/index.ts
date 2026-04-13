@@ -6,3 +6,4 @@ export { Kernel } from './Kernel';
 export { Services } from './Services';
 export { Firewall } from './Firewall';
 export { Users } from './Users';
+export { Firstboot } from './Firstboot';
