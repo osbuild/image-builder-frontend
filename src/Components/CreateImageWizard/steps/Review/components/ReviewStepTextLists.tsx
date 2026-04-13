@@ -15,13 +15,8 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import {
   selectFirewall,
   selectFirstBootScript,
-  selectHostname,
   selectKernel,
-  selectKeyboard,
-  selectLanguages,
-  selectNtpServers,
   selectServices,
-  selectTimezone,
   selectUsers,
   UserGroup,
 } from '@/store/slices/wizard';
@@ -29,30 +24,6 @@ import {
 import { UserGroupsTable } from './ReviewStepTables';
 
 import { useAppSelector } from '../../../../../store/hooks';
-
-export const TimezoneList = () => {
-  const timezone = useAppSelector(selectTimezone);
-  const ntpServers = useAppSelector(selectNtpServers);
-
-  return (
-    <>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Timezone
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {timezone ? timezone : 'None'}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          NTP servers
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {ntpServers && ntpServers.length > 0 ? ntpServers.join(', ') : 'None'}
-        </Content>
-      </Content>
-    </>
-  );
-};
 
 export const UsersList = () => {
   const users = useAppSelector(selectUsers);
@@ -134,47 +105,6 @@ export const GroupsList = ({ groups }: { groups: UserGroup[] }) => {
         ))}
       </Tbody>
     </Table>
-  );
-};
-
-export const LocaleList = () => {
-  const languages = useAppSelector(selectLanguages);
-  const keyboard = useAppSelector(selectKeyboard);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Languages
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {languages && languages.length > 0 ? languages.join(', ') : 'None'}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Keyboard
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {keyboard ? keyboard : 'None'}
-        </Content>
-      </Content>
-    </Content>
-  );
-};
-
-export const HostnameList = () => {
-  const hostname = useAppSelector(selectHostname);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Hostname
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {hostname ? hostname : 'None'}
-        </Content>
-      </Content>
-    </Content>
   );
 };
 

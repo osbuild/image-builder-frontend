@@ -191,4 +191,183 @@ describe('AdvancedSettingsOverview', () => {
       });
     });
   });
+
+  describe('Timezone', () => {
+    test('displays timezone value', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          timezone: {
+            timezone: 'America/New_York',
+            ntpservers: [],
+          },
+        },
+      );
+
+      expect(screen.getByText('Timezone')).toBeInTheDocument();
+      expect(screen.getByText('America/New_York')).toBeInTheDocument();
+    });
+
+    test('displays empty timezone when not set', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          timezone: {
+            timezone: '',
+            ntpservers: [],
+          },
+        },
+      );
+
+      expect(screen.getByText('Timezone')).toBeInTheDocument();
+    });
+
+    test('displays NTP servers when configured', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          timezone: {
+            timezone: 'UTC',
+            ntpservers: ['0.pool.ntp.org', '1.pool.ntp.org'],
+          },
+        },
+      );
+
+      expect(screen.getByText('NTP servers')).toBeInTheDocument();
+      expect(screen.getByText('0.pool.ntp.org')).toBeInTheDocument();
+      expect(screen.getByText('1.pool.ntp.org')).toBeInTheDocument();
+    });
+
+    test('does not display NTP servers section when empty', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          timezone: {
+            timezone: 'Europe/London',
+            ntpservers: [],
+          },
+        },
+      );
+
+      expect(screen.queryByText('NTP servers')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Locale', () => {
+    test('displays language and keyboard when both are set', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          locale: {
+            languages: ['en_US.UTF-8'],
+            keyboard: 'us',
+          },
+        },
+      );
+
+      expect(screen.getByText('Language')).toBeInTheDocument();
+      expect(screen.getByText('en_US.UTF-8')).toBeInTheDocument();
+      expect(screen.getByText('Keyboard')).toBeInTheDocument();
+      expect(screen.getByText('us')).toBeInTheDocument();
+    });
+
+    test('displays multiple languages', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          locale: {
+            languages: ['en_US.UTF-8', 'es_ES.UTF-8', 'fr_FR.UTF-8'],
+            keyboard: 'us',
+          },
+        },
+      );
+
+      expect(screen.getByText('en_US.UTF-8')).toBeInTheDocument();
+      expect(screen.getByText('es_ES.UTF-8')).toBeInTheDocument();
+      expect(screen.getByText('fr_FR.UTF-8')).toBeInTheDocument();
+    });
+
+    test('displays only keyboard when languages are empty', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          locale: {
+            languages: [],
+            keyboard: 'us',
+          },
+        },
+      );
+
+      expect(screen.queryByText('Language')).not.toBeInTheDocument();
+      expect(screen.getByText('Keyboard')).toBeInTheDocument();
+      expect(screen.getByText('us')).toBeInTheDocument();
+    });
+
+    test('displays only language when keyboard is empty', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          locale: {
+            languages: ['en_US.UTF-8'],
+            keyboard: '',
+          },
+        },
+      );
+
+      expect(screen.getByText('Language')).toBeInTheDocument();
+      expect(screen.getByText('en_US.UTF-8')).toBeInTheDocument();
+      expect(screen.queryByText('Keyboard')).not.toBeInTheDocument();
+    });
+
+    test('does not display locale section when both are empty', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          locale: {
+            languages: [],
+            keyboard: '',
+          },
+        },
+      );
+
+      expect(screen.queryByText('Language')).not.toBeInTheDocument();
+      expect(screen.queryByText('Keyboard')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Hostname', () => {
+    test('displays hostname when set', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          hostname: 'my-server.example.com',
+        },
+      );
+
+      expect(screen.getByText('Hostname')).toBeInTheDocument();
+      expect(screen.getByText('my-server.example.com')).toBeInTheDocument();
+    });
+
+    test('does not display hostname section when empty', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          hostname: '',
+        },
+      );
+
+      expect(screen.queryByText('Hostname')).not.toBeInTheDocument();
+    });
+  });
 });

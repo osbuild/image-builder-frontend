@@ -171,7 +171,7 @@ test('Create a blueprint with Timezone customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit Timezone step').click();
+    await frame.getByRole('button', { name: 'Timezone' }).click();
     await expect(frame.getByText('Canada/Saskatchewan')).toBeHidden();
     await expect(
       frame.getByText('Europe/Stockholm', { exact: true }),

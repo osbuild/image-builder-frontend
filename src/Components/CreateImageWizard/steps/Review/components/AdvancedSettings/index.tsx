@@ -4,7 +4,7 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { Filesystem } from './components';
+import { Filesystem, Hostname, Locale, Timezone } from './components';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
 import { ReviewCardProps } from '../types';
@@ -25,6 +25,9 @@ const AdvancedSettingsOverview = ({ restrictions }: ReviewCardProps) => {
       <CardBody>
         <ReviewList>
           <Filesystem shouldHide={restrictions.filesystem.shouldHide} />
+          <Timezone shouldHide={restrictions.timezone.shouldHide} />
+          <Locale shouldHide={restrictions.locale.shouldHide} />
+          <Hostname shouldHide={restrictions.hostname.shouldHide} />
         </ReviewList>
       </CardBody>
     </Card>

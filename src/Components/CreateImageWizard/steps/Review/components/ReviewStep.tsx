@@ -13,15 +13,10 @@ import './ReviewStep.scss';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import {
   selectFirewall,
-  selectHostname,
   selectImageTypes,
   selectIsImageMode,
   selectKernel,
-  selectKeyboard,
-  selectLanguages,
-  selectNtpServers,
   selectServices,
-  selectTimezone,
   selectUserGroups,
   selectUsers,
   UserGroup,
@@ -31,11 +26,8 @@ import {
   FirewallList,
   FirstBootList,
   GroupsList,
-  HostnameList,
   KernelList,
-  LocaleList,
   ServicesList,
-  TimezoneList,
   UsersList,
 } from './ReviewStepTextLists';
 
@@ -46,20 +38,12 @@ const Review = () => {
 
   const isImageMode = useAppSelector(selectIsImageMode);
   const environments = useAppSelector(selectImageTypes);
-  const hostname = useAppSelector(selectHostname);
-  const languages = useAppSelector(selectLanguages);
-  const keyboard = useAppSelector(selectKeyboard);
-  const timezone = useAppSelector(selectTimezone);
-  const ntpServers = useAppSelector(selectNtpServers);
   const firewall = useAppSelector(selectFirewall);
   const services = useAppSelector(selectServices);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
 
-  const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
-  const [isExpandedLocale, setIsExpandedLocale] = useState(true);
-  const [isExpandedHostname, setIsExpandedHostname] = useState(true);
   const [isExpandedKernel, setIsExpandedKernel] = useState(true);
   const [isExpandedFirewall, setIsExpandedFirewall] = useState(true);
   const [isExpandedServices, setIsExpandedServices] = useState(true);
@@ -71,12 +55,6 @@ const Review = () => {
     selectedImageTypes: environments,
   });
 
-  const onToggleTimezone = (isExpandedTimezone: boolean) =>
-    setIsExpandedTimezone(isExpandedTimezone);
-  const onToggleLocale = (isExpandedLocale: boolean) =>
-    setIsExpandedLocale(isExpandedLocale);
-  const onToggleHostname = (isExpandedHostname: boolean) =>
-    setIsExpandedHostname(isExpandedHostname);
   const onToggleKernel = (isExpandedKernel: boolean) =>
     setIsExpandedKernel(isExpandedKernel);
   const onToggleFirewall = (isExpandedFirewall: boolean) =>
@@ -184,60 +162,6 @@ const Review = () => {
             <GroupsList groups={filterNonEmptyGroups(userGroups)} />
           </ExpandableSection>
         )}
-      {!restrictions.timezone.shouldHide &&
-        (timezone || (ntpServers && ntpServers.length > 0)) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Timezone',
-              'revisit-timezone',
-              'wizard-timezone',
-            )}
-            onToggle={(_event, isExpandedTimezone) =>
-              onToggleTimezone(isExpandedTimezone)
-            }
-            isExpanded={isExpandedTimezone}
-            isIndented
-            data-testid='timezone-expandable'
-          >
-            <TimezoneList />
-          </ExpandableSection>
-        )}
-      {!restrictions.locale.shouldHide &&
-        ((languages && languages.length > 0) ||
-          (keyboard && keyboard.length > 0)) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Locale',
-              'revisit-locale',
-              'wizard-locale',
-            )}
-            onToggle={(_event, isExpandedLocale) =>
-              onToggleLocale(isExpandedLocale)
-            }
-            isExpanded={isExpandedLocale}
-            isIndented
-            data-testid='locale-expandable'
-          >
-            <LocaleList />
-          </ExpandableSection>
-        )}
-      {!restrictions.hostname.shouldHide && hostname && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Hostname',
-            'revisit-hostname',
-            'wizard-hostname',
-          )}
-          onToggle={(_event, isExpandedHostname) =>
-            onToggleHostname(isExpandedHostname)
-          }
-          isExpanded={isExpandedHostname}
-          isIndented
-          data-testid='hostname-expandable'
-        >
-          <HostnameList />
-        </ExpandableSection>
-      )}
       {!restrictions.kernel.shouldHide &&
         (kernel.name || kernel.append.length > 0) && (
           <ExpandableSection

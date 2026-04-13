@@ -152,7 +152,7 @@ test('Create a blueprint with Locale customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit Locale step').click();
+    await frame.getByRole('button', { name: 'Locale' }).click();
     await expect(
       frame.getByText('English - United States (en_US.UTF-8)'),
     ).toBeVisible();
