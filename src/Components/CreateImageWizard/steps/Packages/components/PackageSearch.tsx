@@ -78,6 +78,7 @@ type PackageSearchProps = {
   setActiveStream: (value: string) => void;
   recommendations: PackageRecommendation[];
   isLoadingRecommendations: boolean;
+  onRecommendationSelected: (packageName: string) => void;
 };
 
 const PackageSearch = ({
@@ -91,6 +92,7 @@ const PackageSearch = ({
   setActiveStream,
   recommendations,
   isLoadingRecommendations,
+  onRecommendationSelected,
 }: PackageSearchProps) => {
   const dispatch = useAppDispatch();
 
@@ -697,6 +699,9 @@ const PackageSearch = ({
           setIsSelectingPackage(pkg);
         } else {
           dispatch(addPackage(pkg));
+          if (pkg.isRecommendation) {
+            onRecommendationSelected(pkg.name);
+          }
           if (pkg.type === 'module') {
             setActiveStream(pkg.stream || '');
             dispatch(

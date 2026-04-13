@@ -11,9 +11,14 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/components/Repositories';
-import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '@/constants';
+import {
+  AMPLITUDE_MODULE_NAME,
+  ContentOrigin,
+  EPEL_10_REPO_DEFINITION,
+} from '@/constants';
 import { useRecommendPackageMutation } from '@/store/api/backend';
 import {
   useListRepositoriesQuery,
@@ -41,6 +46,7 @@ import {
 } from '../packagesTypes';
 
 const Packages = () => {
+  const { analytics, isBeta } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
@@ -98,15 +104,43 @@ const Packages = () => {
 
   useEffect(() => {
     if (!isOnPremise && packages.length > 0) {
-      fetchRecommendedPackages({
-        recommendPackageRequest: {
-          packages: packages.map((pkg) => pkg.name),
-          recommendedPackages: 5,
-          distribution: distribution.replace('-', ''),
-        },
-      });
+      (async () => {
+        const response = await fetchRecommendedPackages({
+          recommendPackageRequest: {
+            packages: packages.map((pkg) => pkg.name),
+            recommendedPackages: 5,
+            distribution: distribution.replace('-', ''),
+          },
+        });
+
+        if (
+          // there is a mismatch between API type and real data
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          response?.data?.packages &&
+          response.data.packages.length > 0
+        ) {
+          analytics.track(
+            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
+            {
+              module: AMPLITUDE_MODULE_NAME,
+              isPreview: isBeta(),
+              shownRecommendations: response.data.packages,
+              selectedPackages: packages.map((pkg) => pkg.name),
+              distribution: distribution.replace('-', ''),
+              modelVersion: response.data.modelVersion,
+            },
+          );
+        }
+      })();
     }
-  }, [packages, distribution, fetchRecommendedPackages, isOnPremise]);
+  }, [
+    packages,
+    distribution,
+    fetchRecommendedPackages,
+    isOnPremise,
+    analytics,
+    isBeta,
+  ]);
 
   useEffect(() => {
     if (
@@ -147,6 +181,20 @@ const Packages = () => {
           };
         })
       : [];
+
+  const handleRecommendationSelected = (packageName: string) => {
+    if (!isOnPremise) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Recommended Package Added`, {
+        module: AMPLITUDE_MODULE_NAME,
+        isPreview: isBeta(),
+        packageName,
+        selectedPackages: packages.map((pkg) => pkg.name),
+        shownRecommendations: recommendationsData?.packages || [],
+        distribution: distribution.replace('-', ''),
+        modelVersion: recommendationsData?.modelVersion,
+      });
+    }
+  };
 
   return (
     <>
@@ -208,6 +256,7 @@ const Packages = () => {
               isLoadingRecommendations={
                 isLoadingRecommendations || isLoadingDescriptions
               }
+              onRecommendationSelected={handleRecommendationSelected}
             />
           </ToolbarItem>
         </ToolbarContent>
