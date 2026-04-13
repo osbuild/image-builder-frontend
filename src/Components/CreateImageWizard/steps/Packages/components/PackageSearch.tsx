@@ -559,9 +559,9 @@ const PackageSearch = ({
 
   const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
     const parts = [];
-    if (pkg.stream) {
-      parts.push(pkg.stream);
-    }
+
+    parts.push(pkg.stream || 'N/A');
+
     if (pkg.end_date) {
       const retirementDate = new Date(pkg.end_date);
       const formattedDate =
