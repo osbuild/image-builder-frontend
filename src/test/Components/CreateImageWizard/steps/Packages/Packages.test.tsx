@@ -14,7 +14,6 @@ import {
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
-  expectedAllPackageRecommendations,
   expectedPackages,
   expectedPackagesWithoutRecommendations,
   expectedSinglePackageRecommendation,
@@ -71,24 +70,20 @@ const selectFirstPkgOption = async (name: string) => {
   await waitFor(() => user.click(options[0]));
 };
 
-const checkRecommendationsEmptyState = async () => {
-  await screen.findByRole('button', {
-    name: /Recommended Red Hat packages/,
+const openDropdown = async () => {
+  const user = userEvent.setup();
+  const searchbox = await screen.findByRole('textbox', {
+    name: /search package/i,
   });
-
-  await screen.findByText('Select packages to generate recommendations.');
+  await waitFor(() => user.click(searchbox));
 };
 
-const addSingleRecommendation = async () => {
+const selectRecommendation = async (name: string) => {
   const user = userEvent.setup();
-  const addPackageButtons = await screen.findAllByText(/add package/i);
-  await waitFor(() => user.click(addPackageButtons[0]));
-};
-
-const addAllRecommendations = async () => {
-  const user = userEvent.setup();
-  const addAllBtn = await screen.findByText(/add all packages/i);
-  await waitFor(async () => user.click(addAllBtn));
+  const recommendedOption = await screen.findByRole('option', {
+    name: new RegExp(name, 'i'),
+  });
+  await waitFor(() => user.click(recommendedOption));
 };
 
 const clickRevisitButton = async () => {
@@ -159,23 +154,23 @@ describe('Step Packages', () => {
     await renderCreateMode();
     await selectRhel9(); // recommendations are not available for RHEL 10 yet
     await goToPackagesStep();
-    await checkRecommendationsEmptyState();
     await typeIntoSearchBox('test');
     await selectFirstPkgOption('test');
+    await openDropdown();
 
-    await screen.findByText('recommendedPackage1');
-    await screen.findByText('recommendedPackage2');
-    await screen.findByText('recommendedPackage3');
+    await screen.findByRole('option', { name: /recommendedPackage1/i });
+    await screen.findByRole('option', { name: /recommendedPackage2/i });
+    await screen.findByRole('option', { name: /recommendedPackage3/i });
   });
 
   test('allow to add recommendations to selected', async () => {
     await renderCreateMode();
     await selectRhel9(); // recommendations are not available for RHEL 10 yet
     await goToPackagesStep();
-    await checkRecommendationsEmptyState();
     await typeIntoSearchBox('test');
     await selectFirstPkgOption('test');
-    await addSingleRecommendation();
+    await openDropdown();
+    await selectRecommendation('recommendedPackage1');
 
     const pkgTable = await screen.findByTestId('packages-table');
     await within(pkgTable).findByText('recommendedPackage1');
@@ -458,7 +453,9 @@ describe('Packages request generated correctly', () => {
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await selectFirstPkgOption('test'); // select
-      await addSingleRecommendation();
+      await openDropdown();
+      await selectRecommendation('recommendedPackage1');
+
       await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -474,37 +471,17 @@ describe('Packages request generated correctly', () => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
 
-    test('clicking "Add all packages" adds all recommendations to the request', async () => {
-      await renderCreateMode();
-      await selectRhel9(); // recommendations are not available for RHEL 10 yet
-      await enterBlueprintName();
-      await goToPackagesStep();
-      await typeIntoSearchBox('test'); // search for 'test' package
-      await selectFirstPkgOption('test'); // select
-      await addAllRecommendations();
-      await goToReview();
-      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-      const expectedRequest: CreateBlueprintRequest = {
-        ...blueprintRequest,
-        distribution: RHEL_9,
-        customizations: {
-          ...blueprintRequest.customizations,
-          packages: expectedAllPackageRecommendations,
-        },
-      };
-
-      expect(receivedRequest).toEqual(expectedRequest);
-    });
-
     test('deselecting a package recommendation removes it from the request', async () => {
+      const user = userEvent.setup();
       await renderCreateMode();
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await enterBlueprintName();
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await selectFirstPkgOption('test'); // select
-      await addSingleRecommendation();
+      await openDropdown();
+      await selectRecommendation('recommendedPackage1');
+
       await waitFor(async () =>
         user.click(
           (
