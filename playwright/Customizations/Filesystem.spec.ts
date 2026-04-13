@@ -148,7 +148,9 @@ test('Create a blueprint with Filesystem customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit File system configuration step').click();
+    await frame
+      .getByRole('button', { name: 'File system configuration' })
+      .click();
 
     await expect(
       frame.getByRole('radio', {

@@ -30,7 +30,6 @@ import {
 import {
   FirewallList,
   FirstBootList,
-  FSCList,
   GroupsList,
   HostnameList,
   KernelList,
@@ -58,7 +57,6 @@ const Review = () => {
   const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
 
-  const [isExpandedFSC, setIsExpandedFSC] = useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
   const [isExpandedHostname, setIsExpandedHostname] = useState(true);
@@ -73,8 +71,6 @@ const Review = () => {
     selectedImageTypes: environments,
   });
 
-  const onToggleFSC = (isExpandedFSC: boolean) =>
-    setIsExpandedFSC(isExpandedFSC);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
     setIsExpandedTimezone(isExpandedTimezone);
   const onToggleLocale = (isExpandedLocale: boolean) =>
@@ -155,21 +151,6 @@ const Review = () => {
 
   return (
     <>
-      {!restrictions.filesystem.shouldHide && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'File system configuration',
-            'revisit-file-system',
-            'step-file-system',
-          )}
-          onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
-          isExpanded={isExpandedFSC}
-          isIndented
-          data-testid='file-system-configuration-expandable'
-        >
-          <FSCList />
-        </ExpandableSection>
-      )}
       {!restrictions.users.shouldHide && users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(

@@ -103,13 +103,11 @@ const changePartitionUnitsToMiB = async () => {
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
-  const expandable = await screen.findByTestId(
-    'file-system-configuration-expandable',
-  );
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-file-system',
-  );
-  await waitFor(() => user.click(revisitButton));
+  const heading = screen.getByRole('heading', { name: 'Advanced settings' });
+  // eslint-disable-next-line testing-library/no-node-access
+  const card = heading.closest('.pf-v6-c-card') as HTMLElement;
+  const editButton = within(card).getByRole('button', { name: /Edit/i });
+  await waitFor(() => user.click(editButton));
 };
 
 describe('Step File system configuration', () => {

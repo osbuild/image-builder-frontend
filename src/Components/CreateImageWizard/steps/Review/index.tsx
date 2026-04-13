@@ -13,6 +13,7 @@ import {
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
+  AdvancedSettingsOverview,
   ContentOverview,
   ImageOverview,
   ReadyToBuildAlert,
@@ -63,6 +64,7 @@ const ReviewStep = () => {
         restrictions={restrictions}
         oscapPackages={security.packages}
       />
+      <AdvancedSettingsOverview restrictions={restrictions} />
       <Review />
     </Form>
   );

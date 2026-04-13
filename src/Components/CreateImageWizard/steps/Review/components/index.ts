@@ -1,3 +1,4 @@
+export { default as AdvancedSettingsOverview } from './AdvancedSettings';
 export { default as ContentOverview } from './Content';
 export { default as ImageOverview } from './ImageOverview';
 export { default as RepeatableBuild } from './RepeatableBuild';

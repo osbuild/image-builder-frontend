@@ -131,7 +131,9 @@ test('Create a blueprint with Disk customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit File system configuration step').click();
+    await frame
+      .getByRole('button', { name: 'File system configuration' })
+      .click();
 
     const removeRootButton = frame
       .getByRole('row')

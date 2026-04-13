@@ -12,12 +12,9 @@ import {
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { UNIT_GIB } from '@/constants';
 import {
-  selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
-  selectFscMode,
   selectHostname,
   selectKernel,
   selectKeyboard,
@@ -29,100 +26,9 @@ import {
   UserGroup,
 } from '@/store/slices/wizard';
 
-import {
-  DiskReviewTable,
-  FSReviewTable,
-  UserGroupsTable,
-} from './ReviewStepTables';
+import { UserGroupsTable } from './ReviewStepTables';
 
 import { useAppSelector } from '../../../../../store/hooks';
-import MinimumSizePopover from '../../FileSystem/components/MinimumSizePopover';
-import { FilesystemPartition } from '../../FileSystem/fscTypes';
-import { getConversionFactor } from '../../FileSystem/fscUtilities';
-
-export const FSCList = () => {
-  const fscMode = useAppSelector(selectFscMode);
-  const partitions = useAppSelector(selectFilesystemPartitions);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Configuration type
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {fscMode === 'basic'
-            ? 'Basic'
-            : fscMode === 'advanced'
-              ? 'Advanced'
-              : 'Automatic'}
-          {fscMode === 'basic' && (
-            <>
-              {' '}
-              <Popover
-                position='bottom'
-                headerContent='Partitions'
-                hasAutoWidth
-                minWidth='30rem'
-                bodyContent={<FSReviewTable />}
-              >
-                <Button variant='link' className='pf-v6-u-pt-0 pf-v6-u-pb-0'>
-                  View partitions
-                </Button>
-              </Popover>
-            </>
-          )}
-          {fscMode === 'advanced' && (
-            <>
-              {' '}
-              <Popover
-                position='bottom'
-                hasAutoWidth
-                minWidth='50rem'
-                bodyContent={<DiskReviewTable />}
-              >
-                <Button variant='link' className='pf-v6-u-pt-0 pf-v6-u-pb-0'>
-                  View partitions
-                </Button>
-              </Popover>
-            </>
-          )}
-        </Content>
-        {fscMode === 'basic' && (
-          <>
-            <Content component={ContentVariants.dt}>
-              Image size (minimum) <MinimumSizePopover />
-            </Content>
-            <MinSize partitions={partitions} />
-          </>
-        )}
-      </Content>
-    </Content>
-  );
-};
-
-type MinSizeProps = {
-  partitions: FilesystemPartition[];
-};
-
-export const MinSize = ({ partitions }: MinSizeProps) => {
-  let minSize = '';
-  if (partitions.length > 0) {
-    let size = 0;
-    for (const partition of partitions) {
-      size += Number(partition.min_size) * getConversionFactor(partition.unit);
-    }
-
-    size = Number((size / UNIT_GIB).toFixed(1));
-    if (size < 1) {
-      minSize = `Less than 1 GiB`;
-    } else {
-      minSize = `${size} GiB`;
-    }
-  }
-
-  return <Content component={ContentVariants.dd}> {minSize} </Content>;
-};
 
 export const TimezoneList = () => {
   const timezone = useAppSelector(selectTimezone);
