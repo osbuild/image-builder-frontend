@@ -5,6 +5,7 @@ import { createUser } from '@/test/testUtils';
 import {
   clearKeyboardSearch,
   clearLanguageSearch,
+  clickAddLanguage,
   renderLocaleStep,
   searchForKeyboard,
   searchForLanguage,
@@ -54,14 +55,14 @@ describe('Locale Component', () => {
       ).toBeInTheDocument();
     });
 
-    test('displays dropdowns with helper text', async () => {
+    test('displays add language button and dropdowns', async () => {
       renderLocaleStep();
 
       expect(
-        await screen.findByPlaceholderText(/select a language/i),
+        await screen.findByRole('button', { name: /add language/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText(/select a keyboard/i),
+        screen.getByRole('button', { name: /select a keyboard/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Search by country, language or UTF code/i),
@@ -74,9 +75,10 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
 
-      const options = await screen.findAllByRole('option');
+      const options = await screen.findAllByRole('menuitem');
       expect(options.length).toBeGreaterThan(0);
       expect(options[0]).toHaveTextContent('Dutch');
     });
@@ -85,9 +87,10 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
 
-      const nlOptions = await screen.findAllByRole('option');
+      const nlOptions = await screen.findAllByRole('menuitem');
       expect(nlOptions[0]).toHaveTextContent('Dutch - Aruba (nl_AW.UTF-8)');
       expect(nlOptions[1]).toHaveTextContent('Dutch - Belgium (nl_BE.UTF-8)');
       expect(nlOptions[2]).toHaveTextContent(
@@ -99,69 +102,61 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'foo');
 
       expect(screen.getByText(/no results found/i)).toBeInTheDocument();
-
-      const option = await screen.findByRole('option', {
-        name: /no results found/i,
-      });
-      expect(option).toBeDisabled();
     });
 
     test('can clear language search', async () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
-      await screen.findAllByRole('option');
+      await screen.findAllByRole('menuitem');
 
       await clearLanguageSearch(user);
 
-      const languageInput =
-        await screen.findByPlaceholderText(/select a language/i);
-      expect(languageInput).toHaveValue('');
+      expect(screen.getByLabelText(/search by name/i)).toHaveValue('');
     });
   });
 
   describe('Language Selection', () => {
     test('can select a language', async () => {
-      renderLocaleStep();
+      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
       expect(
         screen.getByRole('button', {
-          name: /close dutch - netherlands/i,
+          name: /remove language/i,
         }),
       ).toBeInTheDocument();
     });
 
     test('can select multiple languages', async () => {
-      renderLocaleStep();
+      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'en');
       await selectLanguageOption(
         user,
         'English - United Kingdom (en_GB.UTF-8)',
       );
 
-      expect(
-        screen.getByRole('button', {
-          name: /close dutch - netherlands/i,
-        }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', {
-          name: /close english - united kingdom/i,
-        }),
-      ).toBeInTheDocument();
+      const removeButtons = screen.getAllByRole('button', {
+        name: /remove language/i,
+      });
+      expect(removeButtons).toHaveLength(2);
     });
   });
 
@@ -172,7 +167,7 @@ describe('Locale Component', () => {
 
       await searchForKeyboard(user, 'us');
 
-      const options = await screen.findAllByRole('option');
+      const options = await screen.findAllByRole('menuitem');
       expect(options.length).toBeGreaterThan(0);
       expect(options[0]).toHaveTextContent('us');
     });
@@ -183,7 +178,7 @@ describe('Locale Component', () => {
 
       await searchForKeyboard(user, 'us');
 
-      const options = await screen.findAllByRole('option');
+      const options = await screen.findAllByRole('menuitem');
       expect(options[0]).toHaveTextContent('us');
       expect(options[1]).toHaveTextContent('us-acentos');
       expect(options[2]).toHaveTextContent('us-alt-intl');
@@ -196,11 +191,6 @@ describe('Locale Component', () => {
       await searchForKeyboard(user, 'foo');
 
       expect(screen.getByText(/no results found/i)).toBeInTheDocument();
-
-      const option = await screen.findByRole('option', {
-        name: /no results found/i,
-      });
-      expect(option).toBeDisabled();
     });
 
     test('can clear keyboard search', async () => {
@@ -208,13 +198,11 @@ describe('Locale Component', () => {
       const user = createUser();
 
       await searchForKeyboard(user, 'us');
-      await screen.findAllByRole('option');
+      await screen.findAllByRole('menuitem');
 
       await clearKeyboardSearch(user);
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardInput).toHaveValue('');
+      expect(screen.getByLabelText(/search by name/i)).toHaveValue('');
     });
   });
 
@@ -226,9 +214,9 @@ describe('Locale Component', () => {
       await searchForKeyboard(user, 'us');
       await selectKeyboardOption(user, 'us');
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardInput).toHaveValue('us');
+      expect(
+        await screen.findByRole('button', { name: 'us' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -242,10 +230,14 @@ describe('Locale Component', () => {
       });
 
       expect(
-        screen.getByText('English - United States (en_US.UTF-8)'),
+        screen.getByRole('button', {
+          name: 'English - United States (en_US.UTF-8)',
+        }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText('German - Germany (de_DE.UTF-8)'),
+        screen.getByRole('button', {
+          name: 'German - Germany (de_DE.UTF-8)',
+        }),
       ).toBeInTheDocument();
     });
 
@@ -257,9 +249,9 @@ describe('Locale Component', () => {
         },
       });
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardInput).toHaveValue('de');
+      expect(
+        await screen.findByRole('button', { name: 'de' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -275,6 +267,7 @@ describe('Locale Component', () => {
 
       expect(store.getState().wizard.locale.languages).toHaveLength(0);
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
@@ -290,9 +283,11 @@ describe('Locale Component', () => {
       });
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'en');
       await selectLanguageOption(
         user,

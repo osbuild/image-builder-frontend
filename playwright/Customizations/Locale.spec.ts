@@ -46,10 +46,13 @@ test('Create a blueprint with Locale customization', async ({
 
   await test.step('Check that the Locale step shows langpacks, but not the Additional packages', async () => {
     await frame.getByRole('button', { name: 'Locale' }).click();
-    await frame.getByPlaceholder('Select a language').click();
-    await frame.getByPlaceholder('Select a language').fill('ru_RU');
+    await frame.getByRole('button', { name: 'Add language' }).click();
+    await frame.getByRole('button', { name: 'Select a language' }).click();
+    const searchInput = frame.getByPlaceholder('Search by name').last();
+    await searchInput.click();
+    await searchInput.fill('ru_RU');
     await frame
-      .getByRole('option', { name: 'Russian - Russia (ru_RU.UTF-8)' })
+      .getByRole('menuitem', { name: 'Russian - Russia (ru_RU.UTF-8)' })
       .click();
 
     // Wait for the loading spinner to disappear (langpack resolution can take a while)
@@ -73,37 +76,64 @@ test('Create a blueprint with Locale customization', async ({
 
   await test.step('Select and fill the Locale step', async () => {
     await frame.getByRole('button', { name: 'Locale' }).click();
-    await frame.getByPlaceholder('Select a language').fill('en_US');
+    const keyboardGroup = frame.getByRole('group', { name: 'Keyboard' });
+    // Add en_US language
+    await frame.getByRole('button', { name: 'Add language' }).click();
+    await frame.getByRole('button', { name: 'Select a language' }).click();
+    let langSearch = frame.getByPlaceholder('Search by name').last();
+    await langSearch.click();
+    await langSearch.fill('en_US');
     await frame
-      .getByRole('option', {
+      .getByRole('menuitem', {
         name: 'English - United States (en_US.UTF-8)',
       })
       .click();
     await expect(
-      frame.getByText('English - United States (en_US.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'English - United States (en_US.UTF-8)',
+      }),
     ).toBeVisible();
-    await frame.getByPlaceholder('Select a language').fill('fy');
+    // Add fy_DE language
+    await frame.getByRole('button', { name: 'Add language' }).click();
+    await frame.getByRole('button', { name: 'Select a language' }).click();
+    langSearch = frame.getByPlaceholder('Search by name').last();
+    await langSearch.click();
+    await langSearch.fill('fy');
     await frame
-      .getByRole('option', {
+      .getByRole('menuitem', {
         name: 'Western Frisian - Germany (fy_DE.UTF-8)',
       })
       .click();
     await expect(
-      frame.getByText('Western Frisian - Germany (fy_DE.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'Western Frisian - Germany (fy_DE.UTF-8)',
+      }),
     ).toBeVisible();
-    await frame.getByPlaceholder('Select a language').fill('aa');
+    // Test filtering by adding a temporary row
+    await frame.getByRole('button', { name: 'Add language' }).click();
+    await frame.getByRole('button', { name: 'Select a language' }).click();
+    langSearch = frame.getByPlaceholder('Search by name').last();
+    await langSearch.click();
+    await langSearch.fill('aa');
     // Verify that the dropdown shows filtered options starting with 'aa'
     await expect(
-      frame.getByRole('option', { name: 'aa - Eritrea (aa_ER.UTF-8)' }),
+      frame.getByRole('menuitem', { name: 'aa - Eritrea (aa_ER.UTF-8)' }),
     ).toBeAttached();
     await expect(
-      frame.getByRole('option', { name: 'aa - Ethiopia (aa_ET.UTF-8)' }),
+      frame.getByRole('menuitem', { name: 'aa - Ethiopia (aa_ET.UTF-8)' }),
     ).toBeAttached();
-    await frame.getByPlaceholder('Select a language').fill('xxx');
+    await langSearch.fill('xxx');
     await expect(frame.getByText('No results found for')).toBeAttached();
-    await frame.getByRole('button', { name: 'Menu toggle' }).nth(1).click();
-    await frame.getByPlaceholder('Select a keyboard').fill('ami');
-    await frame.getByRole('option', { name: 'amiga-de' }).click();
+    // Remove the temporary row
+    await frame.getByRole('button', { name: 'Remove language' }).last().click();
+    // Select keyboard
+    await keyboardGroup
+      .getByRole('button', { name: 'Select a keyboard' })
+      .click();
+    const kbSearch = frame.getByPlaceholder('Search by name').last();
+    await kbSearch.click();
+    await kbSearch.fill('ami');
+    await frame.getByRole('menuitem', { name: 'amiga-de' }).click();
     // Wait for the loading spinner to disappear after language/keyboard changes
     await frame
       .getByText('Resolving packages for your preferred locale…')
@@ -153,26 +183,41 @@ test('Create a blueprint with Locale customization', async ({
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit Locale step').click();
+    const languagesGroup = frame.getByRole('group', { name: 'Languages' });
+    const keyboardGroup = frame.getByRole('group', { name: 'Keyboard' });
     await expect(
-      frame.getByText('English - United States (en_US.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'English - United States (en_US.UTF-8)',
+      }),
     ).toBeVisible();
     await expect(
-      frame.getByText('Western Frisian - Germany (fy_DE.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'Western Frisian - Germany (fy_DE.UTF-8)',
+      }),
     ).toBeVisible();
     await expect(
-      frame.getByText('Russian - Russia (ru_RU.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'Russian - Russia (ru_RU.UTF-8)',
+      }),
     ).toBeVisible();
-    await frame.getByPlaceholder('Select a language').fill('en_GB');
+    // Change the first language to en_GB
+    await languagesGroup.locator('.locale-language-toggle').first().click();
+    const editSearch = frame.getByPlaceholder('Search by name').last();
+    await editSearch.click();
+    await editSearch.fill('en_GB');
     await frame
-      .getByRole('option', {
+      .getByRole('menuitem', {
         name: 'English - United Kingdom (en_GB.UTF-8)',
       })
       .click();
     await expect(
-      frame.getByText('English - United Kingdom (en_GB.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'English - United Kingdom (en_GB.UTF-8)',
+      }),
     ).toBeVisible();
-    await frame.getByRole('button', { name: 'Menu toggle' }).nth(1).click();
-    await frame.getByRole('option', { name: 'ANSI-dvorak' }).click();
+    // Change keyboard
+    await keyboardGroup.getByRole('button', { name: 'amiga-de' }).click();
+    await frame.getByRole('menuitem', { name: 'ANSI-dvorak' }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
@@ -203,21 +248,30 @@ test('Create a blueprint with Locale customization', async ({
   await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Locale' }).click();
+    const keyboardGroup = frame.getByRole('group', { name: 'Keyboard' });
     await expect(
-      frame.getByText('English - United States (en_US.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'English - United States (en_US.UTF-8)',
+      }),
     ).toBeVisible();
     await expect(
-      frame.getByText('English - United Kingdom (en_GB.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'English - United Kingdom (en_GB.UTF-8)',
+      }),
     ).toBeVisible();
     await expect(
-      frame.getByText('Western Frisian - Germany (fy_DE.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'Western Frisian - Germany (fy_DE.UTF-8)',
+      }),
     ).toBeVisible();
     await expect(
-      frame.getByText('Russian - Russia (ru_RU.UTF-8)'),
+      frame.getByRole('button', {
+        name: 'Russian - Russia (ru_RU.UTF-8)',
+      }),
     ).toBeVisible();
-    await expect(frame.getByPlaceholder('Select a keyboard')).toHaveValue(
-      'ANSI-dvorak',
-    );
+    await expect(
+      keyboardGroup.getByRole('button', { name: 'ANSI-dvorak' }),
+    ).toBeVisible();
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });
