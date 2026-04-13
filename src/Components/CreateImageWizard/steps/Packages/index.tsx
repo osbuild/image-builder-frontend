@@ -12,14 +12,11 @@ import {
   selectDistribution,
 } from '@/store/slices/wizard';
 import { asDistribution } from '@/store/typeGuards';
-import isRhel from '@/Utilities/isRhel';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import PackageRecommendations from './components/PackageRecommendations';
 import Packages from './components/Packages';
 
 const PackagesStep = () => {
-  const distribution = useAppSelector(selectDistribution);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const release = useAppSelector(selectDistribution);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
@@ -73,7 +70,6 @@ const PackagesStep = () => {
         </Content>
         <Packages />
       </Content>
-      {!isOnPremise && isRhel(distribution) && <PackageRecommendations />}
     </Wrapper>
   );
 };
