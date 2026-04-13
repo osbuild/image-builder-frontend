@@ -370,4 +370,138 @@ describe('AdvancedSettingsOverview', () => {
       expect(screen.queryByText('Hostname')).not.toBeInTheDocument();
     });
   });
+
+  describe('Kernel', () => {
+    test('displays kernel package name when set', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: 'kernel-rt',
+            append: [],
+          },
+        },
+      );
+
+      expect(screen.getByText('Kernel package')).toBeInTheDocument();
+      expect(screen.getByText('kernel-rt')).toBeInTheDocument();
+    });
+
+    test('displays kernel append arguments', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: '',
+            append: ['quiet', 'splash', 'rhgb'],
+          },
+        },
+      );
+
+      expect(screen.getByText('Append')).toBeInTheDocument();
+      expect(screen.getByText('quiet')).toBeInTheDocument();
+      expect(screen.getByText('splash')).toBeInTheDocument();
+      expect(screen.getByText('rhgb')).toBeInTheDocument();
+    });
+
+    test('displays both kernel package and append arguments', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: 'kernel-debug',
+            append: ['debug', 'console=ttyS0'],
+          },
+        },
+      );
+
+      expect(screen.getByText('Kernel package')).toBeInTheDocument();
+      expect(screen.getByText('kernel-debug')).toBeInTheDocument();
+      expect(screen.getByText('Append')).toBeInTheDocument();
+      expect(screen.getByText('debug')).toBeInTheDocument();
+      expect(screen.getByText('console=ttyS0')).toBeInTheDocument();
+    });
+
+    test('hides kernel section when no kernel name or args are set', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: '',
+            append: [],
+          },
+        },
+      );
+
+      expect(screen.queryByText('Kernel package')).not.toBeInTheDocument();
+      expect(screen.queryByText('Append')).not.toBeInTheDocument();
+    });
+
+    test('displays user-selected kernel args with blue labels', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: '',
+            append: ['quiet', 'splash'],
+          },
+        },
+      );
+
+      const quietLabel = screen.getByText('quiet').closest('.pf-v6-c-label');
+      const splashLabel = screen.getByText('splash').closest('.pf-v6-c-label');
+
+      expect(quietLabel).toHaveClass('pf-m-blue');
+      expect(splashLabel).toHaveClass('pf-m-blue');
+    });
+
+    test('displays oscap kernel args with default (grey) labels', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview
+          restrictions={createDefaultRestrictions()}
+          oscapKernelArgs={['audit=1', 'audit_backlog_limit=8192']}
+        />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: '',
+            append: ['audit=1'],
+          },
+        },
+      );
+
+      const label = screen.getByText('audit=1').closest('.pf-v6-c-label');
+      // Grey is the default color, so no color modifier class is applied
+      expect(label).not.toHaveClass('pf-m-blue');
+      expect(label).toHaveClass('pf-m-filled');
+    });
+
+    test('displays mixed kernel args with correct label colors', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview
+          restrictions={createDefaultRestrictions()}
+          oscapKernelArgs={['audit=1']}
+        />,
+        {
+          imageTypes: ['guest-image'],
+          kernel: {
+            name: '',
+            append: ['audit=1', 'quiet'],
+          },
+        },
+      );
+
+      const auditLabel = screen.getByText('audit=1').closest('.pf-v6-c-label');
+      const quietLabel = screen.getByText('quiet').closest('.pf-v6-c-label');
+
+      // Oscap args use grey (default), user args use blue
+      expect(auditLabel).not.toHaveClass('pf-m-blue');
+      expect(quietLabel).toHaveClass('pf-m-blue');
+    });
+  });
 });

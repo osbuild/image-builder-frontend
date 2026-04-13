@@ -15,7 +15,6 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import {
   selectFirewall,
   selectFirstBootScript,
-  selectKernel,
   selectServices,
   selectUsers,
   UserGroup,
@@ -105,35 +104,6 @@ export const GroupsList = ({ groups }: { groups: UserGroup[] }) => {
         ))}
       </Tbody>
     </Table>
-  );
-};
-
-export const KernelList = () => {
-  const kernel = useAppSelector(selectKernel);
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Name
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {kernel.name ? kernel.name : 'None'}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Arguments
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {kernel.append.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>{kernel.append.join(' ')}</CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-      </Content>
-    </Content>
   );
 };
 

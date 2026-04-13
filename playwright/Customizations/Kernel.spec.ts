@@ -140,7 +140,7 @@ test('Create a blueprint with Kernel customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByLabel('Revisit Kernel step').click();
+    await frame.getByRole('button', { name: 'Kernel' }).click();
     await frame.getByRole('button', { name: 'kernel', exact: true }).click();
     await frame.getByRole('option', { name: 'kernel-debug' }).click();
     await frame.getByPlaceholder('Add kernel argument').fill('new=argument');

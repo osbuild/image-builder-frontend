@@ -15,7 +15,6 @@ import {
   selectFirewall,
   selectImageTypes,
   selectIsImageMode,
-  selectKernel,
   selectServices,
   selectUserGroups,
   selectUsers,
@@ -26,7 +25,6 @@ import {
   FirewallList,
   FirstBootList,
   GroupsList,
-  KernelList,
   ServicesList,
   UsersList,
 } from './ReviewStepTextLists';
@@ -42,9 +40,7 @@ const Review = () => {
   const services = useAppSelector(selectServices);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
-  const kernel = useAppSelector(selectKernel);
 
-  const [isExpandedKernel, setIsExpandedKernel] = useState(true);
   const [isExpandedFirewall, setIsExpandedFirewall] = useState(true);
   const [isExpandedServices, setIsExpandedServices] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
@@ -55,8 +51,6 @@ const Review = () => {
     selectedImageTypes: environments,
   });
 
-  const onToggleKernel = (isExpandedKernel: boolean) =>
-    setIsExpandedKernel(isExpandedKernel);
   const onToggleFirewall = (isExpandedFirewall: boolean) =>
     setIsExpandedFirewall(isExpandedFirewall);
   const onToggleServices = (isExpandedServices: boolean) =>
@@ -160,24 +154,6 @@ const Review = () => {
             data-testid='groups-expandable'
           >
             <GroupsList groups={filterNonEmptyGroups(userGroups)} />
-          </ExpandableSection>
-        )}
-      {!restrictions.kernel.shouldHide &&
-        (kernel.name || kernel.append.length > 0) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Kernel',
-              'revisit-kernel',
-              'wizard-kernel',
-            )}
-            onToggle={(_event, isExpandedKernel) =>
-              onToggleKernel(isExpandedKernel)
-            }
-            isExpanded={isExpandedKernel}
-            isIndented
-            data-testid='kernel-expandable'
-          >
-            <KernelList />
           </ExpandableSection>
         )}
       {!restrictions.firewall.shouldHide &&
