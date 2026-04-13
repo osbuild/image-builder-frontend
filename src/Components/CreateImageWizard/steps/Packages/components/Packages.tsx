@@ -125,32 +125,39 @@ const Packages = () => {
 
   useEffect(() => {
     if (!isOnPremise && packages.length > 0) {
-      (async () => {
-        const response = await fetchRecommendedPackages({
-          recommendPackageRequest: {
-            packages: packages.map((pkg) => pkg.name),
-            recommendedPackages: 5,
-            distribution: distribution.replace('-', ''),
-          },
-        });
+      const packageNames = packages.map((pkg) => pkg.name);
+      const noDashDistro = distribution.replace('-', '');
 
-        if (
-          // there is a mismatch between API type and real data
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          response?.data?.packages &&
-          response.data.packages.length > 0
-        ) {
-          analytics.track(
-            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
-            {
-              module: AMPLITUDE_MODULE_NAME,
-              isPreview: isBeta(),
-              foundRecommendations: response.data.packages,
-              selectedPackages: packages.map((pkg) => pkg.name),
-              distribution: distribution.replace('-', ''),
-              modelVersion: response.data.modelVersion,
+      (async () => {
+        try {
+          const response = await fetchRecommendedPackages({
+            recommendPackageRequest: {
+              packages: packageNames,
+              recommendedPackages: 5,
+              distribution: noDashDistro,
             },
-          );
+          });
+
+          if (
+            // there is a mismatch between API type and real data
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            response?.data?.packages &&
+            response.data.packages.length > 0
+          ) {
+            analytics.track(
+              `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
+              {
+                module: AMPLITUDE_MODULE_NAME,
+                isPreview: isBeta(),
+                foundRecommendations: response.data.packages,
+                selectedPackages: packageNames,
+                distribution: noDashDistro,
+                modelVersion: response.data.modelVersion,
+              },
+            );
+          }
+        } catch {
+          // error state handled by isErrorRecommendations
         }
       })();
     }

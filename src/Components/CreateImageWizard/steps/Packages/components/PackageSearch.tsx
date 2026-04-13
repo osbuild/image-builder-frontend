@@ -882,6 +882,12 @@ const PackageSearch = ({
                 {group.name}
               </SelectOption>
             ))
+          ) : isLoadingRecommendations &&
+            packageType === 'packages' &&
+            !sortedPackages.length ? (
+            <SelectOption isDisabled>
+              Getting package recommendations...
+            </SelectOption>
           ) : !isSearchingOtherRepos && !isOnPremise ? (
             <EmptyState variant='sm'>
               <EmptyStateBody>

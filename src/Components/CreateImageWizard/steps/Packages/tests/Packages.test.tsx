@@ -591,6 +591,39 @@ describe('Packages Component', () => {
     });
   });
 
+  describe('Package Recommendations Gating', () => {
+    test('do not show recommendations for RHEL 10', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
+      renderPackagesStep();
+      const user = createUser();
+
+      await typeIntoSearchBox(user, 'test');
+      await selectPkgOption(user, 'test');
+      await clickOnSearchBox(user);
+
+      const options = await screen.findAllByRole('option');
+      options.forEach((option) => {
+        expect(option).not.toHaveTextContent(/suggested based on/i);
+      });
+    });
+
+    test('do not show recommendations for package groups', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ groups: mockGroupSearchResults }),
+      );
+      renderPackagesStep();
+      const user = createUser();
+
+      await switchToPackageGroups(user);
+      await typeIntoSearchBox(user, 'grouper');
+
+      const options = await screen.findAllByRole('option');
+      expect(options).toHaveLength(1);
+      expect(options[0]).toHaveTextContent(/grouper/i);
+      expect(options[0]).not.toHaveTextContent(/suggested based on/i);
+    });
+  });
+
   describe('Form submission', () => {
     test('pressing Enter in search input does not trigger page reload', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
