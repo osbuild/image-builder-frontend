@@ -120,11 +120,11 @@ const Packages = () => {
           response.data.packages.length > 0
         ) {
           analytics.track(
-            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
+            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
             {
               module: AMPLITUDE_MODULE_NAME,
               isPreview: isBeta(),
-              shownRecommendations: response.data.packages,
+              foundRecommendations: response.data.packages,
               selectedPackages: packages.map((pkg) => pkg.name),
               distribution: distribution.replace('-', ''),
               modelVersion: response.data.modelVersion,
@@ -207,6 +207,20 @@ const Packages = () => {
           recommendationsShown: hasRecommendations,
         },
       );
+
+      if (hasRecommendations) {
+        analytics.track(
+          `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
+          {
+            module: AMPLITUDE_MODULE_NAME,
+            isPreview: isBeta(),
+            shownRecommendations: recommendationsData?.packages || [],
+            selectedPackages: packages.map((pkg) => pkg.name),
+            distribution: distribution.replace('-', ''),
+            modelVersion: recommendationsData?.modelVersion,
+          },
+        );
+      }
     }
   };
 
