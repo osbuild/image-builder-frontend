@@ -3,10 +3,15 @@ import React from 'react';
 import { Card, CardBody } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectRegistrationType } from '@/store/slices';
+import { selectAapEnabled, selectRegistrationType } from '@/store/slices';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { RegisterLater, RegisterNow, RegisterSatellite } from './components';
+import {
+  RegisterAAP,
+  RegisterLater,
+  RegisterNow,
+  RegisterSatellite,
+} from './components';
 import { isRegisterNowType } from './types';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
@@ -15,8 +20,9 @@ import { ReviewCardProps } from '../types';
 const Registration = ({ restrictions }: ReviewCardProps) => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const registrationType = useAppSelector(selectRegistrationType);
+  const aapEnabled = useAppSelector(selectAapEnabled);
 
-  if (restrictions.registration.shouldHide) {
+  if (restrictions.registration.shouldHide && restrictions.aap.shouldHide) {
     return null;
   }
 
@@ -28,13 +34,27 @@ const Registration = ({ restrictions }: ReviewCardProps) => {
       />
       <CardBody>
         <ReviewList>
-          <RegisterLater shouldHide={registrationType !== 'register-later'} />
+          <RegisterLater
+            shouldHide={
+              restrictions.registration.shouldHide ||
+              registrationType !== 'register-later'
+            }
+          />
           <RegisterSatellite
-            shouldHide={registrationType !== 'register-satellite'}
+            shouldHide={
+              restrictions.registration.shouldHide ||
+              registrationType !== 'register-satellite'
+            }
           />
           <RegisterNow
             registrationType={registrationType}
-            shouldHide={!isRegisterNowType(registrationType)}
+            shouldHide={
+              restrictions.registration.shouldHide ||
+              !isRegisterNowType(registrationType)
+            }
+          />
+          <RegisterAAP
+            shouldHide={restrictions.aap.shouldHide || !aapEnabled}
           />
         </ReviewList>
       </CardBody>

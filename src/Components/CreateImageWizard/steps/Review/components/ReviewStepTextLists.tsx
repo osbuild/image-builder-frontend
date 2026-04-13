@@ -20,10 +20,6 @@ import {
 } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
-  selectAapCallbackUrl,
-  selectAapHostConfigKey,
-  selectAapTlsCertificateAuthority,
-  selectAapTlsConfirmation,
   selectCustomRepositories,
   selectFilesystemPartitions,
   selectFirewall,
@@ -347,45 +343,6 @@ export const ContentList = () => {
         </Alert>
       )}
     </>
-  );
-};
-
-export const RegisterAapList = () => {
-  const callbackUrl = useAppSelector(selectAapCallbackUrl);
-  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
-  const tlsCertificateAuthority = useAppSelector(
-    selectAapTlsCertificateAuthority,
-  );
-  const skipTlsVerification = useAppSelector(selectAapTlsConfirmation);
-
-  const getTlsStatus = () => {
-    if (skipTlsVerification) {
-      return 'Insecure (TLS verification skipped)';
-    }
-    return tlsCertificateAuthority ? 'Configured' : 'None';
-  };
-
-  return (
-    <Content>
-      <Content component={ContentVariants.dl} className='review-step-dl'>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Ansible Callback URL
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {callbackUrl || 'None'}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Host Config Key
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {hostConfigKey || 'None'}
-        </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          TLS Certificate
-        </Content>
-        <Content component={ContentVariants.dd}>{getTlsStatus()}</Content>
-      </Content>
-    </Content>
   );
 };
 

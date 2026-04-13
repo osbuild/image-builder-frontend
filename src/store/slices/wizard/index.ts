@@ -638,6 +638,13 @@ export const selectIsImageMode = createSelector(
   (mode) => mode === 'image',
 );
 
+export const selectAapTlsConfigured = createSelector(
+  [selectAapTlsCertificateAuthority],
+  (certificate) => {
+    return certificate && certificate !== '';
+  },
+);
+
 export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,

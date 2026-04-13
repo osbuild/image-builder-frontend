@@ -12,7 +12,6 @@ import { ArrowRightIcon } from '@patternfly/react-icons';
 import './ReviewStep.scss';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import {
-  selectAapRegistration,
   selectFirewall,
   selectHostname,
   selectImageTypes,
@@ -37,7 +36,6 @@ import {
   HostnameList,
   KernelList,
   LocaleList,
-  RegisterAapList,
   ServicesList,
   TimezoneList,
   UsersList,
@@ -50,7 +48,6 @@ const Review = () => {
   const { goToStepById } = useWizardContext();
 
   const isImageMode = useAppSelector(selectIsImageMode);
-  const aapRegistration = useAppSelector(selectAapRegistration);
   const environments = useAppSelector(selectImageTypes);
   const hostname = useAppSelector(selectHostname);
   const languages = useAppSelector(selectLanguages);
@@ -63,7 +60,6 @@ const Review = () => {
   const userGroups = useAppSelector(selectUserGroups);
   const kernel = useAppSelector(selectKernel);
 
-  const [isExpandedAap, setIsExpandedAap] = useState(true);
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
   const [isExpandedContent, setIsExpandedContent] = useState(true);
   const [isExpandedSecurityDetail, setIsExpandedSecurityDetail] =
@@ -82,8 +78,6 @@ const Review = () => {
     selectedImageTypes: environments,
   });
 
-  const onToggleAap = (isExpandedAap: boolean) =>
-    setIsExpandedAap(isExpandedAap);
   const onToggleFSC = (isExpandedFSC: boolean) =>
     setIsExpandedFSC(isExpandedFSC);
   const onToggleContent = (isExpandedContent: boolean) =>
@@ -364,21 +358,6 @@ const Review = () => {
             <ServicesList />
           </ExpandableSection>
         )}
-      {!restrictions.aap.shouldHide && aapRegistration.callbackUrl && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Ansible Automation Platform',
-            'revisit-aap',
-            'step-register',
-          )}
-          onToggle={(_event, isExpandableAap) => onToggleAap(isExpandableAap)}
-          isExpanded={isExpandedAap}
-          isIndented
-          data-testid='aap-expandable'
-        >
-          <RegisterAapList />
-        </ExpandableSection>
-      )}
       {!restrictions.firstBoot.shouldHide && (
         <ExpandableSection
           toggleContent={composeExpandable(
