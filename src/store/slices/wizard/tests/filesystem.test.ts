@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { FilesystemPartition } from '@/Components/CreateImageWizard/steps/FileSystem/fscTypes';
+import type { RootState } from '@/store';
 import wizardReducer, {
   addPartition,
   changeFscMode,
@@ -11,18 +11,22 @@ import wizardReducer, {
   initialState,
   removePartition,
   removePartitionByMountpoint,
+  selectAdvancedPartitionCount,
+  selectBasicPartitionCount,
+  selectFSConfigurationsCount,
+  selectLogicalVolumeCount,
+  selectPartitionCount,
   type wizardState,
 } from '@/store/slices/wizard';
 
-const createPartition = (
-  overrides: Partial<FilesystemPartition> = {},
-): FilesystemPartition => ({
-  id: `partition-${Math.random().toString(36).slice(2, 11)}`,
-  mountpoint: '/',
-  min_size: '10',
-  unit: 'GiB',
-  ...overrides,
-});
+import {
+  createBasicPartition,
+  createPlainPartition,
+  createVolumeGroup,
+} from './mocks';
+
+// Alias for backward compatibility with existing tests
+const createPartition = createBasicPartition;
 
 describe('filesystem reducers', () => {
   describe('changeFscMode', () => {
@@ -314,6 +318,261 @@ describe('filesystem reducers', () => {
       );
 
       expect(result.fileSystem.partitions[0].min_size).toBe('50');
+    });
+  });
+});
+
+// Helper to create minimal RootState for selector tests
+const createState = (wizardOverrides: Partial<wizardState>): RootState =>
+  ({
+    wizard: {
+      ...initialState,
+      ...wizardOverrides,
+    },
+  }) as RootState;
+
+describe('filesystem selectors', () => {
+  describe('selectBasicPartitionCount', () => {
+    it('returns count of basic partitions', () => {
+      const state = createState({
+        fileSystem: {
+          partitions: [
+            createPartition({ mountpoint: '/' }),
+            createPartition({ mountpoint: '/home' }),
+          ],
+        },
+      });
+
+      expect(selectBasicPartitionCount(state)).toBe(2);
+    });
+
+    it('returns 0 when no partitions', () => {
+      const state = createState({
+        fileSystem: { partitions: [] },
+      });
+
+      expect(selectBasicPartitionCount(state)).toBe(0);
+    });
+  });
+
+  describe('selectAdvancedPartitionCount', () => {
+    it('counts plain partitions', () => {
+      const state = createState({
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [
+            createPlainPartition({ mountpoint: '/boot' }),
+            createPlainPartition({ mountpoint: '/efi' }),
+          ],
+        },
+      });
+
+      expect(selectAdvancedPartitionCount(state)).toBe(2);
+    });
+
+    it('excludes LVM volume groups from count', () => {
+      const state = createState({
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [
+            createPlainPartition({ mountpoint: '/boot' }),
+            createVolumeGroup([
+              {
+                id: 'lv1',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+                name: 'root',
+                fs_type: 'xfs',
+              },
+            ]),
+          ],
+        },
+      });
+
+      expect(selectAdvancedPartitionCount(state)).toBe(1);
+    });
+  });
+
+  describe('selectLogicalVolumeCount', () => {
+    it('returns 0 when no LVM partitions', () => {
+      const state = createState({
+        fscMode: 'advanced',
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [createPlainPartition({ mountpoint: '/boot' })],
+        },
+      });
+
+      expect(selectLogicalVolumeCount(state)).toBe(0);
+    });
+
+    it('counts logical volumes inside LVM groups', () => {
+      const state = createState({
+        fscMode: 'advanced',
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [
+            createVolumeGroup([
+              {
+                id: 'lv1',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+                name: 'root',
+                fs_type: 'xfs',
+              },
+              {
+                id: 'lv2',
+                mountpoint: '/home',
+                min_size: '5',
+                unit: 'GiB',
+                name: 'home',
+                fs_type: 'xfs',
+              },
+            ]),
+          ],
+        },
+      });
+
+      expect(selectLogicalVolumeCount(state)).toBe(2);
+    });
+
+    it('sums logical volumes across multiple LVM groups', () => {
+      const state = createState({
+        fscMode: 'advanced',
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [
+            createVolumeGroup([
+              {
+                id: 'lv1',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+                name: 'root',
+                fs_type: 'xfs',
+              },
+            ]),
+            createVolumeGroup([
+              {
+                id: 'lv2',
+                mountpoint: '/var',
+                min_size: '5',
+                unit: 'GiB',
+                name: 'var',
+                fs_type: 'xfs',
+              },
+              {
+                id: 'lv3',
+                mountpoint: '/home',
+                min_size: '20',
+                unit: 'GiB',
+                name: 'home',
+                fs_type: 'xfs',
+              },
+            ]),
+          ],
+        },
+      });
+
+      expect(selectLogicalVolumeCount(state)).toBe(3);
+    });
+  });
+
+  describe('selectPartitionCount', () => {
+    it('returns basic count in basic mode', () => {
+      const state = createState({
+        fscMode: 'basic',
+        fileSystem: {
+          partitions: [
+            createPartition({ mountpoint: '/' }),
+            createPartition({ mountpoint: '/home' }),
+          ],
+        },
+      });
+
+      expect(selectPartitionCount(state)).toBe(2);
+    });
+
+    it('returns advanced count in advanced mode', () => {
+      const state = createState({
+        fscMode: 'advanced',
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [
+            createPlainPartition({ mountpoint: '/boot' }),
+            createPlainPartition({ mountpoint: '/efi' }),
+          ],
+        },
+      });
+
+      expect(selectPartitionCount(state)).toBe(2);
+    });
+
+    it('returns 0 in automatic mode', () => {
+      const state = createState({
+        fscMode: 'automatic',
+      });
+
+      expect(selectPartitionCount(state)).toBe(0);
+    });
+  });
+
+  describe('selectFSConfigurationsCount', () => {
+    it('returns sum of partitions and logical volumes', () => {
+      const state = createState({
+        fscMode: 'advanced',
+        disk: {
+          minsize: '',
+          type: 'gpt',
+          partitions: [
+            createPlainPartition({ mountpoint: '/boot' }),
+            createVolumeGroup([
+              {
+                id: 'lv1',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+                name: 'root',
+                fs_type: 'xfs',
+              },
+              {
+                id: 'lv2',
+                mountpoint: '/home',
+                min_size: '5',
+                unit: 'GiB',
+                name: 'home',
+                fs_type: 'xfs',
+              },
+            ]),
+          ],
+        },
+      });
+
+      // 1 partition + 2 logical volumes = 3
+      expect(selectFSConfigurationsCount(state)).toBe(3);
+    });
+
+    it('returns basic partition count in basic mode', () => {
+      const state = createState({
+        fscMode: 'basic',
+        fileSystem: {
+          partitions: [
+            createPartition({ mountpoint: '/' }),
+            createPartition({ mountpoint: '/home' }),
+          ],
+        },
+      });
+
+      // 2 partitions + 0 logical volumes = 2
+      expect(selectFSConfigurationsCount(state)).toBe(2);
     });
   });
 });

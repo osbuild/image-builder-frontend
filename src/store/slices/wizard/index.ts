@@ -11,6 +11,7 @@ import type {
   PartitioningCustomization,
   Units,
 } from '@/Components/CreateImageWizard/steps/FileSystem/fscTypes';
+import { getConversionFactor } from '@/Components/CreateImageWizard/steps/FileSystem/fscUtilities';
 import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
 import type { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
 import {
@@ -19,7 +20,7 @@ import {
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
 import type { V1ListSourceResponseItem } from '@/Components/CreateImageWizard/types';
 import { generateDefaultName } from '@/Components/CreateImageWizard/utilities/useGenerateDefaultName';
-import { RHEL_10, X86_64 } from '@/constants';
+import { RHEL_10, UNIT_GIB, X86_64 } from '@/constants';
 import type { RootState } from '@/store';
 import type {
   CustomRepository,
@@ -660,6 +661,88 @@ export const selectAllRepositoryIds = createSelector(
         ...recommended.map(({ uuid }) => uuid),
       ]),
     ),
+);
+
+export const selectBasicPartitionCount = createSelector(
+  [selectFilesystemPartitions],
+  (partitions) => partitions.length,
+);
+
+export const selectAdvancedPartitionCount = createSelector(
+  [selectDiskPartitions],
+  (partitions) => {
+    return partitions.filter((p) => !('logical_volumes' in p)).length;
+  },
+);
+
+export const selectPartitionCount = createSelector(
+  [selectFscMode, selectBasicPartitionCount, selectAdvancedPartitionCount],
+  (mode, basicCount, advancedCount) => {
+    if (mode === 'basic') return basicCount;
+    if (mode === 'advanced') return advancedCount;
+    return 0;
+  },
+);
+
+export const selectLogicalVolumeCount = createSelector(
+  [selectFscMode, selectDiskPartitions],
+  (mode, partitions) => {
+    if (mode !== 'advanced') return 0;
+    return partitions.reduce((acc, partition) => {
+      if ('logical_volumes' in partition) {
+        return acc + partition.logical_volumes.length;
+      }
+      return acc;
+    }, 0);
+  },
+);
+
+export const selectFSConfigurationsCount = createSelector(
+  [selectPartitionCount, selectLogicalVolumeCount],
+  (partitions, volumes) => partitions + volumes,
+);
+
+const getSize = (partition: {
+  min_size?: string | undefined;
+  unit?: Units | undefined;
+}) => {
+  const conversionFactor = getConversionFactor(partition.unit || 'B');
+  const size = Number(partition.min_size || 0) * conversionFactor;
+  return Number(size / UNIT_GIB);
+};
+
+export const selectBasicFSMinSize = createSelector(
+  [selectFilesystemPartitions],
+  (partitions) => {
+    return partitions.reduce((acc, partition) => {
+      return acc + getSize(partition);
+    }, 0);
+  },
+);
+
+export const selectAdvancedFSMinSize = createSelector(
+  [selectDiskPartitions],
+  (partitions) => {
+    return partitions.reduce((acc, partition) => {
+      if ('logical_volumes' in partition) {
+        return (
+          acc +
+          partition.logical_volumes.reduce((acc, lv) => acc + getSize(lv), 0)
+        );
+      }
+
+      return acc + getSize(partition);
+    }, 0);
+  },
+);
+
+export const selectImageMinSize = createSelector(
+  [selectFscMode, selectBasicFSMinSize, selectAdvancedFSMinSize],
+  (mode, basicSize, advancedSize) => {
+    if (mode === 'basic') return basicSize;
+    if (mode === 'advanced') return advancedSize;
+    return undefined;
+  },
 );
 
 export const wizardSlice = createSlice({
