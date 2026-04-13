@@ -100,6 +100,9 @@ const Packages = () => {
         },
       );
     }
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [
@@ -151,14 +154,7 @@ const Packages = () => {
         }
       })();
     }
-  }, [
-    packages,
-    distribution,
-    fetchRecommendedPackages,
-    isOnPremise,
-    analytics,
-    isBeta,
-  ]);
+  }, [packages, distribution, isOnPremise]);
 
   useEffect(() => {
     if (
