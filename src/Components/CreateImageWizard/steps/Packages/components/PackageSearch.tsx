@@ -18,7 +18,7 @@ import {
   TextInputGroupMain,
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
-import { SearchIcon, TimesIcon } from '@patternfly/react-icons';
+import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import { orderBy } from 'lodash';
 
 import { EPEL_10_REPO_DEFINITION } from '@/constants';
@@ -62,6 +62,7 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   ItemWithSources,
+  PackageRecommendation,
 } from '../packagesTypes';
 
 type PackageSearchProps = {
@@ -75,6 +76,7 @@ type PackageSearchProps = {
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   activeStream: string;
   setActiveStream: (value: string) => void;
+  recommendations: PackageRecommendation[];
 };
 
 const PackageSearch = ({
@@ -86,6 +88,7 @@ const PackageSearch = ({
   setIsSelectingGroup,
   activeStream,
   setActiveStream,
+  recommendations,
 }: PackageSearchProps) => {
   const dispatch = useAppDispatch();
 
@@ -507,12 +510,31 @@ const PackageSearch = ({
     isSearchingOtherRepos,
   ]);
 
-  const sortedPackages = useMemo(() => {
-    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
+  const transformedRecommendations = useMemo(() => {
+    if (
+      packageType === 'groups' ||
+      !recommendations.length ||
+      !debouncedSearchTerm
+    ) {
       return [];
     }
 
-    return orderBy(
+    return recommendations.map(
+      (rec): IBPackageWithRepositoryInfo => ({
+        name: rec.name,
+        summary: rec.summary,
+        repository: 'distro',
+        isRecommendation: true,
+      }),
+    );
+  }, [recommendations, packageType, debouncedSearchTerm]);
+
+  const sortedPackages = useMemo(() => {
+    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
+      return transformedRecommendations;
+    }
+
+    const regularPackages = orderBy(
       transformedPackages,
       [
         (pkg) => (activeStream && pkg.stream === activeStream ? 0 : 1),
@@ -532,7 +554,13 @@ const PackageSearch = ({
       ],
       ['asc', 'asc', 'desc', 'asc', 'asc', 'asc'],
     );
-  }, [transformedPackages, activeStream]);
+
+    const filteredRecommendations = transformedRecommendations.filter(
+      (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
+    );
+
+    return [...regularPackages, ...filteredRecommendations];
+  }, [transformedPackages, activeStream, transformedRecommendations]);
 
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
     const isModuleDisabledByPackage =
@@ -558,6 +586,10 @@ const PackageSearch = ({
   };
 
   const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
+    if (pkg.isRecommendation) {
+      return pkg.summary;
+    }
+
     const parts = [];
 
     parts.push(pkg.stream || 'N/A');
@@ -788,10 +820,21 @@ const PackageSearch = ({
               <SelectOption
                 key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
                 value={`${pkg.name}|||${pkg.stream || ''}`}
-                description={getPackageDescription(pkg)}
+                description={
+                  pkg.isRecommendation
+                    ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
+                    : getPackageDescription(pkg)
+                }
                 isDisabled={isSelectDisabled(pkg)}
               >
-                {pkg.name}
+                {pkg.isRecommendation && (
+                  <>
+                    <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
+                  </>
+                )}
+                {pkg.isRecommendation && pkg.summary
+                  ? `${pkg.name} - ${pkg.summary}`
+                  : pkg.name}
               </SelectOption>
             ))
           ) : packageType === 'groups' && transformedGroups.length > 0 ? (

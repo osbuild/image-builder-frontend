@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   FormGroup,
@@ -12,11 +12,23 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 
+import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/components/Repositories';
 import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '@/constants';
-import { useListRepositoriesQuery } from '@/store/api/contentSources';
+import { useRecommendPackageMutation } from '@/store/api/backend';
+import {
+  useListRepositoriesQuery,
+  useSearchRpmMutation,
+} from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
-import { selectDistribution } from '@/store/slices/wizard';
+import { selectIsOnPremise } from '@/store/slices/env';
+import {
+  selectArchitecture,
+  selectDistribution,
+  selectPackages,
+} from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
+import useDebounce from '@/Utilities/useDebounce';
 
 import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
@@ -25,10 +37,16 @@ import RepositoryModal from './RepositoryModal';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
+  PackageRecommendation,
 } from '../packagesTypes';
 
 const Packages = () => {
+  const isOnPremise = useAppSelector(selectIsOnPremise);
   const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const version = releaseToVersion(distribution);
+  const undebouncedPackages = useAppSelector(selectPackages);
+  const packages = useDebounce(undebouncedPackages);
 
   const epelRepoUrlByDistribution =
     getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
@@ -37,6 +55,17 @@ const Packages = () => {
     useListRepositoriesQuery({
       url: epelRepoUrlByDistribution,
       origin: ContentOrigin.COMMUNITY,
+    });
+
+  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
+    useListRepositoriesQuery({
+      availableForArch: arch,
+      availableForVersion: version,
+      ...excludeEUSReposFilter,
+      contentType: 'rpm',
+      origin: ContentOrigin.REDHAT,
+      limit: 100,
+      offset: 0,
     });
 
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
@@ -52,6 +81,66 @@ const Packages = () => {
   const [isPackageTypeDropdownOpen, setIsPackageTypeDropdownOpen] =
     useState(false);
   const [activeStream, setActiveStream] = useState<string>('');
+
+  const [fetchRecommendedPackages, { data: recommendationsData }] =
+    useRecommendPackageMutation();
+
+  const [
+    fetchRecommendationDescriptions,
+    { data: dataDescriptions, isSuccess: isSuccessDescriptions },
+  ] = useSearchRpmMutation();
+
+  useEffect(() => {
+    if (!isOnPremise && packages.length > 0) {
+      fetchRecommendedPackages({
+        recommendPackageRequest: {
+          packages: packages.map((pkg) => pkg.name),
+          recommendedPackages: 5,
+          distribution: distribution.replace('-', ''),
+        },
+      });
+    }
+  }, [packages, distribution, fetchRecommendedPackages, isOnPremise]);
+
+  useEffect(() => {
+    if (
+      isSuccessDistroRepositories &&
+      // there is a mismatch between API type and real data
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      distroRepositories?.data &&
+      recommendationsData?.packages &&
+      recommendationsData.packages.length > 0
+    ) {
+      const distroRepoUrls = distroRepositories.data.map(
+        (repo) => repo.url || '',
+      );
+
+      fetchRecommendationDescriptions({
+        apiContentUnitSearchRequest: {
+          exact_names: recommendationsData.packages,
+          urls: distroRepoUrls,
+        },
+      });
+    }
+  }, [
+    isSuccessDistroRepositories,
+    distroRepositories,
+    recommendationsData,
+    fetchRecommendationDescriptions,
+  ]);
+
+  const recommendationsWithDescriptions: PackageRecommendation[] =
+    isSuccessDescriptions && recommendationsData?.packages
+      ? recommendationsData.packages.map((pkgName) => {
+          const description = dataDescriptions.find(
+            (p) => p.package_name === pkgName,
+          );
+          return {
+            name: pkgName,
+            summary: description?.summary || '',
+          };
+        })
+      : [];
 
   return (
     <>
@@ -109,6 +198,7 @@ const Packages = () => {
               setIsSelectingGroup={setIsSelectingGroup}
               activeStream={activeStream}
               setActiveStream={setActiveStream}
+              recommendations={recommendationsWithDescriptions}
             />
           </ToolbarItem>
         </ToolbarContent>

@@ -18,6 +18,7 @@ export type IBPackageWithRepositoryInfo = {
   module_name?: string;
   stream?: string;
   end_date?: string;
+  isRecommendation?: boolean;
 };
 
 export type GroupWithRepositoryInfo = {
@@ -25,6 +26,11 @@ export type GroupWithRepositoryInfo = {
   description: string;
   repository: PackageRepository;
   package_list?: string[];
+};
+
+export type PackageRecommendation = {
+  name: string;
+  summary: string;
 };
 
 export enum Repos {
