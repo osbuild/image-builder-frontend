@@ -104,7 +104,11 @@ const Packages = () => {
 
   const [
     fetchRecommendedPackages,
-    { data: recommendationsData, isLoading: isLoadingRecommendations },
+    {
+      data: recommendationsData,
+      isLoading: isLoadingRecommendations,
+      isError: isErrorRecommendations,
+    },
   ] = useRecommendPackageMutation();
 
   const [
@@ -298,6 +302,7 @@ const Packages = () => {
               isLoadingRecommendations={
                 isLoadingRecommendations || isLoadingDescriptions
               }
+              isErrorRecommendations={isErrorRecommendations}
               onRecommendationSelected={handleRecommendationSelected}
               onDropdownOpened={handleDropdownOpened}
             />

@@ -9,6 +9,9 @@ import {
   EmptyStateBody,
   EmptyStateFooter,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -78,6 +81,7 @@ type PackageSearchProps = {
   setActiveStream: (value: string) => void;
   recommendations: PackageRecommendation[];
   isLoadingRecommendations: boolean;
+  isErrorRecommendations: boolean;
   onRecommendationSelected: (packageName: string) => void;
   onDropdownOpened: (hasRecommendations: boolean) => void;
 };
@@ -93,6 +97,7 @@ const PackageSearch = ({
   setActiveStream,
   recommendations,
   isLoadingRecommendations,
+  isErrorRecommendations,
   onRecommendationSelected,
   onDropdownOpened,
 }: PackageSearchProps) => {
@@ -920,6 +925,16 @@ const PackageSearch = ({
             </>
           )}
       </Select>
+      {isErrorRecommendations && packageType === 'packages' && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant='error'>
+              Recommendations couldn&apos;t be fetched. Try again by changing
+              your selected packages.
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };
