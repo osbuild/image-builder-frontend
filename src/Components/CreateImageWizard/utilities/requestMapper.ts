@@ -681,9 +681,7 @@ const getMetadata = (metadata: BlueprintMetadata) => {
 };
 
 /**
- * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
- * @param request BlueprintExportResponse
- * @returns wizardState
+ * Maps a BlueprintExportResponse to the wizard state, used to populate the wizard when importing a blueprint.
  */
 export const mapExportRequestToState = (
   request: BlueprintExportResponse,
@@ -699,6 +697,26 @@ export const mapExportRequestToState = (
     bootc: request.bootc,
   };
 
+  const commonState = commonRequestToState(blueprintResponse);
+
+  let { snapshotting } = commonState;
+  if (request.snapshot_date && !commonState.snapshotting.snapshotDate) {
+    let normalizedDate = '';
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(request.snapshot_date)) {
+      normalizedDate = request.snapshot_date;
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(request.snapshot_date)) {
+      normalizedDate = request.snapshot_date + 'T00:00:00Z';
+    }
+    if (normalizedDate) {
+      snapshotting = {
+        useLatest: false,
+        snapshotDate: normalizedDate,
+        template: '',
+        templateName: '',
+      };
+    }
+  }
+
   return {
     wizardMode,
     blueprintMode:
@@ -713,13 +731,15 @@ export const mapExportRequestToState = (
       enabled: request.customizations.aap_registration !== undefined,
       callbackUrl:
         request.customizations.aap_registration?.ansible_callback_url,
-      hostConfigKey: request.customizations.aap_registration?.host_config_key,
+      hostConfigKey:
+        request.customizations.aap_registration?.host_config_key,
       tlsCertificateAuthority:
         request.customizations.aap_registration?.tls_certificate_authority,
       skipTlsVerification:
         request.customizations.aap_registration?.skip_tls_verification,
     },
-    ...commonRequestToState(blueprintResponse),
+    ...commonState,
+    snapshotting,
   };
 };
 

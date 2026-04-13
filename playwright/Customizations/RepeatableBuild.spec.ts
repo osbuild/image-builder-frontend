@@ -1,5 +1,5 @@
-// import * as fsPromises from 'fs/promises';
-// import * as path from 'path';
+import * as fsPromises from 'fs/promises';
+import * as path from 'path';
 
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +9,6 @@ import {
   navigateToRepositories,
 } from '../BootTests/Content/helpers';
 import { test } from '../fixtures/customizations';
-// import { exportedLocaleBP } from '../fixtures/data/exportBlueprintContents';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
@@ -20,12 +19,12 @@ import {
 import {
   createBlueprint,
   deleteBlueprint,
-  // exportBlueprint,
+  exportBlueprint,
   fillInDetails,
-  // fillInImageOutputGuest,
-  //importBlueprint,
+  fillInImageOutputGuest,
+  importBlueprint,
   registerLater,
-  // verifyExportedBlueprint,
+  verifyExportedBlueprint,
 } from '../helpers/wizardHelpers';
 
 test('Create a blueprint with Repeatable build customization', async ({
@@ -172,37 +171,41 @@ test('Create a blueprint with Repeatable build customization', async ({
       .click();
   });
 
-  //  let exportedBP = '';
-  //
-  //  await test.step('Export BP', async () => {
-  //    exportedBP = await exportBlueprint(page);
-  //    cleanup.add(async () => {
-  //      await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
-  //    });
-  //  });
-  //
-  //  await test.step('Review exported BP', async (step) => {
-  //    step.skip(
-  //      isHosted(),
-  //      'Only verify the contents of the exported blueprint in cockpit',
-  //    );
-  //    verifyExportedBlueprint(exportedBP, exportedRepeatableBuildBP(blueprintName));
-  //  });
-  //
-  //  await test.step('Import BP', async () => {
-  //    await importBlueprint(frame, exportedBP);
-  //  });
-  //
+  let exportedBP = '';
+
+  await test.step('Export BP', async () => {
+    exportedBP = await exportBlueprint(page);
+    cleanup.add(async () => {
+      await fsPromises.rm(path.dirname(exportedBP), { recursive: true });
+    });
+  });
+
+  await test.step('Review exported BP', async (step) => {
+    step.skip(
+      isHosted(),
+      'Only verify the contents of the exported blueprint in cockpit',
+    );
+    verifyExportedBlueprint(exportedBP, exportedRepeatableBuildBP());
+  });
+
+  await test.step('Import BP', async () => {
+    await importBlueprint(frame, exportedBP);
+  });
+
   // TO DO: Importing needs to be fixed first
-  // await test.step('Review imported BP', async () => {
-  //   await fillInImageOutputGuest(frame);
-  //   await frame.getByRole('button', { name: 'Repeatable build' }).click();
-  //   await expect(
-  //     frame.getByRole('radio', { name: /Enable repeatable build/i }),
-  //   ).toBeEnabled();
-  //   await expect(
-  //     frame.getByRole('textbox', { name: /date picker/i }),
-  //   ).toHaveValue('2026-01-01');
-  //   await frame.getByRole('button', { name: 'Cancel' }).click();
-  // });
+  await test.step('Review imported BP', async () => {
+    await fillInImageOutputGuest(frame);
+    await frame.getByRole('button', { name: 'Repeatable build' }).click();
+    await expect(
+      frame.getByRole('radio', { name: /Enable repeatable build/i }),
+    ).toBeEnabled();
+    await expect(
+      frame.getByRole('textbox', { name: /date picker/i }),
+    ).toHaveValue('2026-01-01');
+    await frame.getByRole('button', { name: 'Cancel' }).click();
+  });
 });
+
+function exportedRepeatableBuildBP(): string {
+  throw new Error('Function not implemented.');
+}

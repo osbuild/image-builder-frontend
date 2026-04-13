@@ -184,6 +184,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 customizations: blueprintFromFile.customizations,
                 metadata: blueprintFromFile.metadata,
                 content_sources: blueprintFromFile.content_sources,
+                snapshot_date: blueprintFromFile.snapshot_date,
               };
               blueprintExportedResponse.customizations.custom_repositories =
                 customRepos;
