@@ -82,12 +82,18 @@ const Packages = () => {
     useState(false);
   const [activeStream, setActiveStream] = useState<string>('');
 
-  const [fetchRecommendedPackages, { data: recommendationsData }] =
-    useRecommendPackageMutation();
+  const [
+    fetchRecommendedPackages,
+    { data: recommendationsData, isLoading: isLoadingRecommendations },
+  ] = useRecommendPackageMutation();
 
   const [
     fetchRecommendationDescriptions,
-    { data: dataDescriptions, isSuccess: isSuccessDescriptions },
+    {
+      data: dataDescriptions,
+      isSuccess: isSuccessDescriptions,
+      isLoading: isLoadingDescriptions,
+    },
   ] = useSearchRpmMutation();
 
   useEffect(() => {
@@ -199,6 +205,9 @@ const Packages = () => {
               activeStream={activeStream}
               setActiveStream={setActiveStream}
               recommendations={recommendationsWithDescriptions}
+              isLoadingRecommendations={
+                isLoadingRecommendations || isLoadingDescriptions
+              }
             />
           </ToolbarItem>
         </ToolbarContent>

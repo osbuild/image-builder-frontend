@@ -77,6 +77,7 @@ type PackageSearchProps = {
   activeStream: string;
   setActiveStream: (value: string) => void;
   recommendations: PackageRecommendation[];
+  isLoadingRecommendations: boolean;
 };
 
 const PackageSearch = ({
@@ -89,6 +90,7 @@ const PackageSearch = ({
   activeStream,
   setActiveStream,
   recommendations,
+  isLoadingRecommendations,
 }: PackageSearchProps) => {
   const dispatch = useAppDispatch();
 
@@ -531,7 +533,7 @@ const PackageSearch = ({
 
   const sortedPackages = useMemo(() => {
     if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
-      return transformedRecommendations;
+      return isLoadingRecommendations ? [] : transformedRecommendations;
     }
 
     const regularPackages = orderBy(
@@ -555,12 +557,19 @@ const PackageSearch = ({
       ['asc', 'asc', 'desc', 'asc', 'asc', 'asc'],
     );
 
-    const filteredRecommendations = transformedRecommendations.filter(
-      (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
-    );
+    const filteredRecommendations = isLoadingRecommendations
+      ? []
+      : transformedRecommendations.filter(
+          (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
+        );
 
     return [...regularPackages, ...filteredRecommendations];
-  }, [transformedPackages, activeStream, transformedRecommendations]);
+  }, [
+    transformedPackages,
+    activeStream,
+    transformedRecommendations,
+    isLoadingRecommendations,
+  ]);
 
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
     const isModuleDisabledByPackage =
@@ -816,27 +825,34 @@ const PackageSearch = ({
               Searching {packageTypeLabel}...
             </SelectOption>
           ) : packageType === 'packages' && sortedPackages.length > 0 ? (
-            sortedPackages.slice(0, 50).map((pkg) => (
-              <SelectOption
-                key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
-                value={`${pkg.name}|||${pkg.stream || ''}`}
-                description={
-                  pkg.isRecommendation
-                    ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
-                    : getPackageDescription(pkg)
-                }
-                isDisabled={isSelectDisabled(pkg)}
-              >
-                {pkg.isRecommendation && (
-                  <>
-                    <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
-                  </>
-                )}
-                {pkg.isRecommendation && pkg.summary
-                  ? `${pkg.name} - ${pkg.summary}`
-                  : pkg.name}
-              </SelectOption>
-            ))
+            <>
+              {sortedPackages.slice(0, 50).map((pkg) => (
+                <SelectOption
+                  key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
+                  value={`${pkg.name}|||${pkg.stream || ''}`}
+                  description={
+                    pkg.isRecommendation
+                      ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
+                      : getPackageDescription(pkg)
+                  }
+                  isDisabled={isSelectDisabled(pkg)}
+                >
+                  {pkg.isRecommendation && (
+                    <>
+                      <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
+                    </>
+                  )}
+                  {pkg.isRecommendation && pkg.summary
+                    ? `${pkg.name} - ${pkg.summary}`
+                    : pkg.name}
+                </SelectOption>
+              ))}
+              {isLoadingRecommendations && (
+                <SelectOption isDisabled>
+                  Getting package recommendations...
+                </SelectOption>
+              )}
+            </>
           ) : packageType === 'groups' && transformedGroups.length > 0 ? (
             transformedGroups.slice(0, 50).map((group) => (
               <SelectOption
