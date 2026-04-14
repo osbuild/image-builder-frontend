@@ -119,6 +119,8 @@ const injectedRtkApi = api.injectEndpoints({
           name: queryArg.name,
           repository_uuids: queryArg.repositoryUuids,
           snapshot_uuids: queryArg.snapshotUuids,
+          extended_release: queryArg.extendedRelease,
+          extended_release_version: queryArg.extendedReleaseVersion,
           sort_by: queryArg.sortBy,
         },
       }),
@@ -239,6 +241,10 @@ export type ListTemplatesApiArg = {
   repositoryUuids?: string;
   /** Filter templates by associated snapshots using a comma separated list of snapshot UUIDs */
   snapshotUuids?: string;
+  /** Filter templates by extended release type. Valid values: eus, e4s, eeus. Supports comma-separated lists (e.g., 'eus,e4s'). Use 'none' to filter templates without extended release. */
+  extendedRelease?: string;
+  /** Filter templates by extended release version (e.g., 9.4) */
+  extendedReleaseVersion?: string;
   /** Sort the response data based on specific parameters. Sort criteria can include `name`, `arch`, and `version`. */
   sortBy?: string;
 };
