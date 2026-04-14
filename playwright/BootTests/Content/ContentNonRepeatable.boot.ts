@@ -95,7 +95,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: packageName }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
@@ -240,16 +240,16 @@ test('Content integration test - Non repeatable build - Upload source', async ({
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
     await expect(
-      frame.getByRole('gridcell', { name: packageName }),
+      frame.getByRole('option', { name: packageName }),
     ).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: packageName }).click();
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill(dependencyPackageName);
     await expect(
-      frame.getByRole('gridcell', { name: dependencyPackageName }),
+      frame.getByRole('option', { name: dependencyPackageName }),
     ).toBeVisible();
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: dependencyPackageName }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
@@ -341,7 +341,7 @@ test('Content integration test - Non repeatable build - Community repository', a
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: packageName }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 

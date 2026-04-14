@@ -217,14 +217,10 @@ test('Content integration test - Content Template', async ({
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
-    await expect(
-      frame.getByRole('gridcell', { name: packageName }),
-    ).toBeVisible({ timeout: 60000 });
-    await frame
-      .getByRole('row')
-      .filter({ hasText: packageName })
-      .getByLabel('Select row')
-      .click();
+    await expect(frame.getByRole('option', { name: packageName })).toBeVisible({
+      timeout: 60000,
+    });
+    await frame.getByRole('option', { name: packageName }).click();
   });
 
   await test.step('Set hostname for system identification', async () => {

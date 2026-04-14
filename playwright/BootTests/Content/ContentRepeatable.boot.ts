@@ -151,7 +151,7 @@ test('Content integration test - Repeatable build - URL source', async ({
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
-    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('option', { name: packageName }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 

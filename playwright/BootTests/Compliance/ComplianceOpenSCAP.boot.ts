@@ -92,13 +92,9 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
       .getByRole('textbox', { name: 'Search packages' })
       .fill('perl-XML-XPath');
     await expect(
-      frame.getByRole('gridcell', { name: 'perl-XML-XPath' }),
+      frame.getByRole('option', { name: 'perl-XML-XPath' }),
     ).toBeVisible({ timeout: 60000 });
-    await frame
-      .getByRole('row')
-      .filter({ hasText: 'perl-XML-XPath' })
-      .getByLabel('Select row')
-      .click();
+    await frame.getByRole('option', { name: 'perl-XML-XPath' }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
