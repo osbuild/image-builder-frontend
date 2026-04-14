@@ -99,6 +99,7 @@ const TimezoneDropDown = () => {
           <SearchInput
             value={searchValue}
             aria-label='Filter timezone'
+            placeholder='Search by name'
             onChange={(_event, value) => handleSearchChange(value)}
             onClear={(event) => {
               // prevents setIsOpen(isOpen) from closing the Wizard
