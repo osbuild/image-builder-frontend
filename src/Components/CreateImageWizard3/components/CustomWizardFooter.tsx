@@ -31,7 +31,10 @@ export const CustomWizardFooter = ({
 
   return (
     <WizardFooterWrapper>
-      <Flex columnGap={{ default: 'columnGapSm' }}>
+      <Flex
+        columnGap={{ default: 'columnGapSm' }}
+        justifyContent={{ default: 'justifyContentFlexEnd' }}
+      >
         <Button
           variant='primary'
           onClick={() => {

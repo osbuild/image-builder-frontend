@@ -75,7 +75,10 @@ const ReviewWizardFooter = () => {
 
   return (
     <WizardFooterWrapper>
-      <Flex columnGap={{ default: 'columnGapSm' }}>
+      <Flex
+        columnGap={{ default: 'columnGapSm' }}
+        justifyContent={{ default: 'justifyContentFlexEnd' }}
+      >
         <Dropdown
           isOpen={isOpen}
           onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
