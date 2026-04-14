@@ -79,6 +79,9 @@ const ReviewWizardFooter = () => {
         columnGap={{ default: 'columnGapSm' }}
         justifyContent={{ default: 'justifyContentFlexEnd' }}
       >
+        <Button variant='secondary' onClick={goToPrevStep}>
+          Back
+        </Button>
         <Dropdown
           isOpen={isOpen}
           onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
@@ -128,9 +131,6 @@ const ReviewWizardFooter = () => {
             />
           )}
         </Dropdown>
-        <Button variant='secondary' onClick={goToPrevStep}>
-          Back
-        </Button>
         <Button variant='link' onClick={close}>
           Cancel
         </Button>

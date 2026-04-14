@@ -36,15 +36,6 @@ export const CustomWizardFooter = ({
         justifyContent={{ default: 'justifyContentFlexEnd' }}
       >
         <Button
-          variant='primary'
-          onClick={() => {
-            if (!beforeNext || beforeNext()) goToNextStep();
-          }}
-          isDisabled={disableNext}
-        >
-          Next
-        </Button>
-        <Button
           variant='secondary'
           onClick={() => {
             goToPrevStep();
@@ -54,7 +45,16 @@ export const CustomWizardFooter = ({
           Back
         </Button>
         <Button
-          variant='tertiary'
+          variant='secondary'
+          onClick={() => {
+            if (!beforeNext || beforeNext()) goToNextStep();
+          }}
+          isDisabled={disableNext}
+        >
+          Next
+        </Button>
+        <Button
+          variant='primary'
           onClick={() => {
             if (!isOnPremise) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
