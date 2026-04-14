@@ -23,8 +23,10 @@ export const CustomWizardFooter = ({
   beforeNext,
   isOnPremise,
 }: CustomWizardFooterPropType) => {
-  const { goToNextStep, goToPrevStep, close, activeStep } = useWizardContext();
+  const { goToNextStep, goToPrevStep, goToStepById, close, activeStep } =
+    useWizardContext();
   const { analytics } = useChrome();
+  const reviewAndFinishBtnID = 'wizard-review-and-finish-btn';
   const cancelBtnID = 'wizard-cancel-btn';
 
   return (
@@ -47,6 +49,22 @@ export const CustomWizardFooter = ({
           isDisabled={disableBack || false}
         >
           Back
+        </Button>
+        <Button
+          variant='tertiary'
+          onClick={() => {
+            if (!isOnPremise) {
+              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                module: AMPLITUDE_MODULE_NAME,
+                button_id: reviewAndFinishBtnID,
+                active_step_id: activeStep.id,
+              });
+            }
+            if (!beforeNext || beforeNext()) goToStepById('review-step');
+          }}
+          isDisabled={disableNext}
+        >
+          Review image
         </Button>
         <Button
           variant='link'
