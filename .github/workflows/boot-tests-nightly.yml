@@ -2,11 +2,19 @@ name: Boot tests
 
 on:
   schedule:
-    - cron: '5 0 * * 1-5' # working days at midnight 
+    - cron: '5 0 * * 1-5' # working days at midnight
   workflow_dispatch:
     inputs:
       pr_number:
         description: 'Pull Request number to run tests against'
+        required: false
+        type: number
+      slack_channel_id:
+        description: 'Slack channel ID for notifications (enables notification jobs on manual runs)'
+        required: false
+        type: string
+      run_id:
+        description: 'Run ID to re-analyze (skips boot tests, downloads existing artifact)'
         required: false
         type: number
   pull_request:
@@ -17,6 +25,7 @@ on:
 
 jobs:
   boot-tests:
+    if: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.run_id != '') }}
     runs-on:
       - codebuild-image-builder-frontend-${{ github.run_id }}-${{ github.run_attempt }}
       - instance-size:large
@@ -29,17 +38,12 @@ jobs:
         id: get-pr-details
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number != ''
         run: |
-          PR_NUMBER=${{ github.event.inputs.pr_number }}
-          API_URL="${{ github.api_url }}/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
-          PR_INFO=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "$API_URL")
-          
-          PR_HEAD_SHA=$(echo "$PR_INFO" | jq -r '.head.sha')
-          PR_URL=$(echo "$PR_INFO" | jq -r '.html_url')
-
-          echo "PR Head SHA: $PR_HEAD_SHA"
-          echo "PR URL: $PR_URL"
-          echo "pr_head_sha=$PR_HEAD_SHA" >> $GITHUB_ENV
-          echo "pr_url=$PR_URL" >> $GITHUB_ENV
+          PR_INFO=$(gh pr view "$PR_NUMBER" --json headRefOid,url)
+          echo "pr_head_sha=$(echo "$PR_INFO" | jq -r '.headRefOid')" >> $GITHUB_ENV
+          echo "pr_url=$(echo "$PR_INFO" | jq -r '.url')" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,7 +72,6 @@ jobs:
         run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name frontend-development-proxy quay.io/redhat-user-workloads/hcc-platex-services-tenant/frontend-development-proxy
 
       - name: Run front-end Playwright tests
-        id: playwright-tests
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
@@ -82,98 +85,293 @@ jobs:
           path: playwright-report/
           retention-days: 10
 
+      - name: Store test results JSON
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-json
+          path: test-results.json
+          retention-days: 10
+
+  # Post success/failure notifications to Slack
+  # Isolated from Claude analysis — secrets here are NOT accessible to the analyze-failures job
+  notify-slack:
+    runs-on: ubuntu-latest
+    needs: boot-tests
+    if: >-
+      always() &&
+      (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.slack_channel_id != ''))
+    permissions: {}
+    outputs:
+      slack-ts: ${{ steps.slack-ts.outputs.ts }}
+
+    steps:
       - name: Notify Slack on success
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ success() && github.event_name == 'schedule' }}
+        if: ${{ needs.boot-tests.result == 'success' }}
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "attachments": [
-                {
-                  "color": "#2EB67D",
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+            channel: ${{ github.event.inputs.slack_channel_id || vars.SLACK_CHANNEL_ID }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
 
       - name: Notify Slack on success (Frontend)
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ success() && github.event_name == 'schedule' }}
+        if: ${{ needs.boot-tests.result == 'success' && github.event.inputs.slack_channel_id == '' }}
         with:
-          webhook: ${{ secrets.SLACK_FRONTEND_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "attachments": [
-                {
-                  "color": "#2EB67D",
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+            channel: ${{ vars.SLACK_FRONTEND_CHANNEL_ID }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
 
       - name: Notify Slack on failure
+        id: slack-failure
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ failure() && github.event_name == 'schedule' && github.run_attempt == '1' }}
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "attachments": [
-                {
-                  "color": "#d72839",
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+            channel: ${{ github.event.inputs.slack_channel_id || vars.SLACK_CHANNEL_ID }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
 
       - name: Notify Slack on failure (Frontend)
+        id: slack-failure-frontend
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ failure() && github.event_name == 'schedule' && github.run_attempt == '1' }}
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' && github.event.inputs.slack_channel_id == '' }}
         with:
-          webhook: ${{ secrets.SLACK_FRONTEND_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "attachments": [
-                {
-                  "color": "#d72839",
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+            channel: ${{ vars.SLACK_FRONTEND_CHANNEL_ID }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
+
+      # Save the Slack message timestamps so later rerun attempts can thread replies
+      - name: Save Slack message ts
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
+        run: |
+          echo "${{ steps.slack-failure.outputs.ts }}" > slack-ts.txt
+          echo "${{ steps.slack-failure-frontend.outputs.ts }}" > slack-ts-frontend.txt
+
+      - name: Upload Slack ts artifact
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: slack-ts
+          path: |
+            slack-ts.txt
+            slack-ts-frontend.txt
+          overwrite: true
+
+      # On rerun attempts, retrieve the original message ts (needed for both failure threading and success updates)
+      - name: Download Slack ts artifact
+        if: ${{ github.run_attempt != '1' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: slack-ts
+        continue-on-error: true
+
+      - name: Read Slack message ts
+        id: slack-ts
+        run: |
+          if [ -f slack-ts.txt ]; then
+            echo "ts=$(cat slack-ts.txt)" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f slack-ts-frontend.txt ]; then
+            echo "ts_frontend=$(cat slack-ts-frontend.txt)" >> "$GITHUB_OUTPUT"
+          fi
+
+      # If a retry succeeded, update the original failure messages
+      - name: Update original message on retry success
+        if: ${{ needs.boot-tests.result == 'success' && github.run_attempt != '1' && steps.slack-ts.outputs.ts }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ github.event.inputs.slack_channel_id || vars.SLACK_CHANNEL_ID }}
+            ts: ${{ steps.slack-ts.outputs.ts }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: ~*FAILED*~ *PASSED on retry* (attempt ${{ github.run_attempt }}) :partymeow:"
+
+      - name: Update original message on retry success (Frontend)
+        if: ${{ needs.boot-tests.result == 'success' && github.run_attempt != '1' && steps.slack-ts.outputs.ts_frontend }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_FRONTEND_CHANNEL_ID }}
+            ts: ${{ steps.slack-ts.outputs.ts_frontend }}
+            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: ~*FAILED*~ *PASSED on retry* (attempt ${{ github.run_attempt }}) :partymeow:"
+
+  # Analyze test failures with Claude Code (via Vertex AI) — only on first attempt
+  # SECURITY: This job only has Vertex AI secrets — no Slack tokens, no other credentials.
+  # Claude runs here and cannot access secrets from other jobs.
+  analyze-failures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: boot-tests
+    if: >-
+      always() &&
+      (needs.boot-tests.result == 'failure' || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_id != '')) &&
+      github.run_attempt == '1' &&
+      (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.slack_channel_id != '' || github.event.inputs.run_id != '')))
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test results JSON
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results-json
+          path: .
+          run-id: ${{ github.event.inputs.run_id || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true # Fallback for runs before JSON reporter was added
+
+      - name: Download playwright report (fallback)
+        if: ${{ hashFiles('test-results.json') == '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          run-id: ${{ github.event.inputs.run_id || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Set up GCP credentials
+        run: |
+          echo '${{ secrets.ANTHROPIC_VERTEX_CREDENTIALS }}' > /tmp/gcp-credentials.json
+
+      - name: Analyze test failures
+        run: |
+          mkdir -p boot-test-reports
+          cat boot-test-instructions.md > /tmp/prompt.md
+          echo "" >> /tmp/prompt.md
+          echo "The GitHub Actions run URL is: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/" >> /tmp/prompt.md
+          echo "This is attempt ${{ github.run_attempt }}." >> /tmp/prompt.md
+          cat /tmp/prompt.md | claude --print --verbose \
+            --output-format stream-json \
+            --model "${MODEL:-claude-sonnet-4-6}" \
+            --allowedTools "Read,Glob,Grep,Write" \
+            --disallowedTools "Bash,Agent,WebFetch,WebSearch,Edit,NotebookEdit"
+        env:
+          CLAUDE_CODE_USE_VERTEX: "1"
+          CLOUD_ML_REGION: us-east5
+          ANTHROPIC_VERTEX_PROJECT_ID: ${{ secrets.ANTHROPIC_VERTEX_PROJECT_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-credentials.json
+
+      - name: Upload analysis reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports
+          path: boot-test-reports/
+          retention-days: 10
+
+  # Post Claude's analysis to Slack and rerun flaky tests (attempt 1),
+  # or post a short "retry also failed" thread reply (attempt 2+).
+  # NOTE: When dispatched with run_id only (no slack_channel_id), this job is
+  # intentionally skipped — analyze-failures still runs and uploads reports as
+  # artifacts, but nothing posts them. Use this mode to re-analyze a past run
+  # and download the results manually.
+  post-analysis:
+    runs-on: ubuntu-latest
+    needs: [boot-tests, analyze-failures, notify-slack]
+    if: >-
+      always() &&
+      (needs.boot-tests.result == 'failure' || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_id != '')) &&
+      (needs.analyze-failures.result == 'success' || needs.analyze-failures.result == 'skipped' || needs.analyze-failures.result == 'failure') &&
+      (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.slack_channel_id != ''))
+    permissions:
+      actions: write
+
+    steps:
+      # --- Attempt 1: post Claude's analysis and rerun if flake ---
+      - name: Download analysis reports
+        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: reports
+          path: boot-test-reports/
+
+      - name: Build analysis payload
+        id: analysis-payload
+        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' && needs.notify-slack.outputs.slack-ts }}
+        run: |
+          if [ ! -f boot-test-reports/latest.md ]; then
+            echo "::warning::Claude did not produce boot-test-reports/latest.md"
+            exit 0
+          fi
+          # Truncate to stay under Slack's 40k character limit
+          if [ "$(wc -c < boot-test-reports/latest.md)" -gt 39000 ]; then
+            head -c 39000 boot-test-reports/latest.md > /tmp/truncated.md
+            printf '\n\n:scissors: Report truncated — full report available in workflow artifacts.' >> /tmp/truncated.md
+            mv /tmp/truncated.md boot-test-reports/latest.md
+          fi
+          {
+            echo "json<<PAYLOAD_EOF"
+            jq -n \
+              --arg channel "$SLACK_CHANNEL_ID" \
+              --arg thread_ts "$THREAD_TS" \
+              --rawfile text boot-test-reports/latest.md \
+              '{channel: $channel, thread_ts: $thread_ts, text: $text}'
+            echo "PAYLOAD_EOF"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          SLACK_CHANNEL_ID: ${{ github.event.inputs.slack_channel_id || vars.SLACK_CHANNEL_ID }}
+          THREAD_TS: ${{ needs.notify-slack.outputs.slack-ts }}
+
+      - name: Post analysis to Slack
+        if: ${{ steps.analysis-payload.outputs.json }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: ${{ steps.analysis-payload.outputs.json }}
+
+      - name: Notify analysis failure
+        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'failure' && needs.notify-slack.outputs.slack-ts }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ github.event.inputs.slack_channel_id || vars.SLACK_CHANNEL_ID }}
+            thread_ts: ${{ needs.notify-slack.outputs.slack-ts }}
+            text: ":warning: Automated analysis failed — could not classify this failure. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
+
+      - name: Rerun if flake
+        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' && github.event.inputs.run_id == '' }}
+        run: |
+          CLASSIFICATION=$(cat boot-test-reports/classification.txt 2>/dev/null || echo "UNKNOWN")
+          CLASSIFICATION=$(echo "$CLASSIFICATION" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
+          if [ "$CLASSIFICATION" = "FLAKE" ]; then
+            echo "Classified as FLAKE — rerunning failed jobs (attempt ${{ github.run_attempt }})"
+            gh run rerun ${{ github.run_id }} --failed --repo ${{ github.repository }}
+          else
+            echo "Classified as $CLASSIFICATION — not rerunning"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- Attempt 2+: post a short thread reply ---
+      - name: Post retry failure to Slack
+        if: ${{ github.run_attempt != '1' && needs.notify-slack.outputs.slack-ts }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ github.event.inputs.slack_channel_id || vars.SLACK_CHANNEL_ID }}
+            thread_ts: ${{ needs.notify-slack.outputs.slack-ts }}
+            text: ":x: Retry attempt ${{ github.run_attempt }} also failed. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"

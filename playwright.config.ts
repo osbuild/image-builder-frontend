@@ -11,6 +11,10 @@ if (!process.env.CI) {
   reporters.push(['list']);
 }
 
+if (process.env.CI) {
+  reporters.push(['json', { outputFile: 'test-results.json' }]);
+}
+
 if (process.env.CURRENTS_PROJECT_ID && process.env.CURRENTS_RECORD_KEY) {
   reporters.push(['@currents/playwright']);
 }
