@@ -133,6 +133,13 @@ const LabelInput = ({
     }
   };
 
+  const handleBlur = () => {
+    const trimmed = inputValue.trim();
+    if (trimmed) {
+      addItem(trimmed);
+    }
+  };
+
   const handleRemoveItem = (e: React.MouseEvent, value: string) => {
     dispatch(removeAction(value));
   };
@@ -154,6 +161,7 @@ const LabelInput = ({
           onChange={onTextInputChange}
           value={inputValue}
           onKeyDown={(e) => handleKeyDown(e, inputValue)}
+          onBlur={handleBlur}
         >
           {totalItems > 0 && (
             <LabelGroup
