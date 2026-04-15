@@ -25,7 +25,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  clickReviewAndFinish,
+  clickReviewImage,
+  enterBlueprintName,
   goToReview,
   goToStep,
   interceptBlueprintRequest,
@@ -50,7 +51,6 @@ const selectGuestImageTarget = async () => {
 
 const goToPackagesStep = async () => {
   await selectGuestImageTarget();
-  await clickNext(); // Registration
   await clickRegisterLater();
   await goToStep(/Packages/);
 };
@@ -118,15 +118,6 @@ describe('Step Packages', () => {
     });
   });
 
-  test('clicking Back loads Repositories', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await clickBack();
-    await screen.findByRole('heading', {
-      name: 'Included repositories',
-    });
-  });
-
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -136,9 +127,9 @@ describe('Step Packages', () => {
   test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await goToPackagesStep();
-    await clickReviewAndFinish();
+    await clickReviewImage();
     await screen.findByRole('heading', {
-      name: /Review/i,
+      name: /Review image configuration/i,
     });
   });
 
@@ -194,7 +185,7 @@ describe('Step Packages', () => {
     await selectFirstPkgOption('test');
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Enable repeatable build/ });
+    await screen.findByRole('heading', { name: /Repositories and packages/ });
   });
 
   // Note: Pagination tests, package groups popover test, and basic module tests are
@@ -318,6 +309,7 @@ describe('Packages request generated correctly', () => {
 
   test('with custom packages', async () => {
     await renderCreateMode();
+    await enterBlueprintName();
     await goToPackagesStep();
     await typeIntoSearchBox('test'); // search for 'test' package
     await selectFirstPkgOption('test'); // select
@@ -340,6 +332,7 @@ describe('Packages request generated correctly', () => {
 
   test('deselecting a package removes it from the request', async () => {
     await renderCreateMode();
+    await enterBlueprintName();
     await goToPackagesStep();
     await typeIntoSearchBox('test'); // search for 'test' package
     await selectFirstPkgOption('test'); // select
@@ -358,6 +351,7 @@ describe('Packages request generated correctly', () => {
 
   test('with module', async () => {
     await renderCreateMode();
+    await enterBlueprintName();
     await goToPackagesStep();
     await typeIntoSearchBox('testModule'); // search for 'test' package
     await selectFirstPkgOption('testModule');
@@ -378,6 +372,7 @@ describe('Packages request generated correctly', () => {
 
   test('deselecting a module removes it from the request', async () => {
     await renderCreateMode();
+    await enterBlueprintName();
     await goToPackagesStep();
     await typeIntoSearchBox('testModule'); // search for 'test' package
     await selectFirstPkgOption('testModule');
@@ -396,6 +391,7 @@ describe('Packages request generated correctly', () => {
 
   test('with custom groups', async () => {
     await renderCreateMode();
+    await enterBlueprintName();
     await goToPackagesStep();
     await waitFor(async () =>
       user.click(
@@ -423,6 +419,7 @@ describe('Packages request generated correctly', () => {
 
   test('deselecting a group removes it from the request', async () => {
     await renderCreateMode();
+    await enterBlueprintName();
     await goToPackagesStep();
     await waitFor(async () =>
       user.click(
@@ -454,6 +451,7 @@ describe('Packages request generated correctly', () => {
     test('selecting single recommendation adds it to the request', async () => {
       await renderCreateMode();
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
+      await enterBlueprintName();
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await selectFirstPkgOption('test'); // select
@@ -476,6 +474,7 @@ describe('Packages request generated correctly', () => {
     test('clicking "Add all packages" adds all recommendations to the request', async () => {
       await renderCreateMode();
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
+      await enterBlueprintName();
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await selectFirstPkgOption('test'); // select
@@ -498,6 +497,7 @@ describe('Packages request generated correctly', () => {
     test('deselecting a package recommendation removes it from the request', async () => {
       await renderCreateMode();
       await selectRhel9(); // recommendations are not available for RHEL 10 yet
+      await enterBlueprintName();
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await selectFirstPkgOption('test'); // select

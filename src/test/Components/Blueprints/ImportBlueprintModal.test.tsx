@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import {
@@ -139,7 +139,6 @@ describe('Import modal', () => {
         '123456789012',
       ),
     );
-    await clickNext();
 
     // Registration
     await screen.findByText(
@@ -151,34 +150,26 @@ describe('Import modal', () => {
     //expect(registrationCheckbox).toHaveFocus();
     await screen.findByPlaceholderText('Select activation key');
 
-    // OpenScap
-    await clickNext();
+    await clickNext(); // Repositories and packages
+
+    // Packages
+    await screen.findByText('tmux');
+    await screen.findByText('openssh-server');
+
+    await clickNext(); // Advanced settings
 
     // File system configuration
-    await clickNext();
-    const partition = await screen.findByDisplayValue('/var');
+    const partitionsTable = await screen.findByRole('grid', {
+      name: /file system table/i,
+    });
+    const partition = await within(partitionsTable).findByDisplayValue('/var');
     expect(partition).toBeInTheDocument();
-    const sizeValue = screen.getByRole('cell', {
+    const sizeValue = within(partitionsTable).getByRole('cell', {
       name: /2/i,
     });
     expect(sizeValue).toBeInTheDocument();
 
-    // Repository snapshot/Repeatable builds
-    await clickNext();
-
-    // Custom Repos step
-    await clickNext();
-
-    // Packages step
-    await clickNext();
-    await screen.findByText('tmux');
-    await screen.findByText('openssh-server');
-
-    // Users
-    await clickNext();
-
     // Timezone
-    await clickNext();
     await screen.findByRole('heading', { name: /Timezone/ });
     expect(
       await screen.findByRole('button', { name: 'US/Eastern' }),
@@ -187,7 +178,6 @@ describe('Import modal', () => {
     await screen.findByText(/^1\.north-america\.pool/i);
 
     // Locale
-    await clickNext();
     await screen.findByRole('heading', { name: /Locale/ });
     await screen.findByText('English - United States (en_US.UTF-8)');
     await screen.findByText('Japanese - Japan (ja_JP.UTF-8)');
@@ -196,19 +186,16 @@ describe('Import modal', () => {
     expect(keyboardInput).toHaveValue('us');
 
     // Hostname
-    await clickNext();
     const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
     expect(hostnameInput).toHaveValue('base-image');
 
     // Kernel
-    await clickNext();
     expect(
       await screen.findByRole('button', { name: /kernel-debug/i }),
     ).toBeInTheDocument();
     await screen.findByText('nosmt=force');
 
     // Firewall
-    await clickNext();
     // check ports
     await screen.findByText('22:tcp');
     await screen.findByText('80:tcp');
@@ -220,7 +207,6 @@ describe('Import modal', () => {
     await screen.findByText('ntp');
 
     // Services
-    await clickNext();
     await screen.findByText('sshd');
     await screen.findByText('cockpit.socket');
     await screen.findByText('httpd');
@@ -247,24 +233,15 @@ describe('Import modal', () => {
     });
     await waitFor(() => user.click(guestImageCheckBox));
 
-    await clickNext(); // Registration
-    await clickNext(); // OpenScap
+    await clickNext(); // Repositories and packages
+    await clickNext(); // Advanced settings
 
     // File system configuration
-    await clickNext();
     expect(
       await screen.findByText(/The Wizard only supports KiB, MiB, or GiB/),
     ).toBeInTheDocument();
 
-    await clickNext(); // Repository snapshot
-    await clickNext(); // Custom Repos step
-    await clickNext(); // Packages step
-
-    // Users
-    await clickNext();
-
     // Timezone
-    await clickNext();
     expect(await screen.findByText('Unknown timezone')).toBeInTheDocument();
     expect(
       await screen.findByText('Invalid NTP servers: invalid-ntp-server'),
@@ -292,7 +269,6 @@ describe('Import modal', () => {
     );
 
     // Locale
-    await clickNext();
     expect(
       await screen.findByText('Unknown languages: invalid-language'),
     ).toBeInTheDocument();
@@ -313,7 +289,6 @@ describe('Import modal', () => {
     );
 
     // Hostname
-    await clickNext();
     expect(await screen.findByText(/Invalid hostname/)).toBeInTheDocument();
     await waitFor(() =>
       user.clear(
@@ -324,31 +299,29 @@ describe('Import modal', () => {
     );
 
     // Kernel
-    await clickNext();
     expect(
       await screen.findByText(/Invalid kernel arguments/),
     ).toBeInTheDocument();
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /remove invalid\$kernel\$argum.../i,
+          name: /remove invalid\$kernel\$argument/i,
         }),
       ),
     );
 
     // Firewall
-    await clickNext();
     expect(
       await screen.findByText(/Invalid ports: invalid-port/),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-se.../,
+        /Invalid disabled services: --invalid-firewall-disabled-service/,
       ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-se.../,
+        /Invalid enabled services: --invalid-firewall-enabled-service/,
       ),
     ).toBeInTheDocument();
     await waitFor(() =>
@@ -357,57 +330,57 @@ describe('Import modal', () => {
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /remove --invalid-disabled-s.../i,
+          name: /remove --invalid-firewall-disabled-service/i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /remove --invalid-enabled-se.../i,
+          name: /remove --invalid-firewall-enabled-service/i,
         }),
       ),
     );
 
     // Services
-    await clickNext();
     expect(
       await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-se.../,
+        /Invalid enabled services: --invalid-enabled-service/,
       ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-s.../,
+        /Invalid disabled services: --invalid-disabled-service/,
       ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid masked services: --invalid-masked-ser.../,
+        /Invalid masked services: --invalid-masked-service/,
       ),
     ).toBeInTheDocument();
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /remove --invalid-enabled-se.../i,
+          name: /remove --invalid-enabled-service/i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /remove --invalid-disabled-s.../i,
+          name: /remove --invalid-disabled-service/i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /remove --invalid-masked-ser.../i }),
+        screen.getByRole('button', {
+          name: /remove --invalid-masked-service/i,
+        }),
       ),
     );
 
     // Firstboot
-    await clickNext();
     expect(
       await screen.findByRole('heading', { name: /First boot configuration/i }),
     ).toBeInTheDocument();

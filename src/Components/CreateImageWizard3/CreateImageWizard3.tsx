@@ -291,7 +291,7 @@ const CreateImageWizard3 = () => {
       <Modal
         isOpen={showWizardModal}
         aria-label='Loading image wizard'
-        onEscapePress={handleClose}
+        onClose={handleClose}
         style={{ height: '90vh', width: '80vw' }}
       >
         <Bullseye>

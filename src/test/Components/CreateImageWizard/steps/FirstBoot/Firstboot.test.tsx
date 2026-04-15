@@ -27,9 +27,9 @@ import {
 } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
-  clickNext,
   clickRegisterLater,
-  clickReviewAndFinish,
+  clickReviewImage,
+  enterBlueprintName,
   getNextButton,
   goToOscapStep,
   goToReview,
@@ -49,9 +49,8 @@ const goToFirstBootStep = async (): Promise<void> => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(() => user.click(guestImageCheckBox));
-  await clickNext(); // Registration
   await clickRegisterLater();
-  await goToStep(/First boot/);
+  await goToStep(/Advanced settings/);
 };
 
 const selectSimplifiedOscapProfile = async () => {
@@ -60,7 +59,8 @@ const selectSimplifiedOscapProfile = async () => {
     name: /use a default openscap profile/i,
   });
   await user.click(openscapRadio);
-  const typeahead = await screen.findByRole('textbox', {
+  const openScapSelect = await screen.findByTestId('profileSelect');
+  const typeahead = await within(openScapSelect).findByRole('textbox', {
     name: /type to filter/i,
   });
   await waitFor(() => user.click(typeahead));
@@ -115,9 +115,9 @@ describe('First Boot step', () => {
   test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
-    await clickReviewAndFinish();
+    await clickReviewImage();
     await screen.findByRole('heading', {
-      name: /Review/i,
+      name: /Review image configuration/i,
     });
   });
 
@@ -138,7 +138,7 @@ describe('First Boot step', () => {
     await goToFirstBootStep();
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /File system configuration/ });
+    await screen.findByRole('heading', { name: /Advanced settings/ });
   });
 });
 
@@ -146,6 +146,8 @@ describe('First boot request generated correctly', () => {
   test('with no OpenSCAP profile selected', async () => {
     await renderCreateMode();
     await selectRhel9();
+    await enterBlueprintName();
+    await clickRegisterLater();
     await goToFirstBootStep();
     await openCodeEditor();
     await uploadFile(SCRIPT);
@@ -174,7 +176,8 @@ describe('First boot request generated correctly', () => {
     await renderCreateMode();
     await selectRhel9();
     await selectGuestImageTarget();
-    await goToOscapStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
     await selectSimplifiedOscapProfile();
     await goToStep(/First boot/);
     await openCodeEditor();
@@ -207,6 +210,7 @@ describe('First boot request generated correctly', () => {
     await renderCreateMode();
     await selectRhel9();
     await selectGuestImageTarget();
+    await enterBlueprintName();
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
     await goToStep(/First boot/);
@@ -259,11 +263,24 @@ describe('First Boot edit mode', () => {
     const id = mockBlueprintIds['firstBoot'];
     await renderEditMode(id);
 
-    // navigate to the First Boot step
-    const firstBootNavItem = await screen.findAllByRole('button', {
-      name: /first boot/i,
-    });
-    await waitFor(() => user.click(firstBootNavItem[0]));
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', {
+          name: /Base settings/i,
+        }),
+      ),
+    );
+    await screen.findByRole('heading', { name: /Basic image settings/i });
+    await enterBlueprintName();
+
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', {
+          name: /Advanced settings/i,
+        }),
+      ),
+    );
+    await screen.findByRole('heading', { name: /Advanced settings/i });
 
     // upload empty script file and go to Review
     await uploadFile(``);

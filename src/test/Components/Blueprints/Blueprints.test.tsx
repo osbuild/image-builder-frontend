@@ -58,6 +58,7 @@ describe('Blueprints', () => {
     await screen.findByText(blueprintNameWithComposes);
     await screen.findByText(blueprintNameEmptyComposes);
   });
+
   test('renders blueprint empty state', async () => {
     server.use(
       http.get(`${IMAGE_BUILDER_API}/blueprints`, () => {
@@ -65,22 +66,17 @@ describe('Blueprints', () => {
       }),
     );
 
-    const view = renderCustomRoutesWithReduxRouter();
+    await renderCustomRoutesWithReduxRouter();
     await screen.findByText('No blueprints');
-    const emptyStateAction = screen.getByRole('link', {
+    const emptyStateActions = screen.getAllByRole('button', {
       name: /Create image blueprint/i,
     });
+    const emptyStateAction = emptyStateActions[1]; // Second button is the empty state
     expect(emptyStateAction).toBeInTheDocument();
 
     await waitFor(() => user.click(emptyStateAction));
-
-    const { router } = await view;
-    await waitFor(() =>
-      expect(router.state.location.pathname).toBe(
-        '/insights/image-builder/imagewizard',
-      ),
-    );
   });
+
   test('renders blueprint composes', async () => {
     renderCustomRoutesWithReduxRouter();
 
@@ -90,6 +86,7 @@ describe('Blueprints', () => {
     const images = await findAllByText('dark-chocolate-aws');
     expect(images).toHaveLength(2);
   });
+
   test('renders blueprint composes empty state', async () => {
     renderCustomRoutesWithReduxRouter();
 
@@ -240,6 +237,7 @@ describe('Blueprints', () => {
       );
       await screen.findByText(editedBlueprintName);
     });
+
     test('redirect to index page when blueprint is invalid', async () => {
       server.use(
         http.get(`${IMAGE_BUILDER_API}/blueprints/invalid-compose-id`, () => {

@@ -1,32 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import {
-  clickNext,
-  enterResourceGroup,
-  enterSubscriptionId,
-  enterTenantGuid,
-  renderCreateMode,
-} from './wizardTestUtils';
-
-const selectAllEnvironments = async () => {
-  const user = userEvent.setup();
-
-  await waitFor(() =>
-    user.click(screen.getByRole('checkbox', { name: /Amazon Web Services/i })),
-  );
-  await waitFor(() =>
-    user.click(screen.getByRole('checkbox', { name: /Google Cloud/i })),
-  );
-  await waitFor(() =>
-    user.click(screen.getByRole('checkbox', { name: /Microsoft Azure/i })),
-  );
-  await waitFor(() =>
-    user.click(
-      screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
-    ),
-  );
-};
+import { renderCreateMode } from './wizardTestUtils';
 
 const testCheckbox = async (checkbox: HTMLElement) => {
   const user = userEvent.setup();
@@ -45,31 +20,13 @@ describe('Create Image Wizard', () => {
     await renderCreateMode();
 
     // check heading
-    await screen.findByRole('heading', { name: /Image builder/ });
+    await screen.findByRole('heading', { name: /Build an image/ });
 
     // check navigation
-    await screen.findByRole('button', { name: 'Image output' });
-    await screen.findByRole('button', { name: 'Optional steps' });
-    await screen.findByRole('button', { name: 'File system configuration' });
-    await screen.findByRole('button', { name: 'Additional packages' });
-    await screen.findByRole('button', { name: 'Groups and users' });
-    await screen.findByRole('button', { name: 'Timezone' });
-    await screen.findByRole('button', { name: 'Locale' });
-    await screen.findByRole('button', { name: 'Hostname' });
-    await screen.findByRole('button', { name: 'Kernel' });
-    await screen.findByRole('button', { name: 'Firewall' });
-    await screen.findByRole('button', { name: 'Systemd services' });
-    await screen.findByRole('button', { name: 'Details' });
+    await screen.findByRole('button', { name: 'Base settings' });
+    await screen.findByRole('button', { name: 'Repositories and packages' });
+    await screen.findByRole('button', { name: 'Advanced settings' });
     await screen.findByRole('button', { name: 'Review' });
-    if (!process.env.IS_ON_PREMISE) {
-      await screen.findByRole('button', { name: /Register/ });
-      await screen.findByRole('button', { name: 'Security' });
-      await screen.findByRole('button', { name: 'Repeatable build' });
-      await screen.findByRole('button', { name: 'Repositories' });
-      await screen.findByRole('button', {
-        name: 'First boot script configuration',
-      });
-    }
   });
 });
 
@@ -79,61 +36,6 @@ describe('Keyboard accessibility', () => {
   });
 
   const user = userEvent.setup();
-
-  test('autofocus on each step first input element', async () => {
-    await renderCreateMode();
-
-    // Image output - select environments and fill cloud configs (all inline now)
-    await selectAllEnvironments();
-
-    // AWS config (inline on Image output step)
-    await waitFor(async () =>
-      user.type(
-        await screen.findByRole('textbox', { name: /aws account id/i }),
-        '123456789012',
-      ),
-    );
-
-    // Google config (inline on Image output step)
-    await waitFor(async () =>
-      user.type(
-        await screen.findByRole('textbox', { name: /google principal/i }),
-        'test@test.com',
-      ),
-    );
-
-    // Azure config (inline on Image output step)
-    await enterTenantGuid();
-    await enterSubscriptionId();
-    await enterResourceGroup();
-    await clickNext();
-
-    // Registration
-    await screen.findByText(
-      'Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities.',
-    );
-    //const registrationCheckbox = await screen.findByRole('radio', {
-    //  name: /Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities./i,
-    //});
-    //expect(registrationCheckbox).toHaveFocus();
-    await screen.findByPlaceholderText('Select activation key');
-    await clickNext();
-
-    // TODO: Focus on textbox on Security step
-    await clickNext();
-
-    //File system configuration
-    await clickNext();
-
-    // TODO: Focus on textbox on Custom Repos step
-    await clickNext();
-
-    // TODO: Focus on textbox on Packages step
-    await clickNext();
-    await clickNext();
-    // TODO: Focus on textbox on Details step
-    await clickNext();
-  });
 
   test('pressing Enter does not advance the wizard', async () => {
     await renderCreateMode();

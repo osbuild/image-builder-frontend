@@ -6,7 +6,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
 
-import ImageWizard from '../../../Components/CreateImageWizard';
+import CreateImageWizard3 from '../../../Components/CreateImageWizard3/CreateImageWizard3';
 import { RHEL_10 } from '../../../constants';
 import { getLastBlueprintReq } from '../../mocks/cockpit/cockpitFile';
 import { server } from '../../mocks/server';
@@ -35,20 +35,12 @@ export function spyOnRequest(pathname: string, method: RequestTypes) {
 const routes = [
   {
     path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <ImageWizard />,
+    element: <CreateImageWizard3 />,
   },
   // cockpit routes
   {
-    path: '/imageWizard/:composeId?',
-    element: <ImageWizard />,
-  },
-  {
     path: '/',
-    element: <div />,
+    element: <CreateImageWizard3 />,
   },
 ];
 
@@ -78,14 +70,14 @@ export const blueprintRequest: CreateBlueprintRequest = {
 
 /**
  * @example
- * // returns 'imageWizard?release=rhel8&architecture=aarch64'
+ * // returns '?release=rhel8&architecture=aarch64'
  * preparePathname({ release: 'rhel8', architecture: 'aarch64' });
  * @example
- * // returns '(/)imageWizard'
+ * // returns ''
  * preparePathname({});
  */
 function preparePathname(searchParams: { [key: string]: string } = {}): string {
-  let pathName = process.env.IS_ON_PREMISE ? '/imageWizard' : 'imageWizard';
+  let pathName = process.env.IS_ON_PREMISE ? '/' : '';
   const params = Object.entries(searchParams).map(
     ([param, value]) => `${param}=${value}`,
   );
@@ -97,16 +89,35 @@ function preparePathname(searchParams: { [key: string]: string } = {}): string {
 
 export const renderCreateMode = async (searchParams = {}) => {
   const pathName = preparePathname(searchParams);
+  const preloadedState = {
+    wizardModal: {
+      isModalOpen: true,
+      mode: 'create' as const,
+    },
+  };
+
   await waitFor(
-    async () => await renderCustomRoutesWithReduxRouter(pathName, {}, routes),
+    async () =>
+      await renderCustomRoutesWithReduxRouter(pathName, preloadedState, routes),
   );
 };
 
 export const renderEditMode = async (id: string) => {
-  const pathName = process.env.IS_ON_PREMISE
-    ? `/imagewizard/${id}`
-    : `imagewizard/${id}`;
-  await renderCustomRoutesWithReduxRouter(pathName, {}, routes);
+  const pathName = process.env.IS_ON_PREMISE ? '/' : '';
+  const preloadedState = {
+    wizardModal: {
+      isModalOpen: true,
+      mode: 'edit' as const,
+    },
+    blueprints: {
+      selectedBlueprintId: id,
+    },
+  };
+
+  await waitFor(
+    async () =>
+      await renderCustomRoutesWithReduxRouter(pathName, preloadedState, routes),
+  );
 };
 
 export const openReleaseMenu = async () => {
@@ -214,14 +225,11 @@ export const clickRegisterSatellite = async () => {
 };
 
 export const goToOscapStep = async () => {
-  await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
 };
 
 export const selectCustomRepo = async () => {
   const user = userEvent.setup();
-  await clickBack();
 
   const searchInput = await screen.findByRole('textbox', {
     name: /filter repositories/i,
@@ -231,8 +239,6 @@ export const selectCustomRepo = async () => {
 
   const firstResult = await screen.findByRole('option', { name: /repo/i });
   await waitFor(() => user.click(firstResult));
-
-  await clickNext();
 };
 
 export const enterBlueprintName = async (name: string = 'Red Velvet') => {
@@ -311,12 +317,12 @@ export const clickCancel = async () => {
   await waitFor(() => user.click(cancelBtn));
 };
 
-export const clickReviewAndFinish = async () => {
+export const clickReviewImage = async () => {
   const user = userEvent.setup();
-  const reviewAndFinishBtn = await screen.findByRole('button', {
-    name: /Review and finish/,
+  const reviewImageBtn = await screen.findByRole('button', {
+    name: /Review image/,
   });
-  await waitFor(() => user.click(reviewAndFinishBtn));
+  await waitFor(() => user.click(reviewImageBtn));
 };
 
 export const getNextButton = async () => {
@@ -324,21 +330,13 @@ export const getNextButton = async () => {
   return next;
 };
 
-export const goToReview = async (
-  blueprintName: string = 'Red Velvet',
-  maxSteps: number = 25,
-) => {
+export const goToReview = async (maxSteps: number = 25) => {
   for (let stepIndex = 0; stepIndex < maxSteps; stepIndex++) {
-    const isOnReview = !!screen.queryByRole('heading', { name: /Review/ });
+    const isOnReview = !!screen.queryByRole('heading', {
+      name: /Review image configuration/,
+    });
     if (isOnReview) {
       return;
-    }
-
-    const blueprintNameInput = screen.queryByRole('textbox', {
-      name: /blueprint name/i,
-    });
-    if (blueprintNameInput) {
-      await enterBlueprintName(blueprintName);
     }
 
     await clickNext();

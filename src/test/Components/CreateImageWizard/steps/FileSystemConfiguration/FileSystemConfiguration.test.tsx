@@ -17,7 +17,8 @@ import {
   blueprintRequest,
   clickNext,
   clickRegisterLater,
-  clickReviewAndFinish,
+  clickReviewImage,
+  enterBlueprintName,
   getNextButton,
   goToReview,
   goToStep,
@@ -45,9 +46,8 @@ const selectImageInstaller = async () => {
 };
 
 const goToFileSystemConfigurationStep = async () => {
-  await clickNext(); // Registration
   await clickRegisterLater();
-  await goToStep(/File system configuration/);
+  await goToStep(/Advanced settings/);
 };
 
 const clickManuallyConfigurePartitions = async () => {
@@ -70,7 +70,10 @@ const customizePartition = async () => {
 };
 
 const getRow = async (row: number) => {
-  const rows = await screen.findAllByRole('row');
+  const partitionsTable = await screen.findByRole('grid', {
+    name: /file system table/i,
+  });
+  const rows = await within(partitionsTable).findAllByRole('row');
   return rows[row];
 };
 
@@ -121,9 +124,9 @@ describe('Step File system configuration', () => {
     await renderCreateMode();
     await selectGuestImage();
     await goToFileSystemConfigurationStep();
-    await clickReviewAndFinish();
+    await clickReviewImage();
     await screen.findByRole('heading', {
-      name: /Review/i,
+      name: /Review image configuration/i,
     });
   });
 
@@ -137,15 +140,18 @@ describe('Step File system configuration', () => {
     await addPartition();
 
     // Create a duplicate mount point so the step is invalid
-    const rows = await screen.findAllByRole('row');
+    const partitionsTable = await screen.findByRole('grid', {
+      name: /file system table/i,
+    });
+    const rows = await within(partitionsTable).findAllByRole('row');
     rows.shift();
     const thirdRowMountPoint = await within(rows[2]).findByDisplayValue('/var');
     await waitFor(() => user.clear(thirdRowMountPoint));
     await waitFor(() => user.type(thirdRowMountPoint, '/home'));
 
-    await clickReviewAndFinish();
+    await clickReviewImage();
     expect(
-      await screen.findByRole('button', { name: /Review and finish/ }),
+      await screen.findByRole('button', { name: /Review image/ }),
     ).toBeDisabled();
   });
 
@@ -159,7 +165,10 @@ describe('Step File system configuration', () => {
     await addPartition();
     await addPartition();
 
-    const rows = await screen.findAllByRole('row');
+    const partitionsTable = await screen.findByRole('grid', {
+      name: /file system table/i,
+    });
+    const rows = await within(partitionsTable).findAllByRole('row');
     rows.shift(); // remove table header
     expect(rows).toHaveLength(3);
 
@@ -192,7 +201,6 @@ describe('Step File system configuration', () => {
   test('file system step is hidden for ISO targets only', async () => {
     await renderCreateMode();
     await selectImageInstaller();
-    await clickNext(); // Registration
     await clickRegisterLater();
     // The file system configuration step should not be visible in the nav
     // when only ISO target is selected, as filesystem customization is not supported
@@ -217,7 +225,7 @@ describe('Step File system configuration', () => {
     await goToFileSystemConfigurationStep();
     await goToReview();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /File system configuration/ });
+    await screen.findByRole('heading', { name: /Advanced settings/ });
   });
 });
 
@@ -229,6 +237,7 @@ describe('File system configuration request generated correctly', () => {
   test('10 GiB / correct', async () => {
     await renderCreateMode();
     await selectGuestImage();
+    await enterBlueprintName();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await goToReview();
@@ -256,6 +265,7 @@ describe('File system configuration request generated correctly', () => {
   test('15 GiB / correct', async () => {
     await renderCreateMode();
     await selectGuestImage();
+    await enterBlueprintName();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionSize();
@@ -281,6 +291,7 @@ describe('File system configuration request generated correctly', () => {
   test('MiB / correct', async () => {
     await renderCreateMode();
     await selectGuestImage();
+    await enterBlueprintName();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToMiB();
@@ -306,6 +317,7 @@ describe('File system configuration request generated correctly', () => {
   test('KiB / correct', async () => {
     await renderCreateMode();
     await selectGuestImage();
+    await enterBlueprintName();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToKiB();
@@ -331,6 +343,7 @@ describe('File system configuration request generated correctly', () => {
   test('/home correct', async () => {
     await renderCreateMode();
     await selectGuestImage();
+    await enterBlueprintName();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();
@@ -360,6 +373,7 @@ describe('File system configuration request generated correctly', () => {
   test('/home/cakerecipes correct', async () => {
     await renderCreateMode();
     await selectGuestImage();
+    await enterBlueprintName();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();

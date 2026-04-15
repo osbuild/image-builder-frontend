@@ -251,8 +251,8 @@ append = "invalid$kernel$argument"
 ports = ["invalid-port"]
 
 [customizations.firewall.services]
-enabled = ["--invalid-enabled-service"]
-disabled = ["--invalid-disabled-service"]
+enabled = ["--invalid-firewall-enabled-service"]
+disabled = ["--invalid-firewall-disabled-service"]
 `;
 
 export const BLUEPRINT_WITH_FILESYSTEM_CUSTOMIZATION = `{

@@ -7,7 +7,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 
-import CreateImageWizard from '../index';
+import CreateImageWizard3 from '../../CreateImageWizard3/CreateImageWizard3';
 
 export const renderWithQueryParams = async (
   queryString: string = '',
@@ -15,17 +15,23 @@ export const renderWithQueryParams = async (
   const store = configureStore({
     reducer: serviceReducer,
     middleware: serviceMiddleware,
+    preloadedState: {
+      wizardModal: {
+        isModalOpen: true,
+        mode: 'create' as const,
+      },
+    },
   });
 
   const routes = [
     {
-      path: 'insights/image-builder/imagewizard',
-      element: <CreateImageWizard />,
+      path: 'insights/image-builder/',
+      element: <CreateImageWizard3 />,
     },
   ];
 
   const router = createMemoryRouter(routes, {
-    initialEntries: [`/insights/image-builder/imagewizard${queryString}`],
+    initialEntries: [`/insights/image-builder${queryString}`],
   });
 
   render(

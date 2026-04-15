@@ -10,26 +10,16 @@ import { awsCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
   clickBack,
-  clickNext,
   clickRegisterLater,
+  clickReviewImage,
+  enterBlueprintName,
   getNextButton,
-  goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   renderCreateMode,
   renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
-
-const goToAwsStep = async () => {
-  await clickNext();
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Register
-  await clickRegisterLater();
-  await goToReview();
-};
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
@@ -46,7 +36,6 @@ const selectAwsTarget = async () => {
     name: /Amazon Web Services/i,
   });
   await waitFor(() => user.click(awsCheckbox));
-  await clickNext();
 };
 
 const deselectAwsAndSelectGuestImage = async () => {
@@ -80,9 +69,7 @@ describe('Step Upload to AWS', () => {
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
     await enterAccountId();
-    await clickNext();
     await screen.findByRole('heading', {
       name: 'Register',
     });
@@ -91,7 +78,6 @@ describe('Step Upload to AWS', () => {
   test('clicking Back loads Image output', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
     await clickBack();
     await screen.findByRole('heading', { name: 'Image output' });
   });
@@ -99,14 +85,12 @@ describe('Step Upload to AWS', () => {
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
     await verifyCancelButton(router);
   });
 
   test('validation works', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
 
     const nextButton = await getNextButton();
     expect(nextButton).toBeDisabled();
@@ -118,11 +102,10 @@ describe('Step Upload to AWS', () => {
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
     await enterAccountId();
-    await goToReviewStep();
+    await clickReviewImage();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Image output/ });
+    await screen.findByRole('heading', { name: /Basic image settings/ });
   });
 });
 
@@ -134,9 +117,10 @@ describe('AWS image type request generated correctly', () => {
   test('using an account id', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
     await enterAccountId();
-    await goToReviewStep();
+    await clickReviewImage();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
@@ -161,11 +145,11 @@ describe('AWS image type request generated correctly', () => {
   test('after selecting and deselecting aws', async () => {
     await renderCreateMode();
     await selectAwsTarget();
-    await goToAwsStep();
     await enterAccountId();
-    await clickBack();
+    await enterBlueprintName();
+    await clickRegisterLater();
     await deselectAwsAndSelectGuestImage();
-    await goToReviewStep();
+    await clickReviewImage();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     await waitFor(() => {

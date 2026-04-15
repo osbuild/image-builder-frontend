@@ -14,11 +14,10 @@ import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { gcpCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
-  clickBack,
-  clickNext,
   clickRegisterLater,
+  clickReviewImage,
+  enterBlueprintName,
   getNextButton,
-  goToReview,
   imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
@@ -30,12 +29,6 @@ import {
 
 const GCP_ACCOUNT = 'test@gmail.com';
 const GCP_DOMAIN = 'example.com';
-
-const goToReviewStep = async () => {
-  await clickNext();
-  await clickRegisterLater();
-  await goToReview();
-};
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
@@ -66,7 +59,6 @@ const clickGCPTarget = async () => {
     name: /Google Cloud/i,
   });
   await waitFor(() => user.click(googleCheckbox));
-  await clickNext();
 };
 
 const deselectGcpAndSelectGuestImage = async () => {
@@ -107,23 +99,6 @@ describe('Step Upload to Google', () => {
   });
 
   const user = userEvent.setup();
-
-  test('clicking Next loads Registration', async () => {
-    await renderCreateMode();
-    await clickGCPTarget();
-    await selectGoogleAccount('Google account');
-    await clickNext();
-    await screen.findByRole('heading', {
-      name: 'Register',
-    });
-  });
-
-  test('clicking Back loads Image output', async () => {
-    await renderCreateMode();
-    await clickGCPTarget();
-    await clickBack();
-    await screen.findByRole('heading', { name: 'Image output' });
-  });
 
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
@@ -170,7 +145,7 @@ describe('Step Upload to Google', () => {
     await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('Google account');
-    await goToReviewStep();
+    await clickReviewImage();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
   });
@@ -185,7 +160,9 @@ describe('GCP image type request generated correctly', () => {
     await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('Google account');
-    await goToReviewStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
+    await clickReviewImage();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -205,7 +182,9 @@ describe('GCP image type request generated correctly', () => {
     await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('Service account');
-    await goToReviewStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
+    await clickReviewImage();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
       share_with_accounts: [`serviceAccount:${GCP_ACCOUNT}`],
@@ -221,7 +200,9 @@ describe('GCP image type request generated correctly', () => {
     await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('Google group');
-    await goToReviewStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
+    await clickReviewImage();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
       share_with_accounts: [`group:${GCP_ACCOUNT}`],
@@ -240,7 +221,9 @@ describe('GCP image type request generated correctly', () => {
       'Google Workspace domain or Cloud Identity domain',
       GCP_DOMAIN,
     );
-    await goToReviewStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
+    await clickReviewImage();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
       share_with_accounts: [`domain:${GCP_DOMAIN}`],
@@ -259,9 +242,10 @@ describe('GCP image type request generated correctly', () => {
       'Google Workspace domain or Cloud Identity domain',
       GCP_DOMAIN,
     );
-    await clickBack();
     await deselectGcpAndSelectGuestImage();
-    await goToReviewStep();
+    await enterBlueprintName();
+    await clickRegisterLater();
+    await clickReviewImage();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     await waitFor(() => {
