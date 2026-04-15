@@ -122,10 +122,9 @@ const TargetEnvironment = () => {
   }, []);
 
   useEffect(() => {
-    const registrationType = restrictions.registration.shouldHide
-      ? 'register-later'
-      : 'register-now-rhc';
-    dispatch(changeRegistrationType(registrationType));
+    if (restrictions.registration.shouldHide) {
+      dispatch(changeRegistrationType('register-later'));
+    }
   }, [restrictions.registration.shouldHide, dispatch]);
 
   const isOnlyNetworkInstallerSelected =
