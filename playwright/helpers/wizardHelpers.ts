@@ -21,8 +21,16 @@ export const createBlueprint = async (
   blueprintName: string,
 ) => {
   await page.getByRole('button', { name: 'Create blueprint' }).click();
-  await page.getByRole('button', { name: 'Close' }).first().click();
-  await page.getByRole('button', { name: 'Create blueprint' }).click();
+
+  // An informational modal may appear on first create if localStorage
+  // does not have 'imageBuilder.saveAndBuildModalSeen'. Dismiss it and
+  // click the button again.
+  const closeBtn = page.getByTestId('close-button-saveandbuild-modal');
+  if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await closeBtn.click();
+    await page.getByRole('button', { name: 'Create blueprint' }).click();
+  }
+
   const searchInput = page.getByRole('textbox', { name: 'Search input' });
   await expect(searchInput).toBeEditable();
   await searchInput.fill(blueprintName);

@@ -27,6 +27,12 @@ test('Image mode blueprint create, edit, export, import', async ({
   await ensureAuthenticated(page);
   await navigateToLandingPage(page);
 
+  // Mark the "save and build" informational modal as already seen so it
+  // doesn't block the create flow.
+  await page.evaluate(() => {
+    window.localStorage.setItem('imageBuilder.saveAndBuildModalSeen', 'true');
+  });
+
   // Enable preview so the image-mode Unleash flag is active
   const previewToggle = page.locator('#preview-toggle');
   if (!(await previewToggle.isChecked())) {
