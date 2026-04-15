@@ -258,13 +258,23 @@ const CreateImageWizard3 = () => {
   ) => {
     const status = (step.id !== activeStep.id && step.status) || 'default';
 
+    const isBaseSettingsStep = step.id === 'base-settings-step';
+    const hasVisitedBaseSettings = _steps.find(
+      (s) => s.id === 'base-settings-step',
+    )?.isVisited;
+    const canNavigate =
+      mode === 'edit' ||
+      step.isVisited ||
+      isBaseSettingsStep ||
+      (hasVisitedBaseSettings && !baseSettingsHasErrors);
+
     return (
       <WizardNavItem
         key={step.id}
         id={step.id}
         content={step.name}
         isCurrent={activeStep.id === step.id}
-        isDisabled={step.isDisabled || (mode !== 'edit' && !step.isVisited)}
+        isDisabled={step.isDisabled || !canNavigate}
         isVisited={step.isVisited || false}
         stepIndex={step.index}
         onClick={() => goToStepByIndex(step.index)}
