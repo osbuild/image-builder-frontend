@@ -66,10 +66,11 @@ test('Image mode blueprint create, edit, export, import', async ({
       name: /Select a bootc image/,
     });
     await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
+    await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
     await imageSourceDropdown.click();
 
     const firstOption = frame.getByRole('option').first();
-    await expect(firstOption).toBeVisible();
+    await expect(firstOption).toBeVisible({ timeout: 10000 });
     await firstOption.click();
 
     await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
@@ -82,7 +83,12 @@ test('Image mode blueprint create, edit, export, import', async ({
   });
 
   await test.step('Create blueprint', async () => {
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    const firstNextButton = frame.getByRole('button', {
+      name: 'Next',
+      exact: true,
+    });
+    await expect(firstNextButton).toBeEnabled({ timeout: 10000 });
+    await firstNextButton.click();
     const nextButton = frame.getByRole('button', { name: 'Next', exact: true });
     await expect(nextButton).toBeEnabled({ timeout: 10000 });
     await nextButton.click();
