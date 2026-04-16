@@ -1,10 +1,12 @@
 import { screen } from '@testing-library/react';
 
-import { createUser, typeWithWait } from '@/test/testUtils';
+import { createUser } from '@/test/testUtils';
 
 import {
   clearKeyboardSearch,
   clearLanguageSearch,
+  clickAddLanguage,
+  removeLanguageAtIndex,
   renderLocaleStep,
   searchForKeyboard,
   searchForLanguage,
@@ -54,11 +56,11 @@ describe('Locale Component', () => {
       ).toBeInTheDocument();
     });
 
-    test('displays dropdowns with helper text', async () => {
+    test('displays add language button and dropdowns', async () => {
       renderLocaleStep();
 
       expect(
-        await screen.findByPlaceholderText(/select a language/i),
+        await screen.findByRole('button', { name: /add language/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: /select a keyboard/i }),
@@ -67,6 +69,22 @@ describe('Locale Component', () => {
         screen.getByText(/Search by country, language or UTF code/i),
       ).toBeInTheDocument();
     });
+
+    test('disables Add language button while new language row is visible', async () => {
+      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
+      const user = createUser();
+
+      const addButton = await screen.findByRole('button', {
+        name: /add language/i,
+      });
+      expect(addButton).toBeEnabled();
+
+      await user.click(addButton);
+      expect(addButton).toBeDisabled();
+
+      await removeLanguageAtIndex(user, 0);
+      expect(addButton).toBeEnabled();
+    });
   });
 
   describe('Language Search', () => {
@@ -74,9 +92,10 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
 
-      const options = await screen.findAllByRole('option');
+      const options = await screen.findAllByRole('menuitem');
       expect(options.length).toBeGreaterThan(0);
       expect(options[0]).toHaveTextContent('Dutch');
     });
@@ -85,9 +104,10 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
 
-      const nlOptions = await screen.findAllByRole('option');
+      const nlOptions = await screen.findAllByRole('menuitem');
       expect(nlOptions[0]).toHaveTextContent('Dutch - Aruba (nl_AW.UTF-8)');
       expect(nlOptions[1]).toHaveTextContent('Dutch - Belgium (nl_BE.UTF-8)');
       expect(nlOptions[2]).toHaveTextContent(
@@ -99,69 +119,61 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'foo');
 
       expect(screen.getByText(/no results found/i)).toBeInTheDocument();
-
-      const option = await screen.findByRole('option', {
-        name: /no results found/i,
-      });
-      expect(option).toBeDisabled();
     });
 
     test('can clear language search', async () => {
       renderLocaleStep();
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
-      await screen.findAllByRole('option');
+      await screen.findAllByRole('menuitem');
 
       await clearLanguageSearch(user);
 
-      const languageInput =
-        await screen.findByPlaceholderText(/select a language/i);
-      expect(languageInput).toHaveValue('');
+      expect(screen.getByLabelText(/search by name/i)).toHaveValue('');
     });
   });
 
   describe('Language Selection', () => {
     test('can select a language', async () => {
-      renderLocaleStep();
+      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
       expect(
         screen.getByRole('button', {
-          name: /close dutch - netherlands/i,
+          name: /remove language/i,
         }),
       ).toBeInTheDocument();
     });
 
     test('can select multiple languages', async () => {
-      renderLocaleStep();
+      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'en');
       await selectLanguageOption(
         user,
         'English - United Kingdom (en_GB.UTF-8)',
       );
 
-      expect(
-        screen.getByRole('button', {
-          name: /close dutch - netherlands/i,
-        }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', {
-          name: /close english - united kingdom/i,
-        }),
-      ).toBeInTheDocument();
+      const removeButtons = screen.getAllByRole('button', {
+        name: /remove language/i,
+      });
+      expect(removeButtons).toHaveLength(2);
     });
   });
 
@@ -235,10 +247,14 @@ describe('Locale Component', () => {
       });
 
       expect(
-        screen.getByText('English - United States (en_US.UTF-8)'),
+        screen.getByRole('button', {
+          name: 'English - United States (en_US.UTF-8)',
+        }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText('German - Germany (de_DE.UTF-8)'),
+        screen.getByRole('button', {
+          name: 'German - Germany (de_DE.UTF-8)',
+        }),
       ).toBeInTheDocument();
     });
 
@@ -268,6 +284,7 @@ describe('Locale Component', () => {
 
       expect(store.getState().wizard.locale.languages).toHaveLength(0);
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
@@ -283,9 +300,11 @@ describe('Locale Component', () => {
       });
       const user = createUser();
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
+      await clickAddLanguage(user);
       await searchForLanguage(user, 'en');
       await selectLanguageOption(
         user,
@@ -323,7 +342,7 @@ describe('Locale Component', () => {
       await searchForKeyboard(user, 'us-dvorak{Enter}');
 
       expect(
-        screen.getByPlaceholderText(/select a language/i),
+        screen.getByRole('heading', { name: /Locale/i }),
       ).toBeInTheDocument();
     });
 
@@ -331,14 +350,12 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
-      const languageInput =
-        await screen.findByPlaceholderText(/select a language/i);
-      await typeWithWait(user, languageInput, 'Dutch{Enter}');
+      await clickAddLanguage(user);
+      await searchForLanguage(user, 'Dutch{Enter}');
 
       expect(
-        screen.getByRole('button', { name: /select a keyboard/i }),
+        screen.getByRole('heading', { name: /Locale/i }),
       ).toBeInTheDocument();
-      expect(languageInput).toBeInTheDocument();
     });
   });
 });

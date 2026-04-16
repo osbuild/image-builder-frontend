@@ -1415,6 +1415,19 @@ export const wizardSlice = createSlice({
         }
       }
     },
+    replaceLanguage: (
+      state,
+      action: PayloadAction<{ oldLanguage: string; newLanguage: string }>,
+    ) => {
+      if (state.locale.languages) {
+        const index = state.locale.languages.findIndex(
+          (lang) => lang === action.payload.oldLanguage,
+        );
+        if (index !== -1) {
+          state.locale.languages[index] = action.payload.newLanguage;
+        }
+      }
+    },
     clearLanguages: (state) => {
       state.locale.languages = [];
     },
@@ -1792,6 +1805,7 @@ export const {
   removeUserGroup,
   addLanguage,
   removeLanguage,
+  replaceLanguage,
   clearLanguages,
   changeKeyboard,
   changeBlueprintName,

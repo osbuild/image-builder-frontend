@@ -179,8 +179,12 @@ describe('Import modal', () => {
 
     // Locale
     await screen.findByRole('heading', { name: /Locale/ });
-    await screen.findByText('English - United States (en_US.UTF-8)');
-    await screen.findByText('Japanese - Japan (ja_JP.UTF-8)');
+    await screen.findByRole('button', {
+      name: 'English - United States (en_US.UTF-8)',
+    });
+    await screen.findByRole('button', {
+      name: 'Japanese - Japan (ja_JP.UTF-8)',
+    });
     expect(
       await screen.findByRole('button', { name: 'us' }),
     ).toBeInTheDocument();
@@ -276,7 +280,7 @@ describe('Import modal', () => {
     await waitFor(async () =>
       user.click(
         await screen.findByRole('button', {
-          name: /close invalid-language/i,
+          name: /remove language/i,
         }),
       ),
     );

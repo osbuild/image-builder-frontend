@@ -1,31 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   Button,
   FormGroup,
   HelperText,
   HelperTextItem,
-  Label,
-  LabelGroup,
-  MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectList,
-  SelectOption,
-  TextInputGroup,
-  TextInputGroupMain,
-  TextInputGroupUtilities,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import {
   addLanguage,
   removeLanguage,
+  replaceLanguage,
   selectLanguages,
 } from '@/store/slices/wizard';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import sortfn from '../../../../../Utilities/sortfn';
+import SearchableSelect from '../../../../sharedComponents/SearchableSelect';
 import { useLocaleValidation } from '../../../utilities/useValidation';
 import { languagesList } from '../data/languagesList';
 
@@ -47,9 +38,63 @@ const parseLanguageOption = (language: string) => {
   }
 };
 
+const parsedLanguages: Record<string, string> = Object.fromEntries(
+  languagesList.map((lang) => [lang, parseLanguageOption(lang)]),
+);
+
+type LanguageRowProps = {
+  selectedLanguage?: string;
+  onSelect: (language: string | undefined) => void;
+  onRemove: () => void;
+  existingLanguages: string[];
+};
+
+const LanguageRow = ({
+  selectedLanguage,
+  onSelect,
+  onRemove,
+  existingLanguages,
+}: LanguageRowProps) => {
+  const options = useMemo(
+    () =>
+      Object.entries(parsedLanguages)
+        .filter(
+          ([raw]) =>
+            !existingLanguages.includes(raw) || raw === selectedLanguage,
+        )
+        .map(([raw, parsed]) => ({ value: raw, label: parsed })),
+    [existingLanguages, selectedLanguage],
+  );
+
+  return (
+    <div className='pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-gap-sm pf-v6-u-mb-sm'>
+      <div style={{ width: '50%' }}>
+        <SearchableSelect
+          options={options}
+          selected={selectedLanguage}
+          placeholder='Select a language'
+          onSelect={onSelect}
+          isFullWidth
+        />
+      </div>
+      <Button
+        variant='plain'
+        onClick={onRemove}
+        aria-label={
+          selectedLanguage
+            ? `Remove language ${selectedLanguage}`
+            : 'Remove language'
+        }
+        icon={<MinusCircleIcon />}
+      />
+    </div>
+  );
+};
+
 const LanguagesDropDown = () => {
-  const languages = useAppSelector(selectLanguages);
+  const languages = useAppSelector(selectLanguages) ?? [];
   const dispatch = useAppDispatch();
+  const [showNewRow, setShowNewRow] = useState(false);
 
   const stepValidation = useLocaleValidation();
   const unknownLanguages = stepValidation.errors['unknownLanguages']
@@ -59,169 +104,70 @@ const LanguagesDropDown = () => {
     ? stepValidation.errors['duplicateLanguages'].split(' ')
     : [];
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] = useState<string[]>(languagesList);
-
-  type ParsedLanguages = { [key: string]: string };
-
-  const parsedLanguages = languagesList.reduce((acc, language) => {
-    acc[language] = parseLanguageOption(language);
-    return acc;
-  }, {} as ParsedLanguages);
-
-  useEffect(() => {
-    let filteredLanguages = Object.entries(parsedLanguages);
-
-    if (filterValue) {
-      filteredLanguages = filteredLanguages.filter(([, parsed]) =>
-        String(parsed).toLowerCase().includes(filterValue.toLowerCase()),
-      );
-      if (!isOpen) {
-        setIsOpen(true);
-      }
-    }
-    setSelectOptions(
-      filteredLanguages
-        .sort((a, b) => sortfn(a[1], b[1], filterValue))
-        .map(([raw]) => raw),
-    );
-
-    // This useEffect hook should run *only* on when the filter value changes.
-    // eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue]);
-
-  const onInputClick = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-    } else if (!inputValue) {
-      setIsOpen(false);
+  const handleSelectNewLanguage = (language: string | undefined) => {
+    if (language) {
+      dispatch(addLanguage(language));
+      setShowNewRow(false);
     }
   };
 
-  const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
-    if (value && typeof value === 'string') {
-      setInputValue('');
-      setFilterValue('');
-      if (languages?.includes(value)) {
-        dispatch(removeLanguage(value));
-      } else {
-        dispatch(addLanguage(value));
-      }
-      setIsOpen(false);
+  const handleChangeLanguage = (
+    oldLang: string,
+    newLang: string | undefined,
+  ) => {
+    if (newLang) {
+      dispatch(replaceLanguage({ oldLanguage: oldLang, newLanguage: newLang }));
     }
   };
 
-  const onTextInputChange = (_event: React.FormEvent, value: string) => {
-    setInputValue(value);
-    setFilterValue(value);
+  const handleRemoveLanguage = (language: string) => {
+    dispatch(removeLanguage(language));
   };
-
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onClearButtonClick = () => {
-    setInputValue('');
-    setFilterValue('');
-  };
-
-  const handleRemoveLang = (_event: React.MouseEvent, value: string) => {
-    dispatch(removeLanguage(value));
-    if (unknownLanguages.length > 0) {
-      unknownLanguages.filter((lang) => lang !== value);
-    }
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      variant='typeahead'
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-    >
-      <TextInputGroup isPlain>
-        <TextInputGroupMain
-          value={inputValue}
-          onClick={onInputClick}
-          onChange={onTextInputChange}
-          autoComplete='off'
-          placeholder='Select a language'
-          isExpanded={isOpen}
-        />
-        {inputValue && (
-          <TextInputGroupUtilities>
-            <Button
-              icon={<TimesIcon />}
-              variant='plain'
-              onClick={onClearButtonClick}
-              aria-label='Clear input'
-            />
-          </TextInputGroupUtilities>
-        )}
-      </TextInputGroup>
-    </MenuToggle>
-  );
 
   return (
-    <FormGroup isRequired={false} label='Languages'>
-      <Select
-        isScrollable
-        isOpen={isOpen}
-        selected={languages}
-        onSelect={onSelect}
-        onOpenChange={(isOpen) => setIsOpen(isOpen)}
-        toggle={toggle}
-        shouldFocusFirstItemOnOpen={false}
-      >
-        <SelectList>
-          {selectOptions.length > 0 ? (
-            selectOptions.map((option) => (
-              <SelectOption key={option} value={option}>
-                {parseLanguageOption(option)}
-              </SelectOption>
-            ))
-          ) : (
-            <SelectOption isDisabled>
-              {`No results found for "${filterValue}"`}
-            </SelectOption>
-          )}
-        </SelectList>
-      </Select>
+    <FormGroup isRequired={false} label='Languages' role='group'>
+      {languages.map((lang) => (
+        <LanguageRow
+          key={lang}
+          selectedLanguage={lang}
+          onSelect={(newLang) => handleChangeLanguage(lang, newLang)}
+          onRemove={() => handleRemoveLanguage(lang)}
+          existingLanguages={languages}
+        />
+      ))}
+      {showNewRow && (
+        <LanguageRow
+          onSelect={handleSelectNewLanguage}
+          onRemove={() => setShowNewRow(false)}
+          existingLanguages={languages}
+        />
+      )}
       <HelperText>
         <HelperTextItem>Search by country, language or UTF code</HelperTextItem>
       </HelperText>
       {unknownLanguages.length > 0 && (
         <HelperText>
-          <HelperTextItem
-            variant={'error'}
-          >{`Unknown languages: ${unknownLanguages.join(
+          <HelperTextItem variant='error'>{`Unknown languages: ${unknownLanguages.join(
             ', ',
           )}`}</HelperTextItem>
         </HelperText>
       )}
       {duplicateLanguages.length > 0 && (
         <HelperText>
-          <HelperTextItem
-            variant={'error'}
-          >{`Duplicated languages: ${duplicateLanguages.join(
+          <HelperTextItem variant='error'>{`Duplicated languages: ${duplicateLanguages.join(
             ', ',
           )}`}</HelperTextItem>
         </HelperText>
       )}
-      <LabelGroup numLabels={5} className='pf-v6-u-mt-sm pf-v6-u-w-100'>
-        {languages?.map((lang) => (
-          <Label
-            key={lang}
-            onClose={(e) => handleRemoveLang(e, lang)}
-            isCompact
-          >
-            {parseLanguageOption(lang)}
-          </Label>
-        ))}
-      </LabelGroup>
+      <Button
+        className='pf-v6-u-text-align-left pf-v6-u-mt-sm'
+        variant='link'
+        icon={<PlusCircleIcon />}
+        onClick={() => setShowNewRow(true)}
+        isDisabled={showNewRow}
+      >
+        Add language
+      </Button>
     </FormGroup>
   );
 };

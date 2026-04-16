@@ -24,20 +24,29 @@ type SearchableSelectProps = {
   options: SearchableSelectOption[];
   selected?: string | undefined;
   placeholder?: string | undefined;
+  searchPlaceholder?: string | undefined;
   onSelect: (value: string | undefined) => void;
+  isFullWidth?: boolean;
 };
 
 const SearchableSelect = ({
   options,
   selected,
   placeholder = 'Select an option',
+  searchPlaceholder = 'Search by name',
   onSelect,
+  isFullWidth = false,
 }: SearchableSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const selectedLabel = useMemo(
+    () => options.find((opt) => opt.value === selected)?.label,
+    [options, selected],
+  );
 
   const filteredOptions = useMemo(() => {
     if (!searchValue) {
@@ -67,8 +76,23 @@ const SearchableSelect = ({
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
+      {...(isFullWidth && {
+        isFullWidth,
+        style: { width: '100%', minWidth: '100%' },
+      })}
     >
-      {selected || placeholder}
+      <span
+        style={{
+          display: 'block',
+          width: '100%',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+        title={selectedLabel || selected || undefined}
+      >
+        {selectedLabel || selected || placeholder}
+      </span>
     </MenuToggle>
   );
 
@@ -83,8 +107,8 @@ const SearchableSelect = ({
         <MenuSearchInput>
           <SearchInput
             value={searchValue}
-            aria-label='Search by name'
-            placeholder='Search by name'
+            aria-label={searchPlaceholder}
+            placeholder={searchPlaceholder}
             onChange={(_event, value) => setSearchValue(value)}
             onClear={(event) => {
               event.stopPropagation();
