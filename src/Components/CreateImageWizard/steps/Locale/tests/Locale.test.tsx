@@ -61,7 +61,7 @@ describe('Locale Component', () => {
         await screen.findByPlaceholderText(/select a language/i),
       ).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText(/select a keyboard/i),
+        screen.getByRole('button', { name: /select a keyboard/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Search by country, language or UTF code/i),
@@ -172,7 +172,7 @@ describe('Locale Component', () => {
 
       await searchForKeyboard(user, 'us');
 
-      const options = await screen.findAllByRole('option');
+      const options = await screen.findAllByRole('menuitem');
       expect(options.length).toBeGreaterThan(0);
       expect(options[0]).toHaveTextContent('us');
     });
@@ -183,7 +183,7 @@ describe('Locale Component', () => {
 
       await searchForKeyboard(user, 'us');
 
-      const options = await screen.findAllByRole('option');
+      const options = await screen.findAllByRole('menuitem');
       expect(options[0]).toHaveTextContent('us');
       expect(options[1]).toHaveTextContent('us-acentos');
       expect(options[2]).toHaveTextContent('us-alt-intl');
@@ -196,11 +196,6 @@ describe('Locale Component', () => {
       await searchForKeyboard(user, 'foo');
 
       expect(screen.getByText(/no results found/i)).toBeInTheDocument();
-
-      const option = await screen.findByRole('option', {
-        name: /no results found/i,
-      });
-      expect(option).toBeDisabled();
     });
 
     test('can clear keyboard search', async () => {
@@ -208,13 +203,11 @@ describe('Locale Component', () => {
       const user = createUser();
 
       await searchForKeyboard(user, 'us');
-      await screen.findAllByRole('option');
+      await screen.findAllByRole('menuitem');
 
       await clearKeyboardSearch(user);
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardInput).toHaveValue('');
+      expect(screen.getByLabelText(/search by name/i)).toHaveValue('');
     });
   });
 
@@ -226,9 +219,9 @@ describe('Locale Component', () => {
       await searchForKeyboard(user, 'us');
       await selectKeyboardOption(user, 'us');
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardInput).toHaveValue('us');
+      expect(
+        await screen.findByRole('button', { name: 'us' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -257,9 +250,9 @@ describe('Locale Component', () => {
         },
       });
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      expect(keyboardInput).toHaveValue('de');
+      expect(
+        await screen.findByRole('button', { name: 'de' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -327,14 +320,11 @@ describe('Locale Component', () => {
       renderLocaleStep();
       const user = createUser();
 
-      const keyboardInput =
-        await screen.findByPlaceholderText(/select a keyboard/i);
-      await typeWithWait(user, keyboardInput, 'us-dvorak{Enter}');
+      await searchForKeyboard(user, 'us-dvorak{Enter}');
 
       expect(
         screen.getByPlaceholderText(/select a language/i),
       ).toBeInTheDocument();
-      expect(keyboardInput).toBeInTheDocument();
     });
 
     test('pressing Enter in language search does not trigger page reload', async () => {
@@ -346,7 +336,7 @@ describe('Locale Component', () => {
       await typeWithWait(user, languageInput, 'Dutch{Enter}');
 
       expect(
-        screen.getByPlaceholderText(/select a keyboard/i),
+        screen.getByRole('button', { name: /select a keyboard/i }),
       ).toBeInTheDocument();
       expect(languageInput).toBeInTheDocument();
     });

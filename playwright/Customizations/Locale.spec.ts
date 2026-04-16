@@ -101,9 +101,14 @@ test('Create a blueprint with Locale customization', async ({
     ).toBeAttached();
     await frame.getByPlaceholder('Select a language').fill('xxx');
     await expect(frame.getByText('No results found for')).toBeAttached();
-    await frame.getByRole('button', { name: 'Menu toggle' }).nth(1).click();
-    await frame.getByPlaceholder('Select a keyboard').fill('ami');
-    await frame.getByRole('option', { name: 'amiga-de' }).click();
+    const keyboardGroup = frame.getByRole('group', { name: 'Keyboard' });
+    await keyboardGroup
+      .getByRole('button', { name: 'Select a keyboard' })
+      .click();
+    const kbSearch = frame.getByPlaceholder('Search by name').last();
+    await kbSearch.click();
+    await kbSearch.fill('ami');
+    await frame.getByRole('menuitem', { name: 'amiga-de' }).click();
     // Wait for the loading spinner to disappear after language/keyboard changes
     await frame
       .getByText('Resolving packages for your preferred locale…')
@@ -153,6 +158,7 @@ test('Create a blueprint with Locale customization', async ({
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Locale' }).click();
+    const keyboardGroup = frame.getByRole('group', { name: 'Keyboard' });
     await expect(
       frame.getByText('English - United States (en_US.UTF-8)'),
     ).toBeVisible();
@@ -171,8 +177,8 @@ test('Create a blueprint with Locale customization', async ({
     await expect(
       frame.getByText('English - United Kingdom (en_GB.UTF-8)'),
     ).toBeVisible();
-    await frame.getByRole('button', { name: 'Menu toggle' }).nth(1).click();
-    await frame.getByRole('option', { name: 'ANSI-dvorak' }).click();
+    await keyboardGroup.getByRole('button', { name: 'amiga-de' }).click();
+    await frame.getByRole('menuitem', { name: 'ANSI-dvorak' }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
@@ -203,6 +209,7 @@ test('Create a blueprint with Locale customization', async ({
   await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Locale' }).click();
+    const keyboardGroup = frame.getByRole('group', { name: 'Keyboard' });
     await expect(
       frame.getByText('English - United States (en_US.UTF-8)'),
     ).toBeVisible();
@@ -215,9 +222,9 @@ test('Create a blueprint with Locale customization', async ({
     await expect(
       frame.getByText('Russian - Russia (ru_RU.UTF-8)'),
     ).toBeVisible();
-    await expect(frame.getByPlaceholder('Select a keyboard')).toHaveValue(
-      'ANSI-dvorak',
-    );
+    await expect(
+      keyboardGroup.getByRole('button', { name: 'ANSI-dvorak' }),
+    ).toBeVisible();
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

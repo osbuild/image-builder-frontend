@@ -181,9 +181,9 @@ describe('Import modal', () => {
     await screen.findByRole('heading', { name: /Locale/ });
     await screen.findByText('English - United States (en_US.UTF-8)');
     await screen.findByText('Japanese - Japan (ja_JP.UTF-8)');
-    const keyboardInput =
-      await screen.findByPlaceholderText(/select a keyboard/i);
-    expect(keyboardInput).toHaveValue('us');
+    expect(
+      await screen.findByRole('button', { name: 'us' }),
+    ).toBeInTheDocument();
 
     // Hostname
     const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
@@ -280,13 +280,14 @@ describe('Import modal', () => {
         }),
       ),
     );
-    await waitFor(async () =>
-      user.click(
-        await screen.findByRole('button', {
-          name: /clear input/i,
-        }),
-      ),
-    );
+    const keyboardToggle = await screen.findByRole('button', {
+      name: 'invalid-keyboard',
+    });
+    await waitFor(() => user.click(keyboardToggle));
+    const keyboardSearch = await screen.findByLabelText(/search by name/i);
+    await waitFor(() => user.type(keyboardSearch, 'us'));
+    const keyboardOption = await screen.findByRole('menuitem', { name: 'us' });
+    await waitFor(() => user.click(keyboardOption));
 
     // Hostname
     expect(await screen.findByText(/Invalid hostname/)).toBeInTheDocument();

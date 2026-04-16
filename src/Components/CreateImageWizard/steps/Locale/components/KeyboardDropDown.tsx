@@ -1,25 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import {
-  Button,
-  FormGroup,
-  HelperText,
-  HelperTextItem,
-  MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectList,
-  SelectOption,
-  TextInputGroup,
-  TextInputGroupMain,
-  TextInputGroupUtilities,
-} from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
+import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
 import { changeKeyboard, selectKeyboard } from '@/store/slices/wizard';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import sortfn from '../../../../../Utilities/sortfn';
+import SearchableSelect from '../../../../sharedComponents/SearchableSelect';
 import { useLocaleValidation } from '../../../utilities/useValidation';
 import { keyboardsList } from '../data/keyboardsList';
 
@@ -30,125 +16,25 @@ const KeyboardDropDown = () => {
   const stepValidation = useLocaleValidation();
 
   const [errorText, setErrorText] = useState(stepValidation.errors['keyboard']);
-  const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] = useState<string[]>(keyboardsList);
 
-  useEffect(() => {
-    let filteredKeyboards = keyboardsList;
-
-    if (filterValue) {
-      filteredKeyboards = keyboardsList.filter((keyboard: string) =>
-        String(keyboard).toLowerCase().includes(filterValue.toLowerCase()),
-      );
-      if (!isOpen) {
-        setIsOpen(true);
-      }
-    }
-    setSelectOptions(
-      filteredKeyboards.sort((a, b) => sortfn(a, b, filterValue)),
-    );
-
-    // This useEffect hook should run *only* on when the filter value changes.
-    // eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue]);
-
-  const onInputClick = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-    } else if (!inputValue) {
-      setIsOpen(false);
-    }
-  };
-
-  const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
-    if (value && typeof value === 'string') {
-      setInputValue(value);
-      setFilterValue('');
-      setErrorText('');
-      dispatch(changeKeyboard(value));
-      setIsOpen(false);
-    }
-  };
-
-  const onTextInputChange = (_event: React.FormEvent, value: string) => {
-    setInputValue(value);
-    setFilterValue(value);
-
-    if (value !== keyboard) {
-      dispatch(changeKeyboard(''));
-    }
-  };
-
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onClearButtonClick = () => {
-    setInputValue('');
-    setFilterValue('');
-    setErrorText('');
-    dispatch(changeKeyboard(''));
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      variant='typeahead'
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-    >
-      <TextInputGroup isPlain>
-        <TextInputGroupMain
-          value={keyboard ? keyboard : inputValue}
-          onClick={onInputClick}
-          onChange={onTextInputChange}
-          autoComplete='off'
-          placeholder='Select a keyboard'
-          isExpanded={isOpen}
-        />
-
-        {keyboard && (
-          <TextInputGroupUtilities>
-            <Button
-              icon={<TimesIcon />}
-              variant='plain'
-              onClick={onClearButtonClick}
-              aria-label='Clear input'
-            />
-          </TextInputGroupUtilities>
-        )}
-      </TextInputGroup>
-    </MenuToggle>
+  const options = useMemo(
+    () => keyboardsList.map((kb) => ({ value: kb, label: kb })),
+    [],
   );
 
+  const handleSelect = (value: string | undefined) => {
+    dispatch(changeKeyboard(value ?? ''));
+    setErrorText('');
+  };
+
   return (
-    <FormGroup isRequired={false} label='Keyboard'>
-      <Select
-        isScrollable
-        isOpen={isOpen}
+    <FormGroup isRequired={false} label='Keyboard' role='group'>
+      <SearchableSelect
+        options={options}
         selected={keyboard}
-        onSelect={onSelect}
-        onOpenChange={(isOpen) => setIsOpen(isOpen)}
-        toggle={toggle}
-        shouldFocusFirstItemOnOpen={false}
-      >
-        <SelectList>
-          {selectOptions.length > 0 ? (
-            selectOptions.map((option) => (
-              <SelectOption key={option} value={option}>
-                {option}
-              </SelectOption>
-            ))
-          ) : (
-            <SelectOption isDisabled>
-              {`No results found for "${filterValue}"`}
-            </SelectOption>
-          )}
-        </SelectList>
-      </Select>
+        placeholder='Select a keyboard'
+        onSelect={handleSelect}
+      />
       {errorText && (
         <HelperText>
           <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
