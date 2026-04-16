@@ -683,29 +683,29 @@ const getMetadata = (metadata: BlueprintMetadata) => {
 /**
  * Maps a BlueprintExportResponse to the wizard state, used to populate the wizard when importing a blueprint.
  */
-export const mapExportRequestToState = (
-  request: BlueprintExportResponse,
+export const mapBlueprintExportToState = (
+  blueprint: BlueprintExportResponse,
   image_requests: ImageRequest[],
 ): wizardState => {
   const wizardMode = 'create';
   const blueprintResponse: CreateBlueprintRequest = {
-    name: request.name,
-    description: request.description,
-    distribution: request.distribution,
-    customizations: request.customizations,
+    name: blueprint.name,
+    description: blueprint.description,
+    distribution: blueprint.distribution,
+    customizations: blueprint.customizations,
     image_requests: image_requests,
-    bootc: request.bootc,
+    bootc: blueprint.bootc,
   };
 
   const commonState = commonRequestToState(blueprintResponse);
 
   let { snapshotting } = commonState;
-  if (request.snapshot_date && !commonState.snapshotting.snapshotDate) {
+  if (blueprint.snapshot_date && !commonState.snapshotting.snapshotDate) {
     let normalizedDate = '';
-    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(request.snapshot_date)) {
-      normalizedDate = request.snapshot_date;
-    } else if (/^\d{4}-\d{2}-\d{2}$/.test(request.snapshot_date)) {
-      normalizedDate = request.snapshot_date + 'T00:00:00Z';
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(blueprint.snapshot_date)) {
+      normalizedDate = blueprint.snapshot_date;
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(blueprint.snapshot_date)) {
+      normalizedDate = blueprint.snapshot_date + 'T00:00:00Z';
     }
     if (normalizedDate) {
       snapshotting = {
@@ -720,23 +720,22 @@ export const mapExportRequestToState = (
   return {
     wizardMode,
     blueprintMode:
-      isImageModeDistribution(request.distribution) || request.bootc
+      isImageModeDistribution(blueprint.distribution) || blueprint.bootc
         ? 'image'
         : 'package',
     bootcDistributions: [],
-    metadata: getMetadata(request.metadata),
+    metadata: getMetadata(blueprint.metadata),
     env: initialState.env,
     registration: initialState.registration,
     aapRegistration: {
-      enabled: request.customizations.aap_registration !== undefined,
+      enabled: blueprint.customizations.aap_registration !== undefined,
       callbackUrl:
-        request.customizations.aap_registration?.ansible_callback_url,
-      hostConfigKey:
-        request.customizations.aap_registration?.host_config_key,
+        blueprint.customizations.aap_registration?.ansible_callback_url,
+      hostConfigKey: blueprint.customizations.aap_registration?.host_config_key,
       tlsCertificateAuthority:
-        request.customizations.aap_registration?.tls_certificate_authority,
+        blueprint.customizations.aap_registration?.tls_certificate_authority,
       skipTlsVerification:
-        request.customizations.aap_registration?.skip_tls_verification,
+        blueprint.customizations.aap_registration?.skip_tls_verification,
     },
     ...commonState,
     snapshotting,

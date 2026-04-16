@@ -43,7 +43,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import {
-  mapExportRequestToState,
+  mapBlueprintExportToState,
   mapToCustomRepositories,
 } from '../CreateImageWizard/utilities/requestMapper';
 
@@ -147,7 +147,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
             const blueprintFromFile = await mapOnPremToHosted(
               tomlBlueprint as BlueprintItem,
             );
-            const importBlueprintState = mapExportRequestToState(
+            const importBlueprintState = mapBlueprintExportToState(
               blueprintFromFile,
               [],
             );
@@ -190,7 +190,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 customRepos;
               blueprintExportedResponse.customizations.payload_repositories =
                 undefined;
-              const importBlueprintState = mapExportRequestToState(
+              const importBlueprintState = mapBlueprintExportToState(
                 blueprintExportedResponse,
                 blueprintFromFile.image_requests || [],
               );
@@ -210,7 +210,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               }
               const blueprintFromFileMapped =
                 await mapOnPremToHosted(blueprintFromFile);
-              const importBlueprintState = mapExportRequestToState(
+              const importBlueprintState = mapBlueprintExportToState(
                 blueprintFromFileMapped,
                 [],
               );
