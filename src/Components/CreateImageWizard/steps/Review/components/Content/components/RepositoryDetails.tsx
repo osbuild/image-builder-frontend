@@ -42,7 +42,7 @@ export const RepositoryDetails = ({ shouldHide }: Hideable) => {
     <ReviewGroup
       heading='Repositories'
       description={
-        <LabelGroup>
+        <LabelGroup aria-label='Custom repositories'>
           {validRepos.map((uuid, index) => (
             <RepositoryLabel
               key={`repo-review-${index}`}

@@ -25,7 +25,11 @@ export const Timezone = ({ shouldHide }: Hideable) => {
         <ReviewGroup
           heading='NTP servers'
           description={
-            <LabelMapper id='ntp-server-review' items={ntpServers} />
+            <LabelMapper
+              id='ntp-server-review'
+              ariaLabel='NTP servers'
+              items={ntpServers}
+            />
           }
           className='pf-v6-u-mb-md'
         />

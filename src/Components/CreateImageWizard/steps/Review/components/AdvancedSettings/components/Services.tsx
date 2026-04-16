@@ -49,6 +49,7 @@ export const Services = ({
         description={
           <LabelMapper
             id='enabled-service-review'
+            ariaLabel='Enabled services'
             emptyMessage='No services selected'
             items={enabled}
             oscapItems={oscapServices.enabled}
@@ -60,6 +61,7 @@ export const Services = ({
         description={
           <LabelMapper
             id='disabled-service-review'
+            ariaLabel='Disabled services'
             emptyMessage='No services selected'
             items={disabled}
             oscapItems={oscapServices.disabled}
@@ -71,6 +73,7 @@ export const Services = ({
         description={
           <LabelMapper
             id='masked-service-review'
+            ariaLabel='Masked services'
             emptyMessage='No services selected'
             items={masked}
             oscapItems={oscapServices.masked}

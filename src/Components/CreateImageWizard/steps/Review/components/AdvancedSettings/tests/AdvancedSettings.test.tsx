@@ -403,6 +403,9 @@ describe('AdvancedSettingsOverview', () => {
       );
 
       expect(screen.getByText('Args')).toBeInTheDocument();
+      expect(
+        screen.getByRole('list', { name: 'Kernel arguments' }),
+      ).toBeInTheDocument();
       expect(screen.getByText('quiet')).toBeInTheDocument();
       expect(screen.getByText('splash')).toBeInTheDocument();
       expect(screen.getByText('rhgb')).toBeInTheDocument();
@@ -540,6 +543,9 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
+      expect(
+        screen.getByRole('list', { name: 'Enabled services' }),
+      ).toBeInTheDocument();
       expect(screen.getByText('httpd')).toBeInTheDocument();
       expect(screen.getByText('sshd')).toBeInTheDocument();
     });

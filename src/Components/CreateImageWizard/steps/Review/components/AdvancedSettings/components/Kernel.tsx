@@ -38,6 +38,7 @@ export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
           description={
             <LabelMapper
               id='kernel-append-review'
+              ariaLabel='Kernel arguments'
               emptyMessage='No kernel args selected'
               items={args}
               oscapItems={oscapKernelArgs}

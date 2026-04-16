@@ -19,6 +19,7 @@ export const PackageGroupDetails = ({ shouldHide }: Hideable) => {
       description={
         <LabelMapper
           id='package-group-review'
+          ariaLabel='Package groups'
           emptyMessage='No groups selected'
           items={groups.map((group) => group.name)}
         />

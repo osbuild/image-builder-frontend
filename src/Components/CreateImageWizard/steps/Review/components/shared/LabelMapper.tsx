@@ -4,6 +4,7 @@ import { Label, LabelGroup } from '@patternfly/react-core';
 
 type LabelMapperProps = {
   id: string;
+  ariaLabel: string;
   emptyMessage?: string | undefined;
   items: string[];
   oscapItems?: string[] | undefined;
@@ -12,6 +13,7 @@ type LabelMapperProps = {
 
 export const LabelMapper = ({
   id,
+  ariaLabel,
   emptyMessage,
   items,
   oscapItems: oscap = [],
@@ -21,7 +23,7 @@ export const LabelMapper = ({
   const oscapSet = new Set(oscap);
 
   return (
-    <LabelGroup numLabels={numLabels}>
+    <LabelGroup numLabels={numLabels} aria-label={ariaLabel}>
       {items.map((item, index) => (
         <Label
           color={oscapSet.has(item) ? 'grey' : 'blue'}

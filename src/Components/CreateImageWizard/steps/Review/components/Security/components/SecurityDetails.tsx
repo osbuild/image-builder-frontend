@@ -38,7 +38,7 @@ export const SecurityDetails = ({
         <ReviewGroup
           heading='Added items'
           description={
-            <LabelGroup>
+            <LabelGroup aria-label='Compliance added items'>
               {packages.length > 0 && <Label>{packages.length} packages</Label>}
               {services.total > 0 && <Label>{services.total} services</Label>}
             </LabelGroup>

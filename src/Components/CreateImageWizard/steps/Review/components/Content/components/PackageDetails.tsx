@@ -36,6 +36,7 @@ export const PackageDetails = ({
       description={
         <LabelMapper
           id='package-review'
+          ariaLabel='Packages'
           emptyMessage='No packages selected'
           items={pkgs}
           oscapItems={oscapPackages}
