@@ -66,7 +66,6 @@ import {
 } from '../steps/FileSystem/fscTypes';
 import { keyboardsList } from '../steps/Locale/data/keyboardsList';
 import { languagesList } from '../steps/Locale/data/languagesList';
-import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText';
 import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
@@ -93,6 +92,13 @@ import {
   isValidUrl,
   validateMultipleCertificates,
 } from '../validators';
+
+type HelperTextVariant =
+  | 'default'
+  | 'indeterminate'
+  | 'warning'
+  | 'success'
+  | 'error';
 
 export type StepValidation = {
   errors: {
