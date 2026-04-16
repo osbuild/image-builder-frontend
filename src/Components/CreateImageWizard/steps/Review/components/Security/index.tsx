@@ -36,7 +36,9 @@ const Security = ({ restrictions, security }: SecurityCardProps) => {
           isOnPremise ? 'Security configuration' : 'Compliance configuration'
         }
         stepId={
-          isWizardRevampEnabled ? 'content-step' : 'wizard-repository-snapshot'
+          isWizardRevampEnabled
+            ? 'base-settings-step'
+            : 'wizard-repository-snapshot'
         }
       />
       <CardBody>

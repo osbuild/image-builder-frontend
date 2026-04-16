@@ -400,7 +400,7 @@ const CreateImageWizard3 = () => {
         </WizardStep>
         <WizardStep
           name='Advanced settings'
-          id='advance-settings-step'
+          id='advanced-settings-step'
           navItem={CustomStatusNavItem}
           status={advancedSettingsHasErrors ? 'error' : 'default'}
           isHidden={
