@@ -71,7 +71,10 @@ export const isCustomizationSupported = (
   }
 
   // only rhel distros support registration
-  if (!ctx.isRhel && customization === 'registration') {
+  if (
+    !ctx.isRhel &&
+    (customization === 'registration' || customization === 'aap')
+  ) {
     return false;
   }
 

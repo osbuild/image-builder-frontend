@@ -400,6 +400,28 @@ describe('isCustomizationSupported', () => {
       ).toBe(false);
     });
 
+    it('should hide aap for non-RHEL distributions', () => {
+      const nonRhelCtx: SupportContext = {
+        isImageMode: false,
+        isOnPremise: false,
+        isRhel: false,
+      };
+
+      expect(isCustomizationSupported('aap', undefined, nonRhelCtx)).toBe(
+        false,
+      );
+    });
+
+    it('should allow aap for RHEL distributions', () => {
+      const rhelCtx: SupportContext = {
+        isImageMode: false,
+        isOnPremise: false,
+        isRhel: true,
+      };
+
+      expect(isCustomizationSupported('aap', undefined, rhelCtx)).toBe(true);
+    });
+
     it('should allow registration for RHEL distributions', () => {
       const rhelCtx: SupportContext = {
         isImageMode: false,
