@@ -20,11 +20,13 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/components/Repositories';
+import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '@/constants';
 import { useRecommendPackageMutation } from '@/store/api/backend';
 import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
 } from '@/store/api/contentSources';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   addPackage,
@@ -32,11 +34,8 @@ import {
   selectDistribution,
   selectPackages,
 } from '@/store/slices/wizard';
-
-import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
-import useDebounce from '../../../../../Utilities/useDebounce';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
+import useDebounce from '@/Utilities/useDebounce';
 
 const PackageRecommendations = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);

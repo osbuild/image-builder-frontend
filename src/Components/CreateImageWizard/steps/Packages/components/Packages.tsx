@@ -12,19 +12,16 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 
+import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '@/constants';
 import { useListRepositoriesQuery } from '@/store/api/contentSources';
+import { useAppSelector } from '@/store/hooks';
 import { selectDistribution } from '@/store/slices/wizard';
+import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
 import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
 import RepositoryModal from './RepositoryModal';
 
-import {
-  ContentOrigin,
-  EPEL_10_REPO_DEFINITION,
-} from '../../../../../constants';
-import { useAppSelector } from '../../../../../store/hooks';
-import { getEpelUrlForDistribution } from '../../../../../Utilities/epel';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,

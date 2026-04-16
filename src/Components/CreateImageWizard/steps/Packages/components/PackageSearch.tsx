@@ -52,11 +52,11 @@ import {
   selectTemplate,
   selectWizardMode,
 } from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
+import { convertStringToDate } from '@/Utilities/time';
+import useDebounce from '@/Utilities/useDebounce';
 
-import { asDistribution } from '../../../../../store/typeGuards';
-import { convertStringToDate } from '../../../../../Utilities/time';
-import useDebounce from '../../../../../Utilities/useDebounce';
 import ManageRepositoriesButton from '../../Repositories/components/ManageRepositoriesButton';
 import {
   GroupWithRepositoryInfo,

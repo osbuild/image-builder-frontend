@@ -13,6 +13,7 @@ import {
 import { orderBy } from 'lodash';
 
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   removeModule,
   removePackage,
@@ -27,7 +28,6 @@ import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,

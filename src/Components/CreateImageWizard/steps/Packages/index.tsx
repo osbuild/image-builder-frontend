@@ -3,21 +3,20 @@ import React from 'react';
 import { Content, Form, Label, Title } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   selectComplianceProfileID,
   selectDistribution,
 } from '@/store/slices/wizard';
 import { asDistribution } from '@/store/typeGuards';
+import isRhel from '@/Utilities/isRhel';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import PackageRecommendations from './components/PackageRecommendations';
 import Packages from './components/Packages';
-
-import { useAppSelector } from '../../../../store/hooks';
-import isRhel from '../../../../Utilities/isRhel';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const PackagesStep = () => {
   const distribution = useAppSelector(selectDistribution);

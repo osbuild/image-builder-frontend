@@ -10,24 +10,24 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '@/constants';
 import {
   ApiRepositoryCollectionResponseRead,
   ApiRepositoryResponseRead,
   useCreateRepositoryMutation,
 } from '@/store/api/contentSources';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addPackage,
   addPackageGroup,
   addRecommendedRepository,
   selectDistribution,
 } from '@/store/slices/wizard';
-
-import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   getEpelDefinitionForDistribution,
   getEpelVersionForDistribution,
-} from '../../../../../Utilities/epel';
+} from '@/Utilities/epel';
+
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
