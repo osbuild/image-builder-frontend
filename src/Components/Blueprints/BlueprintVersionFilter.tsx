@@ -12,7 +12,7 @@ import { FilterIcon } from '@patternfly/react-icons';
 import {
   selectBlueprintVersionFilter,
   setBlueprintVersionFilter,
-  versionFilterType,
+  VersionFilterType,
 } from '@/store/slices/blueprint';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -38,7 +38,7 @@ const BlueprintVersionFilter: React.FC<blueprintVersionFilterProps> = ({
   ) => {
     if (value === undefined) return;
 
-    const typedValue = value as versionFilterType;
+    const typedValue = value as VersionFilterType;
     dispatch(setBlueprintVersionFilter(typedValue));
     if (onFilterChange) onFilterChange();
     setIsOpen(false);
