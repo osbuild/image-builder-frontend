@@ -161,6 +161,9 @@ const Packages = () => {
         }
       })();
     }
+    // fetchRecommendedPackages, analytics, and isBeta are unstable dependencies
+    // that were causing an infinite loop when included in the dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packages, distribution, isOnPremise]);
 
   useEffect(() => {

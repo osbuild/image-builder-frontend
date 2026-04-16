@@ -522,11 +522,7 @@ const PackageSearch = ({
   ]);
 
   const transformedRecommendations = useMemo(() => {
-    if (
-      packageType === 'groups' ||
-      !recommendations.length ||
-      !debouncedSearchTerm
-    ) {
+    if (packageType === 'groups' || !recommendations.length) {
       return [];
     }
 
@@ -538,9 +534,13 @@ const PackageSearch = ({
         isRecommendation: true,
       }),
     );
-  }, [recommendations, packageType, debouncedSearchTerm]);
+  }, [recommendations, packageType]);
 
   const sortedPackages = useMemo(() => {
+    if (!debouncedSearchTerm) {
+      return isLoadingRecommendations ? [] : transformedRecommendations;
+    }
+
     if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
       return isLoadingRecommendations ? [] : transformedRecommendations;
     }
@@ -574,6 +574,7 @@ const PackageSearch = ({
 
     return [...regularPackages, ...filteredRecommendations];
   }, [
+    debouncedSearchTerm,
     transformedPackages,
     activeStream,
     transformedRecommendations,
@@ -604,10 +605,6 @@ const PackageSearch = ({
   };
 
   const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
-    if (pkg.isRecommendation) {
-      return pkg.summary;
-    }
-
     const parts = [];
 
     parts.push(pkg.stream || 'N/A');
@@ -636,7 +633,7 @@ const PackageSearch = ({
   const selectedGroupNames = useMemo(() => groups.map((g) => g.name), [groups]);
 
   const onInputClick = () => {
-    if (!isOpen && searchTerm) {
+    if (!isOpen && (searchTerm || transformedRecommendations.length > 0)) {
       setIsOpen(true);
     }
   };
@@ -824,7 +821,7 @@ const PackageSearch = ({
         shouldFocusFirstItemOnOpen={false}
       >
         <SelectList>
-          {!debouncedSearchTerm ? (
+          {!debouncedSearchTerm && sortedPackages.length === 0 ? (
             <SelectOption isDisabled>
               Start typing to search {packageTypeLabel}
             </SelectOption>
