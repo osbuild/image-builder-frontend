@@ -363,7 +363,9 @@ export const ImportBlueprintModal: React.FunctionComponent<
       <ModalFooter>
         <Button
           type='button'
-          isDisabled={isRejected || isInvalidFormat || !fileContent}
+          isDisabled={
+            isRejected || isInvalidFormat || !fileContent || !importedBlueprint
+          }
           onClick={handleReviewAndFinish}
         >
           Review and finish

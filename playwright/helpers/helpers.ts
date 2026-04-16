@@ -24,6 +24,16 @@ export const togglePreview = async (page: Page) => {
   await expect(toggleSwitch).not.toBeChecked();
 };
 
+export const enablePreview = async (page: Page) => {
+  const toggleSwitch = page.locator('#preview-toggle');
+
+  if (!(await toggleSwitch.isChecked())) {
+    await toggleSwitch.click();
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(4000);
+  }
+};
+
 export const isHosted = (): boolean => {
   return process.env.BASE_URL?.includes('redhat.com') || false;
 };

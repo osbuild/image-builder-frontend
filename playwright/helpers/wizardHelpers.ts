@@ -286,7 +286,11 @@ export const importBlueprint = async (
   await expect(
     page.getByRole('textbox', { name: 'File upload' }),
   ).not.toBeEmpty();
-  await page.getByRole('button', { name: 'Review and Finish' }).click();
+  // Wait for the blueprint to finish parsing (including any async repo import API
+  // calls) before clicking. The button is disabled until importedBlueprint is set.
+  const reviewBtn = page.getByRole('button', { name: /review and finish/i });
+  await expect(reviewBtn).toBeEnabled();
+  await reviewBtn.click();
 };
 
 export const saveBlueprintFileWithContents = async (content: string) => {

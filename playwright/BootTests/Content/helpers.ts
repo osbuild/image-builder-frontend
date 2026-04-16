@@ -54,8 +54,8 @@ export const deleteRepository = async (
         .getByLabel('Kebab toggle')
         .click();
       await page.getByRole('menuitem', { name: 'Delete' }).click();
-      // Wait until the repo is loaded in the delete modal
-      await expect(page.getByRole('gridcell').first()).not.toBeEmpty();
+      // Wait until the delete confirmation modal is fully rendered
+      await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Delete' }).click();
     },
     { box: true },
