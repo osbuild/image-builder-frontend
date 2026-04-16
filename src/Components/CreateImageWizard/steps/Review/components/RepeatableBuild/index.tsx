@@ -4,6 +4,7 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
 import { selectSnapshotDate, selectUseLatest } from '@/store/slices';
+import { timestampToDisplayString } from '@/Utilities/time';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
@@ -38,7 +39,10 @@ const RepeatableBuild = ({ restrictions }: ReviewCardProps) => {
             description={<StatusItem>Enabled</StatusItem>}
           />
           {snapshotDate && (
-            <ReviewGroup heading='Snapshot date' description={snapshotDate} />
+            <ReviewGroup
+              heading='Snapshot date'
+              description={timestampToDisplayString(snapshotDate)}
+            />
           )}
         </ReviewList>
       </CardBody>

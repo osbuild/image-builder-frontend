@@ -42,7 +42,7 @@ describe('RepeatableBuild', () => {
     );
 
     expect(screen.getByText('Snapshot date')).toBeInTheDocument();
-    expect(screen.getByText('2026-04-10')).toBeInTheDocument();
+    expect(screen.getByText('Apr 10, 2026')).toBeInTheDocument();
   });
 
   test('does not display snapshot date when not provided', () => {

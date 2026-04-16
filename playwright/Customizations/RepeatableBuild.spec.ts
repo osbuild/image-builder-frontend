@@ -106,7 +106,7 @@ test('Create a blueprint with Repeatable build customization', async ({
       .filter({ hasText: 'Enable repeatable build' });
     await expect(repeatableBuildCard).toBeVisible();
     await expect(repeatableBuildCard.getByText('Enabled')).toBeVisible();
-    await expect(repeatableBuildCard.getByText('2025-12-24')).toBeVisible();
+    await expect(repeatableBuildCard.getByText('Dec 24, 2025')).toBeVisible();
   });
 
   await test.step('Check Repeatable build step behaviour with 1 repo', async () => {
@@ -122,7 +122,7 @@ test('Create a blueprint with Repeatable build customization', async ({
     await expect(
       frame.getByRole('heading', { name: 'Enable repeatable build' }),
     ).toBeVisible();
-    await expect(frame.getByText('2025-12-24')).toBeVisible();
+    await expect(frame.getByText('Dec 24, 2025')).toBeVisible();
     await expect(frame.getByText('EPEL 10 Everything x86_64')).toBeVisible();
   });
 
