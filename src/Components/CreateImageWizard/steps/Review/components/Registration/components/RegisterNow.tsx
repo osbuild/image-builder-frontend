@@ -46,7 +46,7 @@ export const RegisterNow = ({
           )
         }
       />
-      <ReviewGroup heading='Organisation ID' description={orgId} />
+      <ReviewGroup heading='Organization ID' description={orgId} />
       <ReviewGroup heading='Activation key' description={activationKey} />
     </>
   );

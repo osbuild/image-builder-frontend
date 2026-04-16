@@ -34,8 +34,7 @@ export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
       )}
       {args.length > 0 && (
         <ReviewGroup
-          // TODO: maybe we should rename this to `Args`?
-          heading='Append'
+          heading='Args'
           description={
             <LabelMapper
               id='kernel-append-review'

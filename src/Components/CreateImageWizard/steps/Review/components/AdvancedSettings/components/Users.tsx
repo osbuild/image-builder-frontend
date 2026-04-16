@@ -47,7 +47,7 @@ export const Users = ({ shouldHide }: Hideable) => {
           items={users.map(({ groups }, index) => (
             <Truncate
               key={`inner-groups-key-${index}`}
-              content={groups.filter((group) => group.trim()).join('')}
+              content={groups.filter((group) => group.trim()).join(', ')}
               position='end'
               maxCharsDisplayed={15}
             />

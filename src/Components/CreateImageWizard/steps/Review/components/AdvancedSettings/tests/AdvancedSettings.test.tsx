@@ -402,7 +402,7 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
-      expect(screen.getByText('Append')).toBeInTheDocument();
+      expect(screen.getByText('Args')).toBeInTheDocument();
       expect(screen.getByText('quiet')).toBeInTheDocument();
       expect(screen.getByText('splash')).toBeInTheDocument();
       expect(screen.getByText('rhgb')).toBeInTheDocument();
@@ -422,7 +422,7 @@ describe('AdvancedSettingsOverview', () => {
 
       expect(screen.getByText('Kernel package')).toBeInTheDocument();
       expect(screen.getByText('kernel-debug')).toBeInTheDocument();
-      expect(screen.getByText('Append')).toBeInTheDocument();
+      expect(screen.getByText('Args')).toBeInTheDocument();
       expect(screen.getByText('debug')).toBeInTheDocument();
       expect(screen.getByText('console=ttyS0')).toBeInTheDocument();
     });
@@ -440,7 +440,7 @@ describe('AdvancedSettingsOverview', () => {
       );
 
       expect(screen.queryByText('Kernel package')).not.toBeInTheDocument();
-      expect(screen.queryByText('Append')).not.toBeInTheDocument();
+      expect(screen.queryByText('Args')).not.toBeInTheDocument();
     });
 
     test('displays user-selected kernel args with blue labels', () => {
@@ -827,7 +827,7 @@ echo 'Hello there, General Kenobi!'`;
       );
 
       expect(screen.getByText('Groups')).toBeInTheDocument();
-      expect(screen.getByText('wheeldocker')).toBeInTheDocument();
+      expect(screen.getByText('wheel, docker')).toBeInTheDocument();
     });
 
     test('displays multiple users with all their data', () => {

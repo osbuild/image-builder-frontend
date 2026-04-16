@@ -123,7 +123,7 @@ describe('Registration', () => {
       expect(
         screen.getByText('Register with Red Hat Subscription Manager (RHSM)'),
       ).toBeInTheDocument();
-      expect(screen.getByText('Organisation ID')).toBeInTheDocument();
+      expect(screen.getByText('Organization ID')).toBeInTheDocument();
       expect(screen.getByText('12345')).toBeInTheDocument();
       expect(screen.getByText('Activation key')).toBeInTheDocument();
       expect(screen.getByText('my-key')).toBeInTheDocument();
