@@ -1,7 +1,10 @@
 import React, { PropsWithChildren } from 'react';
 
 import { Icon } from '@patternfly/react-core';
-import { CheckCircleIcon, CloseIcon } from '@patternfly/react-icons';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from '@patternfly/react-icons';
 
 export const StatusItem = ({
   variant = 'success',
@@ -11,7 +14,7 @@ export const StatusItem = ({
     <>
       <Icon status={variant}>
         {variant === 'success' && <CheckCircleIcon />}
-        {variant === 'danger' && <CloseIcon />}
+        {variant === 'danger' && <ExclamationCircleIcon />}
       </Icon>{' '}
       {children}
     </>
