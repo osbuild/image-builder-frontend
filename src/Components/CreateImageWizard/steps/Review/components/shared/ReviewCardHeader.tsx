@@ -10,18 +10,31 @@ import {
 export const ReviewCardHeader = ({
   title,
   stepId,
+  sectionId,
 }: {
   title: string;
   stepId: string;
+  sectionId?: string;
 }) => {
   const { goToStepById } = useWizardContext();
+
+  const handleEdit = () => {
+    goToStepById(stepId);
+    if (sectionId) {
+      setTimeout(() => {
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
 
   return (
     <CardHeader
       className='pf-v6-u-mb-md'
       actions={{
         actions: (
-          <Button variant='link' onClick={() => goToStepById(stepId)}>
+          <Button variant='link' onClick={handleEdit}>
             Edit
           </Button>
         ),

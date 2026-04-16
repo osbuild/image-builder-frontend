@@ -4,8 +4,9 @@ import { configure } from '@testing-library/react';
 import { server } from './mocks/server';
 import 'vitest-canvas-mock';
 
-// scrollTo is not defined in jsdom - needed for the navigation to the wizard
+// scrollTo and scrollIntoView are not defined in jsdom
 window.HTMLElement.prototype.scrollTo = function () {};
+window.HTMLElement.prototype.scrollIntoView = function () {};
 
 // provide a fallback *only* when window.getComputedStyle is missing
 window.getComputedStyle =

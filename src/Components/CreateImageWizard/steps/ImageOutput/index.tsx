@@ -52,7 +52,7 @@ const ImageOutputStep = () => {
 
   return (
     <Form>
-      <Title headingLevel='h1' size='xl'>
+      <Title headingLevel='h1' size='xl' id='image-output-section'>
         Image output
       </Title>
       <Content>

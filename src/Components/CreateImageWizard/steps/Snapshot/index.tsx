@@ -12,7 +12,7 @@ const RepeatableBuildStep = () => {
   return (
     <Form>
       <CustomizationLabels customization='repositories' />
-      <Title headingLevel='h1' size='xl'>
+      <Title headingLevel='h1' size='xl' id='repeatable-build-section'>
         Enable repeatable build
       </Title>
       <Content>

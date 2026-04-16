@@ -40,6 +40,7 @@ const Security = ({ restrictions, security }: SecurityCardProps) => {
             ? 'base-settings-step'
             : 'wizard-repository-snapshot'
         }
+        {...(isWizardRevampEnabled && { sectionId: 'security-section' })}
       />
       <CardBody>
         <ReviewList>

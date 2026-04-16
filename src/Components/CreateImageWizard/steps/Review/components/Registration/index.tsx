@@ -31,6 +31,7 @@ const Registration = ({ restrictions }: ReviewCardProps) => {
       <ReviewCardHeader
         title='Registration'
         stepId={isWizardRevampEnabled ? 'base-settings-step' : 'step-register'}
+        {...(isWizardRevampEnabled && { sectionId: 'registration-section' })}
       />
       <CardBody>
         <ReviewList>

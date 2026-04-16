@@ -40,7 +40,7 @@ const RegistrationStep = () => {
     <Form>
       <CustomizationLabels customization='registration' />
       <Content>
-        <Title headingLevel='h1' size='xl'>
+        <Title headingLevel='h1' size='xl' id='registration-section'>
           Register
         </Title>
         <Content className='pf-v6-u-pb-md'>

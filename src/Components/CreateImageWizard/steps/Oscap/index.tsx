@@ -181,7 +181,7 @@ const OscapContent = () => {
           // 'compliance' & 'openscap' here
         }
         <CustomizationLabels customization={'openscap'} />
-        <Title headingLevel='h1' size='xl'>
+        <Title headingLevel='h1' size='xl' id='security-section'>
           Security
         </Title>
         {restrictions.openscap.shouldHide ? (

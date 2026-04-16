@@ -33,6 +33,9 @@ const RepeatableBuild = ({ restrictions }: ReviewCardProps) => {
             ? 'base-settings-step'
             : 'wizard-repository-snapshot'
         }
+        {...(isWizardRevampEnabled && {
+          sectionId: 'repeatable-build-section',
+        })}
       />
       <CardBody>
         <ReviewList>

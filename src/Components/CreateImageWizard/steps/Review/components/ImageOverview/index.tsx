@@ -50,6 +50,7 @@ const ImageOverview = () => {
         stepId={
           isWizardRevampEnabled ? 'base-settings-step' : 'step-image-output'
         }
+        {...(isWizardRevampEnabled && { sectionId: 'image-output-section' })}
       />
       <CardBody>
         <ReviewList>
