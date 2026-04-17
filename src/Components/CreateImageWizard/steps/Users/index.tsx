@@ -29,14 +29,10 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
         Create user accounts to manage access to your image. All usernames must
         be unique.
         {/* TO DO: learn more about accessing your SSH keys link */}
+        {blueprintMode === 'image' &&
+          ' You must create a user during the image build process to be able to log in.'}
+        <UserInfo attemptedNext={attemptedNext} />
       </Content>
-      {blueprintMode === 'image' && (
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-          You must create a user during the image build process to be able to
-          log in.
-        </Content>
-      )}
-      <UserInfo attemptedNext={attemptedNext} />
     </Wrapper>
   );
 };

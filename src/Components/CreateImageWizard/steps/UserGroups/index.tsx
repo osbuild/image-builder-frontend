@@ -25,8 +25,8 @@ const UserGroupsStep = ({ attemptedNext }: UsersStepProps) => {
       </Title>
       <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Define groups to organize user permissions and shared resource access.
+        <GroupInfo attemptedNext={attemptedNext} />
       </Content>
-      <GroupInfo attemptedNext={attemptedNext} />
     </Wrapper>
   );
 };
