@@ -7,11 +7,15 @@ import {
   selectComplianceProfileID,
   selectComplianceType,
   selectDistribution,
+  selectIsImageMode,
   selectIsOnPremise,
 } from '@/store/slices';
-import { isImageMode } from '@/store/typeGuards';
 
-import { imageBuilderApi, OpenScapProfile } from './hosted/imageBuilderApi';
+import {
+  Distributions,
+  imageBuilderApi,
+  OpenScapProfile,
+} from './hosted/imageBuilderApi';
 import { composerApi } from './onprem/composerApi';
 
 export const useSecuritySummary = () => {
@@ -21,6 +25,7 @@ export const useSecuritySummary = () => {
   const policyId = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
   const distribution = useAppSelector(selectDistribution);
+  const isImageMode = useAppSelector(selectIsImageMode);
 
   // `isOnPremise` is derived from `process.env.IS_ON_PREMISE`, which is
   // a build-time constant set by webpack. It will never change between
@@ -32,9 +37,9 @@ export const useSecuritySummary = () => {
     {
       // @ts-expect-error we skip this if it's not defined
       profile: profileId,
-      distribution: distribution,
+      distribution: distribution as Distributions,
     },
-    { skip: isImageMode(distribution) || !profileId },
+    { skip: isImageMode || !profileId },
   );
 
   const { data: complianceData } =
@@ -42,10 +47,10 @@ export const useSecuritySummary = () => {
       {
         // @ts-expect-error we skip this if it's not defined
         policy: policyId,
-        distribution: distribution,
+        distribution: distribution as Distributions,
       },
       {
-        skip: isImageMode(distribution) || isOnPremise || !policyId,
+        skip: isImageMode || isOnPremise || !policyId,
       },
     );
 

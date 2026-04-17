@@ -8,13 +8,15 @@ import {
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
-import { RHEL_10 } from '@/constants';
+import { RHEL_10, X86_64 } from '@/constants';
 import { Distributions } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  changeArchitecture,
   changeBlueprintMode,
   changeDistribution,
+  selectArchitecture,
   selectDistribution,
   selectIsImageMode,
 } from '@/store/slices/wizard';
@@ -26,8 +28,10 @@ const BlueprintMode = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
   const distribution = useAppSelector(selectDistribution);
+  const architecture = useAppSelector(selectArchitecture);
   const [defaultDistro, setDefaultDistro] = useState<Distributions>(RHEL_10);
   const previousDistro = useRef<Distributions>(RHEL_10);
+  const previousArch = useRef(architecture);
 
   useEffect(() => {
     if (!isOnPremise) return;
@@ -60,6 +64,9 @@ const BlueprintMode = () => {
                 isOnPremise ? defaultDistro : previousDistro.current,
               ),
             );
+            if (!isOnPremise) {
+              dispatch(changeArchitecture(previousArch.current));
+            }
           }}
           aria-describedby='blueprint-mode-description'
         />
@@ -71,9 +78,14 @@ const BlueprintMode = () => {
           onChange={() => {
             if (!isOnPremise) {
               previousDistro.current = distribution as Distributions;
+              previousArch.current = architecture;
             }
             dispatch(changeBlueprintMode('image'));
-            dispatch(changeDistribution('image-mode'));
+            if (isOnPremise) {
+              dispatch(changeDistribution('image-mode'));
+            } else {
+              dispatch(changeArchitecture(X86_64));
+            }
           }}
           aria-describedby='blueprint-mode-description'
         />

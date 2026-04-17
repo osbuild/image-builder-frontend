@@ -79,7 +79,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     await expect(firstOption).toBeVisible({ timeout: 10000 });
     await firstOption.click();
 
-    await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
+    await frame.getByRole('radio', { name: 'Virtualization' }).click();
   });
 
   await test.step('Fill in user', async () => {
@@ -117,7 +117,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     ).toBeHidden();
 
     await expect(
-      frame.getByRole('checkbox', { name: 'Virtualization' }),
+      frame.getByRole('radio', { name: 'Virtualization' }),
     ).toBeChecked();
   });
 
@@ -162,7 +162,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     await expect(importedImageMode).toHaveAttribute('aria-pressed', 'true');
 
     // Export doesn't include image_requests, so image types must be re-selected
-    await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
+    await frame.getByRole('radio', { name: 'Virtualization' }).click();
 
     await expect(
       frame.getByRole('textbox', { name: 'blueprint user name' }),

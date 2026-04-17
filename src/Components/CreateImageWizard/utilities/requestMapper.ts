@@ -59,6 +59,7 @@ import {
   selectBaseUrl,
   selectBlueprintDescription,
   selectBlueprintName,
+  selectBootcDistributions,
   selectCompliancePolicyID,
   selectComplianceProfileID,
   selectComplianceType,
@@ -114,7 +115,6 @@ import {
   FIRST_BOOT_SERVICE_DATA,
   FIRSTBOOT_PATH,
   FIRSTBOOT_SERVICE_PATH,
-  IMAGE_MODE,
   RHEL_10,
   RHEL_8,
   RHEL_9,
@@ -157,20 +157,31 @@ export const mapRequestFromState = (
   const isImageMode = selectIsImageMode(state);
   const imageSource = selectImageSource(state);
 
+  let bootcReference: string | undefined;
+  if (isImageMode && imageSource) {
+    const bootcDistributions = selectBootcDistributions(state);
+    const imageTypes = selectImageTypes(state);
+    if (bootcDistributions.length > 0 && imageTypes.length > 0) {
+      const match = bootcDistributions.find((d) => d.type === imageTypes[0]);
+      if (match) {
+        bootcReference = match.reference;
+      }
+    }
+    if (!bootcReference) {
+      bootcReference = imageSource;
+    }
+  }
+
   return {
     name: selectBlueprintName(state),
     metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
-    distribution:
-      // we want to make sure image-source is defined
-      // if it isn't, then keep the original distro
-      isImageMode && imageSource ? IMAGE_MODE : selectDistribution(state),
-    bootc:
-      isImageMode && imageSource
-        ? {
-            reference: imageSource,
-          }
-        : undefined,
+    distribution: selectDistribution(state),
+    bootc: bootcReference
+      ? {
+          reference: bootcReference,
+        }
+      : undefined,
     image_requests: imageRequests,
     customizations,
   };
@@ -590,12 +601,14 @@ export const mapRequestToState = (
   request: BlueprintResponse | ComposerBlueprintResponse,
 ): wizardState => {
   const wizardMode = 'edit';
-  const blueprintMode = isImageModeDistribution(request.distribution)
-    ? 'image'
-    : 'package';
+  const blueprintMode =
+    isImageModeDistribution(request.distribution) || request.bootc
+      ? 'image'
+      : 'package';
   return {
     wizardMode,
     blueprintMode,
+    bootcDistributions: [],
     blueprintId: request.id,
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
@@ -688,9 +701,11 @@ export const mapExportRequestToState = (
 
   return {
     wizardMode,
-    blueprintMode: isImageModeDistribution(request.distribution)
-      ? 'image'
-      : 'package',
+    blueprintMode:
+      isImageModeDistribution(request.distribution) || request.bootc
+        ? 'image'
+        : 'package',
+    bootcDistributions: [],
     metadata: getMetadata(request.metadata),
     env: initialState.env,
     registration: initialState.registration,
@@ -1127,11 +1142,9 @@ const getModules = (state: RootState) => {
 const getTimezone = (state: RootState) => {
   const timezone = selectTimezone(state);
   const ntpservers = selectNtpServers(state);
-  const distribution = selectDistribution(state);
   const isImageMode = selectIsImageMode(state);
 
-  // timezone isn't supported by image-mode
-  if (isImageMode || isImageModeDistribution(distribution)) {
+  if (isImageMode) {
     return undefined;
   }
 
@@ -1185,11 +1198,9 @@ const getSubscription = (
 const getLocale = (state: RootState) => {
   const languages = selectLanguages(state);
   const keyboard = selectKeyboard(state);
-  const distribution = selectDistribution(state);
   const isImageMode = selectIsImageMode(state);
 
-  // locale isn't supported by image-mode
-  if (isImageMode || isImageModeDistribution(distribution)) {
+  if (isImageMode) {
     return undefined;
   }
 

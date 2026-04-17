@@ -19,6 +19,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
+  selectIsImageMode,
   selectIsOnPremise,
   wizardModalSlice,
   wizardSlice,
@@ -62,6 +63,11 @@ startAppListening({
     const imageTypes = selectImageTypes(state);
     const architecture = action.payload;
 
+    // Image-mode gets allowed types from bootc distributions, not getArchitectures
+    if (selectIsImageMode(state)) {
+      return;
+    }
+
     // The response from the RTKQ getArchitectures hook
     const architecturesResponse = isOnPremise
       ? composerApi.endpoints.getArchitectures.select({
@@ -92,6 +98,11 @@ startAppListening({
     const distribution = action.payload;
     const imageTypes = selectImageTypes(state);
     const architecture = selectArchitecture(state);
+
+    // Image-mode gets allowed types from bootc distributions, not getArchitectures
+    if (selectIsImageMode(state)) {
+      return;
+    }
 
     // The response from the RTKQ getArchitectures hook
     const architecturesResponse = isOnPremise

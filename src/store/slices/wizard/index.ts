@@ -23,6 +23,7 @@ import { generateDefaultName } from '@/Components/CreateImageWizard/utilities/us
 import { RHEL_10, UNIT_GIB, X86_64 } from '@/constants';
 import type { RootState } from '@/store';
 import type {
+  BootcDistributionItem,
   CustomRepository,
   Distributions,
   ImageRequest,
@@ -117,6 +118,7 @@ export type wizardState = {
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
   imageSource?: ImageSource | undefined;
+  bootcDistributions: BootcDistributionItem[];
   architecture: ImageRequest['architecture'];
   distribution: Distributions | 'image-mode';
   imageTypes: ImageTypes[];
@@ -228,6 +230,7 @@ export const initialState: wizardState = {
   },
   wizardMode: 'create',
   blueprintMode: 'package',
+  bootcDistributions: [],
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
@@ -347,6 +350,10 @@ export const selectBlueprintMode = (state: RootState) => {
 
 export const selectImageSource = (state: RootState) => {
   return state.wizard.imageSource;
+};
+
+export const selectBootcDistributions = (state: RootState) => {
+  return state.wizard.bootcDistributions;
 };
 
 export const selectBlueprintId = (state: RootState) => {
@@ -782,6 +789,12 @@ export const wizardSlice = createSlice({
       action: PayloadAction<ImageSource | undefined>,
     ) => {
       state.imageSource = action.payload;
+    },
+    changeBootcDistributions: (
+      state,
+      action: PayloadAction<BootcDistributionItem[]>,
+    ) => {
+      state.bootcDistributions = action.payload;
     },
     changeArchitecture: (
       state,
@@ -1714,6 +1727,7 @@ export const {
   changeProxy,
   changeBlueprintMode,
   changeImageSource,
+  changeBootcDistributions,
   changeArchitecture,
   changeDistribution,
   addImageType,

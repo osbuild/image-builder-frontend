@@ -26,9 +26,12 @@ import {
   useGetDistributionsQuery,
   usePodmanImagesQuery,
 } from '@/store/api/backend';
+import { Distributions } from '@/store/api/backend/hosted';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  changeBootcDistributions,
+  changeDistribution,
   changeImageSource,
   ImageSource,
   selectArchitecture,
@@ -249,6 +252,12 @@ const BootcImageSourceSelect = () => {
     | BootcDistributionItem[]
     | undefined;
 
+  useEffect(() => {
+    if (bootcDistributions) {
+      dispatch(changeBootcDistributions(bootcDistributions));
+    }
+  }, [bootcDistributions, dispatch]);
+
   // Deduplicate by name — the API returns one entry per target type,
   // but the dropdown should show one entry per base image.
   const uniqueDistributions = bootcDistributions?.reduce<
@@ -260,12 +269,16 @@ const BootcImageSourceSelect = () => {
     return acc;
   }, []);
 
-  const selectedItem = uniqueDistributions?.find(
-    (d) => d.image_name === imageSource,
+  const selectedItem = bootcDistributions?.find(
+    (d) => d.reference === imageSource,
   );
 
   const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
     dispatch(changeImageSource(selection as string));
+    const selected = bootcDistributions?.find((d) => d.reference === selection);
+    if (selected) {
+      dispatch(changeDistribution(selected.distro as Distributions));
+    }
     setIsOpen(false);
   };
 
@@ -324,7 +337,7 @@ const BootcImageSourceSelect = () => {
         <SelectList>
           {uniqueDistributions && uniqueDistributions.length > 0 ? (
             uniqueDistributions.map((item) => (
-              <SelectOption key={item.image_name} value={item.image_name}>
+              <SelectOption key={item.reference} value={item.reference}>
                 {item.name}
               </SelectOption>
             ))
