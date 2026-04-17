@@ -24,9 +24,7 @@ const UserGroupsStep = ({ attemptedNext }: UsersStepProps) => {
         Groups
       </Title>
       <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Define groups before assigning users to them. Each group will be created
-        on systems using this image. Each group will automatically be assigned
-        an ID number.
+        Define groups to organize user permissions and shared resource access.
       </Content>
       <GroupInfo attemptedNext={attemptedNext} />
     </Wrapper>

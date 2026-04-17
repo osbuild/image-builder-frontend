@@ -26,8 +26,9 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
         Users
       </Title>
       <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Create user accounts for systems that will use this image. Duplicate
-        usernames are not allowed.
+        Create user accounts to manage access to your image. All usernames must
+        be unique.
+        {/* TO DO: learn more about accessing your SSH keys link */}
       </Content>
       {blueprintMode === 'image' && (
         <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
