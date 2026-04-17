@@ -50,7 +50,7 @@ import ServicesStep from './steps/Services';
 import RepeatableBuildStep from './steps/Snapshot';
 import TimezoneStep from './steps/Timezone';
 import UserGroupsStep from './steps/UserGroups';
-import UsersStep from './steps/UsersAndGroups';
+import UsersStep from './steps/Users';
 import {
   useAAPValidation,
   useAwsValidation,

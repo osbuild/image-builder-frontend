@@ -69,7 +69,7 @@ import ServicesStep from '../CreateImageWizard/steps/Services';
 import RepeatableBuildStep from '../CreateImageWizard/steps/Snapshot';
 import TimezoneStep from '../CreateImageWizard/steps/Timezone';
 import UserGroupsStep from '../CreateImageWizard/steps/UserGroups';
-import UsersStep from '../CreateImageWizard/steps/UsersAndGroups';
+import UsersStep from '../CreateImageWizard/steps/Users';
 import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 import {
   useAwsValidation,
