@@ -19,6 +19,7 @@ import {
   selectRegistrationType,
   setFirstBootScript,
 } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { FIRST_BOOT_SERVICE } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -54,11 +55,17 @@ const FirstBootStep = () => {
   const registrationType = useAppSelector(selectRegistrationType);
   const language = detectScriptType(selectedScript);
   const { errors } = useFirstBootValidation();
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='firstBoot' />
-      <Title headingLevel='h1' size='xl'>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+      >
         First boot configuration
       </Title>
       <Content>
@@ -111,7 +118,7 @@ const FirstBootStep = () => {
           </FormHelperText>
         )}
       </FormGroup>
-    </Form>
+    </Wrapper>
   );
 };
 

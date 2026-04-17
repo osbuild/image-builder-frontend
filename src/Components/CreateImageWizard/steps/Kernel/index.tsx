@@ -7,6 +7,7 @@ import { CustomizationLabels } from '@/Components/sharedComponents/Customization
 import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import { selectFips } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';
@@ -18,12 +19,15 @@ const KernelStep = () => {
     kernel: { append: requiredByOpenSCAP },
   } = useSecuritySummary();
 
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
+
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='kernel' />
       <Title
-        headingLevel='h1'
-        size='xl'
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
         className='pf-v6-u-display-flex pf-v6-u-align-items-center'
       >
         Kernel
@@ -46,7 +50,7 @@ const KernelStep = () => {
       )}
       <KernelName />
       <KernelArguments />
-    </Form>
+    </Wrapper>
   );
 };
 

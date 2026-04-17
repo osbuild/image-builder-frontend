@@ -5,18 +5,22 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import ServicesInput from './components/ServicesInputs';
 
 const ServicesStep = () => {
   const { services: requiredByOpenSCAP } = useSecuritySummary();
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='services' />
       <Title
-        headingLevel='h1'
-        size='xl'
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
         className='pf-v6-u-display-flex pf-v6-u-align-items-center'
       >
         Systemd services
@@ -32,7 +36,7 @@ const ServicesStep = () => {
         automatic starting, or mask them to completely block execution.
       </Content>
       <ServicesInput />
-    </Form>
+    </Wrapper>
   );
 };
 

@@ -3,6 +3,7 @@ import React from 'react';
 import { Content, Form, Title } from '@patternfly/react-core';
 
 import { selectFscMode } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import AdvancedPartitioning from './components/AdvancedPartitioning';
 import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
@@ -16,11 +17,17 @@ export type FscModeType = 'automatic' | 'basic' | 'advanced';
 
 const FileSystemStep = () => {
   const fscMode = useAppSelector(selectFscMode);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='filesystem' />
-      <Title headingLevel='h1' size='xl'>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+      >
         File system configuration
       </Title>
       <Content>Define the partitioning of the image.</Content>
@@ -40,7 +47,7 @@ const FileSystemStep = () => {
           <AdvancedPartitioning />
         </>
       )}
-    </Form>
+    </Wrapper>
   );
 };
 

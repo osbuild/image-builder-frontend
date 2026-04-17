@@ -10,6 +10,7 @@ import {
   selectLocaleLangpackCandidates,
   selectVerifiedLocaleLangpacks,
 } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
@@ -19,6 +20,7 @@ import { asDistribution } from '../../../../store/typeGuards';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const LocaleStep = () => {
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const candidateLangpacks = useAppSelector(selectLocaleLangpackCandidates);
@@ -43,10 +45,15 @@ const LocaleStep = () => {
     candidateLangpacks.length > 0 &&
     (isArchitecturesLoading || isSearchLoading);
 
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
+
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='locale' />
-      <Title headingLevel='h1' size='xl'>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+      >
         Locale
       </Title>
       <Content>
@@ -72,7 +79,7 @@ const LocaleStep = () => {
         </Content>
       )}
       <KeyboardDropDown />
-    </Form>
+    </Wrapper>
   );
 };
 

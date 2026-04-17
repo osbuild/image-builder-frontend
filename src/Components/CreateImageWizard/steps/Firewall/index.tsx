@@ -3,15 +3,22 @@ import React from 'react';
 import { Content, Form, Title } from '@patternfly/react-core';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import PortsInput from './components/PortsInput';
 import Services from './components/Services';
 
 const FirewallStep = () => {
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
+
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='firewall' />
-      <Title headingLevel='h1' size='xl'>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+      >
         Firewall
       </Title>
       <Content>
@@ -20,7 +27,7 @@ const FirewallStep = () => {
       </Content>
       <PortsInput />
       <Services />
-    </Form>
+    </Wrapper>
   );
 };
 

@@ -3,15 +3,23 @@ import React from 'react';
 import { Content, Form, Title } from '@patternfly/react-core';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import NtpServersInput from './components/NtpServersInput';
 import TimezoneDropDown from './components/TimezoneDropDown';
 
 const TimezoneStep = () => {
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
+
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='timezone' />
-      <Title headingLevel='h1' size='xl'>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+      >
         Timezone
       </Title>
       <Content>
@@ -20,7 +28,7 @@ const TimezoneStep = () => {
       </Content>
       <TimezoneDropDown />
       <NtpServersInput />
-    </Form>
+    </Wrapper>
   );
 };
 
