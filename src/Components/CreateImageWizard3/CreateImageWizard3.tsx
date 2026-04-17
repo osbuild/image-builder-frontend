@@ -68,6 +68,7 @@ import ReviewStep from '../CreateImageWizard/steps/Review';
 import ServicesStep from '../CreateImageWizard/steps/Services';
 import RepeatableBuildStep from '../CreateImageWizard/steps/Snapshot';
 import TimezoneStep from '../CreateImageWizard/steps/Timezone';
+import UserGroupsStep from '../CreateImageWizard/steps/UserGroups';
 import UsersStep from '../CreateImageWizard/steps/UsersAndGroups';
 import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 import {
@@ -359,6 +360,7 @@ const CreateImageWizard3 = () => {
               !(
                 restrictions.openscap.shouldHide && restrictions.fips.shouldHide
               ) && <OscapStep key='oscap' />,
+              restrictions.users.required && <UserGroupsStep key='groups' />,
               restrictions.users.required && <UsersStep key='users' />,
             ]
               .filter(Boolean)
@@ -450,6 +452,9 @@ const CreateImageWizard3 = () => {
               !restrictions.firewall.shouldHide && (
                 <FirewallStep key='firewall' />
               ),
+              !(
+                restrictions.users.shouldHide || restrictions.users.required
+              ) && <UserGroupsStep key='groups' />,
               !(
                 restrictions.users.shouldHide || restrictions.users.required
               ) && <UsersStep key='users' />,

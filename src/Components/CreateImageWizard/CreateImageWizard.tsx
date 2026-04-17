@@ -5,6 +5,7 @@ import {
   Flex,
   PageSection,
   PageSectionTypes,
+  Title,
   useWizardContext,
   Wizard,
   WizardFooterWrapper,
@@ -48,6 +49,7 @@ import ReviewWizardFooter from './steps/Review/Footer/Footer';
 import ServicesStep from './steps/Services';
 import RepeatableBuildStep from './steps/Snapshot';
 import TimezoneStep from './steps/Timezone';
+import UserGroupsStep from './steps/UserGroups';
 import UsersStep from './steps/UsersAndGroups';
 import {
   useAAPValidation,
@@ -636,7 +638,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   />
                 }
               >
-                <UsersStep attemptedNext={usersStepAttemptedNext} />
+                <>
+                  <Title headingLevel='h1' size='xl'>
+                    Groups and users
+                  </Title>
+                  <br />
+                  <UserGroupsStep attemptedNext={usersStepAttemptedNext} />
+                  <UsersStep attemptedNext={usersStepAttemptedNext} />
+                </>
               </WizardStep>,
               <WizardStep
                 name='Timezone'

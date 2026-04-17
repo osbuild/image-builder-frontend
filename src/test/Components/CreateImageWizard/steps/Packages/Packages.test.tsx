@@ -114,7 +114,10 @@ describe('Step Packages', () => {
     await goToPackagesStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Groups and users',
+      name: 'Groups',
+    });
+    await screen.findByRole('heading', {
+      name: 'Users',
     });
   });
 

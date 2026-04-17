@@ -6,7 +6,6 @@ import { CustomizationLabels } from '@/Components/sharedComponents/Customization
 import { useAppSelector } from '@/store/hooks';
 import { selectBlueprintMode } from '@/store/slices/wizard';
 
-import GroupInfo from './components/GroupInfo';
 import UserInfo from './components/UserInfo';
 
 type UsersStepProps = {
@@ -19,18 +18,6 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
   return (
     <Form>
       <CustomizationLabels customization='users' />
-      <Title headingLevel='h1' size='xl'>
-        Groups and users
-      </Title>
-      <Title headingLevel='h2' size='lg'>
-        Groups
-      </Title>
-      <Content>
-        Define groups before assigning users to them. Each group will be created
-        on systems using this image. Each group will automatically be assigned
-        an ID number.
-      </Content>
-      <GroupInfo attemptedNext={attemptedNext} />
       <Title headingLevel='h2' size='lg'>
         Users
       </Title>
