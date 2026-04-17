@@ -38,7 +38,7 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
       <Table variant='compact' borders={false}>
         <Thead>
           <Tr>
-            <Th width={30}>Group name</Th>
+            <Th width={30}>Name</Th>
             <Th width={30}>Group ID</Th>
             <Th width={10} aria-label='Remove group' />
           </Tr>

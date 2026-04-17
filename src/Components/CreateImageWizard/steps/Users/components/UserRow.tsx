@@ -127,7 +127,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             value={user.ssh_key || ''}
             type={'text'}
             onChange={(_e, value) => handleSshKeyChange(_e, value)}
-            placeholder='Set SSH key'
+            placeholder='Paste SSH key here'
             stepValidation={getValidationByIndex(index)}
             fieldName='userSshKey'
           />

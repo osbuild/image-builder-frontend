@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button } from '@patternfly/react-core';
+import { Button, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
@@ -99,6 +99,11 @@ const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
             !isGidInputInvalid ? getWarningByIndex(index).groupGid : undefined
           }
         />
+        <HelperText>
+          <HelperTextItem>
+            Each group will automatically be assigned an ID number.
+          </HelperTextItem>
+        </HelperText>
       </Td>
       <Td>
         <Button

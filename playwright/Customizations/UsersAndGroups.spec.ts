@@ -154,7 +154,7 @@ test('Create a blueprint with Users customization', async ({
     });
     await usernameInputs.nth(1).fill('sshuser');
 
-    const sshInputs = frame.getByPlaceholder('Set SSH key');
+    const sshInputs = frame.getByPlaceholder('Paste SSH key here');
     await sshInputs.nth(1).fill(validRSAKey);
 
     const groupInputs = frame.getByPlaceholder('Add user group');
@@ -190,7 +190,7 @@ test('Create a blueprint with Users customization', async ({
     const passwordInputs = frame.getByRole('textbox', {
       name: 'blueprint user password',
     });
-    const sshInputs = frame.getByPlaceholder('Set SSH key');
+    const sshInputs = frame.getByPlaceholder('Paste SSH key here');
     const groupInputs = frame.getByPlaceholder('Add user group');
 
     // Test 1: Short password error
@@ -282,7 +282,7 @@ test('Create a blueprint with Users customization', async ({
         name: 'blueprint user password',
       })
       .nth(2);
-    const sshInput = frame.getByPlaceholder('Set SSH key').nth(2);
+    const sshInput = frame.getByPlaceholder('Paste SSH key here').nth(2);
     const groupInput = frame.getByPlaceholder('Add user group').nth(2);
 
     // Tab through fields to test keyboard navigation
@@ -336,7 +336,7 @@ test('Create a blueprint with Users customization', async ({
     const passwordInputs = frame.getByRole('textbox', {
       name: 'blueprint user password',
     });
-    const sshInputs = frame.getByPlaceholder('Set SSH key');
+    const sshInputs = frame.getByPlaceholder('Paste SSH key here');
     const groupInputs = frame.getByPlaceholder('Add user group');
     const adminCheckboxes = frame.getByRole('checkbox', {
       name: 'Administrator',
