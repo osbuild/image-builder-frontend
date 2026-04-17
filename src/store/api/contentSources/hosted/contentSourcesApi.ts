@@ -179,7 +179,7 @@ export type ListRepositoriesApiArg = {
   contentType?: string;
   /** A comma separated list of extended release types to filter on (eus, e4s), or 'none' to filter out extended release repositories */
   extendedRelease?: string;
-  /** A comma separated list of extended release versions to filter on (e.g. 9.4,9.6) */
+  /** A comma separated list of extended release versions to filter on (e.g. 9.4,9.6). Use 'none' to filter repositories without extended release versions. */
   extendedReleaseVersion?: string;
 };
 export type CreateRepositoryApiResponse =
@@ -243,7 +243,7 @@ export type ListTemplatesApiArg = {
   snapshotUuids?: string;
   /** Filter templates by extended release type. Valid values: eus, e4s, eeus. Supports comma-separated lists (e.g., 'eus,e4s'). Use 'none' to filter templates without extended release. */
   extendedRelease?: string;
-  /** Filter templates by extended release version (e.g., 9.4) */
+  /** Filter templates by extended release version (e.g., 9.4). Supports comma-separated lists (e.g., '9.4,9.6'). Use 'none' to filter templates without extended release versions. */
   extendedReleaseVersion?: string;
   /** Sort the response data based on specific parameters. Sort criteria can include `name`, `arch`, and `version`. */
   sortBy?: string;
