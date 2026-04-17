@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 
 import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
 
+import DocumentationButton from '@/Components/sharedComponents/DocumentationButton';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeArchitecture,
@@ -12,6 +14,7 @@ import {
   selectIsCustomName,
   selectIsImageMode,
 } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import ArchSelect from './components/ArchSelect';
 import BlueprintMode from './components/BlueprintMode';
@@ -21,9 +24,6 @@ import ReleaseLifecycle from './components/ReleaseLifecycle';
 import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
-import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {

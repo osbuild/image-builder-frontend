@@ -8,9 +8,8 @@ import {
   ModalHeader,
 } from '@patternfly/react-core';
 
+import { useAppDispatch } from '@/store/hooks';
 import { removeUser } from '@/store/slices/wizard';
-
-import { useAppDispatch } from '../../../../../store/hooks';
 
 type RemoveUserModalProps = {
   setShowRemoveUserModal: React.Dispatch<React.SetStateAction<boolean>>;

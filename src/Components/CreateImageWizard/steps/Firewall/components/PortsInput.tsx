@@ -2,12 +2,11 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import LabelInput from '@/Components/CreateImageWizard/LabelInput';
+import { useFirewallValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { isPortValid } from '@/Components/CreateImageWizard/validators';
+import { useAppSelector } from '@/store/hooks';
 import { addPort, removePort, selectFirewall } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import LabelInput from '../../../LabelInput';
-import { useFirewallValidation } from '../../../utilities/useValidation';
-import { isPortValid } from '../../../validators';
 
 const PortsInput = () => {
   const ports = useAppSelector(selectFirewall).ports;

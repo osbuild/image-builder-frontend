@@ -24,6 +24,7 @@ import {
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeFips,
@@ -34,11 +35,10 @@ import {
   selectDistribution,
   setOscapProfile,
 } from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionValueType = {

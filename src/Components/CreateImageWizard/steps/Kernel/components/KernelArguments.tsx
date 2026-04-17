@@ -2,7 +2,11 @@ import React from 'react';
 
 import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
+import LabelInput from '@/Components/CreateImageWizard/LabelInput';
+import { useKernelValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { isKernelArgumentValid } from '@/Components/CreateImageWizard/validators';
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import {
   addKernelArg,
   removeKernelArg,
@@ -10,12 +14,7 @@ import {
   selectDistribution,
   selectKernel,
 } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
-import LabelInput from '../../../LabelInput';
-import { useKernelValidation } from '../../../utilities/useValidation';
-import { isKernelArgumentValid } from '../../../validators';
+import { asDistribution } from '@/store/typeGuards';
 
 const KernelArguments = () => {
   const kernelAppend = useAppSelector(selectKernel).append;

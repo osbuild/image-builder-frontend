@@ -11,17 +11,16 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
+import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { REGISTRATION_DOCS_URL } from '@/constants';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeSatelliteCaCertificate,
   selectSatelliteCaCertificate,
 } from '@/store/slices/wizard';
 
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
-
-import { REGISTRATION_DOCS_URL } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
-import { useRegistrationValidation } from '../../../utilities/useValidation';
 
 const SatelliteRegistration = () => {
   const dispatch = useAppDispatch();

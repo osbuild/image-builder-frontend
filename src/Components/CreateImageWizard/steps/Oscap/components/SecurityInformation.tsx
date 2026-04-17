@@ -16,6 +16,7 @@ import {
   useGetComplianceCustomizationsQuery,
   useGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   selectCompliancePolicyID,
@@ -25,9 +26,7 @@ import {
   selectDistribution,
   selectFips,
 } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
+import { asDistribution } from '@/store/typeGuards';
 
 export const SecurityInformation = (): JSX.Element => {
   const release = useAppSelector(selectDistribution);

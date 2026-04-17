@@ -1,6 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import { parseSizeUnit } from '@/Components/CreateImageWizard/utilities/parseSizeUnit';
+import { FIRST_BOOT_SERVICE } from '@/constants';
 import { Filesystem, Services } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addKernelArg,
   addPackage,
@@ -15,9 +18,6 @@ import {
   selectServices,
 } from '@/store/slices/wizard';
 
-import { FIRST_BOOT_SERVICE } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
 import { FilesystemPartition, Units } from '../../FileSystem/fscTypes';
 
 export const useSelectorHandlers = () => {

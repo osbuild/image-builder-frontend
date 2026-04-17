@@ -8,7 +8,9 @@ import {
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
+import { RHEL_10 } from '@/constants';
 import { Distributions } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeBlueprintMode,
@@ -16,11 +18,8 @@ import {
   selectDistribution,
   selectIsImageMode,
 } from '@/store/slices/wizard';
-
-import { RHEL_10 } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
-import { getHostDistro } from '../../../../../Utilities/getHostInfo';
+import { asDistribution } from '@/store/typeGuards';
+import { getHostDistro } from '@/Utilities/getHostInfo';
 
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();

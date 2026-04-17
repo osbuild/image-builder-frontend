@@ -13,15 +13,14 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useGetUser } from '@/Hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { changeOrgId } from '@/store/slices/wizard';
 
 import AnsibleAutomationPlatform from './components/AnsibleAutomationPlatform';
 import Registration from './components/Registration';
-
-import { useGetUser } from '../../../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const RegistrationStep = () => {
   const dispatch = useAppDispatch();

@@ -22,10 +22,13 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { v4 as uuidv4 } from 'uuid';
 
+import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
+import { ACTIVATION_KEYS_URL, CDN_PROD_URL, CDN_STAGE_URL } from '@/constants';
 import {
   useCreateActivationKeysMutation,
   useListActivationKeysQuery,
 } from '@/store/api/rhsm';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeActivationKey,
   changeBaseUrl,
@@ -34,19 +37,12 @@ import {
   selectActivationKey,
   selectRegistrationType,
 } from '@/store/slices/wizard';
+import { getErrorMessage } from '@/Utilities/getErrorMessage';
+import sortfn from '@/Utilities/sortfn';
+import { useGetEnvironment } from '@/Utilities/useGetEnvironment';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 
-import {
-  ACTIVATION_KEYS_URL,
-  CDN_PROD_URL,
-  CDN_STAGE_URL,
-} from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { getErrorMessage } from '../../../../../Utilities/getErrorMessage';
-import sortfn from '../../../../../Utilities/sortfn';
-import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
-import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
 import { RegistrationProps } from '../registrationTypes';
 
 const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {

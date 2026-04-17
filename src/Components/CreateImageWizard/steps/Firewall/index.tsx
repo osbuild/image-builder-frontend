@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+
 import PortsInput from './components/PortsInput';
 import Services from './components/Services';
-
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const FirewallStep = () => {
   return (

@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+
 import NtpServersInput from './components/NtpServersInput';
 import TimezoneDropDown from './components/TimezoneDropDown';
-
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const TimezoneStep = () => {
   return (

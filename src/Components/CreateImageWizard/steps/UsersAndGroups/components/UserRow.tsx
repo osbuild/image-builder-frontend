@@ -4,6 +4,11 @@ import { Button, Checkbox } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
+import LabelInput from '@/Components/CreateImageWizard/LabelInput';
+import { PasswordValidatedInput } from '@/Components/CreateImageWizard/utilities/PasswordValidatedInput';
+import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
 import { useAppDispatch } from '@/store/hooks';
 import {
   addGroupToUserByUserIndex,
@@ -18,12 +23,6 @@ import {
 } from '@/store/slices/wizard';
 
 import RemoveUserModal from './RemoveUserModal';
-
-import LabelInput from '../../../LabelInput';
-import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
-import { useUsersValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { isUserGroupValid } from '../../../validators';
 
 type UserRowProps = {
   user: UserWithAdditionalInfo;

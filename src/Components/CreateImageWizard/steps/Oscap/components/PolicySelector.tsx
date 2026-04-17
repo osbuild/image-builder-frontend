@@ -15,6 +15,7 @@ import {
   useLazyGetComplianceCustomizationsQuery,
 } from '@/store/api/backend';
 import { PolicyRead, usePoliciesQuery } from '@/store/api/compliance';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeFips,
   changeFscMode,
@@ -25,11 +26,10 @@ import {
   setCompliancePolicy,
   setOscapProfile,
 } from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type ComplianceSelectOptionValueType = {

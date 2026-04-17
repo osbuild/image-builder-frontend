@@ -11,9 +11,8 @@ import {
 } from '@patternfly/react-core';
 
 import { PolicyRead, usePolicyQuery } from '@/store/api/compliance';
+import { useAppSelector } from '@/store/hooks';
 import { selectCompliancePolicyID } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
 
 const PolicyDetails = (): JSX.Element => {
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);

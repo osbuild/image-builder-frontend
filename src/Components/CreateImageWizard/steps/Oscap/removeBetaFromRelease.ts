@@ -1,11 +1,5 @@
+import { RHEL_10, RHEL_10_BETA, RHEL_9, RHEL_9_BETA } from '@/constants';
 import { Distributions } from '@/store/api/backend';
-
-import {
-  RHEL_10,
-  RHEL_10_BETA,
-  RHEL_9,
-  RHEL_9_BETA,
-} from '../../../../constants';
 
 // The beta releases won't have any oscap profiles associated with them,
 // so just use the ones from the major release.

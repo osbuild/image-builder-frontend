@@ -17,11 +17,11 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 
+import { useTimezoneValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { DEFAULT_TIMEZONE } from '@/constants';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeTimezone, selectTimezone } from '@/store/slices/wizard';
 
-import { DEFAULT_TIMEZONE } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useTimezoneValidation } from '../../../utilities/useValidation';
 import { timezones } from '../timezonesList';
 
 const TimezoneDropDown = () => {

@@ -8,6 +8,9 @@ import {
   Popover,
 } from '@patternfly/react-core';
 
+import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
+import { CDN_PROD_URL } from '@/constants';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeActivationKey,
   changeBaseUrl,
@@ -16,10 +19,6 @@ import {
   selectActivationKey,
   selectOrgId,
 } from '@/store/slices/wizard';
-
-import { CDN_PROD_URL } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { ValidatedInput } from '../../../ValidatedInput';
 
 const ManualRegistrationPopover = ({
   ref,

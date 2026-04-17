@@ -14,6 +14,8 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 
+import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
+import { isAwsAccountIdValid } from '@/Components/CreateImageWizard/validators';
 import { AWS_REGIONS } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -23,9 +25,6 @@ import {
   selectAwsAccountId,
   selectAwsRegion,
 } from '@/store/slices/wizard';
-
-import { ValidatedInput } from '../../../../ValidatedInput';
-import { isAwsAccountIdValid } from '../../../../validators';
 
 export type AwsShareMethod = 'manual';
 

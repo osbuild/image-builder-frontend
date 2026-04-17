@@ -2,7 +2,11 @@ import React from 'react';
 
 import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
+import LabelInput from '@/Components/CreateImageWizard/LabelInput';
+import { useServicesValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { isServiceValid } from '@/Components/CreateImageWizard/validators';
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import {
   addDisabledService,
   addEnabledService,
@@ -14,11 +18,6 @@ import {
   selectDistribution,
   selectServices,
 } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import LabelInput from '../../../LabelInput';
-import { useServicesValidation } from '../../../utilities/useValidation';
-import { isServiceValid } from '../../../validators';
 
 const ServicesInput = () => {
   const disabledServices = useAppSelector(selectServices).disabled;

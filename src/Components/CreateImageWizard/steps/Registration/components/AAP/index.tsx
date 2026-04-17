@@ -11,6 +11,10 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
+import { useAAPValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { validateMultipleCertificates } from '@/Components/CreateImageWizard/validators';
 import { AAP_DOCS_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -23,11 +27,6 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
 } from '@/store/slices/wizard';
-
-import ExternalLinkButton from '../../../../utilities/ExternalLinkButton';
-import { useAAPValidation } from '../../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../../ValidatedInput';
-import { validateMultipleCertificates } from '../../../../validators';
 
 const AAPRegistration = () => {
   const dispatch = useAppDispatch();

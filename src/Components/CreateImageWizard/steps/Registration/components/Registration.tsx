@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeRegistrationType,
@@ -12,7 +13,6 @@ import ActivationKeysList from './ActivationKeysList';
 import { ManualActivationKey } from './ManualActivationKey';
 import SatelliteRegistration from './SatelliteRegistration';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { RegistrationProps } from '../registrationTypes';
 
 const Registration = ({ onErrorChange }: RegistrationProps) => {

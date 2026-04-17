@@ -9,9 +9,8 @@ import {
   SelectOption,
 } from '@patternfly/react-core/dist/esm';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeKernelName, selectKernel } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const NONE_OPTION = 'None';
 const kernelOptions = ['kernel', 'kernel-debug'];

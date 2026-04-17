@@ -4,12 +4,11 @@ import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addUser, selectUsers } from '@/store/slices/wizard';
 
 import UserRow from './UserRow';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useUsersValidation } from '../../../utilities/useValidation';
 
 type UserInfoProps = {
   attemptedNext?: boolean | undefined;

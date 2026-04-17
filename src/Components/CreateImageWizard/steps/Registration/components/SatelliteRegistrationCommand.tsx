@@ -7,21 +7,17 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
+import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { REGISTRATION_DOCS_URL, SATELLITE_SERVICE } from '@/constants';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addEnabledService,
   changeSatelliteRegistrationCommand,
   removeEnabledService,
   selectSatelliteRegistrationCommand,
 } from '@/store/slices/wizard';
-
-import {
-  REGISTRATION_DOCS_URL,
-  SATELLITE_SERVICE,
-} from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import ExternalLinkButton from '../../../utilities/ExternalLinkButton';
-import { useRegistrationValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 const SatelliteRegistrationCommand = () => {
   const dispatch = useAppDispatch();

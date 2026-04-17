@@ -2,6 +2,10 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
+import LabelInput from '@/Components/CreateImageWizard/LabelInput';
+import { useFirewallValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { isServiceValid } from '@/Components/CreateImageWizard/validators';
+import { useAppSelector } from '@/store/hooks';
 import {
   addDisabledFirewallService,
   addEnabledFirewallService,
@@ -9,11 +13,6 @@ import {
   removeEnabledFirewallService,
   selectFirewall,
 } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import LabelInput from '../../../LabelInput';
-import { useFirewallValidation } from '../../../utilities/useValidation';
-import { isServiceValid } from '../../../validators';
 
 const Services = () => {
   const disabledServices = useAppSelector(selectFirewall).services.disabled;

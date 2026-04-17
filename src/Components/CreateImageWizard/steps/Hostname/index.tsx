@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
-import HostnameInput from './components/HostnameInput';
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
+import HostnameInput from './components/HostnameInput';
 
 const HostnameStep = () => {
   return (

@@ -11,10 +11,9 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
+import { useHostnameValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeHostname, selectHostname } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useHostnameValidation } from '../../../utilities/useValidation';
 
 const HostnameInput = () => {
   const dispatch = useAppDispatch();

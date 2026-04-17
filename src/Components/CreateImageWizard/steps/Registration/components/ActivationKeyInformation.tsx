@@ -15,10 +15,9 @@ import {
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { selectActivationKey } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
 
 const ActivationKeyInformation = (): JSX.Element => {
   const activationKey = useAppSelector(selectActivationKey);

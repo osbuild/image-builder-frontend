@@ -9,12 +9,11 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
+import { ARCHES } from '@/constants';
 import { ImageRequest } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { changeArchitecture, selectArchitecture } from '@/store/slices/wizard';
-
-import { ARCHES } from '../../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const ArchSelect = () => {
   const arch = useAppSelector(selectArchitecture);

@@ -2,16 +2,15 @@ import React from 'react';
 
 import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
+import LabelInput from '@/Components/CreateImageWizard/LabelInput';
+import { useTimezoneValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { isNtpServerValid } from '@/Components/CreateImageWizard/validators';
+import { useAppSelector } from '@/store/hooks';
 import {
   addNtpServer,
   removeNtpServer,
   selectNtpServers,
 } from '@/store/slices/wizard';
-
-import { useAppSelector } from '../../../../../store/hooks';
-import LabelInput from '../../../LabelInput';
-import { useTimezoneValidation } from '../../../utilities/useValidation';
-import { isNtpServerValid } from '../../../validators';
 
 const NtpServersInput = () => {
   const ntpServers = useAppSelector(selectNtpServers);

@@ -2,13 +2,12 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useAppSelector } from '@/store/hooks';
 import { selectBlueprintMode } from '@/store/slices/wizard';
 
 import GroupInfo from './components/GroupInfo';
 import UserInfo from './components/UserInfo';
-
-import { useAppSelector } from '../../../../store/hooks';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 type UsersStepProps = {
   attemptedNext?: boolean | undefined;

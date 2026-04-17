@@ -20,6 +20,14 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import {
+  AMPLITUDE_MODULE_NAME,
+  COMPLIANCE_URL,
+  FIRST_BOOT_SERVICE,
+  OSCAP_URL,
+} from '@/constants';
+import { useGetUser } from '@/Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
@@ -27,6 +35,7 @@ import {
 } from '@/store/api/backend';
 import { usePoliciesQuery } from '@/store/api/compliance';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeComplianceType,
@@ -49,6 +58,8 @@ import {
   setCompliancePolicy,
   setOscapProfile,
 } from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
+import { useOnPremOpenSCAPAvailable } from '@/Utilities/useOnPremOpenSCAP';
 
 import OscapOnPremSpinner from './components/OnPremSpinner';
 import OscapOnPremWarning from './components/OnPremWarning';
@@ -58,17 +69,6 @@ import OpenScapProfileDetails from './components/ProfileDetails';
 import ProfileSelector from './components/ProfileSelector';
 import { removeBetaFromRelease } from './removeBetaFromRelease';
 
-import {
-  AMPLITUDE_MODULE_NAME,
-  COMPLIANCE_URL,
-  FIRST_BOOT_SERVICE,
-  OSCAP_URL,
-} from '../../../../constants';
-import { useGetUser } from '../../../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { asDistribution } from '../../../../store/typeGuards';
-import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {

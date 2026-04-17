@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeBlueprintDescription,
   changeBlueprintName,
@@ -10,7 +11,6 @@ import {
   setIsCustomName,
 } from '@/store/slices/wizard';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../ValidatedInput';
 

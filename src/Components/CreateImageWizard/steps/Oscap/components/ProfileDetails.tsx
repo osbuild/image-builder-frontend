@@ -16,13 +16,13 @@ import {
   OpenScapProfile,
   useGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectComplianceProfileID,
   selectDistribution,
 } from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
 
-import { useAppSelector } from '../../../../../store/hooks';
-import { asDistribution } from '../../../../../store/typeGuards';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 const ProfileDetails = (): JSX.Element => {
