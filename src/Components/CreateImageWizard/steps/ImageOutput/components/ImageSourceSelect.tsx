@@ -261,7 +261,7 @@ const BootcImageSourceSelect = () => {
   }, []);
 
   const selectedItem = uniqueDistributions?.find(
-    (d) => d.image_name === imageSource,
+    (d) => d.reference === imageSource,
   );
 
   const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
@@ -324,7 +324,7 @@ const BootcImageSourceSelect = () => {
         <SelectList>
           {uniqueDistributions && uniqueDistributions.length > 0 ? (
             uniqueDistributions.map((item) => (
-              <SelectOption key={item.image_name} value={item.image_name}>
+              <SelectOption key={item.reference} value={item.reference}>
                 {item.name}
               </SelectOption>
             ))

@@ -42,6 +42,7 @@ export const useSecuritySummary = () => {
       {
         // @ts-expect-error we skip this if it's not defined
         policy: policyId,
+        // @ts-expect-error skipped when distribution is 'image-mode'
         distribution: distribution,
       },
       {

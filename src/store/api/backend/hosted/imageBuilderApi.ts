@@ -186,7 +186,7 @@ export type GetDistributionsApiResponse =
    */ DistributionsResponse;
 export type GetDistributionsApiArg = {
   /** Kind of distributions to return. When set to 'bootc', returns bootc/image-mode
-    distributions (each with id, name, type, arch, and image). Defaults to classic distributions.
+    distributions (each with distro, name, type, arch, and reference). Defaults to classic distributions.
      */
   kind?: DistributionKind;
   /** Filter bootc distributions by distribution name. Only applies when kind=bootc.
@@ -352,13 +352,12 @@ export type DistributionItem = {
   name: string;
 };
 export type BootcDistributionItem = {
-  id: string;
   distro: string;
   name: string;
   type: string;
   arch: string;
-  /** part of the container image name used as the base for composing */
-  image_name: string;
+  /** Derived container image reference, only references listed in the bootc distributions list are allowed. */
+  reference: string;
 };
 export type DistributionsResponse = (
   | DistributionItem
@@ -439,8 +438,7 @@ export type Distributions =
   | "fedora-41"
   | "fedora-42"
   | "fedora-43"
-  | "fedora-44"
-  | "image-mode";
+  | "fedora-44";
 export type ListResponseMeta = {
   count: number;
 };
@@ -464,7 +462,7 @@ export type CreateBlueprintResponse = {
   id: string;
 };
 export type BootcBody = {
-  /** Image name from the bootc distributions list. Must match an image_name
+  /** Image name from the bootc distributions list. Must match a reference
     returned by GET /distributions?kind=bootc.
      */
   reference: string;
