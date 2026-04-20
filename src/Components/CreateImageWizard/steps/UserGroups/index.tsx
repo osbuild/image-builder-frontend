@@ -2,17 +2,16 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import GroupInfo from './components/GroupInfo';
 
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
-
-type UsersStepProps = {
+type UserGroupsStepProps = {
   attemptedNext?: boolean | undefined;
 };
 
-const UserGroupsStep = ({ attemptedNext }: UsersStepProps) => {
+const UserGroupsStep = ({ attemptedNext }: UserGroupsStepProps) => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
