@@ -69,10 +69,10 @@ const FirstBootStep = () => {
         First boot configuration
       </Title>
       <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Configure the image with a custom script that will execute on its first
-        boot.
+        Add a custom script to be executed when the image boots for the first
+        time.
         {registrationType !== 'register-later' && (
-          <> First boot script will run after registration is done.</>
+          <> The first boot script will run after registration is done.</>
         )}
       </Content>
 

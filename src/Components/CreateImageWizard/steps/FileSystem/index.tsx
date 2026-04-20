@@ -13,6 +13,10 @@ import FileSystemPartition from './components/FileSystemPartition';
 import { useAppSelector } from '../../../../store/hooks';
 import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
+// NOTE: waiting for docs to come back to us on this
+// const DOCS_URL =
+// 'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/creating-blueprints-and-blueprint-images_host-management-services#additional-modifications-to-a-blueprint_creating-blueprints-and-blueprint-images';
+
 export type FscModeType = 'automatic' | 'basic' | 'advanced';
 
 const FileSystemStep = () => {
@@ -31,7 +35,33 @@ const FileSystemStep = () => {
         File system configuration
       </Title>
       <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Define the partitioning of the image.
+        Configure the system and partitioning for your image. You can use
+        automatic partitioning, manually define your own mount points and sizes,
+        or use advanced partitioning for complex storage layouts. The order of
+        the partitions may change when the image is installed in order to
+        conform to best practices and ensure functionality.
+        {
+          // our existing documentation link button isn't very re-usable
+          // so we have to re-implement this here. Commenting this out
+          // for now while we wait for the docs team to get back to us
+          // about a suitable docs link
+          // !isOnPremise && (
+          //   <Button
+          //     component='a'
+          //     target='_blank'
+          //     variant='link'
+          //     icon={<ExternalLinkAltIcon />}
+          //     iconPosition='right'
+          //     isInline
+          //     href={
+          //
+          //       DOCS_URL
+          //     }
+          //   >
+          //     Learn about customizing file systems
+          //   </Button>
+          // )
+        }
       </Content>
       {fscMode === 'automatic' ? (
         <>

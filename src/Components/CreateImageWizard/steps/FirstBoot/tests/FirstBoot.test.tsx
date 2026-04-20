@@ -21,7 +21,7 @@ describe('FirstBoot Component', () => {
         }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Configure the image with a custom script/i),
+        screen.getByText(/Add a custom script to be executed/i),
       ).toBeInTheDocument();
     });
 
@@ -95,7 +95,7 @@ describe('FirstBoot Component', () => {
 
       expect(
         await screen.findByText(
-          /First boot script will run after registration is done/i,
+          /The first boot script will run after registration is done/i,
         ),
       ).toBeInTheDocument();
     });
@@ -114,7 +114,7 @@ describe('FirstBoot Component', () => {
 
       expect(
         screen.queryByText(
-          /First boot script will run after registration is done/i,
+          /The first boot script will run after registration is done/i,
         ),
       ).not.toBeInTheDocument();
     });

@@ -22,7 +22,7 @@ describe('Firewall Component', () => {
         await screen.findByRole('heading', { name: /Firewall/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Customize firewall settings for your image/i),
+        screen.getByText(/Control network traffic by configuring/i),
       ).toBeInTheDocument();
     });
 
