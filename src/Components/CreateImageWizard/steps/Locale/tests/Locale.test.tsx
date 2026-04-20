@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { createUser } from '@/test/testUtils';
+import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
   clearKeyboardSearch,
@@ -319,6 +319,36 @@ describe('Locale Component', () => {
       await selectKeyboardOption(user, 'us');
 
       expect(store.getState().wizard.locale.keyboard).toBe('us');
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in keyboard search does not trigger page reload', async () => {
+      renderLocaleStep();
+      const user = createUser();
+
+      const keyboardInput =
+        await screen.findByPlaceholderText(/select a keyboard/i);
+      await typeWithWait(user, keyboardInput, 'us-dvorak{Enter}');
+
+      expect(
+        screen.getByPlaceholderText(/select a language/i),
+      ).toBeInTheDocument();
+      expect(keyboardInput).toBeInTheDocument();
+    });
+
+    test('pressing Enter in language search does not trigger page reload', async () => {
+      renderLocaleStep();
+      const user = createUser();
+
+      const languageInput =
+        await screen.findByPlaceholderText(/select a language/i);
+      await typeWithWait(user, languageInput, 'Dutch{Enter}');
+
+      expect(
+        screen.getByPlaceholderText(/select a keyboard/i),
+      ).toBeInTheDocument();
+      expect(languageInput).toBeInTheDocument();
     });
   });
 });

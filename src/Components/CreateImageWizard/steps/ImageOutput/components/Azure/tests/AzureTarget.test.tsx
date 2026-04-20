@@ -5,7 +5,12 @@ import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/re
 import { serviceMiddleware, serviceReducer } from '@/store';
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
 import { initialState } from '@/store/slices/wizard';
-import { clickWithWait, createUser, tabWithWait } from '@/test/testUtils';
+import {
+  clickWithWait,
+  createUser,
+  tabWithWait,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import {
   checkHyperVGenValue,
@@ -485,5 +490,69 @@ describe('Azure CreateBlueprintRequest payload', () => {
     ) as CreateBlueprintRequest;
 
     expect(request.customizations.subscription).toBeUndefined();
+  });
+});
+
+describe('Form submission', () => {
+  test('pressing Enter in tenant ID input does not trigger page reload', async () => {
+    const { store } = renderAzureStep();
+    const user = createUser();
+
+    const tenantInput = await screen.findByPlaceholderText(
+      /Enter your 36-character GUID/i,
+    );
+    await typeWithWait(
+      user,
+      tenantInput,
+      'b8f86d22-4371-46ce-95e7-65c415f3b1e2{Enter}',
+    );
+
+    expect(
+      screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
+    ).toBeInTheDocument();
+    expect(tenantInput).toBeInTheDocument();
+    expect(store.getState().wizard.azure.tenantId).toBe(
+      'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+    );
+  });
+
+  test('pressing Enter in subscription ID input does not trigger page reload', async () => {
+    const { store } = renderAzureStep();
+    const user = createUser();
+
+    const subscriptionInput = await screen.findByPlaceholderText(
+      /Enter your 36-character ID/i,
+    );
+    await typeWithWait(
+      user,
+      subscriptionInput,
+      '60631143-a7dc-4d15-988b-ba83f3c99711{Enter}',
+    );
+
+    expect(
+      screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
+    ).toBeInTheDocument();
+    expect(subscriptionInput).toBeInTheDocument();
+    expect(store.getState().wizard.azure.subscriptionId).toBe(
+      '60631143-a7dc-4d15-988b-ba83f3c99711',
+    );
+  });
+
+  test('pressing Enter in resource group input does not trigger page reload', async () => {
+    const { store } = renderAzureStep();
+    const user = createUser();
+
+    const resourceGroupInput = await screen.findByPlaceholderText(
+      /Enter your resource group/i,
+    );
+    await typeWithWait(user, resourceGroupInput, 'test-resource-group{Enter}');
+
+    expect(
+      screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
+    ).toBeInTheDocument();
+    expect(resourceGroupInput).toBeInTheDocument();
+    expect(store.getState().wizard.azure.resourceGroup).toBe(
+      'test-resource-group',
+    );
   });
 });

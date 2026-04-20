@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { createUser } from '@/test/testUtils';
+import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
   enterCallbackUrl,
@@ -211,6 +211,48 @@ describe('AAP Component', () => {
 
       expect(store.getState().wizard.aapRegistration.skipTlsVerification).toBe(
         true,
+      );
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in callback URL input does not trigger page reload', async () => {
+      const { store } = renderAAPStep();
+      const user = createUser();
+
+      const callbackUrlInput = await screen.findByRole('textbox', {
+        name: /ansible callback url/i,
+      });
+      await typeWithWait(
+        user,
+        callbackUrlInput,
+        'https://controller.example.com/callback/{Enter}',
+      );
+
+      expect(
+        screen.getByRole('textbox', { name: /host config key/i }),
+      ).toBeInTheDocument();
+      expect(callbackUrlInput).toBeInTheDocument();
+      expect(store.getState().wizard.aapRegistration.callbackUrl).toBe(
+        'https://controller.example.com/callback/',
+      );
+    });
+
+    test('pressing Enter in host config key input does not trigger page reload', async () => {
+      const { store } = renderAAPStep();
+      const user = createUser();
+
+      const hostConfigKeyInput = await screen.findByRole('textbox', {
+        name: /host config key/i,
+      });
+      await typeWithWait(user, hostConfigKeyInput, 'test-config-key{Enter}');
+
+      expect(
+        screen.getByRole('textbox', { name: /ansible callback url/i }),
+      ).toBeInTheDocument();
+      expect(hostConfigKeyInput).toBeInTheDocument();
+      expect(store.getState().wizard.aapRegistration.hostConfigKey).toBe(
+        'test-config-key',
       );
     });
   });

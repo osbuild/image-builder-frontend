@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
-import { createUser } from '@/test/testUtils';
+import { clearWithWait, createUser, typeWithWait } from '@/test/testUtils';
 
 import {
   clearBlueprintName,
@@ -310,6 +310,45 @@ describe('Details Component', () => {
       await enterBlueprintName(user, 'Custom Name');
 
       expect(store.getState().wizard.details.isCustomName).toBe(true);
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in name input does not trigger page reload', async () => {
+      const { store } = renderDetailsStep();
+      const user = createUser();
+
+      const nameInput = await screen.findByRole('textbox', {
+        name: /blueprint name/i,
+      });
+      await clearWithWait(user, nameInput);
+      await typeWithWait(user, nameInput, 'custom-blueprint-name{Enter}');
+
+      expect(
+        screen.getByRole('heading', { name: /Image details/i }),
+      ).toBeInTheDocument();
+      expect(nameInput).toBeInTheDocument();
+      expect(store.getState().wizard.details.blueprintName).toBe(
+        'custom-blueprint-name',
+      );
+    });
+
+    test('pressing Enter in description input does not trigger page reload', async () => {
+      const { store } = renderDetailsStep();
+      const user = createUser();
+
+      const descriptionInput = await screen.findByRole('textbox', {
+        name: /blueprint description/i,
+      });
+      await typeWithWait(user, descriptionInput, 'Test description{Enter}');
+
+      expect(
+        screen.getByRole('heading', { name: /Image details/i }),
+      ).toBeInTheDocument();
+      expect(descriptionInput).toBeInTheDocument();
+      expect(store.getState().wizard.details.blueprintDescription).toBe(
+        'Test description',
+      );
     });
   });
 });

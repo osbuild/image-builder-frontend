@@ -590,4 +590,23 @@ describe('Packages Component', () => {
       await screen.findByText(/there are no selected packages/i);
     });
   });
+
+  describe('Form submission', () => {
+    test('pressing Enter in search input does not trigger page reload', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
+      renderPackagesStep();
+      const user = createUser();
+
+      const searchInput = await screen.findByRole('textbox', {
+        name: /search packages/i,
+      });
+      await typeWithWait(user, searchInput, 'test-pkg{Enter}');
+
+      expect(
+        screen.getByRole('button', { name: /individual packages/i }),
+      ).toBeInTheDocument();
+      expect(searchInput).toBeInTheDocument();
+      expect(searchInput).toHaveValue('test-pkg');
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { createUser } from '@/test/testUtils';
+import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
   addNtpServer,
@@ -277,6 +277,22 @@ describe('Timezone Component', () => {
       expect(store.getState().wizard.timezone.ntpservers).not.toContain(
         '0.nl.pool.ntp.org',
       );
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in timezone search does not trigger page reload', async () => {
+      const { store } = renderTimezoneStep();
+      const user = createUser();
+
+      await openTimezoneDropdown(user);
+
+      const searchInput = await screen.findByLabelText(/Filter timezone/i);
+      await typeWithWait(user, searchInput, 'Europe{Enter}');
+
+      expect(searchInput).toBeInTheDocument();
+      expect(searchInput).toHaveValue('Europe');
+      expect(store.getState().wizard.timezone.timezone).toBe('');
     });
   });
 });

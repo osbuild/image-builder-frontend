@@ -1,7 +1,12 @@
 import { screen } from '@testing-library/react';
 
 import { server } from '@/test/mocks/server';
-import { createUser, tabWithWait } from '@/test/testUtils';
+import {
+  clearWithWait,
+  createUser,
+  tabWithWait,
+  typeWithWait,
+} from '@/test/testUtils';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import {
@@ -350,6 +355,45 @@ describe('Repeatable Build Component', () => {
 
       expect(store.getState().wizard.snapshotting.useLatest).toBe(true);
       expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in snapshot date picker does not trigger page reload', async () => {
+      const { store } = renderRepeatableBuildStep();
+      const user = createUser();
+
+      await selectEnableRepeatableBuild(user);
+
+      const dateInput = await screen.findByRole('textbox', {
+        name: /date picker/i,
+      });
+      await clearWithWait(user, dateInput);
+      await typeWithWait(user, dateInput, '2026-03-15{Enter}');
+
+      expect(dateInput).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /Enable repeatable build/i }),
+      ).toBeChecked();
+      expect(store.getState().wizard.snapshotting.snapshotDate).toBe(
+        '2026-03-15T00:00:00.000Z',
+      );
+    });
+
+    test('pressing Enter in template search does not trigger page reload', async () => {
+      renderRepeatableBuildStep();
+      const user = createUser();
+
+      await selectUseAContentTemplate(user);
+      await openTemplateDropdown(user);
+
+      const searchInput = await screen.findByPlaceholderText(/find by name/i);
+      await typeWithWait(user, searchInput, 'template{Enter}');
+
+      expect(searchInput).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /Use a content template/i }),
+      ).toBeChecked();
     });
   });
 });

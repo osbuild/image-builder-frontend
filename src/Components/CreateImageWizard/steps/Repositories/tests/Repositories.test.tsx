@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { CreateBlueprintRequest } from '@/store/api/backend';
 import { server } from '@/test/mocks/server';
-import { createTestStore, createUser } from '@/test/testUtils';
+import { createTestStore, createUser, typeWithWait } from '@/test/testUtils';
 
 import {
   removeRepo,
@@ -613,5 +613,26 @@ describe('Request Payload Generation', () => {
       'ae39f556-6986-478a-95d1-f9c7e33d066c',
       '34718648-0946-4b09-abef-3a20647f2b1f',
     ]);
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in search input does not trigger page reload', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ repositories: mockRepositoryResults }),
+      );
+      renderRepositoriesStep();
+      const user = createUser();
+
+      const searchInput = await screen.findByRole('textbox', {
+        name: /filter repositories/i,
+      });
+      await typeWithWait(user, searchInput, 'test-repo{Enter}');
+
+      expect(
+        screen.getByRole('button', { name: /menu toggle/i }),
+      ).toBeInTheDocument();
+      expect(searchInput).toBeInTheDocument();
+      expect(searchInput).toHaveValue('test-repo');
+    });
   });
 });

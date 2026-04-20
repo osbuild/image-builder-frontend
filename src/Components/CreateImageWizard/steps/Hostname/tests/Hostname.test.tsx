@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { createUser } from '@/test/testUtils';
+import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
   clearHostname,
@@ -168,6 +168,23 @@ describe('Hostname Component', () => {
 
       await clearHostname(user);
       expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter does not trigger page reload', async () => {
+      const { store } = renderHostnameStep();
+      const user = createUser();
+
+      const hostnameInput =
+        await screen.findByPlaceholderText(/Add a hostname/i);
+      await typeWithWait(user, hostnameInput, 'test-hostname{Enter}');
+
+      expect(
+        screen.getByRole('heading', { name: /Hostname/i }),
+      ).toBeInTheDocument();
+      expect(hostnameInput).toBeInTheDocument();
+      expect(store.getState().wizard.hostname).toBe('test-hostname');
     });
   });
 });
