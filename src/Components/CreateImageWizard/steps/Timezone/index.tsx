@@ -22,7 +22,7 @@ const TimezoneStep = () => {
       >
         Timezone
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Select a timezone and define NTP servers to ensure your image maintains
         accurate system time upon deployment.
       </Content>

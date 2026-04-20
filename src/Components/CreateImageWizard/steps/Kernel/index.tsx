@@ -37,7 +37,7 @@ const KernelStep = () => {
           </Label>
         )}
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Choose a kernel package and append specific boot parameters to customize
         how your image initializes its core operating environment.
       </Content>

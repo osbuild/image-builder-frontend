@@ -21,7 +21,7 @@ const FirewallStep = () => {
       >
         Firewall
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Customize firewall settings for your image. When enabling or disabling
         services, use the firewalld service name rather than systemd unit names.
       </Content>

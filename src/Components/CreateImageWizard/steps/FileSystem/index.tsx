@@ -30,7 +30,9 @@ const FileSystemStep = () => {
       >
         File system configuration
       </Title>
-      <Content>Define the partitioning of the image.</Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        Define the partitioning of the image.
+      </Content>
       {fscMode === 'automatic' ? (
         <>
           <FileSystemPartition />

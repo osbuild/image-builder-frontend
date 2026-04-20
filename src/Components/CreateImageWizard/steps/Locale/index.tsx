@@ -56,7 +56,7 @@ const LocaleStep = () => {
       >
         Locale
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Define the primary languages and keyboard settings for your image to
         ensure proper system localization and user interface support.
       </Content>

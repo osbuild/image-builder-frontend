@@ -31,7 +31,7 @@ const HostnameStep = () => {
       >
         Hostname
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Define the hostname to uniquely identify this image within your network
         environment.
       </Content>

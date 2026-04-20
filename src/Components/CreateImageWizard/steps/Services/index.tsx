@@ -30,7 +30,7 @@ const ServicesStep = () => {
           </Label>
         )}
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Configure systemd units to manage your system’s services and startup
         logic. Enable services to start at boot, disable them to prevent
         automatic starting, or mask them to completely block execution.
