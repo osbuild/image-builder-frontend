@@ -89,9 +89,10 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
-    await expect(frame.getByRole('grid').first().getByRole('row')).toHaveCount(
-      3,
-    ); // one base distro repo + header
+    const reposTable = frame.getByRole('grid').filter({
+      has: frame.getByRole('columnheader', { name: 'Snapshot date' }),
+    });
+    await expect(reposTable.getByRole('row')).toHaveCount(3); // two base distro repos + header
     await expect(
       frame.getByRole('option', { name: repositoryName }),
     ).toBeVisible();
@@ -140,10 +141,17 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame
       .getByRole('button', { name: /Select content template/i })
       .click();
-    // Wait for menu to appear (any item, including the loading spinner item),
-    // then wait for the spinner to disappear before clicking.
-    await expect(frame.getByRole('menuitem').first()).toBeVisible();
-    await expect(frame.getByRole('progressbar')).toBeHidden();
+    // Wait for menu to appear, then close it and re-open it, PW selectors are not matching
+    // the menu items for unknown reason on first open
+    await page.waitForTimeout(2000);
+    await frame
+      .getByRole('button', { name: /Select content template/i })
+      .click();
+    await frame
+      .getByRole('button', { name: /Select content template/i })
+      .click();
+    await expect(frame.getByText(/Loading/i)).toBeHidden();
+    await page.waitForTimeout(2000);
     await frame.getByRole('menuitem').first().click();
     await frame.getByRole('button', { name: 'Review image' }).click();
     await expect(
