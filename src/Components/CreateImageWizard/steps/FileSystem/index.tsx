@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useAppSelector } from '@/store/hooks';
 import { selectFscMode } from '@/store/slices/wizard';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
@@ -9,9 +11,6 @@ import AdvancedPartitioning from './components/AdvancedPartitioning';
 import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './components/FileSystemConfiguration';
 import FileSystemPartition from './components/FileSystemPartition';
-
-import { useAppSelector } from '../../../../store/hooks';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 // NOTE: waiting for docs to come back to us on this
 // const DOCS_URL =

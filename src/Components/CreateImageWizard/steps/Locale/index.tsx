@@ -2,22 +2,21 @@ import React, { useMemo } from 'react';
 
 import { Content, Form, Spinner, Title } from '@patternfly/react-core';
 
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useGetArchitecturesQuery } from '@/store/api/backend';
 import { useSearchLanguagePacks } from '@/store/api/distributions';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
   selectDistribution,
   selectLocaleLangpackCandidates,
   selectVerifiedLocaleLangpacks,
 } from '@/store/slices/wizard';
+import { asDistribution } from '@/store/typeGuards';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
-
-import { useAppSelector } from '../../../../store/hooks';
-import { asDistribution } from '../../../../store/typeGuards';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
 
 const LocaleStep = () => {
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');

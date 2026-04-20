@@ -12,6 +12,10 @@ import {
   Title,
 } from '@patternfly/react-core';
 
+import { useFirstBootValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { FIRST_BOOT_SERVICE } from '@/constants';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addEnabledService,
   removeEnabledService,
@@ -20,11 +24,6 @@ import {
   setFirstBootScript,
 } from '@/store/slices/wizard';
 import { useFlag } from '@/Utilities/useGetEnvironment';
-
-import { FIRST_BOOT_SERVICE } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { CustomizationLabels } from '../../../sharedComponents/CustomizationLabels';
-import { useFirstBootValidation } from '../../utilities/useValidation';
 
 const detectScriptType = (scriptString: string): Language => {
   const lines = scriptString.split('\n');
