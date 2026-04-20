@@ -16,6 +16,7 @@ import {
   changeArchitecture,
   changeBlueprintMode,
   changeDistribution,
+  changeImageTypes,
   selectArchitecture,
   selectDistribution,
   selectIsImageMode,
@@ -81,6 +82,7 @@ const BlueprintMode = () => {
               previousArch.current = architecture;
             }
             dispatch(changeBlueprintMode('image'));
+            dispatch(changeImageTypes([]));
             if (isOnPremise) {
               dispatch(changeDistribution('image-mode'));
             } else {
