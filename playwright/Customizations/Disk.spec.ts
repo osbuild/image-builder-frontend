@@ -56,15 +56,12 @@ test('Create a blueprint with Disk customization', async ({
 
   await test.step('Check basic structure of advanced partitioning', async () => {
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
+    await frame.getByRole('button', { name: 'Automatic partitioning' }).click();
     await frame
-      .getByRole('radio', { name: 'Advanced disk partitioning' })
+      .getByRole('option', { name: 'Advanced disk partitioning' })
       .click();
 
-    await expect(
-      frame.getByRole('checkbox', {
-        name: /Select partitioning mode/i,
-      }),
-    ).toBeHidden();
+    await expect(frame.getByText('Partitioning mode')).toBeHidden();
 
     await expect(
       frame.getByRole('button', {
@@ -140,6 +137,12 @@ test('Create a blueprint with Disk customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
 
+    await expect(
+      frame.getByRole('button', {
+        name: 'Advanced disk partitioning',
+      }),
+    ).toBeVisible();
+
     const removeRootButton = frame
       .getByRole('row')
       .nth(1)
@@ -209,6 +212,12 @@ test('Create a blueprint with Disk customization', async ({
     }
     await frame.getByRole('textbox', { name: 'Blueprint name' }).fill('tmp');
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
+
+    await expect(
+      frame.getByRole('button', {
+        name: 'Advanced disk partitioning',
+      }),
+    ).toBeVisible();
 
     const removeRootButton = frame
       .getByRole('row')

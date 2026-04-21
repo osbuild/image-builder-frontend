@@ -360,6 +360,7 @@ describe('filesystem selectors', () => {
       const state = createState({
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [
             createPlainPartition({ mountpoint: '/boot' }),
@@ -375,6 +376,7 @@ describe('filesystem selectors', () => {
       const state = createState({
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [
             createPlainPartition({ mountpoint: '/boot' }),
@@ -402,6 +404,7 @@ describe('filesystem selectors', () => {
         fscMode: 'advanced',
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [createPlainPartition({ mountpoint: '/boot' })],
         },
@@ -415,6 +418,7 @@ describe('filesystem selectors', () => {
         fscMode: 'advanced',
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [
             createVolumeGroup([
@@ -447,6 +451,7 @@ describe('filesystem selectors', () => {
         fscMode: 'advanced',
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [
             createVolumeGroup([
@@ -505,6 +510,7 @@ describe('filesystem selectors', () => {
         fscMode: 'advanced',
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [
             createPlainPartition({ mountpoint: '/boot' }),
@@ -531,6 +537,7 @@ describe('filesystem selectors', () => {
         fscMode: 'advanced',
         disk: {
           minsize: '',
+          unit: 'GiB',
           type: 'gpt',
           partitions: [
             createPlainPartition({ mountpoint: '/boot' }),

@@ -52,8 +52,14 @@ const goToFileSystemConfigurationStep = async () => {
 
 const clickManuallyConfigurePartitions = async () => {
   const user = userEvent.setup();
-  const button = await screen.findByText(/Basic filesystem partitioning/i);
+  const button = await screen.findByRole('button', {
+    name: /Automatic partitioning/i,
+  });
   await waitFor(() => user.click(button));
+  const option = await screen.findByRole('option', {
+    name: /Basic filesystem partitioning/i,
+  });
+  await waitFor(() => user.click(option));
 };
 
 const addPartition = async () => {
@@ -215,8 +221,6 @@ describe('Step File system configuration', () => {
     await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
-
-    await screen.findByText('Configure partitions');
   });
 
   test('revisit step button on Review works', async () => {

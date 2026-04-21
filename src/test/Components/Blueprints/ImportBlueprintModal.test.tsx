@@ -418,11 +418,9 @@ describe('Partitioning import', () => {
     await waitFor(() => user.click(guestImageCheckBox));
 
     await goToStep('File system configuration');
-    expect(
-      await screen.findByRole('radio', {
-        name: /Basic filesystem partitioning/i,
-      }),
-    ).toBeChecked();
+    await screen.findByRole('button', {
+      name: /Basic filesystem partitioning/i,
+    });
     await screen.findByDisplayValue('/var');
   });
 
@@ -442,14 +440,17 @@ describe('Partitioning import', () => {
     await waitFor(() => user.click(guestImageCheckBox));
 
     await goToStep('File system configuration');
-    expect(
-      await screen.findByRole('radio', { name: /advanced disk partitioning/i }),
-    ).toBeChecked();
+    await screen.findByRole('button', {
+      name: /Advanced disk partitioning/i,
+    });
     const minSizeInput = await screen.findByRole('textbox', {
       name: /minimum disk size input/i,
     });
 
-    expect(minSizeInput).toHaveValue('2 GiB');
+    expect(minSizeInput).toHaveValue('2');
+
+    const unitButtons = await screen.findAllByRole('button', { name: 'GiB' });
+    expect(unitButtons[0]).toBeInTheDocument();
 
     const vgNameInput = await screen.findByRole('textbox', {
       name: /volume group name input/i,

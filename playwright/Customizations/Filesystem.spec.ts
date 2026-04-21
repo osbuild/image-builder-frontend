@@ -4,7 +4,6 @@ import * as path from 'path';
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../src/constants';
 import { test } from '../fixtures/cleanup';
 import { exportedFilesystemBP } from '../fixtures/data/exportBlueprintContents';
 import { isHosted } from '../helpers/helpers';
@@ -55,66 +54,43 @@ test('Create a blueprint with Filesystem customization', async ({
     await registerLater(frame);
   });
 
-  await test.step('Check URLs for documentation', async () => {
+  await test.step('Select filesystem configuration mode', async () => {
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
+    await frame.getByRole('button', { name: 'Automatic partitioning' }).click();
     await frame
-      .getByRole('radio', { name: 'Use automatic partitioning' })
+      .getByRole('option', { name: 'Basic filesystem partitioning' })
       .click();
-    const [newPageAutomatic] = await Promise.all([
-      page.context().waitForEvent('page'),
-      frame
-        .getByRole('link', {
-          name: 'Customizing file systems during the image creation',
-        })
-        .click(),
-    ]);
-    await newPageAutomatic.waitForLoadState();
-    const finalUrlAutomatic = newPageAutomatic.url();
-    expect(finalUrlAutomatic).toContain(FILE_SYSTEM_CUSTOMIZATION_URL);
-    await newPageAutomatic.close();
-
-    await frame
-      .getByRole('radio', { name: 'Basic filesystem partitioning' })
-      .click();
-    const [newPageManual] = await Promise.all([
-      page.context().waitForEvent('page'),
-      frame
-        .getByRole('link', {
-          name: 'Read more about manual configuration here',
-        })
-        .click(),
-    ]);
-    await newPageManual.waitForLoadState();
-    const finalUrlManual = newPageManual.url();
-    expect(finalUrlManual).toContain(FILE_SYSTEM_CUSTOMIZATION_URL);
-    await newPageManual.close();
   });
 
   await test.step('Select partitioning mode', async () => {
-    const partitioningModeCheckbox = frame.getByRole('checkbox', {
-      name: /Select partitioning mode/i,
+    const partitioningModeSelect = frame.getByRole('button', {
+      name: 'Select partitioning mode',
     });
-    await expect(partitioningModeCheckbox).toBeVisible();
-    await expect(partitioningModeCheckbox).not.toBeChecked();
+    await expect(partitioningModeSelect).toBeVisible();
 
-    await partitioningModeCheckbox.click();
+    await partitioningModeSelect.click();
 
     await expect(
-      frame.getByRole('radio', {
+      frame.getByRole('option', {
+        name: 'Default',
+      }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('option', {
         name: 'Auto-LVM partitioning',
       }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('radio', {
+      frame.getByRole('option', {
         name: 'Raw partitioning',
       }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('radio', { name: 'LVM partitioning', exact: true }),
+      frame.getByRole('option', { name: /^LVM partitioning/ }),
     ).toBeVisible();
 
     await frame
-      .getByRole('radio', {
+      .getByRole('option', {
         name: 'Raw partitioning',
       })
       .click();
@@ -158,13 +134,24 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
 
     await expect(
-      frame.getByRole('radio', {
+      frame.getByRole('button', {
+        name: 'Basic filesystem partitioning',
+      }),
+    ).toBeVisible();
+
+    await expect(
+      frame.getByRole('button', {
         name: 'Raw partitioning',
       }),
-    ).toBeChecked();
+    ).toBeVisible();
 
     await frame
-      .getByRole('radio', {
+      .getByRole('button', {
+        name: 'Raw partitioning',
+      })
+      .click();
+    await frame
+      .getByRole('option', {
         name: 'Auto-LVM partitioning',
       })
       .click();
@@ -185,11 +172,6 @@ test('Create a blueprint with Filesystem customization', async ({
       .getByRole('textbox', { name: 'Mount point input' })
       .last()
       .fill('/usr/test');
-    await expect(
-      frame.getByText(
-        'Sub-directories for the /usr mount point are no longer supported',
-      ),
-    ).toBeVisible();
 
     await frame
       .getByRole('textbox', { name: 'Mount point input' })
@@ -235,15 +217,16 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
 
     await expect(
-      frame.getByRole('checkbox', {
-        name: /Select partitioning mode/i,
+      frame.getByRole('button', {
+        name: 'Basic filesystem partitioning',
       }),
-    ).toBeChecked();
+    ).toBeVisible();
+
     await expect(
-      frame.getByRole('radio', {
+      frame.getByRole('button', {
         name: 'Auto-LVM partitioning',
       }),
-    ).toBeChecked();
+    ).toBeVisible();
 
     const closeRootButton = frame
       .getByRole('button', { name: 'Remove partition' })

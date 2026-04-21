@@ -58,6 +58,7 @@ describe('wizardSlice core reducers', () => {
         },
         disk: {
           minsize: '50',
+          unit: 'GiB',
           partitions: [
             {
               id: '2',

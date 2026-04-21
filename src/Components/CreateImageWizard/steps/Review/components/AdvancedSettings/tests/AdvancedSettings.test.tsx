@@ -123,6 +123,7 @@ describe('AdvancedSettingsOverview', () => {
             fscMode: 'advanced',
             disk: {
               minsize: '',
+              unit: 'GiB',
               type: 'gpt',
               partitions: advancedPartitions.singlePlain,
             },
@@ -142,6 +143,7 @@ describe('AdvancedSettingsOverview', () => {
             fscMode: 'advanced',
             disk: {
               minsize: '',
+              unit: 'GiB',
               type: 'gpt',
               partitions: advancedPartitions.withLvm,
             },
@@ -162,6 +164,7 @@ describe('AdvancedSettingsOverview', () => {
             fscMode: 'advanced',
             disk: {
               minsize: '',
+              unit: 'GiB',
               type: 'gpt',
               partitions: advancedPartitions.withLvm,
             },
