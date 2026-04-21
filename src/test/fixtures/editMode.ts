@@ -27,7 +27,6 @@ import {
   RHEL_8,
   RHEL_9,
   UNIT_GIB,
-  UNIT_KIB,
   UNIT_MIB,
   X86_64,
 } from '../../constants';
@@ -90,7 +89,7 @@ export const expectedFilesystemCisL2 = [
 export const expectedFsc = [
   { min_size: 10 * UNIT_GIB, mountpoint: '/' },
   { min_size: 10 * UNIT_MIB, mountpoint: '/home' },
-  { min_size: 10 * UNIT_KIB, mountpoint: '/app' },
+  { min_size: 10 * UNIT_MIB, mountpoint: '/app' },
 ];
 
 // Disk

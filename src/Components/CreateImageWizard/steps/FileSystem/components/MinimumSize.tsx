@@ -34,7 +34,7 @@ const MinimumSize = ({ partition, customization }: MinimumSizePropTypes) => {
       isDisabled={partition.unit === 'B'}
       warning={
         partition.unit === 'B'
-          ? 'The Wizard only supports KiB, MiB, or GiB. Adjust or keep the current value.'
+          ? 'The Wizard only supports MiB or GiB. Adjust or keep the current value.'
           : ''
       }
       type='text'

@@ -34,7 +34,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { Units } from '../fscTypes';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
-const units = ['GiB', 'MiB', 'KiB'];
+const units = ['GiB', 'MiB'];
 
 const AdvancedPartitioning = () => {
   const dispatch = useAppDispatch();

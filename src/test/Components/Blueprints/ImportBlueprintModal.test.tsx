@@ -242,7 +242,7 @@ describe('Import modal', () => {
 
     // File system configuration
     expect(
-      await screen.findByText(/The Wizard only supports KiB, MiB, or GiB/),
+      await screen.findByText(/The Wizard only supports MiB or GiB/),
     ).toBeInTheDocument();
 
     // Timezone

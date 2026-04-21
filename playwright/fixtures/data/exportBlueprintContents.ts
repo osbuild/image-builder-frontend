@@ -6,7 +6,7 @@ export const exportedDiskBP = (blueprintName: string): string => {
   return `name = "${blueprintName}"
 
 [[customizations.disk.partitions]]
-minsize = "1 GiB"
+minsize = "10 MiB"
 fs_type = "xfs"
 mountpoint = "/"
 type = "plain"
@@ -18,12 +18,12 @@ mountpoint = "/srv/data"
 type = "plain"
 
 [[customizations.disk.partitions]]
-minsize = "1 KiB"
+minsize = "1 MiB"
 name = "vg-edited-name"
 type = "lvm"
 
 [[customizations.disk.partitions.logical_volumes]]
-minsize = "10 KiB"
+minsize = "10 GiB"
 name = "lv2"
 fs_type = "xfs"
 mountpoint = "/tmp/usb"

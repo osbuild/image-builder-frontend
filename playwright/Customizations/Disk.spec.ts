@@ -84,7 +84,7 @@ test('Create a blueprint with Disk customization', async ({
 
     await frame.getByPlaceholder('Define minimum size').nth(1).fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
-    await frame.getByRole('option', { name: 'KiB' }).click();
+    await frame.getByRole('option', { name: 'MiB' }).click();
 
     await frame.getByRole('button', { name: 'Add LVM volume group' }).click();
     await expect(
@@ -102,7 +102,7 @@ test('Create a blueprint with Disk customization', async ({
       .nth(1)
       .fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
-    await frame.getByRole('option', { name: 'KiB' }).click();
+    await frame.getByRole('option', { name: 'MiB' }).click();
 
     await frame
       .getByRole('textbox', { name: 'Partition name input' })
@@ -122,7 +122,7 @@ test('Create a blueprint with Disk customization', async ({
       .getByPlaceholder('Define minimum size')
       .fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
-    await frame.getByRole('option', { name: 'KiB' }).click();
+    await frame.getByRole('option', { name: 'MiB' }).click();
   });
 
   await test.step('Review image', async () => {
@@ -164,7 +164,7 @@ test('Create a blueprint with Disk customization', async ({
 
     await secondRow.getByPlaceholder('Define mount point').fill('/srv/data');
 
-    await secondRow.getByRole('button', { name: 'KiB' }).click();
+    await secondRow.getByRole('button', { name: 'MiB' }).click();
     await frame.getByRole('option', { name: 'MiB' }).click();
 
     await frame

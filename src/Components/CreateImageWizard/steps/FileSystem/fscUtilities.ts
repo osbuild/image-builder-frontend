@@ -1,6 +1,6 @@
 import { DiskPartition, FilesystemPartition, FSType, Units } from './fscTypes';
 
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
+import { UNIT_GIB, UNIT_MIB } from '../../../../constants';
 
 const defaultMountpointPreferences = [
   '/home',
@@ -16,8 +16,6 @@ export const getConversionFactor = (units: Units) => {
   switch (units) {
     case 'B':
       return 1;
-    case 'KiB':
-      return UNIT_KIB;
     case 'MiB':
       return UNIT_MIB;
     case 'GiB':

@@ -22,7 +22,7 @@ import {
   VolumeGroupWithExtendedLV,
 } from '../fscTypes';
 
-const units = ['GiB', 'MiB', 'KiB'];
+const units = ['GiB', 'MiB'];
 
 type SizeUnitPropTypes = {
   partition:

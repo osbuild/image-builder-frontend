@@ -1,4 +1,4 @@
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
+import { UNIT_GIB, UNIT_MIB } from '../../../constants';
 import { Units } from '../steps/FileSystem/fscTypes';
 
 export const parseSizeUnit = (bytesize: string) => {
@@ -11,9 +11,6 @@ export const parseSizeUnit = (bytesize: string) => {
   } else if (parseInt(bytesize) % UNIT_MIB === 0) {
     size = parseInt(bytesize) / UNIT_MIB;
     unit = 'MiB';
-  } else if (parseInt(bytesize) % UNIT_KIB === 0) {
-    size = parseInt(bytesize) / UNIT_KIB;
-    unit = 'KiB';
   } else if (parseInt(bytesize)) {
     size = parseInt(bytesize);
     unit = 'B';

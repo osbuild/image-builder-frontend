@@ -109,7 +109,6 @@ export const simpleTargetNames: { [key in ImageTypes]: string } = {
   'network-installer': 'Network Installer',
 };
 
-export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
 export const UNIT_GIB = 1024 ** 3;
 

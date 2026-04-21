@@ -14,7 +14,7 @@ export type FilesystemPartition = {
   unit: Units;
 };
 
-export type Units = 'B' | 'KiB' | 'MiB' | 'GiB';
+export type Units = 'B' | 'MiB' | 'GiB';
 
 export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
 

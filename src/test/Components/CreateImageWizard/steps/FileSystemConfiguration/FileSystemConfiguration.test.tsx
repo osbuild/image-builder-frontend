@@ -5,7 +5,6 @@ import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   UNIT_GIB,
-  UNIT_KIB,
   UNIT_MIB,
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -90,15 +89,6 @@ const changePartitionSize = async () => {
     name: /minimum partition size/i,
   });
   await waitFor(() => user.type(minSize, '{backspace}5'));
-};
-
-const changePartitionUnitsToKiB = async () => {
-  const user = userEvent.setup();
-  const row = await getRow(1);
-  const units = await within(row).findByText('GiB');
-  await waitFor(() => user.click(units));
-  const kibOption = await screen.findByRole('option', { name: 'KiB' });
-  await waitFor(() => user.click(kibOption));
 };
 
 const changePartitionUnitsToMiB = async () => {
@@ -309,32 +299,6 @@ describe('File system configuration request generated correctly', () => {
         filesystem: [
           {
             min_size: 10 * UNIT_MIB,
-            mountpoint: '/',
-          },
-        ],
-      },
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
-  test('KiB / correct', async () => {
-    await renderCreateMode();
-    await selectGuestImage();
-    await enterBlueprintName();
-    await goToFileSystemConfigurationStep();
-    await clickManuallyConfigurePartitions();
-    await changePartitionUnitsToKiB();
-    await goToReview();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest = {
-      ...blueprintRequest,
-      customizations: {
-        ...blueprintRequest.customizations,
-        filesystem: [
-          {
-            min_size: 10 * UNIT_KIB,
             mountpoint: '/',
           },
         ],
