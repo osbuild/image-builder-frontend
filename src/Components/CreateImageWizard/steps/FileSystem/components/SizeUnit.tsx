@@ -64,7 +64,12 @@ const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      isFullWidth
+    >
       {partition.unit}
     </MenuToggle>
   );

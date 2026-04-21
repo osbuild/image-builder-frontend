@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '@patternfly/react-core';
+import { Button, TextInput } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
@@ -30,19 +30,26 @@ const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
 
   return (
     <Tr id={partition.id}>
-      <Td>
+      <Td width={30}>
         <Mountpoint partition={partition} customization={customization} />
       </Td>
-      <Td width={20}>xfs</Td>
+      <Td width={20}>
+        <TextInput
+          value='xfs'
+          type='text'
+          aria-label='Partition type'
+          isDisabled
+        />
+      </Td>
       <Td width={20}>
         <MinimumSize partition={partition} customization={customization} />
       </Td>
-      <Td width={10}>
+      <Td width={20}>
         <SizeUnit partition={partition} customization={customization} />
       </Td>
       <Td width={10}>
         <Button
-          variant='link'
+          variant='plain'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
           isDisabled={isRemovingDisabled}

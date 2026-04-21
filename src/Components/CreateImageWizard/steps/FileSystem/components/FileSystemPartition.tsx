@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { Content, FormGroup, Radio } from '@patternfly/react-core';
+import {
+  FormGroup,
+  HelperText,
+  HelperTextItem,
+  Icon,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+} from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
+import { FscModeType } from '@/Components/CreateImageWizard/steps/FileSystem';
 import {
   changeFscMode,
   selectComplianceProfileID,
@@ -10,53 +22,89 @@ import {
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
+const fscModeOptions = [
+  {
+    value: 'automatic' as const,
+    label: 'Automatic partitioning',
+    description:
+      'Automatically partition your image based on the target environment. The target environment sometimes dictates all or part of the partitioning scheme. Automatic partitioning applies the most current supported configuration layout.',
+  },
+  {
+    value: 'basic' as const,
+    label: 'Basic filesystem partitioning',
+    description:
+      'Create partitions for your image by defining mount points and minimum sizes. Image builder creates partitions with a logical volume (LVM) device type. The order of partitions may change when the image is installed in order to conform to best practices and ensure functionality.',
+  },
+  {
+    value: 'advanced' as const,
+    label: 'Advanced disk partitioning',
+    description:
+      'Define your file system using logical volumes and partitions. Create a volume group to gain granular control over partition sizes and mount points.',
+  },
+];
+
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fscMode = useAppSelector(selectFscMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
+  const [isOpen, setIsOpen] = useState(false);
 
   if (hasOscapProfile) {
     return undefined;
   }
 
+  const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
+    dispatch(changeFscMode(selection as FscModeType));
+    setIsOpen(false);
+  };
+
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      style={{ width: '100%' }}
+    >
+      {fscModeOptions.find((opt) => opt.value === fscMode)?.label}
+    </MenuToggle>
+  );
+
   return (
-    <FormGroup>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
-          id='automatic-partitioning-radio'
-          label='Use automatic partitioning'
-          name='fsc-type'
-          description='Automatically partition your image to what is best, depending on the target environment(s)'
-          isChecked={fscMode === 'automatic'}
-          onChange={() => {
-            dispatch(changeFscMode('automatic'));
-          }}
-        />
-      </Content>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
-          id='basic-partitioning-radio'
-          label='Basic filesystem partitioning'
-          name='fsc-type'
-          description='Configure the file system of your image by adding, removing, and editing partitions'
-          isChecked={fscMode === 'basic'}
-          onChange={() => {
-            dispatch(changeFscMode('basic'));
-          }}
-        />
-      </Content>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
-          id='advanced-partitioning-radio'
-          label='Advanced disk partitioning'
-          name='fsc-type'
-          description='Configure disk partitioning with advanced options'
-          isChecked={fscMode === 'advanced'}
-          onChange={() => {
-            dispatch(changeFscMode('advanced'));
-          }}
-        />
-      </Content>
+    <FormGroup label='Partitioning type'>
+      <Select
+        isOpen={isOpen}
+        selected={fscMode}
+        onSelect={onSelect}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
+        toggle={toggle}
+        style={{ width: '60%' }}
+      >
+        <SelectList>
+          {fscModeOptions.map((option) => (
+            <SelectOption
+              key={option.value}
+              value={option.value}
+              description={option.description}
+            >
+              {option.label}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
+      {fscMode === 'automatic' && (
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            <Icon status='info' size='sm'>
+              <InfoCircleIcon />
+            </Icon>{' '}
+            Automatic partitioning is selected by default.
+          </HelperTextItem>
+        </HelperText>
+      )}
     </FormGroup>
   );
 };

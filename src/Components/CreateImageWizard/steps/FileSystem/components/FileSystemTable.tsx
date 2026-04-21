@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import DiskRow from './DiskRow';
-import MinimumSizePopover from './MinimumSizePopover';
 import Row from './Row';
 
 import { DiskPartition, FilesystemPartition } from '../fscTypes';
@@ -32,15 +31,13 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   );
 
   return (
-    <Table aria-label='File system table' variant='compact'>
+    <Table aria-label='File system table' variant='compact' borders={false}>
       <Thead>
         <Tr>
           {mode === 'disk-lvm' && <Th>Name</Th>}
           <Th>Mount point</Th>
           <Th>Type</Th>
-          <Th>
-            Minimum size <MinimumSizePopover />
-          </Th>
+          <Th>Minimum size</Th>
           <Th aria-label='Unit'>Unit</Th>
           <Th aria-label='Remove mount point' />
         </Tr>

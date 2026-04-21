@@ -275,6 +275,7 @@ export const initialState: wizardState = {
   fscMode: 'automatic',
   disk: {
     minsize: '',
+    unit: 'GiB',
     partitions: [],
     type: undefined,
   },
@@ -482,6 +483,10 @@ export const selectDiskType = (state: RootState) => {
 
 export const selectDiskMinsize = (state: RootState) => {
   return state.wizard.disk.minsize;
+};
+
+export const selectDiskUnit = (state: RootState) => {
+  return state.wizard.disk.unit;
 };
 
 export const selectDiskPartitions = (state: RootState) => {
@@ -1174,6 +1179,9 @@ export const wizardSlice = createSlice({
     changeDiskMinsize: (state, action: PayloadAction<string>) => {
       state.disk.minsize = action.payload;
     },
+    changeDiskUnit: (state, action: PayloadAction<Units>) => {
+      state.disk.unit = action.payload;
+    },
     changeDiskType: (
       state,
       action: PayloadAction<'gpt' | 'dos' | undefined>,
@@ -1777,6 +1785,7 @@ export const {
   changePartitionType,
   changePartitionName,
   changeDiskMinsize,
+  changeDiskUnit,
   changeDiskType,
   addDiskPartition,
   removeDiskPartition,

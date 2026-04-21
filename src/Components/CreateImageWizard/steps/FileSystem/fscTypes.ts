@@ -20,6 +20,7 @@ export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
 
 export type FscDisk = {
   minsize: string;
+  unit: Units;
   partitions: DiskPartition[];
   type?: 'gpt' | 'dos' | undefined;
 };

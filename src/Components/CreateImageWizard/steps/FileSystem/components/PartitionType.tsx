@@ -86,7 +86,12 @@ const PartitionType = ({
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      isFullWidth
+    >
       {partition.fs_type}
     </MenuToggle>
   );

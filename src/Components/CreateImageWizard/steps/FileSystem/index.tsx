@@ -10,7 +10,6 @@ import { selectFscMode } from '@/store/slices/wizard';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import AdvancedPartitioning from './components/AdvancedPartitioning';
-import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './components/FileSystemConfiguration';
 import FileSystemPartition from './components/FileSystemPartition';
 
@@ -59,7 +58,6 @@ const FileSystemStep = () => {
       {fscMode === 'automatic' ? (
         <>
           <FileSystemPartition />
-          <FileSystemAutomaticPartition />
         </>
       ) : fscMode === 'basic' ? (
         <>

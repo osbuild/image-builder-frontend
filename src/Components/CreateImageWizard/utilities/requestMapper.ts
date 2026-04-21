@@ -67,6 +67,7 @@ import {
   selectDiskMinsize,
   selectDiskPartitions,
   selectDiskType,
+  selectDiskUnit,
   selectDistribution,
   selectFilesystemPartitions,
   selectFips,
@@ -503,15 +504,21 @@ function commonRequestToState(
         ? ('advanced' as FscModeType)
         : ('automatic' as FscModeType),
     disk: request.customizations.disk
-      ? {
-          type: request.customizations.disk.type || undefined,
-          minsize: request.customizations.disk.minsize || '',
-          partitions: request.customizations.disk.partitions.map((d) =>
-            convertDiskToFscDisk(d),
-          ),
-        }
+      ? (() => {
+          const [size, unit] =
+            request.customizations.disk.minsize?.split(' ') || [];
+          return {
+            type: request.customizations.disk.type || undefined,
+            minsize: size || '',
+            unit: (unit || 'GiB') as Units,
+            partitions: request.customizations.disk.partitions.map((d) =>
+              convertDiskToFscDisk(d),
+            ),
+          };
+        })()
       : {
           minsize: '',
+          unit: 'GiB' as Units,
           partitions: [],
           type: undefined,
         },
@@ -1065,6 +1072,7 @@ const getUserGroups = (state: RootState): Group[] | undefined => {
 const getDisk = (state: RootState): Disk | undefined => {
   const fscMode = selectFscMode(state);
   const minsize = selectDiskMinsize(state);
+  const unit = selectDiskUnit(state);
   const partitions = selectDiskPartitions(state);
   const diskPartitions = partitions.map((partition) => {
     if (partition.type === 'lvm') {
@@ -1102,7 +1110,7 @@ const getDisk = (state: RootState): Disk | undefined => {
   if (fscMode === 'advanced') {
     return {
       type: selectDiskType(state),
-      minsize: minsize ? minsize : undefined,
+      minsize: minsize ? minsize + ' ' + unit : undefined,
       partitions: diskPartitions,
     };
   }

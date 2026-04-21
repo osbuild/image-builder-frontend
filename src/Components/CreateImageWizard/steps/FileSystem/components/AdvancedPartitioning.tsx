@@ -1,20 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
   Content,
-  ContentVariants,
+  Flex,
+  FlexItem,
   FormGroup,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
   TextInput,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
   addDiskPartition,
   changeDiskMinsize,
+  changeDiskUnit,
   selectDiskMinsize,
   selectDiskPartitions,
+  selectDiskUnit,
   selectFilesystemPartitions,
   selectIsImageMode,
 } from '@/store/slices/wizard';
@@ -22,16 +30,20 @@ import {
 import FileSystemTable from './FileSystemTable';
 import VolumeGroups from './VolumeGroups';
 
-import { PARTITIONING_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { Units } from '../fscTypes';
 import { getNextAvailableMountpoint } from '../fscUtilities';
+
+const units = ['GiB', 'MiB', 'KiB'];
 
 const AdvancedPartitioning = () => {
   const dispatch = useAppDispatch();
   const minsize = useAppSelector(selectDiskMinsize);
+  const unit = useAppSelector(selectDiskUnit);
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const inImageMode = useAppSelector(selectIsImageMode);
+  const [isOpen, setIsOpen] = useState(false);
   const handleAddPartition = () => {
     const id = uuidv4();
     const mountpoint = getNextAvailableMountpoint(
@@ -80,43 +92,61 @@ const AdvancedPartitioning = () => {
     );
   };
 
-  const handleDiskMinsizeChange = (e: React.FormEvent, value: string) => {
+  const handleDiskMinsizeChange = (_e: React.FormEvent, value: string) => {
     dispatch(changeDiskMinsize(value));
   };
 
+  const onUnitSelect = (
+    _event?: React.MouseEvent,
+    selection?: string | number,
+  ) => {
+    if (selection === undefined) return;
+    dispatch(changeDiskUnit(selection as Units));
+    setIsOpen(false);
+  };
+
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+      {unit}
+    </MenuToggle>
+  );
+
   return (
     <>
-      <Content>
-        <Content component={ContentVariants.h3}>Configure disk layout</Content>
-      </Content>
-      <Content>
-        <Content>Define complete partition table for your image.</Content>
-        <Content>
-          The order of partitions may change when the image is installed in
-          order to conform to best practices and ensure functionality.
-          <br></br>
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            icon={<ExternalLinkAltIcon />}
-            iconPosition='right'
-            href={PARTITIONING_URL}
-            className='pf-v6-u-pl-0'
-          >
-            Read more about advanced partitioning here
-          </Button>
-        </Content>
-      </Content>
       <FormGroup label='Minimum disk size'>
-        <TextInput
-          aria-label='Minimum disk size input'
-          value={minsize}
-          type='text'
-          onChange={handleDiskMinsizeChange}
-          placeholder='Define minimum disk size'
-          className='pf-v6-u-w-25'
-        />
+        <Flex gap={{ default: 'gapSm' }}>
+          <FlexItem style={{ width: '30%' }}>
+            <TextInput
+              aria-label='Minimum disk size input'
+              value={minsize}
+              type='text'
+              onChange={handleDiskMinsizeChange}
+              placeholder='Define minimum size'
+            />
+          </FlexItem>
+          <FlexItem>
+            <Select
+              isOpen={isOpen}
+              selected={unit}
+              onSelect={onUnitSelect}
+              onOpenChange={(isOpen) => setIsOpen(isOpen)}
+              toggle={toggle}
+              shouldFocusToggleOnSelect
+            >
+              <SelectList>
+                {units.map((unitOption, index) => (
+                  <SelectOption key={index} value={unitOption}>
+                    {unitOption}
+                  </SelectOption>
+                ))}
+              </SelectList>
+            </Select>
+          </FlexItem>
+        </Flex>
       </FormGroup>
       {diskPartitions.filter((p) => p.type === 'plain').length > 0 && (
         <FileSystemTable
@@ -128,7 +158,7 @@ const AdvancedPartitioning = () => {
         <Button
           className='pf-v6-u-text-align-left'
           variant='link'
-          icon={<PlusCircleIcon />}
+          icon={<AddCircleOIcon />}
           onClick={handleAddPartition}
         >
           Add plain partition
@@ -142,7 +172,7 @@ const AdvancedPartitioning = () => {
           <Button
             className='pf-v6-u-text-align-left'
             variant='link'
-            icon={<PlusCircleIcon />}
+            icon={<AddCircleOIcon />}
             onClick={handleAddVolumeGroup}
           >
             Add LVM volume group
