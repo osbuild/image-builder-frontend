@@ -118,28 +118,34 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
     >
       {vg ? (
         <>
-          <FormGroup label='Volume group name'>
-            <ValidatedInputAndTextArea
-              ariaLabel='Volume group name input'
-              value={vg.name || ''}
-              onChange={(_event, name) =>
-                dispatch(changeDiskPartitionName({ id: vg.id, name: name }))
-              }
-              placeholder='Add volume group name'
-              stepValidation={stepValidation}
-              fieldName={`name-${vg.id}`}
-            />
-          </FormGroup>
-          <FormGroup label='Minimum volume group size'>
-            <Flex>
-              <FlexItem spacer={{ default: 'spacerNone' }}>
-                <MinimumSize partition={vg} customization='disk' />
-              </FlexItem>
-              <FlexItem>
-                <SizeUnit partition={vg} customization='disk' />
-              </FlexItem>
-            </Flex>
-          </FormGroup>
+          <Flex gap={{ default: 'gapXl' }}>
+            <FlexItem>
+              <FormGroup label='Volume group name'>
+                <ValidatedInputAndTextArea
+                  ariaLabel='Volume group name input'
+                  value={vg.name || ''}
+                  onChange={(_event, name) =>
+                    dispatch(changeDiskPartitionName({ id: vg.id, name: name }))
+                  }
+                  placeholder='Add volume group name'
+                  stepValidation={stepValidation}
+                  fieldName={`name-${vg.id}`}
+                />
+              </FormGroup>
+            </FlexItem>
+            <FlexItem>
+              <FormGroup label='Minimum volume group size'>
+                <Flex>
+                  <FlexItem spacer={{ default: 'spacerXs' }}>
+                    <MinimumSize partition={vg} customization='disk' />
+                  </FlexItem>
+                  <FlexItem>
+                    <SizeUnit partition={vg} customization='disk' />
+                  </FlexItem>
+                </Flex>
+              </FormGroup>
+            </FlexItem>
+          </Flex>
           {vg.logical_volumes.length > 0 && (
             <FileSystemTable partitions={vg.logical_volumes} mode='disk-lvm' />
           )}
