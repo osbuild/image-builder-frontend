@@ -160,9 +160,6 @@ const OscapContent = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const [onPremOpenSCAPAvailable, isLoadingOnPrem] =
     useOnPremOpenSCAPAvailable();
-  if (!isOnPremise) {
-    analytics.screen('ib-createimagewizard-step-security');
-  }
   const { data: policies } = usePoliciesQuery(
     {
       filter: `os_major_version=${majorVersion}`,

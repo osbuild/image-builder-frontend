@@ -14,8 +14,10 @@ import {
   WizardStep,
   WizardStepType,
 } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useSearchParams } from 'react-router-dom';
 
+import { useGetUser } from '@/Hooks';
 import { useGetBlueprintQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
@@ -48,6 +50,7 @@ import ReviewWizardFooter from './components/ReviewWizardFooter';
 
 import {
   AARCH64,
+  AMPLITUDE_MODULE_NAME,
   CDN_PROD_URL,
   CDN_STAGE_URL,
   DEFAULT_TIMEZONE,
@@ -107,6 +110,9 @@ const CreateImageWizard3 = () => {
   const imageSource = useAppSelector(selectImageSource);
   const [searchParams, setSearchParams] = useSearchParams();
   const hasInitialized = useRef(false);
+  const { analytics, auth } = useChrome();
+  const { userData } = useGetUser(auth);
+  const hasTrackedInitialStepRef = useRef(false);
 
   const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
     { id: blueprintId || '' },
@@ -268,9 +274,43 @@ const CreateImageWizard3 = () => {
     }
   }, [distribution, targetEnvironments, mode, dispatch]);
 
+  useEffect(() => {
+    if (!isOnPremise && showWizardModal && !hasTrackedInitialStepRef.current) {
+      const initialStepId =
+        mode === 'edit' ? 'review-step' : 'base-settings-step';
+      const accountId = userData?.identity.internal?.account_id;
+
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
+        module: AMPLITUDE_MODULE_NAME,
+        step_id: initialStepId,
+        ...(accountId && { account_id: accountId }),
+        from_step_id: undefined,
+      });
+      hasTrackedInitialStepRef.current = true;
+    }
+  }, [showWizardModal, analytics, isOnPremise, mode, userData]);
+
+  const handleStepChange = (
+    _event: React.MouseEvent<HTMLButtonElement>,
+    currentStep: WizardStepType,
+    prevStep: WizardStepType,
+  ) => {
+    if (!isOnPremise) {
+      const accountId = userData?.identity.internal?.account_id;
+
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
+        module: AMPLITUDE_MODULE_NAME,
+        step_id: currentStep.id,
+        ...(accountId && { account_id: accountId }),
+        from_step_id: prevStep.id,
+      });
+    }
+  };
+
   const handleClose = () => {
     dispatch(closeWizardModal());
     dispatch(initializeWizard());
+    hasTrackedInitialStepRef.current = false;
 
     if (
       searchParams.has('release') ||
@@ -349,6 +389,7 @@ const CreateImageWizard3 = () => {
     >
       <Wizard
         onClose={handleClose}
+        onStepChange={handleStepChange}
         isVisitRequired
         startIndex={startIndex}
         header={
