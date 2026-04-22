@@ -1,20 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
-  Card,
-  CardBody,
-  CardHeader,
   Content,
+  ExpandableSection,
   Flex,
   FlexItem,
   FormGroup,
 } from '@patternfly/react-core';
-import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import { VolumeGroup } from '@/store/api/backend';
 import {
+  addDiskPartition,
   addLogicalVolumeToVolumeGroup,
   changeDiskPartitionName,
   removeDiskPartition,
@@ -33,8 +32,12 @@ import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { DiskPartition, DiskPartitionBase } from '../fscTypes';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
+type VolumeGroupType =
+  | Extract<DiskPartition, VolumeGroup & DiskPartitionBase>
+  | undefined;
+
 type VolumeGroupsType = {
-  volumeGroups: Extract<DiskPartition, VolumeGroup & DiskPartitionBase>[];
+  volumeGroups: VolumeGroupType[];
 };
 
 const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
@@ -43,6 +46,45 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const inImageMode = useAppSelector(selectIsImageMode);
+
+  // Only one volume group is supported
+  const vg = volumeGroups[0];
+  const [isExpanded, setIsExpanded] = useState(!!vg);
+
+  const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
+    setIsExpanded(isExpanded);
+
+    if (isExpanded && !vg) {
+      const vgId = uuidv4();
+      const lvId = uuidv4();
+      const mountpoint = getNextAvailableMountpoint(
+        filesystemPartitions,
+        diskPartitions,
+        inImageMode,
+      );
+      dispatch(
+        addDiskPartition({
+          id: vgId,
+          name: '',
+          min_size: '1',
+          unit: 'GiB',
+          type: 'lvm',
+          logical_volumes: [
+            {
+              id: lvId,
+              name: '',
+              mountpoint,
+              min_size: '1',
+              unit: 'GiB',
+              fs_type: 'xfs',
+            },
+          ],
+        }),
+      );
+    } else if (!isExpanded && vg) {
+      dispatch(removeDiskPartition(vg.id));
+    }
+  };
 
   const handleAddLogicalVolume = (vgId: string) => {
     const id = uuidv4();
@@ -66,59 +108,55 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
     );
   };
 
-  return volumeGroups.map((vg) => (
-    <Card key={vg.id}>
-      <CardHeader
-        actions={{
-          actions: (
-            <Button
-              variant='plain'
-              aria-label='Remove volume group button'
-              icon={<TimesIcon />}
-              onClick={() => dispatch(removeDiskPartition(vg.id))}
+  return (
+    <ExpandableSection
+      toggleText='Volume Group Manager'
+      onToggle={onToggle}
+      isExpanded={isExpanded}
+      displaySize='lg'
+      isWidthLimited
+    >
+      {vg ? (
+        <>
+          <FormGroup label='Volume group name'>
+            <ValidatedInputAndTextArea
+              ariaLabel='Volume group name input'
+              value={vg.name || ''}
+              onChange={(_event, name) =>
+                dispatch(changeDiskPartitionName({ id: vg.id, name: name }))
+              }
+              placeholder='Add volume group name'
+              stepValidation={stepValidation}
+              fieldName={`name-${vg.id}`}
             />
-          ),
-        }}
-      />
-      <CardBody>
-        <FormGroup label='Volume group name'>
-          <ValidatedInputAndTextArea
-            ariaLabel='Volume group name input'
-            value={vg.name || ''}
-            onChange={(event, name) =>
-              dispatch(changeDiskPartitionName({ id: vg.id, name: name }))
-            }
-            placeholder='Add volume group name'
-            stepValidation={stepValidation}
-            fieldName={`name-${vg.id}`}
-          />
-        </FormGroup>
-        <FormGroup label='Minimum volume group size'>
-          <Flex>
-            <FlexItem spacer={{ default: 'spacerNone' }}>
-              <MinimumSize partition={vg} customization='disk' />
-            </FlexItem>
-            <FlexItem>
-              <SizeUnit partition={vg} customization='disk' />
-            </FlexItem>
-          </Flex>
-        </FormGroup>
-        {vg.logical_volumes.length > 0 && (
-          <FileSystemTable partitions={vg.logical_volumes} mode='disk-lvm' />
-        )}
-        <Content>
-          <Button
-            className='pf-v6-u-text-align-left'
-            variant='link'
-            icon={<PlusCircleIcon />}
-            onClick={() => handleAddLogicalVolume(vg.id)}
-          >
-            Add logical volume
-          </Button>
-        </Content>
-      </CardBody>
-    </Card>
-  ));
+          </FormGroup>
+          <FormGroup label='Minimum volume group size'>
+            <Flex>
+              <FlexItem spacer={{ default: 'spacerNone' }}>
+                <MinimumSize partition={vg} customization='disk' />
+              </FlexItem>
+              <FlexItem>
+                <SizeUnit partition={vg} customization='disk' />
+              </FlexItem>
+            </Flex>
+          </FormGroup>
+          {vg.logical_volumes.length > 0 && (
+            <FileSystemTable partitions={vg.logical_volumes} mode='disk-lvm' />
+          )}
+          <Content>
+            <Button
+              className='pf-v6-u-text-align-left'
+              variant='link'
+              icon={<PlusCircleIcon />}
+              onClick={() => handleAddLogicalVolume(vg.id)}
+            >
+              Add logical volume
+            </Button>
+          </Content>
+        </>
+      ) : null}
+    </ExpandableSection>
+  );
 };
 
 export default VolumeGroups;

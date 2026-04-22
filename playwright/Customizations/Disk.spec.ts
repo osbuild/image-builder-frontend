@@ -70,7 +70,7 @@ test('Create a blueprint with Disk customization', async ({
     ).toBeVisible();
     await expect(
       frame.getByRole('button', {
-        name: /add lvm volume group/i,
+        name: /Volume Group Manager/i,
       }),
     ).toBeVisible();
   });
@@ -86,7 +86,7 @@ test('Create a blueprint with Disk customization', async ({
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
     await frame.getByRole('option', { name: 'MiB' }).click();
 
-    await frame.getByRole('button', { name: 'Add LVM volume group' }).click();
+    await frame.getByRole('button', { name: 'Volume Group Manager' }).click();
     await expect(
       frame
         .getByRole('row')

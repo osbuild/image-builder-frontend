@@ -63,35 +63,6 @@ const AdvancedPartitioning = () => {
     );
   };
 
-  const handleAddVolumeGroup = () => {
-    const vgId = uuidv4();
-    const lvId = uuidv4();
-    const mountpoint = getNextAvailableMountpoint(
-      filesystemPartitions,
-      diskPartitions,
-      inImageMode,
-    );
-    dispatch(
-      addDiskPartition({
-        id: vgId,
-        name: '',
-        min_size: '1',
-        unit: 'GiB',
-        type: 'lvm',
-        logical_volumes: [
-          {
-            id: lvId,
-            name: '',
-            mountpoint,
-            min_size: '1',
-            unit: 'GiB',
-            fs_type: 'xfs',
-          },
-        ],
-      }),
-    );
-  };
-
   const handleDiskMinsizeChange = (_e: React.FormEvent, value: string) => {
     dispatch(changeDiskMinsize(value));
   };
@@ -167,18 +138,6 @@ const AdvancedPartitioning = () => {
       <VolumeGroups
         volumeGroups={diskPartitions.filter((p) => p.type === 'lvm')}
       />
-      {!diskPartitions.find((p) => p.type === 'lvm') && (
-        <Content>
-          <Button
-            className='pf-v6-u-text-align-left'
-            variant='link'
-            icon={<AddCircleOIcon />}
-            onClick={handleAddVolumeGroup}
-          >
-            Add LVM volume group
-          </Button>
-        </Content>
-      )}
     </>
   );
 };
