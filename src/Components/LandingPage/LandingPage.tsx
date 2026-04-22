@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   PageSection,
@@ -9,12 +9,14 @@ import {
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import './LandingPage.scss';
 
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
+import { useAppDispatch } from '../../store/hooks';
+import { openWizardModal } from '../../store/slices/wizardModal';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import CreateImageWizard3 from '../CreateImageWizard3/CreateImageWizard3';
@@ -26,8 +28,17 @@ export const LandingPage = () => {
   // const [showAlert, setShowAlert] = useState(true);
   // const isOnPremise = useAppSelector(selectIsOnPremise);
 
+  const dispatch = useAppDispatch();
+  const location = useLocation();
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  // Open wizard modal when on /imagewizard path
+  useEffect(() => {
+    if (isWizardRevampEnabled && location.pathname.includes('/imagewizard')) {
+      dispatch(openWizardModal('create'));
+    }
+  }, [dispatch, isWizardRevampEnabled, location.pathname]);
 
   const imageList = (
     <>

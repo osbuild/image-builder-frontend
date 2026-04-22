@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from 'react';
 
 import { Route, Routes } from 'react-router-dom';
 
+import { useFlag } from './Utilities/useGetEnvironment';
+
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
   () => import('./Components/CreateImageWizard/ImportImageWizard'),
@@ -9,6 +11,8 @@ const ImportImageWizard = lazy(
 const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard'));
 
 export const Router = () => {
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
   return (
     <Routes>
       <Route
@@ -30,9 +34,15 @@ export const Router = () => {
       <Route
         path='imagewizard/:composeId?'
         element={
-          <Suspense>
-            <CreateImageWizard />
-          </Suspense>
+          isWizardRevampEnabled ? (
+            <Suspense>
+              <LandingPage />
+            </Suspense>
+          ) : (
+            <Suspense>
+              <CreateImageWizard />
+            </Suspense>
+          )
         }
       />
     </Routes>
