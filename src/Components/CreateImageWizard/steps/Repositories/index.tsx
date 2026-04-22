@@ -30,7 +30,7 @@ const RepositoriesStep = () => {
           headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
           size={isWizardRevampEnabled ? 'lg' : 'xl'}
         >
-          Included repositories
+          Repositories
         </Title>
         <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
           Can&apos;t find a repository? Ensure it&apos;s been added on{' '}

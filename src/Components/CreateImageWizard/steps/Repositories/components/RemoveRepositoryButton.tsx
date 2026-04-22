@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 
@@ -22,7 +22,7 @@ const RemoveRepositoryButton = ({
     <Button
       isDisabled={isDisabled}
       variant='plain'
-      icon={<MinusCircleIcon />}
+      icon={isDisabled ? <LockIcon /> : <MinusCircleIcon />}
       aria-label='Remove repository'
       onClick={() => onRemove(repo)}
       isInline
