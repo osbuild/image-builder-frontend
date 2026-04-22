@@ -40,6 +40,10 @@ const AzureHyperVSelect = () => {
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
+      style={{
+        minWidth: '50%',
+        maxWidth: '50%',
+      }}
     >
       {HYPER_V_GENERATIONS.find((gen) => gen.value === hyperVGeneration)?.label}
     </MenuToggle>
