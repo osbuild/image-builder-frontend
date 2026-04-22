@@ -68,7 +68,7 @@ const Gcp = () => {
 
   return (
     <Form className='pf-v6-u-pb-md'>
-      <FormGroup label='GCP account type' isRequired>
+      <FormGroup label='Account type' isRequired>
         <Select
           isOpen={isOpen}
           selected={accountType}

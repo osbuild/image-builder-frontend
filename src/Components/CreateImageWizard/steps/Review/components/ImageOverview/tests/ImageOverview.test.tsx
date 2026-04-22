@@ -133,7 +133,7 @@ describe('ImageOverview', () => {
         },
       });
 
-      expect(screen.getByText('Google Cloud Platform')).toBeInTheDocument();
+      expect(screen.getByText('Google Cloud')).toBeInTheDocument();
       expect(
         screen.getByText(/Account type: Google account/),
       ).toBeInTheDocument();

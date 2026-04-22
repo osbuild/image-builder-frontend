@@ -247,8 +247,8 @@ const TargetEnvironment = () => {
                 className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
                 id='radio-gcp'
                 name='target-environment'
-                label='Google Cloud Platform'
-                aria-label='Google Cloud Platform'
+                label='Google Cloud'
+                aria-label='Google Cloud'
                 isChecked={environments.includes('gcp')}
                 onChange={() => handleSelectSingleEnvironment('gcp')}
                 body={environments.includes('gcp') ? <Gcp /> : undefined}
@@ -257,8 +257,8 @@ const TargetEnvironment = () => {
               <Checkbox
                 className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
                 id='checkbox-gcp'
-                name='Google Cloud Platform'
-                label='Google Cloud Platform'
+                name='Google Cloud'
+                label='Google Cloud'
                 aria-label='Google Cloud checkbox'
                 isChecked={environments.includes('gcp')}
                 isDisabled={isOnlyNetworkInstallerSelected}

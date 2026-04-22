@@ -19,7 +19,7 @@ export const GCPDetails = () => {
   }, [accountType]);
 
   return (
-    <DetailsStack heading='Google Cloud Platform'>
+    <DetailsStack heading='Google Cloud'>
       <Content component='p'>
         Account type: {getAccountType}
         <br />
