@@ -315,7 +315,6 @@ const CreateImageWizard3 = () => {
     >
       <Wizard
         onClose={handleClose}
-        title='Create image wizard'
         isVisitRequired
         startIndex={startIndex}
         header={
