@@ -4,6 +4,7 @@ import {
   Button,
   FormGroup,
   Grid,
+  Label,
   Panel,
   PanelMain,
   Spinner,
@@ -486,7 +487,10 @@ const Repositories = () => {
                     return (
                       <Tr key={`${uuid}-${rowIndex}`}>
                         <Td dataLabel={'Name'}>
-                          {name}
+                          {name}{' '}
+                          {requiredRedHatRepoUUIDs.includes(uuid) && (
+                            <Label isCompact>Required</Label>
+                          )}
                           {origin === ContentOrigin.UPLOAD ? (
                             <UploadRepositoryLabel />
                           ) : origin === ContentOrigin.COMMUNITY ? (
