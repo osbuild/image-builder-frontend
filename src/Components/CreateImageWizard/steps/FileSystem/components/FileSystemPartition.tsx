@@ -67,7 +67,10 @@ const FileSystemPartition = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      style={{ width: '100%' }}
+      style={{
+        minWidth: '90%',
+        maxWidth: '90%',
+      }}
     >
       {fscModeOptions.find((opt) => opt.value === fscMode)?.label}
     </MenuToggle>
