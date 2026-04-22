@@ -37,7 +37,6 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
           }}
           id='register-system-now'
           name='registration-type'
-          autoFocus
           body={
             <>
               <Content className='pf-v6-u-pb-sm'>
