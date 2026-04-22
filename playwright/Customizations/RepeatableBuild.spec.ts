@@ -4,11 +4,12 @@ import * as path from 'path';
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  deleteRepository,
-  navigateToRepositories,
-} from '../BootTests/Content/helpers';
 import { test } from '../fixtures/customizations';
+import {
+  createRepositoryViaApi,
+  deleteRepositoryByUrlViaApi,
+  deleteRepositoryViaApi,
+} from '../helpers/apiHelpers';
 import { enablePreview, isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
@@ -35,33 +36,29 @@ test('Create a blueprint with Repeatable build customization', async ({
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/really-empty/';
 
-  // Delete the blueprint after the run fixture
-  cleanup.add(() => deleteBlueprint(page, blueprintName));
-  cleanup.add(() => deleteRepository(page, repositoryName));
-
   await ensureAuthenticated(page);
+
+  // Ensure URL exclusivity by deleting any existing repository with this URL
+  await deleteRepositoryByUrlViaApi(page, repositoryUrl);
+
+  let repositoryUuid: string;
+
+  await test.step('Create a custom repository via API', async () => {
+    const repository = await createRepositoryViaApi(page, {
+      name: repositoryName,
+      url: repositoryUrl,
+      snapshot: false,
+    });
+    repositoryUuid = repository.uuid;
+  });
+
+  // Register cleanup after resources are created
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+  cleanup.add(() => deleteRepositoryViaApi(page, repositoryUuid));
 
   await enablePreview(page);
   await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible({
     timeout: 30000,
-  });
-
-  // Here we want to be sure that the repository is deleted due to URL exclusivity per repository
-  await deleteRepository(page, repositoryUrl);
-
-  await test.step('Create a custom repository', async () => {
-    await navigateToRepositories(page);
-    await page.getByRole('button', { name: 'Add repositories' }).click();
-    await page.getByRole('textbox', { name: 'Name' }).fill(repositoryName);
-    await page.getByRole('radio', { name: 'Introspect only' }).click();
-    await page.getByRole('textbox', { name: 'URL' }).fill(repositoryUrl);
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
-      .fill(repositoryName);
-    await expect(
-      page.getByRole('gridcell', { name: repositoryName }),
-    ).toBeVisible();
   });
 
   // Navigate to IB landing page and get the frame
@@ -85,6 +82,7 @@ test('Create a blueprint with Repeatable build customization', async ({
       .fill('2025-12-24');
     await frame.getByRole('button', { name: /Repositories/i }).click();
     await expect(frame.getByText(/Loading/i)).toBeHidden();
+
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
