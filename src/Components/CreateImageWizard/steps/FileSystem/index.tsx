@@ -28,48 +28,52 @@ const FileSystemStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='filesystem' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        File system configuration
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Configure the system and partitioning for your image. You can use
-        automatic partitioning, manually define your own mount points and sizes,
-        or use advanced partitioning for complex storage layouts. The order of
-        the partitions may change when the image is installed in order to
-        conform to best practices and ensure functionality.
-        {!isOnPremise && (
-          <Button
-            component='a'
-            target='_blank'
-            rel='noreferrer noopener'
-            variant='link'
-            icon={<ExternalLinkAltIcon />}
-            iconPosition='right'
-            isInline
-            href={DOCS_URL}
-          >
-            Learn about customizing file systems
-          </Button>
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          File system configuration
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Configure the system and partitioning for your image. You can use
+          automatic partitioning, manually define your own mount points and
+          sizes, or use advanced partitioning for complex storage layouts. The
+          order of the partitions may change when the image is installed in
+          order to conform to best practices and ensure functionality.
+          {!isOnPremise && (
+            <Button
+              component='a'
+              target='_blank'
+              rel='noreferrer noopener'
+              variant='link'
+              icon={<ExternalLinkAltIcon />}
+              iconPosition='right'
+              isInline
+              href={DOCS_URL}
+            >
+              Learn about customizing file systems
+            </Button>
+          )}
+        </Content>
+        {fscMode === 'automatic' ? (
+          <>
+            <FileSystemPartition />
+          </>
+        ) : fscMode === 'basic' ? (
+          <>
+            <FileSystemPartition />
+            <br />
+            <FileSystemConfiguration />
+          </>
+        ) : (
+          <>
+            <FileSystemPartition />
+            <br />
+            <AdvancedPartitioning />
+          </>
         )}
       </Content>
-      {fscMode === 'automatic' ? (
-        <>
-          <FileSystemPartition />
-        </>
-      ) : fscMode === 'basic' ? (
-        <>
-          <FileSystemPartition />
-          <FileSystemConfiguration />
-        </>
-      ) : (
-        <>
-          <FileSystemPartition />
-          <AdvancedPartitioning />
-        </>
-      )}
     </Wrapper>
   );
 };
