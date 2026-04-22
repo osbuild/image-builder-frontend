@@ -8,7 +8,7 @@ import {
   FlexItem,
   FormGroup,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import { VolumeGroup } from '@/store/api/backend';
@@ -147,7 +147,7 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
             <Button
               className='pf-v6-u-text-align-left'
               variant='link'
-              icon={<PlusCircleIcon />}
+              icon={<AddCircleOIcon />}
               onClick={() => handleAddLogicalVolume(vg.id)}
             >
               Add logical volume
