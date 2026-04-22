@@ -114,11 +114,11 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
       onToggle={onToggle}
       isExpanded={isExpanded}
       displaySize='lg'
-      isWidthLimited
+      className='pf-v6-u-mt-lg'
     >
       {vg ? (
         <>
-          <Flex gap={{ default: 'gapXl' }}>
+          <Flex gap={{ default: 'gapXl' }} className='pf-v6-u-pb-md'>
             <FlexItem>
               <FormGroup label='Volume group name'>
                 <ValidatedInputAndTextArea

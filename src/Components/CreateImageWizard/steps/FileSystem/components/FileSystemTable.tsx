@@ -31,7 +31,12 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   );
 
   return (
-    <Table aria-label='File system table' variant='compact' borders={false}>
+    <Table
+      aria-label='File system table'
+      variant='compact'
+      borders={false}
+      style={{ backgroundColor: 'transparent' }}
+    >
       <Thead>
         <Tr>
           {mode === 'disk-lvm' && <Th>Name</Th>}

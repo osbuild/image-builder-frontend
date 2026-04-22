@@ -30,7 +30,7 @@ const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
 
   return (
     <Tr id={partition.id}>
-      <Td width={30}>
+      <Td width={40}>
         <Mountpoint partition={partition} customization={customization} />
       </Td>
       <Td width={20}>
@@ -47,7 +47,7 @@ const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
       <Td width={20}>
         <SizeUnit partition={partition} customization={customization} />
       </Td>
-      <Td width={10}>
+      <Td isActionCell>
         <Button
           variant='plain'
           icon={<MinusCircleIcon />}

@@ -39,25 +39,25 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
   return (
     <Tr id={partition.id}>
       {partition.type !== 'plain' && (
-        <Td className='pf-m-width-20'>
+        <Td width={30}>
           <PartitionName partition={partition} customization={customization} />
         </Td>
       )}
-      <Td width={20}>
+      <Td width={30}>
         <Mountpoint partition={partition} customization={customization} />
       </Td>
-      <Td width={20}>
+      <Td width={10}>
         <PartitionType partition={partition} customization={customization} />
       </Td>
-      <Td width={20}>
+      <Td width={15}>
         <MinimumSize partition={partition} customization={customization} />
       </Td>
-      <Td width={10}>
+      <Td width={15}>
         <SizeUnit partition={partition} customization={customization} />
       </Td>
-      <Td width={10}>
+      <Td isActionCell>
         <Button
-          variant='link'
+          variant='plain'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
           // there needs to be at least one logical volume in a volume group
