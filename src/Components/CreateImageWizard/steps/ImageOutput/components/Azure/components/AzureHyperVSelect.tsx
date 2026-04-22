@@ -22,9 +22,6 @@ const AzureHyperVSelect = () => {
   const hyperVGeneration = useAppSelector(selectAzureHyperVGeneration);
   const [isOpen, setIsOpen] = useState(false);
 
-  const shortGenerationName =
-    hyperVGeneration === 'V1' ? 'Generation 1 (BIOS)' : 'Generation 2 (UEFI)';
-
   const handleSelect = (
     _event?: React.MouseEvent,
     selection?: string | number,
@@ -44,7 +41,7 @@ const AzureHyperVSelect = () => {
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
     >
-      {shortGenerationName}
+      {HYPER_V_GENERATIONS.find((gen) => gen.value === hyperVGeneration)?.label}
     </MenuToggle>
   );
 

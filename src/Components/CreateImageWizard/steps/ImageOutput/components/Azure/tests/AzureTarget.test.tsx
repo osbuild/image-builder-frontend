@@ -80,12 +80,12 @@ describe('Azure Component', () => {
 
       expect(
         await screen.findByRole('option', {
-          name: /Hyper-V generation 1 \(BIOS\)/i,
+          name: /Generation 1 \(BIOS\)/i,
         }),
       ).toBeInTheDocument();
       expect(
         await screen.findByRole('option', {
-          name: /Hyper-V generation 2 \(UEFI\)/i,
+          name: /Generation 2 \(UEFI\)/i,
         }),
       ).toBeInTheDocument();
     });
@@ -279,7 +279,7 @@ describe('Azure Component', () => {
       await clickWithWait(
         user,
         await screen.findByRole('option', {
-          name: /Hyper-V generation 1 \(BIOS\)/i,
+          name: /Generation 1 \(BIOS\)/i,
         }),
       );
 
