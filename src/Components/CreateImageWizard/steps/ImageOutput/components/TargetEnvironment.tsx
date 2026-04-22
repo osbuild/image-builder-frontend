@@ -650,10 +650,10 @@ const TargetEnvironment = () => {
                   component='small'
                   style={{ maxWidth: TEXT_WRAP_WIDTH }}
                 >
-                  You can use RHEL on Microsoft&apos;s Windows Subsystem for
-                  Linux (WSL) for development and learning use cases. Red Hat
-                  supports WSL under the Validated Software Pattern and Third
-                  Party Component Support Policy, which does not include
+                  RHEL on Microsoft&apos;s Windows Subsystem for Linux (WSL) can
+                  be used for development and learning use cases. WSL is
+                  supported by Red Hat under the Validated Software Pattern and
+                  Third Party Component Support Policy, which does not include
                   production use cases.
                 </Content>
               }
@@ -673,10 +673,10 @@ const TargetEnvironment = () => {
                   component='small'
                   style={{ maxWidth: TEXT_WRAP_WIDTH }}
                 >
-                  You can use RHEL on Microsoft&apos;s Windows Subsystem for
-                  Linux (WSL) for development and learning use cases. Red Hat
-                  supports WSL under the Validated Software Pattern and Third
-                  Party Component Support Policy, which does not include
+                  RHEL on Microsoft&apos;s Windows Subsystem for Linux (WSL) can
+                  be used for development and learning use cases. WSL is
+                  supported by Red Hat under the Validated Software Pattern and
+                  Third Party Component Support Policy, which does not include
                   production use cases.
                 </Content>
               }
