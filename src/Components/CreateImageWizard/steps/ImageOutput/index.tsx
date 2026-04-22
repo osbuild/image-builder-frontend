@@ -35,7 +35,10 @@ const ImageOutputStep = () => {
   const isCustomName = useAppSelector(selectIsCustomName);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageModeEnabled = useFlag('image-builder.image-mode.enabled');
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const isHostedImageMode = isImageMode && !isOnPremise;
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   useEffect(() => {
     const defaultName = generateDefaultName(distribution, arch);
@@ -51,13 +54,20 @@ const ImageOutputStep = () => {
   }, [dispatch, isHostedImageMode]);
 
   return (
-    <Form>
-      <Title headingLevel='h1' size='xl' id='image-output-section'>
+    <Wrapper>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        id='image-output-section'
+      >
         Image output
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Select the release, architecture, and a target environment to build your
-        image. Learn more about <DocumentationButton />
+        image.{' '}
+        {!isImageMode &&
+          'Select any number of target environments to simultaneously build this image from. '}
+        Learn more about <DocumentationButton />.
       </Content>
       {isImageModeEnabled && !(distribution as string).startsWith('fedora') && (
         <BlueprintMode />
@@ -76,7 +86,7 @@ const ImageOutputStep = () => {
         <ArchSelect />
       )}
       <TargetEnvironment />
-    </Form>
+    </Wrapper>
   );
 };
 

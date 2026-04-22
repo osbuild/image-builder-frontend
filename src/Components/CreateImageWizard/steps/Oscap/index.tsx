@@ -59,6 +59,7 @@ import {
   setOscapProfile,
 } from '@/store/slices/wizard';
 import { asDistribution } from '@/store/typeGuards';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '@/Utilities/useOnPremOpenSCAP';
 
 import OscapOnPremSpinner from './components/OnPremSpinner';
@@ -80,6 +81,7 @@ const OscapContent = () => {
   const fips = useAppSelector(selectFips);
   const services = useAppSelector(selectServices);
   const imageTypes = useAppSelector(selectImageTypes);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
   const release = removeBetaFromRelease(
     asDistribution(useAppSelector(selectDistribution)),
@@ -170,9 +172,11 @@ const OscapContent = () => {
     },
   );
 
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
+
   return (
     <>
-      <Form>
+      <Wrapper>
         {
           // TODO: for now we will just check openscap, but
           // this is an edge case where we have two different
@@ -181,14 +185,20 @@ const OscapContent = () => {
           // 'compliance' & 'openscap' here
         }
         <CustomizationLabels customization={'openscap'} />
-        <Title headingLevel='h1' size='xl' id='security-section'>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          id='security-section'
+        >
           Security
         </Title>
         {restrictions.openscap.shouldHide ? (
-          <Content>Configure security settings for your image.</Content>
+          <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+            Configure security settings for your image.
+          </Content>
         ) : (
           <>
-            <Content>
+            <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
               Select which Red Hat Lightspeed compliance policy or OpenSCAP
               profile you want your image to be compliant-ready for. Red Hat
               Lightspeed compliance allows the use of tailored policies, whereas
@@ -377,7 +387,7 @@ const OscapContent = () => {
             Cannot get the list of profiles
           </Alert>
         )}
-      </Form>
+      </Wrapper>
     </>
   );
 };

@@ -10,6 +10,7 @@ import {
   selectBlueprintName,
   setIsCustomName,
 } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../ValidatedInput';
@@ -18,6 +19,9 @@ const DetailsStep = () => {
   const dispatch = useAppDispatch();
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -37,11 +41,14 @@ const DetailsStep = () => {
   const stepValidation = useDetailsValidation();
 
   return (
-    <Form>
-      <Title headingLevel='h1' size='xl'>
+    <Wrapper>
+      <Title
+        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+        size={isWizardRevampEnabled ? 'lg' : 'xl'}
+      >
         Image details
       </Title>
-      <Content>
+      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
         Enter a name and description to identify your deployment-ready image.
       </Content>
       <FormGroup isRequired label='Name' fieldId='blueprint-name'>
@@ -70,7 +77,7 @@ const DetailsStep = () => {
           handleClear={() => dispatch(changeBlueprintDescription(''))}
         />
       </FormGroup>
-    </Form>
+    </Wrapper>
   );
 };
 

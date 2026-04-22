@@ -90,7 +90,7 @@ describe('Import modal', () => {
 
     await waitFor(async () =>
       expect(
-        await screen.findByText('Image output', { selector: 'h1' }),
+        await screen.findByText('Image output', { selector: 'h2' }),
       ).toBeInTheDocument(),
     );
   });
@@ -106,7 +106,7 @@ describe('Import modal', () => {
 
     await waitFor(async () =>
       expect(
-        await screen.findByText('Image output', { selector: 'h1' }),
+        await screen.findByText('Image output', { selector: 'h2' }),
       ).toBeInTheDocument(),
     );
   });
@@ -122,7 +122,7 @@ describe('Import modal', () => {
 
     await waitFor(async () =>
       expect(
-        await screen.findByText('Image output', { selector: 'h1' }),
+        await screen.findByText('Image output', { selector: 'h2' }),
       ).toBeInTheDocument(),
     );
 

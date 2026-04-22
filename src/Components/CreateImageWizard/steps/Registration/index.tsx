@@ -18,6 +18,7 @@ import { useGetUser } from '@/Hooks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { changeOrgId } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import AnsibleAutomationPlatform from './components/AnsibleAutomationPlatform';
 import Registration from './components/Registration';
@@ -27,7 +28,10 @@ const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const [showAlert, setShowAlert] = useState(false);
+
+  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   useEffect(() => {
     if (!isOnPremise && orgId) {
@@ -36,13 +40,20 @@ const RegistrationStep = () => {
   }, [isOnPremise, orgId, dispatch]);
 
   return (
-    <Form>
+    <Wrapper>
       <CustomizationLabels customization='registration' />
       <Content>
-        <Title headingLevel='h1' size='xl' id='registration-section'>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          id='registration-section'
+        >
           Register
         </Title>
-        <Content className='pf-v6-u-pb-md'>
+        <Content
+          component={isWizardRevampEnabled ? 'small' : 'p'}
+          className='pf-v6-u-pb-md'
+        >
           Configure registration settings for systems that will use this image.
         </Content>
         <Content className='pf-v6-u-pb-md'>
@@ -79,7 +90,7 @@ const RegistrationStep = () => {
           Activation keys cannot be reached, try again later.
         </Alert>
       )}
-    </Form>
+    </Wrapper>
   );
 };
 
