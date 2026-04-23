@@ -144,9 +144,7 @@ const TimezoneDropDown = () => {
         onOpenChangeKeys={['Escape']}
       />
       <HelperText className='pf-v6-u-pt-sm'>
-        <HelperTextItem>
-          Network time servers for system clock synchronization
-        </HelperTextItem>
+        <HelperTextItem>Search by city and continent.</HelperTextItem>
       </HelperText>
       {errorText && (
         <HelperText>

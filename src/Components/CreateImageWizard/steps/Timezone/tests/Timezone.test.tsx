@@ -52,9 +52,7 @@ describe('Timezone Component', () => {
       renderTimezoneStep();
 
       expect(
-        await screen.findByText(
-          /Network time servers for system clock synchronization/i,
-        ),
+        await screen.findByText(/Search by city and continent./i),
       ).toBeInTheDocument();
     });
 
