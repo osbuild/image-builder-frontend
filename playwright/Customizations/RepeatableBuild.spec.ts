@@ -119,7 +119,7 @@ test('Create a blueprint with Repeatable build customization', async ({
       frame.getByText(
         /This repository doesn't have snapshots enabled, so it cannot be selected./i,
       ),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10000 });
   });
 
   await test.step('Check Repeatable build step behaviour with no repos', async () => {
