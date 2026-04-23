@@ -89,16 +89,32 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
+    const searchInput = frame.getByRole('textbox', {
+      name: 'Filter repositories',
+    });
+    const repoOption = frame.getByRole('option', { name: repositoryName });
+
+    // The repo may not be indexed for filtered queries yet. If the
+    // search shows "No repositories found", refresh and retry.
+    await searchInput.fill(repositoryName);
+    const noResults = frame.getByRole('option', {
+      name: `No repositories found for "${repositoryName}"`,
+    });
+    if (await noResults.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await searchInput.clear();
+      await frame.getByRole('button', { name: 'Refresh repositories' }).click();
+      await expect(
+        frame.getByRole('button', { name: 'Refreshing repositories' }),
+      ).toBeHidden();
+      await searchInput.fill(repositoryName);
+    }
+
     const reposTable = frame.getByRole('grid').filter({
       has: frame.getByRole('columnheader', { name: 'Snapshot date' }),
     });
     await expect(reposTable.getByRole('row')).toHaveCount(3); // two base distro repos + header
-    await expect(
-      frame.getByRole('option', { name: repositoryName }),
-    ).toBeVisible();
-    await expect(
-      frame.getByRole('option', { name: repositoryName }),
-    ).toBeDisabled();
+    await expect(repoOption).toBeVisible();
+    await expect(repoOption).toBeDisabled();
     await expect(
       frame.getByText(
         /This repository doesn't have snapshots enabled, so it cannot be selected./i,
