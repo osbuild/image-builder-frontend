@@ -9,6 +9,7 @@ import {
   createRepositoryViaApi,
   deleteRepositoryByUrlViaApi,
   deleteRepositoryViaApi,
+  waitUntilRepositoryIsSearchable,
 } from '../helpers/apiHelpers';
 import { enablePreview, isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
@@ -50,6 +51,8 @@ test('Create a blueprint with Repeatable build customization', async ({
       snapshot: false,
     });
     repositoryUuid = repository.uuid;
+
+    await waitUntilRepositoryIsSearchable(page, repositoryName);
   });
 
   // Register cleanup after resources are created

@@ -138,6 +138,39 @@ export const deleteRepositoryViaApi = async (
   }
 };
 
+// Polls the content-sources API until the repository appears in search
+// results. Call this after creating a repo to give the backend time to
+// index it before the UI tries to find it.
+export const waitUntilRepositoryIsSearchable = async (
+  page: Page,
+  repositoryName: string,
+  { intervalMs = 2_000, timeoutMs = 30_000 } = {},
+): Promise<void> => {
+  const headers = await getAuthHeaders(page);
+  const endpoint = `/api/content-sources/v1/repositories/?search=${encodeURIComponent(repositoryName)}`;
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const response = await page.context().request.get(endpoint, { headers });
+
+    if (response.status() === 200) {
+      const body = await response.json();
+      const found = body.data?.some(
+        (repo: { name: string }) => repo.name === repositoryName,
+      );
+      if (found) {
+        return;
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(
+    `Repository "${repositoryName}" was not searchable after ${timeoutMs}ms`,
+  );
+};
+
 export const deleteRepositoryByUrlViaApi = async (
   page: Page,
   url: string,
