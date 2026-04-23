@@ -170,7 +170,7 @@ describe('Import modal', () => {
     expect(sizeValue).toBeInTheDocument();
 
     // Timezone
-    await screen.findByRole('heading', { name: /Timezone/ });
+    await screen.findByRole('heading', { name: 'Time' });
     expect(
       await screen.findByRole('button', { name: 'US/Eastern' }),
     ).toBeInTheDocument();

@@ -30,7 +30,7 @@ describe('Timezone Component', () => {
       renderTimezoneStep();
 
       expect(
-        await screen.findByRole('heading', { name: /Timezone/i }),
+        await screen.findByRole('heading', { name: 'Time' }),
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Select a timezone and define NTP servers/i),
