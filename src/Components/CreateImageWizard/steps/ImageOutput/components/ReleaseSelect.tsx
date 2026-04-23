@@ -2,9 +2,6 @@ import React, { ReactElement, useState } from 'react';
 
 import {
   FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -179,13 +176,6 @@ const ReleaseSelect = () => {
             )}
         </SelectList>
       </Select>
-      <FormHelperText>
-        <HelperText>
-          <HelperTextItem id='release-select-helper'>
-            The latest version is selected by default.
-          </HelperTextItem>
-        </HelperText>
-      </FormHelperText>
     </FormGroup>
   );
 };
