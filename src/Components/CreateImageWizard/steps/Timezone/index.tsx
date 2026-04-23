@@ -16,18 +16,21 @@ const TimezoneStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='timezone' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        Time
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Select a timezone and define NTP servers to ensure your image maintains
-        accurate system time upon deployment.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          Time
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Select a timezone and define NTP servers to ensure your image
+          maintains accurate system time upon deployment.
+        </Content>
+        <TimezoneDropDown />
+        <br />
+        <NtpServersInput />
       </Content>
-      <TimezoneDropDown />
-      <NtpServersInput />
     </Wrapper>
   );
 };
