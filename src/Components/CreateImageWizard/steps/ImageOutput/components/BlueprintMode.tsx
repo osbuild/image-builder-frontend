@@ -97,7 +97,7 @@ const BlueprintMode = () => {
         className='pf-v6-u-pt-sm pf-v6-u-text-color-subtle'
       >
         {!isImageMode &&
-          'RHEL in package mode is a system managed by individually installing and updating software packages'}
+          'RHEL in package mode is a system managed by individually installing and updating software packages.'}
         {isImageMode &&
           'RHEL image mode treats the entire operating system as a single, immutable container image that is updated atomically'}
       </Content>
