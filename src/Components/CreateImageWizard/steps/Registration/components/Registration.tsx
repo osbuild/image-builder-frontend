@@ -102,7 +102,7 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
       </Content>
       <Content className='pf-v6-u-pb-sm'>
         <Radio
-          label='Register to a Satellite or Capsule'
+          label='Register for a Satellite or Capsule server'
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));

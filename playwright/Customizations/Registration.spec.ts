@@ -124,7 +124,9 @@ const registrationModes = [
     name: 'satellite',
     setup: async (frame: Awaited<ReturnType<typeof ibFrame>>) => {
       await frame
-        .getByRole('radio', { name: 'Register to a Satellite or Capsule' })
+        .getByRole('radio', {
+          name: 'Register for a Satellite or Capsule server',
+        })
         .check();
       // Upload certificate file using helper function
       await uploadCertificateFile(
@@ -398,7 +400,7 @@ registrationModes.forEach(
           } else if (name === 'satellite') {
             await expect(
               frame.getByRole('radio', {
-                name: 'Register to a Satellite or Capsule',
+                name: 'Register for a Satellite or Capsule server',
               }),
             ).toBeChecked();
           }

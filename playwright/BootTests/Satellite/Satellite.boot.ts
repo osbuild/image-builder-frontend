@@ -52,7 +52,9 @@ test('Satellite registration boot integration test', async ({
 
   await test.step('Select and fill Satellite on Registration step', async () => {
     await frame
-      .getByRole('radio', { name: /Register to a Satellite or Capsule/i })
+      .getByRole('radio', {
+        name: /Register for a Satellite or Capsule server/i,
+      })
       .click();
     await frame
       .getByRole('textbox', { name: 'registration command' })
