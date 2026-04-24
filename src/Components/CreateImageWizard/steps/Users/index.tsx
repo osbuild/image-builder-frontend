@@ -22,17 +22,19 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
   return (
     <Wrapper>
       <CustomizationLabels customization='users' />
-      <Title headingLevel='h2' size='lg'>
-        Users
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Create user accounts to manage access to your image. All usernames must
-        be unique.
-        {/* TO DO: learn more about accessing your SSH keys link */}
-        {blueprintMode === 'image' &&
-          ' You must create a user during the image build process to be able to log in.'}
-        <UserInfo attemptedNext={attemptedNext} />
+      <Content>
+        <Title headingLevel='h2' size='lg'>
+          Users
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Create user accounts to manage access to your image. All usernames
+          must be unique.
+          {/* TO DO: learn more about accessing your SSH keys link */}
+          {blueprintMode === 'image' &&
+            ' You must create a user during the image build process to be able to log in.'}
+        </Content>
       </Content>
+      <UserInfo attemptedNext={attemptedNext} />
     </Wrapper>
   );
 };

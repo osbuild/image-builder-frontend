@@ -27,10 +27,9 @@ const TimezoneStep = () => {
           Select a timezone and define NTP servers to ensure your image
           maintains accurate system time upon deployment.
         </Content>
-        <TimezoneDropDown />
-        <br />
-        <NtpServersInput />
       </Content>
+      <TimezoneDropDown />
+      <NtpServersInput />
     </Wrapper>
   );
 };

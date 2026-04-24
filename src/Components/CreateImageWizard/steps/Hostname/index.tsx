@@ -25,15 +25,17 @@ const HostnameStep = () => {
       }
     >
       <CustomizationLabels customization='hostname' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        Hostname
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Define the hostname to uniquely identify this image within your network
-        environment.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          Hostname
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Define the hostname to uniquely identify this image within your
+          network environment.
+        </Content>
       </Content>
       <HostnameInput />
     </Wrapper>

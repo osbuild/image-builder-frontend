@@ -15,16 +15,18 @@ const FirewallStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='firewall' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        Firewall
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Control network traffic by configuring your image&apos;s firewall.
-        Specify which ports and services are allowed to communicate with your
-        system.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          Firewall
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Control network traffic by configuring your image&apos;s firewall.
+          Specify which ports and services are allowed to communicate with your
+          system.
+        </Content>
       </Content>
       <PortsInput />
       <Services />

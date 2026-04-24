@@ -49,15 +49,17 @@ const LocaleStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='locale' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        Locale
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Define the primary languages and keyboard settings for your image to
-        ensure proper system localization and user interface support.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          Locale
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Define the primary languages and keyboard settings for your image to
+          ensure proper system localization and user interface support.
+        </Content>
       </Content>
       <LanguagesDropDown />
       {isLoading && (

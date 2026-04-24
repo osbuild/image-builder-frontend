@@ -19,13 +19,15 @@ const UserGroupsStep = ({ attemptedNext }: UserGroupsStepProps) => {
   return (
     <Wrapper>
       <CustomizationLabels customization='users' />
-      <Title headingLevel='h2' size='lg'>
-        Groups
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Define groups to organize user permissions and shared resource access.
-        <GroupInfo attemptedNext={attemptedNext} />
+      <Content>
+        <Title headingLevel='h2' size='lg'>
+          Groups
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Define groups to organize user permissions and shared resource access.
+        </Content>
       </Content>
+      <GroupInfo attemptedNext={attemptedNext} />
     </Wrapper>
   );
 };

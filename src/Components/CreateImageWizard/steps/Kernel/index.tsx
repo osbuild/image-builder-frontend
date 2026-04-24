@@ -25,29 +25,31 @@ const KernelStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='kernel' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        className='pf-v6-u-display-flex pf-v6-u-align-items-center'
-      >
-        Kernel
-        {requiredByOpenSCAP.length > 0 && (
-          <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-            {requiredByOpenSCAP.length} Added by OpenSCAP
-          </Label>
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          className='pf-v6-u-display-flex pf-v6-u-align-items-center'
+        >
+          Kernel
+          {requiredByOpenSCAP.length > 0 && (
+            <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
+              {requiredByOpenSCAP.length} Added by OpenSCAP
+            </Label>
+          )}
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Choose a kernel package and append specific boot parameters to
+          customize how your image initializes its core operating environment.
+        </Content>
+        {fips.enabled && (
+          <Alert
+            title='Kernel will be configured to use FIPS, no additional configuration needed.'
+            variant='info'
+            isInline
+          />
         )}
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Choose a kernel package and append specific boot parameters to customize
-        how your image initializes its core operating environment.
       </Content>
-      {fips.enabled && (
-        <Alert
-          title='Kernel will be configured to use FIPS, no additional configuration needed.'
-          variant='info'
-          isInline
-        />
-      )}
       <KernelName />
       <KernelArguments />
     </Wrapper>

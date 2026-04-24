@@ -18,22 +18,24 @@ const ServicesStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='services' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        className='pf-v6-u-display-flex pf-v6-u-align-items-center'
-      >
-        Systemd services
-        {requiredByOpenSCAP.total > 0 && (
-          <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-            {requiredByOpenSCAP.total} Added by OpenSCAP
-          </Label>
-        )}
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Configure systemd units to manage your system’s services and startup
-        logic. Enable services to start at boot, disable them to prevent
-        automatic starting, or mask them to completely block execution.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          className='pf-v6-u-display-flex pf-v6-u-align-items-center'
+        >
+          Systemd services
+          {requiredByOpenSCAP.total > 0 && (
+            <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
+              {requiredByOpenSCAP.total} Added by OpenSCAP
+            </Label>
+          )}
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Configure systemd units to manage your system’s services and startup
+          logic. Enable services to start at boot, disable them to prevent
+          automatic starting, or mask them to completely block execution.
+        </Content>
       </Content>
       <ServicesInput />
     </Wrapper>
