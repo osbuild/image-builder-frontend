@@ -141,10 +141,7 @@ const AAPRegistration = () => {
       </FormGroup>
 
       {shouldShowCaInput && (
-        <FormGroup
-          label='Certificate authority (CA) for Ansible Controller'
-          className='pf-v6-u-w-50'
-        >
+        <FormGroup label='Certificate authority (CA) for Ansible Controller'>
           <FileUpload
             id='aap-certificate-upload'
             type='text'
