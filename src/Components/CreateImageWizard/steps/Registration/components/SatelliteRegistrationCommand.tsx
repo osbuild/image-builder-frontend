@@ -42,7 +42,6 @@ const SatelliteRegistrationCommand = () => {
         ariaLabel='registration command'
         value={registrationCommand || ''}
         onChange={handleChange}
-        placeholder='Input field'
         stepValidation={stepValidation}
         fieldName='command'
         warning={stepValidation.errors.expired}
