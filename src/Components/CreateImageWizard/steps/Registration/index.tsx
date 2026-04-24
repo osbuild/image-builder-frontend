@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  Alert,
-  ClipboardCopy,
-  Content,
-  Form,
-  FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, Content, Form, Title } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
@@ -50,38 +40,13 @@ const RegistrationStep = () => {
         >
           Register
         </Title>
-        <Content
-          component={isWizardRevampEnabled ? 'small' : 'p'}
-          className='pf-v6-u-pb-md'
-        >
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
           Configure registration settings for systems that will use this image.
         </Content>
-        <Content className='pf-v6-u-pb-md'>
-          {!isOnPremise && (
-            <FormGroup label='Organization ID'>
-              <ClipboardCopy
-                hoverTip='Copy to clipboard'
-                clickTip='Successfully copied to clipboard!'
-                isReadOnly
-                className='pf-v6-u-w-25'
-              >
-                {orgId || ''}
-              </ClipboardCopy>
-              <FormHelperText>
-                <HelperText>
-                  <HelperTextItem>
-                    If you&apos;re using an activation key with command line
-                    registration, you must provide your organization&apos;s ID.
-                  </HelperTextItem>
-                </HelperText>
-              </FormHelperText>
-            </FormGroup>
-          )}
-        </Content>
-        <Content className='pf-v6-u-pb-md'>
+        <Content>
           <Registration onErrorChange={setShowAlert} />
         </Content>
-        <Content>
+        <Content className='pf-v6-u-pt-sm'>
           <AnsibleAutomationPlatform />
         </Content>
       </Content>
