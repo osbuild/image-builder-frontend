@@ -3,14 +3,17 @@ import React, { useEffect } from 'react';
 import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
 
 import DocumentationButton from '@/Components/sharedComponents/DocumentationButton';
+import { RHEL_10_IMAGE_MODE_IMAGE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeArchitecture,
   changeBlueprintName,
+  changeImageSource,
   selectArchitecture,
   selectBlueprintName,
   selectDistribution,
+  selectImageSource,
   selectIsCustomName,
   selectIsImageMode,
 } from '@/store/slices/wizard';
@@ -34,6 +37,7 @@ const ImageOutputStep = () => {
   const arch = useAppSelector(selectArchitecture);
   const isCustomName = useAppSelector(selectIsCustomName);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const imageSource = useAppSelector(selectImageSource);
   const isImageModeEnabled = useFlag('image-builder.image-mode.enabled');
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const isHostedImageMode = isImageMode && !isOnPremise;
@@ -52,6 +56,12 @@ const ImageOutputStep = () => {
       dispatch(changeArchitecture('x86_64'));
     }
   }, [dispatch, isHostedImageMode]);
+
+  useEffect(() => {
+    if (!isHostedImageMode) return;
+    if (imageSource) return;
+    dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
+  }, [dispatch, imageSource, isHostedImageMode]);
 
   return (
     <Wrapper>

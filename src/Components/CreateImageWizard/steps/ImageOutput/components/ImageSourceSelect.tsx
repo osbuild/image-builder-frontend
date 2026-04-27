@@ -258,6 +258,22 @@ const BootcImageSourceSelect = () => {
     }
   }, [bootcDistributions, dispatch]);
 
+  useEffect(() => {
+    if (!bootcDistributions || bootcDistributions.length === 0) return;
+
+    const hasSelected = imageSource
+      ? bootcDistributions.some((d) => d.reference === imageSource)
+      : false;
+    if (hasSelected) return;
+
+    const defaultItem =
+      bootcDistributions.find((d) => d.distro.startsWith('rhel-10')) ??
+      bootcDistributions[0];
+
+    dispatch(changeImageSource(defaultItem.reference));
+    dispatch(changeDistribution(defaultItem.distro as Distributions));
+  }, [bootcDistributions, dispatch, imageSource]);
+
   // Deduplicate by name — the API returns one entry per target type,
   // but the dropdown should show one entry per base image.
   const uniqueDistributions = bootcDistributions?.reduce<

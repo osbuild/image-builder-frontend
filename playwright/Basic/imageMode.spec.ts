@@ -69,7 +69,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     await imageModeToggle.click();
 
     const imageSourceDropdown = frame.getByRole('button', {
-      name: /Select a bootc image/,
+      name: /Red Hat Enterprise Linux|RHEL/i,
     });
     await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
     await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
@@ -113,8 +113,8 @@ test('Image mode blueprint create, edit, export, import', async ({
     await expect(imageModeButton).toHaveAttribute('aria-pressed', 'true');
 
     await expect(
-      frame.getByRole('button', { name: /Select a bootc image/ }),
-    ).toBeHidden();
+      frame.getByRole('button', { name: /Red Hat Enterprise Linux|RHEL/i }),
+    ).toBeVisible();
 
     await expect(
       frame.getByRole('radio', { name: 'Virtualization' }),

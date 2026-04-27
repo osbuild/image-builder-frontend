@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
-import { RHEL_10, X86_64 } from '@/constants';
+import { RHEL_10, RHEL_10_IMAGE_MODE_IMAGE, X86_64 } from '@/constants';
 import { Distributions } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -16,6 +16,7 @@ import {
   changeArchitecture,
   changeBlueprintMode,
   changeDistribution,
+  changeImageSource,
   changeImageTypes,
   selectArchitecture,
   selectDistribution,
@@ -65,6 +66,8 @@ const BlueprintMode = () => {
                 isOnPremise ? defaultDistro : previousDistro.current,
               ),
             );
+            // Image source is only relevant in image mode
+            dispatch(changeImageSource(undefined));
             if (!isOnPremise) {
               dispatch(changeArchitecture(previousArch.current));
             }
@@ -87,6 +90,7 @@ const BlueprintMode = () => {
               dispatch(changeDistribution('image-mode'));
             } else {
               dispatch(changeArchitecture(X86_64));
+              dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
             }
           }}
           aria-describedby='blueprint-mode-description'
