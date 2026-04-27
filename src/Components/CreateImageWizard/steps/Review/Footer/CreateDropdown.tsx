@@ -215,7 +215,10 @@ export const CreateSaveButton = ({
             <FlexItem>
               <Spinner
                 style={
-                  { '--pf-v6-c-spinner--Color': '#fff' } as React.CSSProperties
+                  {
+                    '--pf-v6-c-spinner--Color':
+                      'var(--pf-t--global--text--color--on-brand--default)',
+                  } as React.CSSProperties
                 }
                 isInline
                 size='md'

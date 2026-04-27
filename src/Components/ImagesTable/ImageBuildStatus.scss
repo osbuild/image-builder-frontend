@@ -1,6 +1,6 @@
 .failure-button {
-  color: var(--pf-global--Color--100);
+  color: var(--pf-t--global--text--color--regular);
   text-decoration: underline;
   text-decoration-style: dotted;
-  text-decoration-color: grey;
+  text-decoration-color: var(--pf-t--global--border--color--default);
 }

@@ -1,17 +1,3 @@
-.pf-c-popover[data-popper-reference-hidden="true"] {
-    font-weight: initial;
-    visibility: initial;
-    pointer-events: initial;
-}
-
-.pf-c-form {
-    --pf-c-form--GridGap: var(--pf6-global--spacer--md);
-}
-
-.pf-c-form__group-label {
-    --pf-c-form__group-label--PaddingBottom: var(--pf-v6-global--spacer--xs);
-}
-
 .provider-icon {
     width: 3.5em;
     height: 3.5em;
@@ -29,14 +15,6 @@ ul.pf-m-plain {
     list-style: none;
     padding-left: 0;
     margin-left: 0;
-}
-
-.not-available {
-    color: #6a6e73;
-}
-
-.panel-border {
-    --pf-v6-c-panel--before--BorderColor: #BEE1F4;
 }
 
 // Targets the alert within the Reviewsteps > content dropdown

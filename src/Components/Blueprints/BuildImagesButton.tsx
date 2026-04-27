@@ -120,7 +120,8 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
                     <Spinner
                       style={
                         {
-                          '--pf-v6-c-spinner--Color': '#fff',
+                          '--pf-v6-c-spinner--Color':
+                            'var(--pf-t--global--text--color--on-brand--default)',
                         } as React.CSSProperties
                       }
                       isInline
