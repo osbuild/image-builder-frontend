@@ -38,6 +38,7 @@ const Snapshot = () => {
   const handleOptionChange = (
     option: 'latest' | 'snapshotDate' | 'template',
   ): void => {
+    console.log('[Snapshot.handleOptionChange]', { option });
     setSelectedOption(option);
     switch (option) {
       case 'latest':

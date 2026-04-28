@@ -486,6 +486,14 @@ export function useSnapshotValidation(): StepValidation {
   const useLatest = useAppSelector(selectUseLatest);
   const template = useAppSelector(selectTemplate);
 
+  console.log('[useSnapshotValidation]', {
+    useLatest,
+    snapshotDate,
+    template,
+    isSnapshotValid: isSnapshotValid(snapshotDate),
+    willDisable: !useLatest && !isSnapshotValid(snapshotDate) && template === '',
+  });
+
   if (!useLatest && !isSnapshotValid(snapshotDate) && template === '') {
     return {
       errors: { snapshotDate: 'Invalid snapshot date' },

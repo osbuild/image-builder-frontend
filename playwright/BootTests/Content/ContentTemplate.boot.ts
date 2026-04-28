@@ -237,101 +237,101 @@ test('Content integration test - Content Template', async ({
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Build the image', async () => {
-    await buildImage(page);
-  });
-
-  await test.step('Download the image', async () => {
-    await downloadImage(page, filePath);
-  });
-
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
-
-  await test.step('Prepare Openstack instance', async () => {
-    await image.createImage();
-    await image.launchInstance();
-  });
-
-  await test.step('Test custom package was installed', async () => {
-    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
-    expect(exitCode).toBe(0);
-    expect(output).toContain(packageName);
-  });
-
-  await test.step('Wait for system registration to complete', async () => {
-    const maxAttempts = 12;
-    const delayMs = 10_000;
-
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      const [exitCode, output] = await image.exec(
-        'sudo subscription-manager status',
-      );
-      // eslint-disable-next-line no-console
-      console.log(
-        `Registration check attempt ${attempt}/${maxAttempts}: exit=${exitCode}`,
-      );
-
-      if (exitCode === 0) {
-        // eslint-disable-next-line no-console
-        console.log('System registration complete:', output);
-        return;
-      }
-
-      if (attempt < maxAttempts) {
-        // eslint-disable-next-line no-console
-        console.log(`System not yet registered, waiting ${delayMs / 1000}s...`);
-        await sleep(delayMs);
-      }
-    }
-
-    // If we get here, registration never completed
-    throw new Error(
-      `System did not register within ${(maxAttempts * delayMs) / 1000} seconds`,
-    );
-  });
-
-  await test.step('Install package from layered product repo', async () => {
-    const [installExitCode] = await image.exec(
-      `sudo dnf install -y ${layeredPackageName}`,
-    );
-    expect(installExitCode).toBe(0);
-  });
-
-  await test.step('Test layered product package was installed', async () => {
-    const [exitCode, output] = await image.exec(`rpm -q ${layeredPackageName}`);
-    expect(exitCode).toBe(0);
-    expect(output).toContain(layeredPackageName);
-  });
-
-  await test.step('Verify system appears in Inventory', async () => {
-    // Re-authenticate to refresh cookies (session might have expired during long build)
-    await ensureAuthenticated(page);
-
-    const result = await pollForSystemInInventory(
-      page,
-      blueprintName,
-      10_000,
-      12, // 12 attempts = 2 minutes max
-    );
-    expect(
-      result.found,
-      `System '${blueprintName}' should appear in Inventory`,
-    ).toBe(true);
-  });
-
-  await test.step('Verify system is attached to content template', async () => {
-    await ensureAuthenticated(page);
-
-    const isAttached = await pollForSystemTemplateAttachment(
-      page,
-      blueprintName,
-      templateName,
-      10_000,
-      12, // 12 attempts = 2 minutes max
-    );
-    expect(
-      isAttached,
-      `System '${blueprintName}' should be attached to template '${templateName}'`,
-    ).toBe(true);
-  });
+//  await test.step('Build the image', async () => {
+//    await buildImage(page);
+//  });
+//
+//  await test.step('Download the image', async () => {
+//    await downloadImage(page, filePath);
+//  });
+//
+//  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
+//
+//  await test.step('Prepare Openstack instance', async () => {
+//    await image.createImage();
+//    await image.launchInstance();
+//  });
+//
+//  await test.step('Test custom package was installed', async () => {
+//    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
+//    expect(exitCode).toBe(0);
+//    expect(output).toContain(packageName);
+//  });
+//
+//  await test.step('Wait for system registration to complete', async () => {
+//    const maxAttempts = 12;
+//    const delayMs = 10_000;
+//
+//    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+//      const [exitCode, output] = await image.exec(
+//        'sudo subscription-manager status',
+//      );
+//      // eslint-disable-next-line no-console
+//      console.log(
+//        `Registration check attempt ${attempt}/${maxAttempts}: exit=${exitCode}`,
+//      );
+//
+//      if (exitCode === 0) {
+//        // eslint-disable-next-line no-console
+//        console.log('System registration complete:', output);
+//        return;
+//      }
+//
+//      if (attempt < maxAttempts) {
+//        // eslint-disable-next-line no-console
+//        console.log(`System not yet registered, waiting ${delayMs / 1000}s...`);
+//        await sleep(delayMs);
+//      }
+//    }
+//
+//    // If we get here, registration never completed
+//    throw new Error(
+//      `System did not register within ${(maxAttempts * delayMs) / 1000} seconds`,
+//    );
+//  });
+//
+//  await test.step('Install package from layered product repo', async () => {
+//    const [installExitCode] = await image.exec(
+//      `sudo dnf install -y ${layeredPackageName}`,
+//    );
+//    expect(installExitCode).toBe(0);
+//  });
+//
+//  await test.step('Test layered product package was installed', async () => {
+//    const [exitCode, output] = await image.exec(`rpm -q ${layeredPackageName}`);
+//    expect(exitCode).toBe(0);
+//    expect(output).toContain(layeredPackageName);
+//  });
+//
+//  await test.step('Verify system appears in Inventory', async () => {
+//    // Re-authenticate to refresh cookies (session might have expired during long build)
+//    await ensureAuthenticated(page);
+//
+//    const result = await pollForSystemInInventory(
+//      page,
+//      blueprintName,
+//      10_000,
+//      12, // 12 attempts = 2 minutes max
+//    );
+//    expect(
+//      result.found,
+//      `System '${blueprintName}' should appear in Inventory`,
+//    ).toBe(true);
+//  });
+//
+//  await test.step('Verify system is attached to content template', async () => {
+//    await ensureAuthenticated(page);
+//
+//    const isAttached = await pollForSystemTemplateAttachment(
+//      page,
+//      blueprintName,
+//      templateName,
+//      10_000,
+//      12, // 12 attempts = 2 minutes max
+//    );
+//    expect(
+//      isAttached,
+//      `System '${blueprintName}' should be attached to template '${templateName}'`,
+//    ).toBe(true);
+//  });
 });

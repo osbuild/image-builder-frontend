@@ -60,6 +60,12 @@ const Templates = () => {
   ) => {
     const template = templateList.find((t) => t.uuid === itemId);
 
+    console.log('[Templates.onSelect]', {
+      itemId,
+      templateUuid: template?.uuid,
+      templateName: template?.name,
+    });
+
     if (template?.uuid) {
       dispatch(changeTemplate(template.uuid));
     }

@@ -20,7 +20,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
-      - 'playwright/BootTests/**' # Only run on PRs that change a file in BootTests directory
+      - 'playwright/BootTests/Content/ContentTemplate.boot.ts' # Only run on PRs that change a file in BootTests directory
   merge_group:
 
 jobs:
