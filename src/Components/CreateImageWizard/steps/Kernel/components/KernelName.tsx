@@ -12,7 +12,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeKernelName, selectKernel } from '@/store/slices/wizard';
 
-const NONE_OPTION = 'None';
+const NONE_OPTION = 'Default';
 const kernelOptions = ['kernel', 'kernel-debug'];
 
 const KernelName = () => {
@@ -54,9 +54,11 @@ const KernelName = () => {
         shouldFocusFirstItemOnOpen={false}
       >
         <SelectList>
-          <SelectOption key={NONE_OPTION} value={NONE_OPTION}>
-            {NONE_OPTION}
-          </SelectOption>
+          {kernel && (
+            <SelectOption key={NONE_OPTION} value={NONE_OPTION}>
+              {NONE_OPTION}
+            </SelectOption>
+          )}
           {kernelOptions.map((option) => (
             <SelectOption key={option} value={option}>
               {option}

@@ -30,7 +30,7 @@ export const clearKernelName = async (user: UserEventInstance) => {
     name: /kernel/i,
   });
   await clickWithWait(user, toggle);
-  await selectKernelOption(user, 'None');
+  await selectKernelOption(user, 'Default');
 };
 
 export const selectKernelOption = async (
