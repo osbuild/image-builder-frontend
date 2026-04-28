@@ -136,6 +136,12 @@ export type ComposeId = ObjectReference & {
 };
 export type Bootc = {
   reference: string;
+  /** Optional container image reference for a payload container to embed
+    in the ISO's container storage. When set, the payload container is
+    available at install/boot time. Only valid for bootable-container-iso
+    image type.
+     */
+  iso_payload_reference?: string | undefined;
 };
 export type ImageTypes =
   | "aws"
@@ -149,6 +155,7 @@ export type ImageTypes =
   | "azure-rhui"
   | "azure-sapapps-rhui"
   | "azure-sap-rhui"
+  | "bootable-container-iso"
   | "edge-commit"
   | "edge-container"
   | "edge-installer"

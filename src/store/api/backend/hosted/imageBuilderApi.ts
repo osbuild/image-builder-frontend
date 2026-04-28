@@ -891,7 +891,7 @@ export type BlueprintMetadata = {
 export type CreateBlueprintRequest = {
   name: string;
   description?: string | undefined;
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
@@ -912,7 +912,7 @@ export type BlueprintResponse = {
   name: string;
   description: string;
   lint: BlueprintLint;
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
@@ -922,7 +922,7 @@ export type BlueprintResponse = {
 export type BlueprintExportResponse = {
   name: string;
   description: string;
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   customizations: Customizations;
   metadata: BlueprintMetadata;
@@ -940,7 +940,7 @@ export type ComposeResponse = {
 };
 export type ClientId = "api" | "ui" | "mcp";
 export type ComposeRequest = {
-  distribution: Distributions;
+  distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
   image_name?: string | undefined;
   image_description?: string | undefined;
