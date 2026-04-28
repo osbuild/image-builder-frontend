@@ -8,12 +8,14 @@ import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 import {
   getBlueprintsPath,
   readComposes,
+  safeReadJsonFile,
   toComposerComposeRequest,
 } from './helpers';
 
 import {
   ComposeBlueprintApiArg,
   ComposeBlueprintApiResponse,
+  ComposeRequest,
   ComposeResponse,
   ComposesResponseItem,
   GetBlueprintComposesApiArg,
@@ -153,12 +155,15 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
 
       const entries = Object.entries(info.entries || {});
       for (const bpEntry of entries) {
-        const request = await cockpit
-          .file(path.join(blueprintsDir, bpEntry[0], queryArgs.composeId))
-          .read();
+        const request = await safeReadJsonFile<ComposeRequest>(
+          path.join(blueprintsDir, bpEntry[0], queryArgs.composeId),
+        );
+        if (!request) {
+          continue;
+        }
         return {
           image_status: data.image_status,
-          request: JSON.parse(request),
+          request,
         };
       }
 
