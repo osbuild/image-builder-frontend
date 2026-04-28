@@ -271,9 +271,9 @@ const convertLogicalVolume = (volume: LogicalVolume) => {
  * @param distribution blueprint distribution
  */
 const getLatestRelease = (
-  distribution: Distributions | 'image-mode',
+  distribution: Distributions | 'image-mode' | undefined,
 ): Distributions | 'image-mode' => {
-  if (isImageModeDistribution(distribution)) {
+  if (distribution === undefined || isImageModeDistribution(distribution)) {
     return 'image-mode';
   }
 

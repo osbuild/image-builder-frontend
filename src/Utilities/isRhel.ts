@@ -6,7 +6,10 @@ import {
   RHEL_9_BETA,
 } from '../constants';
 
-function isRhel(distro: string) {
+function isRhel(distro: string | undefined) {
+  if (!distro) {
+    return false;
+  }
   switch (distro) {
     case RHEL_8:
     case RHEL_9:
