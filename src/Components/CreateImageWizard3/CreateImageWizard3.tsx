@@ -384,14 +384,16 @@ const CreateImageWizard3 = () => {
           }
         >
           <Form onSubmit={handleFormSubmit}>
-            <Title headingLevel='h1' size='xl'>
-              Repositories and packages
-            </Title>
             <Content>
-              Choose the repositories and individual packages to include in your
-              image. You can select from standard RHEL repositories or add your
-              own custom content. The selections on this page may automatically
-              add required configurations in subsequent steps.
+              <Title headingLevel='h1' size='xl'>
+                Repositories and packages
+              </Title>
+              <Content>
+                Choose the repositories and individual packages to include in
+                your image. You can select from standard RHEL repositories or
+                add your own custom content. The selections on this page may
+                automatically add required configurations in subsequent steps.
+              </Content>
             </Content>
             {!restrictions.repositories.shouldHide && <RepositoriesStep />}
             {!restrictions.repositories.shouldHide &&
@@ -423,14 +425,16 @@ const CreateImageWizard3 = () => {
           }
         >
           <Form onSubmit={handleFormSubmit}>
-            <Title headingLevel='h1' size='xl'>
-              Advanced settings
-            </Title>
             <Content>
-              Define additional specifications to fully customize your image.
-              Use these settings to manage system identity, infrastructure
-              configurations like kernel and file systems, and security rules
-              including firewall and user access.
+              <Title headingLevel='h1' size='xl'>
+                Advanced settings
+              </Title>
+              <Content>
+                Define additional specifications to fully customize your image.
+                Use these settings to manage system identity, infrastructure
+                configurations like kernel and file systems, and security rules
+                including firewall and user access.
+              </Content>
             </Content>
             {/* Conditionally render steps with dividers between them */}
             {[
@@ -477,12 +481,14 @@ const CreateImageWizard3 = () => {
           footer={<ReviewWizardFooter />}
         >
           <Form>
-            <Title headingLevel='h1' size='xl'>
-              Review image configuration
-            </Title>
             <Content>
-              Verify your image specifications and configurations. Review the
-              details below to ensure accuracy before you initiate the build.
+              <Title headingLevel='h1' size='xl'>
+                Review image configuration
+              </Title>
+              <Content>
+                Verify your image specifications and configurations. Review the
+                details below to ensure accuracy before you initiate the build.
+              </Content>
             </Content>
             <ReviewStep />
           </Form>
