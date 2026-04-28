@@ -37,7 +37,17 @@ const KernelName = () => {
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      style={
+        {
+          minWidth: '50%',
+          maxWidth: '100%',
+        } as React.CSSProperties
+      }
+    >
       {kernel || 'Select default kernel'}
     </MenuToggle>
   );
