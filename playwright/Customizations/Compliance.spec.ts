@@ -9,7 +9,7 @@ import {
 } from '../BootTests/Compliance/helpers';
 import { test } from '../fixtures/customizations';
 import { isServiceAvailable } from '../helpers/apiHelpers';
-import { isHosted } from '../helpers/helpers';
+import { isHosted, togglePreview } from '../helpers/helpers';
 import { login } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -126,6 +126,7 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
     });
   });
 
+  await togglePreview(page);
   await page.goto('/insights/image-builder/imagewizard?release=rhel9');
   const frame = ibFrame(page);
 
