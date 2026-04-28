@@ -171,7 +171,7 @@ const PackagesTable = ({
                 <div
                   style={
                     grp.package_list?.length
-                      ? { height: '40em', overflow: 'scroll' }
+                      ? { maxHeight: '40em', overflow: 'scroll' }
                       : {}
                   }
                 >
