@@ -65,19 +65,21 @@ const ImageOutputStep = () => {
 
   return (
     <Wrapper>
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        id='image-output-section'
-      >
-        Image output
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Select the release, architecture, and a target environment to build your
-        image.{' '}
-        {!isImageMode &&
-          'Select any number of target environments to simultaneously build this image from. '}
-        Learn more about <DocumentationButton />.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          id='image-output-section'
+        >
+          Image output
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Select the release, architecture, and a target environment to build
+          your image.{' '}
+          {!isImageMode &&
+            'Select any number of target environments to simultaneously build this image from. '}
+          Learn more about <DocumentationButton />.
+        </Content>
       </Content>
       {isImageModeEnabled && !(distribution as string).startsWith('fedora') && (
         <BlueprintMode />

@@ -185,19 +185,19 @@ const OscapContent = () => {
           // 'compliance' & 'openscap' here
         }
         <CustomizationLabels customization={'openscap'} />
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-          id='security-section'
-        >
-          Security
-        </Title>
-        {restrictions.openscap.shouldHide ? (
-          <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-            Configure security settings for your image.
-          </Content>
-        ) : (
-          <>
+        <Content>
+          <Title
+            headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+            size={isWizardRevampEnabled ? 'lg' : 'xl'}
+            id='security-section'
+          >
+            Security
+          </Title>
+          {restrictions.openscap.shouldHide ? (
+            <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+              Configure security settings for your image.
+            </Content>
+          ) : (
             <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
               Select which Red Hat Lightspeed compliance policy or OpenSCAP
               profile you want your image to be compliant-ready for. Red Hat
@@ -206,15 +206,15 @@ const OscapContent = () => {
               monitor the adherence of your registered RHEL systems to a
               selected policy or profile.
             </Content>
-            {registrationType.startsWith('register-now') && (
-              <Alert
-                title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
-            Lightspeed by default.'
-                variant='info'
-                isInline
-              />
-            )}
-          </>
+          )}
+        </Content>
+        {registrationType.startsWith('register-now') && (
+          <Alert
+            title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
+              Lightspeed by default.'
+            variant='info'
+            isInline
+          />
         )}
         <FormGroup>
           <Switch

@@ -339,12 +339,14 @@ const CreateImageWizard3 = () => {
           }
         >
           <Form>
-            <Title headingLevel='h1' size='xl'>
-              Basic image settings
-            </Title>
             <Content>
-              Your selections below may automatically add required
-              configurations in subsequent steps.
+              <Title headingLevel='h1' size='xl'>
+                Basic image settings
+              </Title>
+              <Content>
+                Your selections below may automatically add required
+                configurations in subsequent steps.
+              </Content>
             </Content>
             {/* Conditionally render steps with dividers between them */}
             {[

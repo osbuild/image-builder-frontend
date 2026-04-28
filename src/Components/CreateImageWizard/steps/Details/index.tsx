@@ -42,14 +42,16 @@ const DetailsStep = () => {
 
   return (
     <Wrapper>
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        Image details
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Enter a name and description to identify your deployment-ready image.
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          Image details
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Enter a name and description to identify your deployment-ready image.
+        </Content>
       </Content>
       <FormGroup isRequired label='Name' fieldId='blueprint-name'>
         <ValidatedInputAndTextArea

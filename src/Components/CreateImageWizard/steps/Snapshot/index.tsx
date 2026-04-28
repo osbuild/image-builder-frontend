@@ -17,16 +17,18 @@ const RepeatableBuildStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='repositories' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        id='repeatable-build-section'
-      >
-        Enable repeatable build
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Create images that can be reproduced consistently with the same package
-        versions and configurations. <ManageRepositoriesButton />
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          id='repeatable-build-section'
+        >
+          Enable repeatable build
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Create images that can be reproduced consistently with the same
+          package versions and configurations. <ManageRepositoriesButton />
+        </Content>
       </Content>
       <Snapshot />
     </Wrapper>

@@ -43,13 +43,9 @@ const RegistrationStep = () => {
         <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
           Configure registration settings for systems that will use this image.
         </Content>
-        <Content>
-          <Registration onErrorChange={setShowAlert} />
-        </Content>
-        <Content className='pf-v6-u-pt-sm'>
-          <AnsibleAutomationPlatform />
-        </Content>
       </Content>
+      <Registration onErrorChange={setShowAlert} />
+      <AnsibleAutomationPlatform />
       {showAlert && (
         <Alert title='Activation keys unavailable' variant='danger' isInline>
           Activation keys cannot be reached, try again later.
