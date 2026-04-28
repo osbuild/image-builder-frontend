@@ -434,8 +434,8 @@ const Repositories = () => {
                     <Th width={45}>Name</Th>
                     {!snapshotDate ? (
                       <>
-                        <Th width={15}>Architecture</Th>
                         <Th>Version</Th>
+                        <Th width={15}>Architecture</Th>
                         <Th width={10}>Packages</Th>
                         <Th>Status</Th>
                       </>
@@ -497,15 +497,15 @@ const Repositories = () => {
                         </Td>
                         {!snapshotDate ? (
                           <>
-                            <Td dataLabel={'Architecture'}>
-                              {getReadableArchitecture(
-                                distribution_arch,
-                                repositoryParameters,
-                              )}
-                            </Td>
                             <Td dataLabel={'Version'}>
                               {getReadableVersions(
                                 distribution_versions,
+                                repositoryParameters,
+                              )}
+                            </Td>
+                            <Td dataLabel={'Architecture'}>
+                              {getReadableArchitecture(
+                                distribution_arch,
                                 repositoryParameters,
                               )}
                             </Td>
@@ -585,8 +585,8 @@ const Repositories = () => {
                 <Thead>
                   <Tr>
                     <Th width={45}>Name</Th>
-                    <Th width={15}>Architecture</Th>
                     <Th>Version</Th>
+                    <Th width={15}>Architecture</Th>
                     <Th width={10}>Packages</Th>
                     <Th>Status</Th>
                   </Tr>
@@ -608,15 +608,15 @@ const Repositories = () => {
                     return (
                       <Tr key={`${uuid}-${rowIndex}`}>
                         <Td dataLabel={'Name'}>{name}</Td>
-                        <Td dataLabel={'Architecture'}>
-                          {getReadableArchitecture(
-                            distribution_arch,
-                            repositoryParameters,
-                          )}
-                        </Td>
                         <Td dataLabel={'Version'}>
                           {getReadableVersions(
                             distribution_versions,
+                            repositoryParameters,
+                          )}
+                        </Td>
+                        <Td dataLabel={'Architecture'}>
+                          {getReadableArchitecture(
+                            distribution_arch,
                             repositoryParameters,
                           )}
                         </Td>
