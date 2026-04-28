@@ -270,7 +270,7 @@ describe('First Boot edit mode', () => {
         }),
       ),
     );
-    await screen.findByRole('heading', { name: /Basic image settings/i });
+    await screen.findByRole('heading', { name: /Base settings/i });
     await enterBlueprintName();
 
     await waitFor(() =>

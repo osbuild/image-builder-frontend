@@ -105,7 +105,7 @@ describe('Step Upload to AWS', () => {
     await enterAccountId();
     await clickReviewImage();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Basic image settings/ });
+    await screen.findByRole('heading', { name: /Base settings/ });
   });
 });
 

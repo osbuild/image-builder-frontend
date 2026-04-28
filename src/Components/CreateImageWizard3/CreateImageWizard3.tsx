@@ -341,7 +341,7 @@ const CreateImageWizard3 = () => {
           <Form>
             <Content>
               <Title headingLevel='h1' size='xl'>
-                Basic image settings
+                Base settings
               </Title>
               <Content>
                 Your selections below may automatically add required
