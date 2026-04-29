@@ -439,7 +439,7 @@ const CreateImageWizard3 = () => {
             </Content>
             {!restrictions.repositories.shouldHide && <RepositoriesStep />}
             {!restrictions.repositories.shouldHide &&
-              !restrictions.packages.shouldHide && <Divider />}
+              !restrictions.packages.shouldHide && <br />}
             {!restrictions.packages.shouldHide && <PackagesStep />}
           </Form>
         </WizardStep>
