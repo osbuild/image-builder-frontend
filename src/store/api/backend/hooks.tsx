@@ -76,9 +76,15 @@ export const useSecuritySummary = () => {
     return profile?.profile_name ?? profileId;
   }, [data?.openscap, complianceType, policyTitle, profileId]);
 
+  const fipsRequired = useMemo(
+    () => data?.fips?.enabled ?? false,
+    [data?.fips?.enabled],
+  );
+
   return useMemo(
     () => ({
       title,
+      fipsRequired,
       packages: data?.packages ?? [],
       services: {
         enabled,
@@ -90,6 +96,6 @@ export const useSecuritySummary = () => {
         append: data?.kernel?.append?.split(' ').filter(Boolean) ?? [],
       },
     }),
-    [data, title, enabled, disabled, masked],
+    [data, title, fipsRequired, enabled, disabled, masked],
   );
 };

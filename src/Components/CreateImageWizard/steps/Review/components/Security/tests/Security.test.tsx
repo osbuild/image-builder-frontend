@@ -11,6 +11,7 @@ describe('Security', () => {
   test('does not render the security card when nothing is configured', () => {
     const mockSecuritySummary = {
       title: undefined,
+      fipsRequired: false,
       packages: [],
       services: { enabled: [], disabled: [], masked: [], total: 0 },
       kernel: { append: [] },
@@ -63,6 +64,7 @@ describe('Security', () => {
     test('displays OpenSCAP profile when compliance type is openscap', () => {
       const mockSummaryWithCIS = {
         title: 'CIS Red Hat Enterprise Linux 9 Benchmark',
+        fipsRequired: false,
         packages: [],
         services: { enabled: [], disabled: [], masked: [], total: 0 },
         kernel: { append: [] },
@@ -93,6 +95,7 @@ describe('Security', () => {
     test('displays Compliance policy when compliance type is compliance', () => {
       const mockComplianceSummary = {
         title: 'My Compliance Policy',
+        fipsRequired: false,
         packages: [],
         services: { enabled: [], disabled: [], masked: [], total: 0 },
         kernel: { append: [] },

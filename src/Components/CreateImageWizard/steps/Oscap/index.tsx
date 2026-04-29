@@ -33,6 +33,7 @@ import {
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
 } from '@/store/api/backend';
+import { useSecuritySummary } from '@/store/api/backend/hooks';
 import { usePoliciesQuery } from '@/store/api/compliance';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -120,6 +121,8 @@ const OscapContent = () => {
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const { fipsRequired } = useSecuritySummary();
 
   const handleFipsToggle = (checked: boolean) => {
     dispatch(changeFips(checked));
@@ -381,13 +384,17 @@ const OscapContent = () => {
             id='fips-enabled-switch'
             label='Enable FIPS mode'
             isChecked={fips.enabled}
+            isDisabled={fipsRequired}
             onChange={(_event, checked) => handleFipsToggle(checked)}
             hasCheckIcon
           />
           <FormHelperText>
             <HelperText>
-              Enable FIPS 140-2 compliant cryptographic algorithms. This setting
-              is applied at build time and persists on boot.
+              <HelperTextItem>
+                {fipsRequired
+                  ? 'FIPS mode is required by the selected compliance profile and cannot be disabled.'
+                  : 'Enable FIPS 140-2 compliant cryptographic algorithms. This setting is applied at build time and persists on boot.'}
+              </HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
