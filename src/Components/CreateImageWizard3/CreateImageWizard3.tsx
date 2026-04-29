@@ -188,27 +188,37 @@ const CreateImageWizard3 = () => {
       if (searchParams.get('target') === 'qcow2') {
         dispatch(addImageType('guest-image'));
       }
-
-      const initializeHostDistro = async () => {
-        const distro = await getHostDistro();
-        dispatch(changeDistribution(distro));
-      };
-
-      const initializeHostArch = async () => {
-        const arch = await getHostArch();
-        dispatch(changeArchitecture(arch));
-      };
-
-      if (isOnPremise) {
-        if (!searchParams.get('release')) {
-          initializeHostDistro();
-        }
-        if (!searchParams.get('arch')) {
-          initializeHostArch();
-        }
-      }
     }
     // This useEffect hook should run *only* when the modal opens in create mode
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, showWizardModal]);
+
+  useEffect(() => {
+    if (
+      (mode !== 'create' && mode !== 'import') ||
+      !isOnPremise ||
+      !showWizardModal
+    ) {
+      return;
+    }
+
+    const initializeHostDistro = async () => {
+      const distro = await getHostDistro();
+      dispatch(changeDistribution(distro));
+    };
+
+    const initializeHostArch = async () => {
+      const arch = await getHostArch();
+      dispatch(changeArchitecture(arch));
+    };
+
+    if (!searchParams.get('release')) {
+      initializeHostDistro();
+    }
+    if (!searchParams.get('arch')) {
+      initializeHostArch();
+    }
+    // This useEffect hook should run *only* when the modal opens in import/create mode
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, showWizardModal]);
 
