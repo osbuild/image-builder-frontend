@@ -216,22 +216,6 @@ const OscapContent = () => {
             isInline
           />
         )}
-        <FormGroup>
-          <Switch
-            id='fips-enabled-switch'
-            label='Enable FIPS mode'
-            isChecked={fips.enabled}
-            onChange={(_event, checked) => handleFipsToggle(checked)}
-            hasCheckIcon
-          />
-          <FormHelperText>
-            <HelperText>
-              Enable FIPS 140-2 compliant cryptographic algorithms. This setting
-              is applied at build time and persists on boot.
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
-
         {!restrictions.openscap.shouldHide &&
           (isOnPremise && isLoadingOnPrem ? (
             <OscapOnPremSpinner />
@@ -245,7 +229,7 @@ const OscapContent = () => {
                     <Radio
                       id='security-type-compliance'
                       name='security-type'
-                      label='Use a custom compliance policy'
+                      label='Use a custom Compliance policy'
                       isChecked={complianceType === 'compliance'}
                       onChange={() => handleTypeChange('compliance')}
                     />
@@ -391,6 +375,22 @@ const OscapContent = () => {
             Cannot get the list of profiles
           </Alert>
         )}
+
+        <FormGroup>
+          <Switch
+            id='fips-enabled-switch'
+            label='Enable FIPS mode'
+            isChecked={fips.enabled}
+            onChange={(_event, checked) => handleFipsToggle(checked)}
+            hasCheckIcon
+          />
+          <FormHelperText>
+            <HelperText>
+              Enable FIPS 140-2 compliant cryptographic algorithms. This setting
+              is applied at build time and persists on boot.
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
       </Wrapper>
     </>
   );
