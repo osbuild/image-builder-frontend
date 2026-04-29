@@ -291,7 +291,7 @@ const ProfileSelector = ({
           onChange={onTextInputChange}
           onKeyDown={onKeyDown}
           autoComplete='off'
-          placeholder='None'
+          placeholder='Select a profile'
           isExpanded={isOpen}
         />
 
@@ -330,28 +330,18 @@ const ProfileSelector = ({
             </SelectOption>
           )}
           {selectOptions.length > 0 &&
-            [
+            selectOptions.map(({ id, name }) => (
               <SelectOption
-                key='oscap-none-option'
-                value={{ toString: () => 'None', compareTo: () => false }}
-                isSelected={!profileID}
+                key={id}
+                value={{
+                  profileID: id,
+                  toString: () => name,
+                }}
+                isSelected={profileID === id}
               >
-                None
-              </SelectOption>,
-            ].concat(
-              selectOptions.map(({ id, name }) => (
-                <SelectOption
-                  key={id}
-                  value={{
-                    profileID: id,
-                    toString: () => name,
-                  }}
-                  isSelected={profileID === id}
-                >
-                  {name}
-                </SelectOption>
-              )),
-            )}
+                {name}
+              </SelectOption>
+            ))}
           {isSuccess && selectOptions.length === 0 && (
             <SelectOption isDisabled>
               {`No results found for "${filterValue}"`}
