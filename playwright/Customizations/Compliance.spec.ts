@@ -151,7 +151,7 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
     await frame
       .getByRole('radio', { name: 'Use a custom compliance policy' })
       .click();
-    await frame.getByRole('button', { name: 'None' }).click();
+    await frame.getByRole('button', { name: 'Select a policy' }).click();
     await expect(frame.getByRole('option').first()).toBeVisible();
     const searchInput = frame.getByRole('textbox', { name: /filter/i });
     await expect(searchInput).toBeVisible();
