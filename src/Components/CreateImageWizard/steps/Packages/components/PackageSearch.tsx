@@ -607,8 +607,9 @@ const PackageSearch = ({
   const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
     const parts = [];
 
-    parts.push(pkg.stream || 'N/A');
-
+    if (pkg.stream) {
+      parts.push(pkg.stream);
+    }
     if (pkg.end_date) {
       const retirementDate = new Date(pkg.end_date);
       const formattedDate =
@@ -620,7 +621,7 @@ const PackageSearch = ({
     if (pkg.summary) {
       parts.push(pkg.summary);
     }
-    return parts.join(', ');
+    return parts.length === 0 ? '--' : parts.join(', ');
   };
 
   const packageTypeLabel =
