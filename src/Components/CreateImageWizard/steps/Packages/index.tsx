@@ -4,40 +4,27 @@ import { Content, Form, Label, Title } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useSecuritySummary } from '@/store/api/backend/hooks';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import {
-  selectComplianceProfileID,
-  selectDistribution,
-} from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
+import { selectPackages } from '@/store/slices/wizard';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import Packages from './components/Packages';
 
 const PackagesStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const release = useAppSelector(selectDistribution);
-  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+  const packages = useAppSelector(selectPackages);
 
   const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
-  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
-    {
-      distribution: asDistribution(release),
-      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: complianceProfileID,
-    },
-    {
-      skip: !complianceProfileID,
-    },
-  );
-
-  const requiredByOpenSCAPCount =
-    oscapProfileInfo?.packages?.filter(Boolean).length ?? 0;
+  const { packages: oscapPackages } = useSecuritySummary();
+  const packageNames = new Set(packages.map((pkg) => pkg.name));
+  const requiredByOpenSCAPCount = oscapPackages.filter((pkg) =>
+    packageNames.has(pkg),
+  ).length;
 
   return (
     <Wrapper>
