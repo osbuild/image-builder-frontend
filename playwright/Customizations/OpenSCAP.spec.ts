@@ -68,7 +68,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
   await test.step('Select a CIS profile then switch to None', async () => {
     await frame
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
-      .check();
+      .click();
     await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
     await frame
       .getByRole('option', {
@@ -76,8 +76,9 @@ test('Create a blueprint with OpenSCAP customization', async ({
       })
       .click();
 
-    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
-    await frame.getByRole('option', { name: /^None$/ }).click();
+    await frame
+      .getByRole('radio', { name: 'No additional policy or profile' })
+      .click();
   });
 
   await test.step('Verify Packages show no OpenSCAP additions', async () => {
@@ -92,7 +93,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await frame.getByRole('button', { name: 'Base settings' }).click();
     await frame
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
-      .check();
+      .click();
 
     await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
     await frame
