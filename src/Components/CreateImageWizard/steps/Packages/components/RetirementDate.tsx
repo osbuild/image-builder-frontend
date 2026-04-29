@@ -13,7 +13,7 @@ type RetirementDateProps = {
 
 const RetirementDate = ({ date }: RetirementDateProps) => {
   if (!date) {
-    return <>N/A</>;
+    return <>--</>;
   }
 
   const retirementDate = new Date(date);

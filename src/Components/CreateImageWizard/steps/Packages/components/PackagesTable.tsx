@@ -223,7 +223,7 @@ const PackagesTable = ({
             >
               <Td>&nbsp;</Td>
               <Td>{pkg.name}</Td>
-              <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
+              <Td>{pkg.stream ? pkg.stream : '--'}</Td>
               <Td>
                 <RetirementDate date={pkg.end_date} />
               </Td>
