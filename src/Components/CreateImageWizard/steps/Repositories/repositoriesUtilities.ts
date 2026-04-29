@@ -207,3 +207,6 @@ export const isRepoDisabled = (
 
   return [false, ''];
 };
+
+// Until IB has full support for extended release repositories, filter them out
+export const excludeEUSReposFilter = { extendedRelease: 'none' };

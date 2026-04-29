@@ -61,14 +61,12 @@ import UploadRepositoryLabel from './UploadRepositoryLabel';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
+  excludeEUSReposFilter,
   getReadableArchitecture,
   getReadableVersions,
   isEPELUrl,
   isRepoDisabled,
 } from '../repositoriesUtilities';
-
-// Until IB has full support for extended release repositories, filter them out
-export const excludeEUSReposFilter = { extendedRelease: 'none' };
 
 const Repositories = () => {
   const dispatch = useAppDispatch();

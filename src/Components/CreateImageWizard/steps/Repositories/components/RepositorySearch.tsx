@@ -35,7 +35,11 @@ import CommunityRepositoryLabel from './CommunityRepositoryLabel';
 import CustomEpelWarning from './CustomEpelWarning';
 import UploadRepositoryLabel from './UploadRepositoryLabel';
 
-import { isEPELUrl, isRepoDisabled } from '../repositoriesUtilities';
+import {
+  excludeEUSReposFilter,
+  isEPELUrl,
+  isRepoDisabled,
+} from '../repositoriesUtilities';
 
 type RepositorySearchProps = {
   onSelectRepository: (repo: ApiRepositoryResponseRead) => void;
@@ -76,6 +80,7 @@ const RepositorySearch = ({
       {
         availableForArch: arch,
         availableForVersion: version,
+        ...excludeEUSReposFilter,
         contentType: 'rpm',
         origin: originParam,
         limit: 50,
