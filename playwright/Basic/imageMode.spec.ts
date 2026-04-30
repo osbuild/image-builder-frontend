@@ -66,9 +66,44 @@ test('Image mode blueprint create, edit, export, import', async ({
       .fill('Testing blueprint');
   });
 
-  await test.step('Fill in image output with image mode', async () => {
+  await test.step('Make sure unsupported environments are hidden', async () => {
     await imageModeToggle.click();
 
+    let imageSourceDropdown = frame.getByRole('button', {
+      name: /Red Hat Enterprise Linux|RHEL/i,
+    });
+    await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
+    await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
+    await imageSourceDropdown.click();
+    await frame.getByRole('option', { name: 'Fedora Hummingbird' }).click();
+
+    // clouds are not supported on hummingbird
+    await expect(
+      frame.getByRole('radio', { name: 'Amazon Web Services' }),
+    ).toBeHidden();
+    await expect(
+      frame.getByRole('radio', { name: 'Google Cloud' }),
+    ).toBeHidden();
+    await expect(
+      frame.getByRole('radio', { name: 'Microsoft Azure' }),
+    ).toBeHidden();
+    // but the guest image is
+    await expect(
+      frame.getByRole('radio', { name: 'Virtualization' }),
+    ).toBeVisible();
+
+    imageSourceDropdown = frame.getByRole('button', {
+      name: /fedora hummingbird/i,
+    });
+    await imageSourceDropdown.click();
+    await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
+    await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
+    await frame
+      .getByRole('option', { name: 'Red Hat Enterprise Linux (RHEL)' })
+      .click();
+  });
+
+  await test.step('Fill in image output with image mode', async () => {
     const imageSourceDropdown = frame.getByRole('button', {
       name: /Red Hat Enterprise Linux|RHEL/i,
     });
@@ -79,6 +114,16 @@ test('Image mode blueprint create, edit, export, import', async ({
     const firstOption = frame.getByRole('option').first();
     await expect(firstOption).toBeVisible({ timeout: 10000 });
     await firstOption.click();
+
+    await expect(
+      frame.getByRole('radio', { name: 'Amazon Web Services' }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('radio', { name: 'Google Cloud' }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('radio', { name: 'Microsoft Azure' }),
+    ).toBeVisible();
 
     await frame.getByRole('radio', { name: 'Virtualization' }).click();
   });
@@ -113,6 +158,9 @@ test('Image mode blueprint create, edit, export, import', async ({
       frame.getByRole('button', { name: /Red Hat Enterprise Linux|RHEL/i }),
     ).toBeVisible();
 
+    await expect(
+      frame.getByRole('radio', { name: 'Virtualization' }),
+    ).toBeVisible();
     await expect(
       frame.getByRole('radio', { name: 'Virtualization' }),
     ).toBeChecked();

@@ -84,7 +84,7 @@ const TargetEnvironment = () => {
     isError: isBootcError,
     isFetching: isBootcFetching,
   } = useGetDistributionsQuery(
-    { kind: 'bootc', arch },
+    { kind: 'bootc', arch, distro: distribution },
     { skip: !isImageMode || isOnPremise },
   );
   const bootcDistributions = bootcDistributionsRaw as
