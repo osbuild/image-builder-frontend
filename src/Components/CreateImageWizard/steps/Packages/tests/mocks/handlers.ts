@@ -1,3 +1,4 @@
+import { GetOscapCustomizationsApiResponse } from '@/store/api/backend';
 import {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
@@ -6,6 +7,7 @@ import {
   composeHandlers,
   createArchitecturesHandler,
   createGroupsHandler,
+  createOscapHandler,
   createRecommendationsHandler,
   createRepositoriesHandler,
   createRpmHandler,
@@ -21,6 +23,7 @@ export { fetchMock };
 type FetchHandlerOverrides = {
   rpms?: ApiSearchRpmResponse[];
   groups?: ApiSearchPackageGroupResponse[];
+  oscap?: GetOscapCustomizationsApiResponse;
 };
 
 export const createFetchHandler = (
@@ -33,6 +36,9 @@ export const createFetchHandler = (
     createRepositoriesHandler(),
     createTemplatesHandler(),
     createRecommendationsHandler(),
+    createOscapHandler(
+      overrides.oscap ? { customizations: overrides.oscap } : {},
+    ),
   );
 };
 

@@ -1,6 +1,10 @@
 import createFetchMock from 'vitest-fetch-mock';
 
-import { Architectures, BlueprintsResponse } from '@/store/api/backend';
+import {
+  Architectures,
+  BlueprintsResponse,
+  GetOscapCustomizationsApiResponse,
+} from '@/store/api/backend';
 import {
   ApiRepositoryResponseRead,
   ApiSearchPackageGroupResponse,
@@ -207,6 +211,28 @@ export const createArchitecturesHandler = (
       if (distro in architectures) {
         return JSON.stringify(architectures[distro]);
       }
+    }
+    return null;
+  };
+};
+
+// Oscap customizations handler
+export type OscapHandlerOptions = {
+  customizations?: GetOscapCustomizationsApiResponse;
+};
+
+export const createOscapHandler = (
+  options: OscapHandlerOptions = {},
+): FetchHandler => {
+  const { customizations } = options;
+
+  return ({ url, method }: FetchRequest) => {
+    if (
+      url.includes('/oscap/') &&
+      url.endsWith('/customizations') &&
+      method === 'GET'
+    ) {
+      return JSON.stringify(customizations ?? {});
     }
     return null;
   };

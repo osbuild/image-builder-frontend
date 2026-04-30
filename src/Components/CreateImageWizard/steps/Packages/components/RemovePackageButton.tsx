@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { Button, Tooltip } from '@patternfly/react-core';
+import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 
 import {
   GroupWithRepositoryInfo,
@@ -10,23 +10,43 @@ import {
 
 type RemovePackageButtonProps = {
   item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo;
+  isRequired?: boolean;
   onRemove: (
     item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo,
   ) => void;
 };
 
-const RemovePackageButton = ({ item, onRemove }: RemovePackageButtonProps) => {
+const RemovePackageButton = ({
+  item,
+  isRequired,
+  onRemove,
+}: RemovePackageButtonProps) => {
   const packageType = 'package_list' in item ? 'package group' : 'package';
 
-  return (
+  const button = (
     <Button
+      isDisabled={!!isRequired}
       variant='plain'
-      icon={<MinusCircleIcon />}
-      aria-label={`Remove ${packageType}`}
+      icon={isRequired ? <LockIcon /> : <MinusCircleIcon />}
+      aria-label={
+        isRequired
+          ? `Required ${packageType}, cannot be removed`
+          : `Remove ${packageType}`
+      }
       onClick={() => onRemove(item)}
       isInline
       hasNoPadding
     />
+  );
+
+  if (!isRequired) {
+    return button;
+  }
+
+  return (
+    <Tooltip content='Required by the selected OpenSCAP profile'>
+      <span>{button}</span>
+    </Tooltip>
   );
 };
 

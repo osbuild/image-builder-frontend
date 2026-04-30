@@ -642,4 +642,137 @@ describe('Packages Component', () => {
       expect(searchInput).toHaveValue('test-pkg');
     });
   });
+
+  describe('Required packages (OpenSCAP)', () => {
+    const oscapCustomizationsResponse = {
+      openscap: {
+        profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+        profile_name: 'CIS Workstation L1',
+        profile_description: 'Test profile',
+      },
+      packages: ['aide', 'neovim'],
+    };
+
+    const renderWithOscapPackages = () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ oscap: oscapCustomizationsResponse }),
+      );
+
+      return renderPackagesStep({
+        compliance: {
+          complianceType: 'openscap',
+          profileID: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          policyID: undefined,
+          policyTitle: undefined,
+        },
+        packages: [
+          {
+            name: 'aide',
+            summary: 'Required by chosen OpenSCAP profile',
+            repository: 'distro',
+          },
+          {
+            name: 'neovim',
+            summary: 'Required by chosen OpenSCAP profile',
+            repository: 'distro',
+          },
+          {
+            name: 'zsh',
+            summary: 'User selected package',
+            repository: 'distro',
+          },
+          {
+            name: 'curl',
+            summary: 'User selected package',
+            repository: 'distro',
+          },
+        ],
+      });
+    };
+
+    test('required packages appear before user-added packages', async () => {
+      renderWithOscapPackages();
+
+      await screen.findAllByTestId('required-package-row');
+
+      // Query all rows together via the table to verify DOM order
+      const table = screen.getByTestId('packages-table');
+      const allRows = within(table).getAllByRole('row');
+      // Filter to data rows (skip the header row)
+      const dataRows = allRows.filter(
+        (row) =>
+          row.getAttribute('data-testid') === 'required-package-row' ||
+          row.getAttribute('data-testid') === 'package-row',
+      );
+
+      expect(dataRows).toHaveLength(4);
+      // Required packages first (alphabetical)
+      expect(dataRows[0]).toHaveTextContent('aide');
+      expect(dataRows[0]).toHaveAttribute(
+        'data-testid',
+        'required-package-row',
+      );
+      expect(dataRows[1]).toHaveTextContent('neovim');
+      expect(dataRows[1]).toHaveAttribute(
+        'data-testid',
+        'required-package-row',
+      );
+      // User packages after (alphabetical)
+      expect(dataRows[2]).toHaveTextContent('curl');
+      expect(dataRows[2]).toHaveAttribute('data-testid', 'package-row');
+      expect(dataRows[3]).toHaveTextContent('zsh');
+      expect(dataRows[3]).toHaveAttribute('data-testid', 'package-row');
+    });
+
+    test('required packages have a disabled button with lock icon', async () => {
+      renderWithOscapPackages();
+
+      const requiredRows = await screen.findAllByTestId('required-package-row');
+
+      // Required rows should have a disabled button
+      for (const row of requiredRows) {
+        const button = within(row).getByRole('button', {
+          name: /cannot be removed/i,
+        });
+        expect(button).toBeDisabled();
+      }
+
+      // User rows should have enabled remove buttons
+      const userRows = await screen.findAllByTestId('package-row');
+      for (const row of userRows) {
+        const button = within(row).getByRole('button', { name: /remove/i });
+        expect(button).toBeEnabled();
+      }
+    });
+
+    test('without oscap profile, all packages have remove buttons', async () => {
+      renderPackagesStep({
+        packages: [
+          {
+            name: 'zsh',
+            summary: 'User selected package',
+            repository: 'distro',
+          },
+          {
+            name: 'curl',
+            summary: 'User selected package',
+            repository: 'distro',
+          },
+        ],
+      });
+
+      const rows = await screen.findAllByTestId('package-row');
+      expect(rows).toHaveLength(2);
+
+      // No required package rows should exist
+      expect(screen.queryAllByTestId('required-package-row')).toHaveLength(0);
+
+      // All rows should have enabled remove buttons
+      for (const row of rows) {
+        const button = within(row).getByRole('button', { name: /remove/i });
+        expect(button).toBeInTheDocument();
+        expect(button).toBeEnabled();
+      }
+    });
+  });
 });

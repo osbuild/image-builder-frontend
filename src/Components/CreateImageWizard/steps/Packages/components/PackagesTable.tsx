@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-table';
 import { orderBy } from 'lodash';
 
+import { useSecuritySummary } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -48,6 +49,11 @@ const PackagesTable = ({
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
+  const { packages: requiredPkgNames } = useSecuritySummary();
+  const requiredSet = useMemo(
+    () => new Set(requiredPkgNames),
+    [requiredPkgNames],
+  );
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
@@ -199,29 +205,41 @@ const PackagesTable = ({
       )),
     );
 
+    // Render required (oscap) packages first, then user-added packages
+    const orderedPackages = [
+      ...sortedPackages.filter((pkg) => requiredSet.has(pkg.name)),
+      ...sortedPackages.filter((pkg) => !requiredSet.has(pkg.name)),
+    ];
+
     rows = rows.concat(
-      sortedPackages.map((pkg) => (
-        <Tbody
-          key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
-        >
-          <Tr data-testid='package-row'>
-            <Td>&nbsp;</Td>
-            <Td>{pkg.name}</Td>
-            <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
-            <Td>
-              <RetirementDate date={pkg.end_date} />
-            </Td>
-            <Td>
-              <RemovePackageButton
-                item={pkg}
-                onRemove={(item) =>
-                  handleRemovePackage(item as IBPackageWithRepositoryInfo)
-                }
-              />
-            </Td>
-          </Tr>
-        </Tbody>
-      )),
+      orderedPackages.map((pkg) => {
+        const isRequired = requiredSet.has(pkg.name);
+        return (
+          <Tbody
+            key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
+          >
+            <Tr
+              data-testid={isRequired ? 'required-package-row' : 'package-row'}
+            >
+              <Td>&nbsp;</Td>
+              <Td>{pkg.name}</Td>
+              <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
+              <Td>
+                <RetirementDate date={pkg.end_date} />
+              </Td>
+              <Td>
+                <RemovePackageButton
+                  item={pkg}
+                  isRequired={isRequired}
+                  onRemove={(item) =>
+                    handleRemovePackage(item as IBPackageWithRepositoryInfo)
+                  }
+                />
+              </Td>
+            </Tr>
+          </Tbody>
+        );
+      }),
     );
     return rows;
   };
@@ -240,6 +258,7 @@ const PackagesTable = ({
     expandedGroups,
     sortedPackages,
     sortedGroups,
+    requiredSet,
   ]);
 
   return (
