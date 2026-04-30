@@ -23,7 +23,10 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   addImageType,
   changeArchitecture,
+  changeBaseUrl,
   changeDistribution,
+  changeProxy,
+  changeServerUrl,
   changeTimezone,
   initializeWizard,
   loadWizardState,
@@ -45,6 +48,8 @@ import ReviewWizardFooter from './components/ReviewWizardFooter';
 
 import {
   AARCH64,
+  CDN_PROD_URL,
+  CDN_STAGE_URL,
   DEFAULT_TIMEZONE,
   RHEL_10,
   RHEL_8,
@@ -52,6 +57,7 @@ import {
 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import DetailsStep from '../CreateImageWizard/steps/Details';
 import FileSystemStep from '../CreateImageWizard/steps/FileSystem';
 import FirewallStep from '../CreateImageWizard/steps/Firewall';
@@ -92,6 +98,7 @@ import {
 
 const CreateImageWizard3 = () => {
   const dispatch = useAppDispatch();
+  const { isProd } = useGetEnvironment();
   const showWizardModal = useAppSelector(selectIsWizardModalOpen);
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
@@ -174,6 +181,19 @@ const CreateImageWizard3 = () => {
         dispatch(initializeWizard());
         hasInitialized.current = true;
       }
+
+      // Initialize registration URLs
+      if (isProd()) {
+        dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
+        dispatch(changeBaseUrl(CDN_PROD_URL));
+        dispatch(changeProxy(undefined));
+      } else {
+        dispatch(changeServerUrl('subscription.rhsm.stage.redhat.com'));
+        dispatch(changeBaseUrl(CDN_STAGE_URL));
+        dispatch(changeProxy('squid.corp.redhat.com:3128'));
+      }
+
+      // Initialize params
       if (searchParams.get('release') === 'rhel8') {
         dispatch(changeDistribution(RHEL_8));
       }

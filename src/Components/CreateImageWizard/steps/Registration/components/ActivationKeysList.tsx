@@ -78,6 +78,8 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
     'imageBuilder.recentActivationKey',
   );
 
+  // TO DO: Can be removed once migration to the new Wizard is complete
+  // The url initialisation is handled directly in the V3 Wizard
   useEffect(() => {
     if (isProd()) {
       dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
