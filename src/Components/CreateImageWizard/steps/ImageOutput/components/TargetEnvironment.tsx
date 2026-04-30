@@ -24,6 +24,7 @@ import { selectIsOnPremise } from '@/store/slices';
 import {
   addImageType,
   changeImageTypes,
+  changeIsoPayloadReference,
   changeRegistrationType,
   reinitializeAws,
   reinitializeAzure,
@@ -33,6 +34,7 @@ import {
   selectDistribution,
   selectImageTypes,
   selectIsImageMode,
+  selectIsoPayloadReference,
 } from '@/store/slices/wizard';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
@@ -123,6 +125,31 @@ const TargetEnvironment = () => {
       dispatch(changeImageTypes([environments[0]]));
     }
   }, [isImageMode, environments, dispatch]);
+
+  const isoPayloadReference = useAppSelector(selectIsoPayloadReference);
+  useEffect(() => {
+    if (!isImageMode || !environments.includes('bootable-container-iso')) {
+      return;
+    }
+    const entry = bootcDistributions?.find(
+      (d) => d.type === 'bootable-container-iso' && d.distro === distribution,
+    );
+    const refs = entry?.iso_payload_references;
+    if (!refs || refs.length === 0) {
+      return;
+    }
+    if (isoPayloadReference && refs.includes(isoPayloadReference)) {
+      return;
+    }
+    dispatch(changeIsoPayloadReference(refs[0]));
+  }, [
+    isImageMode,
+    environments,
+    bootcDistributions,
+    distribution,
+    isoPayloadReference,
+    dispatch,
+  ]);
 
   const isOnlyNetworkInstallerSelected =
     environments.length === 1 && environments.includes('network-installer');
@@ -536,6 +563,25 @@ const TargetEnvironment = () => {
               }}
             />
           ))}
+        {miscFormats.includes('bootable-container-iso') && isImageMode && (
+          <Radio
+            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
+            id='radio-bootable-container-iso'
+            name='target-environment'
+            label='Container installer (.iso)'
+            aria-label='Container installer'
+            description={
+              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
+                Install a bootable container to bare metal or virtual machines
+                using the guided Anaconda installer.
+              </Content>
+            }
+            isChecked={environments.includes('bootable-container-iso')}
+            onChange={() =>
+              handleSelectSingleEnvironment('bootable-container-iso')
+            }
+          />
+        )}
         {miscFormats.includes('network-installer') &&
           (isImageMode ? (
             <Radio

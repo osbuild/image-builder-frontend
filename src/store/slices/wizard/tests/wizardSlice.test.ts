@@ -215,6 +215,21 @@ describe('wizardSlice core reducers', () => {
 
         expect(result.imageTypes).toEqual([]);
       });
+
+      it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
+        const stateWithIso: wizardState = {
+          ...initialState,
+          imageTypes: ['bootable-container-iso'],
+          isoPayloadReference: 'registry.example.org/payload:latest',
+        };
+
+        const result = wizardReducer(
+          stateWithIso,
+          changeImageTypes(['guest-image']),
+        );
+
+        expect(result.isoPayloadReference).toBeUndefined();
+      });
     });
   });
 });

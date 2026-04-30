@@ -45,6 +45,12 @@ export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {
       ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem'),
     ],
   },
+  'bootable-container-iso': {
+    name: 'bootable-container-iso',
+    supported_blueprint_options: [
+      ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem'),
+    ],
+  },
   vsphere: {
     name: 'vsphere',
     supported_blueprint_options: [...ALL_CUSTOMIZATIONS],

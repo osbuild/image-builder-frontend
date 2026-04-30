@@ -118,6 +118,8 @@ export type wizardState = {
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
   imageSource?: ImageSource | undefined;
+  /** Embedded OS image ref for bootable-container-iso (installer ref is the bootc `reference` for that target). */
+  isoPayloadReference?: string | undefined;
   bootcDistributions: BootcDistributionItem[];
   architecture: ImageRequest['architecture'];
   distribution: Distributions | 'image-mode';
@@ -351,6 +353,10 @@ export const selectBlueprintMode = (state: RootState) => {
 
 export const selectImageSource = (state: RootState) => {
   return state.wizard.imageSource;
+};
+
+export const selectIsoPayloadReference = (state: RootState) => {
+  return state.wizard.isoPayloadReference;
 };
 
 export const selectBootcDistributions = (state: RootState) => {
@@ -795,6 +801,12 @@ export const wizardSlice = createSlice({
     ) => {
       state.imageSource = action.payload;
     },
+    changeIsoPayloadReference: (
+      state,
+      action: PayloadAction<string | undefined>,
+    ) => {
+      state.isoPayloadReference = action.payload;
+    },
     changeBootcDistributions: (
       state,
       action: PayloadAction<BootcDistributionItem[]>,
@@ -831,6 +843,11 @@ export const wizardSlice = createSlice({
     },
     changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
       state.imageTypes = action.payload;
+      // isoPayloadReference is only relevant for bootable-container-iso,
+      // clear it when that image type is no longer selected
+      if (!action.payload.includes('bootable-container-iso')) {
+        state.isoPayloadReference = undefined;
+      }
     },
     changeAwsAccountId: (state, action: PayloadAction<string>) => {
       state.aws.accountId = action.payload;
@@ -1748,6 +1765,7 @@ export const {
   changeProxy,
   changeBlueprintMode,
   changeImageSource,
+  changeIsoPayloadReference,
   changeBootcDistributions,
   changeArchitecture,
   changeDistribution,

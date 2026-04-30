@@ -46,7 +46,7 @@ export const AwsS3Instance = ({
   const fileExtensions: { [key in ImageTypes]: string } = {
     aws: '',
     azure: '',
-    'bootable-container-iso': '',
+    'bootable-container-iso': '.iso',
     'edge-commit': '',
     'edge-installer': '',
     gcp: '',
@@ -115,6 +115,7 @@ const VM_IMPORTABLE_IMAGE_TYPES: ImageTypes[] = ['guest-image'];
 
 // Image types that can be used as installation media in cockpit-machines
 const VM_INSTALLABLE_IMAGE_TYPES: ImageTypes[] = [
+  'bootable-container-iso',
   'image-installer',
   'network-installer',
 ];

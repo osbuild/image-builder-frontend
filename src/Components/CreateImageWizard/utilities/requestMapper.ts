@@ -81,6 +81,7 @@ import {
   selectImageSource,
   selectImageTypes,
   selectIsImageMode,
+  selectIsoPayloadReference,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -159,9 +160,9 @@ export const mapRequestFromState = (
   const imageSource = selectImageSource(state);
 
   let bootcReference: string | undefined;
+  const imageTypes = selectImageTypes(state);
   if (isImageMode && imageSource) {
     const bootcDistributions = selectBootcDistributions(state);
-    const imageTypes = selectImageTypes(state);
     const selectedDistro = bootcDistributions.find(
       (d) => d.reference === imageSource,
     );
@@ -178,16 +179,23 @@ export const mapRequestFromState = (
     }
   }
 
+  const isoPayloadRef = selectIsoPayloadReference(state);
+  const bootcBody =
+    bootcReference !== undefined
+      ? {
+          reference: bootcReference,
+          ...(imageTypes[0] === 'bootable-container-iso' && isoPayloadRef
+            ? { iso_payload_reference: isoPayloadRef }
+            : {}),
+        }
+      : undefined;
+
   return {
     name: selectBlueprintName(state),
     metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
     distribution: selectDistribution(state),
-    bootc: bootcReference
-      ? {
-          reference: bootcReference,
-        }
-      : undefined,
+    bootc: bootcBody,
     image_requests: imageRequests,
     customizations,
   };
@@ -540,6 +548,7 @@ function commonRequestToState(
     architecture: arch,
     distribution: getLatestRelease(request.distribution),
     imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
+    isoPayloadReference: request.bootc?.iso_payload_reference,
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: azureTargetOptions(azureUploadOptions),
     gcp: gcpTargetOptions(gcpUploadOptions),
@@ -854,6 +863,8 @@ const uploadTypeByTargetEnv = (
     case 'guest-image':
       return 'aws.s3';
     case 'image-installer':
+      return 'aws.s3';
+    case 'bootable-container-iso':
       return 'aws.s3';
     case 'network-installer':
       return 'aws.s3';

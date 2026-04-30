@@ -142,6 +142,7 @@ describe('DISTRO_DETAILS structure', () => {
       'gcp',
       'guest-image',
       'image-installer',
+      'bootable-container-iso',
       'vsphere',
       'vsphere-ova',
       'wsl',

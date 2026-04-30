@@ -7,7 +7,7 @@ import { MiscFormatType } from '@/Hooks/Utilities/useTargetEnvironmentCategories
 import { ReviewGroup } from '../../shared';
 
 const MISC_FORMATS: Record<MiscFormatType, string> = {
-  'bootable-container-iso': '',
+  'bootable-container-iso': 'Container installer (.iso)',
   'guest-image': 'Virtualization (.qcow2)',
   'image-installer': 'Baremetal (.iso)',
   'pxe-tar-xz': 'Network - PXE Boot',
