@@ -443,7 +443,8 @@ export type Distributions =
   | "fedora-41"
   | "fedora-42"
   | "fedora-43"
-  | "fedora-44";
+  | "fedora-44"
+  | "hummingbird";
 export type ListResponseMeta = {
   count: number;
 };
