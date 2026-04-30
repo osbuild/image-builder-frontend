@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import {
   Bullseye,
@@ -99,6 +99,7 @@ const CreateImageWizard3 = () => {
   const isImageMode = useAppSelector(selectIsImageMode);
   const imageSource = useAppSelector(selectImageSource);
   const [searchParams, setSearchParams] = useSearchParams();
+  const hasInitialized = useRef(false);
 
   const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
     { id: blueprintId || '' },
@@ -169,7 +170,10 @@ const CreateImageWizard3 = () => {
     }
 
     if (mode === 'create' && showWizardModal) {
-      dispatch(initializeWizard());
+      if (!hasInitialized.current) {
+        dispatch(initializeWizard());
+        hasInitialized.current = true;
+      }
       if (searchParams.get('release') === 'rhel8') {
         dispatch(changeDistribution(RHEL_8));
       }
