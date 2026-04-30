@@ -401,7 +401,13 @@ const CreateImageWizard3 = () => {
               .filter(Boolean)
               .flatMap((component, index, array) =>
                 index < array.length - 1
-                  ? [component, <Divider key={`divider-${index}`} />]
+                  ? [
+                      component,
+                      <Divider
+                        key={`divider-${index}`}
+                        className='pf-v6-u-mt-xl'
+                      />,
+                    ]
                   : [component],
               )}
           </Form>
@@ -504,7 +510,13 @@ const CreateImageWizard3 = () => {
               .filter(Boolean)
               .flatMap((component, index, array) =>
                 index < array.length - 1
-                  ? [component, <Divider key={`divider-${index}`} />]
+                  ? [
+                      component,
+                      <Divider
+                        key={`divider-${index}`}
+                        className='pf-v6-u-mt-xl'
+                      />,
+                    ]
                   : [component],
               )}
           </Form>
