@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import DocumentationButton from '@/Components/sharedComponents/DocumentationButton';
 import { RHEL_10_IMAGE_MODE_IMAGE } from '@/constants';
@@ -92,11 +92,7 @@ const ImageOutputStep = () => {
           <ReleaseLifecycle />
         </>
       )}
-      {isHostedImageMode ? (
-        <FormGroup label='Architecture'>x86_64</FormGroup>
-      ) : (
-        <ArchSelect />
-      )}
+      <ArchSelect isDisabled={isHostedImageMode} />
       <TargetEnvironment />
     </Wrapper>
   );

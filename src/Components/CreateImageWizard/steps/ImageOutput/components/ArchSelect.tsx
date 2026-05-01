@@ -15,7 +15,11 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { changeArchitecture, selectArchitecture } from '@/store/slices/wizard';
 
-const ArchSelect = () => {
+type ArchSelectProps = {
+  isDisabled?: boolean;
+};
+
+const ArchSelect = ({ isDisabled = false }: ArchSelectProps) => {
   const arch = useAppSelector(selectArchitecture);
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
@@ -57,6 +61,7 @@ const ArchSelect = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
+      isDisabled={isDisabled}
       style={
         {
           minWidth: '8rem',
