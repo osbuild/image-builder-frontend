@@ -231,7 +231,7 @@ export type ListTemplatesApiArg = {
   offset?: number;
   /** Number of items to include in response. Use it to control the number of items, particularly when dealing with large datasets. Default value: `100`. */
   limit?: number;
-  /** Filter templates by version. */
+  /** Filter templates by version. Supports comma-separated lists (e.g. '8,9'). */
   version?: string;
   /** Filter templates by architecture. */
   arch?: string;
