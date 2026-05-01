@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { server } from '@/test/mocks/server';
 import {
@@ -24,6 +24,9 @@ import {
   mockEpelSearch,
   mockGroupSearchResults,
   mockModuleSearchResults,
+  mockOscapCustomizations,
+  mockOscapProfile,
+  mockOscapSearchResults,
   mockSearchResults,
 } from './mocks';
 
@@ -644,24 +647,15 @@ describe('Packages Component', () => {
   });
 
   describe('Required packages (OpenSCAP)', () => {
-    const oscapCustomizationsResponse = {
-      openscap: {
-        profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
-        profile_name: 'CIS Workstation L1',
-        profile_description: 'Test profile',
-      },
-      packages: ['aide', 'neovim'],
-    };
-
     const renderWithOscapPackages = () => {
       fetchMock.mockResponse(
-        createFetchHandler({ oscap: oscapCustomizationsResponse }),
+        createFetchHandler({ oscap: mockOscapCustomizations }),
       );
 
       return renderPackagesStep({
         compliance: {
           complianceType: 'openscap',
-          profileID: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          profileID: mockOscapProfile,
           policyID: undefined,
           policyTitle: undefined,
         },
@@ -773,6 +767,196 @@ describe('Packages Component', () => {
         expect(button).toBeInTheDocument();
         expect(button).toBeEnabled();
       }
+    });
+
+    test('required packages cannot be removed via search dropdown', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockOscapSearchResults,
+          oscap: mockOscapCustomizations,
+        }),
+      );
+
+      const { store } = renderPackagesStep({
+        compliance: {
+          complianceType: 'openscap',
+          profileID: mockOscapProfile,
+          policyID: undefined,
+          policyTitle: undefined,
+        },
+        packages: [
+          {
+            name: 'aide',
+            summary: 'Advanced Intrusion Detection Environment',
+            repository: 'distro',
+          },
+        ],
+      });
+
+      const user = createUser();
+
+      // Verify the required package is in state
+      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.packages[0].name).toBe('aide');
+
+      // Search for the required package
+      await typeIntoSearchBox(user, 'aide');
+
+      // The search result for 'aide' should be disabled since it's required
+      const aideOption = await screen.findByRole('option', { name: /aide/i });
+      expect(aideOption).toBeDisabled();
+
+      // Non-required package should not be disabled
+      const testLibOption = await screen.findByRole('option', {
+        name: /test-lib/i,
+      });
+      expect(testLibOption).not.toBeDisabled();
+
+      // Clicking the disabled option should not remove the package
+      await clickWithWait(user, aideOption);
+
+      // Package should still be in state
+      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.packages[0].name).toBe('aide');
+    });
+
+    test('onSelect guard prevents removal of required packages even when click bypasses disabled state', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockOscapSearchResults,
+          oscap: mockOscapCustomizations,
+        }),
+      );
+
+      const { store } = renderPackagesStep({
+        compliance: {
+          complianceType: 'openscap',
+          profileID: mockOscapProfile,
+          policyID: undefined,
+          policyTitle: undefined,
+        },
+        packages: [
+          {
+            name: 'aide',
+            summary: 'Advanced Intrusion Detection Environment',
+            repository: 'distro',
+          },
+        ],
+      });
+
+      const user = createUser();
+
+      expect(store.getState().wizard.packages).toHaveLength(1);
+
+      await typeIntoSearchBox(user, 'aide');
+
+      const aideOption = await screen.findByRole('option', { name: /aide/i });
+
+      // fireEvent is used intentionally here instead of userEvent.
+      // userEvent respects the native `disabled` attribute set by PatternFly
+      // and won't dispatch the click, so the onSelect guard at line 742 of
+      // PackageSearch.tsx would never be exercised. fireEvent bypasses
+      // disabled checks, letting us verify the guard blocks removePackage
+      // dispatch as a defense-in-depth measure.
+      fireEvent.click(aideOption);
+
+      // The onSelect guard should prevent the package from being removed
+      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.packages[0].name).toBe('aide');
+    });
+
+    test('without compliance, search results are not disabled and packages can be toggled freely', async () => {
+      fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
+
+      const { store } = renderPackagesStep({
+        packages: [
+          {
+            name: 'test-lib',
+            summary: 'test-lib package summary',
+            repository: 'distro',
+          },
+        ],
+      });
+
+      const user = createUser();
+
+      // Verify the package is in state
+      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.packages[0].name).toBe('test-lib');
+
+      // Search for the already-selected package
+      await typeIntoSearchBox(user, 'test');
+
+      // All search options should be enabled (no compliance = no protection)
+      const testLibOption = await screen.findByRole('option', {
+        name: /test-lib/i,
+      });
+      expect(testLibOption).not.toBeDisabled();
+
+      const testPkgOption = await screen.findByRole('option', {
+        name: /testPkg/i,
+      });
+      expect(testPkgOption).not.toBeDisabled();
+
+      // Clicking the selected package should remove it
+      await clickWithWait(user, testLibOption);
+      expect(store.getState().wizard.packages).toHaveLength(0);
+
+      // Re-search and re-add the package
+      await clearSearchInput(user);
+      await typeIntoSearchBox(user, 'test');
+
+      const testLibOptionAgain = await screen.findByRole('option', {
+        name: /test-lib/i,
+      });
+      await clickWithWait(user, testLibOptionAgain);
+      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.packages[0].name).toBe('test-lib');
+    });
+
+    test('required package not yet selected can still be added via search', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockOscapSearchResults,
+          oscap: mockOscapCustomizations,
+        }),
+      );
+
+      const { store } = renderPackagesStep({
+        compliance: {
+          complianceType: 'openscap',
+          profileID: mockOscapProfile,
+          policyID: undefined,
+          policyTitle: undefined,
+        },
+        // aide is required but NOT in the initial packages list
+        packages: [],
+      });
+
+      const user = createUser();
+
+      // Search for the required package
+      await typeIntoSearchBox(user, 'aide');
+
+      // aide is required but not yet selected, so it should NOT be disabled
+      const aideOption = await screen.findByRole('option', { name: /aide/i });
+      expect(aideOption).not.toBeDisabled();
+
+      // Select it — should be addable
+      await clickWithWait(user, aideOption);
+
+      // Verify it was added to Redux state
+      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.packages[0].name).toBe('aide');
+
+      // Re-open search and verify it's now disabled (required AND selected)
+      await clearSearchInput(user);
+      await typeIntoSearchBox(user, 'aide');
+
+      const aideOptionAgain = await screen.findByRole('option', {
+        name: /aide/i,
+      });
+      expect(aideOptionAgain).toBeDisabled();
     });
   });
 });

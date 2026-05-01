@@ -25,7 +25,11 @@ import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import { orderBy } from 'lodash';
 
 import { EPEL_10_REPO_DEFINITION } from '@/constants';
-import { Module, useGetArchitecturesQuery } from '@/store/api/backend';
+import {
+  Module,
+  useGetArchitecturesQuery,
+  useSecuritySummary,
+} from '@/store/api/backend';
 import {
   ApiRepositoryCollectionResponseRead,
   useGetTemplateQuery,
@@ -114,6 +118,15 @@ const PackageSearch = ({
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const wizardMode = useAppSelector(selectWizardMode);
+
+  const { packages: requiredPackages } = useSecuritySummary();
+  const requiredSet = useMemo(
+    () => new Set(requiredPackages),
+    [requiredPackages],
+  );
+
+  const isRequiredAndSelected = (pkg: IBPackageWithRepositoryInfo) =>
+    requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
@@ -597,10 +610,13 @@ const PackageSearch = ({
       modules.some((module: Module) => module.name === pkg.module_name) &&
       !modules.some((m: Module) => m.stream === pkg.stream);
 
+    const isRequired = isRequiredAndSelected(pkg);
+
     return (
       isModuleDisabledByPackage ||
       isPackageDisabledByModule ||
-      isModuleStreamConflict
+      isModuleStreamConflict ||
+      isRequired
     );
   };
 
@@ -717,7 +733,7 @@ const PackageSearch = ({
             );
           }
         }
-      } else {
+      } else if (!isRequiredAndSelected(pkg)) {
         dispatch(removePackage(pkg.name));
         if (pkg.type === 'module' && pkg.module_name) {
           dispatch(removeModule(pkg.module_name));

@@ -1,4 +1,7 @@
-import type { Architectures } from '@/store/api/backend';
+import type {
+  Architectures,
+  GetOscapCustomizationsApiResponse,
+} from '@/store/api/backend';
 import type {
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
@@ -42,6 +45,25 @@ export const mockGroupSearchResults: ApiSearchPackageGroupResponse[] = [
     package_group_name: 'Grouper group',
     package_list: ['fish1', 'fish2'],
   },
+];
+
+export const mockOscapProfile =
+  'xccdf_org.ssgproject.content_profile_cis_workstation_l1';
+
+export const mockOscapCustomizations: GetOscapCustomizationsApiResponse = {
+  openscap: {
+    profile_id: mockOscapProfile,
+    profile_name:
+      'CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation',
+    profile_description: 'Mock OpenSCAP profile for testing',
+  },
+  packages: ['aide', 'neovim'],
+};
+
+export const mockOscapSearchResults: ApiSearchRpmResponse[] = [
+  { package_name: 'aide', summary: 'Advanced Intrusion Detection Environment' },
+  { package_name: 'neovim', summary: 'Vim-fork focused on extensibility' },
+  { package_name: 'test-lib', summary: 'test-lib package summary' },
 ];
 
 export const mockArchitectures: Record<string, Architectures> = {
