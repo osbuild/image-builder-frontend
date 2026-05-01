@@ -1,8 +1,19 @@
 import { useEffect, useState } from 'react';
 
-import { isEqual } from 'lodash';
-
 import { DEBOUNCED_SEARCH_WAIT_TIME } from '../constants';
+
+const isEqual = <T,>(a: T, b: T): boolean => {
+  if (a === b) return true;
+  if (
+    typeof a !== 'object' ||
+    typeof b !== 'object' ||
+    a === null ||
+    b === null
+  ) {
+    return false;
+  }
+  return JSON.stringify(a) === JSON.stringify(b);
+};
 
 function useDebounce<T>(
   value: T,

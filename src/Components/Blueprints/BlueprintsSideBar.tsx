@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Bullseye,
@@ -17,7 +17,6 @@ import {
 import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';
 
 import {
@@ -41,13 +40,10 @@ import { openWizardModal } from '@/store/slices/wizardModal';
 import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
 
-import {
-  DEBOUNCED_SEARCH_WAIT_TIME,
-  PAGINATION_LIMIT,
-  PAGINATION_OFFSET,
-} from '../../constants';
+import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 import { useGetUser } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import useDebounce from '../../Utilities/useDebounce';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 
 type blueprintSearchProps = {
@@ -195,36 +191,28 @@ const BlueprintsSidebar = () => {
 const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const dispatch = useAppDispatch();
-
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((filter) => {
-        dispatch(setBlueprintsOffset(0));
-        dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
-        dispatch(
-          setBlueprintSearchInput(filter.length > 0 ? filter : undefined),
-        );
-      }, DEBOUNCED_SEARCH_WAIT_TIME),
-    [dispatch],
+  const [localSearchValue, setLocalSearchValue] = useState(
+    blueprintSearchInput || '',
   );
+  const debouncedSearchValue = useDebounce(localSearchValue);
 
   useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
+    dispatch(setBlueprintsOffset(0));
+    dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
+    dispatch(
+      setBlueprintSearchInput(
+        debouncedSearchValue.length > 0 ? debouncedSearchValue : undefined,
+      ),
+    );
+  }, [debouncedSearchValue, dispatch]);
 
   const onChange = (value: string) => {
-    if (value.length === 0) {
-      dispatch(setBlueprintSearchInput(undefined));
-    } else {
-      debouncedSearch(value);
-    }
+    setLocalSearchValue(value);
   };
 
   return (
     <SearchInput
-      value={blueprintSearchInput || ''}
+      value={localSearchValue}
       placeholder='Search by name or description'
       onChange={(_event, value) => onChange(value)}
       onClear={() => onChange('')}
