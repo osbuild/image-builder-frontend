@@ -61,18 +61,20 @@ const FirstBootStep = () => {
   return (
     <Wrapper>
       <CustomizationLabels customization='firstBoot' />
-      <Title
-        headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-        size={isWizardRevampEnabled ? 'lg' : 'xl'}
-      >
-        First boot configuration
-      </Title>
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
-        Add a custom script to be executed when the image boots for the first
-        time.
-        {registrationType !== 'register-later' && (
-          <> The first boot script will run after registration is done.</>
-        )}
+      <Content>
+        <Title
+          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
+          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+        >
+          First boot configuration
+        </Title>
+        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+          Add a custom script to be executed when the image boots for the first
+          time.
+          {registrationType !== 'register-later' && (
+            <> The first boot script will run after registration is done.</>
+          )}
+        </Content>
       </Content>
 
       <Alert
