@@ -23,7 +23,6 @@ import {
 } from '@patternfly/react-core';
 import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { orderBy } from 'lodash';
 
 import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/repositoriesUtilities';
 import {
@@ -579,16 +578,25 @@ const PackageSearch = ({
       });
 
     // group by name, but sort by application stream in descending order
-    unpackedData = orderBy(
-      unpackedData,
-      [
-        'name',
-        (pkg) => pkg.stream || '',
-        (pkg) => pkg.repository || '',
-        (pkg) => pkg.module_name || '',
-      ],
-      ['asc', 'desc', 'asc', 'asc'],
-    );
+    unpackedData = [...unpackedData].sort((a, b) => {
+      // By name (asc)
+      if (a.name !== b.name) return a.name.localeCompare(b.name);
+
+      // By stream (desc)
+      const aStream = a.stream || '';
+      const bStream = b.stream || '';
+      if (aStream !== bStream) return bStream.localeCompare(aStream);
+
+      // By repository (asc)
+      const aRepo = a.repository || '';
+      const bRepo = b.repository || '';
+      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
+
+      // By module_name (asc)
+      const aModule = a.module_name || '';
+      const bModule = b.module_name || '';
+      return aModule.localeCompare(bModule);
+    });
 
     return unpackedData;
   }, [
@@ -714,26 +722,51 @@ const PackageSearch = ({
       return isLoadingRecommendations ? [] : transformedRecommendations;
     }
 
-    const regularPackages = orderBy(
-      transformedPackages,
-      [
-        (pkg) => (activeStream && pkg.stream === activeStream ? 0 : 1),
-        'name',
-        (pkg) => {
-          if (!pkg.stream) return '';
-          const parts = pkg.stream
-            .split('.')
-            .map((part: string) => parseInt(part, 10) || 0);
-          return parts
-            .map((p: number) => p.toString().padStart(10, '0'))
-            .join('.');
-        },
-        (pkg) => pkg.end_date || '9999-12-31',
-        (pkg) => pkg.repository || '',
-        (pkg) => pkg.module_name || '',
-      ],
-      ['asc', 'asc', 'desc', 'asc', 'asc', 'asc'],
-    );
+    const regularPackages = [...transformedPackages].sort((a, b) => {
+      // Active stream packages first (if activeStream is set)
+      const aIsActive = activeStream && a.stream === activeStream ? 0 : 1;
+      const bIsActive = activeStream && b.stream === activeStream ? 0 : 1;
+      if (aIsActive !== bIsActive) return aIsActive - bIsActive;
+
+      // Then by name (asc)
+      if (a.name !== b.name) return a.name.localeCompare(b.name);
+
+      // Then by stream version (desc)
+      const aStream = a.stream || '';
+      const bStream = b.stream || '';
+      if (aStream !== bStream) {
+        if (!aStream) return 1;
+        if (!bStream) return -1;
+        const aParts = aStream
+          .split('.')
+          .map((part) => parseInt(part, 10) || 0);
+        const bParts = bStream
+          .split('.')
+          .map((part) => parseInt(part, 10) || 0);
+        const aVersion = aParts
+          .map((p) => p.toString().padStart(10, '0'))
+          .join('.');
+        const bVersion = bParts
+          .map((p) => p.toString().padStart(10, '0'))
+          .join('.');
+        return bVersion.localeCompare(aVersion); // descending
+      }
+
+      // Then by end date (asc, nulls last)
+      const aEndDate = a.end_date || '9999-12-31';
+      const bEndDate = b.end_date || '9999-12-31';
+      if (aEndDate !== bEndDate) return aEndDate.localeCompare(bEndDate);
+
+      // Then by repository (asc)
+      const aRepo = a.repository || '';
+      const bRepo = b.repository || '';
+      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
+
+      // Finally by module name (asc)
+      const aModule = a.module_name || '';
+      const bModule = b.module_name || '';
+      return aModule.localeCompare(bModule);
+    });
 
     const hasModules = regularPackages.some((pkg) => pkg.type === 'module');
     const filteredRecommendations =

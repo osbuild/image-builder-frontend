@@ -10,7 +10,6 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { orderBy } from 'lodash';
 
 import { useSecuritySummary } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
@@ -103,33 +102,51 @@ const PackagesTable = ({
       return [];
     }
 
-    return orderBy(
-      packages,
-      [
-        // Active stream packages first (if activeStream is set)
-        (pkg) => (activeStream && pkg.stream === activeStream ? 0 : 1),
-        // Then by name
-        'name',
-        // Then by stream version (descending)
-        (pkg) => {
-          if (!pkg.stream) return '';
-          const parts = pkg.stream
-            .split('.')
-            .map((part: string) => parseInt(part, 10) || 0);
-          // Convert to string with zero-padding for proper sorting
-          return parts
-            .map((p: number) => p.toString().padStart(10, '0'))
-            .join('.');
-        },
-        // Then by end date (nulls last)
-        (pkg) => pkg.end_date || '9999-12-31',
-        // Then by repository
-        (pkg) => pkg.repository || '',
-        // Finally by module name
-        (pkg) => pkg.module_name || '',
-      ],
-      ['asc', 'asc', 'desc', 'asc', 'asc', 'asc'],
-    );
+    return [...packages].sort((a, b) => {
+      // Active stream packages first (if activeStream is set)
+      const aIsActive = activeStream && a.stream === activeStream ? 0 : 1;
+      const bIsActive = activeStream && b.stream === activeStream ? 0 : 1;
+      if (aIsActive !== bIsActive) return aIsActive - bIsActive;
+
+      // Then by name (asc)
+      if (a.name !== b.name) return a.name.localeCompare(b.name);
+
+      // Then by stream version (desc)
+      const aStream = a.stream || '';
+      const bStream = b.stream || '';
+      if (aStream !== bStream) {
+        if (!aStream) return 1;
+        if (!bStream) return -1;
+        const aParts = aStream
+          .split('.')
+          .map((part) => parseInt(part, 10) || 0);
+        const bParts = bStream
+          .split('.')
+          .map((part) => parseInt(part, 10) || 0);
+        const aVersion = aParts
+          .map((p) => p.toString().padStart(10, '0'))
+          .join('.');
+        const bVersion = bParts
+          .map((p) => p.toString().padStart(10, '0'))
+          .join('.');
+        return bVersion.localeCompare(aVersion); // descending
+      }
+
+      // Then by end date (asc, nulls last)
+      const aEndDate = a.end_date || '9999-12-31';
+      const bEndDate = b.end_date || '9999-12-31';
+      if (aEndDate !== bEndDate) return aEndDate.localeCompare(bEndDate);
+
+      // Then by repository (asc)
+      const aRepo = a.repository || '';
+      const bRepo = b.repository || '';
+      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
+
+      // Finally by module name (asc)
+      const aModule = a.module_name || '';
+      const bModule = b.module_name || '';
+      return aModule.localeCompare(bModule);
+    });
   }, [packages, activeStream]);
 
   const sortedGroups = useMemo(() => {
@@ -137,7 +154,7 @@ const PackagesTable = ({
       return [];
     }
 
-    return orderBy(groups, ['name'], ['asc']);
+    return [...groups].sort((a, b) => a.name.localeCompare(b.name));
   }, [groups]);
 
   const composePkgTable = () => {
