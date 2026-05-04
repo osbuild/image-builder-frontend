@@ -27,7 +27,7 @@ describe('Hostname Component', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          /Define the hostname to uniquely identify this image within your network environment/i,
+          /Define the hostname to uniquely identify this system within your network environment/i,
         ),
       ).toBeInTheDocument();
     });
