@@ -25,6 +25,7 @@ import {
   selectBlueprintId,
   selectBlueprintMode,
   selectBlueprintName,
+  selectDiskMinsize,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectFirewall,
@@ -76,6 +77,7 @@ import {
   isAzureSubscriptionIdValid,
   isAzureTenantGUIDValid,
   isBlueprintNameValid,
+  isDiskMinSizeValid,
   isGcpDomainValid,
   isGcpEmailValid,
   isHostnameValid,
@@ -416,6 +418,7 @@ export function useFilesystemValidation(): StepValidation {
   const fscMode = useAppSelector(selectFscMode);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
+  const diskMinsize = useAppSelector(selectDiskMinsize);
   const blueprintMode = useAppSelector(selectBlueprintMode);
   let disabledNext = false;
 
@@ -432,6 +435,13 @@ export function useFilesystemValidation(): StepValidation {
 
   const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
   const nameDuplicates = volumeGroups.flatMap((vg) => getDuplicateNames(vg));
+
+  if (fscMode === 'advanced') {
+    if (diskMinsize && !isDiskMinSizeValid(diskMinsize)) {
+      errors['disk-min-size'] = 'Must be a positive integer';
+      disabledNext = true;
+    }
+  }
 
   for (const partition of partitions) {
     if (validatePartitionSize(partition, errors)) {

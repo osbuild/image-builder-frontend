@@ -69,6 +69,10 @@ export const isMountpointMinSizeValid = (minSize: string) => {
   return /^\d+$/.test(minSize) && parseInt(minSize) > 0;
 };
 
+export const isDiskMinSizeValid = (minSize: string) => {
+  return /^\d+$/.test(minSize) && parseInt(minSize) >= 0;
+};
+
 export const isPartitionNameValid = (name: string) => {
   return /^[a-zA-Z0-9+_.][a-zA-Z0-9+_.-]*$/.test(name);
 };

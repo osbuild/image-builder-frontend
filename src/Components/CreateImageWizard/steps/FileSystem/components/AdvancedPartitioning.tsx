@@ -11,7 +11,6 @@ import {
   Select,
   SelectList,
   SelectOption,
-  TextInput,
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,6 +30,8 @@ import FileSystemTable from './FileSystemTable';
 import VolumeGroups from './VolumeGroups';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { useFilesystemValidation } from '../../../utilities/useValidation';
+import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { Units } from '../fscTypes';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
@@ -43,6 +44,7 @@ const AdvancedPartitioning = () => {
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const inImageMode = useAppSelector(selectIsImageMode);
+  const stepValidation = useFilesystemValidation();
   const [isOpen, setIsOpen] = useState(false);
   const handleAddPartition = () => {
     const id = uuidv4();
@@ -91,12 +93,14 @@ const AdvancedPartitioning = () => {
       <FormGroup label='Minimum disk size'>
         <Flex gap={{ default: 'gapSm' }}>
           <FlexItem style={{ width: '30%' }}>
-            <TextInput
-              aria-label='Minimum disk size input'
-              value={minsize}
+            <ValidatedInputAndTextArea
+              ariaLabel='Minimum disk size input'
+              value={minsize || ''}
               type='text'
-              onChange={handleDiskMinsizeChange}
               placeholder='Define minimum size'
+              stepValidation={stepValidation}
+              fieldName='disk-min-size'
+              onChange={handleDiskMinsizeChange}
             />
           </FlexItem>
           <FlexItem>
