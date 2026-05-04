@@ -449,8 +449,8 @@ const TargetEnvironment = () => {
                   component='small'
                   style={{ maxWidth: TEXT_WRAP_WIDTH }}
                 >
-                  A deployment-ready virtual disk format used by virtualization
-                  software like QEMU and KVM. It allows for efficient storage
+                  A deployment-ready virtual disk format used by Openshift
+                  Virtualization and libvirt. It allows for efficient storage
                   usage by only writing the changes made to the disk image
                   rather than the entire image, ensuring the file only consumes
                   physical storage as data is written.
@@ -472,8 +472,8 @@ const TargetEnvironment = () => {
                   component='small'
                   style={{ maxWidth: TEXT_WRAP_WIDTH }}
                 >
-                  A deployment-ready virtual disk format used by virtualization
-                  software like QEMU and KVM. It allows for efficient storage
+                  A deployment-ready virtual disk format used by Openshift
+                  Virtualization and libvirt. It allows for efficient storage
                   usage by only writing the changes made to the disk image
                   rather than the entire image, ensuring the file only consumes
                   physical storage as data is written.
