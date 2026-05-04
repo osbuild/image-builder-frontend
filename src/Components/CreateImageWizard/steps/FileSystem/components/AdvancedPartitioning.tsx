@@ -92,7 +92,7 @@ const AdvancedPartitioning = () => {
     <>
       <FormGroup label='Minimum disk size'>
         <Flex gap={{ default: 'gapSm' }}>
-          <FlexItem style={{ width: '30%' }}>
+          <FlexItem style={{ width: '50%' }}>
             <ValidatedInputAndTextArea
               ariaLabel='Minimum disk size input'
               value={minsize || ''}

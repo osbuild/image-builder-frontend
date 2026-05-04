@@ -63,7 +63,12 @@ const PartitioningMode = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      style={{ width: '100%' }}
+      style={
+        {
+          minWidth: '50%',
+          maxWidth: '100%',
+        } as React.CSSProperties
+      }
     >
       {partitioningMode === undefined
         ? 'Select partitioning mode'
