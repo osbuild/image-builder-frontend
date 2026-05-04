@@ -83,11 +83,110 @@ describe('Repositories Component', () => {
 
       expect(
         await screen.findByRole('option', {
-          name: /searching repositories/i,
+          name: /loading repositories/i,
         }),
       ).toBeInTheDocument();
 
       resolveSearch(JSON.stringify({ data: [], meta: { count: 0 } }));
+    });
+
+    test('shows unfiltered repositories when dropdown opens', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ repositories: mockRepositoryResults }),
+      );
+      renderRepositoriesStep();
+      const user = createUser();
+
+      // Open dropdown by clicking toggle
+      const toggle = await screen.findByRole('button', {
+        name: /menu toggle/i,
+      });
+      await user.click(toggle);
+
+      // Should show repositories without typing
+      expect(
+        await screen.findByRole('option', { name: /01-test-valid-repo/i }),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByRole('option', {
+          name: /04-test-another-valid-repo/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    test('shows appropriate empty state message based on filter state', async () => {
+      fetchMock.mockResponse(createFetchHandler({ repositories: [] }));
+      renderRepositoriesStep();
+      const user = createUser();
+
+      // Open dropdown - should show "No repositories available"
+      const toggle = await screen.findByRole('button', {
+        name: /menu toggle/i,
+      });
+      await user.click(toggle);
+
+      expect(
+        await screen.findByRole('option', {
+          name: /no repositories available/i,
+        }),
+      ).toBeInTheDocument();
+
+      // Type to search - should show "No repositories found for..."
+      const searchInput = await screen.findByRole('textbox', {
+        name: /filter repositories/i,
+      });
+      await user.type(searchInput, 'nonexistent');
+
+      expect(
+        await screen.findByRole('option', {
+          name: /no repositories found for "nonexistent"/i,
+        }),
+      ).toBeInTheDocument();
+
+      // Initial empty-state message should no longer be rendered
+      expect(
+        screen.queryByRole('option', {
+          name: /no repositories available/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('uses different limit for filtered vs unfiltered results', async () => {
+      const requestLog: string[] = [];
+
+      fetchMock.mockResponse((req) => {
+        requestLog.push(req.url);
+        return createDefaultFetchHandler(req);
+      });
+
+      renderRepositoriesStep();
+      const user = createUser();
+
+      // Open dropdown without search
+      const toggle = await screen.findByRole('button', {
+        name: /menu toggle/i,
+      });
+      await user.click(toggle);
+
+      await screen.findByRole('option', { name: /no repositories available/i });
+
+      // Type to search - should use limit=50
+      const searchInput = await screen.findByRole('textbox', {
+        name: /filter repositories/i,
+      });
+      await user.type(searchInput, 'test');
+
+      await screen.findByRole('option', {
+        name: /no repositories found for "test"/i,
+      });
+
+      const filteredRequest = requestLog.find(
+        (url) =>
+          url.includes('/repositories') &&
+          url.includes('search=test') &&
+          !url.includes('uuid='),
+      );
+      expect(filteredRequest).toContain('limit=50');
     });
 
     test('shows "no results" for failed search', async () => {
