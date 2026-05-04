@@ -91,7 +91,7 @@
     "stylelint": "17.9.1",
     "stylelint-config-recommended-scss": "17.0.1",
     "ts-node": "10.9.2",
-    "ts-patch": "3.3.0",
+    "ts-patch": "4.0.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.59.1",
     "uuid": "14.0.0",
