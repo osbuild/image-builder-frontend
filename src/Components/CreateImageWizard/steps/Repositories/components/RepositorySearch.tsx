@@ -85,12 +85,12 @@ const RepositorySearch = ({
         search: debouncedFilterValue,
       },
       {
-        skip: !debouncedFilterValue,
+        skip: !isOpen,
       },
     );
 
   const onInputClick = () => {
-    if (!isOpen && inputValue) {
+    if (!isOpen) {
       setIsOpen(true);
     }
   };
@@ -181,12 +181,8 @@ const RepositorySearch = ({
       shouldFocusFirstItemOnOpen={false}
     >
       <SelectList>
-        {!debouncedFilterValue ? (
-          <SelectOption isDisabled>
-            Start typing to search repositories
-          </SelectOption>
-        ) : isFetching ? (
-          <SelectOption isDisabled>Searching repositories...</SelectOption>
+        {isFetching ? (
+          <SelectOption isDisabled>Loading repositories...</SelectOption>
         ) : repositories.length > 0 ? (
           repositories.map((repo) => {
             const isSelected = selectedRepoIds.has(repo.uuid || '');
@@ -224,10 +220,12 @@ const RepositorySearch = ({
               </SelectOption>
             );
           })
-        ) : (
+        ) : debouncedFilterValue ? (
           <SelectOption isDisabled>
             No repositories found for &quot;{debouncedFilterValue}&quot;
           </SelectOption>
+        ) : (
+          <SelectOption isDisabled>No repositories available</SelectOption>
         )}
       </SelectList>
     </Select>
