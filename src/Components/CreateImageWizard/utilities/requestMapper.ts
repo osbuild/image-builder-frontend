@@ -162,8 +162,13 @@ export const mapRequestFromState = (
   if (isImageMode && imageSource) {
     const bootcDistributions = selectBootcDistributions(state);
     const imageTypes = selectImageTypes(state);
-    if (bootcDistributions.length > 0 && imageTypes.length > 0) {
-      const match = bootcDistributions.find((d) => d.type === imageTypes[0]);
+    const selectedDistro = bootcDistributions.find(
+      (d) => d.reference === imageSource,
+    );
+    if (selectedDistro && imageTypes.length > 0) {
+      const match = bootcDistributions.find(
+        (d) => d.name === selectedDistro.name && d.type === imageTypes[0],
+      );
       if (match) {
         bootcReference = match.reference;
       }

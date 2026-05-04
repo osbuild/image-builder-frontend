@@ -185,7 +185,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
-    dispatch(initializeWizard());
+    if (!isEdit) {
+      dispatch(initializeWizard());
+    }
     if (searchParams.get('release') === 'rhel8') {
       dispatch(changeDistribution(RHEL_8));
     }

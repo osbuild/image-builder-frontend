@@ -94,17 +94,13 @@ const TargetEnvironment = () => {
   const isFetching = isArchFetching || isBootcFetching;
   const isError = isArchError || isBootcError;
 
-  const supportedEnvironments = useMemo(
-    () =>
-      skipArchitectures
-        ? [
-            ...new Set(
-              bootcDistributions?.map((d) => d.type) ?? EMPTY_ENVIRONMENTS,
-            ),
-          ]
-        : archEnvironments,
-    [skipArchitectures, bootcDistributions, archEnvironments],
-  );
+  const supportedEnvironments = useMemo(() => {
+    if (!skipArchitectures) return archEnvironments;
+
+    return [
+      ...new Set(bootcDistributions?.map((d) => d.type) ?? EMPTY_ENVIRONMENTS),
+    ];
+  }, [skipArchitectures, bootcDistributions, archEnvironments]);
 
   const dispatch = useAppDispatch();
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
