@@ -22,12 +22,19 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { orderBy } from 'lodash';
 
-import { EPEL_10_REPO_DEFINITION } from '@/constants';
+import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/repositoriesUtilities';
+import {
+  AMPLITUDE_MODULE_NAME,
+  ContentOrigin,
+  EPEL_10_REPO_DEFINITION,
+} from '@/constants';
 import {
   Module,
   useGetArchitecturesQuery,
+  useRecommendPackageMutation,
   useSecuritySummary,
 } from '@/store/api/backend';
 import {
@@ -61,6 +68,7 @@ import {
 } from '@/store/slices/wizard';
 import { asDistribution } from '@/store/typeGuards';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -69,7 +77,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   ItemWithSources,
-  PackageRecommendation,
 } from '../packagesTypes';
 
 type PackageSearchProps = {
@@ -83,11 +90,6 @@ type PackageSearchProps = {
   setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
   activeStream: string;
   setActiveStream: (value: string) => void;
-  recommendations: PackageRecommendation[];
-  isLoadingRecommendations: boolean;
-  isErrorRecommendations: boolean;
-  onRecommendationSelected: (packageName: string) => void;
-  onDropdownOpened: (hasRecommendations: boolean) => void;
 };
 
 const PackageSearch = ({
@@ -99,13 +101,9 @@ const PackageSearch = ({
   setIsSelectingGroup,
   activeStream,
   setActiveStream,
-  recommendations,
-  isLoadingRecommendations,
-  isErrorRecommendations,
-  onRecommendationSelected,
-  onDropdownOpened,
 }: PackageSearchProps) => {
   const dispatch = useAppDispatch();
+  const { analytics, isBeta } = useChrome();
 
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const distribution = useAppSelector(selectDistribution);
@@ -128,9 +126,36 @@ const PackageSearch = ({
   const isRequiredAndSelected = (pkg: IBPackageWithRepositoryInfo) =>
     requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);
 
+  const version = releaseToVersion(distribution);
+
+  const {
+    data: distroRepositoriesForRecommendations,
+    isSuccess: isSuccessDistroRepositoriesForRecommendations,
+  } = useListRepositoriesQuery({
+    availableForArch: arch,
+    availableForVersion: version,
+    ...excludeEUSReposFilter,
+    contentType: 'rpm',
+    origin: ContentOrigin.REDHAT,
+    limit: 100,
+    offset: 0,
+  });
+
+  const [
+    fetchRecommendedPackages,
+    {
+      data: recommendationsData,
+      isLoading: isLoadingRecommendations,
+      isError: isErrorRecommendations,
+    },
+  ] = useRecommendPackageMutation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
+  const [hasTrackedRecommendations, setHasTrackedRecommendations] =
+    useState(false);
 
   const epelRepoUrlByDistribution =
     getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
@@ -407,6 +432,93 @@ const PackageSearch = ({
     });
   }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
 
+  const [
+    fetchRecommendationDescriptions,
+    { data: dataDescriptions, isSuccess: isSuccessDescriptions },
+  ] = useSearchRpmMutation();
+
+  useEffect(() => {
+    if (!isOnPremise && packages.length > 0) {
+      const packageNames = packages.map((pkg) => pkg.name);
+      const noDashDistro = distribution.replace('-', '');
+
+      (async () => {
+        try {
+          const response = await fetchRecommendedPackages({
+            recommendPackageRequest: {
+              packages: packageNames,
+              recommendedPackages: 5,
+              distribution: noDashDistro,
+            },
+          });
+
+          // there is a mismatch between API type and real data
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (response?.data?.packages && response.data.packages.length > 0) {
+            analytics.track(
+              `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
+              {
+                module: AMPLITUDE_MODULE_NAME,
+                isPreview: isBeta(),
+                foundRecommendations: response.data.packages,
+                selectedPackages: packageNames,
+                distribution: noDashDistro,
+                modelVersion: response.data.modelVersion,
+              },
+            );
+          }
+        } catch {
+          // error state handled by isErrorRecommendations
+        }
+      })();
+    }
+    // fetchRecommendedPackages, analytics, and isBeta are unstable dependencies
+    // that were causing an infinite loop when included in the dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [packages, distribution, isOnPremise]);
+
+  useEffect(() => {
+    if (
+      isSuccessDistroRepositoriesForRecommendations &&
+      // there is a mismatch between API type and real data
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      distroRepositoriesForRecommendations?.data &&
+      recommendationsData?.packages &&
+      recommendationsData.packages.length > 0
+    ) {
+      const distroRepoUrls = distroRepositoriesForRecommendations.data.map(
+        (repo) => repo.url || '',
+      );
+
+      fetchRecommendationDescriptions({
+        apiContentUnitSearchRequest: {
+          exact_names: recommendationsData.packages,
+          urls: distroRepoUrls,
+        },
+      });
+    }
+  }, [
+    isSuccessDistroRepositoriesForRecommendations,
+    distroRepositoriesForRecommendations,
+    recommendationsData,
+    fetchRecommendationDescriptions,
+  ]);
+
+  const recommendationsWithDescriptions = useMemo(() => {
+    if (!isSuccessDescriptions || !recommendationsData?.packages) {
+      return [];
+    }
+    return recommendationsData.packages.map((pkgName) => {
+      const description = dataDescriptions.find(
+        (p) => p.package_name === pkgName,
+      );
+      return {
+        name: pkgName,
+        summary: description?.summary || '',
+      };
+    });
+  }, [isSuccessDescriptions, recommendationsData, dataDescriptions]);
+
   const transformedPackages = useMemo(() => {
     let transformedDistroData: ItemWithSources[] = [];
     let transformedCustomData: ItemWithSources[] = [];
@@ -535,11 +647,11 @@ const PackageSearch = ({
   ]);
 
   const transformedRecommendations = useMemo(() => {
-    if (packageType === 'groups' || !recommendations.length) {
+    if (packageType === 'groups' || !recommendationsWithDescriptions.length) {
       return [];
     }
 
-    return recommendations.map(
+    return recommendationsWithDescriptions.map(
       (rec): IBPackageWithRepositoryInfo => ({
         name: rec.name,
         summary: rec.summary,
@@ -547,7 +659,51 @@ const PackageSearch = ({
         isRecommendation: true,
       }),
     );
-  }, [recommendations, packageType]);
+  }, [recommendationsWithDescriptions, packageType]);
+
+  useEffect(() => {
+    if (!isOpen || packageType !== 'packages' || isOnPremise) {
+      if (!isOpen) {
+        setHasTrackedOpen(false);
+        setHasTrackedRecommendations(false);
+      }
+      return;
+    }
+
+    if (!hasTrackedOpen) {
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME} - Package Search Dropdown Opened`,
+        {
+          module: AMPLITUDE_MODULE_NAME,
+          isPreview: isBeta(),
+          selectedPackages: packages.map((pkg) => pkg.name),
+          recommendationsShown: false,
+        },
+      );
+      setHasTrackedOpen(true);
+    }
+
+    if (transformedRecommendations.length > 0 && !hasTrackedRecommendations) {
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
+        {
+          module: AMPLITUDE_MODULE_NAME,
+          isPreview: isBeta(),
+          shownRecommendations: recommendationsData?.packages || [],
+          selectedPackages: packages.map((pkg) => pkg.name),
+          distribution: distribution.replace('-', ''),
+          modelVersion: recommendationsData?.modelVersion,
+        },
+      );
+      setHasTrackedRecommendations(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isOpen,
+    hasTrackedOpen,
+    hasTrackedRecommendations,
+    transformedRecommendations.length,
+  ]);
 
   const sortedPackages = useMemo(() => {
     if (!debouncedSearchTerm) {
@@ -579,11 +735,13 @@ const PackageSearch = ({
       ['asc', 'asc', 'desc', 'asc', 'asc', 'asc'],
     );
 
-    const filteredRecommendations = isLoadingRecommendations
-      ? []
-      : transformedRecommendations.filter(
-          (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
-        );
+    const hasModules = regularPackages.some((pkg) => pkg.type === 'module');
+    const filteredRecommendations =
+      isLoadingRecommendations || hasModules
+        ? []
+        : transformedRecommendations.filter(
+            (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
+          );
 
     return [...regularPackages, ...filteredRecommendations];
   }, [
@@ -720,8 +878,19 @@ const PackageSearch = ({
           setIsSelectingPackage(pkg);
         } else {
           dispatch(addPackage(pkg));
-          if (pkg.isRecommendation) {
-            onRecommendationSelected(pkg.name);
+          if (pkg.isRecommendation && !isOnPremise) {
+            analytics.track(
+              `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
+              {
+                module: AMPLITUDE_MODULE_NAME,
+                isPreview: isBeta(),
+                packageName: pkg.name,
+                selectedPackages: packages.map((p) => p.name),
+                shownRecommendations: recommendationsData?.packages || [],
+                distribution: distribution.replace('-', ''),
+                modelVersion: recommendationsData?.modelVersion,
+              },
+            );
           }
           if (pkg.type === 'module') {
             setActiveStream(pkg.stream || '');
@@ -826,14 +995,7 @@ const PackageSearch = ({
           packageType === 'packages' ? selectedPackageKeys : selectedGroupNames
         }
         onSelect={onSelect}
-        onOpenChange={(isOpen) => {
-          if (isOpen && packageType === 'packages') {
-            onDropdownOpened(
-              sortedPackages.some((pkg) => pkg.isRecommendation),
-            );
-          }
-          setIsOpen(isOpen);
-        }}
+        onOpenChange={setIsOpen}
         toggle={toggle}
         shouldFocusFirstItemOnOpen={false}
       >
