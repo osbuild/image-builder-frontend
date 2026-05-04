@@ -47,7 +47,7 @@ const DetailsStep = () => {
           headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
           size={isWizardRevampEnabled ? 'lg' : 'xl'}
         >
-          Image details
+          Details
         </Title>
         <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
           Enter a name and description to identify your deployment-ready image.

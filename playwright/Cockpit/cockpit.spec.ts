@@ -99,9 +99,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await frame.getByRole('button', { name: 'Back', exact: true }).click();
 
     await frame.getByRole('button', { name: 'Base settings' }).click();
-    await expect(
-      frame.getByRole('heading', { name: 'Image details' }),
-    ).toBeVisible();
+    await expect(frame.getByRole('heading', { name: 'Details' })).toBeVisible();
     await frame
       .getByRole('textbox', { name: 'blueprint name' })
       .fill(blueprintName);

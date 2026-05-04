@@ -43,7 +43,7 @@ describe('Details Component', () => {
       renderDetailsStep();
 
       expect(
-        await screen.findByRole('heading', { name: /Image details/i }),
+        await screen.findByRole('heading', { name: /Details/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
@@ -325,7 +325,7 @@ describe('Details Component', () => {
       await typeWithWait(user, nameInput, 'custom-blueprint-name{Enter}');
 
       expect(
-        screen.getByRole('heading', { name: /Image details/i }),
+        screen.getByRole('heading', { name: /Details/i }),
       ).toBeInTheDocument();
       expect(nameInput).toBeInTheDocument();
       expect(store.getState().wizard.details.blueprintName).toBe(
@@ -343,7 +343,7 @@ describe('Details Component', () => {
       await typeWithWait(user, descriptionInput, 'Test description{Enter}');
 
       expect(
-        screen.getByRole('heading', { name: /Image details/i }),
+        screen.getByRole('heading', { name: /Details/i }),
       ).toBeInTheDocument();
       expect(descriptionInput).toBeInTheDocument();
       expect(store.getState().wizard.details.blueprintDescription).toBe(
