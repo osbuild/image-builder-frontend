@@ -138,37 +138,58 @@ export const deleteRepositoryViaApi = async (
   }
 };
 
-// Polls the content-sources API until the repository appears in search
-// results. Call this after creating a repo to give the backend time to
-// index it before the UI tries to find it.
-export const waitUntilRepositoryIsSearchable = async (
+// Ensures a repository with the given name exists. If it already exists,
+// returns the existing repo. If not, creates it. Handles race conditions
+// where a concurrent test run creates the repo between the check and
+// the create attempt.
+export const ensureRepositoryExists = async (
   page: Page,
-  repositoryName: string,
-  { intervalMs = 2_000, timeoutMs = 30_000 } = {},
-): Promise<void> => {
+  repository: RepositoryRequest,
+): Promise<RepositoryResponse> => {
   const headers = await getAuthHeaders(page);
-  const endpoint = `/api/content-sources/v1/repositories/?search=${encodeURIComponent(repositoryName)}`;
-  const deadline = Date.now() + timeoutMs;
 
-  while (Date.now() < deadline) {
-    const response = await page.context().request.get(endpoint, { headers });
+  // Check if the repo already exists by name
+  const searchResponse = await page
+    .context()
+    .request.get(
+      `/api/content-sources/v1/repositories/?name=${encodeURIComponent(repository.name)}`,
+      { headers },
+    );
 
-    if (response.status() === 200) {
-      const body = await response.json();
-      const found = body.data?.some(
-        (repo: { name: string }) => repo.name === repositoryName,
+  if (searchResponse.status() === 200) {
+    const body = await searchResponse.json();
+    const existing = body.data?.find(
+      (r: { name: string }) => r.name === repository.name,
+    );
+    if (existing) {
+      return existing;
+    }
+  }
+
+  // Repo doesn't exist, create it
+  try {
+    return await createRepositoryViaApi(page, repository);
+  } catch {
+    // Another run may have created it concurrently, try searching again
+    const retryResponse = await page
+      .context()
+      .request.get(
+        `/api/content-sources/v1/repositories/?name=${encodeURIComponent(repository.name)}`,
+        { headers },
       );
-      if (found) {
-        return;
+
+    if (retryResponse.status() === 200) {
+      const body = await retryResponse.json();
+      const existing = body.data?.find(
+        (r: { name: string }) => r.name === repository.name,
+      );
+      if (existing) {
+        return existing;
       }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    throw new Error(`Failed to create or find repository "${repository.name}"`);
   }
-
-  throw new Error(
-    `Repository "${repositoryName}" was not searchable after ${timeoutMs}ms`,
-  );
 };
 
 export const deleteRepositoryByUrlViaApi = async (
