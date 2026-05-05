@@ -726,7 +726,7 @@ echo 'Hello there, General Kenobi!'`;
       expect(screen.queryByText('Users')).not.toBeInTheDocument();
     });
 
-    test('displays user count when users are configured', () => {
+    test('displays users heading when users are configured', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
@@ -736,7 +736,6 @@ echo 'Hello there, General Kenobi!'`;
       );
 
       expect(screen.getByText('Users')).toBeInTheDocument();
-      expect(screen.getByText('2')).toBeInTheDocument();
     });
 
     test('does not display user columns when no users configured', () => {
@@ -852,7 +851,6 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('3')).toBeInTheDocument();
       expect(screen.getByText('admin')).toBeInTheDocument();
       expect(screen.getByText('developer')).toBeInTheDocument();
       expect(screen.getByText('guest')).toBeInTheDocument();

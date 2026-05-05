@@ -17,7 +17,7 @@ export const Users = ({ shouldHide }: Hideable) => {
 
   return (
     <>
-      <ReviewGroup heading='Users' description={users.length} />
+      <ReviewGroup heading='Users' />
       <Flex>
         <FlexColumn
           heading='Username'
