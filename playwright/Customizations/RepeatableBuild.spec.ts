@@ -5,12 +5,7 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
-import {
-  createRepositoryViaApi,
-  deleteRepositoryByUrlViaApi,
-  deleteRepositoryViaApi,
-  waitUntilRepositoryIsSearchable,
-} from '../helpers/apiHelpers';
+import { ensureRepositoryExists } from '../helpers/apiHelpers';
 import { enablePreview, isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
@@ -35,32 +30,21 @@ test('Create a blueprint with Repeatable build customization', async ({
   test.skip(!isHosted(), 'Repeatable build is not available in the plugin');
 
   const blueprintName = 'test-' + uuidv4();
-  const repositoryName =
-    'repeatable-test-with-no-snapshot-' + uuidv4().slice(0, 8);
+  const repositoryName = 'image-builder-ci-repeatable-no-snapshot';
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/really-empty/';
 
   await ensureAuthenticated(page);
 
-  // Ensure URL exclusivity by deleting any existing repository with this URL
-  await deleteRepositoryByUrlViaApi(page, repositoryUrl);
-
-  let repositoryUuid: string;
-
-  await test.step('Create a custom repository via API', async () => {
-    const repository = await createRepositoryViaApi(page, {
+  await test.step('Ensure static repository exists', async () => {
+    await ensureRepositoryExists(page, {
       name: repositoryName,
       url: repositoryUrl,
       snapshot: false,
     });
-    repositoryUuid = repository.uuid;
-
-    await waitUntilRepositoryIsSearchable(page, repositoryName);
   });
 
-  // Register cleanup after resources are created
   cleanup.add(() => deleteBlueprint(page, blueprintName));
-  cleanup.add(() => deleteRepositoryViaApi(page, repositoryUuid));
 
   await enablePreview(page);
   await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible({
@@ -102,37 +86,22 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
-    const searchInput = frame.getByRole('textbox', {
-      name: 'Filter repositories',
-    });
-    const repoOption = frame.getByRole('option', { name: repositoryName });
-
-    // The repo may not be indexed for filtered queries yet. If the
-    // search shows "No repositories found", refresh and retry.
-    await searchInput.fill(repositoryName);
-    const noResults = frame.getByRole('option', {
-      name: `No repositories found for "${repositoryName}"`,
-    });
-    if (await noResults.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await searchInput.clear();
-      await frame.getByRole('button', { name: 'Refresh repositories' }).click();
-      await expect(
-        frame.getByRole('button', { name: 'Refreshing repositories' }),
-      ).toBeHidden();
-      await searchInput.fill(repositoryName);
-    }
 
     const reposTable = frame.getByRole('grid').filter({
       has: frame.getByRole('columnheader', { name: 'Snapshot date' }),
     });
     await expect(reposTable.getByRole('row')).toHaveCount(3); // two base distro repos + header
-    await expect(repoOption).toBeVisible();
-    await expect(repoOption).toBeDisabled();
+    await expect(
+      frame.getByRole('option', { name: repositoryName }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('option', { name: repositoryName }),
+    ).toBeDisabled();
     await expect(
       frame.getByText(
         /This repository doesn't have snapshots enabled, so it cannot be selected./i,
       ),
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible();
   });
 
   await test.step('Check Repeatable build step behaviour with no repos', async () => {
