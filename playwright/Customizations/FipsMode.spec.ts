@@ -71,9 +71,7 @@ test('FIPS switch toggles and persists through save', async ({
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
       .check();
 
-    const typeToFilter = frame.getByRole('textbox', { name: 'Type to filter' });
-
-    await typeToFilter.fill('stig');
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: /Red Hat STIG for Red Hat Enterprise Linux 10/i,

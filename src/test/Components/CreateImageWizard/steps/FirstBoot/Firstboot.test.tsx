@@ -60,11 +60,7 @@ const selectSimplifiedOscapProfile = async () => {
   });
   await user.click(openscapRadio);
   const openScapSelect = await screen.findByTestId('profileSelect');
-  const typeahead = await within(openScapSelect).findByRole('textbox', {
-    name: /type to filter/i,
-  });
-  await waitFor(() => user.click(typeahead));
-  await waitFor(() => user.type(typeahead, 'simplified'));
+  await waitFor(() => user.click(openScapSelect));
 
   const simplifiedProfile = await screen.findByRole('option', {
     name: /simplified profile/i,

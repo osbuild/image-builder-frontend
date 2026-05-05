@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Button,
   FormGroup,
   MenuToggle,
   MenuToggleElement,
@@ -9,11 +8,7 @@ import {
   SelectList,
   SelectOption,
   Spinner,
-  TextInputGroup,
-  TextInputGroupMain,
-  TextInputGroupUtilities,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
 
 import {
   DistributionProfileItem,
@@ -31,7 +26,6 @@ import {
   changeFscMode,
   clearKernelAppend,
   selectComplianceProfileID,
-  selectComplianceType,
   selectDistribution,
   setOscapProfile,
 } from '@/store/slices/wizard';
@@ -68,21 +62,13 @@ const ProfileSelector = ({
   );
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] = useState<
-    {
-      id: DistributionProfileItem;
-      name: string | undefined;
-    }[]
-  >([]);
+  const [isApplying, setIsApplying] = useState(false);
   const [profileDetails, setProfileDetails] = useState<
     {
       id: DistributionProfileItem;
       name: string | undefined;
     }[]
   >([]);
-  const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
   const {
     clearCompliancePackages,
@@ -102,14 +88,6 @@ const ProfileSelector = ({
   );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
-
-  useEffect(() => {
-    if (!profileID) {
-      setInputValue('');
-      setFilterValue('');
-      setIsOpen(false);
-    }
-  }, [profileID]);
 
   // prefetch the profiles customizations for on-prem
   // and save the results to the cache, since the request
@@ -148,30 +126,13 @@ const ProfileSelector = ({
 
       const resolvedProfiles = await Promise.all(promises);
       setProfileDetails(resolvedProfiles);
-      setSelectOptions(resolvedProfiles);
     };
 
     fetchProfileDetails();
   }, [profiles, release, trigger]);
 
-  useEffect(() => {
-    if (!filterValue) {
-      setSelectOptions(profileDetails);
-      return;
-    }
-    const trimmedFilter = filterValue.toLowerCase().trim();
-    const filtered = profileDetails.filter(({ name }) =>
-      name?.toLowerCase().includes(trimmedFilter),
-    );
-
-    setSelectOptions(filtered);
-    if (!isOpen && filtered.length > 0) {
-      setIsOpen(true);
-    }
-  }, [filterValue, profileDetails, isOpen]);
-
   const handleToggle = () => {
-    if (!isOpen && complianceType === 'openscap') {
+    if (!isOpen) {
       refetch();
     }
     setIsOpen(!isOpen);
@@ -184,53 +145,13 @@ const ProfileSelector = ({
     handleServices(undefined);
     dispatch(clearKernelAppend());
     dispatch(changeFips(false));
-    setInputValue('');
-    setFilterValue('');
-  };
-
-  const onInputClick = () => {
-    if (!isOpen) {
-      setIsOpen(true);
-    } else if (!inputValue) {
-      setIsOpen(false);
-    }
-  };
-
-  const onTextInputChange = (_event: React.FormEvent, value: string) => {
-    setInputValue(value);
-    setFilterValue(value);
-
-    if (value !== profileID) {
-      dispatch(setOscapProfile(undefined));
-    }
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-
-      if (!isOpen) {
-        setIsOpen(true);
-      } else if (selectOptions.length === 1) {
-        const singleProfile = selectOptions[0];
-        const selection: OScapSelectOptionValueType = {
-          profileID: singleProfile.id,
-          toString: () => singleProfile.name || '',
-        };
-
-        setInputValue(singleProfile.name || '');
-        setFilterValue('');
-        applyChanges(selection);
-        setIsOpen(false);
-      }
-    }
   };
 
   const applyChanges = (selection: OScapSelectOptionValueType) => {
     if (selection.profileID === undefined) {
-      // handle user has selected 'None' case
       handleClear();
     } else {
+      setIsApplying(true);
       const oldOscapPackages = currentProfileData?.packages || [];
       trigger(
         {
@@ -253,7 +174,8 @@ const ProfileSelector = ({
           handleKernelAppend(response.kernel?.append);
           dispatch(setOscapProfile(selection.profileID));
           dispatch(changeFips(response.fips?.enabled || false));
-        });
+        })
+        .finally(() => setIsApplying(false));
     }
   };
 
@@ -263,49 +185,56 @@ const ProfileSelector = ({
   ) => {
     if (selection === undefined) return;
 
-    setInputValue((selection as OScapSelectOptionValueType['profileID']) || '');
-    setFilterValue('');
     applyChanges(selection as unknown as OScapSelectOptionValueType);
     setIsOpen(false);
+  };
+
+  const selectedProfileName = profileID
+    ? profileDetails.find(({ id }) => id === profileID)?.name || profileID
+    : undefined;
+
+  const profileOptions = () => {
+    if (isFetching) {
+      return [
+        <SelectOption key='oscap-loader' value='loader'>
+          <Spinner size='lg' />
+        </SelectOption>,
+      ];
+    }
+
+    const res = profileDetails.map(({ id, name }) => (
+      <SelectOption
+        key={id}
+        value={{
+          profileID: id,
+          toString: () => name,
+        }}
+        isSelected={profileID === id}
+      >
+        {name}
+      </SelectOption>
+    ));
+    return res;
   };
 
   const toggleOpenSCAP = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       data-testid='profileSelect'
       ref={toggleRef}
-      variant='typeahead'
+      isPlaceholder={!selectedProfileName && !isApplying}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={isDisabled || !isSuccess}
+      isDisabled={isDisabled || !isSuccess || isApplying}
       isFullWidth
+      style={{ maxWidth: 'none' }}
     >
-      <TextInputGroup isPlain>
-        <TextInputGroupMain
-          value={
-            profileID
-              ? profileDetails.find(({ id }) => id === profileID)?.name ||
-                profileID
-              : inputValue
-          }
-          onClick={onInputClick}
-          onChange={onTextInputChange}
-          onKeyDown={onKeyDown}
-          autoComplete='off'
-          placeholder='Select a profile'
-          isExpanded={isOpen}
-        />
-
-        {profileID && (
-          <TextInputGroupUtilities>
-            <Button
-              icon={<TimesIcon />}
-              variant='plain'
-              onClick={handleClear}
-              aria-label='Clear input'
-            />
-          </TextInputGroupUtilities>
-        )}
-      </TextInputGroup>
+      {isApplying ? (
+        <>
+          <Spinner size='sm' /> Applying profile...
+        </>
+      ) : (
+        selectedProfileName || 'Select a profile'
+      )}
     </MenuToggle>
   );
 
@@ -319,35 +248,8 @@ const ProfileSelector = ({
         onOpenChange={handleToggle}
         toggle={toggleOpenSCAP}
         shouldFocusFirstItemOnOpen={false}
-        popperProps={{
-          maxWidth: '50vw',
-        }}
       >
-        <SelectList>
-          {isFetching && (
-            <SelectOption value='loader'>
-              <Spinner size='lg' />
-            </SelectOption>
-          )}
-          {selectOptions.length > 0 &&
-            selectOptions.map(({ id, name }) => (
-              <SelectOption
-                key={id}
-                value={{
-                  profileID: id,
-                  toString: () => name,
-                }}
-                isSelected={profileID === id}
-              >
-                {name}
-              </SelectOption>
-            ))}
-          {isSuccess && selectOptions.length === 0 && (
-            <SelectOption isDisabled>
-              {`No results found for "${filterValue}"`}
-            </SelectOption>
-          )}
-        </SelectList>
+        <SelectList>{profileOptions()}</SelectList>
       </Select>
     </FormGroup>
   );
