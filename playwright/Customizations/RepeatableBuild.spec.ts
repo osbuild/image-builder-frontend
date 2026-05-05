@@ -82,13 +82,15 @@ test('Create a blueprint with Repeatable build customization', async ({
       .click();
     await expect(frame.getByText(/Loading/i)).toBeHidden();
 
+    // wait until things are loaded before trying to filter?
+    await expect(
+      frame.getByRole('columnheader', { name: 'Snapshot date' }),
+    ).toBeVisible({ timeout: 10000 });
+
     await frame
       .getByRole('textbox', { name: 'Filter repositories' })
       .fill(repositoryName);
 
-    await expect(
-      frame.getByRole('columnheader', { name: 'Snapshot date' }),
-    ).toBeVisible({ timeout: 10000 });
     const reposTable = frame.getByRole('grid').filter({
       has: frame.getByRole('columnheader', { name: 'Snapshot date' }),
     });
