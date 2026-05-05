@@ -115,7 +115,7 @@ export const computeRestrictions = ({
 
     result[customization] = {
       shouldHide: !supportedOptions.has(customization),
-      required: ctx.isImageMode && customization === 'users',
+      required: ctx.isImageMode && ctx.isOnPremise && customization === 'users',
     };
   }
 

@@ -57,31 +57,31 @@ describe('useCustomizationRestrictions hook logic', () => {
       }
     });
 
-    it('should mark users as required in image mode', () => {
+    it('should not mark users as required in hosted image mode', () => {
       const result = computeRestrictionStrategy({
         isImageMode: true,
         isOnPremise: false,
       });
 
-      // Users should be required in image mode
+      for (const customization of getAllCustomizationTypes()) {
+        expect(result[customization].required).toBe(false);
+      }
+    });
+
+    it('should mark users as required in on-premise image mode', () => {
+      const result = computeRestrictionStrategy({
+        isImageMode: true,
+        isOnPremise: true,
+      });
+
       expect(result.users.required).toBe(true);
 
-      // Other customizations should not be required
       const nonUserTypes = getAllCustomizationTypes().filter(
         (c) => c !== 'users',
       );
       for (const customization of nonUserTypes) {
         expect(result[customization].required).toBe(false);
       }
-    });
-
-    it('should not mark users as required when not in image mode', () => {
-      const result = computeRestrictionStrategy({
-        isImageMode: false,
-        isOnPremise: false,
-      });
-
-      expect(result.users.required).toBe(false);
     });
   });
 
@@ -162,7 +162,7 @@ describe('useCustomizationRestrictions hook logic', () => {
       expect(result.repositories.shouldHide).toBe(true);
       expect(result.firstBoot.shouldHide).toBe(true);
 
-      // Users should be marked as required in image mode
+      // Users should be required on-premise
       expect(result.users.required).toBe(true);
     });
   });

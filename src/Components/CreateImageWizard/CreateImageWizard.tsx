@@ -435,7 +435,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             name='Groups and users'
             id='wizard-users'
             key='wizard-users'
-            // This step is only visible when users is required (i.e., in image mode)
+            // This step is only visible when users is required (i.e., in image mode on-prem)
             isHidden={!restrictions.users.required}
             navItem={CustomStatusNavItem}
             status={

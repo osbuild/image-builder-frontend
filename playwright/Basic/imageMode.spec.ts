@@ -128,12 +128,6 @@ test('Image mode blueprint create, edit, export, import', async ({
     await frame.getByRole('radio', { name: 'Virtualization' }).click();
   });
 
-  await test.step('Fill in user', async () => {
-    await frame
-      .getByRole('textbox', { name: 'blueprint user name' })
-      .fill('testuser');
-  });
-
   await test.step('Create blueprint', async () => {
     const reviewImageButton = frame.getByRole('button', {
       name: 'Review image',
@@ -166,11 +160,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     ).toBeChecked();
   });
 
-  await test.step('Verify user in edit modal', async () => {
-    await expect(
-      frame.getByRole('textbox', { name: 'blueprint user name' }),
-    ).toHaveValue('testuser');
-
+  await test.step('Save changes in edit modal', async () => {
     const reviewImageButton = frame.getByRole('button', {
       name: 'Review image',
     });
@@ -206,10 +196,6 @@ test('Image mode blueprint create, edit, export, import', async ({
 
     // Export doesn't include image_requests, so image types must be re-selected
     await frame.getByRole('radio', { name: 'Virtualization' }).click();
-
-    await expect(
-      frame.getByRole('textbox', { name: 'blueprint user name' }),
-    ).toHaveValue('testuser');
 
     // Change the name to avoid "name already exists" conflict
     await frame
