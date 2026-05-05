@@ -127,7 +127,7 @@ export const deleteRepositoryViaApi = async (
   const headers = await getAuthHeaders(page);
   const response = await page
     .context()
-    .request.delete(`/api/content-sources/v1/repositories/${uuid}`, {
+    .request.delete(`/api/content-sources/v1/repositories/${uuid}/`, {
       headers,
     });
 
