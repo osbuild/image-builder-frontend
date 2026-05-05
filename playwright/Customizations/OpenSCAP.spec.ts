@@ -56,16 +56,14 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(
       frame.getByText('WSL: customization is not supported'),
     ).toBeVisible();
-    await expect(
-      frame.getByRole('textbox', { name: 'Type to filter' }),
-    ).toBeEnabled();
   });
 
   await test.step('Select a CIS profile then switch to None', async () => {
     await frame
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
       .click();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+    await expect(frame.getByTestId('profileSelect')).toBeEnabled();
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
@@ -91,7 +89,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
       .click();
 
-    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
@@ -143,14 +141,11 @@ test('Create a blueprint with OpenSCAP customization', async ({
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Base settings' }).click();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
-    await expect(
-      frame.getByText(
-        'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
-      ),
-    ).toBeVisible();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).clear();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+    await expect(frame.getByTestId('profileSelect')).toContainText(
+      'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
+      { timeout: 60000 },
+    );
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server',

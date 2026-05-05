@@ -2,19 +2,15 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import {
-  clickWithWait,
-  createUser,
-  renderWithRedux,
-  typeWithWait,
-} from '@/test/testUtils';
+import { clickWithWait, createUser, renderWithRedux } from '@/test/testUtils';
 
 import OscapStep from '../index';
 
 describe('Oscap Component', () => {
-  describe('Form submission', () => {
-    test('pressing Enter in profile search does not trigger page reload', async () => {
+  describe('Profile selector', () => {
+    test('profile dropdown opens and closes on toggle click', async () => {
       renderWithRedux(<OscapStep />, {
+        imageTypes: ['guest-image'],
         compliance: {
           complianceType: 'openscap',
           profileID: undefined,
@@ -24,12 +20,16 @@ describe('Oscap Component', () => {
       });
       const user = createUser();
 
-      const profileSearchInput =
-        await screen.findByPlaceholderText('Select a profile');
-      await typeWithWait(user, profileSearchInput, 'cis{Enter}');
+      const openscapRadio = await screen.findByRole('radio', {
+        name: /Use a default OpenSCAP profile/i,
+      });
+      await clickWithWait(user, openscapRadio);
 
-      expect(profileSearchInput).toBeInTheDocument();
-      expect(profileSearchInput).toHaveValue('cis');
+      const profileSelect = await screen.findByTestId('profileSelect');
+      expect(profileSelect).toHaveTextContent('Select a profile');
+
+      await clickWithWait(user, profileSelect);
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
   });
 
@@ -71,7 +71,7 @@ describe('Oscap Component', () => {
     });
 
     test('switching to openscap enables the profile selector', async () => {
-      renderWithRedux(<OscapStep />);
+      renderWithRedux(<OscapStep />, { imageTypes: ['guest-image'] });
       const user = createUser();
 
       const openscapRadio = await screen.findByRole('radio', {
@@ -86,13 +86,12 @@ describe('Oscap Component', () => {
         }),
       ).not.toBeChecked();
 
-      expect(
-        screen.getByPlaceholderText('Select a profile'),
-      ).toBeInTheDocument();
+      expect(screen.getByTestId('profileSelect')).toBeInTheDocument();
     });
 
     test('switching back to none from openscap deselects profile', async () => {
       renderWithRedux(<OscapStep />, {
+        imageTypes: ['guest-image'],
         compliance: {
           complianceType: 'openscap',
           profileID: undefined,

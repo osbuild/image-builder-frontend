@@ -229,6 +229,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
     <MenuToggle
       ouiaId='compliancePolicySelect'
       ref={toggleRef}
+      isPlaceholder={!policyTitle && !isApplying}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
       isDisabled={isDisabled || isFetchingPolicies || isApplying}
