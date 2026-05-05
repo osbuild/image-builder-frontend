@@ -32,19 +32,17 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
       : users;
 
   const stepValidation = useUsersValidation();
-  const hasErrors = !!stepValidation.disabledNext;
-  const showAlert = attemptedNext && hasErrors;
 
   const onAddUserClick = () => {
     dispatch(addUser());
   };
   return (
     <>
-      {showAlert && (
+      {attemptedNext && stepValidation.stepError && (
         <Alert
           variant='danger'
           isInline
-          title='Errors found'
+          title={stepValidation.stepError}
           className='pf-v6-u-mt-lg'
         />
       )}

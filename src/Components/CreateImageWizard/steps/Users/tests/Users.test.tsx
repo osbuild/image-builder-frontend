@@ -84,4 +84,76 @@ describe('Users Component', () => {
       );
     });
   });
+
+  describe('Image mode validation', () => {
+    test('shows error alert when image mode is selected with no users', () => {
+      renderWithRedux(<UsersStep attemptedNext={true} />, {
+        blueprintMode: 'image',
+        users: [],
+      });
+
+      expect(
+        screen.getByText(
+          'At least one user is required in image mode to be able to log in.',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('shows error alert when image mode is selected with empty username', () => {
+      renderWithRedux(<UsersStep attemptedNext={true} />, {
+        blueprintMode: 'image',
+        users: [
+          {
+            name: '',
+            password: '',
+            ssh_key: '',
+            isAdministrator: false,
+            groups: [],
+            hasPassword: false,
+          },
+        ],
+      });
+
+      expect(
+        screen.getByText(
+          'At least one user is required in image mode to be able to log in.',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('does not show image mode error when a user is defined', () => {
+      renderWithRedux(<UsersStep attemptedNext={true} />, {
+        blueprintMode: 'image',
+        users: [
+          {
+            name: 'testuser',
+            password: '',
+            ssh_key: '',
+            isAdministrator: false,
+            groups: [],
+            hasPassword: false,
+          },
+        ],
+      });
+
+      expect(
+        screen.queryByText(
+          'At least one user is required in image mode to be able to log in.',
+        ),
+      ).not.toBeInTheDocument();
+    });
+
+    test('does not show error alert in package mode with no users', () => {
+      renderWithRedux(<UsersStep attemptedNext={true} />, {
+        blueprintMode: 'package',
+        users: [],
+      });
+
+      expect(
+        screen.queryByText(
+          'At least one user is required in image mode to be able to log in.',
+        ),
+      ).not.toBeInTheDocument();
+    });
+  });
 });

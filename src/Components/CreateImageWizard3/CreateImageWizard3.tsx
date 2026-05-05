@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Bullseye,
@@ -148,6 +148,9 @@ const CreateImageWizard3 = () => {
   const usersHaveErrors =
     usersValidation.disabledNext || userGroupsValidation.disabledNext;
 
+  const [baseSettingsAttemptedNext, setBaseSettingsAttemptedNext] =
+    useState(false);
+
   const baseSettingsHasErrors =
     targetEnvironments.length === 0 ||
     (isImageMode && !imageSource) ||
@@ -157,7 +160,9 @@ const CreateImageWizard3 = () => {
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     snapshotValidation.disabledNext ||
-    (restrictions.users.required && usersHaveErrors);
+    (baseSettingsAttemptedNext &&
+      restrictions.users.required &&
+      usersHaveErrors);
 
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
@@ -331,9 +336,17 @@ const CreateImageWizard3 = () => {
     _steps: WizardStepType[],
     goToStepByIndex: (index: number) => void,
   ) => {
-    const status = (step.id !== activeStep.id && step.status) || 'default';
-
     const isBaseSettingsStep = step.id === 'base-settings-step';
+    const showBaseSettingsUserError =
+      isBaseSettingsStep &&
+      baseSettingsAttemptedNext &&
+      restrictions.users.required &&
+      usersHaveErrors;
+    const status =
+      showBaseSettingsUserError ||
+      (step.id !== activeStep.id && step.status === 'error')
+        ? 'error'
+        : 'default';
     const hasVisitedBaseSettings = _steps.find(
       (s) => s.id === 'base-settings-step',
     )?.isVisited;
@@ -409,6 +422,13 @@ const CreateImageWizard3 = () => {
             <CustomWizardFooter
               disableBack={true}
               disableNext={baseSettingsHasErrors}
+              beforeNext={() => {
+                if (restrictions.users.required && usersHaveErrors) {
+                  setBaseSettingsAttemptedNext(true);
+                  return false;
+                }
+                return true;
+              }}
               isOnPremise={isOnPremise}
             />
           }
@@ -437,7 +457,12 @@ const CreateImageWizard3 = () => {
                 restrictions.openscap.shouldHide && restrictions.fips.shouldHide
               ) && <OscapStep key='oscap' />,
               restrictions.users.required && <UserGroupsStep key='groups' />,
-              restrictions.users.required && <UsersStep key='users' />,
+              restrictions.users.required && (
+                <UsersStep
+                  key='users'
+                  attemptedNext={baseSettingsAttemptedNext}
+                />
+              ),
             ]
               .filter(Boolean)
               .flatMap((component, index, array) =>

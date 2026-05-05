@@ -115,6 +115,7 @@ export type UsersStepValidation = {
     [key: string]: { [key: string]: string };
   };
   disabledNext: boolean;
+  stepError?: string;
 };
 
 export function useIsBlueprintValid(): boolean {
@@ -843,11 +844,11 @@ export function useUsersValidation(): UsersStepValidation {
   ) {
     if (blueprintMode === 'image') {
       return {
-        // the User step is required in image mode
-        // blocking Next without a render error is sufficient
         errors: {},
         warnings: {},
         disabledNext: true,
+        stepError:
+          'At least one user is required in image mode to be able to log in.',
       };
     }
 

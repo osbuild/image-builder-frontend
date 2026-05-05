@@ -459,8 +459,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   return true;
                 }}
                 disableNext={
-                  usersValidation.disabledNext ||
-                  userGroupsValidation.disabledNext
+                  usersStepAttemptedNext &&
+                  (usersValidation.disabledNext ||
+                    userGroupsValidation.disabledNext)
                 }
                 isOnPremise={isOnPremise}
               />

@@ -25,6 +25,14 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
       <Content>
         <Title headingLevel='h2' size='lg'>
           Users
+          {blueprintMode === 'image' && (
+            <span
+              className='pf-v6-u-text-color-status-danger'
+              aria-hidden='true'
+            >
+              {' *'}
+            </span>
+          )}
         </Title>
         <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
           Create user accounts to manage access to your image. All usernames
