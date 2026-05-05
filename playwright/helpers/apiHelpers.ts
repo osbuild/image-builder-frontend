@@ -147,7 +147,7 @@ export const waitUntilRepositoryIsSearchable = async (
   { intervalMs = 2_000, timeoutMs = 30_000 } = {},
 ): Promise<void> => {
   const headers = await getAuthHeaders(page);
-  const endpoint = `/api/content-sources/v1/repositories/?search=${encodeURIComponent(repositoryName)}`;
+  const endpoint = `/api/content-sources/v1/repositories/?search=${encodeURIComponent(repositoryName)}&available_for_arch=x86_64&origin=external,upload,community&content_type=rpm&extended_release=none&available_for_version=10`;
   const deadline = Date.now() + timeoutMs;
 
   while (Date.now() < deadline) {
