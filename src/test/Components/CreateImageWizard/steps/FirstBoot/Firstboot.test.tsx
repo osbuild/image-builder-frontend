@@ -10,7 +10,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { clickWithWait, typeWithWait } from '@/test/testUtils';
+import { clickWithWait } from '@/test/testUtils';
 
 import {
   CREATE_BLUEPRINT,
@@ -62,11 +62,7 @@ const selectSimplifiedOscapProfile = async () => {
   });
   await clickWithWait(user, openscapRadio);
   const openScapSelect = await screen.findByTestId('profileSelect');
-  const typeahead = await within(openScapSelect).findByRole('textbox', {
-    name: /type to filter/i,
-  });
-  await clickWithWait(user, typeahead);
-  await typeWithWait(user, typeahead, 'simplified');
+  await clickWithWait(user, openScapSelect);
 
   const simplifiedProfile = await screen.findByRole('option', {
     name: /simplified profile/i,
