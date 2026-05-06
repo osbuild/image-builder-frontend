@@ -58,6 +58,7 @@ const Release = ({ release }: ReleaseProps) => {
     'fedora-42': 'Fedora 42',
     'fedora-43': 'Fedora 43',
     'fedora-44': 'Fedora 44',
+    hummingbird: 'Fedora Hummingbird',
   };
 
   return <p>{releaseDisplayValue[release]}</p>;

@@ -66,7 +66,20 @@ type BootcVersionInfo = {
   minor: string | undefined;
 };
 
-const parseBootcReference = (ref: string): BootcVersionInfo | undefined => {
+type BootcReferenceInfo =
+  | {
+      type: 'rhel';
+      major: string;
+      minor: string | undefined;
+    }
+  | {
+      type: 'hummingbird';
+    };
+
+// Cockpit / on-prem references: registry.redhat.io/rhel<N>/rhel-bootc:<version>
+const parseCockpitBootcReference = (
+  ref: string,
+): BootcVersionInfo | undefined => {
   const rhelPathMatch = ref.match(/\/rhel(\d+)\//);
   if (!rhelPathMatch) {
     return undefined;
@@ -91,29 +104,75 @@ const parseBootcReference = (ref: string): BootcVersionInfo | undefined => {
   return { major: pathMajor, minor: undefined };
 };
 
+// Hosted service references: .../image-builder-bootc-foundry/<name>-<target>:<tag>
+const parseHostedBootcReference = (
+  ref: string,
+): BootcReferenceInfo | undefined => {
+  const foundryMatch = ref.match(
+    /\/image-builder-bootc-foundry\/([^:]+?)(?::[^/]*)?$/,
+  );
+  if (!foundryMatch) {
+    return undefined;
+  }
+  const imageName = foundryMatch[1];
+
+  if (imageName.startsWith('hummingbird')) {
+    return { type: 'hummingbird' };
+  }
+
+  const rhelMatch = imageName.match(/^rhel-(\d+)/);
+  if (rhelMatch) {
+    return { type: 'rhel', major: rhelMatch[1], minor: undefined };
+  }
+
+  return undefined;
+};
+
 /**
- * Maps a bootc image reference (e.g. from image mode builds) to a libosinfo shortID.
- * Used when building Launch/Install URLs for cockpit-machines when distribution is not set.
- * Parses the image tag to return major.minor when available.
+ * Maps a bootc image reference to a libosinfo shortID.
+ * Supports both Cockpit references (registry.redhat.io/rhel<N>/rhel-bootc:<version>)
+ * and hosted service references (.../image-builder-bootc-foundry/<name>-<target>:<tag>).
  *
- * @param ref - The bootc image reference (e.g. 'registry.redhat.io/rhel9/rhel-bootc:9.7')
- * @returns The libosinfo shortID (e.g. 'rhel9.7', 'rhel10.1', 'rhel9.0') or undefined if not mappable
+ * @param ref - The bootc image reference
+ * @returns The libosinfo shortID (e.g. 'rhel9.7', 'rhel10.0') or undefined if not mappable
  */
 export const bootcReferenceToOSShortId = (ref: string): string | undefined => {
-  const info = parseBootcReference(ref);
-  if (!info) return undefined;
-  return `rhel${info.major}.${info.minor ?? '0'}`;
+  const cockpitInfo = parseCockpitBootcReference(ref);
+  if (cockpitInfo) {
+    return `rhel${cockpitInfo.major}.${cockpitInfo.minor ?? '0'}`;
+  }
+
+  const hostedInfo = parseHostedBootcReference(ref);
+  if (hostedInfo && hostedInfo.type === 'rhel') {
+    return `rhel${hostedInfo.major}.0`;
+  }
+
+  return undefined;
 };
 
 /**
  * Maps a bootc image reference to a display label for the OS column.
- * Parses the image tag to show major and minor version when available.
+ * Supports both Cockpit references (registry.redhat.io/rhel<N>/rhel-bootc:<version>)
+ * and hosted service references (.../image-builder-bootc-foundry/<name>-<target>:<tag>).
  *
- * @param ref - The bootc image reference (e.g. 'registry.redhat.io/rhel10/rhel-bootc:10.1')
- * @returns Display label (e.g. 'RHEL 10.1', 'RHEL 9') or 'Image mode' if not recognized
+ * @param ref - The bootc image reference
+ * @returns Display label (e.g. 'RHEL 10.1', 'Fedora Hummingbird') or 'Image mode' if not recognized
  */
 export const bootcReferenceToOSDisplayLabel = (ref: string): string => {
-  const info = parseBootcReference(ref);
-  if (!info) return 'Image mode';
-  return info.minor ? `RHEL ${info.major}.${info.minor}` : `RHEL ${info.major}`;
+  const cockpitInfo = parseCockpitBootcReference(ref);
+  if (cockpitInfo) {
+    return cockpitInfo.minor
+      ? `RHEL ${cockpitInfo.major}.${cockpitInfo.minor}`
+      : `RHEL ${cockpitInfo.major}`;
+  }
+
+  const hostedInfo = parseHostedBootcReference(ref);
+  if (hostedInfo) {
+    if (hostedInfo.type === 'hummingbird') {
+      return 'Fedora Hummingbird';
+    }
+    return `RHEL ${hostedInfo.major}`;
+  }
+
+  return 'Image mode';
 };

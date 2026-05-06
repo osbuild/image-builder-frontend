@@ -439,6 +439,52 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   } as unknown as ComposesResponseItem,
+  {
+    id: 'image-mode-bootc-rhel10-hosted',
+    image_name: 'image-mode-rhel10-hosted',
+    created_at: '2025-06-01T10:00:00Z',
+    request: {
+      distribution: 'rhel-10.1',
+      bootc: {
+        reference:
+          'quay.io/redhat-services-prod/insights-management-tenant/image-builder-bootc-foundry/rhel-10-ec2:latest',
+      },
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'aws',
+          upload_request: {
+            type: 'aws',
+            options: {
+              share_with_accounts: ['123123123123'],
+            },
+          },
+        },
+      ],
+    },
+  } as unknown as ComposesResponseItem,
+  {
+    id: 'image-mode-bootc-hummingbird',
+    image_name: 'image-mode-hummingbird',
+    created_at: '2025-06-01T11:00:00Z',
+    request: {
+      distribution: 'hummingbird',
+      bootc: {
+        reference:
+          'quay.io/redhat-services-prod/insights-management-tenant/image-builder-bootc-foundry/hummingbird-qcow2:latest',
+      },
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'guest-image',
+          upload_request: {
+            type: 'aws.s3',
+            options: {},
+          },
+        },
+      ],
+    },
+  } as unknown as ComposesResponseItem,
 ];
 
 export const mockComposeImageModeRhel9 = mockComposes.find(
@@ -1040,6 +1086,67 @@ export const mockStatus = (composeId: string): ComposeStatus => {
             image_type: 'guest-image',
             upload_request: {
               type: 'local',
+              options: {},
+            },
+          },
+        ],
+      },
+    } as unknown as ComposeStatus,
+    'image-mode-bootc-rhel10-hosted': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            ami: 'ami-0217b81d9be50e44b',
+            region: 'us-east-1',
+          },
+          status: 'success',
+          type: 'aws',
+        },
+      },
+      request: {
+        distribution: 'rhel-10.1',
+        bootc: {
+          reference:
+            'quay.io/redhat-services-prod/insights-management-tenant/image-builder-bootc-foundry/rhel-10-ec2:latest',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
+            },
+          },
+        ],
+      },
+    } as unknown as ComposeStatus,
+    'image-mode-bootc-hummingbird': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://image-builder-s3-bucket.s3.amazonaws.com/hummingbird-qcow2',
+          },
+          status: 'success',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        distribution: 'hummingbird',
+        bootc: {
+          reference:
+            'quay.io/redhat-services-prod/insights-management-tenant/image-builder-bootc-foundry/hummingbird-qcow2:latest',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'aws.s3',
               options: {},
             },
           },

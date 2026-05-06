@@ -66,12 +66,13 @@ describe('Images Table', () => {
 
     await screen.findByTestId('images-table');
 
-    // The image-mode entry is at the end of mockComposes (page 3).
-    // Navigate forward twice to reach it.
+    // The image-mode entry is on page 2 of mockComposes.
+    // Navigate forward once to reach it.
     const pagination = await screen.findByTestId('images-pagination-top');
-    const nextButtons = await within(pagination).findAllByRole('button');
-    await user.click(nextButtons[nextButtons.length - 1]);
-    await user.click(nextButtons[nextButtons.length - 1]);
+    const nextButton = await within(pagination).findByRole('button', {
+      name: /go to next page/i,
+    });
+    await user.click(nextButton);
 
     const table = await screen.findByTestId('images-table');
 
