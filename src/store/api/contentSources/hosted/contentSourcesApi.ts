@@ -121,6 +121,7 @@ const injectedRtkApi = api.injectEndpoints({
           snapshot_uuids: queryArg.snapshotUuids,
           extended_release: queryArg.extendedRelease,
           extended_release_version: queryArg.extendedReleaseVersion,
+          restrict_to_major: queryArg.restrictToMajor,
           sort_by: queryArg.sortBy,
         },
       }),
@@ -245,6 +246,8 @@ export type ListTemplatesApiArg = {
   extendedRelease?: string;
   /** Filter templates by extended release version (e.g., 9.4). Supports comma-separated lists (e.g., '9.4,9.6'). Use 'none' to filter templates without extended release versions. */
   extendedReleaseVersion?: string;
+  /** When true, major versions in the version filter only match templates without an extended release version. Specific minor versions in the version filter are still matched. */
+  restrictToMajor?: boolean;
   /** Sort the response data based on specific parameters. Sort criteria can include `name`, `arch`, and `version`. */
   sortBy?: string;
 };
