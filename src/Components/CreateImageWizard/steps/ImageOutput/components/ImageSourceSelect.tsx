@@ -274,16 +274,19 @@ const BootcImageSourceSelect = () => {
     dispatch(changeDistribution(defaultItem.distro as Distributions));
   }, [bootcDistributions, dispatch, imageSource]);
 
-  // Deduplicate by name — the API returns one entry per target type,
+  // Filter out minor versions (e.g. rhel-10.1, etc.), the backend returns
+  // both major and minor versions, we want to show only major versions
+  // for now.
+  // Then, deduplicate by name — the API returns one entry per target type,
   // but the dropdown should show one entry per base image.
-  const uniqueDistributions = bootcDistributions?.reduce<
-    BootcDistributionItem[]
-  >((acc, item) => {
-    if (!acc.some((d) => d.name === item.name)) {
-      acc.push(item);
-    }
-    return acc;
-  }, []);
+  const uniqueDistributions = bootcDistributions
+    ?.filter((d) => !d.name.includes('.'))
+    .reduce<BootcDistributionItem[]>((acc, item) => {
+      if (!acc.some((d) => d.name === item.name)) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
 
   const selectedItem = bootcDistributions?.find(
     (d) => d.reference === imageSource,
