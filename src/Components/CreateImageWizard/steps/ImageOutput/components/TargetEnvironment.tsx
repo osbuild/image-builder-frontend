@@ -8,6 +8,7 @@ import {
   FormGroup,
   Radio,
   Spinner,
+  Tooltip,
 } from '@patternfly/react-core';
 
 import { useTargetEnvironmentCategories } from '@/Hooks';
@@ -44,6 +45,28 @@ import Gcp from './Gcp';
 
 const TEXT_WRAP_WIDTH = '54rem';
 const EMPTY_ENVIRONMENTS: string[] = [];
+
+const createLabelWithTooltip = (
+  prefix: string,
+  tooltipText: string,
+  description: string,
+) => {
+  return (
+    <>
+      {prefix} -{' '}
+      <Tooltip content={description}>
+        <span
+          style={{
+            textDecoration: 'underline dashed',
+            textDecorationColor: 'gray',
+          }}
+        >
+          {tooltipText}
+        </span>
+      </Tooltip>
+    </>
+  );
+};
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
@@ -357,20 +380,12 @@ const TargetEnvironment = () => {
                 className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
                 id='radio-vsphere-ova'
                 name='target-environment'
-                label='VMware vSphere - Open virtualization format (.ova)'
+                label={createLabelWithTooltip(
+                  'VMware vSphere',
+                  'Open virtualization format (.ova)',
+                  'An OVA file is a virtual appliance used by virtualization platforms such as VMware vSphere. It is a package that contains files used to describe a virtual machine, which includes a VMDK image, OVF descriptor file and a manifest file.',
+                )}
                 aria-label='VMware vSphere OVA'
-                description={
-                  <Content
-                    component='small'
-                    style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                  >
-                    An OVA file is a virtual appliance used by virtualization
-                    platforms such as VMware vSphere. It is a package that
-                    contains files used to describe a virtual machine, which
-                    includes a VMDK image, OVF descriptor file and a manifest
-                    file.
-                  </Content>
-                }
                 isChecked={environments.includes('vsphere-ova')}
                 onChange={() => handleSelectSingleEnvironment('vsphere-ova')}
               />
@@ -380,20 +395,12 @@ const TargetEnvironment = () => {
                 id='vsphere-checkbox-ova'
                 isLabelWrapped
                 name='vsphere-checkbox-ova'
-                label='VMware vSphere - Open virtualization format (.ova)'
+                label={createLabelWithTooltip(
+                  'VMware vSphere',
+                  'Open virtualization format (.ova)',
+                  'An OVA file is a virtual appliance used by virtualization platforms such as VMware vSphere. It is a package that contains files used to describe a virtual machine, which includes a VMDK image, OVF descriptor file and a manifest file.',
+                )}
                 aria-label='VMware vSphere checkbox OVA'
-                description={
-                  <Content
-                    component='small'
-                    style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                  >
-                    An OVA file is a virtual appliance used by virtualization
-                    platforms such as VMware vSphere. It is a package that
-                    contains files used to describe a virtual machine, which
-                    includes a VMDK image, OVF descriptor file and a manifest
-                    file.
-                  </Content>
-                }
                 isChecked={environments.includes('vsphere-ova')}
                 isDisabled={isOnlyNetworkInstallerSelected}
                 onChange={() => {
@@ -407,19 +414,12 @@ const TargetEnvironment = () => {
                 className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
                 id='radio-vsphere-vmdk'
                 name='target-environment'
-                label='VMware vSphere - Virtual disk (.vmdk)'
+                label={createLabelWithTooltip(
+                  'VMware vSphere',
+                  'Virtual disk (.vmdk)',
+                  'A VMDK file is a virtual disk that stores the contents of a virtual machine. This disk has to be imported into vSphere using govc import.vmdk, use the OVA version when using the vSphere UI.',
+                )}
                 aria-label='VMware vSphere VMDK'
-                description={
-                  <Content
-                    component='small'
-                    style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                  >
-                    A VMDK file is a virtual disk that stores the contents of a
-                    virtual machine. This disk has to be imported into vSphere
-                    using govc import.vmdk, use the OVA version when using the
-                    vSphere UI.
-                  </Content>
-                }
                 isChecked={environments.includes('vsphere')}
                 onChange={() => handleSelectSingleEnvironment('vsphere')}
               />
@@ -429,19 +429,12 @@ const TargetEnvironment = () => {
                 id='vsphere-checkbox-vmdk'
                 isLabelWrapped
                 name='vsphere-checkbox-vmdk'
-                label='VMware vSphere - Virtual disk (.vmdk)'
+                label={createLabelWithTooltip(
+                  'VMware vSphere',
+                  'Virtual disk (.vmdk)',
+                  'A VMDK file is a virtual disk that stores the contents of a virtual machine. This disk has to be imported into vSphere using govc import.vmdk, use the OVA version when using the vSphere UI.',
+                )}
                 aria-label='VMware vSphere checkbox VMDK'
-                description={
-                  <Content
-                    component='small'
-                    style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                  >
-                    A VMDK file is a virtual disk that stores the contents of a
-                    virtual machine. This disk has to be imported into vSphere
-                    using govc import.vmdk, use the OVA version when using the
-                    vSphere UI.
-                  </Content>
-                }
                 isChecked={environments.includes('vsphere')}
                 isDisabled={isOnlyNetworkInstallerSelected}
                 onChange={() => {
@@ -469,20 +462,12 @@ const TargetEnvironment = () => {
               className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='radio-guest-image'
               name='target-environment'
-              label='Virtualization - Guest image (.qcow2)'
+              label={createLabelWithTooltip(
+                'Virtualization',
+                'Guest image (.qcow2)',
+                'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
+              )}
               aria-label='Virtualization guest image'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  A deployment-ready virtual disk format used by Openshift
-                  Virtualization and libvirt. It allows for efficient storage
-                  usage by only writing the changes made to the disk image
-                  rather than the entire image, ensuring the file only consumes
-                  physical storage as data is written.
-                </Content>
-              }
               isChecked={environments.includes('guest-image')}
               onChange={() => handleSelectSingleEnvironment('guest-image')}
             />
@@ -492,20 +477,12 @@ const TargetEnvironment = () => {
               id='checkbox-guest-image'
               isLabelWrapped
               name='Virtualization guest image'
-              label='Virtualization - Guest image (.qcow2)'
+              label={createLabelWithTooltip(
+                'Virtualization',
+                'Guest image (.qcow2)',
+                'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
+              )}
               aria-label='Virtualization guest image checkbox'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  A deployment-ready virtual disk format used by Openshift
-                  Virtualization and libvirt. It allows for efficient storage
-                  usage by only writing the changes made to the disk image
-                  rather than the entire image, ensuring the file only consumes
-                  physical storage as data is written.
-                </Content>
-              }
               isChecked={environments.includes('guest-image')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => {
@@ -519,20 +496,12 @@ const TargetEnvironment = () => {
               className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='radio-image-installer'
               name='target-environment'
-              label='Bare metal - Installer (.iso)'
+              label={createLabelWithTooltip(
+                'Bare metal',
+                'Installer (.iso)',
+                'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
+              )}
               aria-label='Bare metal installer'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  This is a standard bootable image used to install RHEL
-                  directly onto physical hardware or &ldquo;bare metal&rdquo;
-                  servers. It contains the necessary installer and kernel to
-                  initialize a system from scratch, ensuring the OS is
-                  configured correctly for your specific hardware environment.
-                </Content>
-              }
               isChecked={environments.includes('image-installer')}
               onChange={() => handleSelectSingleEnvironment('image-installer')}
             />
@@ -542,20 +511,12 @@ const TargetEnvironment = () => {
               id='checkbox-image-installer'
               isLabelWrapped
               name='Bare metal installer'
-              label='Bare metal - Installer (.iso)'
+              label={createLabelWithTooltip(
+                'Bare metal',
+                'Installer (.iso)',
+                'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
+              )}
               aria-label='Bare metal installer checkbox'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  This is a standard bootable image used to install RHEL
-                  directly onto physical hardware or &ldquo;bare metal&rdquo;
-                  servers. It contains the necessary installer and kernel to
-                  initialize a system from scratch, ensuring the OS is
-                  configured correctly for your specific hardware environment.
-                </Content>
-              }
               isChecked={environments.includes('image-installer')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => {
@@ -570,12 +531,6 @@ const TargetEnvironment = () => {
             name='target-environment'
             label='Container installer (.iso)'
             aria-label='Container installer'
-            description={
-              <Content component='small' style={{ maxWidth: TEXT_WRAP_WIDTH }}>
-                Install a bootable container to bare metal or virtual machines
-                using the guided Anaconda installer.
-              </Content>
-            }
             isChecked={environments.includes('bootable-container-iso')}
             onChange={() =>
               handleSelectSingleEnvironment('bootable-container-iso')
@@ -588,20 +543,12 @@ const TargetEnvironment = () => {
               className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='radio-network-installer'
               name='target-environment'
-              label='Network - Installer (.iso)'
+              label={createLabelWithTooltip(
+                'Network',
+                'Installer (.iso)',
+                'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
+              )}
               aria-label='Network installer'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  This is a lightweight image that differs from a standard
-                  &quot;full&quot; ISO by requiring an active network connection
-                  to pull the latest software directly from package
-                  repositories, as no OS packages are stored locally on the
-                  image.
-                </Content>
-              }
               isChecked={environments.includes('network-installer')}
               onChange={() =>
                 handleSelectSingleEnvironment('network-installer')
@@ -613,20 +560,12 @@ const TargetEnvironment = () => {
               id='checkbox-network-installer'
               isLabelWrapped
               name='Network - Installer'
-              label='Network - Installer (.iso)'
+              label={createLabelWithTooltip(
+                'Network',
+                'Installer (.iso)',
+                'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
+              )}
               aria-label='Network installer checkbox'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  This is a lightweight image that differs from a standard
-                  &quot;full&quot; ISO by requiring an active network connection
-                  to pull the latest software directly from package
-                  repositories, as no OS packages are stored locally on the
-                  image.
-                </Content>
-              }
               isChecked={environments.includes('network-installer')}
               isDisabled={isOtherEnvironmentSelected}
               onChange={() => {
@@ -640,19 +579,12 @@ const TargetEnvironment = () => {
               className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='radio-pxe-boot'
               name='target-environment'
-              label='Network - PXE boot (.tar.xz)'
+              label={createLabelWithTooltip(
+                'Network',
+                'PXE boot (.tar.xz)',
+                'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
+              )}
               aria-label='PXE boot image'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  A PXE boot image is a compressed archive containing the
-                  kernel, initramfs, and root filesystem needed to boot a system
-                  over the network using the Preboot Execution Environment (PXE)
-                  protocol.
-                </Content>
-              }
               isChecked={environments.includes('pxe-tar-xz')}
               onChange={() => handleSelectSingleEnvironment('pxe-tar-xz')}
             />
@@ -662,19 +594,12 @@ const TargetEnvironment = () => {
               id='checkbox-pxe-boot'
               isLabelWrapped
               name='PXE boot image'
-              label='Network - PXE boot (.tar.xz)'
+              label={createLabelWithTooltip(
+                'Network',
+                'PXE boot (.tar.xz)',
+                'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
+              )}
               aria-label='PXE boot image checkbox'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  A PXE boot image is a compressed archive containing the
-                  kernel, initramfs, and root filesystem needed to boot a system
-                  over the network using the Preboot Execution Environment (PXE)
-                  protocol.
-                </Content>
-              }
               isChecked={environments.includes('pxe-tar-xz')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => {
@@ -688,20 +613,12 @@ const TargetEnvironment = () => {
               className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
               id='radio-wsl'
               name='target-environment'
-              label='WSL - Windows Subsystem for Linux (.wsl)'
+              label={createLabelWithTooltip(
+                'WSL',
+                'Windows Subsystem for Linux (.wsl)',
+                "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
+              )}
               aria-label='Windows Subsystem for Linux'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  RHEL on Microsoft&apos;s Windows Subsystem for Linux (WSL) can
-                  be used for development and learning use cases. WSL is
-                  supported by Red Hat under the Validated Software Pattern and
-                  Third Party Component Support Policy, which does not include
-                  production use cases.
-                </Content>
-              }
               isChecked={environments.includes('wsl')}
               onChange={() => handleSelectSingleEnvironment('wsl')}
             />
@@ -711,20 +628,12 @@ const TargetEnvironment = () => {
               id='checkbox-wsl'
               isLabelWrapped
               name='WSL'
-              label='WSL - Windows Subsystem for Linux (.wsl)'
+              label={createLabelWithTooltip(
+                'WSL',
+                'Windows Subsystem for Linux (.wsl)',
+                "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
+              )}
               aria-label='Windows Subsystem for Linux checkbox'
-              description={
-                <Content
-                  component='small'
-                  style={{ maxWidth: TEXT_WRAP_WIDTH }}
-                >
-                  RHEL on Microsoft&apos;s Windows Subsystem for Linux (WSL) can
-                  be used for development and learning use cases. WSL is
-                  supported by Red Hat under the Validated Software Pattern and
-                  Third Party Component Support Policy, which does not include
-                  production use cases.
-                </Content>
-              }
               isChecked={environments.includes('wsl')}
               isDisabled={isOnlyNetworkInstallerSelected}
               onChange={() => {
