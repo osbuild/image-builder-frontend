@@ -563,7 +563,9 @@ const TargetEnvironment = () => {
               label={createLabelWithTooltip(
                 'Network',
                 'Installer (.iso)',
-                'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
+                isOtherEnvironmentSelected
+                  ? 'Network installer cannot be combined with other image types'
+                  : 'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
               )}
               aria-label='Network installer checkbox'
               isChecked={environments.includes('network-installer')}
