@@ -69,9 +69,11 @@ describe('Images Table', () => {
     // The image-mode entry is at the end of mockComposes (page 3).
     // Navigate forward twice to reach it.
     const pagination = await screen.findByTestId('images-pagination-top');
-    const nextButtons = await within(pagination).findAllByRole('button');
-    await user.click(nextButtons[nextButtons.length - 1]);
-    await user.click(nextButtons[nextButtons.length - 1]);
+    const nextPage = within(pagination).getByRole('button', {
+      name: 'Go to next page',
+    });
+    await user.click(nextPage);
+    await user.click(nextPage);
 
     const table = await screen.findByTestId('images-table');
 
@@ -88,6 +90,45 @@ describe('Images Table', () => {
     const cells = within(imageModeRow).getAllByRole('cell');
     const osCell = cells[3];
     expect(osCell).toHaveTextContent('RHEL 9.7');
+  });
+
+  test('displays Package mode and Image mode labels for blueprint-linked composes', async () => {
+    await renderCustomRoutesWithReduxRouter();
+
+    await screen.findByTestId('images-table');
+
+    // The blueprint-linked composes are on page 2 of mockComposes.
+    const pagination = await screen.findByTestId('images-pagination-top');
+    const nextPage = within(pagination).getByRole('button', {
+      name: 'Go to next page',
+    });
+    await user.click(nextPage);
+
+    const table = await screen.findByTestId('images-table');
+
+    const packageModeRow = await waitFor(() => {
+      const rows = within(table).getAllByRole('row');
+      const dataRows = rows.slice(1);
+      const row = dataRows.find((r) =>
+        within(r).queryByText('package-mode-bp-image'),
+      );
+      if (!row) throw new Error('Package mode row not found');
+      return row;
+    });
+    expect(
+      within(packageModeRow).getByText('Package mode'),
+    ).toBeInTheDocument();
+
+    const imageModeRow = await waitFor(() => {
+      const rows = within(table).getAllByRole('row');
+      const dataRows = rows.slice(1);
+      const row = dataRows.find((r) =>
+        within(r).queryByText('image-mode-bp-image'),
+      );
+      if (!row) throw new Error('Image mode row not found');
+      return row;
+    });
+    expect(within(imageModeRow).getByText('Image mode')).toBeInTheDocument();
   });
 
   test('check download compose request action', async () => {
@@ -222,8 +263,10 @@ describe('Images Table', () => {
 
     // Go to next page on the table
     const pagination = await screen.findByTestId('images-pagination-top');
-    const pageButtons = await within(pagination).findAllByRole('button');
-    await user.click(pageButtons[pageButtons.length - 1]);
+    const nextPage = within(pagination).getByRole('button', {
+      name: 'Go to next page',
+    });
+    await user.click(nextPage);
     await screen.findAllByText(/9e7d0d51-7106-42ab-98f2-f89872a9d599/i);
 
     rows = [];

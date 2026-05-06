@@ -399,6 +399,51 @@ export const mockComposes: ComposesResponseItem[] = [
     },
   },
   {
+    id: 'bp-package-mode-compose',
+    image_name: 'package-mode-bp-image',
+    created_at: '2024-02-01T10:00:00Z',
+    blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc',
+    blueprint_version: 1,
+    request: {
+      distribution: RHEL_9,
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'aws',
+          upload_request: {
+            type: 'aws',
+            options: {
+              share_with_accounts: ['123123123123'],
+            },
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'bp-image-mode-compose',
+    image_name: 'image-mode-bp-image',
+    created_at: '2024-02-01T10:00:00Z',
+    blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc',
+    blueprint_version: 1,
+    request: {
+      distribution: RHEL_9,
+      bootc: {
+        reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+      },
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'guest-image',
+          upload_request: {
+            type: 'aws.s3',
+            options: {},
+          },
+        },
+      ],
+    },
+  },
+  {
     id: '63e42aaf-b543-41c6-899f-3de1e61838dc',
     image_name: 'dark-chocolate-v2',
     created_at: '2023-09-08T14:38:00.000Z',
@@ -418,7 +463,6 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   },
-  // Cockpit-only: bootc field and 'local' upload type are not in the hosted API types yet
   {
     id: 'image-mode-bootc-rhel9',
     image_name: 'image-mode-rhel9',
@@ -1018,7 +1062,6 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         ],
       },
     },
-    // Cockpit-only: bootc field and 'local' upload type are not in the hosted API types yet
     'image-mode-bootc-rhel9': {
       image_status: {
         status: 'success',
@@ -1040,6 +1083,62 @@ export const mockStatus = (composeId: string): ComposeStatus => {
             image_type: 'guest-image',
             upload_request: {
               type: 'local',
+              options: {},
+            },
+          },
+        ],
+      },
+    } as unknown as ComposeStatus,
+    'bp-package-mode-compose': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            ami: 'ami-0217b81d9be50e44d',
+            region: 'us-east-1',
+          },
+          status: 'success',
+          type: 'aws',
+        },
+      },
+      request: {
+        distribution: RHEL_9,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
+            },
+          },
+        ],
+      },
+    },
+    'bp-image-mode-compose': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://s3.amazonaws.com/bp-image-mode-compose-disk.qcow2',
+          },
+          status: 'success',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        distribution: RHEL_9,
+        bootc: {
+          reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'aws.s3',
               options: {},
             },
           },

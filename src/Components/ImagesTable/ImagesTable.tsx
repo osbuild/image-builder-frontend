@@ -633,16 +633,15 @@ const Row = ({
               >
                 {compose.image_name || compose.id}
               </Button>{' '}
-              {isOnPremise &&
-                (bootcCompose?.request.bootc ? (
-                  <Label isCompact color='yellow'>
-                    Image mode
-                  </Label>
-                ) : (
-                  <Label isCompact color='teal'>
-                    Package mode
-                  </Label>
-                ))}
+              {bootcCompose?.request.bootc ? (
+                <Label isCompact color='yellow'>
+                  Image mode
+                </Label>
+              ) : (
+                <Label isCompact color='teal'>
+                  Package mode
+                </Label>
+              )}
             </>
           ) : (
             <span> {compose.image_name || compose.id}</span>
