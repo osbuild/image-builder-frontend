@@ -655,14 +655,15 @@ const Row = ({
           {timestampToDisplayString(compose.created_at)}
         </Td>
         <Td dataLabel='Release'>
-          {bootcCompose?.request.bootc?.reference ? (
-            <p>
-              {bootcReferenceToOSDisplayLabel(
-                bootcCompose.request.bootc.reference,
-              )}
-            </p>
-          ) : (
+          {compose.request.distribution ? (
             <Release release={compose.request.distribution} />
+          ) : (
+            <p>
+              {bootcCompose?.request.bootc?.reference &&
+                bootcReferenceToOSDisplayLabel(
+                  bootcCompose.request.bootc.reference,
+                )}
+            </p>
           )}
         </Td>
         <Td dataLabel='Target'>
