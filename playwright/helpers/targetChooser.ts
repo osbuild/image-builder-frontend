@@ -52,17 +52,17 @@ export const selectDistro = async (
   switch (distro) {
     case 'rhel10':
       await page
-        .getByRole('option', { name: 'Red Hat Enterprise Linux (RHEL) 10' })
+        .getByRole('option', { name: /Red Hat Enterprise Linux (RHEL) 10/ })
         .click();
       break;
     case 'rhel9':
       await page
-        .getByRole('option', { name: 'Red Hat Enterprise Linux (RHEL) 9' })
+        .getByRole('option', { name: /Red Hat Enterprise Linux (RHEL) 9/ })
         .click();
       break;
     case 'rhel8':
       await page
-        .getByRole('option', { name: 'Red Hat Enterprise Linux (RHEL) 8' })
+        .getByRole('option', { name: /Red Hat Enterprise Linux (RHEL) 8/ })
         .click();
       break;
   }
