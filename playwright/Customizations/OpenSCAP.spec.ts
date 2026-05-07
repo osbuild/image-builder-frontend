@@ -12,7 +12,6 @@ import {
   ibFrame,
   navigateToLandingPage,
 } from '../helpers/navHelpers';
-import { selectDistro } from '../helpers/targetChooser';
 import {
   createBlueprint,
   deleteBlueprint,
@@ -50,10 +49,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
   });
 
   await test.step('WSL + Installer shows WSL is not supported', async () => {
-    await selectDistro(frame, 'rhel9');
-    await frame
-      .getByRole('checkbox', { name: 'Windows Subsystem for Linux' })
-      .click();
+    await fillInImageOutput(frame, 'wsl', 'rhel9');
     await frame.getByRole('checkbox', { name: 'Bare metal installer' }).click();
     await registerLater(frame);
 
