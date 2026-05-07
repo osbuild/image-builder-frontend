@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   Flex,
   FlexItem,
-  Form,
   FormGroup,
   HelperText,
   HelperTextItem,
@@ -11,6 +10,7 @@ import {
   MenuToggleElement,
   Select,
   SelectOption,
+  Stack,
   TextInput,
 } from '@patternfly/react-core';
 
@@ -85,56 +85,54 @@ const Aws = () => {
   const region = useAppSelector(selectAwsRegion);
 
   return (
-    <Form className='pf-v6-u-pb-md'>
-      <>
-        {!isOnPremise && (
-          <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-            <FlexItem>
-              <FormGroup label='AWS account ID' isRequired>
-                <ValidatedInput
-                  aria-label='aws account id'
-                  value={shareWithAccount || ''}
-                  validator={isAwsAccountIdValid}
-                  onChange={(_event, value) =>
-                    dispatch(changeAwsAccountId(value))
-                  }
-                  helperText={
-                    !shareWithAccount
-                      ? 'AWS account ID is required'
-                      : 'Should be 12 characters long'
-                  }
-                  handleClear={() => dispatch(changeAwsAccountId(''))}
-                />
-              </FormGroup>
-            </FlexItem>
-            <FlexItem>
-              <FormGroup label='Default region' isRequired>
-                <TextInput
-                  value={'us-east-1'}
-                  type='text'
-                  aria-label='default region'
-                  readOnlyVariant='default'
-                />
-              </FormGroup>
-              <HelperText className='pf-v6-u-pt-sm'>
-                <HelperTextItem>
-                  Images are built in the default region but can be copied to
-                  other regions later.
-                </HelperTextItem>
-              </HelperText>
-            </FlexItem>
-          </Flex>
-        )}
-        {isOnPremise && (
-          <FormGroup label='Region' isRequired>
-            <AWSRegion
-              value={region || ''}
-              onChange={(v) => dispatch(changeAwsRegion(v))}
-            />
-          </FormGroup>
-        )}
-      </>
-    </Form>
+    <Stack hasGutter className='pf-v6-u-pb-md'>
+      {!isOnPremise && (
+        <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+          <FlexItem>
+            <FormGroup label='AWS account ID' isRequired>
+              <ValidatedInput
+                aria-label='aws account id'
+                value={shareWithAccount || ''}
+                validator={isAwsAccountIdValid}
+                onChange={(_event, value) =>
+                  dispatch(changeAwsAccountId(value))
+                }
+                helperText={
+                  !shareWithAccount
+                    ? 'AWS account ID is required'
+                    : 'Should be 12 characters long'
+                }
+                handleClear={() => dispatch(changeAwsAccountId(''))}
+              />
+            </FormGroup>
+          </FlexItem>
+          <FlexItem>
+            <FormGroup label='Default region' isRequired>
+              <TextInput
+                value={'us-east-1'}
+                type='text'
+                aria-label='default region'
+                readOnlyVariant='default'
+              />
+            </FormGroup>
+            <HelperText className='pf-v6-u-pt-sm'>
+              <HelperTextItem>
+                Images are built in the default region but can be copied to
+                other regions later.
+              </HelperTextItem>
+            </HelperText>
+          </FlexItem>
+        </Flex>
+      )}
+      {isOnPremise && (
+        <FormGroup label='Region' isRequired>
+          <AWSRegion
+            value={region || ''}
+            onChange={(v) => dispatch(changeAwsRegion(v))}
+          />
+        </FormGroup>
+      )}
+    </Stack>
   );
 };
 

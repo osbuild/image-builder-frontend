@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Form } from '@patternfly/react-core';
-
 import { useSecuritySummary } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppSelector } from '@/store/hooks';
@@ -33,7 +31,7 @@ const ReviewStep = () => {
   });
 
   return (
-    <Form>
+    <>
       <FormHeader />
       <ImageOverview />
       <Registration restrictions={restrictions} />
@@ -50,7 +48,7 @@ const ReviewStep = () => {
           oscapServices={security.services}
         />
       )}
-    </Form>
+    </>
   );
 };
 
