@@ -22,8 +22,8 @@ describe('RepeatableBuild', () => {
       },
     );
 
-    expect(screen.getByText('Enable repeatable build')).toBeInTheDocument();
-    expect(screen.getByText('Repeatable build')).toBeInTheDocument();
+    const repeatableBuildTexts = screen.getAllByText('Repeatable build');
+    expect(repeatableBuildTexts).toHaveLength(2); // Card title and review group heading
     expect(screen.getByText('Enabled')).toBeInTheDocument();
   });
 

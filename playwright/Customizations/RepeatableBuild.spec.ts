@@ -103,7 +103,7 @@ test('Create a blueprint with Repeatable build customization', async ({
   await test.step('Check Repeatable build step behaviour with no repos', async () => {
     await frame.getByRole('button', { name: 'Review image' }).click();
     await expect(
-      frame.getByRole('heading', { name: 'Enable repeatable build' }),
+      frame.getByRole('heading', { name: 'Repeatable build' }),
     ).toBeVisible();
     await expect(frame.getByText('Dec 24, 2025')).toBeVisible();
   });
@@ -127,7 +127,7 @@ test('Create a blueprint with Repeatable build customization', async ({
         .click();
       await frame.getByRole('button', { name: 'Review image' }).click();
       await expect(
-        frame.getByRole('heading', { name: 'Enable repeatable build' }),
+        frame.getByRole('heading', { name: 'Repeatable build' }),
       ).toBeVisible();
       await expect(frame.getByText('Dec 24, 2025')).toBeVisible();
       await expect(frame.getByText('EPEL 10 Everything x86_64')).toBeVisible();
@@ -152,7 +152,7 @@ test('Create a blueprint with Repeatable build customization', async ({
     await frame.getByRole('menuitem').first().click();
     await frame.getByRole('button', { name: 'Review image' }).click();
     await expect(
-      frame.getByRole('heading', { name: 'Enable repeatable build' }),
+      frame.getByRole('heading', { name: 'Repeatable build' }),
     ).toBeVisible();
   });
 
