@@ -10,6 +10,8 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import { clickWithWait, typeWithWait } from '@/test/testUtils';
+
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
@@ -48,7 +50,7 @@ const goToFirstBootStep = async (): Promise<void> => {
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await waitFor(() => user.click(guestImageCheckBox));
+  await clickWithWait(user, guestImageCheckBox);
   await clickRegisterLater();
   await goToStep(/Advanced settings/);
 };
@@ -58,18 +60,18 @@ const selectSimplifiedOscapProfile = async () => {
   const openscapRadio = await screen.findByRole('radio', {
     name: /use a default openscap profile/i,
   });
-  await user.click(openscapRadio);
+  await clickWithWait(user, openscapRadio);
   const openScapSelect = await screen.findByTestId('profileSelect');
   const typeahead = await within(openScapSelect).findByRole('textbox', {
     name: /type to filter/i,
   });
-  await waitFor(() => user.click(typeahead));
-  await waitFor(() => user.type(typeahead, 'simplified'));
+  await clickWithWait(user, typeahead);
+  await typeWithWait(user, typeahead, 'simplified');
 
   const simplifiedProfile = await screen.findByRole('option', {
     name: /simplified profile/i,
   });
-  await waitFor(() => user.click(simplifiedProfile));
+  await clickWithWait(user, simplifiedProfile);
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
@@ -90,7 +92,7 @@ const clickRevisitButton = async () => {
   // eslint-disable-next-line testing-library/no-node-access
   const card = heading.closest('.pf-v6-c-card') as HTMLElement;
   const editButton = within(card).getByRole('button', { name: /Edit/i });
-  await waitFor(() => user.click(editButton));
+  await clickWithWait(user, editButton);
 };
 
 describe('First Boot step', () => {
@@ -251,22 +253,20 @@ describe('First Boot edit mode', () => {
     const id = mockBlueprintIds['firstBoot'];
     await renderEditMode(id);
 
-    await waitFor(() =>
-      user.click(
-        screen.getByRole('button', {
-          name: /Base settings/i,
-        }),
-      ),
+    await clickWithWait(
+      user,
+      screen.getByRole('button', {
+        name: /Base settings/i,
+      }),
     );
     await screen.findByRole('heading', { name: /Base settings/i });
     await enterBlueprintName();
 
-    await waitFor(() =>
-      user.click(
-        screen.getByRole('button', {
-          name: /Advanced settings/i,
-        }),
-      ),
+    await clickWithWait(
+      user,
+      screen.getByRole('button', {
+        name: /Advanced settings/i,
+      }),
     );
     await screen.findByRole('heading', { name: /Advanced settings/i });
 
