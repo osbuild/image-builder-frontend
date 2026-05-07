@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form } from '@patternfly/react-core';
+import { Stack } from '@patternfly/react-core';
 
 import AzureAuthButton from './components/AzureAuthButton';
 import AzureHyperVSelect from './components/AzureHyperVSelect';
@@ -10,15 +10,13 @@ import TenantIdInput from './components/TenantIdInput';
 
 const Azure = () => {
   return (
-    <Form className='pf-v6-u-pb-md'>
+    <Stack hasGutter className='pf-v6-u-pb-md'>
       <AzureHyperVSelect />
-      <>
-        <TenantIdInput />
-        <AzureAuthButton />
-        <SubscriptionIdInput />
-        <ResourceGroupInput />
-      </>
-    </Form>
+      <TenantIdInput />
+      <AzureAuthButton />
+      <SubscriptionIdInput />
+      <ResourceGroupInput />
+    </Stack>
   );
 };
 

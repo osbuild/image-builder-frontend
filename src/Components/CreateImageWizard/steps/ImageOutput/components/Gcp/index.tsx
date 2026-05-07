@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 import {
-  Form,
   FormGroup,
   MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
+  Stack,
 } from '@patternfly/react-core';
 
 import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
@@ -67,7 +67,7 @@ const Gcp = () => {
   );
 
   return (
-    <Form className='pf-v6-u-pb-md'>
+    <Stack hasGutter className='pf-v6-u-pb-md'>
       <FormGroup label='Account type' isRequired>
         <Select
           isOpen={isOpen}
@@ -113,7 +113,7 @@ const Gcp = () => {
           handleClear={() => dispatch(changeGcpEmail(''))}
         />
       </FormGroup>
-    </Form>
+    </Stack>
   );
 };
 
