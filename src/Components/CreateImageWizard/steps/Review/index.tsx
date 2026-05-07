@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Content, Form, Title } from '@patternfly/react-core';
+import { Content, Title } from '@patternfly/react-core';
 
 import { useSecuritySummary } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
@@ -53,7 +53,7 @@ const ReviewStep = () => {
   });
 
   return (
-    <Form>
+    <>
       <FormHeader />
       <ImageOverview />
       <Registration restrictions={restrictions} />
@@ -68,7 +68,7 @@ const ReviewStep = () => {
         oscapKernelArgs={security.kernel.append}
         oscapServices={security.services}
       />
-    </Form>
+    </>
   );
 };
 
