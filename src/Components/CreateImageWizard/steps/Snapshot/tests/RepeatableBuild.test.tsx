@@ -60,7 +60,7 @@ describe('Repeatable Build Component', () => {
 
       expect(
         await screen.findByRole('heading', {
-          name: /Enable repeatable build/i,
+          name: /Repeatable build/i,
         }),
       ).toBeInTheDocument();
       expect(
