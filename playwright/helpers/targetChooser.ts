@@ -19,7 +19,9 @@ export const selectTarget = async (
       await page.getByRole('checkbox', { name: 'Bare metal' }).click();
       break;
     case 'wsl':
-      await page.getByRole('checkbox', { name: 'WSL' }).click();
+      await page
+        .getByRole('checkbox', { name: 'Windows Subsystem for Linux' })
+        .click();
       break;
     case 'ova':
       await page
@@ -48,7 +50,7 @@ export const selectDistro = async (
    * @param page - the page object
    * @param distro - the distro to select (rhel10, rhel9, rhel8)
    */
-  await page.getByRole('button', { name: 'Red Hat Enterprise Linux' }).click();
+  await page.getByRole('button', { name: /Red Hat Enterprise Linux/ }).click();
   switch (distro) {
     case 'rhel10':
       await page
