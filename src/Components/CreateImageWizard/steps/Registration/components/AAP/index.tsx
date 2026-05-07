@@ -4,11 +4,11 @@ import {
   Checkbox,
   DropEvent,
   FileUpload,
-  Form,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
+  Stack,
 } from '@patternfly/react-core';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
@@ -86,7 +86,7 @@ const AAPRegistration = () => {
   };
 
   return (
-    <Form className='pf-v6-u-pb-md'>
+    <Stack hasGutter className='pf-v6-u-pb-md'>
       <FormGroup
         label='Ansible Callback URL'
         isRequired
@@ -218,7 +218,7 @@ const AAPRegistration = () => {
           )}
         </FormGroup>
       )}
-    </Form>
+    </Stack>
   );
 };
 
