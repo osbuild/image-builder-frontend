@@ -66,7 +66,7 @@ describe('Blueprints', () => {
       }),
     );
 
-    await renderCustomRoutesWithReduxRouter();
+    renderCustomRoutesWithReduxRouter();
     await screen.findByText('No blueprints');
     const emptyStateActions = screen.getAllByRole('button', {
       name: /Create image blueprint/i,

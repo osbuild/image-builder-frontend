@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { createUser } from '@/test/testUtils';
+import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {
   clearKeyboardSearch,
@@ -79,7 +79,7 @@ describe('Locale Component', () => {
       });
       expect(addButton).toBeEnabled();
 
-      await user.click(addButton);
+      await clickWithWait(user, addButton);
       expect(addButton).toBeDisabled();
 
       await removeLanguageAtIndex(user, 0);
