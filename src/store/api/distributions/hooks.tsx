@@ -57,10 +57,6 @@ export const isCustomizationSupported = (
   imageType: ImageTypeInfo | undefined,
   ctx: SupportContext,
 ) => {
-  if (ctx.isImageMode) {
-    return ['filesystem', 'users'].includes(customization);
-  }
-
   if (
     ctx.isOnPremise &&
     // on-premise doesn't allow first boot & repository
@@ -68,6 +64,14 @@ export const isCustomizationSupported = (
     ['repositories', 'firstBoot'].includes(customization)
   ) {
     return false;
+  }
+
+  let supportedOptions = imageType?.supported_blueprint_options;
+  if (ctx.isImageMode) {
+    // Image mode at most supports filesystem and users, and might not support any customization.
+    supportedOptions = supportedOptions?.filter((c) =>
+      ['filesystem', 'users'].includes(c),
+    ) ?? ['filesystem', 'users'];
   }
 
   // only rhel distros support registration
@@ -78,7 +82,6 @@ export const isCustomizationSupported = (
     return false;
   }
 
-  const supportedOptions = imageType?.supported_blueprint_options;
   return !supportedOptions || supportedOptions.includes(customization);
 };
 
@@ -137,16 +140,11 @@ export const useCustomizationRestrictions = ({
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
 
-  const { data } = api.useGetDistributionDetailsQuery(
-    {
-      distro: distro,
-      architecture: [arch],
-      imageType: selectedImageTypes,
-    },
-    {
-      skip: isImageMode,
-    },
-  );
+  const { data } = api.useGetDistributionDetailsQuery({
+    distro: distro,
+    architecture: [arch],
+    imageType: selectedImageTypes,
+  });
 
   const restrictions = useMemo(() => {
     const imageTypes = extractImageTypes({

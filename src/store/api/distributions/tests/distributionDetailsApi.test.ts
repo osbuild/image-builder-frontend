@@ -96,6 +96,19 @@ describe('DISTRO_DETAILS configuration', () => {
       expect(wslSupported).toHaveLength(ALL_CUSTOMIZATIONS.length - 3);
     });
   });
+
+  describe('bootable-container-iso restrictions', () => {
+    it('should allow no customizations', () => {
+      const isoSupported =
+        DISTRO_DETAILS['bootable-container-iso'].supported_blueprint_options;
+
+      // Verify it's an array (not an object due to accidental object spread)
+      expect(Array.isArray(isoSupported)).toBe(true);
+
+      // Should be empty
+      expect(isoSupported).toHaveLength(0);
+    });
+  });
 });
 
 describe('ALL_CUSTOMIZATIONS', () => {
