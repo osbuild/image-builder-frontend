@@ -111,9 +111,11 @@ test('Image mode blueprint create, edit, export, import', async ({
     await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
     await imageSourceDropdown.click();
 
-    const firstOption = frame.getByRole('option').first();
-    await expect(firstOption).toBeVisible({ timeout: 10000 });
-    await firstOption.click();
+    const rhelSourceOption = frame
+      .getByRole('option', { name: /RHEL/i })
+      .first();
+    await expect(rhelSourceOption).toBeVisible({ timeout: 10000 });
+    await rhelSourceOption.click();
 
     await expect(
       frame.getByRole('radio', { name: 'Amazon Web Services' }),
