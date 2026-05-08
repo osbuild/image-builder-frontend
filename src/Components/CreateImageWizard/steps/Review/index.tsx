@@ -63,11 +63,13 @@ const ReviewStep = () => {
         restrictions={restrictions}
         oscapPackages={security.packages}
       />
-      <AdvancedSettingsOverview
-        restrictions={restrictions}
-        oscapKernelArgs={security.kernel.append}
-        oscapServices={security.services}
-      />
+      {Object.values(restrictions).some((r) => !r.shouldHide) && (
+        <AdvancedSettingsOverview
+          restrictions={restrictions}
+          oscapKernelArgs={security.kernel.append}
+          oscapServices={security.services}
+        />
+      )}
     </Form>
   );
 };
