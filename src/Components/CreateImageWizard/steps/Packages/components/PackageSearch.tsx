@@ -702,7 +702,7 @@ const PackageSearch = ({
     isOpen,
     hasTrackedOpen,
     hasTrackedRecommendations,
-    transformedRecommendations.length,
+    transformedRecommendations,
   ]);
 
   const sortedPackages = useMemo(() => {
