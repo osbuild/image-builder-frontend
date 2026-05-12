@@ -12,9 +12,11 @@ import {
 } from '@patternfly/react-core';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
-import { useAAPValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import {
+  type StepValidation,
+  useAAPValidation,
+} from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
-import { validateMultipleCertificates } from '@/Components/CreateImageWizard/validators';
 import { AAP_DOCS_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -28,6 +30,29 @@ import {
   selectAapTlsConfirmation,
 } from '@/store/slices/wizard';
 
+const emptyValidation: StepValidation = { errors: {}, disabledNext: false };
+
+// clear hostConfigKey when the user leaves the step if the callback URL is still empty.
+function useClearHostConfigKeyOnUnmount(
+  callbackUrl: string | undefined,
+  hostConfigKey: string | undefined,
+  dispatch: ReturnType<typeof useAppDispatch>,
+) {
+  const callbackUrlRef = React.useRef(callbackUrl);
+  const hostConfigKeyRef = React.useRef(hostConfigKey);
+  React.useEffect(() => {
+    callbackUrlRef.current = callbackUrl;
+    hostConfigKeyRef.current = hostConfigKey;
+  }, [callbackUrl, hostConfigKey]);
+  React.useEffect(() => {
+    return () => {
+      if (!callbackUrlRef.current && hostConfigKeyRef.current) {
+        dispatch(changeAapHostConfigKey(undefined));
+      }
+    };
+  }, [dispatch]);
+}
+
 const AAPRegistration = () => {
   const dispatch = useAppDispatch();
   const callbackUrl = useAppSelector(selectAapCallbackUrl);
@@ -39,20 +64,39 @@ const AAPRegistration = () => {
   const [isRejected, setIsRejected] = React.useState(false);
   const stepValidation = useAAPValidation();
 
-  const isHttpsUrl = callbackUrl?.toLowerCase().startsWith('https://') || false;
+  useClearHostConfigKeyOnUnmount(callbackUrl, hostConfigKey, dispatch);
+
+  const [callbackUrlBlurred, setCallbackUrlBlurred] = React.useState(false);
+  const callbackUrlValidation = React.useMemo(
+    (): StepValidation =>
+      callbackUrlBlurred && stepValidation.errors.callbackUrl
+        ? {
+            errors: { callbackUrl: stepValidation.errors.callbackUrl },
+            disabledNext: stepValidation.disabledNext,
+          }
+        : emptyValidation,
+    [callbackUrlBlurred, stepValidation],
+  );
+
+  const isHttpsUrl = callbackUrl?.toLowerCase().startsWith('https:') || false;
+  const isHttpUrl =
+    (callbackUrl?.toLowerCase().startsWith('http:') && !isHttpsUrl) || false;
   const shouldShowCaInput = !isHttpsUrl || !tlsConfirmation;
 
-  const validated =
-    'certificate' in stepValidation.errors
+  const hasCertContent =
+    !!tlsCertificateAuthority && tlsCertificateAuthority.trim() !== '';
+
+  const validated: 'default' | 'success' | 'error' = hasCertContent
+    ? stepValidation.errors.certificate
       ? 'error'
-      : tlsCertificateAuthority &&
-          validateMultipleCertificates(tlsCertificateAuthority)
-            .validCertificates.length > 0
-        ? 'success'
-        : 'default';
+      : 'success'
+    : 'default';
 
   const handleCallbackUrlChange = (value: string) => {
     dispatch(changeAapCallbackUrl(value));
+    if (tlsConfirmation && !value.toLowerCase().startsWith('https:')) {
+      dispatch(changeAapTlsConfirmation(false));
+    }
   };
 
   const handleHostConfigKeyChange = (value: string) => {
@@ -92,14 +136,16 @@ const AAPRegistration = () => {
         isRequired
         className='pf-v6-u-w-50'
       >
-        <ValidatedInputAndTextArea
-          value={callbackUrl || ''}
-          onChange={(_event, value) => handleCallbackUrlChange(value.trim())}
-          ariaLabel='ansible callback url'
-          isRequired
-          stepValidation={stepValidation}
-          fieldName='callbackUrl'
-        />
+        <div onBlur={() => setCallbackUrlBlurred(true)}>
+          <ValidatedInputAndTextArea
+            value={callbackUrl || ''}
+            onChange={(_event, value) => handleCallbackUrlChange(value.trim())}
+            ariaLabel='ansible callback url'
+            isRequired
+            stepValidation={callbackUrlValidation}
+            fieldName='callbackUrl'
+          />
+        </div>
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
@@ -141,7 +187,33 @@ const AAPRegistration = () => {
       </FormGroup>
 
       {shouldShowCaInput && (
-        <FormGroup label='Certificate authority (CA) for Ansible Controller'>
+        <FormGroup
+          label='Certificate authority (CA) for Ansible Controller'
+          isRequired={isHttpUrl}
+        >
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>
+                {isHttpUrl ? (
+                  'Upload a CA certificate for the Ansible Controller'
+                ) : (
+                  <>
+                    Upload a CA certificate, or check &quot;Insecure&quot; to
+                    skip TLS verification{' '}
+                    <span
+                      style={{
+                        color:
+                          'var(--pf-t--global--color--status--danger--default)',
+                        fontSize: 'var(--pf-t--global--font--size--lg)',
+                      }}
+                    >
+                      *
+                    </span>
+                  </>
+                )}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
           <FileUpload
             id='aap-certificate-upload'
             type='text'
@@ -199,25 +271,20 @@ const AAPRegistration = () => {
           </FormHelperText>
         </FormGroup>
       )}
-      {isHttpsUrl && (
-        <FormGroup>
-          <Checkbox
-            id='tls-confirmation-checkbox'
-            label='Insecure'
-            isChecked={tlsConfirmation || false}
-            onChange={(_event, checked) => handleTlsConfirmationChange(checked)}
-          />
-          {stepValidation.errors['tlsConfirmation'] && (
-            <FormHelperText>
-              <HelperText>
-                <HelperTextItem variant='error'>
-                  {stepValidation.errors['tlsConfirmation']}
-                </HelperTextItem>
-              </HelperText>
-            </FormHelperText>
-          )}
-        </FormGroup>
-      )}
+      <FormGroup>
+        <Checkbox
+          id='tls-confirmation-checkbox'
+          label='Insecure'
+          description={
+            isHttpUrl
+              ? 'Not available for HTTP URLs — a CA certificate is required'
+              : 'Skip TLS certificate verification for HTTPS connections'
+          }
+          isChecked={tlsConfirmation || false}
+          isDisabled={isHttpUrl}
+          onChange={(_event, checked) => handleTlsConfirmationChange(checked)}
+        />
+      </FormGroup>
     </Form>
   );
 };

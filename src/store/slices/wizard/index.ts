@@ -919,7 +919,10 @@ export const wizardSlice = createSlice({
       state.aapRegistration.callbackUrl = action.payload;
     },
 
-    changeAapHostConfigKey: (state, action: PayloadAction<string>) => {
+    changeAapHostConfigKey: (
+      state,
+      action: PayloadAction<string | undefined>,
+    ) => {
       state.aapRegistration.hostConfigKey = action.payload;
     },
     changeAapTlsCertificateAuthority: (

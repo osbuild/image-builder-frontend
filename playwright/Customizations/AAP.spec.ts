@@ -147,12 +147,12 @@ test('Create a blueprint with AAP registration customization', async ({
       .getByRole('textbox', { name: 'ansible callback url' })
       .fill(validHttpCallbackUrl);
 
-    // TLS confirmation checkbox should NOT appear for HTTP URLs
+    // TLS confirmation checkbox should be disabled for HTTP URLs
     await expect(
       frame.getByRole('checkbox', {
         name: 'Insecure',
       }),
-    ).toBeHidden();
+    ).toBeDisabled();
     await expect(
       frame.getByRole('textbox', { name: 'File upload' }),
     ).toBeVisible();

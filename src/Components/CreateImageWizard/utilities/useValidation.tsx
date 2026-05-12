@@ -303,13 +303,11 @@ export function useAAPValidation(): StepValidation {
   if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
     return { errors: {}, disabledNext: false };
   }
-  if (!callbackUrl || callbackUrl.trim() === '') {
-    errors.callbackUrl = 'Ansible Callback URL is required';
-  } else if (!isValidUrl(callbackUrl)) {
+  if (callbackUrl && !isValidUrl(callbackUrl)) {
     errors.callbackUrl = 'Callback URL must be a valid URL';
   }
 
-  if (!hostConfigKey || hostConfigKey.trim() === '') {
+  if (hostConfigKey !== undefined && hostConfigKey.trim() === '') {
     errors.hostConfigKey = 'Host Config Key is required';
   }
 
@@ -322,29 +320,27 @@ export function useAAPValidation(): StepValidation {
     }
   }
 
-  if (callbackUrl && callbackUrl.trim() !== '') {
-    const isHttpsUrl = callbackUrl.toLowerCase().startsWith('https://');
+  const urlIsValid = !!callbackUrl && isValidUrl(callbackUrl);
+  const hasHostConfigKey = !!hostConfigKey && hostConfigKey.trim() !== '';
+  const hasValidCert =
+    !!tlsCertificateAuthority &&
+    tlsCertificateAuthority.trim() !== '' &&
+    !errors.certificate;
 
-    // If URL is HTTP, require TLS certificate
-    if (
-      !isHttpsUrl &&
-      (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '')
-    ) {
-      errors.certificate = 'HTTP URL requires a custom TLS certificate';
-      return { errors, disabledNext: true };
+  let disabledNext =
+    Object.keys(errors).length > 0 || !urlIsValid || !hasHostConfigKey;
+
+  if (urlIsValid) {
+    const isHttpsUrl = callbackUrl.toLowerCase().startsWith('https:');
+    if (!isHttpsUrl && !hasValidCert) {
+      disabledNext = true;
     }
-
-    // For HTTPS URL, if the TLS confirmation is not checked, require certificate
-    if (
-      !tlsConfirmation &&
-      (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '')
-    ) {
-      errors.certificate =
-        'HTTPS URL requires either a custom TLS certificate or confirmation that no custom certificate is needed';
+    if (isHttpsUrl && !tlsConfirmation && !hasValidCert) {
+      disabledNext = true;
     }
   }
 
-  return { errors, disabledNext: Object.keys(errors).length > 0 };
+  return { errors, disabledNext };
 }
 
 const validatePartitionSize = (

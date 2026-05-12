@@ -36,26 +36,46 @@ describe('AAP Component', () => {
       expect(input).toHaveValue('https://controller.example.com/callback/');
     });
 
-    test('shows insecure checkbox for HTTPS URLs', async () => {
+    test('insecure checkbox is always visible', async () => {
       renderAAPStep();
-      const user = createUser();
-
-      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
 
       expect(
         await screen.findByRole('checkbox', { name: /insecure/i }),
       ).toBeInTheDocument();
     });
 
-    test('does not show insecure checkbox for HTTP URLs', async () => {
+    test('insecure checkbox is enabled with HTTPS description for HTTPS URLs', async () => {
+      renderAAPStep();
+      const user = createUser();
+
+      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
+
+      const checkbox = await screen.findByRole('checkbox', {
+        name: /insecure/i,
+      });
+      expect(checkbox).toBeEnabled();
+      expect(
+        screen.getByText(
+          /Skip TLS certificate verification for HTTPS connections/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('insecure checkbox is disabled with HTTP description for HTTP URLs', async () => {
       renderAAPStep();
       const user = createUser();
 
       await enterCallbackUrl(user, 'http://controller.example.com/callback/');
 
+      const checkbox = await screen.findByRole('checkbox', {
+        name: /insecure/i,
+      });
+      expect(checkbox).toBeDisabled();
       expect(
-        screen.queryByRole('checkbox', { name: /insecure/i }),
-      ).not.toBeInTheDocument();
+        screen.getByText(
+          /Not available for HTTP URLs — a CA certificate is required/i,
+        ),
+      ).toBeInTheDocument();
     });
   });
 
@@ -64,6 +84,7 @@ describe('AAP Component', () => {
       renderAAPStep();
       const user = createUser();
 
+      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
       await enterHostConfigKey(user, 'my-host-config-key');
 
       const input = await screen.findByRole('textbox', {
@@ -71,27 +92,44 @@ describe('AAP Component', () => {
       });
       expect(input).toHaveValue('my-host-config-key');
     });
+
+    test('host config key is cleared on unmount when callback URL is empty', async () => {
+      const { store, unmount } = renderAAPStep({
+        aapRegistration: {
+          enabled: true,
+          callbackUrl: '',
+          hostConfigKey: 'orphaned-key',
+          tlsCertificateAuthority: '',
+          skipTlsVerification: false,
+        },
+      });
+
+      const input = await screen.findByRole('textbox', {
+        name: /host config key/i,
+      });
+      expect(input).toHaveValue('orphaned-key');
+
+      unmount();
+      expect(
+        store.getState().wizard.aapRegistration.hostConfigKey,
+      ).toBeUndefined();
+    });
   });
 
   describe('TLS Configuration', () => {
-    test('certificate input is visible by default for HTTPS URLs', async () => {
+    test('certificate input is visible by default', async () => {
       renderAAPStep();
-      const user = createUser();
-
-      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
 
       expect(
         await screen.findByText(/Certificate authority/i),
       ).toBeInTheDocument();
     });
 
-    test('certificate input is hidden when insecure checkbox is checked', async () => {
+    test('certificate input is hidden when insecure checkbox is checked for HTTPS URLs', async () => {
       renderAAPStep();
       const user = createUser();
 
       await enterCallbackUrl(user, 'https://controller.example.com/callback/');
-      await screen.findByRole('checkbox', { name: /insecure/i });
-
       await toggleInsecureCheckbox(user);
 
       expect(
@@ -104,11 +142,51 @@ describe('AAP Component', () => {
       const user = createUser();
 
       await enterCallbackUrl(user, 'https://controller.example.com/callback/');
-      await screen.findByRole('checkbox', { name: /insecure/i });
-
       await toggleInsecureCheckbox(user);
       await toggleInsecureCheckbox(user);
 
+      expect(
+        await screen.findByText(/Certificate authority/i),
+      ).toBeInTheDocument();
+    });
+
+    test('shows info hint about CA and Insecure options', async () => {
+      renderAAPStep();
+
+      expect(
+        await screen.findByText(
+          /upload a CA certificate, or check "Insecure" to skip TLS verification/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('shows HTTP-specific CA helper text for HTTP URLs', async () => {
+      renderAAPStep();
+      const user = createUser();
+
+      await enterCallbackUrl(user, 'http://controller.example.com/callback/');
+
+      expect(
+        await screen.findByText(
+          /Upload a CA certificate for the Ansible Controller/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    test('TLS confirmation is cleared when switching from HTTPS to HTTP', async () => {
+      renderAAPStep();
+      const user = createUser();
+
+      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
+      await toggleInsecureCheckbox(user);
+
+      const checkbox = screen.getByRole('checkbox', { name: /insecure/i });
+      expect(checkbox).toBeChecked();
+
+      await enterCallbackUrl(user, 'http://controller.example.com/callback/');
+
+      expect(checkbox).not.toBeChecked();
+      expect(checkbox).toBeDisabled();
       expect(
         await screen.findByText(/Certificate authority/i),
       ).toBeInTheDocument();
@@ -137,7 +215,7 @@ describe('AAP Component', () => {
       renderAAPStep({
         aapRegistration: {
           enabled: true,
-          callbackUrl: '',
+          callbackUrl: 'https://controller.example.com/callback/',
           hostConfigKey: 'existing-key',
           tlsCertificateAuthority: '',
           skipTlsVerification: false,
@@ -184,6 +262,7 @@ describe('AAP Component', () => {
       const { store } = renderAAPStep();
       const user = createUser();
 
+      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
       await enterHostConfigKey(user, 'my-host-config-key');
 
       expect(store.getState().wizard.aapRegistration.hostConfigKey).toBe(
@@ -242,6 +321,7 @@ describe('AAP Component', () => {
       const { store } = renderAAPStep();
       const user = createUser();
 
+      await enterCallbackUrl(user, 'https://controller.example.com/callback/');
       const hostConfigKeyInput = await screen.findByRole('textbox', {
         name: /host config key/i,
       });
