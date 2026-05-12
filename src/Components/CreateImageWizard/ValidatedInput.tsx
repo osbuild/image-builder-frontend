@@ -75,13 +75,11 @@ export const ValidatedInputAndTextArea = ({
   );
 
   const handleBlur = () => {
-    if (value) {
-      setIsPristine(false);
-    }
+    setIsPristine(false);
   };
 
   useEffect(() => {
-    if (errorMessage) {
+    if (errorMessage && value) {
       setIsPristine(false);
     }
     if (isDisabled) {
