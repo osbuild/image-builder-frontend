@@ -726,6 +726,51 @@ echo 'Hello there, General Kenobi!'`;
       expect(screen.queryByText('Users')).not.toBeInTheDocument();
     });
 
+    test('does not render users section when only empty users exist', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [
+            {
+              name: '',
+              password: '',
+              hasPassword: false,
+              ssh_key: '',
+              groups: [],
+              isAdministrator: false,
+            },
+          ],
+        },
+      );
+
+      expect(screen.queryByText('Users')).not.toBeInTheDocument();
+    });
+
+    test('filters out empty users and renders only non-empty ones', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [
+            {
+              name: '',
+              password: '',
+              hasPassword: false,
+              ssh_key: '',
+              groups: [],
+              isAdministrator: false,
+            },
+            adminUser,
+          ],
+        },
+      );
+
+      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getByText('admin')).toBeInTheDocument();
+      expect(screen.getAllByText('*****')).toHaveLength(1);
+    });
+
     test('displays users heading when users are configured', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
