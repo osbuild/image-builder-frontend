@@ -30,7 +30,7 @@ export const deleteRepository = async (
           .isVisible())
       ) {
         await page
-          .getByRole('textbox', { name: 'Name/URL filter' })
+          .getByRole('textbox', { name: 'filter search' })
           .fill(repositoryNameOrUrl);
 
         await page

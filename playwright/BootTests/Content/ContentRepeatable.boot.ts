@@ -60,7 +60,7 @@ test('Content integration test - Repeatable build - URL source', async ({
     await page.getByRole('textbox', { name: 'URL' }).fill(initialRepositoryUrl);
     await page.getByRole('button', { name: 'Save' }).click();
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('gridcell', { name: repositoryName }),
@@ -69,7 +69,7 @@ test('Content integration test - Repeatable build - URL source', async ({
 
   await test.step('Wait for initial snapshot to be created', async () => {
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('button', { name: '- 1 of 1' }).first(),
@@ -81,7 +81,7 @@ test('Content integration test - Repeatable build - URL source', async ({
 
   await test.step('Edit repository to create new snapshot', async () => {
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('gridcell', { name: repositoryName }),
@@ -100,7 +100,7 @@ test('Content integration test - Repeatable build - URL source', async ({
 
   await test.step('Wait for new snapshot to be created', async () => {
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('button', { name: '- 1 of 1' }).first(),

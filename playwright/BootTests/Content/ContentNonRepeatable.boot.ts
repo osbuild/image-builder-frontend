@@ -60,7 +60,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
     await page.getByRole('textbox', { name: 'URL' }).fill(repositoryUrl);
     await page.getByRole('button', { name: 'Save' }).click();
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('gridcell', { name: repositoryName }),
@@ -204,7 +204,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     await page.waitForTimeout(3000);
     await page.getByRole('button', { name: 'Confirm changes' }).click();
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('gridcell', { name: repositoryName }),
