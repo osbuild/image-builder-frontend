@@ -56,27 +56,41 @@ Keep headers/labels terse but give detailed analysis in the probable cause.
 The GH Run link MUST be present.
 If a rerun was triggered by the workflow, add a line about it at the end.
 
+IMPORTANT: The report is posted to Slack, so you MUST use Slack mrkdwn syntax:
+- Bold: `*bold*` (single asterisks, NOT double `**`)
+- Links: `<url|text>` (NOT `[text](url)`)
+- Code: `` `code` `` (backticks work the same)
+
 ```
-**Boot Test Report — 2026-03-26**
-:warning: **FLAKE** | 2 test(s) failed
+*Boot Test Report — 2026-03-26*
+:large_yellow_circle: *FLAKE* | 2 test(s) failed
+:github-664: <https://github.com/org/repo/actions/runs/12345|Run link>
+~--------------------------------------------~
+:x: *Failed tests:*
 
-[GH Run](https://github.com/org/repo/actions/runs/12345)
+• *Image Builder > Create blueprint* — timed out clicking a "Create Blueprint" button; likely slow API response under load
+Error: `TimeoutError: locator.click: Timeout 30000ms exceeded`
 
-**Failed tests:**
-
-• Image Builder > Create blueprint — `TimeoutError: locator.click: Timeout 30000ms exceeded`
-  Likely a timing issue — the "Create" button renders after an async API call to image-builder service. Under load the response takes >30s. This test has failed 3 times this week with the same timeout, confirming flakiness rather than a real regression.
-
-• Wizard > Select AWS target — `Error: expect(locator).toBeVisible() — element not found`
-  The AWS target card depends on a feature flag fetched from chrome-service. Probably a race condition where the wizard renders before the feature flags response arrives. No code changes to this area in recent commits.
+• *Wizard > Select AWS target* — element not found; likely race condition with feature flag fetch
+Error: `Error: expect(locator).toBeVisible() — element not found`
+~--------------------------------------------~
+:large_blue_circle: *Summary:*
+Both failures are timing-related flakes under load, no code changes involved. Safe to ignore if rerun passes.
 
 :arrows_counterclockwise: Rerun of failed jobs triggered automatically.
+~--------------------------------------------~
 ```
 
 ## Rules — DO NOT SKIP
 
+- The report MUST use Slack mrkdwn syntax (NOT Markdown). `*bold*` not `**bold**`, `<url|text>` not `[text](url)`.
 - The report MUST contain a link to the GitHub Actions run.
 - Every failed test in the report MUST include the error message.
 - Keep headers/labels terse. Give detailed analysis in the probable cause section.
 - Write the classification (FLAKE, EXTERNAL, or BUG) to `boot-test-reports/classification.txt`.
 - Write the full report to `boot-test-reports/latest.md`.
+- Keep the Failed tests section very brief
+- For FLAKE classification use :large_yellow_circle: emoji
+- For BUG classification use :red_circle: emoji
+- For EXTERNAL classification use :large_orange_circle: emoji
+
