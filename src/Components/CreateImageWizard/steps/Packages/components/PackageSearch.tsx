@@ -677,7 +677,7 @@ const PackageSearch = ({
           module: AMPLITUDE_MODULE_NAME,
           isPreview: isBeta(),
           selectedPackages: packages.map((pkg) => pkg.name),
-          recommendationsShown: false,
+          recommendationsShown: transformedRecommendations.length > 0,
         },
       );
       setHasTrackedOpen(true);
