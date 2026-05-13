@@ -71,7 +71,7 @@ test('Content integration test - Content Template', async ({
     await page.getByRole('textbox', { name: 'URL' }).fill(repositoryUrl);
     await page.getByRole('button', { name: 'Save' }).click();
     await page
-      .getByRole('textbox', { name: 'Name/URL filter' })
+      .getByRole('textbox', { name: 'filter search' })
       .fill(repositoryName);
     await expect(
       page.getByRole('row').filter({ hasText: repositoryName }),
