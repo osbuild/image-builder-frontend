@@ -139,7 +139,13 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ matrix.channel.id }}
-            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
+            attachments:
+              - color: "#2EB67D"
+                blocks:
+                  - type: section
+                    text:
+                      type: mrkdwn
+                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *SUCCESS* :partymeow:"
 
       - name: Notify Slack on failure
         id: slack-failure
@@ -150,7 +156,13 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ matrix.channel.id }}
-            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
+            attachments:
+              - color: "#E01E5A"
+                blocks:
+                  - type: section
+                    text:
+                      type: mrkdwn
+                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
 
       - name: Save Slack message ts
         if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
@@ -188,7 +200,13 @@ jobs:
           payload: |
             channel: ${{ matrix.channel.id }}
             ts: ${{ steps.slack-ts.outputs.ts }}
-            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: ~*FAILED*~ *PASSED on retry* (attempt ${{ github.run_attempt }}) :partymeow:"
+            attachments:
+              - color: "#2EB67D"
+                blocks:
+                  - type: section
+                    text:
+                      type: mrkdwn
+                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: ~*FAILED*~ *PASSED on retry* (attempt ${{ github.run_attempt }}) :partymeow:"
 
   # Analyze test failures with Claude Code (via Vertex AI) — only on first attempt
   # SECURITY: This job only has Vertex AI secrets — no Slack tokens, no other credentials.
@@ -227,6 +245,20 @@ jobs:
           path: playwright-report/
           run-id: ${{ github.event.inputs.run_id || github.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Download boot-tests job log
+        run: |
+          JOB_ID=$(gh api "repos/${{ github.repository }}/actions/runs/${RUN_ID}/jobs" \
+            --jq '.jobs[] | select(.name == "boot-tests") | .id')
+          if [ -n "$JOB_ID" ]; then
+            gh api "repos/${{ github.repository }}/actions/jobs/${JOB_ID}/logs" > ci-logs.txt
+          else
+            echo "Could not find boot-tests job" > ci-logs.txt
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.inputs.run_id || github.run_id }}
         continue-on-error: true
 
       - name: Install Claude Code
@@ -341,8 +373,19 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: ${{ steps.analysis-payload.outputs.json }}
 
-      - name: Update original message with analysis indicator
-        if: ${{ steps.analysis-payload.outputs.json }}
+      - name: Read classification
+        id: classification
+        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' }}
+        run: |
+          CLASSIFICATION=$(cat boot-test-reports/classification.txt 2>/dev/null || echo "UNKNOWN")
+          CLASSIFICATION=$(echo "$CLASSIFICATION" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
+          echo "value=$CLASSIFICATION" >> "$GITHUB_OUTPUT"
+          if [ "$CLASSIFICATION" = "FLAKE" ] || [ "$CLASSIFICATION" = "INFRASTRUCTURE" ]; then
+            echo "retriable=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update original message — rerun in progress
+        if: ${{ steps.classification.outputs.retriable && steps.slack-ts.outputs.ts }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.update
@@ -350,7 +393,13 @@ jobs:
           payload: |
             channel: ${{ matrix.channel.id }}
             ts: ${{ steps.slack-ts.outputs.ts }}
-            text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad: — :memo::arrow_down:"
+            attachments:
+              - color: "#1445f7"
+                blocks:
+                  - type: section
+                    text:
+                      type: mrkdwn
+                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad: :arrows_counterclockwise:"
 
       - name: Notify analysis failure
         if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'failure' && steps.slack-ts.outputs.ts }}
@@ -364,19 +413,14 @@ jobs:
             text: ":warning: Automated analysis failed — could not classify this failure. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
 
       # Only rerun from one matrix instance to avoid duplicate reruns
-      - name: Rerun if flake
-        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' && github.event.inputs.run_id == '' && (matrix.channel.name == 'main' || matrix.channel.name == 'manual') }}
+      - name: Rerun if retriable
+        if: ${{ steps.classification.outputs.retriable && github.event.inputs.run_id == '' && (matrix.channel.name == 'main' || matrix.channel.name == 'manual') }}
         run: |
-          CLASSIFICATION=$(cat boot-test-reports/classification.txt 2>/dev/null || echo "UNKNOWN")
-          CLASSIFICATION=$(echo "$CLASSIFICATION" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
-          if [ "$CLASSIFICATION" = "FLAKE" ]; then
-            echo "Classified as FLAKE — rerunning failed jobs (attempt ${{ github.run_attempt }})"
-            gh run rerun ${{ github.run_id }} --failed --repo ${{ github.repository }}
-          else
-            echo "Classified as $CLASSIFICATION — not rerunning"
-          fi
+          echo "Classified as $CLASSIFICATION — rerunning failed jobs (attempt ${{ github.run_attempt }})"
+          gh run rerun ${{ github.run_id }} --failed --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLASSIFICATION: ${{ steps.classification.outputs.value }}
 
       # --- Attempt 2+: post a short thread reply ---
       - name: Post retry failure to Slack
@@ -389,3 +433,20 @@ jobs:
             channel: ${{ matrix.channel.id }}
             thread_ts: ${{ steps.slack-ts.outputs.ts }}
             text: ":x: Retry attempt ${{ github.run_attempt }} also failed. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
+
+      - name: Revert original message on retry failure
+        if: ${{ github.run_attempt != '1' && steps.slack-ts.outputs.ts }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ matrix.channel.id }}
+            ts: ${{ steps.slack-ts.outputs.ts }}
+            attachments:
+              - color: "#E01E5A"
+                blocks:
+                  - type: section
+                    text:
+                      type: mrkdwn
+                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
