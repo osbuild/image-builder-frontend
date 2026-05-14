@@ -65,6 +65,7 @@ IMPORTANT: The report is posted to Slack, so you MUST use Slack mrkdwn syntax:
 *Boot Test Report — 2026-03-26*
 :large_yellow_circle: *FLAKE* | 2 test(s) failed
 :github-664: <https://github.com/org/repo/actions/runs/12345|Run link>
+:playwright: <https://app.currents.dev/run/666bfb835a936797|Currents link>
 ~--------------------------------------------~
 :x: *Failed tests:*
 
@@ -85,6 +86,7 @@ Both failures are timing-related flakes under load, no code changes involved. Sa
 
 - The report MUST use Slack mrkdwn syntax (NOT Markdown). `*bold*` not `**bold**`, `<url|text>` not `[text](url)`.
 - The report MUST contain a link to the GitHub Actions run.
+- Extract the Currents run URL from `ci-logs.txt` (look for `https://app.currents.dev/run/...`) and include it next to the GH Run link. If not found, omit it.
 - Every failed test in the report MUST include the error message.
 - Keep headers/labels terse. Give detailed analysis in the probable cause section.
 - Write the classification (FLAKE, EXTERNAL, or BUG) to `boot-test-reports/classification.txt`.
