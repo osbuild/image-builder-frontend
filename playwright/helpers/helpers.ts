@@ -54,14 +54,6 @@ export const closePopupsIfExist = async (page: Page) => {
       .contentFrame()
       .getByRole('button', { name: 'Profile image for Rob Rob' })
       .last(), // This closes the intercom pop-up notification at the bottom of the screen, the last notification is displayed first if stacked (different from the modal popup handled above)
-    page
-      .locator('iframe[name="trustarc_cm"]')
-      .contentFrame()
-      .getByRole('button', { name: 'Agree and proceed with' }), // closes the EU cookies popup
-    page
-      .locator('iframe[name="trustarc_cm"]')
-      .contentFrame()
-      .getByRole('button', { name: 'Accept default' }), // closes the SSO login cookies popup
   ];
 
   for (const locator of locatorsToCheck) {
@@ -69,6 +61,23 @@ export const closePopupsIfExist = async (page: Page) => {
       await locator.first().click({ timeout: 10_000, noWaitAfter: true }); // There can be multiple toast pop-ups
     });
   }
+
+  // Trigger on the iframe element rather than buttons inside .contentFrame()
+  // which doesn't reliably fire with addLocatorHandler.
+  const trustarcIframe = page.locator('iframe[name="trustarc_cm"]');
+  await page.addLocatorHandler(trustarcIframe, async () => {
+    const frame = trustarcIframe.contentFrame();
+    const acceptDefault = frame.getByRole('button', {
+      name: 'Accept default',
+    });
+    const agreeAndProceed = frame.getByRole('button', {
+      name: 'Agree and proceed with',
+    });
+    await acceptDefault
+      .or(agreeAndProceed)
+      .first()
+      .click({ timeout: 10_000, noWaitAfter: true });
+  });
 };
 
 // copied over from constants
