@@ -24,12 +24,16 @@ You have access to:
 - The checked-out repository source code (read-only)
 - `test-results.json` in the working directory (Playwright JSON reporter output), OR
   `playwright-report/` directory (HTML report fallback for older runs)
+- `ci-logs.txt` in the working directory — full GitHub Actions log from the boot-tests job.
+  Check this if test results are missing or incomplete (runner errors, infra failures).
 - The GitHub Actions run URL is appended to this prompt — include it in your report
 
 ## Workflow
 
 1. **Read the test results.** Check for `test-results.json` first — if it exists,
    use it as your primary source. Fall back to `playwright-report/` if not found.
+   If neither exists, read `ci-logs.txt` to determine what went wrong at the
+   runner/infrastructure level.
 2. **If all tests passed** — write a green report and stop.
 3. **If tests failed:**
    a. For each failed test:
@@ -45,6 +49,7 @@ You have access to:
       - **FLAKE** — non-deterministic (timing, network, resource contention)
       - **EXTERNAL** — a dependency or service covered by integration tests changed behavior
       - **BUG** — genuine issue in our code or tests
+      - **INFRASTRUCTURE** — runner or CI environment failure (Docker, npm install, server startup, OOM, network)
 4. **Produce the final report:**
    - Write the classification to `boot-test-reports/classification.txt` (just the word: FLAKE, EXTERNAL, or BUG).
    - Write the full analysis to `boot-test-reports/latest.md`, following the template below.
@@ -89,10 +94,11 @@ Both failures are timing-related flakes under load, no code changes involved. Sa
 - Extract the Currents run URL from `ci-logs.txt` (look for `https://app.currents.dev/run/...`) and include it next to the GH Run link. If not found, omit it.
 - Every failed test in the report MUST include the error message.
 - Keep headers/labels terse. Give detailed analysis in the probable cause section.
-- Write the classification (FLAKE, EXTERNAL, or BUG) to `boot-test-reports/classification.txt`.
+- Write the classification (FLAKE, EXTERNAL, BUG, or INFRASTRUCTURE) to `boot-test-reports/classification.txt`.
 - Write the full report to `boot-test-reports/latest.md`.
 - Keep the Failed tests section very brief
 - For FLAKE classification use :large_yellow_circle: emoji
 - For BUG classification use :red_circle: emoji
 - For EXTERNAL classification use :large_orange_circle: emoji
+- For INFRASTRUCTURE classification use :swanson_computer: emoji
 
