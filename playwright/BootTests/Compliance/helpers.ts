@@ -197,7 +197,8 @@ export const createCompliancePolicy = async (
     });
     await expect(createButton).toBeVisible();
     await createButton.click();
-    await page.getByRole('option', { name: distro }).click();
+    const distroId = distro.replace(/\s+/g, '').toLowerCase() + '-input';
+    await page.locator(`label[for="${distroId}"]`).click();
 
     // Wait for the policy type list to load before searching
     await expect(page.getByRole('gridcell').first()).toBeVisible({
