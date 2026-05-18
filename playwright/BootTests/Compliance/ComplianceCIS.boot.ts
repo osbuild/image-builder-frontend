@@ -51,7 +51,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   await test.step('Create a Compliance policy', async () => {
     await navigateToCompliance(page);
     await page.getByRole('button', { name: 'Create new policy' }).click();
-    await page.getByRole('option', { name: 'RHEL 10' }).click();
+    await page.locator('label[for="rhel10-input"]').click();
     await expect(
       page.getByRole('gridcell', { name: 'ANSSI-BP-028 (enhanced)' }).first(),
     ).toBeVisible(); // Wait for the policy type list to load
