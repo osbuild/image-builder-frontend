@@ -1,11 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-TMT_SOURCE_DIR=${TMT_SOURCE_DIR:-}
 PW_WORKERS=4
-if [ -n "$TMT_SOURCE_DIR" ]; then
-    # Move to the directory with sources
-    cd "${TMT_SOURCE_DIR}/cockpit-image-builder"
+if [ -n "${TMT_TREE:-}" ]; then
+    cd "${TMT_TREE}"
     npm ci
 elif [ "${CI:-}" != "true" ]; then
     # packit drops us into the schutzbot directory
