@@ -24,12 +24,16 @@ You have access to:
 - The checked-out repository source code (read-only)
 - `test-results.json` in the working directory (Playwright JSON reporter output), OR
   `playwright-report/` directory (HTML report fallback for older runs)
+- `ci-logs.txt` in the working directory — full GitHub Actions log from the boot-tests job.
+  Check this if test results are missing or incomplete (runner errors, infra failures).
 - The GitHub Actions run URL is appended to this prompt — include it in your report
 
 ## Workflow
 
 1. **Read the test results.** Check for `test-results.json` first — if it exists,
    use it as your primary source. Fall back to `playwright-report/` if not found.
+   If neither exists, read `ci-logs.txt` to determine what went wrong at the
+   runner/infrastructure level.
 2. **If all tests passed** — write a green report and stop.
 3. **If tests failed:**
    a. For each failed test:
@@ -45,6 +49,7 @@ You have access to:
       - **FLAKE** — non-deterministic (timing, network, resource contention)
       - **EXTERNAL** — a dependency or service covered by integration tests changed behavior
       - **BUG** — genuine issue in our code or tests
+      - **INFRASTRUCTURE** — runner or CI environment failure (Docker, npm install, server startup, OOM, network)
 4. **Produce the final report:**
    - Write the classification to `boot-test-reports/classification.txt` (just the word: FLAKE, EXTERNAL, or BUG).
    - Write the full analysis to `boot-test-reports/latest.md`, following the template below.
@@ -56,27 +61,44 @@ Keep headers/labels terse but give detailed analysis in the probable cause.
 The GH Run link MUST be present.
 If a rerun was triggered by the workflow, add a line about it at the end.
 
+IMPORTANT: The report is posted to Slack, so you MUST use Slack mrkdwn syntax:
+- Bold: `*bold*` (single asterisks, NOT double `**`)
+- Links: `<url|text>` (NOT `[text](url)`)
+- Code: `` `code` `` (backticks work the same)
+
 ```
-**Boot Test Report — 2026-03-26**
-:warning: **FLAKE** | 2 test(s) failed
+*Boot Test Report — 2026-03-26*
+:large_yellow_circle: *FLAKE* | 2 test(s) failed
+:github-664: <https://github.com/org/repo/actions/runs/12345|Run link>
+:playwright: <https://app.currents.dev/run/666bfb835a936797|Currents link>
+~--------------------------------------------~
+:x: *Failed tests:*
 
-[GH Run](https://github.com/org/repo/actions/runs/12345)
+• *Image Builder > Create blueprint* — timed out clicking a "Create Blueprint" button; likely slow API response under load
+Error: `TimeoutError: locator.click: Timeout 30000ms exceeded`
 
-**Failed tests:**
-
-• Image Builder > Create blueprint — `TimeoutError: locator.click: Timeout 30000ms exceeded`
-  Likely a timing issue — the "Create" button renders after an async API call to image-builder service. Under load the response takes >30s. This test has failed 3 times this week with the same timeout, confirming flakiness rather than a real regression.
-
-• Wizard > Select AWS target — `Error: expect(locator).toBeVisible() — element not found`
-  The AWS target card depends on a feature flag fetched from chrome-service. Probably a race condition where the wizard renders before the feature flags response arrives. No code changes to this area in recent commits.
+• *Wizard > Select AWS target* — element not found; likely race condition with feature flag fetch
+Error: `Error: expect(locator).toBeVisible() — element not found`
+~--------------------------------------------~
+:large_blue_circle: *Summary:*
+Both failures are timing-related flakes under load, no code changes involved. Safe to ignore if rerun passes.
 
 :arrows_counterclockwise: Rerun of failed jobs triggered automatically.
+~--------------------------------------------~
 ```
 
 ## Rules — DO NOT SKIP
 
+- The report MUST use Slack mrkdwn syntax (NOT Markdown). `*bold*` not `**bold**`, `<url|text>` not `[text](url)`.
 - The report MUST contain a link to the GitHub Actions run.
+- Extract the Currents run URL from `ci-logs.txt` (look for `https://app.currents.dev/run/...`) and include it next to the GH Run link. If not found, omit it.
 - Every failed test in the report MUST include the error message.
 - Keep headers/labels terse. Give detailed analysis in the probable cause section.
-- Write the classification (FLAKE, EXTERNAL, or BUG) to `boot-test-reports/classification.txt`.
+- Write the classification (FLAKE, EXTERNAL, BUG, or INFRASTRUCTURE) to `boot-test-reports/classification.txt`.
 - Write the full report to `boot-test-reports/latest.md`.
+- Keep the Failed tests section very brief
+- For FLAKE classification use :large_yellow_circle: emoji
+- For BUG classification use :red_circle: emoji
+- For EXTERNAL classification use :large_orange_circle: emoji
+- For INFRASTRUCTURE classification use :swanson_computer: emoji
+
