@@ -3,15 +3,15 @@ import React from 'react';
 import { Flex, Truncate } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectUsers } from '@/store/slices';
+import { selectNonEmptyUsers } from '@/store/slices/wizard';
 
 import { FlexColumn, ReviewGroup, StatusItem } from '../../shared';
 import { Hideable } from '../../types';
 
 export const Users = ({ shouldHide }: Hideable) => {
-  const users = useAppSelector(selectUsers);
+  const nonEmptyUsers = useAppSelector(selectNonEmptyUsers);
 
-  if (shouldHide || users.length === 0) {
+  if (shouldHide || nonEmptyUsers.length === 0) {
     return null;
   }
 
@@ -22,17 +22,17 @@ export const Users = ({ shouldHide }: Hideable) => {
         <FlexColumn
           heading='Username'
           labelKey='user-name-review'
-          items={users.map(({ name }) => name)}
+          items={nonEmptyUsers.map(({ name }) => name)}
         />
         <FlexColumn
           heading='Password'
           labelKey='user-password-review'
-          items={users.map((_) => '*****')}
+          items={nonEmptyUsers.map((_) => '*****')}
         />
         <FlexColumn
           heading='SSH key'
           labelKey='user-sshkey-review'
-          items={users.map(({ ssh_key }, index) => (
+          items={nonEmptyUsers.map(({ ssh_key }, index) => (
             <Truncate
               key={`inner-ssh-key-${index}`}
               content={ssh_key}
@@ -44,7 +44,7 @@ export const Users = ({ shouldHide }: Hideable) => {
         <FlexColumn
           heading='Groups'
           labelKey='user-groups-review'
-          items={users.map(({ groups }, index) => (
+          items={nonEmptyUsers.map(({ groups }, index) => (
             <Truncate
               key={`inner-groups-key-${index}`}
               content={groups.filter((group) => group.trim()).join(', ')}
@@ -56,7 +56,7 @@ export const Users = ({ shouldHide }: Hideable) => {
         <FlexColumn
           heading='Administrator'
           labelKey='user-admin-review'
-          items={users.map(({ isAdministrator }, index) => (
+          items={nonEmptyUsers.map(({ isAdministrator }, index) => (
             <StatusItem
               key={`inner-admin-key-${index}`}
               variant={isAdministrator ? 'success' : 'danger'}
