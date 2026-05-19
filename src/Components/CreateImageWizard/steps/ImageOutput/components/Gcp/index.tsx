@@ -92,6 +92,7 @@ const Gcp = () => {
       <FormGroup
         label={accountType === 'domain' ? 'Domain' : 'Principal'}
         isRequired
+        className='pf-v6-u-w-50'
       >
         <ValidatedInput
           aria-label='google principal'
