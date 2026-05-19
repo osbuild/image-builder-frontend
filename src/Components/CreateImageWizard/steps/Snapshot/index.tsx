@@ -23,7 +23,7 @@ const RepeatableBuildStep = () => {
           size={isWizardRevampEnabled ? 'lg' : 'xl'}
           id='repeatable-build-section'
         >
-          Enable repeatable build
+          Repeatable build
         </Title>
         <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
           Create images that can be reproduced consistently with the same

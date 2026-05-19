@@ -27,7 +27,7 @@ const RepeatableBuild = ({ restrictions }: ReviewCardProps) => {
   return (
     <Card>
       <ReviewCardHeader
-        title='Enable repeatable build'
+        title='Repeatable build'
         stepId={
           isWizardRevampEnabled
             ? 'base-settings-step'
