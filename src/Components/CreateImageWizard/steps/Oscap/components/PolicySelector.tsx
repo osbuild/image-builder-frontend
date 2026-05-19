@@ -53,7 +53,7 @@ const ComplianceSelectOption = ({
   ): ComplianceSelectOptionValueType => ({
     policyID,
     title,
-    toString: () => title || 'None',
+    toString: () => title || 'Untitled policy',
   });
 
   return (
@@ -209,15 +209,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       ];
     }
 
-    const res = [
-      <SelectOption
-        key='compliance-none-option'
-        value={{ toString: () => 'None', compareTo: () => false }}
-        isSelected={!policyID}
-      >
-        None
-      </SelectOption>,
-    ];
+    const res = [];
     for (const p of policies.data) {
       // there is a mismatch between API type and real data
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -240,6 +232,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
     <MenuToggle
       ouiaId='compliancePolicySelect'
       ref={toggleRef}
+      isPlaceholder={!policyTitle && !isApplying}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
       isDisabled={isDisabled || isFetchingPolicies || isApplying}
@@ -251,7 +244,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
           <Spinner size='sm' /> Applying policy...
         </>
       ) : (
-        policyTitle || 'None'
+        policyTitle || 'Select a policy'
       )}
     </MenuToggle>
   );

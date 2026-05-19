@@ -60,7 +60,7 @@ export type RegistrationType =
 
 export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
 
-export type ComplianceType = 'openscap' | 'compliance';
+export type ComplianceType = 'none' | 'openscap' | 'compliance';
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
@@ -269,7 +269,7 @@ export const initialState: wizardState = {
     },
   },
   compliance: {
-    complianceType: 'openscap',
+    complianceType: 'none',
     policyID: undefined,
     profileID: undefined,
     policyTitle: undefined,

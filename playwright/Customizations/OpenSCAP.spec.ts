@@ -60,24 +60,23 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(
       frame.getByText('WSL: customization is not supported'),
     ).toBeVisible();
-    await expect(
-      frame.getByRole('textbox', { name: 'Type to filter' }),
-    ).toBeEnabled();
+    await expect(frame.getByTestId('profileSelect')).toBeEnabled();
   });
 
   await test.step('Select a CIS profile then switch to None', async () => {
     await frame
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
-      .check();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+      .click();
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
       })
       .click();
 
-    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
-    await frame.getByRole('option', { name: /^None$/ }).click();
+    await frame
+      .getByRole('radio', { name: 'No additional policy or profile' })
+      .click();
   });
 
   await test.step('Verify Packages show no OpenSCAP additions', async () => {
@@ -92,9 +91,9 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await frame.getByRole('button', { name: 'Base settings' }).click();
     await frame
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
-      .check();
+      .click();
 
-    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
@@ -146,14 +145,10 @@ test('Create a blueprint with OpenSCAP customization', async ({
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Base settings' }).click();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
-    await expect(
-      frame.getByText(
-        'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
-      ),
-    ).toBeVisible();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).clear();
-    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+    await expect(frame.getByTestId('profileSelect')).toHaveTextContent(
+      'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
+    );
+    await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
         name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server',
