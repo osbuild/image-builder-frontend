@@ -128,8 +128,8 @@ const OscapContent = () => {
     dispatch(changeFips(checked));
   };
 
-  const handleTypeChange = (complianceType: string) => {
-    dispatch(changeComplianceType(complianceType as ComplianceType));
+  const handleTypeChange = (complianceType: ComplianceType) => {
+    dispatch(changeComplianceType(complianceType));
 
     // Avoid showing profile information when switching between types by
     // clearing the compliance data.
@@ -166,7 +166,7 @@ const OscapContent = () => {
     },
     {
       skip:
-        complianceType === 'openscap' ||
+        complianceType !== 'compliance' ||
         isOnPremise ||
         restrictions.openscap.shouldHide,
     },
@@ -223,13 +223,22 @@ const OscapContent = () => {
             <OscapOnPremWarning />
           ) : (
             <FormGroup>
+              <Content className='pf-v6-u-pb-sm'>
+                <Radio
+                  id='security-type-none'
+                  name='security-type'
+                  label='No additional policy or profile'
+                  isChecked={complianceType === 'none'}
+                  onChange={() => handleTypeChange('none')}
+                />
+              </Content>
               {!isOnPremise && (
                 <>
                   <Content className='pf-v6-u-pb-sm'>
                     <Radio
                       id='security-type-compliance'
                       name='security-type'
-                      label='Use a custom Compliance policy'
+                      label='Use a custom compliance policy'
                       isChecked={complianceType === 'compliance'}
                       onChange={() => handleTypeChange('compliance')}
                     />
