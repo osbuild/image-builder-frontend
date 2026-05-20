@@ -31,6 +31,8 @@ test('Create a blueprint with Compliance policy selected', async ({
   page,
   cleanup,
 }) => {
+  // TODO: Re-enable once compliance once compliance is working again
+  test.skip(true, 'Compliance tests are temporarily disabled.');
   test.skip(!isHosted(), 'Compliance is not available in the plugin');
 
   await test.step('Check if Compliance service is available', async () => {
@@ -110,6 +112,8 @@ test('Create a blueprint with Compliance policy selected', async ({
 });
 
 test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
+  // TODO: Re-enable once compliance is working again
+  test.skip(true, 'Compliance tests are temporarily disabled.');
   test.skip(!isHosted(), 'Compliance alerts are not available in the plugin');
   const blueprintName = 'test-compliance-' + uuidv4();
   const policyName = 'test-policy-' + uuidv4();
