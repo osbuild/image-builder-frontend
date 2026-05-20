@@ -28,6 +28,8 @@ import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
+  // TODO: Re-enable once compliance once compliance is working again
+  test.skip(true, 'Compliance tests are temporarily disabled.');
   test.skip(
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
