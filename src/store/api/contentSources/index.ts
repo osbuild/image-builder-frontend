@@ -1,6 +1,7 @@
 import * as hostedQueries from './hosted';
 import * as onpremQueries from './onprem';
 
+export * from './hooks';
 export type * from './hosted';
 
 // Hooks with different implementations for hosted vs on-prem

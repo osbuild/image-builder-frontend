@@ -4,7 +4,7 @@ import { Content, Form, Spinner, Title } from '@patternfly/react-core';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useGetArchitecturesQuery } from '@/store/api/backend';
-import { useSearchLanguagePacks } from '@/store/api/distributions';
+import { useSearchLanguagePacks } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
