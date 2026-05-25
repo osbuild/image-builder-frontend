@@ -155,6 +155,20 @@ describe('Locale Component', () => {
       ).toBeInTheDocument();
     });
 
+    test('removing the last language shows an empty selection row', async () => {
+      const { store } = renderLocaleStep({
+        locale: { languages: ['en_US.UTF-8'], keyboard: '' },
+      });
+      const user = createUser();
+
+      await removeLanguageAtIndex(user, 0);
+
+      expect(store.getState().wizard.locale.languages).toHaveLength(0);
+      expect(
+        screen.getByRole('button', { name: /select a language/i }),
+      ).toBeInTheDocument();
+    });
+
     test('can select multiple languages', async () => {
       renderLocaleStep({ locale: { languages: [], keyboard: '' } });
       const user = createUser();
