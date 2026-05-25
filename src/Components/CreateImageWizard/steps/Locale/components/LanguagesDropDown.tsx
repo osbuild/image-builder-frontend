@@ -122,6 +122,9 @@ const LanguagesDropDown = () => {
 
   const handleRemoveLanguage = (language: string) => {
     dispatch(removeLanguage(language));
+    if (languages.length <= 1) {
+      setShowNewRow(true);
+    }
   };
 
   return (
