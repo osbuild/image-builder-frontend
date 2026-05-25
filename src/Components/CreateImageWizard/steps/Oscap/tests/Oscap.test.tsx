@@ -2,7 +2,12 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { createUser, renderWithRedux, typeWithWait } from '@/test/testUtils';
+import {
+  clickWithWait,
+  createUser,
+  renderWithRedux,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import OscapStep from '../index';
 
@@ -55,7 +60,7 @@ describe('Oscap Component', () => {
       const complianceRadio = await screen.findByRole('radio', {
         name: /Use a custom compliance policy/i,
       });
-      await user.click(complianceRadio);
+      await clickWithWait(user, complianceRadio);
 
       expect(complianceRadio).toBeChecked();
       expect(
@@ -72,7 +77,7 @@ describe('Oscap Component', () => {
       const openscapRadio = await screen.findByRole('radio', {
         name: /Use a default OpenSCAP profile/i,
       });
-      await user.click(openscapRadio);
+      await clickWithWait(user, openscapRadio);
 
       expect(openscapRadio).toBeChecked();
       expect(
@@ -100,7 +105,7 @@ describe('Oscap Component', () => {
       const noneRadio = await screen.findByRole('radio', {
         name: /No additional policy or profile/i,
       });
-      await user.click(noneRadio);
+      await clickWithWait(user, noneRadio);
 
       expect(noneRadio).toBeChecked();
       expect(
