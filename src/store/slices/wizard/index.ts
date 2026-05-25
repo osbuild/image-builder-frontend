@@ -559,15 +559,15 @@ export const selectUsers = (state: RootState) => {
   return state.wizard.users;
 };
 
-export const selectNonEmptyUsers = (state: RootState) => {
-  return state.wizard.users.filter(
+export const selectNonEmptyUsers = createSelector([selectUsers], (users) =>
+  users.filter(
     (user) =>
       user.name.trim() ||
       user.password.trim() ||
       user.ssh_key.trim() ||
       user.hasPassword,
-  );
-};
+  ),
+);
 
 export const selectUserGroups = (state: RootState) => {
   return state.wizard.userGroups;
