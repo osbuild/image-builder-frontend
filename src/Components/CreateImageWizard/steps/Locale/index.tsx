@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Content, Form, Spinner, Title } from '@patternfly/react-core';
+import { Content, Spinner, Title } from '@patternfly/react-core';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useGetArchitecturesQuery } from '@/store/api/backend';
@@ -13,13 +13,11 @@ import {
   selectVerifiedLocaleLangpacks,
 } from '@/store/slices/wizard';
 import { asDistribution } from '@/store/typeGuards';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
 const LocaleStep = () => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const candidateLangpacks = useAppSelector(selectLocaleLangpackCandidates);
@@ -44,19 +42,14 @@ const LocaleStep = () => {
     candidateLangpacks.length > 0 &&
     (isArchitecturesLoading || isSearchLoading);
 
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
-
   return (
-    <Wrapper>
+    <>
       <CustomizationLabels customization='locale' />
       <Content>
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        >
+        <Title headingLevel='h2' size='lg'>
           Locale
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Define the primary languages and keyboard settings for your image to
           ensure proper system localization and user interface support.
         </Content>
@@ -80,7 +73,7 @@ const LocaleStep = () => {
         </Content>
       )}
       <KeyboardDropDown />
-    </Wrapper>
+    </>
   );
 };
 

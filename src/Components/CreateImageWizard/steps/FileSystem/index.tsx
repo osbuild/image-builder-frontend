@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { Button, Content, Form, Title } from '@patternfly/react-core';
+import { Button, Content, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices';
 import { selectFscMode } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import AdvancedPartitioning from './components/AdvancedPartitioning';
 import FileSystemConfiguration from './components/FileSystemConfiguration';
@@ -21,21 +20,15 @@ export type FscModeType = 'automatic' | 'basic' | 'advanced';
 const FileSystemStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const fscMode = useAppSelector(selectFscMode);
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   return (
-    <Wrapper>
+    <>
       <CustomizationLabels customization='filesystem' />
       <Content>
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        >
+        <Title headingLevel='h2' size='lg'>
           File system configuration
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Configure the system and partitioning for your image. You can use
           automatic partitioning, manually define your own mount points and
           sizes, or use advanced partitioning for complex storage layouts. The
@@ -74,7 +67,7 @@ const FileSystemStep = () => {
           </>
         )}
       </Content>
-    </Wrapper>
+    </>
   );
 };
 

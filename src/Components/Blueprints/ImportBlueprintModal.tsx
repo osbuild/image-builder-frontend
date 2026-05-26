@@ -20,7 +20,6 @@ import {
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
-import { useNavigate } from 'react-router-dom';
 import TOML from 'smol-toml';
 
 import {
@@ -33,7 +32,7 @@ import {
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
 } from '@/store/api/contentSources';
-import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
+import { selectIsOnPremise } from '@/store/slices/env';
 import { loadWizardState, wizardState } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
 
@@ -41,7 +40,6 @@ import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
-import { useFlag } from '../../Utilities/useGetEnvironment';
 import {
   mapBlueprintExportToState,
   mapToCustomRepositories,
@@ -65,7 +63,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
   };
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
     React.useState<wizardState>();
@@ -253,21 +250,13 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const handleFileReadFinished = () => {
     setIsLoading(false);
   };
-  const navigate = useNavigate();
-  const resolvePath = useAppSelector(selectPathResolver);
 
   const handleReviewAndFinish = () => {
     if (!importedBlueprint) return;
 
-    if (isWizardRevampEnabled) {
-      dispatch(loadWizardState(importedBlueprint));
-      dispatch(openWizardModal('import'));
-      setShowImportModal(false);
-    } else {
-      navigate(resolvePath('imagewizard/import'), {
-        state: { blueprint: importedBlueprint },
-      });
-    }
+    dispatch(loadWizardState(importedBlueprint));
+    dispatch(openWizardModal('import'));
+    setShowImportModal(false);
   };
 
   const variantSwitch = () => {

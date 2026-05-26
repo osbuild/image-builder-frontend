@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Alert, Content, Form, Title } from '@patternfly/react-core';
+import { Alert, Content, Title } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
@@ -8,7 +8,6 @@ import { useGetUser } from '@/Hooks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { changeOrgId } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import AnsibleAutomationPlatform from './components/AnsibleAutomationPlatform';
 import Registration from './components/Registration';
@@ -18,10 +17,7 @@ const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const [showAlert, setShowAlert] = useState(false);
-
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   useEffect(() => {
     if (!isOnPremise && orgId) {
@@ -30,17 +26,13 @@ const RegistrationStep = () => {
   }, [isOnPremise, orgId, dispatch]);
 
   return (
-    <Wrapper>
+    <>
       <CustomizationLabels customization='registration' />
       <Content>
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-          id='registration-section'
-        >
+        <Title headingLevel='h2' size='lg' id='registration-section'>
           Register
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Configure registration settings for systems that will use this image.
         </Content>
       </Content>
@@ -51,7 +43,7 @@ const RegistrationStep = () => {
           Activation keys cannot be reached, try again later.
         </Alert>
       )}
-    </Wrapper>
+    </>
   );
 };
 

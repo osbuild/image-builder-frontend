@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert, Content, Form, Title } from '@patternfly/react-core';
+import { Alert, Content, Title } from '@patternfly/react-core';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useAppSelector } from '@/store/hooks';
@@ -9,7 +9,6 @@ import {
   selectRecommendedRepositories,
   selectWizardMode,
 } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './components/Repositories';
@@ -19,20 +18,14 @@ const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
   return (
-    <Wrapper>
+    <>
       <CustomizationLabels customization='repositories' />
       <Content>
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        >
+        <Title headingLevel='h2' size='lg'>
           Repositories
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Can&apos;t find a repository? Ensure it&apos;s been added on{' '}
           <ManageRepositoriesButton
             label={'the Repositories page'}
@@ -62,7 +55,7 @@ const RepositoriesStep = () => {
         ''
       )}
       <Repositories />
-    </Wrapper>
+    </>
   );
 };
 

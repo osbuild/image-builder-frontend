@@ -17,7 +17,6 @@ import {
 import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { Link } from 'react-router-dom';
 
 import {
   BlueprintItem,
@@ -34,7 +33,7 @@ import {
   setBlueprintSearchInput,
   setBlueprintsOffset,
 } from '@/store/slices/blueprint';
-import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
+import { selectIsOnPremise } from '@/store/slices/env';
 import { openWizardModal } from '@/store/slices/wizardModal';
 
 import BlueprintCard from './BlueprintCard';
@@ -44,7 +43,6 @@ import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 import { useGetUser } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import useDebounce from '../../Utilities/useDebounce';
-import { useFlag } from '../../Utilities/useGetEnvironment';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
@@ -62,8 +60,6 @@ const BlueprintsSidebar = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const resolvePath = useAppSelector(selectPathResolver);
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -106,16 +102,12 @@ const BlueprintsSidebar = () => {
       <EmptyBlueprintState
         icon={PlusCircleIcon}
         action={
-          isWizardRevampEnabled ? (
-            <Button
-              variant='link'
-              onClick={() => dispatch(openWizardModal('create'))}
-            >
-              Create image blueprint
-            </Button>
-          ) : (
-            <Link to={resolvePath('imagewizard')}>Create image blueprint</Link>
-          )
+          <Button
+            variant='link'
+            onClick={() => dispatch(openWizardModal('create'))}
+          >
+            Create image blueprint
+          </Button>
         }
         titleText='No blueprints'
         bodyText='Create a blueprint and optionally build related images.'

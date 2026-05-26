@@ -10,7 +10,6 @@ import {
   Content,
   DropEvent,
   FileUpload,
-  Form,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -30,7 +29,6 @@ import {
   selectRegistrationType,
   setFirstBootScript,
 } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 // Inline <style> needed because sassPrefix wraps SCSS in .imageBuilder,
 // but the wizard Modal renders in a portal outside that wrapper.
@@ -73,9 +71,6 @@ const FirstBootStep = () => {
   const registrationType = useAppSelector(selectRegistrationType);
   const language = detectScriptType(selectedScript);
   const { errors } = useFirstBootValidation();
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   const initialScriptRef = useRef(selectedScript);
   const [filename, setFilename] = useState('');
@@ -131,16 +126,13 @@ const FirstBootStep = () => {
   ];
 
   return (
-    <Wrapper>
+    <>
       <CustomizationLabels customization='firstBoot' />
       <Content>
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-        >
+        <Title headingLevel='h2' size='lg'>
           First boot configuration
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Add a custom script to be executed when the image boots for the first
           time.
           {registrationType !== 'register-later' && (
@@ -208,7 +200,7 @@ const FirstBootStep = () => {
           </FormHelperText>
         )}
       </FormGroup>
-    </Wrapper>
+    </>
   );
 };
 

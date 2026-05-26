@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { Alert, Content, Form, Label, Title } from '@patternfly/react-core';
+import { Alert, Content, Label, Title } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import { selectFips } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';
@@ -19,16 +18,13 @@ const KernelStep = () => {
     kernel: { append: requiredByOpenSCAP },
   } = useSecuritySummary();
 
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
-
   return (
-    <Wrapper>
+    <>
       <CustomizationLabels customization='kernel' />
       <Content>
         <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
+          headingLevel='h2'
+          size='lg'
           className='pf-v6-u-display-flex pf-v6-u-align-items-center'
         >
           Kernel
@@ -38,7 +34,7 @@ const KernelStep = () => {
             </Label>
           )}
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Choose a kernel package and append specific boot parameters to
           customize how your image initializes its core operating environment.
         </Content>
@@ -52,7 +48,7 @@ const KernelStep = () => {
       </Content>
       <KernelName />
       <KernelArguments />
-    </Wrapper>
+    </>
   );
 };
 

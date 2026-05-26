@@ -63,7 +63,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   useFlag: vi.fn((flag) => {
     switch (flag) {
       case 'image-builder.layered-repos.enabled':
-      case 'image-builder.wizard-revamp.enabled':
         return true;
       default:
         return false;

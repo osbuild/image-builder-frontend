@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Card, CardBody } from '@patternfly/react-core';
 
-import { useFlag } from '@/Utilities/useGetEnvironment';
-
 import {
   PackageDetails,
   PackageGroupDetails,
@@ -21,8 +19,6 @@ const ContentOverview = ({
   restrictions,
   oscapPackages = [],
 }: ContentOverviewProps) => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-
   if (
     restrictions.packages.shouldHide &&
     restrictions.repositories.shouldHide
@@ -34,9 +30,7 @@ const ContentOverview = ({
     <Card>
       <ReviewCardHeader
         title='Repositories and packages'
-        stepId={
-          isWizardRevampEnabled ? 'content-step' : 'wizard-repository-snapshot'
-        }
+        stepId='content-step'
       />
       <CardBody>
         <ReviewList>

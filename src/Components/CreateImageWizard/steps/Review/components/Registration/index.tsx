@@ -4,7 +4,6 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
 import { selectAapEnabled, selectRegistrationType } from '@/store/slices';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
   RegisterAAP,
@@ -18,7 +17,6 @@ import { ReviewCardHeader, ReviewList } from '../shared';
 import { ReviewCardProps } from '../types';
 
 const Registration = ({ restrictions }: ReviewCardProps) => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const registrationType = useAppSelector(selectRegistrationType);
   const aapEnabled = useAppSelector(selectAapEnabled);
 
@@ -30,8 +28,8 @@ const Registration = ({ restrictions }: ReviewCardProps) => {
     <Card>
       <ReviewCardHeader
         title='Registration'
-        stepId={isWizardRevampEnabled ? 'base-settings-step' : 'step-register'}
-        {...(isWizardRevampEnabled && { sectionId: 'registration-section' })}
+        stepId='base-settings-step'
+        sectionId='registration-section'
       />
       <CardBody>
         <ReviewList>
