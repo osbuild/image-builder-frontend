@@ -384,8 +384,31 @@ jobs:
             echo "retriable=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Notify analysis failure
+        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'failure' && steps.slack-ts.outputs.ts }}
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ matrix.channel.id }}
+            thread_ts: ${{ steps.slack-ts.outputs.ts }}
+            text: ":warning: Automated analysis failed — could not classify this failure. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
+
+      # Only rerun from one matrix instance to avoid duplicate reruns
+      - name: Rerun if retriable
+        id: rerun
+        if: ${{ steps.classification.outputs.retriable && github.event.inputs.run_id == '' && (matrix.channel.name == 'main' || matrix.channel.name == 'manual') }}
+        continue-on-error: true
+        run: |
+          echo "Classified as $CLASSIFICATION — rerunning failed jobs (attempt ${{ github.run_attempt }})"
+          gh run rerun ${{ github.run_id }} --failed --repo ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLASSIFICATION: ${{ steps.classification.outputs.value }}
+
       - name: Update original message — rerun in progress
-        if: ${{ steps.classification.outputs.retriable && steps.slack-ts.outputs.ts }}
+        if: ${{ steps.rerun.outcome == 'success' && steps.slack-ts.outputs.ts }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.update
@@ -400,27 +423,6 @@ jobs:
                     text:
                       type: mrkdwn
                       text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad: :arrows_counterclockwise:"
-
-      - name: Notify analysis failure
-        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'failure' && steps.slack-ts.outputs.ts }}
-        uses: slackapi/slack-github-action@v2.1.1
-        with:
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            channel: ${{ matrix.channel.id }}
-            thread_ts: ${{ steps.slack-ts.outputs.ts }}
-            text: ":warning: Automated analysis failed — could not classify this failure. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
-
-      # Only rerun from one matrix instance to avoid duplicate reruns
-      - name: Rerun if retriable
-        if: ${{ steps.classification.outputs.retriable && github.event.inputs.run_id == '' && (matrix.channel.name == 'main' || matrix.channel.name == 'manual') }}
-        run: |
-          echo "Classified as $CLASSIFICATION — rerunning failed jobs (attempt ${{ github.run_attempt }})"
-          gh run rerun ${{ github.run_id }} --failed --repo ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CLASSIFICATION: ${{ steps.classification.outputs.value }}
 
       # --- Attempt 2+: post a short thread reply ---
       - name: Post retry failure to Slack
