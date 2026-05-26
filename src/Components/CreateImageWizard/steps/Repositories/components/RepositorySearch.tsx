@@ -29,7 +29,6 @@ import {
 } from '@/store/slices';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import useDebounce from '@/Utilities/useDebounce';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import CommunityRepositoryLabel from './CommunityRepositoryLabel';
 import CustomEpelWarning from './CustomEpelWarning';
@@ -64,14 +63,12 @@ const RepositorySearch = ({
   const [inputValue, setInputValue] = useState('');
   const [filterValue, setFilterValue] = useState('');
 
-  const isLayeredReposEnabled = useFlag('image-builder.layered-repos.enabled');
-
   const originParam = useMemo(() => {
     const origins = [ContentOrigin.CUSTOM];
     origins.push(ContentOrigin.COMMUNITY);
-    if (isLayeredReposEnabled) origins.push(ContentOrigin.REDHAT);
+    origins.push(ContentOrigin.REDHAT);
     return origins.join(',');
-  }, [isLayeredReposEnabled]);
+  }, []);
 
   const debouncedFilterValue = useDebounce(filterValue);
 
