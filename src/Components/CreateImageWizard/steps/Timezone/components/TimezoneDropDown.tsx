@@ -59,6 +59,9 @@ const TimezoneDropDown = () => {
   const normalizeTimezoneString = (value: string): string =>
     value.toLowerCase().replace(/[_/]/g, ' ').replace(/\s+/g, ' ').trim();
 
+  const formatTimezoneDisplayString = (value: string): string =>
+    value.replace(/_/g, ' ');
+
   const sortedTimezones = useMemo(() => {
     const normalizedFilter = normalizeTimezoneString(searchValue);
 
@@ -83,7 +86,7 @@ const TimezoneDropDown = () => {
       isFullWidth
       data-testid='timezone-toggle'
     >
-      {timezone || 'Select a timezone'}
+      {timezone ? formatTimezoneDisplayString(timezone) : 'Select a timezone'}
     </MenuToggle>
   );
 
@@ -114,7 +117,7 @@ const TimezoneDropDown = () => {
         <MenuList>
           {sortedTimezones.map((option) => (
             <MenuItem key={option} itemId={option}>
-              {option}{' '}
+              {formatTimezoneDisplayString(option)}{' '}
               {option === DEFAULT_TIMEZONE && (
                 <Label color='blue' isCompact>
                   Default
