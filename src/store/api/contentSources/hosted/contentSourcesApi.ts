@@ -417,7 +417,7 @@ export type ApiRepositoryResponse = {
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
   failed_snapshot_count?: number | undefined;
-  /** The feature name this repo requires */
+  /** Comma-separated Red Hat feature names; entitlement or import matches if any token applies */
   feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
@@ -477,7 +477,7 @@ export type ApiRepositoryResponseRead = {
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
   failed_snapshot_count?: number | undefined;
-  /** The feature name this repo requires */
+  /** Comma-separated Red Hat feature names; entitlement or import matches if any token applies */
   feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
@@ -611,7 +611,7 @@ export type ApiRepositoryImportResponse = {
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
   failed_snapshot_count?: number | undefined;
-  /** The feature name this repo requires */
+  /** Comma-separated Red Hat feature names; entitlement or import matches if any token applies */
   feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
@@ -677,7 +677,7 @@ export type ApiRepositoryImportResponseRead = {
   failed_introspections_count?: number | undefined;
   /** Number of consecutive failed snapshots */
   failed_snapshot_count?: number | undefined;
-  /** The feature name this repo requires */
+  /** Comma-separated Red Hat feature names; entitlement or import matches if any token applies */
   feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
