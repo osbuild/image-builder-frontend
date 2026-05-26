@@ -17,7 +17,6 @@ import {
   selectIsCustomName,
   selectIsImageMode,
 } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import ArchSelect from './components/ArchSelect';
 import BlueprintMode from './components/BlueprintMode';
@@ -38,7 +37,7 @@ const ImageOutputStep = () => {
   const isCustomName = useAppSelector(selectIsCustomName);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const imageSource = useAppSelector(selectImageSource);
-  const isImageModeEnabled = useFlag('image-builder.image-mode.enabled');
+
   const isHostedImageMode = isImageMode && !isOnPremise;
 
   useEffect(() => {
@@ -74,10 +73,8 @@ const ImageOutputStep = () => {
           Learn more about <DocumentationButton />.
         </Content>
       </Content>
-      {isImageModeEnabled && !(distribution as string).startsWith('fedora') && (
-        <BlueprintMode />
-      )}
-      {isImageModeEnabled && isImageMode && <ImageSourceSelect />}
+      {!(distribution as string).startsWith('fedora') && <BlueprintMode />}
+      {isImageMode && <ImageSourceSelect />}
       {!isImageMode && (
         <>
           <ReleaseSelect />
