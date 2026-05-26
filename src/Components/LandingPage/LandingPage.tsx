@@ -39,11 +39,10 @@ export const LandingPage = () => {
   const { composeId } = useParams();
   const [searchParams] = useSearchParams();
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   // Open wizard modal when on /imagewizard path
   useEffect(() => {
-    if (isWizardRevampEnabled && location.pathname.includes('/imagewizard')) {
+    if (location.pathname.includes('/imagewizard')) {
       const blueprintId = composeId || searchParams.get('blueprint_id');
 
       if (blueprintId) {
@@ -53,13 +52,7 @@ export const LandingPage = () => {
         dispatch(openWizardModal('create'));
       }
     }
-  }, [
-    dispatch,
-    isWizardRevampEnabled,
-    location.pathname,
-    composeId,
-    searchParams,
-  ]);
+  }, [dispatch, location.pathname, composeId, searchParams]);
 
   const imageList = (
     <>
@@ -94,7 +87,7 @@ export const LandingPage = () => {
     <>
       <ImageBuilderHeader />
       {imageList}
-      {isWizardRevampEnabled && <CreateImageWizard3 />}
+      <CreateImageWizard3 />
       <Outlet />
     </>
   );

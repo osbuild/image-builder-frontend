@@ -37,7 +37,6 @@ import {
   selectIsImageMode,
   selectIsoPayloadReference,
 } from '@/store/slices/wizard';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import Aws from './Aws';
 import Azure from './Azure';
@@ -74,8 +73,6 @@ const TargetEnvironment = () => {
   const distribution = useAppSelector(selectDistribution);
   const isImageMode = useAppSelector(selectIsImageMode);
   const isOnPremise = useAppSelector(selectIsOnPremise);
-
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -251,7 +248,7 @@ const TargetEnvironment = () => {
       label={<span className='pf-v6-u-font-size-md'>Target environments</span>}
       fieldId='target-environments'
     >
-      <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+      <Content component='small'>
         {isImageMode
           ? 'Select a target environment for this image.'
           : 'Select one or more target environments for this image.'}

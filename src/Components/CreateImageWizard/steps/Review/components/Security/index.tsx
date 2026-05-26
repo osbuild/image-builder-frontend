@@ -4,7 +4,6 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
 import { selectFips, selectIsOnPremise } from '@/store/slices';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { FIPSDetails, SecurityDetails } from './components';
 import { isSecurityConfigured, SecuritySummary } from './types';
@@ -17,7 +16,6 @@ type SecurityCardProps = ReviewCardProps & {
 };
 
 const Security = ({ restrictions, security }: SecurityCardProps) => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const { enabled: fipsEnabled } = useAppSelector(selectFips);
 
@@ -35,12 +33,8 @@ const Security = ({ restrictions, security }: SecurityCardProps) => {
         title={
           isOnPremise ? 'Security configuration' : 'Compliance configuration'
         }
-        stepId={
-          isWizardRevampEnabled
-            ? 'base-settings-step'
-            : 'wizard-repository-snapshot'
-        }
-        {...(isWizardRevampEnabled && { sectionId: 'security-section' })}
+        stepId='base-settings-step'
+        sectionId='security-section'
       />
       <CardBody>
         <ReviewList>

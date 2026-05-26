@@ -41,8 +41,6 @@ const onPremFlag = (flag: string): boolean => {
   switch (flag) {
     case 'image-builder.image-mode.enabled':
       return true;
-    case 'image-builder.wizard-revamp.enabled':
-      return true;
     default:
       return false;
   }

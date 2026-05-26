@@ -15,15 +15,12 @@ import {
   selectIsImageMode,
   selectIsOnPremise,
 } from '@/store/slices';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 
 const ImageOverview = () => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-
   const imageName = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
   const isOnPremise = useAppSelector(selectIsOnPremise);
@@ -47,10 +44,8 @@ const ImageOverview = () => {
     <Card>
       <ReviewCardHeader
         title='Image overview'
-        stepId={
-          isWizardRevampEnabled ? 'base-settings-step' : 'step-image-output'
-        }
-        {...(isWizardRevampEnabled && { sectionId: 'image-output-section' })}
+        stepId='base-settings-step'
+        sectionId='image-output-section'
       />
       <CardBody>
         <ReviewList>

@@ -5,7 +5,6 @@ import { Card, CardBody } from '@patternfly/react-core';
 import { useAppSelector } from '@/store/hooks';
 import { selectSnapshotDate, selectUseLatest } from '@/store/slices';
 import { timestampToDisplayString } from '@/Utilities/time';
-import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
   ReviewCardHeader,
@@ -16,7 +15,6 @@ import {
 import { ReviewCardProps } from '../types';
 
 const RepeatableBuild = ({ restrictions }: ReviewCardProps) => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const useLatest = useAppSelector(selectUseLatest);
   const snapshotDate = useAppSelector(selectSnapshotDate);
 
@@ -28,14 +26,8 @@ const RepeatableBuild = ({ restrictions }: ReviewCardProps) => {
     <Card>
       <ReviewCardHeader
         title='Repeatable build'
-        stepId={
-          isWizardRevampEnabled
-            ? 'base-settings-step'
-            : 'wizard-repository-snapshot'
-        }
-        {...(isWizardRevampEnabled && {
-          sectionId: 'repeatable-build-section',
-        })}
+        stepId='base-settings-step'
+        sectionId='repeatable-build-section'
       />
       <CardBody>
         <ReviewList>

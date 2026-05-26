@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Card, CardBody } from '@patternfly/react-core';
 
-import { useFlag } from '@/Utilities/useGetEnvironment';
-
 import {
   Filesystem,
   Firewall,
@@ -35,17 +33,11 @@ const AdvancedSettingsOverview = ({
   oscapKernelArgs = [],
   oscapServices,
 }: AdvancedSettingsOverviewProps) => {
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
-
   return (
     <Card>
       <ReviewCardHeader
         title='Advanced settings'
-        stepId={
-          // NOTE: this doesn't really map properly on to the old wizard, so
-          // let's just take the user to the filesystem step by default.
-          isWizardRevampEnabled ? 'advanced-settings-step' : 'step-file-system'
-        }
+        stepId='advanced-settings-step'
       />
       <CardBody>
         <ReviewList>

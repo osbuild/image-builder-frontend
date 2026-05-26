@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Content, Form, Title } from '@patternfly/react-core';
+import { Content, Title } from '@patternfly/react-core';
 
 import DocumentationButton from '@/Components/sharedComponents/DocumentationButton';
 import { RHEL_10_IMAGE_MODE_IMAGE } from '@/constants';
@@ -39,10 +39,7 @@ const ImageOutputStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const imageSource = useAppSelector(selectImageSource);
   const isImageModeEnabled = useFlag('image-builder.image-mode.enabled');
-  const isWizardRevampEnabled = useFlag('image-builder.wizard-revamp.enabled');
   const isHostedImageMode = isImageMode && !isOnPremise;
-
-  const Wrapper = isWizardRevampEnabled ? React.Fragment : Form;
 
   useEffect(() => {
     const defaultName = generateDefaultName(distribution, arch);
@@ -64,16 +61,12 @@ const ImageOutputStep = () => {
   }, [dispatch, imageSource, isHostedImageMode]);
 
   return (
-    <Wrapper>
+    <>
       <Content>
-        <Title
-          headingLevel={isWizardRevampEnabled ? 'h2' : 'h1'}
-          size={isWizardRevampEnabled ? 'lg' : 'xl'}
-          id='image-output-section'
-        >
+        <Title headingLevel='h2' size='lg' id='image-output-section'>
           Image output
         </Title>
-        <Content component={isWizardRevampEnabled ? 'small' : 'p'}>
+        <Content component='small'>
           Select the release, architecture, and a target environment to build
           your image.{' '}
           {!isImageMode &&
@@ -94,7 +87,7 @@ const ImageOutputStep = () => {
       )}
       <ArchSelect isDisabled={isHostedImageMode} />
       <TargetEnvironment />
-    </Wrapper>
+    </>
   );
 };
 
