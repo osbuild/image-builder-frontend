@@ -1145,6 +1145,33 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         ],
       },
     } as unknown as ComposeStatus,
+    'a8f5e2d1-9c3b-4f6a-b7e8-1d2c3f4a5b6c': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://s3.amazonaws.com/a8f5e2d1-disk.qcow2',
+          },
+          status: 'success',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        bootc: {
+          reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'aws.s3',
+              options: {},
+            },
+          },
+        ],
+      },
+    } as unknown as ComposeStatus,
   };
   return mockComposes[composeId];
 };

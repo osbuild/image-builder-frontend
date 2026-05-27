@@ -446,12 +446,13 @@ export const mockCentosBlueprintComposes: GetBlueprintComposesApiResponse = {
 };
 
 export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
-  meta: { count: 3 },
+  meta: { count: 4 },
   data: [
     {
       id: '63e42aaf-b543-41c6-899f-3de1e61838dc',
       image_name: 'dark-chocolate-aws',
       created_at: '2023-09-08T14:38:00.000Z',
+      blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc',
       blueprint_version: 2,
       request: {
         distribution: RHEL_9,
@@ -494,6 +495,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
       id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
       image_name: 'Dark Chocolate',
       created_at: '2021-04-27T12:31:12Z',
+      blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc',
       blueprint_version: 1,
       request: {
         distribution: RHEL_9,
@@ -516,6 +518,28 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
               options: {
                 share_with_accounts: ['123123123123'],
               },
+            },
+          },
+        ],
+      },
+    },
+    {
+      id: 'a8f5e2d1-9c3b-4f6a-b7e8-1d2c3f4a5b6c',
+      image_name: 'dark-chocolate-bootc',
+      created_at: '2024-03-01T10:00:00Z',
+      blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc',
+      blueprint_version: 2,
+      request: {
+        bootc: {
+          reference: 'registry.redhat.io/rhel9/rhel-bootc:9.7',
+        },
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'aws.s3',
+              options: {},
             },
           },
         ],

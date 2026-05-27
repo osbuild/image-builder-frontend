@@ -131,6 +131,27 @@ describe('Images Table', () => {
     expect(within(imageModeRow).getByText('Image mode')).toBeInTheDocument();
   });
 
+  test('displays Package mode and Image mode labels in blueprint-filtered view', async () => {
+    await renderCustomRoutesWithReduxRouter();
+
+    const user = userEvent.setup();
+
+    // Select the "Dark Chocolate" blueprint to filter the view
+    const blueprint = await screen.findByTestId(
+      '677b010b-e95e-4694-9813-d11d847f1bfc',
+    );
+    await user.click(blueprint);
+
+    const table = await screen.findByTestId('images-table');
+
+    await waitFor(() => {
+      expect(within(table).getAllByText('Package mode').length).toBeGreaterThan(
+        0,
+      );
+    });
+    expect(within(table).getByText('Image mode')).toBeInTheDocument();
+  });
+
   test('check download compose request action', async () => {
     await renderCustomRoutesWithReduxRouter();
 
