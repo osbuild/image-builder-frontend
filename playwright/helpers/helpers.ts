@@ -54,14 +54,8 @@ export const closePopupsIfExist = async (page: Page) => {
       .contentFrame()
       .getByRole('button', { name: 'Profile image for Rob Rob' })
       .last(), // This closes the intercom pop-up notification at the bottom of the screen, the last notification is displayed first if stacked (different from the modal popup handled above)
-    page
-      .locator('iframe[name="trustarc_cm"]')
-      .contentFrame()
-      .getByRole('button', { name: 'Agree and proceed with' }), // closes the EU cookies popup
-    page
-      .locator('iframe[name="trustarc_cm"]')
-      .contentFrame()
-      .getByRole('button', { name: 'Accept default' }), // closes the SSO login cookies popup
+    page.getByRole('button', { name: 'Agree and proceed with' }), // closes the EU cookies popup
+    page.getByRole('button', { name: 'Accept default' }), // closes the SSO login cookies popup
   ];
 
   for (const locator of locatorsToCheck) {

@@ -129,9 +129,9 @@ const fillAndSubmitLogin = async (page: Page, user: string) => {
 };
 
 const loginConsole = async (page: Page, user: string, password: string) => {
-  await closePopupsIfExist(page);
   await page.goto('/insights/image-builder/landing');
 
+  await closePopupsIfExist(page);
   await fillAndSubmitLogin(page, user);
 
   let loginInputAttempts = 0;
