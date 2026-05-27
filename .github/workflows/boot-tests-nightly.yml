@@ -17,6 +17,10 @@ on:
         description: 'Run ID to re-analyze (skips boot tests, downloads existing artifact)'
         required: false
         type: number
+      rerun_of:
+        description: 'Original run ID (set automatically when retrying flaky failures)'
+        required: false
+        type: number
   pull_request:
     types: [opened, reopened, synchronize]
     paths:
@@ -97,7 +101,10 @@ jobs:
   # Scheduled runs notify both channels; manual runs with slack_channel_id notify only that channel.
   prepare-channels:
     runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.slack_channel_id != '')
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.slack_channel_id != '') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.rerun_of != '')
     permissions: {}
     outputs:
       channels: ${{ steps.set.outputs.channels }}
@@ -124,7 +131,8 @@ jobs:
     if: >-
       always() &&
       needs.prepare-channels.result == 'success'
-    permissions: {}
+    permissions:
+      actions: read
     strategy:
       fail-fast: false
       matrix:
@@ -132,7 +140,7 @@ jobs:
 
     steps:
       - name: Notify Slack on success
-        if: ${{ needs.boot-tests.result == 'success' }}
+        if: ${{ needs.boot-tests.result == 'success' && github.event.inputs.rerun_of == '' }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
@@ -149,7 +157,7 @@ jobs:
 
       - name: Notify Slack on failure
         id: slack-failure
-        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.event.inputs.rerun_of == '' }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
@@ -165,23 +173,25 @@ jobs:
                       text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad:"
 
       - name: Save Slack message ts
-        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.event.inputs.rerun_of == '' }}
         run: echo "${{ steps.slack-failure.outputs.ts }}" > slack-ts.txt
 
       - name: Upload Slack ts artifact
-        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.run_attempt == '1' }}
+        if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.event.inputs.rerun_of == '' }}
         uses: actions/upload-artifact@v4
         with:
           name: slack-ts-${{ matrix.channel.name }}
           path: slack-ts.txt
           overwrite: true
 
-      # On rerun attempts, retrieve the original message ts
+      # On reruns, retrieve the original message ts from the original run
       - name: Download Slack ts artifact
-        if: ${{ github.run_attempt != '1' }}
+        if: ${{ github.event.inputs.rerun_of != '' }}
         uses: actions/download-artifact@v4
         with:
           name: slack-ts-${{ matrix.channel.name }}
+          run-id: ${{ github.event.inputs.rerun_of }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: Read Slack message ts
@@ -192,7 +202,7 @@ jobs:
           fi
 
       - name: Update original message on retry success
-        if: ${{ needs.boot-tests.result == 'success' && github.run_attempt != '1' && steps.slack-ts.outputs.ts }}
+        if: ${{ needs.boot-tests.result == 'success' && github.event.inputs.rerun_of != '' && steps.slack-ts.outputs.ts }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.update
@@ -206,9 +216,9 @@ jobs:
                   - type: section
                     text:
                       type: mrkdwn
-                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: ~*FAILED*~ *PASSED on retry* (attempt ${{ github.run_attempt }}) :partymeow:"
+                      text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: ~*FAILED*~ *PASSED on retry* :partymeow:"
 
-  # Analyze test failures with Claude Code (via Vertex AI) — only on first attempt
+  # Analyze test failures with Claude Code (via Vertex AI) — only on first run, not reruns
   # SECURITY: This job only has Vertex AI secrets — no Slack tokens, no other credentials.
   # Claude runs here and cannot access secrets from other jobs.
   analyze-failures:
@@ -218,7 +228,7 @@ jobs:
     if: >-
       always() &&
       (needs.boot-tests.result == 'failure' || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_id != '')) &&
-      github.run_attempt == '1' &&
+      github.event.inputs.rerun_of == '' &&
       (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.slack_channel_id != '' || github.event.inputs.run_id != '')))
     permissions:
       contents: read
@@ -294,8 +304,8 @@ jobs:
           path: boot-test-reports/
           retention-days: 10
 
-  # Post Claude's analysis to Slack and rerun flaky tests (attempt 1),
-  # or post a short "retry also failed" thread reply (attempt 2+).
+  # Post Claude's analysis to Slack and trigger rerun for flaky tests (first run),
+  # or post a short "retry also failed" thread reply (rerun).
   # Uses the same channel matrix as notify-slack to avoid step duplication.
   # NOTE: When dispatched with run_id only (no slack_channel_id), this job is
   # intentionally skipped — analyze-failures still runs and uploads reports as
@@ -317,9 +327,9 @@ jobs:
         channel: ${{ fromJSON(needs.prepare-channels.outputs.channels) }}
 
     steps:
-      # --- Attempt 1: post Claude's analysis and rerun if flake ---
+      # --- First run: post Claude's analysis and trigger rerun if flake ---
       - name: Download analysis reports
-        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' }}
+        if: ${{ github.event.inputs.rerun_of == '' && needs.analyze-failures.result == 'success' }}
         uses: actions/download-artifact@v4
         with:
           name: reports
@@ -329,6 +339,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: slack-ts-${{ matrix.channel.name }}
+          run-id: ${{ github.event.inputs.rerun_of || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: Read Slack message ts
@@ -340,7 +352,7 @@ jobs:
 
       - name: Build analysis payload
         id: analysis-payload
-        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' && steps.slack-ts.outputs.ts }}
+        if: ${{ github.event.inputs.rerun_of == '' && needs.analyze-failures.result == 'success' && steps.slack-ts.outputs.ts }}
         run: |
           if [ ! -f boot-test-reports/latest.md ]; then
             echo "::warning::Claude did not produce boot-test-reports/latest.md"
@@ -375,7 +387,7 @@ jobs:
 
       - name: Read classification
         id: classification
-        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'success' }}
+        if: ${{ github.event.inputs.rerun_of == '' && needs.analyze-failures.result == 'success' }}
         run: |
           CLASSIFICATION=$(cat boot-test-reports/classification.txt 2>/dev/null || echo "UNKNOWN")
           CLASSIFICATION=$(echo "$CLASSIFICATION" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
@@ -385,7 +397,7 @@ jobs:
           fi
 
       - name: Notify analysis failure
-        if: ${{ github.run_attempt == '1' && needs.analyze-failures.result == 'failure' && steps.slack-ts.outputs.ts }}
+        if: ${{ github.event.inputs.rerun_of == '' && needs.analyze-failures.result == 'failure' && steps.slack-ts.outputs.ts }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
@@ -395,14 +407,15 @@ jobs:
             thread_ts: ${{ steps.slack-ts.outputs.ts }}
             text: ":warning: Automated analysis failed — could not classify this failure. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
 
-      # Only rerun from one matrix instance to avoid duplicate reruns
-      - name: Rerun if retriable
+      # Only trigger rerun from one matrix instance to avoid duplicates
+      - name: Trigger rerun
         id: rerun
-        if: ${{ steps.classification.outputs.retriable && github.event.inputs.run_id == '' && (matrix.channel.name == 'main' || matrix.channel.name == 'manual') }}
-        continue-on-error: true
+        if: ${{ steps.classification.outputs.retriable && github.event.inputs.run_id == '' && github.event.inputs.rerun_of == '' && (matrix.channel.name == 'main' || matrix.channel.name == 'manual') }}
         run: |
-          echo "Classified as $CLASSIFICATION — rerunning failed jobs (attempt ${{ github.run_attempt }})"
-          gh run rerun ${{ github.run_id }} --failed --repo ${{ github.repository }}
+          echo "Classified as $CLASSIFICATION — triggering rerun"
+          gh workflow run boot-tests-nightly.yml \
+            -f rerun_of=${{ github.run_id }} \
+            --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CLASSIFICATION: ${{ steps.classification.outputs.value }}
@@ -424,9 +437,9 @@ jobs:
                       type: mrkdwn
                       text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/ | :stars: Nightly boot test run>: *FAILED* :big-sad: :arrows_counterclockwise:"
 
-      # --- Attempt 2+: post a short thread reply ---
+      # --- Rerun: post a short thread reply ---
       - name: Post retry failure to Slack
-        if: ${{ github.run_attempt != '1' && steps.slack-ts.outputs.ts }}
+        if: ${{ github.event.inputs.rerun_of != '' && steps.slack-ts.outputs.ts }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
@@ -434,10 +447,10 @@ jobs:
           payload: |
             channel: ${{ matrix.channel.id }}
             thread_ts: ${{ steps.slack-ts.outputs.ts }}
-            text: ":x: Retry attempt ${{ github.run_attempt }} also failed. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
+            text: ":x: Retry also failed. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/|View run>"
 
       - name: Revert original message on retry failure
-        if: ${{ github.run_attempt != '1' && steps.slack-ts.outputs.ts }}
+        if: ${{ github.event.inputs.rerun_of != '' && steps.slack-ts.outputs.ts }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.update
