@@ -117,15 +117,6 @@ export type ComposerComposesResponseItem = Omit<
   };
 };
 
-export type ImageInfo = {
-  image: string;
-  repository: string;
-  tag: string;
-};
-
-export type PodmanImagesArg = void;
-export type PodmanImagesResponse = ImageInfo[];
-
 type PodmanLabels = {
   // let's just hardcode this for now, we don't have any
   // rpm builds for other arches for the on-prem frontend

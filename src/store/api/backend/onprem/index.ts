@@ -18,8 +18,6 @@ export {
   useLazyExportBlueprintCockpitQuery,
   useLazyGetBlueprintsQuery,
   useLazyGetOscapCustomizationsQuery,
-  useLazyPodmanImagesQuery,
-  usePodmanImagesQuery,
   useUpdateBlueprintMutation,
   useUpdateWorkerConfigMutation,
 } from './composerApi';

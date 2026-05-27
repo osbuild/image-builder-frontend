@@ -107,7 +107,6 @@ export {
   useExportBlueprintCockpitQuery,
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
-  usePodmanImagesQuery,
   useUpdateWorkerConfigMutation,
 } from './onprem';
 
@@ -143,10 +142,6 @@ export type {
   WorkerConfigFile,
   WorkerConfigRequest,
   WorkerConfigResponse,
-  // Podman types (on-prem only)
-  ImageInfo,
-  PodmanImagesArg,
-  PodmanImagesResponse,
   // Non-conflicting generated types
   Bootc,
   LocalUploadStatus,

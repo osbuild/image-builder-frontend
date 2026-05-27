@@ -1,8 +1,4 @@
-import {
-  Architectures,
-  BootcDistributionItem,
-  ImageInfo,
-} from '@/store/api/backend';
+import { Architectures, BootcDistributionItem } from '@/store/api/backend';
 
 export const mockArchitecturesX86: Architectures = [
   {
@@ -67,19 +63,6 @@ export const mockArchitecturesWithNetworkInstaller: Architectures = [
         rhsm: true,
       },
     ],
-  },
-];
-
-export const mockPodmanImages: ImageInfo[] = [
-  {
-    image: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-    repository: 'registry.redhat.io/rhel10/rhel-bootc',
-    tag: '10.0',
-  },
-  {
-    image: 'registry.redhat.io/rhel10/rhel-bootc:latest',
-    repository: 'registry.redhat.io/rhel10/rhel-bootc',
-    tag: 'latest',
   },
 ];
 
