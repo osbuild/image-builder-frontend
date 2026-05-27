@@ -2,11 +2,7 @@ import cockpit from 'cockpit';
 
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
-import {
-  PodmanImageInfo,
-  PodmanImagesArg,
-  PodmanImagesResponse,
-} from '../types';
+import { ImageInfo, PodmanImagesArg, PodmanImagesResponse } from '../types';
 
 export const podmanEndpoints = (builder: OnPremBuilder) => ({
   podmanImages: builder.query<PodmanImagesResponse, PodmanImagesArg>({
@@ -54,7 +50,7 @@ export const podmanEndpoints = (builder: OnPremBuilder) => ({
             tag,
           };
         })
-        .filter((image): image is PodmanImageInfo => image !== null);
+        .filter((image): image is ImageInfo => image !== null);
 
       return images;
     }),

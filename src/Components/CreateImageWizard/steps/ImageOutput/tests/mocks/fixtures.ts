@@ -1,4 +1,4 @@
-import { Architectures, PodmanImageInfo } from '@/store/api/backend';
+import { Architectures, ImageInfo } from '@/store/api/backend';
 
 export const mockArchitecturesX86: Architectures = [
   {
@@ -66,7 +66,7 @@ export const mockArchitecturesWithNetworkInstaller: Architectures = [
   },
 ];
 
-export const mockPodmanImages: PodmanImageInfo[] = [
+export const mockPodmanImages: ImageInfo[] = [
   {
     image: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
     repository: 'registry.redhat.io/rhel10/rhel-bootc',
