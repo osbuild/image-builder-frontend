@@ -21,7 +21,6 @@ import {
 } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices';
 import {
   addImageType,
   changeImageTypes,
@@ -72,13 +71,10 @@ const TargetEnvironment = () => {
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
   const isImageMode = useAppSelector(selectIsImageMode);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
   });
-
-  const skipArchitectures = isImageMode && !isOnPremise;
 
   const {
     isError: isArchError,
@@ -89,7 +85,7 @@ const TargetEnvironment = () => {
       distribution,
     },
     {
-      skip: skipArchitectures,
+      skip: isImageMode,
       selectFromResult: ({ data, isFetching, isError }) => ({
         isError,
         isFetching,
@@ -107,8 +103,9 @@ const TargetEnvironment = () => {
     isFetching: isBootcFetching,
   } = useGetDistributionsQuery(
     { kind: 'bootc', arch, distro: distribution },
-    { skip: !isImageMode || isOnPremise },
+    { skip: !isImageMode },
   );
+
   const bootcDistributions = bootcDistributionsRaw as
     | BootcDistributionItem[]
     | undefined;
@@ -117,12 +114,12 @@ const TargetEnvironment = () => {
   const isError = isArchError || isBootcError;
 
   const supportedEnvironments = useMemo(() => {
-    if (!skipArchitectures) return archEnvironments;
+    if (!isImageMode) return archEnvironments;
 
     return [
       ...new Set(bootcDistributions?.map((d) => d.type) ?? EMPTY_ENVIRONMENTS),
     ];
-  }, [skipArchitectures, bootcDistributions, archEnvironments]);
+  }, [isImageMode, bootcDistributions, archEnvironments]);
 
   const dispatch = useAppDispatch();
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');

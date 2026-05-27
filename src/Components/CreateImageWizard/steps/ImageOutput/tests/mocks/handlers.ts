@@ -1,14 +1,26 @@
-import { Architectures } from '@/store/api/backend';
+import { Architectures, BootcDistributionItem } from '@/store/api/backend';
 import {
   composeHandlers,
   createArchitecturesHandler,
   type FetchHandler,
   fetchMock,
+  type FetchRequest,
 } from '@/test/testUtils';
 
 import { mockArchitecturesBoth } from './fixtures';
 
 export { fetchMock };
+
+export const createDistributionsHandler = (
+  distributions: BootcDistributionItem[],
+): FetchHandler => {
+  return ({ url, method }: FetchRequest) => {
+    if (url.includes('/distributions') && method === 'GET') {
+      return JSON.stringify(distributions);
+    }
+    return null;
+  };
+};
 
 export const createDefaultFetchHandler = (): FetchHandler => {
   return composeHandlers(
