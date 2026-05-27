@@ -2,7 +2,6 @@ import { architectureEndpoints } from './architecture';
 import { blueprintEndpoints } from './blueprints';
 import { composeEndpoints } from './composes';
 import { oscapEndpoints } from './oscap';
-import { podmanEndpoints } from './podman';
 import { workerEndpoints } from './worker';
 
 import { emptyComposerApi } from '../emptyComposerApi';
@@ -15,7 +14,6 @@ export const composerApi = emptyComposerApi.injectEndpoints({
       ...composeEndpoints(builder),
       ...oscapEndpoints(builder),
       ...workerEndpoints(builder),
-      ...podmanEndpoints(builder),
     };
   },
   // since we are inheriting some endpoints,
@@ -44,8 +42,6 @@ export const {
   useGetComposeStatusQuery,
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
-  usePodmanImagesQuery,
-  useLazyPodmanImagesQuery,
 } = composerApi;
 
 // re-export this for testing
