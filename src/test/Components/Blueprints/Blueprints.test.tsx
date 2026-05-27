@@ -335,7 +335,7 @@ describe('Blueprints', () => {
 
       expect(
         within(screen.getByTestId('images-table')).getAllByRole('row'),
-      ).toHaveLength(4);
+      ).toHaveLength(5);
 
       await waitFor(() => user.click(composesVersionFilter));
       const option = await screen.findByRole('menuitem', { name: 'Newest' });
@@ -343,7 +343,7 @@ describe('Blueprints', () => {
       await waitFor(() =>
         expect(
           within(screen.getByTestId('images-table')).getAllByRole('row'),
-        ).toHaveLength(2),
+        ).toHaveLength(3),
       );
     });
   });

@@ -621,31 +621,30 @@ const Row = ({
         />
         <Td dataLabel='Image name'>
           {compose.blueprint_id && !selectedBlueprintId ? (
-            <>
-              <Button
-                component='a'
-                variant='link'
-                isInline
-                onClick={() =>
-                  compose.blueprint_id &&
-                  handleClick({ blueprintId: compose.blueprint_id })
-                }
-              >
-                {compose.image_name || compose.id}
-              </Button>{' '}
-              {bootcCompose?.request.bootc ? (
-                <Label isCompact color='yellow'>
-                  Image mode
-                </Label>
-              ) : (
-                <Label isCompact color='teal'>
-                  Package mode
-                </Label>
-              )}
-            </>
+            <Button
+              component='a'
+              variant='link'
+              isInline
+              onClick={() =>
+                compose.blueprint_id &&
+                handleClick({ blueprintId: compose.blueprint_id })
+              }
+            >
+              {compose.image_name || compose.id}
+            </Button>
           ) : (
-            <span> {compose.image_name || compose.id}</span>
-          )}
+            <span>{compose.image_name || compose.id}</span>
+          )}{' '}
+          {compose.blueprint_id &&
+            (bootcCompose?.request.bootc ? (
+              <Label isCompact color='yellow'>
+                Image mode
+              </Label>
+            ) : (
+              <Label isCompact color='teal'>
+                Package mode
+              </Label>
+            ))}
         </Td>
         <Td
           dataLabel='Created'
