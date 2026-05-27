@@ -3,7 +3,7 @@ INSTALL_DIR_BASE = /share/cockpit/
 INSTALL_DIR = $(INSTALL_DIR_BASE)$(PACKAGE_NAME)
 APPSTREAMFILE=org.image-builder.$(PACKAGE_NAME).metainfo.xml
 
-VERSION := $(shell grep "^Version:" cockpit/$(PACKAGE_NAME).spec | sed 's/[^[:digit:]]*\([[:digit:]]\+\).*/\1/')
+VERSION := $(shell grep "^Version:" cockpit/$(PACKAGE_NAME).spec | sed 's/^Version:[[:space:]]*//')
 COMMIT = $(shell git rev-parse HEAD)
 
 # TODO: figure out a strategy for keeping this updated
