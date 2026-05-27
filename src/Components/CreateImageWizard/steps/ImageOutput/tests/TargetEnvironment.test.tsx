@@ -1,14 +1,27 @@
 import { screen } from '@testing-library/react';
 
+import { RHEL_10 } from '@/constants';
+import { Distributions } from '@/store/api/backend';
 import { selectImageTypes } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
-import { createUser, fetchMock } from '@/test/testUtils';
+import {
+  clickWithWait,
+  composeHandlers,
+  createArchitecturesHandler,
+  createUser,
+  fetchMock,
+  type WizardStateOverrides,
+} from '@/test/testUtils';
 
 import { clickTargetCheckbox, renderTargetEnvironment } from './helpers';
 import {
   createCustomArchitecturesHandler,
   createDefaultFetchHandler,
+  createDistributionsHandler,
+  mockArchitecturesBoth,
   mockArchitecturesWithNetworkInstaller,
+  mockBootcDistributions,
+  mockBootcDistributionsMultipleTypes,
   setupErrorHandler,
 } from './mocks';
 
@@ -228,6 +241,100 @@ describe('TargetEnvironment', () => {
       setupErrorHandler();
 
       renderTargetEnvironment();
+
+      expect(
+        await screen.findByText(/couldn't be loaded/i),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Image mode', () => {
+    const imageModeOverrides: WizardStateOverrides = {
+      blueprintMode: 'image',
+      distribution: RHEL_10 as Distributions,
+    };
+
+    const createImageModeHandler = (
+      distributions: typeof mockBootcDistributions,
+    ) => {
+      return composeHandlers(
+        createDistributionsHandler(distributions),
+        createArchitecturesHandler({
+          architectures: {
+            'rhel-10': mockArchitecturesBoth,
+          },
+        }),
+      );
+    };
+
+    beforeEach(() => {
+      fetchMock.mockResponse(createImageModeHandler(mockBootcDistributions));
+    });
+
+    test('renders radio buttons instead of checkboxes', async () => {
+      renderTargetEnvironment(imageModeOverrides);
+
+      expect(
+        await screen.findByRole('radio', {
+          name: /Virtualization.*Guest image/i,
+        }),
+      ).toBeInTheDocument();
+
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+    });
+
+    test('derives target environments from distributions data', async () => {
+      fetchMock.mockResponse(
+        createImageModeHandler(mockBootcDistributionsMultipleTypes),
+      );
+
+      renderTargetEnvironment(imageModeOverrides);
+
+      expect(
+        await screen.findByRole('radio', {
+          name: /Virtualization.*Guest image/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /Amazon Web Services/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('selecting a radio replaces the previous selection', async () => {
+      fetchMock.mockResponse(
+        createImageModeHandler(mockBootcDistributionsMultipleTypes),
+      );
+
+      const user = createUser();
+      const { store } = renderTargetEnvironment(imageModeOverrides);
+
+      const guestRadio = await screen.findByRole('radio', {
+        name: /Virtualization.*Guest image/i,
+      });
+      await clickWithWait(user, guestRadio);
+      expect(selectImageTypes(store.getState())).toEqual(['guest-image']);
+
+      const awsRadio = screen.getByRole('radio', {
+        name: /Amazon Web Services/i,
+      });
+      await clickWithWait(user, awsRadio);
+      expect(selectImageTypes(store.getState())).toEqual(['aws']);
+    });
+
+    test('shows loading state while fetching distributions', async () => {
+      fetchMock.mockResponse(() => new Promise(() => {}));
+
+      renderTargetEnvironment(imageModeOverrides);
+
+      expect(
+        await screen.findByText(/loading target environments/i),
+      ).toBeInTheDocument();
+    });
+
+    test('shows error state when distributions fetch fails', async () => {
+      setupErrorHandler();
+
+      renderTargetEnvironment(imageModeOverrides);
 
       expect(
         await screen.findByText(/couldn't be loaded/i),

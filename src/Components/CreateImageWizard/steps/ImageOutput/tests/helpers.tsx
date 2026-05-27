@@ -151,7 +151,7 @@ export const renderImageSourceSelect = (
 // ImageSourceSelect interaction helpers
 export const openImageSourceSelect = async (user: UserEventInstance) => {
   const toggle = await screen.findByRole('button', {
-    name: /select an image/i,
+    name: /select a bootc image/i,
   });
   await clickWithWait(user, toggle);
 };
