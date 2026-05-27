@@ -6,6 +6,7 @@ export {
   useDeleteBlueprintMutation,
   useExportBlueprintCockpitQuery,
   useGetArchitecturesQuery,
+  useGetDistributionsQuery,
   useGetBlueprintComposesQuery,
   useGetBlueprintQuery,
   useGetBlueprintsQuery,

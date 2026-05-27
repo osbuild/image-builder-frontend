@@ -17,6 +17,13 @@ export const useGetArchitecturesQuery = (
     : serviceQueries.useGetArchitecturesQuery
 ) as typeof composerQueries.useGetArchitecturesQuery;
 
+// NOTE: same logic as above
+export const useGetDistributionsQuery = (
+  process.env.IS_ON_PREMISE
+    ? composerQueries.useGetDistributionsQuery
+    : serviceQueries.useGetDistributionsQuery
+) as typeof composerQueries.useGetDistributionsQuery;
+
 export const useGetBlueprintQuery = process.env.IS_ON_PREMISE
   ? composerQueries.useGetBlueprintQuery
   : serviceQueries.useGetBlueprintQuery;
@@ -90,7 +97,6 @@ export {
   useComposeImageMutation,
   useExportBlueprintQuery,
   useFixupBlueprintMutation,
-  useGetDistributionsQuery,
   useGetPackagesQuery,
   useLazyExportBlueprintQuery,
   useLazyGetPackagesQuery,
@@ -138,7 +144,7 @@ export type {
   WorkerConfigRequest,
   WorkerConfigResponse,
   // Podman types (on-prem only)
-  PodmanImageInfo,
+  ImageInfo,
   PodmanImagesArg,
   PodmanImagesResponse,
   // Non-conflicting generated types

@@ -1,12 +1,41 @@
 import { IMAGE_MODE } from '@/constants';
-import { GetArchitecturesApiResponse } from '@/store/api/backend/hosted';
 import { type OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
-import { getCloudConfigs } from './helpers';
+import {
+  filterBootcImages,
+  getCloudConfigs,
+  listPodmanImages,
+  parseJsonUnsafe,
+  toBootcDistro,
+} from './helpers';
 
-import { ComposerGetArchitecturesApiArg } from '../types';
+import {
+  GetArchitecturesApiResponse,
+  GetDistributionsApiArg,
+  GetDistributionsApiResponse,
+} from '../../hosted';
+import { ComposerGetArchitecturesApiArg, PodmanImageInfo } from '../types';
 
 export const architectureEndpoints = (builder: OnPremBuilder) => ({
+  getDistributions: builder.query<
+    GetDistributionsApiResponse,
+    GetDistributionsApiArg
+  >({
+    // The on-prem endpoint only uses `arch` to filter podman images,
+    // so we normalize the cache key to avoid redundant podman spawns
+    // when consumers pass different optional params (e.g. distro).
+    serializeQueryArgs: ({ queryArgs }) => ({ arch: queryArgs.arch }),
+    queryFn: onPremQueryHandler(async ({ queryArgs: { arch } }) => {
+      const result = await listPodmanImages();
+      const parsed = parseJsonUnsafe<PodmanImageInfo[]>(result);
+
+      if (!Array.isArray(parsed)) {
+        throw new Error('Unexpected podman images output');
+      }
+
+      return parsed.filter(filterBootcImages(arch)).map(toBootcDistro);
+    }),
+  }),
   getArchitectures: builder.query<
     GetArchitecturesApiResponse,
     ComposerGetArchitecturesApiArg

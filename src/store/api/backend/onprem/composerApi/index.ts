@@ -26,6 +26,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
 
 export const {
   useGetArchitecturesQuery,
+  useGetDistributionsQuery,
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
   useLazyGetBlueprintsQuery,
