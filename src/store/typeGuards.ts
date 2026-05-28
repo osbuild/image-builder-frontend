@@ -4,7 +4,6 @@ import {
   AzureUploadRequestOptions,
   AzureUploadStatus,
   ComposesResponseItem,
-  Distributions,
   GcpUploadRequestOptions,
   GcpUploadStatus,
   ImageTypes,
@@ -15,7 +14,7 @@ import {
 // import from ./api/backend/onprem to break circular dependency
 import { Bootc } from './api/backend/onprem';
 
-import { IMAGE_MODE, targetOptions } from '../constants';
+import { targetOptions } from '../constants';
 
 export const isGcpUploadRequestOptions = (
   _options: UploadRequest['options'],
@@ -59,12 +58,6 @@ export const isAzureUploadStatus = (
   return 'image_name' in status;
 };
 
-export const isImageMode = (
-  distribution?: Distributions | 'image-mode' | undefined,
-): distribution is 'image-mode' => {
-  return distribution === undefined || distribution === IMAGE_MODE;
-};
-
 export type ComposeWithBootc = ComposesResponseItem & {
   request: ComposesResponseItem['request'] & {
     bootc?: Bootc;
@@ -75,20 +68,6 @@ export const hasBootcRequest = (
   compose: ComposesResponseItem,
 ): compose is ComposeWithBootc => {
   return 'bootc' in compose.request;
-};
-
-// we added a dummy distribution, 'image-mode', for image-mode
-// images on-prem. However this caused a number of type issues
-// in the codebase, mostly in places that won't have image-mode
-// support, but this typeguard is useful for managing this in
-// one place
-export const asDistribution = (
-  distribution: Distributions | 'image-mode',
-): Distributions => {
-  if (isImageMode(distribution)) {
-    throw new Error('Unexpected image-mode distribution');
-  }
-  return distribution;
 };
 
 export const isImageType = (key: string): key is ImageTypes => {

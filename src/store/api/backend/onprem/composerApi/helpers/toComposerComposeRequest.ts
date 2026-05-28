@@ -1,5 +1,7 @@
-import { IMAGE_MODE } from '@/constants';
-import type { OpenScapProfile } from '@/store/api/backend/hosted';
+import type {
+  Distributions,
+  OpenScapProfile,
+} from '@/store/api/backend/hosted';
 
 import {
   type ComposerCreateBlueprintRequest,
@@ -11,7 +13,7 @@ import {
 
 export const toComposerComposeRequest = (
   blueprint: ComposerCreateBlueprintRequest,
-  distribution: string,
+  distribution: Distributions | undefined,
   image_requests: ComposerImageRequest[],
 ): ComposeRequest => {
   // subscription, users & openscap are the only options
@@ -55,14 +57,14 @@ export const toComposerComposeRequest = (
     };
   }
 
-  let distro: string | undefined = distribution;
-  if (distro === IMAGE_MODE) {
-    distro = undefined;
-  }
-
   let bootc = undefined;
   if (blueprint.bootc) {
     bootc = blueprint.bootc;
+  }
+
+  let distro: Distributions | undefined = distribution;
+  if (bootc) {
+    distro = undefined;
   }
 
   return {

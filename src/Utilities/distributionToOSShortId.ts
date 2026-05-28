@@ -8,9 +8,9 @@ import { Distributions } from '../store/api/backend';
  * @returns The libosinfo shortID (e.g., 'rhel9.0', 'rhel8.10', 'fedora41') or undefined if not mappable
  */
 export const distributionToOSShortId = (
-  distribution: Distributions | 'image-mode' | undefined,
+  distribution: Distributions | undefined,
 ): string | undefined => {
-  if (!distribution || distribution === 'image-mode') {
+  if (!distribution) {
     return undefined;
   }
 

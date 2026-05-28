@@ -26,7 +26,6 @@ import {
   selectDistribution,
   selectFips,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 
 export const SecurityInformation = (): JSX.Element => {
   const release = useAppSelector(selectDistribution);
@@ -44,7 +43,7 @@ export const SecurityInformation = (): JSX.Element => {
     error: profileError,
   } = useGetOscapCustomizationsQuery(
     {
-      distribution: asDistribution(release),
+      distribution: release,
       profile: complianceProfileID as unknown as DistributionProfileItem,
     },
     {
@@ -59,7 +58,7 @@ export const SecurityInformation = (): JSX.Element => {
     error: complianceError,
   } = useGetComplianceCustomizationsQuery(
     {
-      distribution: asDistribution(release),
+      distribution: release,
       policy: compliancePolicyID!,
     },
     {

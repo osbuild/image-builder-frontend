@@ -26,7 +26,6 @@ import {
   setCompliancePolicy,
   setOscapProfile,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
@@ -74,9 +73,7 @@ type PolicySelectorProps = {
 const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
   const policyID = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
-  const release = removeBetaFromRelease(
-    asDistribution(useAppSelector(selectDistribution)),
-  );
+  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const majorVersion = release.split('-')[1];
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);

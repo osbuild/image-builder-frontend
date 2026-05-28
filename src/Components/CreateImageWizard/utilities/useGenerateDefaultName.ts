@@ -1,7 +1,7 @@
 import { Distributions, ImageRequest } from '@/store/api/backend';
 
 export const generateDefaultName = (
-  distribution: Distributions | 'image-mode',
+  distribution: Distributions,
   arch: ImageRequest['architecture'],
 ) => {
   const date = new Date();

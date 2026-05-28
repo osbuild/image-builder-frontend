@@ -58,7 +58,6 @@ import {
   setCompliancePolicy,
   setOscapProfile,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 import { useOnPremOpenSCAPAvailable } from '@/Utilities/useOnPremOpenSCAP';
 
 import OscapOnPremSpinner from './components/OnPremSpinner';
@@ -81,9 +80,7 @@ const OscapContent = () => {
   const services = useAppSelector(selectServices);
   const imageTypes = useAppSelector(selectImageTypes);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
-  const release = removeBetaFromRelease(
-    asDistribution(useAppSelector(selectDistribution)),
-  );
+  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const majorVersion = release.split('-')[1];
 
   const { restrictions } = useCustomizationRestrictions({

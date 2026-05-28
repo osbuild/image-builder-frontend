@@ -1,6 +1,7 @@
 import {
   type ComposerCreateBlueprintRequest,
   type ComposerImageRequest,
+  type Distributions,
   type OpenScapProfile,
 } from '@/store/api/backend';
 
@@ -275,7 +276,7 @@ export const createLocalImageRequest = (): ComposerImageRequest => ({
 });
 
 // Distribution list for testing
-export const testDistributions = [
+export const testDistributions: Distributions[] = [
   'rhel-8',
   'rhel-9',
   'rhel-10',

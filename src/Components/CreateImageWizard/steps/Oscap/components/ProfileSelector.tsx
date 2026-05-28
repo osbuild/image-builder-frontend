@@ -35,7 +35,6 @@ import {
   selectDistribution,
   setOscapProfile,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
@@ -63,9 +62,7 @@ const ProfileSelector = ({
 }: ProfileSelectorProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const profileID = useAppSelector(selectComplianceProfileID);
-  const release = removeBetaFromRelease(
-    asDistribution(useAppSelector(selectDistribution)),
-  );
+  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');

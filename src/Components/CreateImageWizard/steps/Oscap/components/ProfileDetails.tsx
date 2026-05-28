@@ -21,13 +21,12 @@ import {
   selectComplianceProfileID,
   selectDistribution,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 const ProfileDetails = (): JSX.Element => {
   const releaseRaw = useAppSelector(selectDistribution);
-  const release = removeBetaFromRelease(asDistribution(releaseRaw));
+  const release = removeBetaFromRelease(releaseRaw);
   const profileID = useAppSelector(selectComplianceProfileID);
 
   const { data, isFetching, error } = useGetOscapCustomizationsQuery(

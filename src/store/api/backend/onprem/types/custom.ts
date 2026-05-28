@@ -1,12 +1,10 @@
 import {
   Awss3UploadRequestOptions,
   AwsUploadRequestOptions,
-  BlueprintResponse,
   ComposeRequest,
   ComposesResponseItem,
   CreateBlueprintApiArg,
   CreateBlueprintRequest,
-  DistributionProfileItem,
   Distributions,
   ImageRequest,
   UpdateBlueprintApiArg,
@@ -44,23 +42,6 @@ export type UpdateWorkerConfigApiArg = {
   updateWorkerConfigRequest: WorkerConfigRequest | undefined;
 };
 
-export type ComposerGetArchitecturesApiArg = {
-  distribution: Distributions | 'image-mode';
-};
-
-export type ComposerGetOscapProfilesApiArg = {
-  // NOTE: this is a workaround to get the types happy,
-  // we will disable openscap for image-mode
-  distribution: Distributions | 'image-mode';
-};
-
-export type ComposerGetOscapCustomizationsApiArg = {
-  // NOTE: this is a workaround to get the types happy,
-  // we will disable openscap for image-mode
-  distribution: Distributions | 'image-mode';
-  profile: DistributionProfileItem;
-};
-
 export type ComposerUploadTypes = UploadTypes | 'local';
 
 export type ComposerAwsUploadRequestOptions = AwsUploadRequestOptions & {
@@ -76,18 +57,10 @@ export type ComposerImageRequest = Omit<ImageRequest, 'upload_request'> & {
   upload_request: ComposerUploadRequest;
 };
 
-export type ComposerBlueprintResponse = Omit<
-  BlueprintResponse,
-  'distribution'
-> & {
-  distribution: Distributions | 'image-mode';
-};
-
 export type ComposerCreateBlueprintRequest = Omit<
   CreateBlueprintRequest,
-  'image_requests' | 'distribution'
+  'image_requests'
 > & {
-  distribution: Distributions | 'image-mode';
   image_requests: ComposerImageRequest[];
   bootc?: Bootc | undefined;
 };
@@ -111,7 +84,7 @@ export type ComposerComposesResponseItem = Omit<
   'request'
 > & {
   request: Omit<ComposeRequest, 'image_requests' | 'distribution'> & {
-    distribution?: Distributions | 'image-mode' | undefined;
+    distribution?: Distributions | undefined;
     image_requests: ComposerImageRequest[];
     bootc?: Bootc | undefined;
   };

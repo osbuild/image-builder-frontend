@@ -3,7 +3,6 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { IMAGE_MODE } from '@/constants';
 import {
   selectDistribution,
   selectImageSource as selectImageSourceState,
@@ -39,7 +38,6 @@ vi.mock('@/store/api/backend', async (importOriginal) => {
 
 const renderHostedImageSourceSelect = () => {
   return renderWithRedux(<ImageSourceSelect />, {
-    distribution: IMAGE_MODE,
     blueprintMode: 'image',
   });
 };

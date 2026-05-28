@@ -82,12 +82,6 @@ export const CreateSaveAndBuildBtn = ({
     }
     if (requestBody) {
       const blueprint = (await createBlueprint({
-        // NOTE: We're using 'image-mode' as a dummy distribution for the
-        // on-prem frontend, this is one of the few cases where we
-        // can't work around the type error. This is fine because
-        // on-prem can handle this, while the hosted service should
-        // never receive 'image-mode' as a distribution
-        // @ts-ignore see above note (this errors when running npm run build)
         createBlueprintRequest: requestBody,
       })) as CreateBlueprintResponse;
 
@@ -187,12 +181,6 @@ export const CreateSaveButton = ({
     }
     if (requestBody) {
       const blueprint = (await createBlueprint({
-        // NOTE: We're using 'image-mode' as a dummy distribution for the
-        // on-prem frontend, this is one of the few cases where we
-        // can't work around the type error. This is fine because
-        // on-prem can handle this, while the hosted service should
-        // never receive 'image-mode' as a distribution
-        // @ts-ignore see above note (this errors when running npm run build)
         createBlueprintRequest: requestBody,
       })) as CreateBlueprintResponse;
       dispatch(setBlueprintId(blueprint.id));
