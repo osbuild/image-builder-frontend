@@ -113,6 +113,7 @@ const CreateImageWizard3 = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const hasTrackedInitialStepRef = useRef(false);
+  const hasTrackedWizardOpenedRef = useRef(false);
 
   const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
     { id: blueprintId || '' },
@@ -275,6 +276,19 @@ const CreateImageWizard3 = () => {
   }, [distribution, targetEnvironments, mode, dispatch]);
 
   useEffect(() => {
+    if (!isOnPremise && showWizardModal && !hasTrackedWizardOpenedRef.current) {
+      const accountId = userData?.identity.internal?.account_id;
+
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Wizard Opened`, {
+        module: AMPLITUDE_MODULE_NAME,
+        mode: mode,
+        ...(accountId && { account_id: accountId }),
+      });
+      hasTrackedWizardOpenedRef.current = true;
+    }
+  }, [showWizardModal, analytics, isOnPremise, mode, userData]);
+
+  useEffect(() => {
     if (!isOnPremise && showWizardModal && !hasTrackedInitialStepRef.current) {
       const initialStepId =
         mode === 'edit' ? 'review-step' : 'base-settings-step';
@@ -311,6 +325,7 @@ const CreateImageWizard3 = () => {
     dispatch(closeWizardModal());
     dispatch(initializeWizard());
     hasTrackedInitialStepRef.current = false;
+    hasTrackedWizardOpenedRef.current = false;
 
     if (
       searchParams.has('release') ||
