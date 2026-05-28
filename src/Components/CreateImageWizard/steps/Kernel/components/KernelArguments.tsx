@@ -14,7 +14,6 @@ import {
   selectDistribution,
   selectKernel,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 
 const KernelArguments = () => {
   const kernelAppend = useAppSelector(selectKernel).append;
@@ -26,7 +25,7 @@ const KernelArguments = () => {
 
   const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
     {
-      distribution: asDistribution(release),
+      distribution: release,
       // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
       profile: complianceProfileID,
     },

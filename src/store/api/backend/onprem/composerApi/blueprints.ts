@@ -5,7 +5,6 @@ import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
 import { mapHostedToOnPrem } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
-import { IMAGE_MODE } from '@/constants';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import { getBlueprintsPath } from './helpers';
@@ -29,6 +28,17 @@ import {
   ComposerCreateBlueprintRequest,
   ComposerUpdateBlueprintApiArg,
 } from '../types';
+
+/**
+ * Prepares a blueprint request for on-prem persistence. Bootc blueprints
+ * don't use distribution, so it is stripped to preserve interoperability.
+ */
+export const prepareBlueprintForSave = (
+  blueprintReq: ComposerCreateBlueprintRequest,
+) => ({
+  ...blueprintReq,
+  distribution: blueprintReq.bootc ? undefined : blueprintReq.distribution,
+});
 
 export const blueprintEndpoints = (builder: OnPremBuilder) => ({
   getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
@@ -128,18 +138,9 @@ export const blueprintEndpoints = (builder: OnPremBuilder) => ({
         const id = uuidv4();
         const blueprintsDir = await getBlueprintsPath();
         await cockpit.spawn(['mkdir', '-p', path.join(blueprintsDir, id)], {});
-        await cockpit.file(path.join(blueprintsDir, id, `${id}.json`)).replace(
-          JSON.stringify({
-            ...blueprintReq,
-            // we need to strip the dummy distribution
-            // before saving the blueprint to preserve
-            // blueprint interoperability
-            distribution:
-              blueprintReq.distribution !== IMAGE_MODE
-                ? blueprintReq.distribution
-                : undefined,
-          }),
-        );
+        await cockpit
+          .file(path.join(blueprintsDir, id, `${id}.json`))
+          .replace(JSON.stringify(prepareBlueprintForSave(blueprintReq)));
         return {
           id,
         };
@@ -153,18 +154,9 @@ export const blueprintEndpoints = (builder: OnPremBuilder) => ({
     queryFn: onPremQueryHandler(
       async ({ queryArgs: { id, createBlueprintRequest: blueprintReq } }) => {
         const blueprintsDir = await getBlueprintsPath();
-        await cockpit.file(path.join(blueprintsDir, id, `${id}.json`)).replace(
-          JSON.stringify({
-            ...blueprintReq,
-            // we need to strip the dummy distribution
-            // before saving the blueprint to preserve
-            // blueprint interoperability
-            distribution:
-              blueprintReq.distribution !== IMAGE_MODE
-                ? blueprintReq.distribution
-                : undefined,
-          }),
-        );
+        await cockpit
+          .file(path.join(blueprintsDir, id, `${id}.json`))
+          .replace(JSON.stringify(prepareBlueprintForSave(blueprintReq)));
         return {
           id,
         };

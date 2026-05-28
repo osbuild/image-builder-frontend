@@ -8,7 +8,6 @@ import {
   selectLocaleLangpackCandidates,
   setVerifiedLocaleLangpacks,
 } from '@/store/slices';
-import { asDistribution } from '@/store/typeGuards';
 
 import { contentSourcesApi as hostedApi } from './hosted';
 import { contentSourcesApi as onPremApi } from './onprem';
@@ -49,7 +48,7 @@ export const useSearchLanguagePacks = (distroUrls: string[]) => {
         ? {
             packages: candidateLangpacks,
             architecture: arch,
-            distribution: asDistribution(distribution),
+            distribution: distribution,
           }
         : { exact_names: candidateLangpacks, urls: distroUrls, limit: 500 };
 

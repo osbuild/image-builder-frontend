@@ -22,7 +22,6 @@ import {
   selectDistribution,
   selectIsImageMode,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 import { getHostDistro } from '@/Utilities/getHostInfo';
 
 const BlueprintMode = () => {
@@ -40,11 +39,9 @@ const BlueprintMode = () => {
     const fetchDefaultDistro = async () => {
       try {
         const distro = await getHostDistro();
-        setDefaultDistro(asDistribution(distro as Distributions));
+        setDefaultDistro(distro as Distributions);
       } catch {
         // defaultDistro remains RHEL_10
-        // this is fine since image-mode is
-        // limited to RHEL_10 for now
       }
     };
 
@@ -81,14 +78,12 @@ const BlueprintMode = () => {
           isSelected={isImageMode}
           onChange={() => {
             if (!isOnPremise) {
-              previousDistro.current = distribution as Distributions;
+              previousDistro.current = distribution;
               previousArch.current = architecture;
             }
             dispatch(changeBlueprintMode('image'));
             dispatch(changeImageTypes([]));
-            if (isOnPremise) {
-              dispatch(changeDistribution('image-mode'));
-            } else {
+            if (!isOnPremise) {
               dispatch(changeArchitecture(X86_64));
               dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
             }

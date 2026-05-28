@@ -271,6 +271,37 @@ describe('toComposerComposeRequest', () => {
         expect(result.distribution).toBe(dist);
       });
     });
+
+    it('should pass through undefined distribution', () => {
+      const blueprint = createMinimalBlueprint();
+
+      const result = toComposerComposeRequest(blueprint, undefined, []);
+      expect(result.distribution).toBeUndefined();
+    });
+
+    it('should clear distribution when blueprint has bootc', () => {
+      const blueprint = createMinimalBlueprint({
+        bootc: { reference: 'quay.io/org/image:latest' },
+      });
+
+      const result = toComposerComposeRequest(blueprint, 'rhel-9', []);
+      expect(result.distribution).toBeUndefined();
+      expect(result.bootc).toEqual({
+        reference: 'quay.io/org/image:latest',
+      });
+    });
+
+    it('should keep distribution undefined when bootc and no distribution', () => {
+      const blueprint = createMinimalBlueprint({
+        bootc: { reference: 'quay.io/org/image:latest' },
+      });
+
+      const result = toComposerComposeRequest(blueprint, undefined, []);
+      expect(result.distribution).toBeUndefined();
+      expect(result.bootc).toEqual({
+        reference: 'quay.io/org/image:latest',
+      });
+    });
   });
 
   describe('complex scenarios', () => {

@@ -1,4 +1,3 @@
-import { IMAGE_MODE } from '@/constants';
 import { type OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import {
@@ -10,11 +9,12 @@ import {
 } from './helpers';
 
 import {
+  GetArchitecturesApiArg,
   GetArchitecturesApiResponse,
   GetDistributionsApiArg,
   GetDistributionsApiResponse,
 } from '../../hosted';
-import { ComposerGetArchitecturesApiArg, PodmanImageInfo } from '../types';
+import { PodmanImageInfo } from '../types';
 
 export const architectureEndpoints = (builder: OnPremBuilder) => ({
   getDistributions: builder.query<
@@ -38,24 +38,9 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
   }),
   getArchitectures: builder.query<
     GetArchitecturesApiResponse,
-    ComposerGetArchitecturesApiArg
+    GetArchitecturesApiArg
   >({
-    queryFn: onPremQueryHandler(async ({ queryArgs: { distribution } }) => {
-      if (distribution === IMAGE_MODE) {
-        return [
-          {
-            arch: 'aarch64',
-            image_types: ['guest-image'],
-            repositories: [],
-          },
-          {
-            arch: 'x86_64',
-            image_types: ['guest-image'],
-            repositories: [],
-          },
-        ];
-      }
-
+    queryFn: onPremQueryHandler(async () => {
       const cloudImageTypes = await getCloudConfigs();
       return [
         {

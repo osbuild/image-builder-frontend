@@ -65,7 +65,6 @@ import {
   selectTemplate,
   selectWizardMode,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { convertStringToDate } from '@/Utilities/time';
@@ -177,7 +176,7 @@ const PackageSearch = ({
 
   const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
     useGetArchitecturesQuery({
-      distribution: asDistribution(distribution),
+      distribution: distribution,
     });
 
   const distroUrls = useMemo(() => {

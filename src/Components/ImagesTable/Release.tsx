@@ -3,11 +3,11 @@ import React from 'react';
 import { Distributions } from '@/store/api/backend';
 
 type ReleaseProps = {
-  release: Distributions | 'image-mode' | undefined;
+  release: Distributions | undefined;
 };
 
 const Release = ({ release }: ReleaseProps) => {
-  if (release === 'image-mode' || release === undefined) {
+  if (release === undefined) {
     return null;
   }
 

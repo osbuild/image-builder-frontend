@@ -122,7 +122,7 @@ export type wizardState = {
   isoPayloadReference?: string | undefined;
   bootcDistributions: BootcDistributionItem[];
   architecture: ImageRequest['architecture'];
-  distribution: Distributions | 'image-mode';
+  distribution: Distributions;
   imageTypes: ImageTypes[];
   aapRegistration: {
     enabled: boolean;
@@ -829,10 +829,7 @@ export const wizardSlice = createSlice({
     ) => {
       state.architecture = action.payload;
     },
-    changeDistribution: (
-      state,
-      action: PayloadAction<Distributions | 'image-mode'>,
-    ) => {
+    changeDistribution: (state, action: PayloadAction<Distributions>) => {
       state.distribution = action.payload;
 
       if (process.env.IS_ON_PREMISE && !isRhel(action.payload)) {

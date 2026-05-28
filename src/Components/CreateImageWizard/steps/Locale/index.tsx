@@ -12,7 +12,6 @@ import {
   selectLocaleLangpackCandidates,
   selectVerifiedLocaleLangpacks,
 } from '@/store/slices/wizard';
-import { asDistribution } from '@/store/typeGuards';
 
 import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
@@ -23,7 +22,7 @@ const LocaleStep = () => {
   const candidateLangpacks = useAppSelector(selectLocaleLangpackCandidates);
   const { data: distroRepositories, isLoading: isArchitecturesLoading } =
     useGetArchitecturesQuery({
-      distribution: asDistribution(distribution),
+      distribution: distribution,
     });
 
   const distroUrls = useMemo(() => {

@@ -6,9 +6,8 @@ import * as serviceQueries from './hosted/imageBuilderApi';
 import * as composerQueries from './onprem/composerApi';
 import { composerApi } from './onprem/enhancedComposerApi';
 
-// NOTE: We cast to the composer query type because it accepts
-// 'image-mode' as a distribution (needed for on-prem). Casting to
-// the service query type breaks selectFromResult inference due to
+// NOTE: We cast to the composer query type because casting to the
+// service query type breaks selectFromResult inference due to
 // different API slice generics. The response shape is identical
 // (composer imports GetArchitecturesApiResponse from hosted).
 export const useGetArchitecturesQuery = (
@@ -120,9 +119,6 @@ export type {
   // Custom on-prem API argument types
   ComposerCreateBlueprintApiArg,
   ComposerCreateBlueprintRequest,
-  ComposerGetArchitecturesApiArg,
-  ComposerGetOscapCustomizationsApiArg,
-  ComposerGetOscapProfilesApiArg,
   ComposerUpdateBlueprintApiArg,
   // Prefixed types to avoid conflicts with hosted
   ComposerBlueprint,
@@ -131,7 +127,6 @@ export type {
   ComposerImageTypes,
   // On-prem specific types
   ComposerAwsUploadRequestOptions,
-  ComposerBlueprintResponse,
   ComposerComposesResponseItem,
   ComposerImageRequest,
   ComposerUploadTypes,

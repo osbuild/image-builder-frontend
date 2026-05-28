@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { IMAGE_MODE, RHEL_10 } from '@/constants';
+import { RHEL_10 } from '@/constants';
 import {
   clickWithWait,
   renderWithRedux,
@@ -136,7 +136,6 @@ export const renderImageSourceSelect = (
   return renderWithRedux(
     <ImageSourceSelect />,
     {
-      distribution: IMAGE_MODE,
       blueprintMode: 'image',
       ...wizardStateOverrides,
     },

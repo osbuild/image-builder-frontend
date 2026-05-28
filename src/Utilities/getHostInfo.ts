@@ -3,7 +3,6 @@ import { read_os_release } from 'os-release';
 
 import { AARCH64, X86_64 } from '../constants';
 import { Distributions } from '../store/api/backend/hosted';
-import { asDistribution } from '../store/typeGuards';
 
 type Architecture = 'x86_64' | 'aarch64';
 
@@ -22,7 +21,7 @@ export const getHostDistro = async (): Promise<Distributions> => {
         if (distro.indexOf('.') !== -1) {
           distro = distro.split('.')[0];
         }
-        return asDistribution(distro as Distributions);
+        return distro as Distributions;
       } catch (err) {
         cachedHostDistro = null;
         throw err;

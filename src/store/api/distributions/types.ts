@@ -39,7 +39,7 @@ export type ImageTypeInfo = {
 };
 
 export type DistributionDetailsCustomizationArgs = {
-  distro: Distributions | 'image-mode';
+  distro: Distributions;
   architecture: string[];
   imageType: ImageTypes[];
 };

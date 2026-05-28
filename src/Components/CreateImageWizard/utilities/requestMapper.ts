@@ -10,7 +10,6 @@ import {
   BlueprintResponse,
   BtrfsVolume,
   ComposerAwsUploadRequestOptions,
-  ComposerBlueprintResponse,
   ComposerCreateBlueprintRequest,
   ComposerImageRequest,
   ComposerUploadTypes,
@@ -125,7 +124,6 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
-import { isImageMode as isImageModeDistribution } from '../../../store/typeGuards';
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
 import {
@@ -285,10 +283,10 @@ const convertLogicalVolume = (volume: LogicalVolume) => {
  * @param distribution blueprint distribution
  */
 const getLatestRelease = (
-  distribution: Distributions | 'image-mode' | undefined,
-): Distributions | 'image-mode' => {
-  if (distribution === undefined || isImageModeDistribution(distribution)) {
-    return 'image-mode';
+  distribution: Distributions | undefined,
+): Distributions | undefined => {
+  if (distribution === undefined) {
+    return undefined;
   }
 
   return distribution.startsWith('rhel-10')
@@ -400,7 +398,6 @@ function commonRequestToState(
   request:
     | BlueprintResponse
     | CreateBlueprintRequest
-    | ComposerBlueprintResponse
     | ComposerCreateBlueprintRequest,
 ) {
   const gcp = request.image_requests.find(
@@ -546,7 +543,11 @@ function commonRequestToState(
         },
     partitioning_mode: request.customizations.partitioning_mode,
     architecture: arch,
-    distribution: getLatestRelease(request.distribution),
+    // Legacy on-prem bootc blueprints may have undefined distribution.
+    // Fall back to initialState so the wizard state type stays satisfied;
+    // the user can pick the correct distro in the wizard.
+    distribution:
+      getLatestRelease(request.distribution) ?? initialState.distribution,
     imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
     isoPayloadReference: request.bootc?.iso_payload_reference,
     imageTypes: request.image_requests.map((image) => image.image_type),
@@ -618,14 +619,9 @@ function commonRequestToState(
  * @param source  V1ListSourceResponseItem
  * @returns wizardState
  */
-export const mapRequestToState = (
-  request: BlueprintResponse | ComposerBlueprintResponse,
-): wizardState => {
+export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const wizardMode = 'edit';
-  const blueprintMode =
-    isImageModeDistribution(request.distribution) || request.bootc
-      ? 'image'
-      : 'package';
+  const blueprintMode = request.bootc ? 'image' : 'package';
   return {
     wizardMode,
     blueprintMode,
@@ -740,10 +736,7 @@ export const mapBlueprintExportToState = (
 
   return {
     wizardMode,
-    blueprintMode:
-      isImageModeDistribution(blueprint.distribution) || blueprint.bootc
-        ? 'image'
-        : 'package',
+    blueprintMode: blueprint.bootc ? 'image' : 'package',
     bootcDistributions: [],
     metadata: getMetadata(blueprint.metadata),
     env: initialState.env,
@@ -819,7 +812,6 @@ const getRegistrationType = (
   request:
     | BlueprintResponse
     | CreateBlueprintRequest
-    | ComposerBlueprintResponse
     | ComposerCreateBlueprintRequest,
 ): RegistrationType => {
   const subscription = request.customizations.subscription;

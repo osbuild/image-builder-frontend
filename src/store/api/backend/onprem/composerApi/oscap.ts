@@ -9,18 +9,16 @@ import { lookupDatastreamDistro } from './helpers';
 import {
   BlueprintItem,
   DistributionProfileItem,
+  GetOscapCustomizationsApiArg,
   GetOscapCustomizationsApiResponse,
+  GetOscapProfilesApiArg,
   GetOscapProfilesApiResponse,
 } from '../../hosted';
-import {
-  ComposerGetOscapCustomizationsApiArg,
-  ComposerGetOscapProfilesApiArg,
-} from '../types';
 
 export const oscapEndpoints = (builder: OnPremBuilder) => ({
   getOscapProfiles: builder.query<
     GetOscapProfilesApiResponse,
-    ComposerGetOscapProfilesApiArg
+    GetOscapProfilesApiArg
   >({
     queryFn: onPremQueryHandler(async ({ queryArgs: { distribution } }) => {
       const dsDistro = lookupDatastreamDistro(distribution);
@@ -45,7 +43,7 @@ export const oscapEndpoints = (builder: OnPremBuilder) => ({
   }),
   getOscapCustomizations: builder.query<
     GetOscapCustomizationsApiResponse,
-    ComposerGetOscapCustomizationsApiArg
+    GetOscapCustomizationsApiArg
   >({
     queryFn: onPremQueryHandler(
       async ({ queryArgs: { distribution, profile } }) => {
