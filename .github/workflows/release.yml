@@ -3,11 +3,22 @@ name: "Create GitHub release"
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]*"
+      - "!v*.*"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to release from"
+        required: true
+      tag:
+        description: "Tag to release (e.g. v94.1)"
+        required: true
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       # create release artefact before creating the release to get the correct release in the
       # artefact name.
@@ -25,7 +36,7 @@ jobs:
       - name: Make dist
         run: |
           make dist
-          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
+          RELEASE_NO=$(echo $TAG | tr -d 'v')
           mv "cockpit-image-builder-$RELEASE_NO.tar.gz" ../cockpit-image-builder-$RELEASE_NO.tar.gz
 
       # create release, which will bump the version
@@ -34,6 +45,7 @@ jobs:
         with:
           token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
+          branch: ${{ inputs.branch || 'main' }}
 
       # upload release artefact
       # Source0 expands to `https://github.com/osbuild/image-builder-frontend/releases/download/v$VERSION/cockpit-image-builder-v$VERSION.tar.gz`,
@@ -42,6 +54,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
-          gh release upload ${{github.ref_name}} \
+          RELEASE_NO=$(echo $TAG | tr -d 'v')
+          gh release upload $TAG \
             ../cockpit-image-builder-$RELEASE_NO.tar.gz
