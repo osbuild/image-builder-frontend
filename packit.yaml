@@ -65,3 +65,8 @@ jobs:
     trigger: commit
     dist_git_branches:
       - fedora-all
+
+  - job: bodhi_update
+    trigger: commit
+    dist_git_branches:
+      - fedora-branched # rawhide updates are created automatically
