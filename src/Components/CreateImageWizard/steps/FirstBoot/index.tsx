@@ -145,7 +145,7 @@ const FirstBootStep = () => {
         variant='warning'
         isExpandable
         isInline
-        title='Important: please do not include sensitive information'
+        title='Please do not include sensitive information'
       >
         <Content>
           Please ensure that your script does not contain any secrets,
