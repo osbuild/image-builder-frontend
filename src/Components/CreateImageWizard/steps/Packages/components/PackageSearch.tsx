@@ -1005,6 +1005,7 @@ const PackageSearch = ({
           icon={<SearchIcon />}
           aria-label={`Search ${packageTypeLabel}`}
           data-testid='packages-search-input'
+          placeholder='Add packages'
         />
         <TextInputGroupUtilities>
           <Button
