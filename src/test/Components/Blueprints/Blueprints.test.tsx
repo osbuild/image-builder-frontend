@@ -4,7 +4,6 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
-import CreateImageWizard from '../../../Components/CreateImageWizard';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
 import { IMAGE_BUILDER_API } from '../../../constants';
 import {
@@ -223,10 +222,6 @@ describe('Blueprints', () => {
         path: 'insights/image-builder/*',
         element: <LandingPage />,
       },
-      {
-        path: 'insights/image-builder/imagewizard/:composeId?',
-        element: <CreateImageWizard />,
-      },
     ];
 
     test('open blueprint wizard in editing mode', async () => {
@@ -249,7 +244,7 @@ describe('Blueprints', () => {
         {},
         routes,
       );
-      await screen.findByRole('heading', { name: /Image builder/i, level: 1 });
+      await screen.findByTestId('blueprints-create-button');
     });
   });
 
