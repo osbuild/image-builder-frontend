@@ -57,13 +57,13 @@ test('Create a blueprint with Firewall customization', async ({
   await test.step('Select and correctly fill the ports in Firewall step', async () => {
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
-    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('80:tcp');
+    await frame.getByPlaceholder('Enter port').fill('80:tcp');
     await page.keyboard.press('Enter');
-    await expect(frame.getByText('80:tcp')).toBeVisible();
+    await expect(frame.getByText('80:tcp', { exact: true })).toBeVisible();
 
-    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('443:udp');
+    await frame.getByPlaceholder('Enter port').fill('443:udp');
     await page.keyboard.press('Enter');
-    await expect(frame.getByText('443:udp')).toBeVisible();
+    await expect(frame.getByText('443:udp', { exact: true })).toBeVisible();
   });
 
   await test.step('Select and correctly fill the disabled services in Firewall step', async () => {
@@ -85,7 +85,7 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   await test.step('Prevent adding duplicate ports and services', async () => {
-    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('80:tcp');
+    await frame.getByPlaceholder('Enter port').fill('80:tcp');
     await page.keyboard.press('Enter');
     await expect(frame.getByText('Port already exists.')).toBeVisible();
 
@@ -109,9 +109,7 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   await test.step('Select and incorrectly fill the ports in Firewall step', async () => {
-    await frame
-      .getByPlaceholder('Enter port (e.g., 8080:tcp)')
-      .fill('00:wrongFormat');
+    await frame.getByPlaceholder('Enter port').fill('00:wrongFormat');
     await page.keyboard.press('Enter');
     await expect(
       frame
@@ -174,7 +172,7 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
 
-    await frame.getByPlaceholder('Enter port (e.g., 8080:tcp)').fill('90:tcp');
+    await frame.getByPlaceholder('Enter port').fill('90:tcp');
     await page.keyboard.press('Enter');
     await frame.getByPlaceholder('Enter firewalld service').nth(0).fill('x');
     await page.keyboard.press('Enter');
@@ -190,8 +188,8 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('x').nth(0)).toBeVisible();
     await expect(frame.getByText('y').nth(0)).toBeVisible();
 
-    await expect(frame.getByText('80:tcp')).toBeHidden();
-    await expect(frame.getByText('443:udp')).toBeHidden();
+    await expect(frame.getByText('80:tcp', { exact: true })).toBeHidden();
+    await expect(frame.getByText('443:udp', { exact: true })).toBeHidden();
     await expect(frame.getByText('telnet.socket')).toBeHidden();
     await expect(frame.getByText('cloud-init')).toBeHidden();
 
@@ -234,8 +232,8 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('x').nth(0)).toBeVisible();
     await expect(frame.getByText('y').nth(0)).toBeVisible();
 
-    await expect(frame.getByText('80:tcp')).toBeHidden();
-    await expect(frame.getByText('443:udp')).toBeHidden();
+    await expect(frame.getByText('80:tcp', { exact: true })).toBeHidden();
+    await expect(frame.getByText('443:udp', { exact: true })).toBeHidden();
     await expect(frame.getByText('telnet.socket')).toBeHidden();
     await expect(frame.getByText('cloud-init')).toBeHidden();
 
@@ -277,7 +275,7 @@ test('Firewall fields collapse chips with show less / more', async ({
   });
 
   await test.step('Ports: shows all chips when 4 or fewer', async () => {
-    const portInput = frame.getByPlaceholder('Enter port (e.g., 8080:tcp)');
+    const portInput = frame.getByPlaceholder('Enter port');
     for (const port of ['80:tcp', '443:tcp', '8080:tcp', '22:tcp']) {
       await portInput.fill(port);
       await page.keyboard.press('Enter');
@@ -285,13 +283,13 @@ test('Firewall fields collapse chips with show less / more', async ({
 
     await expect(frame.getByText('80:tcp', { exact: true })).toBeVisible();
     await expect(frame.getByText('443:tcp')).toBeVisible();
-    await expect(frame.getByText('8080:tcp')).toBeVisible();
+    await expect(frame.getByText('8080:tcp', { exact: true })).toBeVisible();
     await expect(frame.getByText('22:tcp')).toBeVisible();
     await expect(frame.getByText(/^\d+ more$/)).toBeHidden();
   });
 
   await test.step('Ports: collapses and shows "X more" when more than 4', async () => {
-    const portInput = frame.getByPlaceholder('Enter port (e.g., 8080:tcp)');
+    const portInput = frame.getByPlaceholder('Enter port');
     for (const port of ['3000:tcp', '5432:tcp']) {
       await portInput.fill(port);
       await page.keyboard.press('Enter');
@@ -325,7 +323,7 @@ test('Firewall fields collapse chips with show less / more', async ({
     await expect(frame.getByText('Show less')).toBeHidden();
     await expect(frame.getByText('80:tcp', { exact: true })).toBeVisible();
     await expect(frame.getByText('443:tcp')).toBeVisible();
-    await expect(frame.getByText('8080:tcp')).toBeVisible();
+    await expect(frame.getByText('8080:tcp', { exact: true })).toBeVisible();
     await expect(frame.getByText('22:tcp')).toBeVisible();
   });
 
