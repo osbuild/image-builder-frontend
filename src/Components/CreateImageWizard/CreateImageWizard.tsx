@@ -356,6 +356,7 @@ const CreateImageWizard = () => {
   const handleClose = () => {
     dispatch(closeWizardModal());
     dispatch(initializeWizard());
+    hasInitialized.current = false;
     hasTrackedInitialStepRef.current = false;
     hasTrackedWizardOpenedRef.current = false;
 
