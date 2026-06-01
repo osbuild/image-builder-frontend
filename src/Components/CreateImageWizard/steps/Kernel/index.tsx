@@ -38,14 +38,14 @@ const KernelStep = () => {
           Choose a kernel package and append specific boot parameters to
           customize how your image initializes its core operating environment.
         </Content>
-        {fips.enabled && (
-          <Alert
-            title='Kernel will be configured to use FIPS, no additional configuration needed.'
-            variant='info'
-            isInline
-          />
-        )}
       </Content>
+      {fips.enabled && (
+        <Alert
+          title='Kernel will be configured to use FIPS, no additional configuration needed.'
+          variant='info'
+          isInline
+        />
+      )}
       <KernelName />
       <KernelArguments />
     </>
