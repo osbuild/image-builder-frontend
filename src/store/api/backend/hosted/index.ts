@@ -11,6 +11,7 @@ export {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
   useGetDistributionsQuery,
+  useGetDistributionQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
   useGetOscapCustomizationsForPolicyQuery,

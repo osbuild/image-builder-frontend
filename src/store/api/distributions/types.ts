@@ -1,4 +1,4 @@
-import { Distributions, ImageTypes } from '@/store/api/backend';
+import { ImageTypes } from '@/store/api/backend';
 
 export type CustomizationType =
   | 'packages'
@@ -20,31 +20,6 @@ export type CustomizationType =
 export type CustomizationRestrictions = Partial<
   Record<ImageTypes, CustomizationType[]>
 >;
-
-export type DistributionDetails = {
-  name: string;
-  architectures?: Record<string, ArchitectureInfo>;
-};
-
-export type ArchitectureInfo = {
-  name: string;
-  image_types?: Record<string, ImageTypeInfo>;
-};
-
-export type ImageTypeInfo = {
-  name: string;
-  aliases?: string[];
-  required_blueprint_options?: string[];
-  supported_blueprint_options?: string[];
-};
-
-export type DistributionDetailsCustomizationArgs = {
-  distro: Distributions;
-  architecture: string[];
-  imageType: ImageTypes[];
-};
-
-export type DistributionDetailsCustomizationApi = DistributionDetails;
 
 export type RestrictionStrategy = {
   shouldHide: boolean;
