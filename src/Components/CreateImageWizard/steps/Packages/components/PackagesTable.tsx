@@ -1,6 +1,6 @@
 import React, { ReactElement, useMemo, useState } from 'react';
 
-import { Content } from '@patternfly/react-core';
+import { Content, Label } from '@patternfly/react-core';
 import {
   ExpandableRowContent,
   Table,
@@ -239,7 +239,9 @@ const PackagesTable = ({
               data-testid={isRequired ? 'required-package-row' : 'package-row'}
             >
               <Td>&nbsp;</Td>
-              <Td>{pkg.name}</Td>
+              <Td>
+                {pkg.name} {isRequired && <Label isCompact>Required</Label>}
+              </Td>
               <Td>{pkg.stream ? pkg.stream : '--'}</Td>
               <Td>
                 <RetirementDate date={pkg.end_date} />
