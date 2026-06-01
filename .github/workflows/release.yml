@@ -46,6 +46,7 @@ jobs:
           token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
           branch: ${{ inputs.branch || 'main' }}
+          tag: ${{ env.TAG }}
 
       # upload release artefact
       # Source0 expands to `https://github.com/osbuild/image-builder-frontend/releases/download/v$VERSION/cockpit-image-builder-v$VERSION.tar.gz`,
