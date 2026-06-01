@@ -460,7 +460,7 @@ const CreateImageWizard = () => {
             />
           }
         >
-          <Form>
+          <Form onSubmit={handleFormSubmit}>
             <Content>
               <Title headingLevel='h1' size='xl'>
                 Base settings
