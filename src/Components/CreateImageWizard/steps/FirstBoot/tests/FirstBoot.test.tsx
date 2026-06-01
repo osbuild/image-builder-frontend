@@ -32,9 +32,7 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep();
 
       expect(
-        await screen.findByText(
-          /Important: please do not include sensitive information/i,
-        ),
+        await screen.findByText(/Please do not include sensitive information/i),
       ).toBeInTheDocument();
     });
 
