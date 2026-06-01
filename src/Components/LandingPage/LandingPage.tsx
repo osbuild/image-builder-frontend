@@ -25,7 +25,7 @@ import { setBlueprintId } from '../../store/slices/blueprint';
 import { openWizardModal } from '../../store/slices/wizardModal';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
-import CreateImageWizard3 from '../CreateImageWizard3/CreateImageWizard3';
+import CreateImageWizard from '../CreateImageWizard/CreateImageWizard';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
@@ -87,7 +87,7 @@ export const LandingPage = () => {
     <>
       <ImageBuilderHeader />
       {imageList}
-      <CreateImageWizard3 />
+      <CreateImageWizard />
       <Outlet />
     </>
   );

@@ -6,7 +6,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
 
-import CreateImageWizard3 from '../../../Components/CreateImageWizard3/CreateImageWizard3';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import { RHEL_10 } from '../../../constants';
 import { getLastBlueprintReq } from '../../mocks/cockpit/cockpitFile';
 import { server } from '../../mocks/server';
@@ -35,12 +35,12 @@ export function spyOnRequest(pathname: string, method: RequestTypes) {
 const routes = [
   {
     path: 'insights/image-builder/*',
-    element: <CreateImageWizard3 />,
+    element: <CreateImageWizard />,
   },
   // cockpit routes
   {
     path: '/',
-    element: <CreateImageWizard3 />,
+    element: <CreateImageWizard />,
   },
 ];
 

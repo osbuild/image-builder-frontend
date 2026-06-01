@@ -7,7 +7,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 
-import CreateImageWizard3 from '../../CreateImageWizard3/CreateImageWizard3';
+import CreateImageWizard from '../CreateImageWizard';
 
 export const renderWithQueryParams = async (
   queryString: string = '',
@@ -26,7 +26,7 @@ export const renderWithQueryParams = async (
   const routes = [
     {
       path: 'insights/image-builder/',
-      element: <CreateImageWizard3 />,
+      element: <CreateImageWizard />,
     },
   ];
 
