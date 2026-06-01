@@ -1,4 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { ImageTypeInfo } from '@/store/api/backend';
+import {
+  ALL_CUSTOMIZATIONS,
+  computeImageTypeCustomizationSupport,
+  computeRestrictions,
+  CustomizationType,
+  isCustomizationSupported,
+  RestrictionStrategy,
+  SupportContext,
+} from '@/store/api/distributions';
 
 import {
   computeRestrictionStrategy,
@@ -9,17 +18,6 @@ import {
   defaultContext,
   mockImageTypes,
 } from './mocks';
-
-import {
-  ALL_CUSTOMIZATIONS,
-  computeImageTypeCustomizationSupport,
-  computeRestrictions,
-  CustomizationType,
-  ImageTypeInfo,
-  isCustomizationSupported,
-  RestrictionStrategy,
-  SupportContext,
-} from '..';
 
 describe('useCustomizationRestrictions hook logic', () => {
   describe('default behavior (package mode, not on-premise)', () => {

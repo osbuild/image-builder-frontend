@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 
 import { simpleTargetNames } from '@/constants';
-import { ImageTypes } from '@/store/api/backend';
+import {
+  ArchitectureInfo,
+  ImageTypeInfo,
+  ImageTypes,
+  useGetDistributionQuery,
+} from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -13,16 +18,32 @@ import {
 import { isImageType } from '@/store/typeGuards';
 import isRhel from '@/Utilities/isRhel';
 
-import { ALL_CUSTOMIZATIONS } from './constants';
-import { distroDetailsApi as api } from './distributionDetailsApi';
-import {
-  ArchitectureInfo,
-  CustomizationType,
-  ImageTypeInfo,
-  RestrictionStrategy,
-} from './types';
+import { ALL_CUSTOMIZATIONS, BACKEND_TO_FRONTEND_OPTIONS } from './constants';
+import { CustomizationType, RestrictionStrategy } from './types';
 
-const extractImageTypes = ({
+export const normalizeOptions = (
+  options: string[] | undefined,
+): string[] | undefined => {
+  if (!options) return undefined;
+  return [
+    ...new Set(
+      options
+        .flatMap((opt) => BACKEND_TO_FRONTEND_OPTIONS[opt] ?? [])
+        .filter(Boolean),
+    ),
+  ];
+};
+
+export const resolveImageTypeKey = (
+  key: string,
+  aliases: string[] | undefined,
+): string => {
+  if (isImageType(key)) return key;
+  const match = aliases?.find(isImageType);
+  return match ?? key;
+};
+
+export const extractImageTypes = ({
   architectures,
   arch,
 }: {
@@ -31,8 +52,6 @@ const extractImageTypes = ({
 }): Record<string, ImageTypeInfo> => {
   if (
     !architectures ||
-    // eslint complains about this always being falsy, but there are cases
-    // where this does actually happen and can cause some rendering issues.
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     !architectures[arch] ||
     !architectures[arch].image_types
@@ -40,7 +59,18 @@ const extractImageTypes = ({
     return {};
   }
 
-  return architectures[arch].image_types;
+  const raw = architectures[arch].image_types;
+  const normalized: Record<string, ImageTypeInfo> = {};
+  for (const [key, value] of Object.entries(raw)) {
+    const frontendKey = resolveImageTypeKey(key, value.aliases);
+    normalized[frontendKey] = {
+      ...value,
+      supported_blueprint_options: normalizeOptions(
+        value.supported_blueprint_options,
+      ),
+    };
+  }
+  return normalized;
 };
 
 export type SupportContext = {
@@ -122,7 +152,7 @@ export const computeRestrictions = ({
   return result;
 };
 
-// Instead of exporting the hook directly from the `distributionDetailsApi`
+// Instead of exporting the hook directly from the backend API,
 // let's create a wrapper around this to transform the data so that it is easier
 // to work with where we need it. This way it will be easy to decide whether we
 // need to hide the customizations or display an alert, without complex conditionals
@@ -137,7 +167,7 @@ export const useCustomizationRestrictions = ({
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
 
-  const { data } = api.useGetDistributionDetailsQuery({
+  const { data } = useGetDistributionQuery({
     distro: distro,
     architecture: [arch],
     imageType: selectedImageTypes,
@@ -213,7 +243,7 @@ export const useImageTypeCustomizationSupport = (
   const isImageMode = useAppSelector(selectIsImageMode);
   const selectedImageTypes = useAppSelector(selectImageTypes);
 
-  const { data } = api.useGetDistributionDetailsQuery(
+  const { data } = useGetDistributionQuery(
     {
       distro: distro,
       architecture: [arch],
@@ -224,10 +254,10 @@ export const useImageTypeCustomizationSupport = (
     },
   );
 
-  if (selectedImageTypes.length === 1) {
-    // if there is only one image type selected the wizard will
-    // hide the unsupported steps, so we can just return an empty
-    // array and labels won't be generated.
+  if (selectedImageTypes.length <= 1) {
+    // Labels are only meaningful when multiple image types are selected,
+    // showing per-target support. With 0 or 1 targets the wizard hides
+    // unsupported steps entirely, so no labels are needed.
     return [];
   }
 

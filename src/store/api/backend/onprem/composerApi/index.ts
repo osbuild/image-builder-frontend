@@ -1,6 +1,7 @@
 import { architectureEndpoints } from './architecture';
 import { blueprintEndpoints } from './blueprints';
 import { composeEndpoints } from './composes';
+import { distributionEndpoints } from './distribution';
 import { oscapEndpoints } from './oscap';
 import { workerEndpoints } from './worker';
 
@@ -12,6 +13,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
       ...architectureEndpoints(builder),
       ...blueprintEndpoints(builder),
       ...composeEndpoints(builder),
+      ...distributionEndpoints(builder),
       ...oscapEndpoints(builder),
       ...workerEndpoints(builder),
     };
@@ -33,6 +35,7 @@ export const {
   useDeleteBlueprintMutation,
   useExportBlueprintCockpitQuery,
   useLazyExportBlueprintCockpitQuery,
+  useGetDistributionQuery,
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
