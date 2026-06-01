@@ -15,13 +15,17 @@ import {
   WizardStepType,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { useSearchParams } from 'react-router-dom';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useGetUser } from '@/Hooks';
 import { useGetBlueprintQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
-import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
-import { selectIsOnPremise } from '@/store/slices/env';
+import {
+  selectSelectedBlueprintId,
+  setBlueprintId,
+} from '@/store/slices/blueprint';
+import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 import {
   addImageType,
   changeArchitecture,
@@ -101,6 +105,8 @@ import {
 
 const CreateImageWizard = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const addNotification = useAddNotification();
   const { isProd } = useGetEnvironment();
   const showWizardModal = useAppSelector(selectIsWizardModalOpen);
   const mode = useAppSelector(selectWizardModalMode);
@@ -109,13 +115,18 @@ const CreateImageWizard = () => {
   const isImageMode = useAppSelector(selectIsImageMode);
   const imageSource = useAppSelector(selectImageSource);
   const [searchParams, setSearchParams] = useSearchParams();
+  const resolvePath = useAppSelector(selectPathResolver);
   const hasInitialized = useRef(false);
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const hasTrackedInitialStepRef = useRef(false);
   const hasTrackedWizardOpenedRef = useRef(false);
 
-  const { data: blueprintDetails, isSuccess } = useGetBlueprintQuery(
+  const {
+    data: blueprintDetails,
+    isSuccess,
+    isError,
+  } = useGetBlueprintQuery(
     { id: blueprintId || '' },
     { skip: !(mode === 'edit' && !!blueprintId) },
   );
@@ -252,6 +263,27 @@ const CreateImageWizard = () => {
     // This useEffect hook should run *only* when the modal opens in import/create mode
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, showWizardModal]);
+
+  useEffect(() => {
+    if (mode === 'edit' && isError) {
+      dispatch(closeWizardModal());
+      dispatch(setBlueprintId(undefined));
+      navigate(resolvePath(''));
+      addNotification({
+        variant: 'warning',
+        title: 'Blueprint not found',
+        description: `Blueprint ${blueprintId} could not be found.`,
+      });
+    }
+  }, [
+    mode,
+    isError,
+    dispatch,
+    navigate,
+    resolvePath,
+    addNotification,
+    blueprintId,
+  ]);
 
   useEffect(() => {
     if (mode === 'edit' && blueprintId && blueprintDetails) {
