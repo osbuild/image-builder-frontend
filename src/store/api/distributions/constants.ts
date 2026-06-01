@@ -1,4 +1,4 @@
-import { CustomizationType, ImageTypeInfo } from './types';
+import { CustomizationType } from './types';
 
 export const ALL_CUSTOMIZATIONS = [
   'packages',
@@ -18,68 +18,24 @@ export const ALL_CUSTOMIZATIONS = [
   'aap',
 ] as const satisfies readonly CustomizationType[];
 
-// We are just mocking the response until we can actually
-// get this information from the API.
-export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {
-  aws: {
-    name: 'aws',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  azure: {
-    name: 'azure',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  vhd: {
-    name: 'vhd',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  gcp: { name: 'gcp', supported_blueprint_options: [...ALL_CUSTOMIZATIONS] },
-  'guest-image': {
-    name: 'guest-image',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  'image-installer': {
-    name: 'image-installer',
-    supported_blueprint_options: [
-      // image-installer has everything but filesystem
-      ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem'),
-    ],
-  },
-  'bootable-container-iso': {
-    name: 'bootable-container-iso',
-    supported_blueprint_options: [],
-  },
-  vsphere: {
-    name: 'vsphere',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  'vsphere-ova': {
-    name: 'vsphere-ova',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  wsl: {
-    name: 'wsl',
-    supported_blueprint_options: [
-      // wsl has everything but filesystem, openscap & kernel
-      ...ALL_CUSTOMIZATIONS.filter(
-        (c) => c !== 'filesystem' && c !== 'kernel' && c !== 'openscap',
-      ),
-    ],
-  },
-  ami: { name: 'ami', supported_blueprint_options: [...ALL_CUSTOMIZATIONS] },
-  oci: {
-    name: 'oci',
-    supported_blueprint_options: [...ALL_CUSTOMIZATIONS],
-  },
-  'network-installer': {
-    name: 'network-installer',
-    supported_blueprint_options: ['locale', 'fips'],
-  },
-  'pxe-tar-xz': {
-    name: 'pxe-tar-xz',
-    supported_blueprint_options: [
-      // pxe boot has everything but filesystem
-      ...ALL_CUSTOMIZATIONS.filter((c) => c !== 'filesystem'),
-    ],
-  },
+// Mapping backend naming of customizations to frontend naming.
+// A single backend key can map to multiple frontend customization types.
+export const BACKEND_TO_FRONTEND_OPTIONS: Record<
+  string,
+  CustomizationType | CustomizationType[]
+> = {
+  packages: 'packages',
+  'customizations.filesystem': 'filesystem',
+  'customizations.kernel': 'kernel',
+  'customizations.timezone': 'timezone',
+  'customizations.locale': 'locale',
+  'customizations.firewall': 'firewall',
+  'customizations.services': 'services',
+  'customizations.hostname': 'hostname',
+  'customizations.openscap': 'openscap',
+  'customizations.repositories': 'repositories',
+  'customizations.user': 'users',
+  'customizations.rhsm': 'registration',
+  'customizations.fips': 'fips',
+  'customizations.files': ['firstBoot', 'aap'],
 };
