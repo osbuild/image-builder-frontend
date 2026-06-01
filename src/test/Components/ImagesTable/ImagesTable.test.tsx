@@ -32,9 +32,13 @@ describe('Images Table', () => {
     expect(headerCells[2]).toHaveTextContent('Updated');
     expect(headerCells[3]).toHaveTextContent('OS');
     expect(headerCells[4]).toHaveTextContent('Target');
-    expect(headerCells[5]).toHaveTextContent('Version');
-    expect(headerCells[6]).toHaveTextContent('Status');
-    expect(headerCells[7]).toHaveTextContent('Instance');
+    if (!process.env.IS_ON_PREMISE) {
+      expect(headerCells[5]).toHaveTextContent('Version');
+      expect(headerCells[6]).toHaveTextContent('Status');
+      expect(headerCells[7]).toHaveTextContent('Instance');
+    } else {
+      expect(headerCells[5]).toHaveTextContent('Status');
+    }
 
     const imageNameValues = mockComposes.map((compose) =>
       compose.image_name ? compose.image_name : compose.id,

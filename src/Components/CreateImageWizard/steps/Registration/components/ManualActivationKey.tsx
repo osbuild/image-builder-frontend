@@ -1,12 +1,13 @@
-import React, { MutableRefObject, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
 import {
+  Button,
   Content,
   ContentVariants,
   FormGroup,
-  FormGroupLabelHelp,
   Popover,
 } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 
 import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
 import { CDN_PROD_URL } from '@/constants';
@@ -20,14 +21,9 @@ import {
   selectOrgId,
 } from '@/store/slices/wizard';
 
-const ManualRegistrationPopover = ({
-  ref,
-}: {
-  ref: MutableRefObject<null>;
-}) => {
+const ManualRegistrationPopover = () => {
   return (
     <Popover
-      triggerRef={ref}
       headerContent='About Activation Keys & Organization ID'
       position='right'
       minWidth='30rem'
@@ -46,9 +42,12 @@ const ManualRegistrationPopover = ({
         </Content>
       }
     >
-      <FormGroupLabelHelp
-        ref={ref}
+      <Button
+        icon={<HelpIcon />}
+        variant='plain'
+        size='sm'
         aria-label='About Activation Keys & Organization ID'
+        hasNoPadding
       />
     </Popover>
   );
@@ -58,8 +57,6 @@ export const ManualActivationKey = () => {
   const dispatch = useAppDispatch();
   const orgId = useAppSelector(selectOrgId);
   const activationKey = useAppSelector(selectActivationKey);
-  const orgIdRef = useRef(null);
-  const activationKeyRef = useRef(null);
 
   useEffect(() => {
     dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
@@ -71,7 +68,7 @@ export const ManualActivationKey = () => {
       <FormGroup
         className='pf-v6-u-mb-md'
         label={'Activation key'}
-        labelHelp={<ManualRegistrationPopover ref={activationKeyRef} />}
+        labelHelp={<ManualRegistrationPopover />}
         isRequired
       >
         <ValidatedInput
@@ -88,7 +85,7 @@ export const ManualActivationKey = () => {
       </FormGroup>
       <FormGroup
         label={'Organization ID'}
-        labelHelp={<ManualRegistrationPopover ref={orgIdRef} />}
+        labelHelp={<ManualRegistrationPopover />}
         isRequired
       >
         <ValidatedInput

@@ -3,7 +3,12 @@ import { screen, waitFor } from '@testing-library/react';
 import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { CreateBlueprintRequest } from '@/store/api/backend';
 import { server } from '@/test/mocks/server';
-import { createTestStore, createUser, typeWithWait } from '@/test/testUtils';
+import {
+  clickWithWait,
+  createTestStore,
+  createUser,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import {
   removeRepo,
@@ -101,7 +106,7 @@ describe('Repositories Component', () => {
       const toggle = await screen.findByRole('button', {
         name: /menu toggle/i,
       });
-      await user.click(toggle);
+      await clickWithWait(user, toggle);
 
       // Should show repositories without typing
       expect(
@@ -123,7 +128,7 @@ describe('Repositories Component', () => {
       const toggle = await screen.findByRole('button', {
         name: /menu toggle/i,
       });
-      await user.click(toggle);
+      await clickWithWait(user, toggle);
 
       expect(
         await screen.findByRole('option', {
@@ -135,7 +140,7 @@ describe('Repositories Component', () => {
       const searchInput = await screen.findByRole('textbox', {
         name: /filter repositories/i,
       });
-      await user.type(searchInput, 'nonexistent');
+      await typeWithWait(user, searchInput, 'nonexistent');
 
       expect(
         await screen.findByRole('option', {
@@ -166,7 +171,7 @@ describe('Repositories Component', () => {
       const toggle = await screen.findByRole('button', {
         name: /menu toggle/i,
       });
-      await user.click(toggle);
+      await clickWithWait(user, toggle);
 
       await screen.findByRole('option', { name: /no repositories available/i });
 
@@ -174,7 +179,7 @@ describe('Repositories Component', () => {
       const searchInput = await screen.findByRole('textbox', {
         name: /filter repositories/i,
       });
-      await user.type(searchInput, 'test');
+      await typeWithWait(user, searchInput, 'test');
 
       await screen.findByRole('option', {
         name: /no repositories found for "test"/i,
@@ -295,14 +300,16 @@ describe('Repositories Component', () => {
       await selectRepo(user, '01-test-valid-repo');
       await selectRepo(user, '04-test-another-valid-repo');
 
-      expect(
-        await screen.findByRole('cell', { name: /01-test-valid-repo/i }),
-      ).toBeInTheDocument();
-      expect(
-        await screen.findByRole('cell', {
-          name: /04-test-another-valid-repo/i,
-        }),
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByRole('cell', { name: /01-test-valid-repo/i }),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('cell', {
+            name: /04-test-another-valid-repo/i,
+          }),
+        ).toBeInTheDocument();
+      });
     });
   });
 
