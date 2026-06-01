@@ -610,7 +610,7 @@ const generateLinks = (
 const generateFillerRepos = (num: number): ApiRepositoryResponse[] => {
   const repos = new Array(num).fill(undefined).map((_, i) => {
     return {
-      uuid: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
+      uuid: `filler-repo-${i}`,
       name: `z-filler repo ${i}`,
       url: `http://fillerRepos.org/9/x86_64/packages/${i}`,
       distribution_versions: ['any'],

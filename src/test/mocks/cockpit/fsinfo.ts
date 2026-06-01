@@ -5,7 +5,7 @@ import path from 'path';
 import { mockBlueprintIds } from '../../fixtures/blueprints';
 import { mockComposes } from '../../fixtures/composes';
 
-const bpDir = '/default/.cache/cockpit-image-builder/';
+const bpDir = '/default/.local/state/cockpit-image-builder';
 
 type fileinfo = {
   entries?: Record<string, fileinfo>;
@@ -65,7 +65,7 @@ export const fsinfo = (
   // abuse one blueprint to return all composes.
   if (
     filepath ===
-    '/default/.cache/cockpit-image-builder/b3ff8307-18bd-418a-9a91-836ce039b035'
+    '/default/.local/state/cockpit-image-builder/b3ff8307-18bd-418a-9a91-836ce039b035'
   ) {
     return listComposes();
   }
