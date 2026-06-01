@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup } from '@patternfly/react-core';
+import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useFirewallValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
@@ -17,7 +17,7 @@ const PortsInput = () => {
     <FormGroup label='Ports'>
       <LabelInput
         ariaLabel='Add ports'
-        placeholder='Enter port (e.g., 8080:tcp)'
+        placeholder='Enter port'
         validator={isPortValid}
         list={ports}
         item='Port'
@@ -26,6 +26,9 @@ const PortsInput = () => {
         stepValidation={stepValidation}
         fieldName='ports'
       />
+      <HelperText className='pf-v6-u-pt-sm'>
+        <HelperTextItem>Examples: 8080:tcp, 443:udp</HelperTextItem>
+      </HelperText>
     </FormGroup>
   );
 };
