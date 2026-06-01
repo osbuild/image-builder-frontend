@@ -5,7 +5,6 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
-import ImportImageWizard from '../Components/CreateImageWizard/ImportImageWizard';
 import LandingPage from '../Components/LandingPage/LandingPage';
 import {
   serviceMiddleware as middleware,
@@ -26,10 +25,6 @@ const defaultRoutes = [
   {
     path: 'insights/image-builder/*',
     element: <LandingPage />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/import',
-    element: <ImportImageWizard />,
   },
 ];
 

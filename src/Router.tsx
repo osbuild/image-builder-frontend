@@ -3,9 +3,6 @@ import React, { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
-const ImportImageWizard = lazy(
-  () => import('./Components/CreateImageWizard/ImportImageWizard'),
-);
 
 export const Router = () => {
   return (
@@ -15,14 +12,6 @@ export const Router = () => {
         element={
           <Suspense>
             <LandingPage />
-          </Suspense>
-        }
-      />
-      <Route
-        path='imagewizard/import'
-        element={
-          <Suspense>
-            <ImportImageWizard />
           </Suspense>
         }
       />
