@@ -25,13 +25,13 @@ import { useAppSelector } from '../../../store/hooks';
 import {
   CreateSaveAndBuildBtn,
   CreateSaveButton,
-} from '../../CreateImageWizard/steps/Review/Footer/CreateDropdown';
+} from '../steps/Review/Footer/CreateDropdown';
 import {
   EditSaveAndBuildBtn,
   EditSaveButton,
-} from '../../CreateImageWizard/steps/Review/Footer/EditDropdown';
-import { mapRequestFromState } from '../../CreateImageWizard/utilities/requestMapper';
-import { useIsBlueprintValid } from '../../CreateImageWizard/utilities/useValidation';
+} from '../steps/Review/Footer/EditDropdown';
+import { mapRequestFromState } from '../utilities/requestMapper';
+import { useIsBlueprintValid } from '../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
   const { goToPrevStep, close } = useWizardContext();

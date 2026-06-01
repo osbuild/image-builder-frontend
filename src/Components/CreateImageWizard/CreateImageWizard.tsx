@@ -99,7 +99,7 @@ import {
   useUsersValidation,
 } from '../CreateImageWizard/utilities/useValidation';
 
-const CreateImageWizard3 = () => {
+const CreateImageWizard = () => {
   const dispatch = useAppDispatch();
   const { isProd } = useGetEnvironment();
   const showWizardModal = useAppSelector(selectIsWizardModalOpen);
@@ -602,4 +602,4 @@ const CreateImageWizard3 = () => {
   );
 };
 
-export default CreateImageWizard3;
+export default CreateImageWizard;
