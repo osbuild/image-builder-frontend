@@ -2,11 +2,16 @@
 set -euo pipefail
 
 PW_WORKERS=4
-if [ -n "${TMT_TREE:-}" ]; then
-    # Move to the directory with sources
+if [ -n "${TMT_SOURCE_DIR:-}" ]; then
+    # Runs in dist-git
+    cd "${TMT_SOURCE_DIR}/cockpit-image-builder"
+    npm ci
+elif [ -n "${TMT_TREE:-}" ]; then
+    # Runs in CI (Packit)
     cd "${TMT_TREE}"
     npm ci
 elif [ "${CI:-}" != "true" ]; then
+    # Local fallback
     cd ../
     npm ci
     # halve the workers on schutzbot to increase reliability
