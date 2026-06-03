@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 
 import { isSnapshotDateValid } from '@/Components/CreateImageWizard/validators';
+import { TEMPLATES_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeSnapshotDate,
@@ -138,7 +139,22 @@ const Snapshot = () => {
         ouiaId='use-content-template-radio'
         name='snapshot-type'
         label='Use a content template'
-        description='Select a content template and build this image with repository snapshots included in that template.'
+        description={
+          <>
+            Select a content template and build this image with repository
+            snapshots included in that template.{' '}
+            <Button
+              component='a'
+              target='_blank'
+              variant='link'
+              isInline
+              href={TEMPLATES_URL}
+              rel='noopener noreferrer'
+            >
+              Create and manage templates
+            </Button>
+          </>
+        }
         isChecked={selectedOption === 'template'}
         onChange={() => handleOptionChange('template')}
         className='pf-v6-u-pb-sm'

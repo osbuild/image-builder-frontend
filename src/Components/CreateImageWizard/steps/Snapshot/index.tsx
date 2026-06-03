@@ -6,8 +6,6 @@ import { CustomizationLabels } from '@/Components/sharedComponents/Customization
 
 import Snapshot from './components/Snapshot';
 
-import ManageRepositoriesButton from '../Repositories/components/ManageRepositoriesButton';
-
 const RepeatableBuildStep = () => {
   return (
     <>
@@ -18,7 +16,7 @@ const RepeatableBuildStep = () => {
         </Title>
         <Content component='small'>
           Create images that can be reproduced consistently with the same
-          package versions and configurations. <ManageRepositoriesButton />
+          package versions and configurations.
         </Content>
       </Content>
       <Snapshot />
