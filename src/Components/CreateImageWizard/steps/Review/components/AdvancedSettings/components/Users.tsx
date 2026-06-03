@@ -18,7 +18,7 @@ export const Users = ({ shouldHide }: Hideable) => {
   return (
     <>
       <ReviewGroup heading='Users' />
-      <Flex>
+      <Flex flexWrap={{ default: 'nowrap' }} style={{ overflowX: 'auto' }}>
         <FlexColumn
           heading='Username'
           labelKey='user-name-review'
