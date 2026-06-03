@@ -13,6 +13,7 @@ import {
   Timezone,
   Users,
 } from './components';
+import { UserGroups } from './components/UserGroups';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
 import { ReviewCardProps } from '../types';
@@ -55,6 +56,7 @@ const AdvancedSettingsOverview = ({
           />
           <Firewall shouldHide={restrictions.firewall.shouldHide} />
           <Users shouldHide={restrictions.users.shouldHide} />
+          <UserGroups shouldHide={restrictions.users.shouldHide} />
           <Firstboot shouldHide={restrictions.firstBoot.shouldHide} />
         </ReviewList>
       </CardBody>

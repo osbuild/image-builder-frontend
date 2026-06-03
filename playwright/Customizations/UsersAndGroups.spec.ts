@@ -677,11 +677,9 @@ test('Create a blueprint with Groups customization', async ({
   await test.step('Verify groups in Review step', async () => {
     await frame.getByRole('button', { name: 'Review image' }).click();
 
-    await expect(frame.getByText('developers')).toBeVisible();
-    // TODO: for now we only verify groups that are added to users
-    // we're missing a dedicated groups sections
-    // await expect(frame.getByText('qa-team')).toBeVisible();
-    // await expect(frame.getByText('ops')).toBeVisible();
+    await expect(frame.getByText('developers')).toHaveCount(2); // one group name + one assigned group
+    await expect(frame.getByText('qa-team')).toBeVisible();
+    await expect(frame.getByText('ops')).toBeVisible();
   });
 
   await test.step('Create and save blueprint', async () => {
