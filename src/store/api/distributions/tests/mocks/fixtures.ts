@@ -1,8 +1,7 @@
+import { DistributionDetails, ImageTypeInfo } from '@/store/api/backend';
 import {
   ALL_CUSTOMIZATIONS,
   type CustomizationType,
-  type DistributionDetails,
-  type ImageTypeInfo,
   type SupportContext,
 } from '@/store/api/distributions';
 

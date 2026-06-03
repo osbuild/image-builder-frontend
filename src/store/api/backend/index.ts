@@ -81,6 +81,12 @@ export const useGetComposeStatusQuery = process.env.IS_ON_PREMISE
   ? composerQueries.useGetComposeStatusQuery
   : serviceQueries.useGetComposeStatusQuery;
 
+export const useGetDistributionQuery = (
+  process.env.IS_ON_PREMISE
+    ? composerQueries.useGetDistributionQuery
+    : serviceQueries.useGetDistributionQuery
+) as typeof serviceQueries.useGetDistributionQuery;
+
 export const useBackendPrefetch = process.env.IS_ON_PREMISE
   ? composerApi.usePrefetch
   : imageBuilderApi.usePrefetch;
