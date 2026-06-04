@@ -123,7 +123,7 @@ const Packages = () => {
               </Select>
             </FormGroup>
           </ToolbarItem>
-          <ToolbarItem>
+          <ToolbarItem style={{ flex: 1 }}>
             <PackageSearch
               packageType={packageType}
               isSuccessEpelRepo={isSuccessEpelRepo}

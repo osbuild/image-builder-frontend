@@ -994,6 +994,7 @@ const PackageSearch = ({
       variant='typeahead'
       onClick={onToggleClick}
       isExpanded={isOpen}
+      isFullWidth
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
@@ -1019,7 +1020,7 @@ const PackageSearch = ({
   );
 
   return (
-    <FormGroup label='Packages'>
+    <FormGroup label='Packages' style={{ width: '100%' }}>
       <Select
         isScrollable
         isOpen={isOpen}
