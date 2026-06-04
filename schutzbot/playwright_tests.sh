@@ -1,15 +1,22 @@
 #!/bin/bash
 set -euo pipefail
 
+echo "PWD: $(pwd)"
+ls
+
 PW_WORKERS=4
 if [ -n "${TMT_SOURCE_DIR:-}" ]; then
     # Runs in dist-git
-    cd "${TMT_SOURCE_DIR}/cockpit-image-builder"
-    npm ci
+    echo "TMT_SOURCE_DIR: ${TMT_SOURCE_DIR}"
+    cd "${TMT_SOURCE_DIR}"
+    ls
+    npm ci || echo "Failed to run npm ci in TMT_SOURCE_DIR, moving to TMT_TREE..."
 elif [ -n "${TMT_TREE:-}" ]; then
     # Runs in CI (Packit)
+    echo "TMT_TREE: ${TMT_TREE}"
     cd "${TMT_TREE}"
-    npm ci
+    ls
+    npm ci || echo "Failed to run npm ci in TMT_TREE, moving to local fallback..."
 elif [ "${CI:-}" != "true" ]; then
     # Local fallback
     cd ../
