@@ -110,6 +110,7 @@ const getBlueprintsPath = async () => {
   // Backwards compatibility, drop after rhel 10.2.
   await cockpit.script(`
 if [ ! -e "${blueprintsDir}" ] && [ -d "${user.home}/.cache/cockpit-image-builder" ] ; then
+  mkdir -p "${stateDir}"
   cp -a "${user.home}/.cache/cockpit-image-builder" ${blueprintsDir}
 fi
 `);
