@@ -30,13 +30,18 @@ vi.stubGlobal('ResizeObserver', MockResizeObserver);
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   default: () => ({
     auth: {
-      getUser: async () => ({
-        identity: {
-          internal: {
-            org_id: 5,
-          },
-        },
-      }),
+      getUser: () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              identity: {
+                internal: {
+                  org_id: 5,
+                },
+              },
+            });
+          }, 0);
+        }),
     },
     isBeta: () => true,
     isProd: () => true,
@@ -80,6 +85,26 @@ configure({
   },
 });
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-afterAll(() => server.close());
+// Fail tests on console warnings and errors
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'error' });
+
+  vi.spyOn(console, 'error').mockImplementation((...args) => {
+    throw new Error(`Console error:\n${args.join(' ')}`);
+  });
+
+  vi.spyOn(console, 'warn').mockImplementation((...args) => {
+    const message = args.join(' ');
+    if (message.includes('Maximum update depth exceeded')) {
+      return;
+    }
+    throw new Error(`Console warning:\n${message}`);
+  });
+});
+
+afterAll(() => {
+  server.close();
+  vi.restoreAllMocks();
+});
+
 afterEach(() => server.resetHandlers());
