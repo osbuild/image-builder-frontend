@@ -58,7 +58,7 @@ module.exports = defineConfig([
       'react-hooks': pluginReactHooks,
       'react-redux': pluginReactRedux,
       import: pluginImport,
-      jsxA11y: pluginJsxA11y,
+      'jsx-a11y': pluginJsxA11y,
       prettier: pluginPrettier,
     },
     rules: {
@@ -67,6 +67,7 @@ module.exports = defineConfig([
       ...pluginReact.configs.flat.recommended.rules,
       ...pluginReactHooks.configs.recommended.rules,
       ...pluginReactRedux.configs.recommended.rules,
+      ...pluginJsxA11y.configs.recommended.rules,
       ...fecConfig.rules,
       'import/order': ['error', {
         groups: ['builtin', 'external', 'internal', 'sibling', 'parent', 'index'],
@@ -132,7 +133,6 @@ module.exports = defineConfig([
           varsIgnorePattern: '^_',
         },
       ],
-      'jsx-a11y/no-autofocus': 'off',
       'react-hooks/set-state-in-effect': 'warn', // TODO address issues and enable the rule
       'prettier/prettier': ['error', {
         semi: true,
