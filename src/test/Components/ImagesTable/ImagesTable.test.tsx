@@ -199,10 +199,8 @@ describe('Images Table', () => {
       });
 
     try {
-      // Click the download link
-      const downloadLink: HTMLAnchorElement =
-        await within(downloadButton).findByRole('link');
-      await user.click(downloadLink);
+      // Click the download menu item
+      await user.click(downloadButton);
 
       // Verify the download was triggered correctly
       await waitFor(() => {

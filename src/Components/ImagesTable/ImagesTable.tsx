@@ -710,7 +710,7 @@ const defaultActions = (
 ) => {
   const name = `request-${compose.id}.json`;
 
-  const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
 
     const data = JSON.stringify(compose.request, null, 2);
@@ -740,11 +740,8 @@ const defaultActions = (
 
   const actions = [
     {
-      title: (
-        <a className='ib-subdued-link' href='#' onClick={handleDownload}>
-          Download compose request (.json)
-        </a>
-      ),
+      title: 'Download compose request (.json)',
+      onClick: handleDownload,
     },
   ];
 
@@ -753,23 +750,14 @@ const defaultActions = (
     const fileBrowserHref =
       '/files#/?path=' + encodeURIComponent(parsedPath.dir);
 
-    const handleOpenInFileBrowser = (
-      e: React.MouseEvent<HTMLAnchorElement>,
-    ) => {
+    const handleOpenInFileBrowser = (e: React.MouseEvent) => {
       e.preventDefault();
       cockpit.jump(fileBrowserHref, cockpit.transport.host);
     };
 
     actions.push({
-      title: (
-        <a
-          className='ib-subdued-link'
-          href='#'
-          onClick={handleOpenInFileBrowser}
-        >
-          Open in file browser
-        </a>
-      ),
+      title: 'Open in file browser',
+      onClick: handleOpenInFileBrowser,
     });
   }
 
