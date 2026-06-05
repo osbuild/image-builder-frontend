@@ -1,4 +1,4 @@
-import { useUpdateBlueprintMutation } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 
 import {
   HookOptions,
@@ -6,8 +6,10 @@ import {
 } from './useMutationWithNotification';
 
 export const useUpdateBPWithNotification = (options?: HookOptions) => {
+  const {
+    mutations: { useUpdateBlueprintMutation },
+  } = usePlatform();
   const { trigger: updateBlueprint, ...rest } = useMutationWithNotification(
-    // @ts-expect-error TODO: this will need to be revisited
     useUpdateBlueprintMutation,
     {
       options,

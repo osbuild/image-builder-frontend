@@ -5,7 +5,7 @@ import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useServicesValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { isServiceValid } from '@/Components/CreateImageWizard/validators';
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 import { useAppSelector } from '@/store/hooks';
 import {
   addDisabledService,
@@ -20,6 +20,9 @@ import {
 } from '@/store/slices/wizard';
 
 const ServicesInput = () => {
+  const {
+    queries: { useGetOscapCustomizationsQuery },
+  } = usePlatform();
   const disabledServices = useAppSelector(selectServices).disabled;
   const maskedServices = useAppSelector(selectServices).masked;
   const enabledServices = useAppSelector(selectServices).enabled;

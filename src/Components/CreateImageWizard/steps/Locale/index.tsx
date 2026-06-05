@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Content, Spinner, Title } from '@patternfly/react-core';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
-import { useGetArchitecturesQuery } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 import { useSearchLanguagePacks } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import {
@@ -17,6 +17,9 @@ import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
 const LocaleStep = () => {
+  const {
+    queries: { useGetArchitecturesQuery },
+  } = usePlatform();
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const candidateLangpacks = useAppSelector(selectLocaleLangpackCandidates);

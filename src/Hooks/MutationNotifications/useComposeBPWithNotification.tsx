@@ -1,8 +1,11 @@
-import { useComposeBlueprintMutation } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 
 import { useMutationWithNotification } from './useMutationWithNotification';
 
 export const useComposeBPWithNotification = () => {
+  const {
+    mutations: { useComposeBlueprintMutation },
+  } = usePlatform();
   const { trigger: composeBlueprint, ...rest } = useMutationWithNotification(
     useComposeBlueprintMutation,
     {

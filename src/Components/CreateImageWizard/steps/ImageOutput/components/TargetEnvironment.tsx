@@ -11,14 +11,10 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 
+import { usePlatform } from '@/context/platform';
 import { useTargetEnvironmentCategories } from '@/Hooks';
 import { rhsmApi } from '@/store/api';
-import {
-  BootcDistributionItem,
-  ImageTypes,
-  useGetArchitecturesQuery,
-  useGetDistributionsQuery,
-} from '@/store/api/backend';
+import { BootcDistributionItem, ImageTypes } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -67,6 +63,9 @@ const createLabelWithTooltip = (
 };
 
 const TargetEnvironment = () => {
+  const {
+    queries: { useGetArchitecturesQuery, useGetDistributionsQuery },
+  } = usePlatform();
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);

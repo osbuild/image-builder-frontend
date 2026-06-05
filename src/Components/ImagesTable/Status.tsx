@@ -24,12 +24,12 @@ import {
   PendingIcon,
 } from '@patternfly/react-icons';
 
+import { usePlatform } from '@/context/platform';
 import {
   ComposerComposesResponseItem,
   ComposesResponseItem,
   ComposeStatus,
   ComposeStatusError,
-  useGetComposeStatusQuery,
 } from '@/store/api/backend';
 
 import {
@@ -42,6 +42,9 @@ type ComposeStatusPropTypes = {
 };
 
 export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -77,6 +80,9 @@ type CloudStatusPropTypes = {
 };
 
 export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -145,6 +151,9 @@ export const ExpiringStatus = ({
   isExpired,
   timeToExpiration,
 }: ExpiringStatusPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -237,6 +246,9 @@ type LocalStatusPropTypes = {
 };
 
 export const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

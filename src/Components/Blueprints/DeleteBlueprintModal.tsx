@@ -10,11 +10,8 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import {
-  backendApi,
-  GetBlueprintsApiArg,
-  useGetBlueprintsQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { GetBlueprintsApiArg } from '@/store/api/backend';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -43,6 +40,10 @@ interface DeleteBlueprintModalProps {
 export const DeleteBlueprintModal: React.FunctionComponent<
   DeleteBlueprintModalProps
 > = ({ setShowDeleteModal, isOpen }: DeleteBlueprintModalProps) => {
+  const {
+    queries: { useGetBlueprintsQuery },
+    api: { backendApi },
+  } = usePlatform();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;

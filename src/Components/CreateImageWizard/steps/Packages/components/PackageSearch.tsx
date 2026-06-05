@@ -30,6 +30,7 @@ import {
   ContentOrigin,
   EPEL_10_REPO_DEFINITION,
 } from '@/constants';
+import { usePlatform } from '@/context/platform';
 import {
   Module,
   useGetArchitecturesQuery,
@@ -42,7 +43,6 @@ import {
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
   useSearchRepositoryModuleStreamsMutation,
-  useSearchRpmMutation,
 } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -100,6 +100,9 @@ const PackageSearch = ({
   activeStream,
   setActiveStream,
 }: PackageSearchProps) => {
+  const {
+    mutations: { useSearchRpmMutation },
+  } = usePlatform();
   const dispatch = useAppDispatch();
   const { analytics, isBeta } = useChrome();
 
@@ -254,13 +257,16 @@ const PackageSearch = ({
     }
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
       if (isOnPremise) {
+        // On-prem uses a different request shape with packages/architecture/distribution
+        // fields that don't exist in the hosted ApiContentUnitSearchRequest type.
+        // The on-prem implementation accepts these fields at runtime via PlatformContext.
         searchDistroRpms({
           apiContentUnitSearchRequest: {
             packages: [debouncedSearchTerm],
             architecture: arch,
             distribution,
           },
-        });
+        } as Parameters<typeof searchDistroRpms>[0]);
       } else {
         searchDistroRpms({
           apiContentUnitSearchRequest: {

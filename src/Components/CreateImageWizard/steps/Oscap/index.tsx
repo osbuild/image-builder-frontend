@@ -26,12 +26,8 @@ import {
   FIRST_BOOT_SERVICE,
   OSCAP_URL,
 } from '@/constants';
+import { usePlatform } from '@/context/platform';
 import { useGetUser } from '@/Hooks';
-import {
-  useBackendPrefetch,
-  useGetOscapCustomizationsQuery,
-  useGetOscapProfilesQuery,
-} from '@/store/api/backend';
 import { useSecuritySummary } from '@/store/api/backend/hooks';
 import { usePoliciesQuery } from '@/store/api/compliance';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
@@ -71,6 +67,10 @@ import { removeBetaFromRelease } from './removeBetaFromRelease';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
+  const {
+    queries: { useGetOscapProfilesQuery, useGetOscapCustomizationsQuery },
+    api: { useBackendPrefetch },
+  } = usePlatform();
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
   const complianceType = useAppSelector(selectComplianceType);

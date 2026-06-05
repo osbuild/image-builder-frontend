@@ -12,10 +12,10 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { usePlatform } from '@/context/platform';
 import {
   ComposesResponseItem,
   GcpUploadRequestOptions,
-  useGetComposeStatusQuery,
 } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
 
@@ -45,6 +45,9 @@ type AwsDetailsPropTypes = {
 };
 
 export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const options = compose.request.image_requests[0].upload_request.options;
 
   const { analytics, auth } = useChrome();
@@ -176,6 +179,9 @@ type AzureDetailsPropTypes = {
 };
 
 export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data: composeStatus } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -256,6 +262,9 @@ type GcpDetailsPropTypes = {
 };
 
 export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data: composeStatus } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -344,6 +353,9 @@ type OciDetailsPropTypes = {
 };
 
 export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { data: composeStatus } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

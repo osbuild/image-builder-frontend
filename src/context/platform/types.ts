@@ -18,7 +18,6 @@ import type {
   useGetArchitecturesQuery as useComposerGetArchitecturesQuery,
   useGetDistributionsQuery as useComposerGetDistributionsQuery,
 } from '@/store/api/backend/onprem/composerApi';
-import type { composerApi } from '@/store/api/backend/onprem/enhancedComposerApi';
 import type {
   contentSourcesApi,
   useListSnapshotsByDateMutation as useHostedListSnapshotsByDateMutation,
@@ -58,11 +57,9 @@ type PlatformHooks = {
     useGetEnvironment: () => { isBeta: () => boolean; isProd: () => boolean };
   };
   api: {
-    backendApi: typeof imageBuilderApi | typeof composerApi;
+    backendApi: typeof imageBuilderApi;
     contentSourcesApi: typeof contentSourcesApi;
-    useBackendPrefetch:
-      | typeof imageBuilderApi.usePrefetch
-      | typeof composerApi.usePrefetch;
+    useBackendPrefetch: typeof imageBuilderApi.usePrefetch;
   };
 };
 

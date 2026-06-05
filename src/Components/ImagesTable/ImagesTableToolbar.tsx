@@ -13,13 +13,11 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 
+import { usePlatform } from '@/context/platform';
 import {
   BlueprintItem,
   Distributions,
   GetBlueprintComposesApiArg,
-  useGetBlueprintComposesQuery,
-  useGetBlueprintQuery,
-  useGetBlueprintsQuery,
 } from '@/store/api/backend';
 import {
   selectBlueprintSearchInput,
@@ -58,6 +56,13 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   setPage,
   onPerPageSelect,
 }: imagesTableToolbarProps) => {
+  const {
+    queries: {
+      useGetBlueprintQuery,
+      useGetBlueprintComposesQuery,
+      useGetBlueprintsQuery,
+    },
+  } = usePlatform();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);

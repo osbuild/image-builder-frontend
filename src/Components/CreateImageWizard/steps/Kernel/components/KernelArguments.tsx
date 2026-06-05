@@ -5,7 +5,7 @@ import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useKernelValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { isKernelArgumentValid } from '@/Components/CreateImageWizard/validators';
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 import { useAppSelector } from '@/store/hooks';
 import {
   addKernelArg,
@@ -16,6 +16,9 @@ import {
 } from '@/store/slices/wizard';
 
 const KernelArguments = () => {
+  const {
+    queries: { useGetOscapCustomizationsQuery },
+  } = usePlatform();
   const kernelAppend = useAppSelector(selectKernel).append;
 
   const stepValidation = useKernelValidation();

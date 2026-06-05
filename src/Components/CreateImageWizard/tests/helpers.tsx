@@ -5,6 +5,8 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
+import { PlatformProvider } from '@/context/platform';
+import { hostedPlatform } from '@/context/platform/hosted';
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 
 import CreateImageWizard from '../CreateImageWizard';
@@ -36,12 +38,14 @@ export const renderWithQueryParams = async (
 
   render(
     <Provider store={store}>
-      <RouterProvider
-        router={router}
-        future={{
-          v7_startTransition: true,
-        }}
-      />
+      <PlatformProvider value={hostedPlatform}>
+        <RouterProvider
+          router={router}
+          future={{
+            v7_startTransition: true,
+          }}
+        />
+      </PlatformProvider>
     </Provider>,
   );
 

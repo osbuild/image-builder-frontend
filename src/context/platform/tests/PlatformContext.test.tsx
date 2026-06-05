@@ -1,34 +1,26 @@
 import React from 'react';
 
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { PlatformProvider, usePlatform } from '@/context/platform';
-import type { PlatformHooks } from '@/context/platform/types';
+
+import { mockPlatform } from './mocks';
 
 describe('PlatformContext', () => {
   it('throws when usePlatform is called outside PlatformProvider', () => {
-    const onError = (e: ErrorEvent) => e.preventDefault();
-    window.addEventListener('error', onError);
+    // React logs to console.error before the error propagates;
+    // suppress it so the global setup spy doesn't treat it as a failure.
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {
       renderHook(() => usePlatform());
     }).toThrow('usePlatform must be used within a PlatformProvider');
 
-    window.removeEventListener('error', onError);
+    spy.mockRestore();
   });
 
   it('provides the platform object when wrapped in PlatformProvider', () => {
-    const mockPlatform = {
-      queries: {},
-      mutations: {},
-      env: {
-        useFlag: () => false,
-        useGetEnvironment: () => ({ isBeta: () => false, isProd: () => true }),
-      },
-      api: {},
-    } as unknown as PlatformHooks;
-
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <PlatformProvider value={mockPlatform}>{children}</PlatformProvider>
     );

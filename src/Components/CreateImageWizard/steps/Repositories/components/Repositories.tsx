@@ -16,12 +16,12 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { CONTENT_URL, ContentOrigin } from '@/constants';
+import { usePlatform } from '@/context/platform';
 import {
   ApiRepositoryResponseRead,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useListRepositoryParametersQuery,
-  useListSnapshotsByDateMutation,
 } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -70,6 +70,9 @@ import {
 } from '../repositoriesUtilities';
 
 const Repositories = () => {
+  const {
+    mutations: { useListSnapshotsByDateMutation },
+  } = usePlatform();
   const dispatch = useAppDispatch();
 
   const arch = useAppSelector(selectArchitecture);

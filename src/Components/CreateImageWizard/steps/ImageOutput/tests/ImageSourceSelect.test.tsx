@@ -27,12 +27,19 @@ import ImageSourceSelect from '../components/ImageSourceSelect';
 const mockRefetch = vi.fn();
 const mockUseGetDistributionsQuery = vi.fn();
 
-vi.mock('@/store/api/backend', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/store/api/backend')>();
+vi.mock('@/context/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/context/platform')>();
+  const { mockPlatform } = await import('@/context/platform/tests/mocks');
   return {
     ...actual,
-    useGetDistributionsQuery: (...args: unknown[]) =>
-      mockUseGetDistributionsQuery(...args),
+    usePlatform: () => ({
+      ...mockPlatform,
+      queries: {
+        ...mockPlatform.queries,
+        useGetDistributionsQuery: (...args: unknown[]) =>
+          mockUseGetDistributionsQuery(...args),
+      },
+    }),
   };
 });
 

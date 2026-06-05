@@ -18,10 +18,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import {
-  ComposesResponseItem,
-  useGetComposeStatusQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { ComposesResponseItem } from '@/store/api/backend';
 
 import { generateDefaultName } from './useGenerateDefaultName';
 
@@ -34,6 +32,9 @@ import { parseGcpSharedWith } from '../ImagesTable/ImageDetails';
 type LaunchProps = { compose: ComposesResponseItem };
 
 export const GcpLaunchModal = ({ compose }: LaunchProps) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerProjectId, setCustomerProjectId] = useState('');
   const { data, isSuccess, isFetching } = useGetComposeStatusQuery({
