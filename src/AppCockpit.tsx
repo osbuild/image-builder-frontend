@@ -12,6 +12,8 @@ import { HashRouter } from 'react-router-dom';
 
 import './AppCockpit.scss';
 import { NotReady, RequireAdmin } from './Components/Cockpit';
+import { PlatformProvider } from './context/platform';
+import { onPremPlatform } from './context/platform/onprem';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
 import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
@@ -41,11 +43,13 @@ const Application = () => {
 };
 const ImageBuilder = () => (
   <Provider store={store}>
-    <Page className='no-masthead-sidebar' isContentFilled>
-      <PageSection>
-        <Application />
-      </PageSection>
-    </Page>
+    <PlatformProvider value={onPremPlatform}>
+      <Page className='no-masthead-sidebar' isContentFilled>
+        <PageSection>
+          <Application />
+        </PageSection>
+      </Page>
+    </PlatformProvider>
   </Provider>
 );
 
