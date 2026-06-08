@@ -18,8 +18,8 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { usePlatform } from '@/context/platform';
 import { useGetUser } from '@/Hooks';
-import { useGetBlueprintQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import {
   selectSelectedBlueprintId,
@@ -124,6 +124,10 @@ const CreateImageWizard = () => {
   const hasTrackedInitialStepRef = useRef(false);
   const hasTrackedWizardOpenedRef = useRef(false);
   const isHostDistroDetected = useRef(!isOnPremise);
+
+  const {
+    queries: { useGetBlueprintQuery },
+  } = usePlatform();
 
   const {
     data: blueprintDetails,

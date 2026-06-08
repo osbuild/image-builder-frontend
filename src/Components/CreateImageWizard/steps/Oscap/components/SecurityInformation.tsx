@@ -10,11 +10,11 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 
+import { usePlatform } from '@/context/platform';
 import {
   DistributionProfileItem,
   OpenScapProfile,
   useGetComplianceCustomizationsQuery,
-  useGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -28,6 +28,9 @@ import {
 } from '@/store/slices/wizard';
 
 export const SecurityInformation = (): JSX.Element => {
+  const {
+    queries: { useGetOscapCustomizationsQuery },
+  } = usePlatform();
   const release = useAppSelector(selectDistribution);
   const complianceType = useAppSelector(selectComplianceType);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);

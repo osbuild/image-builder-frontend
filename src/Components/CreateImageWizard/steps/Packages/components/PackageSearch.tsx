@@ -33,7 +33,6 @@ import {
 import { usePlatform } from '@/context/platform';
 import {
   Module,
-  useGetArchitecturesQuery,
   useRecommendPackageMutation,
   useSecuritySummary,
 } from '@/store/api/backend';
@@ -101,6 +100,7 @@ const PackageSearch = ({
   setActiveStream,
 }: PackageSearchProps) => {
   const {
+    queries: { useGetArchitecturesQuery },
     mutations: { useSearchRpmMutation },
   } = usePlatform();
   const dispatch = useAppDispatch();
