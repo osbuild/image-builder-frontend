@@ -8,6 +8,8 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 
+import './ImageBuilderHeader.scss';
+
 import { useBackendPrefetch } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { selectDistribution } from '@/store/slices/wizard';
@@ -78,12 +80,6 @@ export const ImageBuilderHeader = ({
   const [showImportModal, setShowImportModal] = useState(false);
   const [showCloudConfigModal, setShowCloudConfigModal] = useState(false);
 
-  const pageHeaderProps: React.ComponentProps<typeof PageHeader> &
-    React.ComponentPropsWithoutRef<'section'> = {
-    className: 'pf-m-sticky-top',
-    style: { boxShadow: 'none' },
-  };
-
   return (
     <>
       <ImportBlueprintModal
@@ -96,7 +92,7 @@ export const ImageBuilderHeader = ({
           isOpen={showCloudConfigModal}
         />
       )}
-      <PageHeader {...pageHeaderProps}>
+      <PageHeader className='pf-m-sticky-top image-builder-header'>
         <PageHeaderTitle
           title={
             <>
