@@ -14,6 +14,7 @@ import { useBackendPrefetch } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { selectDistribution } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
 import { useGetDocumentationUrl } from '../../Hooks';
@@ -77,6 +78,10 @@ export const ImageBuilderHeader = ({
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
 
+  const isImagesTableRevampEnabled = useFlag(
+    'image-builder.images-table-revamp.enabled',
+  );
+
   const [showImportModal, setShowImportModal] = useState(false);
   const [showCloudConfigModal, setShowCloudConfigModal] = useState(false);
 
@@ -139,6 +144,15 @@ export const ImageBuilderHeader = ({
             </>
           }
         />
+        {isImagesTableRevampEnabled && (
+          <Content className='image-builder-header__description'>
+            Build, customize, and deploy RHEL images for public cloud, private
+            cloud, and on-premise environments. You can manage your images by
+            duplicating, rebuilding, or editing existing configurations.
+            Download your finished builds or launch them directly as
+            deployment-ready systems.
+          </Content>
+        )}
       </PageHeader>
     </>
   );
