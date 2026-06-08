@@ -18,12 +18,8 @@ import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import {
-  BlueprintItem,
-  GetBlueprintsApiArg,
-  imageBuilderApi,
-  useGetBlueprintsQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { BlueprintItem, GetBlueprintsApiArg } from '@/store/api/backend';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -57,6 +53,9 @@ type emptyBlueprintStateProps = {
 };
 
 const BlueprintsSidebar = () => {
+  const {
+    queries: { useGetBlueprintsQuery },
+  } = usePlatform();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
@@ -181,6 +180,9 @@ const BlueprintsSidebar = () => {
 };
 
 const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
+  const {
+    api: { backendApi },
+  } = usePlatform();
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const dispatch = useAppDispatch();
   const [localSearchValue, setLocalSearchValue] = useState(
@@ -190,7 +192,7 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
 
   useEffect(() => {
     dispatch(setBlueprintsOffset(0));
-    dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
+    dispatch(backendApi.util.invalidateTags([{ type: 'Blueprints' }]));
     dispatch(
       setBlueprintSearchInput(
         debouncedSearchValue.length > 0 ? debouncedSearchValue : undefined,

@@ -4,6 +4,9 @@ import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
 import { render, RenderResult } from '@testing-library/react';
 import { Provider } from 'react-redux';
 
+import { PlatformProvider } from '@/context/platform';
+import { hostedPlatform } from '@/context/platform/hosted';
+import { onPremPlatform } from '@/context/platform/onprem';
 import {
   onPremMiddleware,
   onPremReducer,
@@ -29,7 +32,13 @@ export const renderWithRedux = (
   options: RenderWithReduxOptions = {},
 ): RenderWithReduxResult => {
   const store = createTestStore(wizardStateOverrides, options);
-  const view = render(<Provider store={store}>{component}</Provider>);
+  const isOnPremise = options.preloadedState?.env?.isOnPremise;
+  const platform = isOnPremise ? onPremPlatform : hostedPlatform;
+  const view = render(
+    <Provider store={store}>
+      <PlatformProvider value={platform}>{component}</PlatformProvider>
+    </Provider>,
+  );
   return { ...view, store };
 };
 

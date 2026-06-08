@@ -31,16 +31,13 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 import { useDispatch } from 'react-redux';
 
+import { usePlatform } from '@/context/platform';
 import {
   BlueprintItem,
   ComposesResponseItem,
   GetBlueprintComposesApiArg,
   GetBlueprintsApiArg,
   LocalUploadStatus,
-  useGetBlueprintComposesQuery,
-  useGetBlueprintsQuery,
-  useGetComposesQuery,
-  useGetComposeStatusQuery,
 } from '@/store/api/backend';
 import {
   selectBlueprintSearchInput,
@@ -96,6 +93,13 @@ import { GcpLaunchModal } from '../Launch/GcpLaunchModal';
 import { OciLaunchModal } from '../Launch/OciLaunchModal';
 
 const ImagesTable = () => {
+  const {
+    queries: {
+      useGetBlueprintsQuery,
+      useGetBlueprintComposesQuery,
+      useGetComposesQuery,
+    },
+  } = usePlatform();
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
@@ -322,6 +326,9 @@ type ImagesTableRowPropTypes = {
 };
 
 const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const [pollingInterval, setPollingInterval] = useState(
     STATUS_POLLING_INTERVAL,
   );
@@ -580,6 +587,9 @@ const Row = ({
   details,
   instance,
 }: RowPropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);

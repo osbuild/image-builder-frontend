@@ -19,10 +19,8 @@ import {
 import { SyncAltIcon } from '@patternfly/react-icons';
 
 import { RHEL_10_IMAGE_MODE_IMAGE } from '@/constants';
-import {
-  BootcDistributionItem,
-  useGetDistributionsQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { BootcDistributionItem } from '@/store/api/backend';
 import { Distributions } from '@/store/api/backend/hosted';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -63,6 +61,9 @@ const InfoMessageContent = ({ source }: { source: string }) => {
 };
 
 const ImageSourceSelect = () => {
+  const {
+    queries: { useGetDistributionsQuery },
+  } = usePlatform();
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const arch = useAppSelector(selectArchitecture);

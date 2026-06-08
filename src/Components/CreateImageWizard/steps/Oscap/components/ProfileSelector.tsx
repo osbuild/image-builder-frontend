@@ -15,14 +15,12 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
+import { usePlatform } from '@/context/platform';
 import {
   DistributionProfileItem,
   DistributionProfileResponse,
   OpenScap,
   OpenScapProfile,
-  useBackendPrefetch,
-  useGetOscapCustomizationsQuery,
-  useLazyGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -60,6 +58,13 @@ const ProfileSelector = ({
   isSuccess,
   refetch,
 }: ProfileSelectorProps) => {
+  const {
+    queries: {
+      useGetOscapCustomizationsQuery,
+      useLazyGetOscapCustomizationsQuery,
+    },
+    api: { useBackendPrefetch },
+  } = usePlatform();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));

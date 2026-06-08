@@ -18,7 +18,8 @@ import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/Me
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-import { ImageTypes, useGetBlueprintQuery } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { ImageTypes } from '@/store/api/backend';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
@@ -35,6 +36,9 @@ type BuildImagesButtonPropTypes = {
 };
 
 export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
+  const {
+    queries: { useGetBlueprintQuery },
+  } = usePlatform();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [deselectedTargets, setDeselectedTargets] = useState<ImageTypes[]>([]);
   const { trigger: buildBlueprint, isLoading: imageBuildLoading } =

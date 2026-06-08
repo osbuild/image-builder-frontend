@@ -92,6 +92,53 @@ Imports are enforced alphabetically by ESLint. Group order:
 - Playwright tests for E2E coverage of critical flows
 - The `TZ=UTC` prefix is applied automatically by npm scripts
 
+## Platform Context
+
+The app runs on two platforms — **hosted** (console.redhat.com) and **on-premises** (Cockpit plugin). Platform-specific hooks, API slices, and utilities are abstracted behind a React context so components never branch on the environment directly.
+
+### Architecture
+
+| File | Purpose |
+| --- | --- |
+| `src/context/platform/types.ts` | `PlatformHooks` type — the contract for `queries`, `mutations`, `env`, and `api` |
+| `src/context/platform/index.ts` | `PlatformContext`, `PlatformProvider`, and `usePlatform()` hook |
+| `src/context/platform/hosted.ts` | Hosted implementation (`hostedPlatform`) — Unleash flags, hosted RTK Query hooks |
+| `src/context/platform/onprem.ts` | On-prem implementation (`onPremPlatform`) — static flags, Cockpit/composer hooks |
+
+### Barrel files
+
+The store barrel files (`src/store/api/backend/index.ts`, `src/store/api/contentSources/index.ts`) no longer contain any `process.env.IS_ON_PREMISE` ternary logic. All platform-switched hooks are now sourced exclusively through `usePlatform()`. The barrels retain only:
+
+- **Type re-exports** (hosted as canonical, prefixed on-prem types where they conflict)
+- **Platform-independent hooks** — hosted-only hooks gated at the component/route level (e.g. `useComposeImageMutation`, `useListRepositoriesQuery`)
+- **API slice references** (`imageBuilderApi`, `composerApi`, `contentSourcesApi`) for store setup and `invalidateTags`
+
+### Usage
+
+Entry points (`src/AppEntry.tsx`, Cockpit bootstrap) wrap the app with `<PlatformProvider value={hostedPlatform}>` or `<PlatformProvider value={onPremPlatform}>`.
+
+Consumers destructure the specific hooks they need from `usePlatform()`:
+
+```tsx
+import { usePlatform } from '@/context/platform';
+
+const { queries: { useGetBlueprintQuery } } = usePlatform();
+const { data } = useGetBlueprintQuery({ id });
+```
+
+Destructure to the individual hook level — not just `queries`/`mutations`/`api` — so call sites match the original direct-import style and keep diffs minimal.
+
+### PlatformHooks shape
+
+- **`queries`** — RTK Query hooks: `useGetBlueprintQuery`, `useGetBlueprintsQuery`, `useGetComposeStatusQuery`, `useGetArchitecturesQuery`, `useGetDistributionsQuery`, `useGetOscapProfilesQuery`, `useGetOscapCustomizationsQuery`, `useLazyGetBlueprintsQuery`, `useLazyGetOscapCustomizationsQuery`, `useGetComposesQuery`, `useGetBlueprintComposesQuery`
+- **`mutations`** — RTK Query mutation hooks: `useCreateBlueprintMutation`, `useUpdateBlueprintMutation`, `useDeleteBlueprintMutation`, `useComposeBlueprintMutation`, `useSearchRpmMutation`, `useListSnapshotsByDateMutation`
+- **`env`** — `useFlag(flag)` and `useGetEnvironment()`
+- **`api`** — `backendApi` (the RTK API slice for `invalidateTags` etc.), `contentSourcesApi`, `useBackendPrefetch`
+
+### Testing
+
+Tests use a `mockPlatform` fixture from `src/context/platform/tests/mocks/` and render inside a `PlatformProvider`. When mocking `usePlatform` directly via `vi.mock`, spread `mockPlatform` and override only the hooks under test.
+
 ## Feature Flags
 
 Uses Unleash for feature toggles in the hosted service. Import `useFlag` from `src/Utilities/useGetEnvironment.ts` to check flag status:

@@ -1,4 +1,4 @@
-import { useCreateBlueprintMutation } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 
 import {
   HookOptions,
@@ -6,8 +6,10 @@ import {
 } from './useMutationWithNotification';
 
 export const useCreateBPWithNotification = (options?: HookOptions) => {
+  const {
+    mutations: { useCreateBlueprintMutation },
+  } = usePlatform();
   const { trigger: createBlueprint, ...rest } = useMutationWithNotification(
-    // @ts-expect-error TODO: this will need to be revisited
     useCreateBlueprintMutation,
     {
       options,

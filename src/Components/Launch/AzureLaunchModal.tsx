@@ -15,10 +15,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import {
-  ComposesResponseItem,
-  useGetComposeStatusQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { ComposesResponseItem } from '@/store/api/backend';
 
 import { isAzureUploadStatus } from '../../store/typeGuards';
 
@@ -27,6 +25,9 @@ type LaunchProps = {
 };
 
 export const AzureLaunchModal = ({ compose }: LaunchProps) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isSuccess, isFetching } = useGetComposeStatusQuery({
     composeId: compose.id,

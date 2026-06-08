@@ -1,4 +1,4 @@
-import { useDeleteBlueprintMutation } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 
 import {
   HookOptions,
@@ -6,6 +6,9 @@ import {
 } from './useMutationWithNotification';
 
 export const useDeleteBPWithNotification = (options?: HookOptions) => {
+  const {
+    mutations: { useDeleteBlueprintMutation },
+  } = usePlatform();
   const { trigger: deleteBlueprint, ...rest } = useMutationWithNotification(
     useDeleteBlueprintMutation,
     {

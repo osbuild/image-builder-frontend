@@ -10,11 +10,11 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
+import { usePlatform } from '@/context/platform';
 import {
   DistributionProfileItem,
   OpenScap,
   OpenScapProfile,
-  useGetOscapCustomizationsQuery,
 } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import {
@@ -25,6 +25,9 @@ import {
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 const ProfileDetails = (): JSX.Element => {
+  const {
+    queries: { useGetOscapCustomizationsQuery },
+  } = usePlatform();
   const releaseRaw = useAppSelector(selectDistribution);
   const release = removeBetaFromRelease(releaseRaw);
   const profileID = useAppSelector(selectComplianceProfileID);

@@ -1,17 +1,7 @@
 import * as hostedQueries from './hosted';
-import * as onpremQueries from './onprem';
 
 export * from './hooks';
 export type * from './hosted';
-
-// Hooks with different implementations for hosted vs on-prem
-export const useSearchRpmMutation = process.env.IS_ON_PREMISE
-  ? onpremQueries.useSearchRpmMutation
-  : hostedQueries.useSearchRpmMutation;
-
-export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
-  ? onpremQueries.useListSnapshotsByDateMutation
-  : hostedQueries.useListSnapshotsByDateMutation;
 
 // NOTE: We have to explicitly export **only** the hosted contentSourcesApi
 // here because of RTK. The on-prem version of the contentSourcesApi shares

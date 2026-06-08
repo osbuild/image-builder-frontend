@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 
-import { useBackendPrefetch } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { selectDistribution } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
@@ -72,6 +72,9 @@ export const ImageBuilderHeader = ({
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
+  const {
+    api: { useBackendPrefetch },
+  } = usePlatform();
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
 

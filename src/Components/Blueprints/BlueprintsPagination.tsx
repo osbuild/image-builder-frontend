@@ -3,10 +3,8 @@ import React from 'react';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 
-import {
-  GetBlueprintsApiArg,
-  useGetBlueprintsQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { GetBlueprintsApiArg } from '@/store/api/backend';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -18,6 +16,9 @@ import {
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const BlueprintsPagination = () => {
+  const {
+    queries: { useGetBlueprintsQuery },
+  } = usePlatform();
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset) || 0;
   const blueprintsLimit = useAppSelector(selectLimit) || 10;

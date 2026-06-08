@@ -6,11 +6,11 @@ import { Button, Skeleton } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import cockpit from 'cockpit';
 
+import { usePlatform } from '@/context/platform';
 import {
   ComposesResponseItem,
   ImageTypes,
   LocalUploadStatus,
-  useGetComposeStatusQuery,
 } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
 
@@ -32,6 +32,9 @@ export const AwsS3Instance = ({
   compose,
   isExpired,
 }: AwsS3InstancePropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const { analytics } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
@@ -121,6 +124,9 @@ const VM_INSTALLABLE_IMAGE_TYPES: ImageTypes[] = [
 ];
 
 export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const isMachinesAvailable = useCockpitMachinesAvailable();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,

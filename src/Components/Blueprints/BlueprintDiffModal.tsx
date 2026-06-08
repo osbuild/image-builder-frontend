@@ -10,7 +10,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 
-import { useGetBlueprintQuery } from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 
 import { BuildImagesButton } from './BuildImagesButton';
@@ -31,6 +31,9 @@ const BlueprintDiffModal = ({
   isOpen,
   onClose,
 }: blueprintDiffProps) => {
+  const {
+    queries: { useGetBlueprintQuery },
+  } = usePlatform();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
 
   const { data: baseBlueprint } = useGetBlueprintQuery(

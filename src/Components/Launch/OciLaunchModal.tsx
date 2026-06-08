@@ -18,10 +18,8 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  ComposesResponseItem,
-  useGetComposeStatusQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { ComposesResponseItem } from '@/store/api/backend';
 import { selectPathResolver } from '@/store/slices/env';
 
 import { useAppSelector } from '../../store/hooks';
@@ -33,6 +31,9 @@ type LaunchProps = {
 };
 
 export const OciLaunchModal = ({ isExpired, compose }: LaunchProps) => {
+  const {
+    queries: { useGetComposeStatusQuery },
+  } = usePlatform();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isSuccess, isFetching } = useGetComposeStatusQuery({
     composeId: compose.id,

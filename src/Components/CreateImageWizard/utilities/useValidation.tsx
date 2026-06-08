@@ -3,10 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode } from 'jwt-decode';
 
-import {
-  BlueprintsResponse,
-  useLazyGetBlueprintsQuery,
-} from '@/store/api/backend';
+import { usePlatform } from '@/context/platform';
+import { BlueprintsResponse } from '@/store/api/backend';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -1098,6 +1096,9 @@ const countCharacterTypes = (value: string) => {
 };
 
 export function useDetailsValidation(): StepValidation {
+  const {
+    queries: { useLazyGetBlueprintsQuery },
+  } = usePlatform();
   const name = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
   const blueprintId = useAppSelector(selectBlueprintId);
