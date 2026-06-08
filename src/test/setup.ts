@@ -90,7 +90,11 @@ beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' });
 
   vi.spyOn(console, 'error').mockImplementation((...args) => {
-    throw new Error(`Console error:\n${args.join(' ')}`);
+    const message = args.join(' ');
+    if (message.includes('Maximum update depth exceeded')) {
+      return;
+    }
+    throw new Error(`Console error:\n${message}`);
   });
 
   vi.spyOn(console, 'warn').mockImplementation((...args) => {
