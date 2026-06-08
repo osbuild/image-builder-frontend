@@ -1,5 +1,12 @@
 .image-builder-header {
   box-shadow: none;
+
+  // make the "About Image Builder" and Open Source badge aligned with the
+  // title vertically
+  .pf-v6-c-badge,
+  .pf-v6-c-button {
+    vertical-align: middle;
+  }
 }
 
 .image-builder-header__description {
