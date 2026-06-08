@@ -123,7 +123,9 @@ export const ImageBuilderHeader = ({
                       })
                     }
                   >
-                    Create image blueprint
+                    {isImagesTableRevampEnabled
+                      ? 'Build new image'
+                      : 'Create image blueprint'}
                   </Button>
                   <Button
                     variant='secondary'

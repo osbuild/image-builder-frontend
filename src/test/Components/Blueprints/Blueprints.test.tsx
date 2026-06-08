@@ -67,10 +67,9 @@ describe('Blueprints', () => {
 
     renderCustomRoutesWithReduxRouter();
     await screen.findByText('No blueprints');
-    const emptyStateActions = screen.getAllByRole('button', {
+    const emptyStateAction = await screen.findByRole('button', {
       name: /Create image blueprint/i,
     });
-    const emptyStateAction = emptyStateActions[1]; // Second button is the empty state
     expect(emptyStateAction).toBeInTheDocument();
 
     await waitFor(() => user.click(emptyStateAction));

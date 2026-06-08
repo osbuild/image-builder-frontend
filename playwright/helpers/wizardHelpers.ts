@@ -12,10 +12,7 @@ import { ibFrame, navigateToLandingPage } from './navHelpers';
 import isRhel from '../../src/Utilities/isRhel';
 
 export const openWizard = async (scope: Page | FrameLocator) => {
-  await scope
-    .getByRole('button', { name: 'Create image blueprint' })
-    .first()
-    .click();
+  await scope.getByRole('button', { name: 'Build new image' }).first().click();
 };
 
 /**
