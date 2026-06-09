@@ -51,3 +51,6 @@ rpmbuild
 .env
 .auth
 /image-downloads/
+
+# claude config
+.claude/
