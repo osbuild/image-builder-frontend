@@ -1,13 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
-import { RHEL_10, RHEL_9 } from '@/constants';
+import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
 import {
   BlueprintExportResponse,
   BlueprintResponse,
+  CreateBlueprintRequest,
   Distributions,
+  ImageRequest,
 } from '@/store/api/backend';
+import { createTestStore } from '@/test/testUtils';
 
-import { mapBlueprintExportToState, mapRequestToState } from '../requestMapper';
+import {
+  mapBlueprintExportToState,
+  mapRequestFromState,
+  mapRequestToState,
+} from '../requestMapper';
 
 const createMinimalBlueprintResponse = (
   overrides: Partial<BlueprintResponse> = {},
@@ -133,4 +140,71 @@ describe('mapBlueprintExportToState', () => {
     // Falls back to initialState.distribution, not a hardcoded default
     expect(state.distribution).toBe(RHEL_10);
   });
+});
+
+const baseTestImageRequest: ImageRequest = {
+  architecture: 'x86_64',
+  image_type: 'guest-image',
+  upload_request: { type: 'aws.s3', options: {} },
+};
+
+const aarch64TestImageRequest: ImageRequest = {
+  ...baseTestImageRequest,
+  architecture: 'aarch64',
+};
+
+const editModeFixtures: Record<string, CreateBlueprintRequest> = {
+  rhel9_x86_64: {
+    distribution: RHEL_9,
+    image_requests: [baseTestImageRequest],
+    name: 'rhel9_x86_64',
+    description: '',
+    customizations: {},
+  },
+  rhel8_x86_64: {
+    distribution: RHEL_8,
+    image_requests: [baseTestImageRequest],
+    name: 'rhel8_x86_64',
+    description: '',
+    customizations: {},
+  },
+  centos9_x86_64: {
+    distribution: CENTOS_9,
+    image_requests: [baseTestImageRequest],
+    name: 'centos9_x86_64',
+    description: '',
+    customizations: {},
+  },
+  rhel9_aarch64: {
+    distribution: RHEL_9,
+    image_requests: [aarch64TestImageRequest],
+    name: 'rhel9_aarch64',
+    description: '',
+    customizations: {},
+  },
+};
+
+const toBlueprintResponse = (
+  request: CreateBlueprintRequest,
+): BlueprintResponse => ({
+  ...request,
+  description: request.description ?? '',
+  id: 'test-round-trip-id',
+  lint: { errors: [], warnings: [] },
+});
+
+const stripUndefined = <T extends Record<string, unknown>>(obj: T): T =>
+  JSON.parse(JSON.stringify(obj)) as T;
+
+describe('round-trip: mapRequestToState + mapRequestFromState', () => {
+  it.each(Object.entries(editModeFixtures))(
+    'round-trips correctly for %s blueprint',
+    (_, expectedRequest) => {
+      const response = toBlueprintResponse(expectedRequest);
+      const wizardState = mapRequestToState(response);
+      const store = createTestStore(wizardState);
+      const result = stripUndefined(mapRequestFromState(store, 'test-org-id'));
+      expect(result).toEqual(expectedRequest);
+    },
+  );
 });
