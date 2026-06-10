@@ -1,13 +1,13 @@
 .pf-m-expanded .no-bottom-border {
-    border-bottom-style: none;
+  border-bottom-style: none;
 }
 
 .ib-subdued-link {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
     color: inherit;
     text-decoration: none;
-
-    &:hover {
-        color: inherit;
-        text-decoration: none;
-    }
+  }
 }

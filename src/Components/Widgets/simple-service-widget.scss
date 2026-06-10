@@ -1,6 +1,7 @@
 // non-scrollable widgets using flex
-.landing-imageBuilder, [class*="landing-landing-./ImageBuilderWidget"] {
-  display: flex; 
+.landing-imageBuilder,
+[class*='landing-landing-./ImageBuilderWidget'] {
+  display: flex;
   overflow: hidden;
   a {
     text-decoration: none;
@@ -9,4 +10,3 @@
     }
   }
 }
-
