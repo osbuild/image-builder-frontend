@@ -1,3 +1,4 @@
+export { inferDistro } from './inferDistro';
 export { parseJsonUnsafe } from './parseJson';
 export { lookupDatastreamDistro } from './dataStreamLookup';
 export { getBlueprintsPath } from './getBlueprintsPath';
