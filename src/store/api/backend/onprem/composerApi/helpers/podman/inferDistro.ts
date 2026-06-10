@@ -1,4 +1,4 @@
-import { ValidatedPodmanImage } from '../../types';
+import { ValidatedPodmanImage } from '@/store/api/backend/onprem';
 
 type InferredDistro = {
   distro: string;
@@ -7,7 +7,7 @@ type InferredDistro = {
 
 export const inferDistro = (image: ValidatedPodmanImage): InferredDistro => {
   const labels = image.Labels;
-  const reference = image.Names[0].toLowerCase();
+  const reference = image.RepoTags[0].toLowerCase();
   const version = labels.version;
 
   // RHEL — has redhat.id label
@@ -63,7 +63,7 @@ export const inferDistro = (image: ValidatedPodmanImage): InferredDistro => {
 
   // Fallback — use the image reference as the name
   return {
-    distro: image.Names[0],
-    name: image.Names[0],
+    distro: image.RepoTags[0],
+    name: image.RepoTags[0],
   };
 };
