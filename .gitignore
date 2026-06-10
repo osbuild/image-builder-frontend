@@ -54,3 +54,6 @@ rpmbuild
 
 # claude config
 .claude/
+
+# eslint cache
+.eslintcache

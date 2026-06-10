@@ -100,7 +100,7 @@
     "whatwg-fetch": "3.6.20"
   },
   "scripts": {
-    "lint": "eslint src playwright --fix",
+    "lint": "eslint src playwright --fix --cache",
     "lint:check": "eslint src playwright",
     "format": "prettier --write src playwright",
     "format:check": "prettier --check src playwright",
