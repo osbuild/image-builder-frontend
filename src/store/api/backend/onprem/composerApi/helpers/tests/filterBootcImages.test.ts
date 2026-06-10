@@ -9,7 +9,6 @@ const makeImage = (
   Labels: {
     architecture: 'x86_64',
     version: '10',
-    'redhat.id': 'rhel',
     'containers.bootc': '1',
     ...overrides,
   },
@@ -27,15 +26,38 @@ describe('filterBootcImages', () => {
     expect(predicate(makeImage({ architecture: 'x86_64' }))).toBe(false);
   });
 
-  it('returns false when redhat.id label is missing', () => {
+  it('returns true when ostree.bootable is true (no containers.bootc)', () => {
     const predicate = filterBootcImages('x86_64');
-    const image = makeImage();
-    delete image.Labels!['redhat.id'];
+    const image = makeImage({
+      'ostree.bootable': 'true',
+    });
+    delete image.Labels!['containers.bootc'];
+
+    expect(predicate(image)).toBe(true);
+  });
+
+  it('returns false when ostree.bootable is true but architecture differs', () => {
+    const predicate = filterBootcImages('x86_64');
+    const image = makeImage({
+      architecture: 'aarch64',
+      'ostree.bootable': 'true',
+    });
+    delete image.Labels!['containers.bootc'];
 
     expect(predicate(image)).toBe(false);
   });
 
-  it('returns false when containers.bootc label is missing', () => {
+  it('returns true when both containers.bootc and ostree.bootable are present', () => {
+    const predicate = filterBootcImages('x86_64');
+    const image = makeImage({
+      'containers.bootc': '1',
+      'ostree.bootable': 'true',
+    });
+
+    expect(predicate(image)).toBe(true);
+  });
+
+  it('returns false when neither bootc label is present', () => {
     const predicate = filterBootcImages('x86_64');
     const image = makeImage();
     delete image.Labels!['containers.bootc'];
@@ -43,7 +65,7 @@ describe('filterBootcImages', () => {
     expect(predicate(image)).toBe(false);
   });
 
-  it('returns false when containers.bootc is 0', () => {
+  it('returns false when containers.bootc is 0 and ostree.bootable is absent', () => {
     const predicate = filterBootcImages('x86_64');
     expect(predicate(makeImage({ 'containers.bootc': '0' }))).toBe(false);
   });
