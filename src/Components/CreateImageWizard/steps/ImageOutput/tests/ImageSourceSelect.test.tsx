@@ -17,6 +17,7 @@ import {
 } from './helpers';
 import {
   mockBootcDistributions,
+  mockBootcDistributionsMixed,
   mockBootcDistributionsMultipleTypes,
   mockBootcDistributionsNoRhel10,
   mockBootcDistributionsWithMinorVersions,
@@ -400,6 +401,126 @@ describe('ImageSourceSelect', () => {
       expect(
         screen.queryByRole('button', { name: /refresh image sources/i }),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Non-RHEL distributions', () => {
+    beforeEach(() => {
+      mockUseGetDistributionsQuery.mockReturnValue({
+        data: mockBootcDistributionsMixed,
+        isLoading: false,
+        isError: false,
+        refetch: mockRefetch,
+      });
+    });
+
+    test('displays all distro names including non-RHEL in dropdown', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      const toggle = await screen.findByRole('button', {
+        name: /red hat enterprise linux \(rhel\) 10/i,
+      });
+      await clickWithWait(user, toggle);
+
+      expect(
+        screen.getByRole('option', {
+          name: /red hat enterprise linux \(rhel\) 10/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: /fedora 42/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: /centos stream 10/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('option', {
+          name: /localhost\/my-custom-image:latest/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    test('selecting Fedora dispatches correct distribution and image source', async () => {
+      const { store } = renderImageSourceSelect();
+      const user = createUser();
+
+      // Wait for auto-select
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+        );
+      });
+
+      const toggle = await screen.findByRole('button', {
+        name: /red hat enterprise linux \(rhel\) 10/i,
+      });
+      await clickWithWait(user, toggle);
+      const fedoraOption = await screen.findByRole('option', {
+        name: /fedora 42/i,
+      });
+      await clickWithWait(user, fedoraOption);
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'quay.io/fedora/fedora-bootc:42',
+        );
+        expect(selectDistribution(store.getState())).toBe('fedora-42');
+      });
+    });
+
+    test('selecting CentOS dispatches correct distribution and image source', async () => {
+      const { store } = renderImageSourceSelect();
+      const user = createUser();
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+        );
+      });
+
+      const toggle = await screen.findByRole('button', {
+        name: /red hat enterprise linux \(rhel\) 10/i,
+      });
+      await clickWithWait(user, toggle);
+      const centosOption = await screen.findByRole('option', {
+        name: /centos stream 10/i,
+      });
+      await clickWithWait(user, centosOption);
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'quay.io/centos-bootc/centos-bootc:stream10',
+        );
+        expect(selectDistribution(store.getState())).toBe('centos-10');
+      });
+    });
+
+    test('selecting unknown image dispatches correct distribution and image source', async () => {
+      const { store } = renderImageSourceSelect();
+      const user = createUser();
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+        );
+      });
+
+      const toggle = await screen.findByRole('button', {
+        name: /red hat enterprise linux \(rhel\) 10/i,
+      });
+      await clickWithWait(user, toggle);
+      const customOption = await screen.findByRole('option', {
+        name: /localhost\/my-custom-image:latest/i,
+      });
+      await clickWithWait(user, customOption);
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'localhost/my-custom-image:latest',
+        );
+        expect(selectDistribution(store.getState())).toBe('unknown-custom');
+      });
     });
   });
 
