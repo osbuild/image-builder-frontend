@@ -1,4 +1,4 @@
-import { emptyOnPremApi as api } from "../../../shared/emptyOnPremApi";
+import { emptyOnPremApi as api } from '../../../shared/emptyOnPremApi';
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     getComposeStatus: build.query<
@@ -10,7 +10,7 @@ const injectedRtkApi = api.injectEndpoints({
     postCompose: build.mutation<PostComposeApiResponse, PostComposeApiArg>({
       query: (queryArg) => ({
         url: `/compose`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.composeRequest,
       }),
     }),
@@ -34,14 +34,14 @@ export type ObjectReference = {
   kind: string;
   href: string;
 };
-export type ComposeStatusValue = "success" | "failure" | "pending";
+export type ComposeStatusValue = 'success' | 'failure' | 'pending';
 export type ImageStatusValue =
-  | "success"
-  | "failure"
-  | "pending"
-  | "building"
-  | "uploading"
-  | "registering";
+  | 'success'
+  | 'failure'
+  | 'pending'
+  | 'building'
+  | 'uploading'
+  | 'registering';
 export type SubProgress = {
   /** Amount of completed steps in the build. */
   done: number;
@@ -51,15 +51,15 @@ export type SubProgress = {
 export type Progress = SubProgress & {
   subprogress?: SubProgress | undefined;
 };
-export type UploadStatusValue = "success" | "failure" | "pending" | "running";
+export type UploadStatusValue = 'success' | 'failure' | 'pending' | 'running';
 export type UploadTypes =
-  | "aws"
-  | "aws.s3"
-  | "gcp"
-  | "azure"
-  | "container"
-  | "oci.objectstorage"
-  | "local";
+  | 'aws'
+  | 'aws.s3'
+  | 'gcp'
+  | 'azure'
+  | 'container'
+  | 'oci.objectstorage'
+  | 'local';
 export type Awsec2UploadStatus = {
   ami: string;
   region: string;
@@ -144,41 +144,41 @@ export type Bootc = {
   iso_payload_reference?: string | undefined;
 };
 export type ImageTypes =
-  | "aws"
-  | "aws-cvm"
-  | "aws-ha-rhui"
-  | "aws-rhui"
-  | "aws-sap-rhui"
-  | "azure"
-  | "azure-cvm"
-  | "azure-eap7-rhui"
-  | "azure-rhui"
-  | "azure-sapapps-rhui"
-  | "azure-sap-rhui"
-  | "bootable-container-iso"
-  | "edge-commit"
-  | "edge-container"
-  | "edge-installer"
-  | "gcp"
-  | "gcp-rhui"
-  | "guest-image"
-  | "image-installer"
-  | "iot-bootable-container"
-  | "iot-commit"
-  | "iot-container"
-  | "iot-installer"
-  | "iot-raw-image"
-  | "iot-simplified-installer"
-  | "live-installer"
-  | "minimal-raw"
-  | "network-installer"
-  | "everything-network-installer"
-  | "server-network-installer"
-  | "oci"
-  | "pxe-tar-xz"
-  | "vsphere"
-  | "vsphere-ova"
-  | "wsl";
+  | 'aws'
+  | 'aws-cvm'
+  | 'aws-ha-rhui'
+  | 'aws-rhui'
+  | 'aws-sap-rhui'
+  | 'azure'
+  | 'azure-cvm'
+  | 'azure-eap7-rhui'
+  | 'azure-rhui'
+  | 'azure-sapapps-rhui'
+  | 'azure-sap-rhui'
+  | 'bootable-container-iso'
+  | 'edge-commit'
+  | 'edge-container'
+  | 'edge-installer'
+  | 'gcp'
+  | 'gcp-rhui'
+  | 'guest-image'
+  | 'image-installer'
+  | 'iot-bootable-container'
+  | 'iot-commit'
+  | 'iot-container'
+  | 'iot-installer'
+  | 'iot-raw-image'
+  | 'iot-simplified-installer'
+  | 'live-installer'
+  | 'minimal-raw'
+  | 'network-installer'
+  | 'everything-network-installer'
+  | 'server-network-installer'
+  | 'oci'
+  | 'pxe-tar-xz'
+  | 'vsphere'
+  | 'vsphere-ova'
+  | 'wsl';
 export type Repository = {
   /** Determines whether a valid subscription is required to access this repository. */
   rhsm?: boolean | undefined;
@@ -288,7 +288,7 @@ export type AzureUploadOptions = {
   /** Choose the VM Image HyperV generation, different features on Azure are available
     depending on the HyperV generation.
      */
-  hyper_v_generation?: ("V1" | "V2") | undefined;
+  hyper_v_generation?: ('V1' | 'V2') | undefined;
 };
 export type ContainerUploadOptions = {
   /** Name for the created container image
@@ -525,7 +525,7 @@ export type Fips = {
 };
 export type Installer = {
   unattended?: boolean | undefined;
-  "sudo-nopasswd"?: string[] | undefined;
+  'sudo-nopasswd'?: string[] | undefined;
 };
 export type ImportKeys = {
   files?: string[] | undefined;
@@ -563,7 +563,7 @@ export type CaCertsCustomization = {
 };
 export type Minsize = string;
 export type FilesystemTyped = {
-  type?: "plain" | undefined;
+  type?: 'plain' | undefined;
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -572,7 +572,7 @@ export type FilesystemTyped = {
   label?: string | undefined;
   /** The filesystem type. Swap partitions must have an empty mountpoint.
    */
-  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
 };
 export type BtrfsSubvolume = {
   /** The name of the subvolume, which defines the location (path) on the root volume
@@ -583,7 +583,7 @@ export type BtrfsSubvolume = {
   mountpoint: string;
 };
 export type BtrfsVolume = {
-  type: "btrfs";
+  type: 'btrfs';
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -599,10 +599,10 @@ export type LogicalVolume = {
   label?: string | undefined;
   /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
    */
-  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
 };
 export type VolumeGroup = {
-  type: "lvm";
+  type: 'lvm';
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -616,7 +616,7 @@ export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
 export type Disk = {
   /** Type of the partition table
    */
-  type?: ("gpt" | "dos") | undefined;
+  type?: ('gpt' | 'dos') | undefined;
   minsize?: Minsize | undefined;
   partitions: Partition[];
 };
@@ -670,7 +670,7 @@ export type Customizations = {
     uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
     even when there are one or more mountpoints.
      */
-  partitioning_mode?: ("raw" | "lvm" | "auto-lvm") | undefined;
+  partitioning_mode?: ('raw' | 'lvm' | 'auto-lvm') | undefined;
   fips?: Fips | undefined;
   installer?: Installer | undefined;
   rpm?: RpmCustomization | undefined;
@@ -811,7 +811,7 @@ export type BlueprintCustomizations = {
     uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
     even when there are one or more mountpoints.
      */
-  partitioning_mode?: ("raw" | "lvm" | "auto-lvm") | undefined;
+  partitioning_mode?: ('raw' | 'lvm' | 'auto-lvm') | undefined;
   fdo?: Fdo | undefined;
   openscap?: BlueprintOpenScap | undefined;
   ignition?: Ignition | undefined;

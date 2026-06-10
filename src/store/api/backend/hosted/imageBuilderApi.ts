@@ -1,4 +1,4 @@
-import { emptyImageBuilderApi as api } from "./emptyImageBuilderApi";
+import { emptyImageBuilderApi as api } from './emptyImageBuilderApi';
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     getDistributions: build.query<
@@ -11,7 +11,7 @@ const injectedRtkApi = api.injectEndpoints({
           kind: queryArg.kind,
           distro: queryArg.distro,
           arch: queryArg.arch,
-          type: queryArg["type"],
+          type: queryArg['type'],
         },
       }),
     }),
@@ -38,7 +38,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.createBlueprintRequest,
       }),
     }),
@@ -48,7 +48,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}`,
-        method: "PUT",
+        method: 'PUT',
         body: queryArg.createBlueprintRequest,
       }),
     }),
@@ -66,7 +66,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
     }),
     exportBlueprint: build.query<
@@ -81,7 +81,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}/compose`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.body,
       }),
     }),
@@ -118,7 +118,7 @@ const injectedRtkApi = api.injectEndpoints({
     composeImage: build.mutation<ComposeImageApiResponse, ComposeImageApiArg>({
       query: (queryArg) => ({
         url: `/compose`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.composeRequest,
       }),
     }),
@@ -164,7 +164,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/experimental/recommendations`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.recommendPackageRequest,
       }),
     }),
@@ -174,7 +174,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/experimental/blueprints/${queryArg.id}/fixup`,
-        method: "POST",
+        method: 'POST',
       }),
     }),
   }),
@@ -308,7 +308,7 @@ export type GetPackagesApiArg = {
   /** distribution to look up packages for */
   distribution: Distributions;
   /** architecture to look up packages for */
-  architecture: "x86_64" | "aarch64";
+  architecture: 'x86_64' | 'aarch64';
   /** packages to look for */
   search: string;
   /** max amount of packages, default 100 */
@@ -368,7 +368,7 @@ export type DistributionsResponse = (
   | DistributionItem
   | BootcDistributionItem
 )[];
-export type DistributionKind = "bootc";
+export type DistributionKind = 'bootc';
 export type Repository = {
   /** An ID referring to a repository defined in content sources can be used instead of
     'baseurl', 'mirrorlist' or 'metalink'.
@@ -401,52 +401,52 @@ export type HttpErrorList = {
   errors: HttpError[];
 };
 export type Distributions =
-  | "rhel-8"
-  | "rhel-8-nightly"
-  | "rhel-84"
-  | "rhel-85"
-  | "rhel-86"
-  | "rhel-87"
-  | "rhel-88"
-  | "rhel-89"
-  | "rhel-8.10"
-  | "rhel-9"
-  | "rhel-9-nightly"
-  | "rhel-9.6-nightly"
-  | "rhel-9.7-nightly"
-  | "rhel-9.8-nightly"
-  | "rhel-9.9-nightly"
-  | "rhel-9-beta"
-  | "rhel-90"
-  | "rhel-91"
-  | "rhel-92"
-  | "rhel-93"
-  | "rhel-94"
-  | "rhel-95"
-  | "rhel-9.6"
-  | "rhel-9.7"
-  | "rhel-9.8"
-  | "rhel-10"
-  | "rhel-10-nightly"
-  | "rhel-10.0-nightly"
-  | "rhel-10.1-nightly"
-  | "rhel-10.2-nightly"
-  | "rhel-10.3-nightly"
-  | "rhel-10-beta"
-  | "rhel-10.0"
-  | "rhel-10.1"
-  | "rhel-10.2"
-  | "centos-9"
-  | "centos-10"
-  | "fedora-37"
-  | "fedora-38"
-  | "fedora-39"
-  | "fedora-40"
-  | "fedora-41"
-  | "fedora-42"
-  | "fedora-43"
-  | "fedora-44"
-  | "hummingbird";
+  | 'rhel-8'
+  | 'rhel-8-nightly'
+  | 'rhel-84'
+  | 'rhel-85'
+  | 'rhel-86'
+  | 'rhel-87'
+  | 'rhel-88'
+  | 'rhel-89'
+  | 'rhel-8.10'
+  | 'rhel-9'
+  | 'rhel-9-nightly'
+  | 'rhel-9.6-nightly'
+  | 'rhel-9.7-nightly'
+  | 'rhel-9.8-nightly'
+  | 'rhel-9.9-nightly'
+  | 'rhel-9-beta'
+  | 'rhel-90'
+  | 'rhel-91'
+  | 'rhel-92'
+  | 'rhel-93'
+  | 'rhel-94'
+  | 'rhel-95'
+  | 'rhel-9.6'
+  | 'rhel-9.7'
+  | 'rhel-9.8'
+  | 'rhel-10'
+  | 'rhel-10-nightly'
+  | 'rhel-10.0-nightly'
+  | 'rhel-10.1-nightly'
+  | 'rhel-10.2-nightly'
+  | 'rhel-10.3-nightly'
+  | 'rhel-10-beta'
+  | 'rhel-10.0'
+  | 'rhel-10.1'
+  | 'rhel-10.2'
+  | 'centos-9'
+  | 'centos-10'
+  | 'fedora-37'
+  | 'fedora-38'
+  | 'fedora-39'
+  | 'fedora-40'
+  | 'fedora-41'
+  | 'fedora-42'
+  | 'fedora-43'
+  | 'fedora-44'
+  | 'hummingbird';
 export type ListResponseMeta = {
   count: number;
 };
@@ -483,30 +483,30 @@ export type BootcBody = {
   iso_payload_reference?: string | undefined;
 };
 export type ImageTypes =
-  | "aws"
-  | "azure"
-  | "bootable-container-iso"
-  | "edge-commit"
-  | "edge-installer"
-  | "gcp"
-  | "guest-image"
-  | "image-installer"
-  | "network-installer"
-  | "oci"
-  | "pxe-tar-xz"
-  | "vsphere"
-  | "vsphere-ova"
-  | "wsl"
-  | "ami"
-  | "rhel-edge-commit"
-  | "rhel-edge-installer"
-  | "vhd";
+  | 'aws'
+  | 'azure'
+  | 'bootable-container-iso'
+  | 'edge-commit'
+  | 'edge-installer'
+  | 'gcp'
+  | 'guest-image'
+  | 'image-installer'
+  | 'network-installer'
+  | 'oci'
+  | 'pxe-tar-xz'
+  | 'vsphere'
+  | 'vsphere-ova'
+  | 'wsl'
+  | 'ami'
+  | 'rhel-edge-commit'
+  | 'rhel-edge-installer'
+  | 'vhd';
 export type UploadTypes =
-  | "aws"
-  | "gcp"
-  | "azure"
-  | "aws.s3"
-  | "oci.objectstorage";
+  | 'aws'
+  | 'gcp'
+  | 'azure'
+  | 'aws.s3'
+  | 'oci.objectstorage';
 export type AwsUploadRequestOptions = {
   share_with_accounts?: string[] | undefined;
   share_with_sources?: string[] | undefined;
@@ -548,7 +548,7 @@ export type AzureUploadRequestOptions = {
   /** Choose the VM Image HyperV generation, different features on Azure are available
     depending on the HyperV generation.
      */
-  hyper_v_generation?: ("V1" | "V2") | undefined;
+  hyper_v_generation?: ('V1' | 'V2') | undefined;
 };
 export type OciUploadRequestOptions = object;
 export type UploadRequest = {
@@ -579,7 +579,7 @@ export type OsTree = {
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
    */
-  architecture: "x86_64" | "aarch64";
+  architecture: 'x86_64' | 'aarch64';
   image_type: ImageTypes;
   upload_request: UploadRequest;
   ostree?: OsTree | undefined;
@@ -634,15 +634,15 @@ export type File = {
   /** Contents of the file as plain text */
   data?: string | undefined;
   /** When data is base64-encoded to prevent Akamai content filter false positives */
-  data_encoding?: ("plain" | "base64") | undefined;
+  data_encoding?: ('plain' | 'base64') | undefined;
   /** Ensure that the parent directories exist */
   ensure_parents?: boolean | undefined;
 };
 export type Subscription = {
   organization: number;
-  "activation-key": string;
-  "server-url": string;
-  "base-url": string;
+  'activation-key': string;
+  'server-url': string;
+  'base-url': string;
   insights: boolean;
   /** Optional flag to use rhc to register the system, which also always enables Insights.
    */
@@ -699,7 +699,7 @@ export type Filesystem = {
 };
 export type Minsize = string;
 export type FilesystemTyped = {
-  type?: "plain" | undefined;
+  type?: 'plain' | undefined;
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -708,7 +708,7 @@ export type FilesystemTyped = {
   label?: string | undefined;
   /** The filesystem type. Swap partitions must have an empty mountpoint.
    */
-  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
 };
 export type BtrfsSubvolume = {
   /** The name of the subvolume, which defines the location (path) on the root volume
@@ -719,7 +719,7 @@ export type BtrfsSubvolume = {
   mountpoint: string;
 };
 export type BtrfsVolume = {
-  type: "btrfs";
+  type: 'btrfs';
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -735,10 +735,10 @@ export type LogicalVolume = {
   label?: string | undefined;
   /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
    */
-  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
 };
 export type VolumeGroup = {
-  type: "lvm";
+  type: 'lvm';
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -752,7 +752,7 @@ export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
 export type Disk = {
   /** Type of the partition table
    */
-  type?: ("gpt" | "dos") | undefined;
+  type?: ('gpt' | 'dos') | undefined;
   minsize?: Minsize | undefined;
   partitions: Partition[];
 };
@@ -843,7 +843,7 @@ export type Installer = {
   /** Create a kickstart file for a fully automated installation
    */
   unattended?: boolean | undefined;
-  "sudo-nopasswd"?: string[] | undefined;
+  'sudo-nopasswd'?: string[] | undefined;
 };
 export type CaCertsCustomization = {
   pem_certs: string[];
@@ -893,7 +893,7 @@ export type Customizations = {
     uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
     even when there are one or more mountpoints.
      */
-  partitioning_mode?: ("raw" | "lvm" | "auto-lvm") | undefined;
+  partitioning_mode?: ('raw' | 'lvm' | 'auto-lvm') | undefined;
   fips?: Fips | undefined;
   installer?: Installer | undefined;
   cacerts?: CaCertsCustomization | undefined;
@@ -954,7 +954,7 @@ export type BlueprintExportResponse = {
 export type ComposeResponse = {
   id: string;
 };
-export type ClientId = "api" | "ui" | "mcp";
+export type ClientId = 'api' | 'ui' | 'mcp';
 export type ComposeRequest = {
   distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
@@ -1007,7 +1007,7 @@ export type OciUploadStatus = {
   url: string;
 };
 export type UploadStatus = {
-  status: "success" | "failure" | "pending" | "running";
+  status: 'success' | 'failure' | 'pending' | 'running';
   type: UploadTypes;
   options:
     | AwsUploadStatus
@@ -1023,12 +1023,12 @@ export type ComposeStatusError = {
 };
 export type ImageStatus = {
   status:
-    | "success"
-    | "failure"
-    | "pending"
-    | "building"
-    | "uploading"
-    | "registering";
+    | 'success'
+    | 'failure'
+    | 'pending'
+    | 'building'
+    | 'uploading'
+    | 'registering';
   progress?: Progress | undefined;
   upload_status?: UploadStatus | undefined;
   error?: ComposeStatusError | undefined;
@@ -1047,26 +1047,26 @@ export type PackagesResponse = {
   data: Package[];
 };
 export type DistributionProfileItem =
-  | "xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced"
-  | "xccdf_org.ssgproject.content_profile_anssi_bp28_high"
-  | "xccdf_org.ssgproject.content_profile_anssi_bp28_intermediary"
-  | "xccdf_org.ssgproject.content_profile_anssi_bp28_minimal"
-  | "xccdf_org.ssgproject.content_profile_ccn_advanced"
-  | "xccdf_org.ssgproject.content_profile_ccn_basic"
-  | "xccdf_org.ssgproject.content_profile_ccn_intermediate"
-  | "xccdf_org.ssgproject.content_profile_cis"
-  | "xccdf_org.ssgproject.content_profile_cis_server_l1"
-  | "xccdf_org.ssgproject.content_profile_cis_workstation_l1"
-  | "xccdf_org.ssgproject.content_profile_cis_workstation_l2"
-  | "xccdf_org.ssgproject.content_profile_cui"
-  | "xccdf_org.ssgproject.content_profile_e8"
-  | "xccdf_org.ssgproject.content_profile_hipaa"
-  | "xccdf_org.ssgproject.content_profile_ism_o"
-  | "xccdf_org.ssgproject.content_profile_ospp"
-  | "xccdf_org.ssgproject.content_profile_pci-dss"
-  | "xccdf_org.ssgproject.content_profile_standard"
-  | "xccdf_org.ssgproject.content_profile_stig"
-  | "xccdf_org.ssgproject.content_profile_stig_gui";
+  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced'
+  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_high'
+  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_intermediary'
+  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_minimal'
+  | 'xccdf_org.ssgproject.content_profile_ccn_advanced'
+  | 'xccdf_org.ssgproject.content_profile_ccn_basic'
+  | 'xccdf_org.ssgproject.content_profile_ccn_intermediate'
+  | 'xccdf_org.ssgproject.content_profile_cis'
+  | 'xccdf_org.ssgproject.content_profile_cis_server_l1'
+  | 'xccdf_org.ssgproject.content_profile_cis_workstation_l1'
+  | 'xccdf_org.ssgproject.content_profile_cis_workstation_l2'
+  | 'xccdf_org.ssgproject.content_profile_cui'
+  | 'xccdf_org.ssgproject.content_profile_e8'
+  | 'xccdf_org.ssgproject.content_profile_hipaa'
+  | 'xccdf_org.ssgproject.content_profile_ism_o'
+  | 'xccdf_org.ssgproject.content_profile_ospp'
+  | 'xccdf_org.ssgproject.content_profile_pci-dss'
+  | 'xccdf_org.ssgproject.content_profile_standard'
+  | 'xccdf_org.ssgproject.content_profile_stig'
+  | 'xccdf_org.ssgproject.content_profile_stig_gui';
 export type DistributionProfileResponse = DistributionProfileItem[];
 export type RecommendationsResponse = {
   packages: string[];
