@@ -70,11 +70,11 @@ export const toBootcDistro = (
   const d = `rhel-${image.Labels.version}`;
 
   return {
-    arch: image.Labels.architecture,
+    arch: image.Labels.architecture ?? '',
     distro: d,
     reference: image.Names[0],
     // Align with the hosted API naming pattern
-    name: `Red Hat Enterprise Linux (RHEL) ${image.Labels.version}`,
+    name: `Red Hat Enterprise Linux (RHEL) ${image.Labels.version ?? ''}`,
     // we're hardcoding the image type in here
     // because this is the only target we support
     // on-prem at the moment
