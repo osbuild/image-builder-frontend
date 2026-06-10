@@ -33,9 +33,7 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
         throw new Error('Unexpected podman images output');
       }
 
-      return parsed
-        .filter(filterBootcImages(arch))
-        .map(toBootcDistro(arch ?? ''));
+      return parsed.filter(filterBootcImages(arch)).map(toBootcDistro());
     }),
   }),
   getArchitectures: builder.query<

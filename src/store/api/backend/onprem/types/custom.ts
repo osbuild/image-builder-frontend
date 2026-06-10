@@ -91,7 +91,6 @@ export type ComposerComposesResponseItem = Omit<
 };
 
 type PodmanLabels = Record<string, string | undefined> & {
-  architecture?: string | undefined;
   version?: string | undefined;
   name?: string | undefined;
   ['redhat.id']?: string | undefined;
@@ -100,11 +99,13 @@ type PodmanLabels = Record<string, string | undefined> & {
 };
 
 export type PodmanImageInfo = {
+  Architecture: string;
   Labels?: PodmanLabels | undefined;
   Names?: string[] | undefined;
 };
 
 export type ValidatedPodmanImage = {
+  Architecture: string;
   Labels: PodmanLabels;
   Names: string[];
 };

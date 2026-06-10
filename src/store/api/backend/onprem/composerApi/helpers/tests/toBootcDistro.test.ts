@@ -6,9 +6,10 @@ import { toBootcDistro } from '../podmanImages';
 const makeImage = (
   overrides: Partial<ValidatedPodmanImage['Labels']> = {},
   names: string[] = ['registry.redhat.io/rhel10/rhel-bootc:10.0'],
+  architecture = 'amd64',
 ): ValidatedPodmanImage => ({
+  Architecture: architecture,
   Labels: {
-    architecture: 'x86_64',
     version: '10',
     'redhat.id': 'rhel',
     ...overrides,
@@ -18,7 +19,7 @@ const makeImage = (
 
 describe('toBootcDistro', () => {
   it('maps a RHEL podman image to a bootc distro object', () => {
-    const result = toBootcDistro('x86_64')(makeImage());
+    const result = toBootcDistro()(makeImage());
 
     expect(result).toEqual({
       arch: 'x86_64',
@@ -30,7 +31,7 @@ describe('toBootcDistro', () => {
   });
 
   it('uses the first entry from Names as the reference', () => {
-    const result = toBootcDistro('x86_64')(
+    const result = toBootcDistro()(
       makeImage({}, [
         'registry.redhat.io/rhel9/rhel-bootc:9.6',
         'some-other-name',
@@ -41,31 +42,34 @@ describe('toBootcDistro', () => {
   });
 
   it('constructs the distro string from the version label for RHEL', () => {
-    const result = toBootcDistro('x86_64')(makeImage({ version: '9' }));
+    const result = toBootcDistro()(makeImage({ version: '9' }));
 
     expect(result.distro).toBe('rhel-9');
     expect(result.name).toBe('Red Hat Enterprise Linux (RHEL) 9');
   });
 
-  it('uses the architecture from the image labels', () => {
-    const result = toBootcDistro('x86_64')(
-      makeImage({ architecture: 'aarch64' }),
-    );
+  it('normalizes kernel arch to RPM arch', () => {
+    const result = toBootcDistro()(makeImage({}, undefined, 'arm64'));
 
     expect(result.arch).toBe('aarch64');
   });
 
+  it('passes through RPM arch unchanged', () => {
+    const result = toBootcDistro()(makeImage({}, undefined, 'x86_64'));
+
+    expect(result.arch).toBe('x86_64');
+  });
+
   it('always sets type to guest-image', () => {
-    const result = toBootcDistro('x86_64')(makeImage());
+    const result = toBootcDistro()(makeImage());
 
     expect(result.type).toBe('guest-image');
   });
 
   it('produces fedora distro for a Fedora image', () => {
-    const result = toBootcDistro('x86_64')(
+    const result = toBootcDistro()(
       makeImage(
         {
-          architecture: 'x86_64',
           version: '42',
           'redhat.id': undefined,
         },
@@ -83,10 +87,9 @@ describe('toBootcDistro', () => {
   });
 
   it('produces centos distro for a CentOS image', () => {
-    const result = toBootcDistro('x86_64')(
+    const result = toBootcDistro()(
       makeImage(
         {
-          architecture: 'x86_64',
           version: '10',
           'redhat.id': undefined,
         },
@@ -104,10 +107,9 @@ describe('toBootcDistro', () => {
   });
 
   it('produces hummingbird distro for a Hummingbird image', () => {
-    const result = toBootcDistro('x86_64')(
+    const result = toBootcDistro()(
       makeImage(
         {
-          architecture: 'x86_64',
           version: '42',
           name: 'Fedora Hummingbird',
           'redhat.id': undefined,
@@ -126,10 +128,9 @@ describe('toBootcDistro', () => {
   });
 
   it('uses reference as name for an unknown image', () => {
-    const result = toBootcDistro('x86_64')(
+    const result = toBootcDistro()(
       makeImage(
         {
-          architecture: 'x86_64',
           version: '1.0',
           'redhat.id': undefined,
         },
@@ -144,15 +145,5 @@ describe('toBootcDistro', () => {
       name: 'registry.example.com/my-custom-bootc:1.0',
       type: 'guest-image',
     });
-  });
-
-  it('falls back to arch argument when architecture label is missing', () => {
-    const result = toBootcDistro('aarch64')(
-      makeImage({
-        architecture: undefined,
-      }),
-    );
-
-    expect(result.arch).toBe('aarch64');
   });
 });

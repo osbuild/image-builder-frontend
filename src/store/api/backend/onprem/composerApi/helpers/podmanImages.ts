@@ -5,6 +5,16 @@ import { inferDistro } from './inferDistro';
 import { BootcDistributionItem } from '../../../hosted';
 import { PodmanImageInfo, ValidatedPodmanImage } from '../../types';
 
+const archMap: Record<string, string> = {
+  amd64: 'x86_64',
+  arm64: 'aarch64',
+  x86_64: 'x86_64',
+  aarch64: 'aarch64',
+};
+
+export const normalizeArch = (arch: string | undefined): string | undefined =>
+  arch ? archMap[arch] : undefined;
+
 export const listPodmanImages = async () => {
   try {
     const result = (await cockpit.spawn(
@@ -40,7 +50,9 @@ export const filterBootcImages = (arch: string | undefined) => {
       return false;
     }
 
-    if (image.Labels.architecture !== arch) {
+    const filterArch = normalizeArch(arch);
+    const imageArch = normalizeArch(image.Architecture);
+    if (!arch || !imageArch || imageArch !== filterArch) {
       return false;
     }
 
@@ -52,12 +64,12 @@ export const filterBootcImages = (arch: string | undefined) => {
   };
 };
 
-export const toBootcDistro = (arch: string) => {
+export const toBootcDistro = () => {
   return (image: ValidatedPodmanImage): BootcDistributionItem => {
     const { distro, name } = inferDistro(image);
 
     return {
-      arch: image.Labels.architecture ?? arch,
+      arch: normalizeArch(image.Architecture) ?? '',
       distro,
       reference: image.Names[0],
       name,

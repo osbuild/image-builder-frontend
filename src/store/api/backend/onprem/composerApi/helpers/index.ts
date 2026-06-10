@@ -6,6 +6,7 @@ export { getCloudConfigs } from './getCloudConfigs';
 export {
   filterBootcImages,
   listPodmanImages,
+  normalizeArch,
   toBootcDistro,
 } from './podmanImages';
 export { readComposes } from './readComposes';

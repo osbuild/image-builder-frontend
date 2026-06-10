@@ -7,6 +7,7 @@ const makeImage = (
   labels: Partial<ValidatedPodmanImage['Labels']> = {},
   names: string[] = ['registry.example.com/some-image:latest'],
 ): ValidatedPodmanImage => ({
+  Architecture: 'amd64',
   Labels: {
     ...labels,
   },
