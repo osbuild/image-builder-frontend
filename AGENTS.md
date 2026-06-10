@@ -35,6 +35,8 @@ npm run test:unit       # Run unit tests only (co-located with components)
 npm run test:integration # Run integration tests only (src/test/) - legacy
 npm run lint            # Run ESLint
 npm run lint:js:fix     # Auto-fix lint errors
+npm run format          # Auto-format code with Prettier
+npm run format:check    # Check formatting (CI)
 npm run api             # Regenerate RTK Query API code from OpenAPI specs
 npm run build           # Production build
 npm run build:cockpit   # Build Cockpit plugin
@@ -58,6 +60,8 @@ Each config specifies:
 **To add a new API:** Follow the pattern in README.md - create an empty API slice in `src/store/`, add the config in `api/config/`, and update `eslint.config.js` to ignore the generated file.
 
 ## Code Style
+
+**Formatting** is handled by Prettier (`npm run format`). ESLint handles linting only — it does not enforce formatting rules.
 
 - **Avoid JSDoc comments** - TypeScript types document function signatures sufficiently
 - **Comments should explain why, not what** - Code should be self-explanatory; use comments only to clarify intent or non-obvious decisions
