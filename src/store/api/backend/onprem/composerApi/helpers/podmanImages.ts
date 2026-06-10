@@ -1,5 +1,7 @@
 import cockpit from 'cockpit';
 
+import { inferDistro } from './inferDistro';
+
 import { BootcDistributionItem } from '../../../hosted';
 import { PodmanImageInfo, ValidatedPodmanImage } from '../../types';
 
@@ -50,23 +52,16 @@ export const filterBootcImages = (arch: string | undefined) => {
   };
 };
 
-export const toBootcDistro = (
-  image: ValidatedPodmanImage,
-): BootcDistributionItem => {
-  // at the moment we're filtering out all non-rhel image mode
-  // images so we're fine to assume the distro as being a rhel
-  // variant. We'll have to re-think this a little bit later on
-  const d = `rhel-${image.Labels.version}`;
+export const toBootcDistro = (arch: string) => {
+  return (image: ValidatedPodmanImage): BootcDistributionItem => {
+    const { distro, name } = inferDistro(image);
 
-  return {
-    arch: image.Labels.architecture ?? '',
-    distro: d,
-    reference: image.Names[0],
-    // Align with the hosted API naming pattern
-    name: `Red Hat Enterprise Linux (RHEL) ${image.Labels.version ?? ''}`,
-    // we're hardcoding the image type in here
-    // because this is the only target we support
-    // on-prem at the moment
-    type: 'guest-image',
+    return {
+      arch: image.Labels.architecture ?? arch,
+      distro,
+      reference: image.Names[0],
+      name,
+      type: 'guest-image',
+    };
   };
 };
