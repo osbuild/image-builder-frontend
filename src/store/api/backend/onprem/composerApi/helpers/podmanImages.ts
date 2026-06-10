@@ -6,14 +6,7 @@ import { PodmanImageInfo, ValidatedPodmanImage } from '../../types';
 export const listPodmanImages = async () => {
   try {
     const result = (await cockpit.spawn(
-      [
-        'podman',
-        'images',
-        '--filter',
-        'reference=registry.redhat.io/rhel*/rhel-bootc',
-        '--format',
-        'json',
-      ],
+      ['podman', 'images', '--format', 'json'],
       {
         // Root is required to access system-level podman images
         superuser: 'require',
@@ -49,15 +42,11 @@ export const filterBootcImages = (arch: string | undefined) => {
       return false;
     }
 
-    // just include rhel bootable containers for now
-    if (!('redhat.id' in image.Labels)) {
-      return false;
-    }
+    const isBootc =
+      image.Labels['containers.bootc'] === '1' ||
+      image.Labels['ostree.bootable'] === 'true';
 
-    return (
-      'containers.bootc' in image.Labels &&
-      image.Labels['containers.bootc'] === '1'
-    );
+    return isBootc;
   };
 };
 
