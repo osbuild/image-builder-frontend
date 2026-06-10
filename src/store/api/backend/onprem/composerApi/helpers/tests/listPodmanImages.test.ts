@@ -22,14 +22,7 @@ describe('listPodmanImages', () => {
 
     expect(result).toBe(mockOutput);
     expect(cockpit.spawn).toHaveBeenCalledWith(
-      [
-        'podman',
-        'images',
-        '--filter',
-        'reference=registry.redhat.io/rhel*/rhel-bootc',
-        '--format',
-        'json',
-      ],
+      ['podman', 'images', '--format', 'json'],
       { superuser: 'require' },
     );
   });
