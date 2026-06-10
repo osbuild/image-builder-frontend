@@ -1,0 +1,12 @@
+node_modules
+
+**/mockServiceWorker.js
+
+# Build output
+dist/
+coverage/
+
+# Vendored
+cockpit/public/
+
+package-lock.json

@@ -1,4 +1,4 @@
-import { emptyContentSourcesApi as api } from "./emptyContentSourcesApi";
+import { emptyContentSourcesApi as api } from './emptyContentSourcesApi';
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     listFeatures: build.query<ListFeaturesApiResponse, ListFeaturesApiArg>({
@@ -10,7 +10,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/module_streams/search`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.apiSearchModuleStreamsRequest,
       }),
     }),
@@ -20,7 +20,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/package_groups/names`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.apiContentUnitSearchRequest,
       }),
     }),
@@ -56,7 +56,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/repositories/`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.apiRepositoryRequest,
       }),
     }),
@@ -66,7 +66,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/repositories/bulk_import/`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.body,
       }),
     }),
@@ -93,7 +93,7 @@ const injectedRtkApi = api.injectEndpoints({
     searchRpm: build.mutation<SearchRpmApiResponse, SearchRpmApiArg>({
       query: (queryArg) => ({
         url: `/rpms/names`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.apiContentUnitSearchRequest,
       }),
     }),
@@ -103,7 +103,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/snapshots/for_date/`,
-        method: "POST",
+        method: 'POST',
         body: queryArg.apiListSnapshotByDateRequest,
       }),
     }),
