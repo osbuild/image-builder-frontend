@@ -6,12 +6,12 @@ const pluginReactRedux = require('eslint-plugin-react-redux');
 const pluginImport = require('eslint-plugin-import');
 const fecConfig = require('@redhat-cloud-services/eslint-config-redhat-cloud-services');
 const pluginJsxA11y = require('eslint-plugin-jsx-a11y');
-const pluginPrettier = require('eslint-plugin-prettier');
 const jestDom = require('eslint-plugin-jest-dom');
 const pluginTestingLibrary = require('eslint-plugin-testing-library');
 const pluginPlaywright = require('eslint-plugin-playwright');
 const { defineConfig } = require('eslint/config');
 const globals = require('globals');
+const prettierConfig = require('eslint-config-prettier');
 
 module.exports = defineConfig([
   { // Ignore programatically generated files
@@ -59,7 +59,6 @@ module.exports = defineConfig([
       'react-redux': pluginReactRedux,
       import: pluginImport,
       'jsx-a11y': pluginJsxA11y,
-      prettier: pluginPrettier,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -134,17 +133,6 @@ module.exports = defineConfig([
         },
       ],
       'react-hooks/set-state-in-effect': 'warn', // TODO address issues and enable the rule
-      'prettier/prettier': ['error', {
-        semi: true,
-        tabWidth: 2,
-        singleQuote: true,
-        jsxSingleQuote: true,
-        bracketSpacing: true,
-        tsxSingleQuote: true,
-        tsSingleQuote: true,
-        printWidth: 80,
-        trailingComma: 'all',
-      }],
     },
     settings: {
       react: {
@@ -197,4 +185,6 @@ module.exports = defineConfig([
       'no-console': 'off',
     },
   },
+
+  prettierConfig,
 ]);
