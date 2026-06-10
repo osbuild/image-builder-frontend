@@ -33,8 +33,7 @@ npm run start:stage     # Run against staging
 npm run test            # Run all Vitest tests
 npm run test:unit       # Run unit tests only (co-located with components)
 npm run test:integration # Run integration tests only (src/test/) - legacy
-npm run lint            # Run ESLint
-npm run lint:js:fix     # Auto-fix lint errors
+npm run lint            # Auto-fix lint errors
 npm run format          # Auto-format code with Prettier
 npm run format:check    # Check formatting (CI)
 npm run api             # Regenerate RTK Query API code from OpenAPI specs

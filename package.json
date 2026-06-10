@@ -78,7 +78,6 @@
     "mini-css-extract-plugin": "2.10.2",
     "moment": "2.30.1",
     "msw": "2.14.6",
-    "npm-run-all2": "9.0.1",
     "packageurl-js": "2.0.1",
     "path-browserify": "1.0.1",
     "postcss-scss": "4.0.9",
@@ -101,9 +100,8 @@
     "whatwg-fetch": "3.6.20"
   },
   "scripts": {
-    "lint": "npm-run-all lint:*",
-    "lint:js": "eslint src playwright",
-    "lint:js:fix": "eslint src playwright --fix",
+    "lint": "eslint src playwright --fix",
+    "lint:check": "eslint src playwright",
     "format": "prettier --write src playwright",
     "format:check": "prettier --check src playwright",
     "start": "fec dev-proxy",
@@ -121,7 +119,7 @@
     "build": "fec build",
     "build:cockpit": "webpack --config cockpit/webpack.config.ts",
     "api": "bash api/codegen.sh",
-    "verify": "npm-run-all build lint test",
+    "verify": "npm run build && npm run lint && npm run format && npm run test",
     "postinstall": "ts-patch install",
     "circular": "madge --circular ./src --extensions js,ts,tsx",
     "circular:graph": "madge --circular ./src --extensions js,ts,tsx -i deps.png",
