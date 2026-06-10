@@ -5,7 +5,12 @@ import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/re
 import { serviceMiddleware, serviceReducer } from '@/store';
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
 import { initialState } from '@/store/slices/wizard';
-import { clickWithWait, createUser, typeWithWait } from '@/test/testUtils';
+import {
+  clickWithWait,
+  createUser,
+  tabWithWait,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import {
   checkAccountIdValue,
@@ -82,7 +87,7 @@ describe('AWS Component', () => {
         name: /aws account id/i,
       });
       await typeWithWait(user, accountIdInput, '12345');
-      await waitFor(() => accountIdInput.blur());
+      await tabWithWait(user);
 
       await waitFor(() => {
         expect(
@@ -99,7 +104,7 @@ describe('AWS Component', () => {
         name: /aws account id/i,
       });
       await typeWithWait(user, accountIdInput, 'abc123456789');
-      await waitFor(() => accountIdInput.blur());
+      await tabWithWait(user);
 
       await waitFor(() => {
         expect(
@@ -110,12 +115,13 @@ describe('AWS Component', () => {
 
     test('displays error when field is focused then blurred without input', async () => {
       renderAwsStep();
+      const user = createUser();
 
       const accountIdInput = await screen.findByRole('textbox', {
         name: /aws account id/i,
       });
       accountIdInput.focus();
-      await waitFor(() => accountIdInput.blur());
+      await tabWithWait(user);
 
       await waitFor(() => {
         expect(
@@ -138,11 +144,7 @@ describe('AWS Component', () => {
         name: /clear/i,
       });
       await clickWithWait(user, clearButton);
-
-      const accountIdInput = await screen.findByRole('textbox', {
-        name: /aws account id/i,
-      });
-      await waitFor(() => accountIdInput.blur());
+      await tabWithWait(user);
 
       await waitFor(() => {
         expect(
