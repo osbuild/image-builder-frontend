@@ -7,6 +7,7 @@ import {
   parseJsonUnsafe,
   toBootcDistro,
 } from './helpers';
+import { normalizeArch, podmanInspect } from './helpers/podman';
 
 import {
   GetArchitecturesApiArg,
@@ -33,9 +34,21 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
         throw new Error('Unexpected podman images output');
       }
 
-      return parsed
-        .filter(filterBootcImages(arch))
-        .map(toBootcDistro(arch ?? ''));
+      const ids = parsed.map((img) => img.Id);
+      const inspect = await podmanInspect(ids);
+      const images = parseJsonUnsafe<PodmanImageInfo>(inspect);
+
+      if (!Array.isArray(images)) {
+        throw new Error('Unexpected podman images output');
+      }
+
+      return images
+        .map((img) => ({
+          ...img,
+          Architecture: normalizeArch(img.Architecture ?? arch),
+        }))
+        .filter(filterBootcImages)
+        .map(toBootcDistro);
     }),
   }),
   getArchitectures: builder.query<

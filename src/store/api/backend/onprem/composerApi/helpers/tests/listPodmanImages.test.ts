@@ -1,7 +1,7 @@
 import cockpit from 'cockpit';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { listPodmanImages } from '../podmanImages';
+import { listPodmanImages } from '../podman';
 
 vi.mock('cockpit', () => ({
   default: {

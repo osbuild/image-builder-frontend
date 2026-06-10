@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
 import { ValidatedPodmanImage } from '../../../types';
-import { inferDistro } from '../inferDistro';
+import { inferDistro } from '../podman';
 
 const makeImage = (
   labels: Partial<ValidatedPodmanImage['Labels']> = {},
   names: string[] = ['registry.example.com/some-image:latest'],
 ): ValidatedPodmanImage => ({
+  Id: 'sha256:abc123',
+  Architecture: 'amd64',
   Labels: {
     ...labels,
   },
-  Names: names,
+  RepoTags: names,
 });
 
 describe('inferDistro', () => {
