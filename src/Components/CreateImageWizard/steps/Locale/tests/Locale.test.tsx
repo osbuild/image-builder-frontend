@@ -1,6 +1,6 @@
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { initialState, replaceLanguage } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {
@@ -381,6 +381,70 @@ describe('Locale Component', () => {
       await selectKeyboardOption(user, 'us');
 
       expect(store.getState().wizard.system.locale.keyboard).toBe('us');
+    });
+  });
+
+  describe('Validation', () => {
+    test('displays error for duplicate languages from state', async () => {
+      renderLocaleStep({
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: ['en_US.UTF-8', 'en_US.UTF-8'],
+            keyboard: '',
+          },
+        },
+      });
+
+      expect(
+        await screen.findByText(/duplicated languages/i),
+      ).toBeInTheDocument();
+    });
+
+    test('replaceLanguage prevents creating duplicates', async () => {
+      const { store } = renderLocaleStep({
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
+            keyboard: '',
+          },
+        },
+      });
+
+      store.dispatch(
+        replaceLanguage({
+          oldLanguage: 'de_DE.UTF-8',
+          newLanguage: 'en_US.UTF-8',
+        }),
+      );
+
+      const languages = store.getState().wizard.system.locale.languages;
+      expect(languages).toEqual(['en_US.UTF-8', 'de_DE.UTF-8']);
+    });
+
+    test('replaceLanguage succeeds for valid non-duplicate replacement', async () => {
+      const { store } = renderLocaleStep({
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
+            keyboard: '',
+          },
+        },
+      });
+
+      act(() => {
+        store.dispatch(
+          replaceLanguage({
+            oldLanguage: 'de_DE.UTF-8',
+            newLanguage: 'nl_NL.UTF-8',
+          }),
+        );
+      });
+
+      const languages = store.getState().wizard.system.locale.languages;
+      expect(languages).toEqual(['en_US.UTF-8', 'nl_NL.UTF-8']);
     });
   });
 

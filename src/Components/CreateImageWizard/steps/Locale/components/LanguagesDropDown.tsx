@@ -129,15 +129,20 @@ const LanguagesDropDown = () => {
 
   return (
     <FormGroup isRequired={false} label='Languages' role='group'>
-      {languages.map((lang) => (
-        <LanguageRow
-          key={lang}
-          selectedLanguage={lang}
-          onSelect={(newLang) => handleChangeLanguage(lang, newLang)}
-          onRemove={() => handleRemoveLanguage(lang)}
-          existingLanguages={languages}
-        />
-      ))}
+      {languages.map((lang, index) => {
+        const occurrenceIndex = languages
+          .slice(0, index)
+          .filter((l) => l === lang).length;
+        return (
+          <LanguageRow
+            key={`${lang}-${occurrenceIndex}`}
+            selectedLanguage={lang}
+            onSelect={(newLang) => handleChangeLanguage(lang, newLang)}
+            onRemove={() => handleRemoveLanguage(lang)}
+            existingLanguages={languages}
+          />
+        );
+      })}
       {showNewRow && (
         <LanguageRow
           onSelect={handleSelectNewLanguage}
