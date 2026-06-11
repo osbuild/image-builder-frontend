@@ -348,6 +348,38 @@ describe('Locale Component', () => {
     });
   });
 
+  describe('Validation', () => {
+    test('displays error for duplicate languages from state', async () => {
+      renderLocaleStep({
+        locale: {
+          languages: ['en_US.UTF-8', 'en_US.UTF-8'],
+          keyboard: '',
+        },
+      });
+
+      expect(
+        await screen.findByText(/duplicated languages/i),
+      ).toBeInTheDocument();
+    });
+
+    test('replaceLanguage prevents creating duplicates', async () => {
+      const { store } = renderLocaleStep({
+        locale: {
+          languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
+          keyboard: '',
+        },
+      });
+
+      store.dispatch({
+        type: 'wizard/replaceLanguage',
+        payload: { oldLanguage: 'de_DE.UTF-8', newLanguage: 'en_US.UTF-8' },
+      });
+
+      const languages = store.getState().wizard.locale.languages;
+      expect(languages).toEqual(['en_US.UTF-8', 'de_DE.UTF-8']);
+    });
+  });
+
   describe('Form submission', () => {
     test('pressing Enter in keyboard search does not trigger page reload', async () => {
       renderLocaleStep();

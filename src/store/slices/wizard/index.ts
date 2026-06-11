@@ -1452,6 +1452,13 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{ oldLanguage: string; newLanguage: string }>,
     ) => {
       if (state.locale.languages) {
+        const isDuplicate = state.locale.languages.some(
+          (lang, i) =>
+            lang === action.payload.newLanguage &&
+            state.locale.languages![i] !== action.payload.oldLanguage,
+        );
+        if (isDuplicate) return;
+
         const index = state.locale.languages.findIndex(
           (lang) => lang === action.payload.oldLanguage,
         );
