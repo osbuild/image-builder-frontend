@@ -195,9 +195,14 @@ export const wizardSlice = createSlice({
         const index = state.system.locale.languages.findIndex(
           (lang) => lang === action.payload.oldLanguage,
         );
-        if (index !== -1) {
-          state.system.locale.languages[index] = action.payload.newLanguage;
-        }
+        if (index === -1) return;
+
+        const isDuplicate = state.system.locale.languages.some(
+          (lang, i) => i !== index && lang === action.payload.newLanguage,
+        );
+        if (isDuplicate) return;
+
+        state.system.locale.languages[index] = action.payload.newLanguage;
       }
     },
     clearLanguages: (state) => {
