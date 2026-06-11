@@ -14,7 +14,7 @@ export const buildImage = async (page: Page) => {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (true) {
     if (
-      (await page.getByText('Ready').isVisible()) ||
+      (await page.getByText('Ready', { exact: true }).isVisible()) ||
       (await page.getByText('Expires in').isVisible())
     ) {
       console.log(`Image is ready (Time spent: ${timeSpentBuilding / 60000}m)`);
@@ -43,7 +43,8 @@ export const downloadImage = async (page: Page, filePath: string) => {
   // Start waiting for download before clicking. Note no await.
   console.log('Downloading image');
   const downloadPromise = page.waitForEvent('download');
-  await page.getByText('Download').first().click();
+  // Use a more specific selector to avoid matching "Download" in header description
+  await page.getByRole('link', { name: /Download \(\./ }).click();
   const download = await downloadPromise;
   await download.saveAs(filePath);
   console.log(`Downloaded file: ${filePath}`);
