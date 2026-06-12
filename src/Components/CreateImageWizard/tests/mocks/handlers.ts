@@ -1,3 +1,4 @@
+import { GetBlueprintApiResponse } from '@/store/api/backend';
 import {
   composeHandlers,
   createArchitecturesHandler,
@@ -24,6 +25,26 @@ export const createSourcesHandler = (): FetchHandler => {
       return JSON.stringify({ data: [] });
     }
     return null;
+  };
+};
+
+export type BlueprintHandlerOptions = {
+  blueprint: GetBlueprintApiResponse;
+};
+
+export const createBlueprintHandler = (
+  options: BlueprintHandlerOptions,
+): FetchHandler => {
+  const { blueprint } = options;
+
+  return ({ url, method }) => {
+    const blueprintMatch = url.match(/\/blueprints\/([^/?]+)/);
+    if (!blueprintMatch || method !== 'GET') {
+      return null;
+    }
+
+    const requestedId = blueprintMatch[1];
+    return requestedId === blueprint.id ? JSON.stringify(blueprint) : null;
   };
 };
 

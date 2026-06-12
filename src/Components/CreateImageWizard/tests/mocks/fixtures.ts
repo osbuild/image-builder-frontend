@@ -1,4 +1,5 @@
-import { Architectures } from '@/store/api/backend';
+import { RHEL_9 } from '@/constants';
+import { Architectures, GetBlueprintApiResponse } from '@/store/api/backend';
 
 export const mockArchitectures: Record<string, Architectures> = {
   'rhel-8': [
@@ -37,4 +38,28 @@ export const mockArchitectures: Record<string, Architectures> = {
       repositories: [],
     },
   ],
+};
+
+export const mockBlueprintId = '677b010b-e95e-4694-9813-d11d847f1bfc';
+
+export const mockBlueprint: GetBlueprintApiResponse = {
+  id: mockBlueprintId,
+  name: 'Test Blueprint',
+  description: 'Test blueprint for edit mode',
+  distribution: RHEL_9,
+  image_requests: [
+    {
+      architecture: 'x86_64',
+      image_type: 'guest-image',
+      upload_request: {
+        type: 'aws.s3',
+        options: {},
+      },
+    },
+  ],
+  customizations: {},
+  lint: {
+    errors: [],
+    warnings: [],
+  },
 };

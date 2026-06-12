@@ -1,17 +1,35 @@
 import { screen, within } from '@testing-library/react';
+import { vi } from 'vitest';
 
-import { renderEditMode } from './wizardTestUtils';
+import { composeHandlers, createArchitecturesHandler } from '@/test/testUtils';
 
-import { mockBlueprintIds } from '../../fixtures/blueprints';
+import { renderEditMode } from './helpers';
+import {
+  createBlueprintHandler,
+  fetchMock,
+  mockArchitectures,
+  mockBlueprint,
+  mockBlueprintId,
+} from './mocks';
 
-describe('EditImageWizard', () => {
+describe('EditMode', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    fetchMock.enableMocks();
+    fetchMock.mockResponse(
+      composeHandlers(
+        createArchitecturesHandler({ architectures: mockArchitectures }),
+        createBlueprintHandler({ blueprint: mockBlueprint }),
+      ),
+    );
+  });
+
+  afterEach(() => {
+    fetchMock.disableMocks();
   });
 
   test('should enable all navigation items in edit mode', async () => {
-    const id = mockBlueprintIds['darkChocolate'];
-    await renderEditMode(id);
+    await renderEditMode(mockBlueprintId);
 
     const heading = await screen.findByRole('heading', {
       name: /review image configuration/i,
@@ -33,7 +51,6 @@ describe('EditImageWizard', () => {
       name: /review/i,
     });
 
-    // Assert that all validation items are enabled
     expect(heading).toBeInTheDocument();
     expect(baseNavItem).toBeEnabled();
     expect(contentNavItem).toBeEnabled();
