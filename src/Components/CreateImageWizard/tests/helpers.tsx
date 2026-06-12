@@ -49,3 +49,51 @@ export const renderWithQueryParams = async (
 
   return { store };
 };
+
+export const renderEditMode = async (
+  blueprintId: string,
+): Promise<{ store: EnhancedStore<RootState> }> => {
+  const store = configureStore({
+    reducer: serviceReducer,
+    middleware: serviceMiddleware,
+    preloadedState: {
+      wizardModal: {
+        isModalOpen: true,
+        mode: 'edit' as const,
+      },
+      blueprints: {
+        selectedBlueprintId: blueprintId,
+        searchInput: undefined,
+        offset: 0,
+        limit: 10,
+        versionFilter: 'latest' as const,
+      },
+    },
+  });
+
+  const routes = [
+    {
+      path: 'insights/image-builder/',
+      element: <CreateImageWizard />,
+    },
+  ];
+
+  const router = createMemoryRouter(routes, {
+    initialEntries: ['/insights/image-builder/'],
+  });
+
+  render(
+    <Provider store={store}>
+      <RouterProvider
+        router={router}
+        future={{
+          v7_startTransition: true,
+        }}
+      />
+    </Provider>,
+  );
+
+  await screen.findByRole('heading', { name: /review image configuration/i });
+
+  return { store };
+};
