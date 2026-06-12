@@ -50,6 +50,7 @@ import {
   selectIsWizardModalOpen,
   selectWizardModalMode,
 } from '@/store/slices/wizardModal';
+import { useGetEnvironment } from '@/Utilities/useGetEnvironment';
 
 import CustomWizardFooter from './components/CustomWizardFooter';
 import ReviewWizardFooter from './components/ReviewWizardFooter';
@@ -66,7 +67,6 @@ import {
 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import DetailsStep from '../CreateImageWizard/steps/Details';
 import FileSystemStep from '../CreateImageWizard/steps/FileSystem';
 import FirewallStep from '../CreateImageWizard/steps/Firewall';

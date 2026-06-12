@@ -18,6 +18,9 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
+      "@/store/api/backend": ["src/store/api/backend/index.hosted.ts"],
+      "@/store/api/contentSources": ["src/store/api/contentSources/index.hosted.ts"],
+      "@/Utilities/useGetEnvironment": ["src/Utilities/useGetEnvironment/index.hosted.ts"],
       "@/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/types"]
