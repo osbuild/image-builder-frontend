@@ -29,3 +29,7 @@ export type {
   UserOnPrem,
 } from './blueprintMapper';
 export { toComposerComposeRequest } from './toComposerComposeRequest';
+export { imageStatusFromBuildlog } from './imageStatusFromBuildlog';
+export { progressFromFile } from './progressFromFile';
+export { uploadStatusFromFile } from './uploadStatusFromFile';
+export { imageStatusFallback } from './imageStatusFallback';
