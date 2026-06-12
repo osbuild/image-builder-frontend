@@ -37,7 +37,8 @@ import {
   useSecuritySummary,
 } from '@/store/api/backend';
 import {
-  ApiRepositoryCollectionResponseRead,
+  type ApiContentUnitSearchRequest,
+  type ApiRepositoryCollectionResponseRead,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
@@ -254,12 +255,17 @@ const PackageSearch = ({
     }
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
       if (isOnPremise) {
+        // On-prem uses a different request shape with `packages` field;
+        // this branch is unreachable in the hosted build but the code
+        // is shared across targets.
+        const onPremRequest = {
+          packages: [debouncedSearchTerm],
+          architecture: arch,
+          distribution,
+        };
         searchDistroRpms({
-          apiContentUnitSearchRequest: {
-            packages: [debouncedSearchTerm],
-            architecture: arch,
-            distribution,
-          },
+          apiContentUnitSearchRequest:
+            onPremRequest as ApiContentUnitSearchRequest,
         });
       } else {
         searchDistroRpms({

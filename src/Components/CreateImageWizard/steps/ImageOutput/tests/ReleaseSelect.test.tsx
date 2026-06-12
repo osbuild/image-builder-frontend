@@ -1,11 +1,14 @@
+import React from 'react';
+
 import { screen, waitFor } from '@testing-library/react';
 
-import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
+import { CENTOS_10, CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
+import { Distributions } from '@/store/api/backend';
 import {
   selectDistribution,
   selectRegistrationType,
 } from '@/store/slices/wizard';
-import { clickWithWait, createUser } from '@/test/testUtils';
+import { clickWithWait, createUser, renderWithRedux } from '@/test/testUtils';
 
 import {
   expandDevelopmentOptions,
@@ -13,6 +16,8 @@ import {
   renderReleaseSelect,
   selectRelease,
 } from './helpers';
+
+import ReleaseSelect from '../components/ReleaseSelect';
 
 describe('ReleaseSelect', () => {
   describe('Rendering', () => {
@@ -194,6 +199,69 @@ describe('ReleaseSelect', () => {
 
       expect(fullSupportTexts.length).toBeGreaterThan(0);
       expect(maintenanceTexts.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('On-premise behavior (via usePlatformFeatures)', () => {
+    const renderOnPremReleaseSelect = (
+      distribution: Distributions = CENTOS_10 as Distributions,
+    ) => {
+      return renderWithRedux(
+        <ReleaseSelect />,
+        { distribution },
+        { preloadedState: { env: { isOnPremise: true } } },
+      );
+    };
+
+    test('shows only the current distribution in the dropdown', async () => {
+      const user = createUser();
+      renderOnPremReleaseSelect(CENTOS_10);
+
+      await openReleaseSelect(user);
+
+      // Only the current distribution should be shown
+      expect(
+        screen.getByRole('option', { name: /CentOS Stream 10/i }),
+      ).toBeInTheDocument();
+
+      // Other releases should not be shown
+      expect(
+        screen.queryByRole('option', {
+          name: /Red Hat Enterprise Linux/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('does not show lifecycle descriptions', async () => {
+      const user = createUser();
+      renderOnPremReleaseSelect(RHEL_10);
+
+      await openReleaseSelect(user);
+
+      expect(screen.queryByText(/Full support ends:/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/Maintenance support ends:/i),
+      ).not.toBeInTheDocument();
+    });
+
+    test('does not show the development options load button', async () => {
+      const user = createUser();
+      renderOnPremReleaseSelect();
+
+      await openReleaseSelect(user);
+
+      expect(
+        screen.queryByRole('option', {
+          name: /show options for further development/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('displays the on-prem release name in the toggle', () => {
+      renderOnPremReleaseSelect(CENTOS_10);
+
+      const toggle = screen.getByTestId('release_select');
+      expect(toggle).toHaveTextContent(/CentOS Stream 10/i);
     });
   });
 });

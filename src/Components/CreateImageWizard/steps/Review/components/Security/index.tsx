@@ -2,8 +2,9 @@ import React from 'react';
 
 import { Card, CardBody } from '@patternfly/react-core';
 
+import { usePlatformFeatures } from '@/Hooks/usePlatformFeatures';
 import { useAppSelector } from '@/store/hooks';
-import { selectFips, selectIsOnPremise } from '@/store/slices';
+import { selectFips } from '@/store/slices';
 
 import { FIPSDetails, SecurityDetails } from './components';
 import { isSecurityConfigured, SecuritySummary } from './types';
@@ -16,7 +17,7 @@ type SecurityCardProps = ReviewCardProps & {
 };
 
 const Security = ({ restrictions, security }: SecurityCardProps) => {
-  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const { securitySectionLabel } = usePlatformFeatures();
   const { enabled: fipsEnabled } = useAppSelector(selectFips);
 
   if (restrictions.openscap.shouldHide && restrictions.fips.shouldHide) {
@@ -30,9 +31,7 @@ const Security = ({ restrictions, security }: SecurityCardProps) => {
   return (
     <Card>
       <ReviewCardHeader
-        title={
-          isOnPremise ? 'Security configuration' : 'Compliance configuration'
-        }
+        title={securitySectionLabel}
         stepId='base-settings-step'
         sectionId='security-section'
       />

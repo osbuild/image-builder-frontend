@@ -7,7 +7,6 @@ import {
 
 export const useCreateBPWithNotification = (options?: HookOptions) => {
   const { trigger: createBlueprint, ...rest } = useMutationWithNotification(
-    // @ts-expect-error TODO: this will need to be revisited
     useCreateBlueprintMutation,
     {
       options,

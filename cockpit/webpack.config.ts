@@ -32,6 +32,11 @@ module.exports = {
   },
   resolve: {
     alias: {
+      // Platform alias overrides — trailing $ ensures exact match so that
+      // '@/store/api/backend/hooks' still resolves via the generic '@' alias
+      '@/store/api/backend$': path.resolve(__dirname, '../src/store/api/backend/index.onprem.ts'),
+      '@/store/api/contentSources$': path.resolve(__dirname, '../src/store/api/contentSources/index.onprem.ts'),
+      '@/Utilities/useGetEnvironment$': path.resolve(__dirname, '../src/Utilities/useGetEnvironment/index.onprem.ts'),
       '@': path.resolve(__dirname, '../src'),
     },
     fallback: {

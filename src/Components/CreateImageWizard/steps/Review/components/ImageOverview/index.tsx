@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 
 import { Card, CardBody } from '@patternfly/react-core';
 
-import { ON_PREM_RELEASES, RELEASES } from '@/constants';
 import { useTargetEnvironmentCategories } from '@/Hooks';
+import { usePlatformFeatures } from '@/Hooks/usePlatformFeatures';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
@@ -13,7 +13,6 @@ import {
   selectImageSource,
   selectImageTypes,
   selectIsImageMode,
-  selectIsOnPremise,
 } from '@/store/slices';
 
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
@@ -23,7 +22,7 @@ import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 const ImageOverview = () => {
   const imageName = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const { releases } = usePlatformFeatures();
   const isImageMode = useAppSelector(selectIsImageMode);
   const imageSource = useAppSelector(selectImageSource);
   const distribution = useAppSelector(selectDistribution);
@@ -31,8 +30,6 @@ const ImageOverview = () => {
 
   const { publicClouds, privateClouds, miscFormats } =
     useTargetEnvironmentCategories(useAppSelector(selectImageTypes));
-
-  const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
   const release = useMemo(() => {
     if (isImageMode) return imageSource;

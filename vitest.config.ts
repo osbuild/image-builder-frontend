@@ -62,18 +62,44 @@ const config = {
   },
   resolve: {
     mainFields: ['module'],
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
+    alias: [
+      // Platform alias overrides — exact match only (no prefix matching)
+      // so that '@/store/api/backend/hooks' still resolves via the generic
+      // '@' alias rather than being swallowed by the backend alias.
+      {
+        find: /^@\/store\/api\/backend$/,
+        replacement: path.resolve(
+          __dirname,
+          'src/store/api/backend/index.hosted.ts',
+        ),
+      },
+      {
+        find: /^@\/store\/api\/contentSources$/,
+        replacement: path.resolve(
+          __dirname,
+          'src/store/api/contentSources/index.hosted.ts',
+        ),
+      },
+      { find: '@', replacement: path.resolve(__dirname, 'src') },
       // we have to point vitest to the mocks for `cockpit` and `cockpit/fsinfo`
       // by using aliases. This allows vitest to resolve these two packages
       // and allows the tests to pass
-      cockpit: path.resolve(__dirname, 'src/test/mocks/cockpit'),
-      'cockpit/fsinfo': path.resolve(
-        __dirname,
-        'src/test/mocks/cockpit/fsinfo',
-      ),
-      'os-release': path.resolve(__dirname, 'src/test/mocks/os-release'),
-    },
+      {
+        find: 'cockpit/fsinfo',
+        replacement: path.resolve(
+          __dirname,
+          'src/test/mocks/cockpit/fsinfo',
+        ),
+      },
+      {
+        find: 'cockpit',
+        replacement: path.resolve(__dirname, 'src/test/mocks/cockpit'),
+      },
+      {
+        find: 'os-release',
+        replacement: path.resolve(__dirname, 'src/test/mocks/os-release'),
+      },
+    ],
   },
   esbuild: {
     loader: 'tsx',

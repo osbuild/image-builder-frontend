@@ -63,6 +63,10 @@ module.exports = {
   proxyVerbose: true,
   resolve: {
     alias: {
+      // Platform alias overrides — trailing $ ensures exact match so that
+      // '@/store/api/backend/hooks' still resolves via the generic '@' alias
+      '@/store/api/backend$': path.resolve(__dirname, 'src/store/api/backend/index.hosted.ts'),
+      '@/store/api/contentSources$': path.resolve(__dirname, 'src/store/api/contentSources/index.hosted.ts'),
       '@': path.resolve(__dirname, 'src'),
       // we don't wan't these packages bundled with
       // the service frontend, so we can set the aliases

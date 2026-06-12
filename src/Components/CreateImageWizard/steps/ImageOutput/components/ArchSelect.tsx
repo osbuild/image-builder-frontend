@@ -10,9 +10,9 @@ import {
 } from '@patternfly/react-core';
 
 import { ARCHES } from '@/constants';
+import { usePlatformFeatures } from '@/Hooks/usePlatformFeatures';
 import { ImageRequest } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices/env';
 import { changeArchitecture, selectArchitecture } from '@/store/slices/wizard';
 
 type ArchSelectProps = {
@@ -22,7 +22,7 @@ type ArchSelectProps = {
 const ArchSelect = ({ isDisabled = false }: ArchSelectProps) => {
   const arch = useAppSelector(selectArchitecture);
   const dispatch = useAppDispatch();
-  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const { canCrossArchBuild } = usePlatformFeatures();
   const [isOpen, setIsOpen] = useState(false);
 
   const setArch = (_event?: React.MouseEvent, selection?: string | number) => {
@@ -34,9 +34,7 @@ const ArchSelect = ({ isDisabled = false }: ArchSelectProps) => {
   const setSelectOptions = () => {
     const options: ReactElement[] = [];
     const arches = ARCHES.filter((a) => {
-      // we don't want to support cross-arch
-      // builds for on-prem for now
-      if (isOnPremise) {
+      if (!canCrossArchBuild) {
         return a === arch;
       }
       return true;
