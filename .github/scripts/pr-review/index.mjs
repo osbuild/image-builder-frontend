@@ -83,9 +83,7 @@ async function main() {
   const diffLines = parseDiffLines(diff);
 
   // 4. Build context for reviewers
-  const fileList = files
-    .map((f) => `${f.status}\t${f.filename}`)
-    .join('\n');
+  const fileList = files.map((f) => `${f.status}\t${f.filename}`).join('\n');
   const task = buildTaskPrompt(fileList, diff);
 
   // 5. Run reviewers in parallel
@@ -122,8 +120,10 @@ async function main() {
 
   // 6. Validate findings — drop anything outside the changeset
   const allFindings = results.flatMap((r) => r.findings);
+  const knownFiles = new Set(files.map((f) => f.filename));
 
   const validFindings = allFindings.filter((f) => {
+    if (f.file && !knownFiles.has(f.file)) return false; // Hallucinated file path
     if (!f.file || !f.line) return true; // No location → goes to summary
     return isLineInDiff(diffLines, f.file, f.line);
   });
@@ -141,6 +141,8 @@ async function main() {
 
   // 8. Post inline review comments for criticals
   const inlineCriticals = criticals.filter((f) => f.file && f.line);
+  const summaryCriticals = criticals.filter((f) => !f.file || !f.line);
+  let inlinePostingFailed = false;
 
   if (inlineCriticals.length > 0) {
     try {
@@ -156,9 +158,7 @@ async function main() {
     } catch (err) {
       // If inline comments fail (e.g. line not in diff), fall through to summary
       console.error(`Failed to post inline comments: ${err.message}`);
-      criticals.push(
-        ...inlineCriticals.filter((f) => !criticals.includes(f)),
-      );
+      inlinePostingFailed = true;
     }
   }
 
@@ -166,19 +166,29 @@ async function main() {
   const sections = [];
 
   if (criticals.length > 0) {
-    const criticalLines = criticals.map((f) => {
+    const renderedCriticals = inlinePostingFailed
+      ? criticals
+      : summaryCriticals;
+
+    const criticalLines = renderedCriticals.map((f) => {
       const loc = f.file ? ` \`${f.file}${f.line ? `:${f.line}` : ''}\`` : '';
       return `- **${f.title}**${loc} _(${f.reviewer})_\n  ${f.message}`;
     });
 
-    if (inlineCriticals.length > 0) {
-      sections.push(
-        `## 🔴 Critical Issues\n\n${inlineCriticals.length} critical issue(s) posted as inline comments.\n`,
+    const parts = [];
+
+    if (inlineCriticals.length > 0 && !inlinePostingFailed) {
+      parts.push(
+        `${inlineCriticals.length} critical issue(s) posted as inline comments.`,
       );
-    } else {
-      sections.push(
-        `## 🔴 Critical Issues\n\n${criticalLines.join('\n\n')}`,
-      );
+    }
+
+    if (criticalLines.length > 0) {
+      parts.push(criticalLines.join('\n\n'));
+    }
+
+    if (parts.length > 0) {
+      sections.push(`## 🔴 Critical Issues\n\n${parts.join('\n\n')}`);
     }
   }
 
@@ -226,6 +236,16 @@ async function main() {
 function buildTaskPrompt(fileList, diff) {
   return `Review the following pull request changes.
 
+## Project context
+
+This is a React 18 / TypeScript frontend that runs in two environments:
+- **Hosted**: a federated micro-frontend on console.redhat.com
+- **On-premises (Cockpit)**: a standalone Cockpit plugin for RHEL systems
+
+Environment detection uses \`process.env.IS_ON_PREMISE\`. Some components have environment-specific code paths and feature flags may behave differently between hosted and on-prem.
+
+Be aware of both environments when reviewing changes that touch platform detection, feature flags, or environment-specific logic.
+
 ## Scope
 
 Your review MUST be scoped to the changeset only.
@@ -234,6 +254,12 @@ Your review MUST be scoped to the changeset only.
 - DO NOT flag pre-existing issues, patterns, or missing tests in unchanged code
 - DO NOT suggest changes to files or lines not in the diff
 - If you find zero issues in your area of expertise, return an empty findings array
+
+## Tone
+
+- Frame concerns as questions, not directives (e.g. "Could this cause...?" not "This is wrong")
+- Label nitpicks explicitly (e.g. "nitpick: ...")
+- Acknowledge trade-offs when suggesting alternatives
 
 ## Changed files
 
@@ -289,9 +315,7 @@ function parseFindings(response, reviewerName) {
         if (raw) {
           json = JSON.parse(raw[0]);
         } else {
-          console.error(
-            `Could not extract JSON from ${reviewerName} response`,
-          );
+          console.error(`Could not extract JSON from ${reviewerName} response`);
           return [];
         }
       }
