@@ -212,3 +212,25 @@ timezone = "${tz}"
 [customizations.locale]
 languages = [ "C.UTF-8" ]`;
 };
+
+export const exportedPackagesBP = (blueprintName: string): string => {
+  return `name = "${blueprintName}"
+
+[customizations.timezone]
+timezone = "${tz}"
+
+[customizations.locale]
+languages = [ "C.UTF-8" ]
+
+[[packages]]
+name = "vim-minimal"
+version = "*"
+
+[[packages]]
+name = "bash"
+version = "*"
+
+[[packages]]
+name = "tmux"
+version = "*"`;
+};
