@@ -4,7 +4,7 @@ export const safeReadJsonFile = async <T>(
   filePath: string,
 ): Promise<T | null> => {
   try {
-    const content = await cockpit.file(filePath).read();
+    const content = await cockpit.file(filePath, { superuser: "try" }).read();
     return JSON.parse(content) as T;
   } catch (error) {
     // eslint-disable-next-line no-console
