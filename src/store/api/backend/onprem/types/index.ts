@@ -11,4 +11,5 @@ export type {
   // Non-conflicting types exported as-is
   Bootc,
   LocalUploadStatus,
+  ImageStatus,
 } from './generated';

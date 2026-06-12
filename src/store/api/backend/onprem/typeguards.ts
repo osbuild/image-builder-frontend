@@ -1,39 +1,41 @@
 import { isNonNullObject, OnPremApiError } from '@/store/api/shared';
 
-import { ComposeResponse, ComposeStatus } from '../hosted';
+import type { ImageStatus, UploadStatus } from '../hosted';
 
-export const isComposeResponse = (value: unknown): value is ComposeResponse => {
-  if (!isNonNullObject(value) || !('id' in value)) {
+export const isImageStatus = (value: unknown): value is ImageStatus => {
+  if (!isNonNullObject(value) || !('status' in value) || typeof value.status !== 'string') {
     return false;
   }
-  return typeof value.id === 'string';
+  const uploadStatus = value.upload_status;
+  if (uploadStatus) {
+    return isUploadStatus(uploadStatus)
+  }
+  return true;
 };
 
-export const assertComposeResponse = (value: unknown): ComposeResponse => {
-  if (!isComposeResponse(value)) {
+export const assertImageStatus = (value: unknown): ImageStatus => {
+  if (!isImageStatus(value)) {
     throw new OnPremApiError(
-      'Image build request failed due to an unexpected response from the composer service',
+      'Unable to retrieve image build status due to an unexpected response',
     );
   }
   return value;
 };
 
-export const isComposeStatus = (value: unknown): value is ComposeStatus => {
-  if (!isNonNullObject(value) || !('image_status' in value)) {
-    return false;
-  }
-  const imageStatus = value.image_status;
+export const isUploadStatus = (value: unknown): value is UploadStatus => {
   return (
-    isNonNullObject(imageStatus) &&
-    'status' in imageStatus &&
-    typeof imageStatus.status === 'string'
+    isNonNullObject(value) &&
+    'type' in value &&
+    typeof value.type === 'string' &&
+    'status' in value &&
+    typeof value.status === 'string'
   );
 };
 
-export const assertComposeStatus = (value: unknown): ComposeStatus => {
-  if (!isComposeStatus(value)) {
+export const assertUploadStatus = (value: unknown): UploadStatus => {
+  if (!isUploadStatus(value)) {
     throw new OnPremApiError(
-      'Unable to retrieve image build status due to an unexpected response',
+      'Unable to retrieve image upload status due to an unexpected response',
     );
   }
   return value;
