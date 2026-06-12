@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { RHEL_10, X86_64 } from '@/constants';
+import { CENTOS_10, RHEL_10, X86_64 } from '@/constants';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { renderWithRedux } from '@/test/testUtils';
 
@@ -82,6 +82,16 @@ describe('ImageOverview', () => {
     renderWithRedux(<ImageOverview />);
 
     expect(screen.getByText('Target environments')).toBeInTheDocument();
+  });
+
+  test('displays on-prem release name when on-premise', () => {
+    renderWithRedux(
+      <ImageOverview />,
+      { distribution: CENTOS_10 },
+      { preloadedState: { env: { isOnPremise: true } } },
+    );
+
+    expect(screen.getByText('CentOS Stream 10')).toBeInTheDocument();
   });
 
   describe('Private clouds', () => {

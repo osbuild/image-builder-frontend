@@ -10,8 +10,6 @@ import {
 } from '@patternfly/react-core';
 
 import {
-  ON_PREM_RELEASES,
-  RELEASES,
   RHEL_10,
   RHEL_10_FULL_SUPPORT,
   RHEL_10_MAINTENANCE_SUPPORT,
@@ -22,9 +20,9 @@ import {
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '@/constants';
+import { usePlatformFeatures } from '@/Hooks/usePlatformFeatures';
 import { Distributions } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeDistribution,
   changeRegistrationType,
@@ -41,9 +39,8 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-
-  const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
+  const { releases, showReleaseLifecycleInfo, showDevelopmentReleases } =
+    usePlatformFeatures();
 
   const handleSelect = (
     _event?: React.MouseEvent,
@@ -66,7 +63,7 @@ const ReleaseSelect = () => {
   };
 
   const setDescription = (key: Distributions) => {
-    if (isOnPremise) {
+    if (!showReleaseLifecycleInfo) {
       return '';
     }
 
@@ -97,7 +94,7 @@ const ReleaseSelect = () => {
     const options: ReactElement[] = [];
     const filteredRhel = new Map(
       [...releases].filter(([key]) => {
-        if (isOnPremise) {
+        if (!showDevelopmentReleases) {
           return key === distribution;
         }
 
@@ -158,22 +155,19 @@ const ReleaseSelect = () => {
       >
         <SelectList>
           {setSelectOptions()}
-          {!showDevelopmentOptions &&
-            // Hide this for on-prem since the host
-            // could be centos or fedora
-            !isOnPremise && (
-              <SelectOption
-                onClick={(ev) => {
-                  // prevents setIsOpen{isOpen} from closing the Wizard
-                  ev.stopPropagation();
-                  handleExpand();
-                }}
-                value='loader'
-                isLoadButton
-              >
-                Show options for further development of RHEL
-              </SelectOption>
-            )}
+          {!showDevelopmentOptions && showDevelopmentReleases && (
+            <SelectOption
+              onClick={(ev) => {
+                // prevents setIsOpen{isOpen} from closing the Wizard
+                ev.stopPropagation();
+                handleExpand();
+              }}
+              value='loader'
+              isLoadButton
+            >
+              Show options for further development of RHEL
+            </SelectOption>
+          )}
         </SelectList>
       </Select>
     </FormGroup>
