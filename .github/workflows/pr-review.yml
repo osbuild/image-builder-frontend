@@ -1,0 +1,53 @@
+# AI-powered PR review using Claude on Vertex AI.
+#
+# Required GCP setup (one-time):
+#   1. Create a service account with roles/aiplatform.user
+#   2. Download a JSON key for the service account
+#
+# Required repository secrets (Settings → Secrets → Actions):
+#   GCP_SA_KEY  — contents of the service account JSON key file
+#
+# Required repository variables (Settings → Variables → Actions):
+#   GCP_PROJECT_ID  — GCP project ID
+#   GCP_REGION      — Vertex AI region (default: us-east5)
+#   VERTEX_MODEL    — Claude model ID (default: claude-sonnet-4-20250514)
+
+name: PR Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, ready_for_review]
+
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: AI Review
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          token_format: access_token
+
+      - name: Run PR review
+        run: node .github/scripts/pr-review/index.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERTEX_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          VERTEX_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          VERTEX_REGION: ${{ vars.GCP_REGION }}
+          VERTEX_MODEL: ${{ vars.VERTEX_MODEL }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_FULL_NAME: ${{ github.repository }}
