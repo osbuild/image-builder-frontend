@@ -60,6 +60,44 @@ describe('Security', () => {
     });
   });
 
+  describe('Platform labels', () => {
+    test('shows "Compliance configuration" on hosted', () => {
+      renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
+        imageTypes: ['guest-image'],
+        fips: {
+          enabled: true,
+        },
+      });
+
+      expect(screen.getByText('Compliance configuration')).toBeInTheDocument();
+      expect(
+        screen.queryByText('Security configuration'),
+      ).not.toBeInTheDocument();
+    });
+
+    test('shows "Security configuration" on-prem', () => {
+      renderWithRedux(
+        <Security restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          fips: {
+            enabled: true,
+          },
+        },
+        {
+          preloadedState: {
+            env: { isOnPremise: true },
+          },
+        },
+      );
+
+      expect(screen.getByText('Security configuration')).toBeInTheDocument();
+      expect(
+        screen.queryByText('Compliance configuration'),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   describe('OpenSCAP', () => {
     test('displays OpenSCAP profile when compliance type is openscap', () => {
       const mockSummaryWithCIS = {

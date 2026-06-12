@@ -9,9 +9,9 @@ import {
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
 import { RHEL_10, RHEL_10_IMAGE_MODE_IMAGE, X86_64 } from '@/constants';
+import { usePlatformFeatures } from '@/Hooks/usePlatformFeatures';
 import { Distributions } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeArchitecture,
   changeBlueprintMode,
@@ -26,7 +26,11 @@ import { getHostDistro } from '@/Utilities/getHostInfo';
 
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();
-  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const {
+    canCrossArchBuild,
+    restoresPreviousSelections,
+    setsDefaultImageSource,
+  } = usePlatformFeatures();
   const isImageMode = useAppSelector(selectIsImageMode);
   const distribution = useAppSelector(selectDistribution);
   const architecture = useAppSelector(selectArchitecture);
@@ -35,7 +39,7 @@ const BlueprintMode = () => {
   const previousArch = useRef(architecture);
 
   useEffect(() => {
-    if (!isOnPremise) return;
+    if (canCrossArchBuild) return;
     const fetchDefaultDistro = async () => {
       try {
         const distro = await getHostDistro();
@@ -46,7 +50,34 @@ const BlueprintMode = () => {
     };
 
     fetchDefaultDistro();
-  }, [isOnPremise]);
+  }, [canCrossArchBuild]);
+
+  const handlePackageMode = () => {
+    dispatch(changeBlueprintMode('package'));
+    dispatch(
+      changeDistribution(
+        restoresPreviousSelections ? previousDistro.current : defaultDistro,
+      ),
+    );
+    // Image source is only relevant in image mode
+    dispatch(changeImageSource(undefined));
+    if (restoresPreviousSelections) {
+      dispatch(changeArchitecture(previousArch.current));
+    }
+  };
+
+  const handleImageMode = () => {
+    if (restoresPreviousSelections) {
+      previousDistro.current = distribution;
+      previousArch.current = architecture;
+    }
+    dispatch(changeBlueprintMode('image'));
+    dispatch(changeImageTypes([]));
+    if (setsDefaultImageSource) {
+      dispatch(changeArchitecture(X86_64));
+      dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
+    }
+  };
 
   return (
     <FormGroup label='Image type' isRequired>
@@ -56,19 +87,7 @@ const BlueprintMode = () => {
           text='Package mode'
           buttonId='blueprint-mode-package'
           isSelected={!isImageMode}
-          onChange={() => {
-            dispatch(changeBlueprintMode('package'));
-            dispatch(
-              changeDistribution(
-                isOnPremise ? defaultDistro : previousDistro.current,
-              ),
-            );
-            // Image source is only relevant in image mode
-            dispatch(changeImageSource(undefined));
-            if (!isOnPremise) {
-              dispatch(changeArchitecture(previousArch.current));
-            }
-          }}
+          onChange={handlePackageMode}
           aria-describedby='blueprint-mode-description'
         />
         <ToggleGroupItem
@@ -76,18 +95,7 @@ const BlueprintMode = () => {
           text='Image mode'
           buttonId='blueprint-mode-image'
           isSelected={isImageMode}
-          onChange={() => {
-            if (!isOnPremise) {
-              previousDistro.current = distribution;
-              previousArch.current = architecture;
-            }
-            dispatch(changeBlueprintMode('image'));
-            dispatch(changeImageTypes([]));
-            if (!isOnPremise) {
-              dispatch(changeArchitecture(X86_64));
-              dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
-            }
-          }}
+          onChange={handleImageMode}
           aria-describedby='blueprint-mode-description'
         />
       </ToggleGroup>
