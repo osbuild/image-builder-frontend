@@ -41,6 +41,23 @@ export const renderArchSelect = (
   });
 };
 
+export const renderArchSelectOnPrem = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(
+    <ArchSelect />,
+    {
+      ...defaultStateOverrides,
+      ...wizardStateOverrides,
+    },
+    {
+      preloadedState: {
+        env: { isOnPremise: true },
+      },
+    },
+  );
+};
+
 // Interaction helpers
 export const openArchSelect = async (user: UserEventInstance) => {
   const toggle = await screen.findByTestId('arch_select');
@@ -118,6 +135,16 @@ export const renderBlueprintMode = (
       },
     },
   );
+};
+
+// BlueprintMode render function (uses hosted store)
+export const renderBlueprintModeHosted = (
+  wizardStateOverrides: WizardStateOverrides = {},
+) => {
+  return renderWithRedux(<BlueprintMode />, {
+    ...defaultStateOverrides,
+    ...wizardStateOverrides,
+  });
 };
 
 export const toggleBlueprintMode = async (

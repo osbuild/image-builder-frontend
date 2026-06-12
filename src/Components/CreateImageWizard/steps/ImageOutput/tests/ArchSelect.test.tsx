@@ -4,7 +4,12 @@ import { AARCH64, X86_64 } from '@/constants';
 import { selectArchitecture } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
-import { openArchSelect, renderArchSelect, selectArch } from './helpers';
+import {
+  openArchSelect,
+  renderArchSelect,
+  renderArchSelectOnPrem,
+  selectArch,
+} from './helpers';
 
 describe('ArchSelect', () => {
   test('renders with default x86_64 architecture', () => {
@@ -74,6 +79,32 @@ describe('ArchSelect', () => {
 
     await waitFor(() => {
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('on-prem (no cross-arch build)', () => {
+    test('only shows the current architecture option', async () => {
+      const user = createUser();
+      renderArchSelectOnPrem();
+
+      await openArchSelect(user);
+
+      expect(screen.getByRole('option', { name: X86_64 })).toBeInTheDocument();
+      expect(
+        screen.queryByRole('option', { name: AARCH64 }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('only shows aarch64 when that is the current arch', async () => {
+      const user = createUser();
+      renderArchSelectOnPrem({ architecture: AARCH64 });
+
+      await openArchSelect(user);
+
+      expect(screen.getByRole('option', { name: AARCH64 })).toBeInTheDocument();
+      expect(
+        screen.queryByRole('option', { name: X86_64 }),
+      ).not.toBeInTheDocument();
     });
   });
 });

@@ -1,8 +1,13 @@
 import { screen } from '@testing-library/react';
 
+import { AARCH64, RHEL_10, RHEL_9, X86_64 } from '@/constants';
 import { createUser } from '@/test/testUtils';
 
-import { renderBlueprintMode, toggleBlueprintMode } from './helpers';
+import {
+  renderBlueprintMode,
+  renderBlueprintModeHosted,
+  toggleBlueprintMode,
+} from './helpers';
 
 describe('BlueprintMode', () => {
   describe('Rendering', () => {
@@ -129,6 +134,83 @@ describe('BlueprintMode', () => {
         name: /image mode/i,
       });
       expect(imageModeButton).toHaveAttribute('aria-pressed', 'true');
+    });
+  });
+
+  describe('Hosted platform behavior', () => {
+    test('restores previous distribution when switching back to package mode', async () => {
+      const { store } = renderBlueprintModeHosted({ distribution: RHEL_9 });
+      const user = createUser();
+
+      // Switch to image mode (saves previous distro)
+      await toggleBlueprintMode(user, 'image');
+      // Switch back to package mode (restores previous distro)
+      await toggleBlueprintMode(user, 'package');
+
+      expect(store.getState().wizard.distribution).toBe(RHEL_9);
+    });
+
+    test('restores previous architecture when switching back to package mode', async () => {
+      const { store } = renderBlueprintModeHosted({ architecture: AARCH64 });
+      const user = createUser();
+
+      await toggleBlueprintMode(user, 'image');
+      // Image mode forces x86_64
+      expect(store.getState().wizard.architecture).toBe(X86_64);
+
+      await toggleBlueprintMode(user, 'package');
+      // Package mode restores previous arch
+      expect(store.getState().wizard.architecture).toBe(AARCH64);
+    });
+
+    test('sets default image source when switching to image mode', async () => {
+      const { store } = renderBlueprintModeHosted();
+      const user = createUser();
+
+      await toggleBlueprintMode(user, 'image');
+
+      expect(store.getState().wizard.imageSource).toBeDefined();
+    });
+
+    test('forces x86_64 architecture when switching to image mode', async () => {
+      const { store } = renderBlueprintModeHosted({ architecture: AARCH64 });
+      const user = createUser();
+
+      await toggleBlueprintMode(user, 'image');
+
+      expect(store.getState().wizard.architecture).toBe(X86_64);
+    });
+  });
+
+  describe('On-prem platform behavior', () => {
+    test('does not save or restore previous selections', async () => {
+      const { store } = renderBlueprintMode({ distribution: RHEL_9 });
+      const user = createUser();
+
+      await toggleBlueprintMode(user, 'image');
+      await toggleBlueprintMode(user, 'package');
+
+      // On-prem uses the default distro (RHEL_10 from state), not previous
+      expect(store.getState().wizard.distribution).toBe(RHEL_10);
+    });
+
+    test('does not set default image source when switching to image mode', async () => {
+      const { store } = renderBlueprintMode();
+      const user = createUser();
+
+      await toggleBlueprintMode(user, 'image');
+
+      expect(store.getState().wizard.imageSource).toBeUndefined();
+    });
+
+    test('does not change architecture when switching to image mode', async () => {
+      const { store } = renderBlueprintMode({ architecture: AARCH64 });
+      const user = createUser();
+
+      await toggleBlueprintMode(user, 'image');
+
+      // On-prem doesn't force x86_64
+      expect(store.getState().wizard.architecture).toBe(AARCH64);
     });
   });
 });
