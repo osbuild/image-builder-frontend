@@ -27,8 +27,8 @@ export const useSecuritySummary = () => {
   const distribution = useAppSelector(selectDistribution);
   const isImageMode = useAppSelector(selectIsImageMode);
 
-  // `isOnPremise` is derived from `process.env.IS_ON_PREMISE`, which is
-  // a build-time constant set by webpack. It will never change between
+  // `isOnPremise` is derived from `selectIsOnPremise`, which reads a
+  // build-time constant set by webpack. It will never change between
   // renders, so this conditional does not violate the Rules of Hooks —
   // the same branch is always taken for the lifetime of the application.
   // We also access `.endpoints` directly to avoid circular dependencies.

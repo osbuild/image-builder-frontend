@@ -24,8 +24,8 @@ export const useSearchLanguagePacks = (distroUrls: string[]) => {
   const arch = useAppSelector(selectArchitecture);
   const candidateLangpacks = useAppSelector(selectLocaleLangpackCandidates);
 
-  // `isOnPremise` is derived from `process.env.IS_ON_PREMISE`, which is
-  // a build-time constant set by webpack. It will never change between
+  // `isOnPremise` is derived from `selectIsOnPremise`, which reads a
+  // build-time constant set by webpack. It will never change between
   // renders, so this conditional does not violate the Rules of Hooks —
   // the same branch is always taken for the lifetime of the application.
   // We also access `.endpoints` directly to avoid circular dependencies.
@@ -38,13 +38,13 @@ export const useSearchLanguagePacks = (distroUrls: string[]) => {
       dispatch(setVerifiedLocaleLangpacks([]));
       return;
     }
-    if (!process.env.IS_ON_PREMISE && distroUrls.length === 0) {
+    if (!isOnPremise && distroUrls.length === 0) {
       return;
     }
 
     let cancelled = false;
     const run = async () => {
-      const request = process.env.IS_ON_PREMISE
+      const request = isOnPremise
         ? {
             packages: candidateLangpacks,
             architecture: arch,
@@ -73,6 +73,7 @@ export const useSearchLanguagePacks = (distroUrls: string[]) => {
     distribution,
     distroUrls,
     dispatch,
+    isOnPremise,
     candidateLangpacks,
     searchRpms,
   ]);
