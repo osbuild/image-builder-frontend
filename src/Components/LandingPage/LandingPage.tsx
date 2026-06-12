@@ -16,6 +16,8 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
+import { useFlag } from '@/Utilities/useGetEnvironment';
+
 import './LandingPage.scss';
 
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
@@ -23,7 +25,6 @@ import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 import { useAppDispatch } from '../../store/hooks';
 import { setBlueprintId } from '../../store/slices/blueprint';
 import { openWizardModal } from '../../store/slices/wizardModal';
-import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import CreateImageWizard from '../CreateImageWizard/CreateImageWizard';
 import ImagesTable from '../ImagesTable/ImagesTable';

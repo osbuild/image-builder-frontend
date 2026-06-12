@@ -78,7 +78,7 @@ export const EditSaveAndBuildBtn = ({
     if (requestBody) {
       await updateBlueprint({
         id: blueprintId,
-        createBlueprintRequest: requestBody,
+        createBlueprintRequest: requestBody as CreateBlueprintRequest,
       });
     }
     buildBlueprint({ id: blueprintId, body: {} });
@@ -127,7 +127,7 @@ export const EditSaveButton = ({
     if (requestBody) {
       updateBlueprint({
         id: blueprintId,
-        createBlueprintRequest: requestBody,
+        createBlueprintRequest: requestBody as CreateBlueprintRequest,
       });
     }
   };
