@@ -141,3 +141,34 @@ export const mockBootcDistributionsMultipleTypes: BootcDistributionItem[] = [
     reference: 'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
   },
 ];
+
+export const mockBootcDistributionsMixed: BootcDistributionItem[] = [
+  {
+    distro: 'rhel-10',
+    name: 'Red Hat Enterprise Linux (RHEL) 10',
+    type: 'guest-image',
+    arch: 'x86_64',
+    reference: 'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+  },
+  {
+    distro: 'fedora-42',
+    name: 'Fedora 42',
+    type: 'guest-image',
+    arch: 'x86_64',
+    reference: 'quay.io/fedora/fedora-bootc:42',
+  },
+  {
+    distro: 'centos-10',
+    name: 'CentOS Stream 10',
+    type: 'guest-image',
+    arch: 'x86_64',
+    reference: 'quay.io/centos-bootc/centos-bootc:stream10',
+  },
+  {
+    distro: 'unknown-custom',
+    name: 'localhost/my-custom-image:latest',
+    type: 'guest-image',
+    arch: 'x86_64',
+    reference: 'localhost/my-custom-image:latest',
+  },
+];

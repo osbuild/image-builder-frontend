@@ -90,21 +90,22 @@ export type ComposerComposesResponseItem = Omit<
   };
 };
 
-type PodmanLabels = {
-  // let's just hardcode this for now, we don't have any
-  // rpm builds for other arches for the on-prem frontend
-  architecture: 'x86_64' | 'aarch64';
-  version: string;
+type PodmanLabels = Record<string, string | undefined> & {
+  version?: string | undefined;
+  name?: string | undefined;
   ['redhat.id']?: string | undefined;
   ['containers.bootc']?: '0' | '1' | undefined;
+  ['ostree.bootable']?: string | undefined;
 };
 
 export type PodmanImageInfo = {
+  Architecture: string;
   Labels?: PodmanLabels | undefined;
   Names?: string[] | undefined;
 };
 
 export type ValidatedPodmanImage = {
+  Architecture: string;
   Labels: PodmanLabels;
   Names: string[];
 };

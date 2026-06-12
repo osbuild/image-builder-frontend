@@ -1,19 +1,24 @@
 import cockpit from 'cockpit';
 
+import { inferDistro } from './inferDistro';
+
 import { BootcDistributionItem } from '../../../hosted';
 import { PodmanImageInfo, ValidatedPodmanImage } from '../../types';
+
+const archMap: Record<string, string> = {
+  amd64: 'x86_64',
+  arm64: 'aarch64',
+  x86_64: 'x86_64',
+  aarch64: 'aarch64',
+};
+
+export const normalizeArch = (arch: string | undefined): string | undefined =>
+  arch ? archMap[arch] : undefined;
 
 export const listPodmanImages = async () => {
   try {
     const result = (await cockpit.spawn(
-      [
-        'podman',
-        'images',
-        '--filter',
-        'reference=registry.redhat.io/rhel*/rhel-bootc',
-        '--format',
-        'json',
-      ],
+      ['podman', 'images', '--format', 'json'],
       {
         // Root is required to access system-level podman images
         superuser: 'require',
@@ -45,39 +50,30 @@ export const filterBootcImages = (arch: string | undefined) => {
       return false;
     }
 
-    if (image.Labels.architecture !== arch) {
+    const filterArch = normalizeArch(arch);
+    const imageArch = normalizeArch(image.Architecture);
+    if (!arch || !imageArch || imageArch !== filterArch) {
       return false;
     }
 
-    // just include rhel bootable containers for now
-    if (!('redhat.id' in image.Labels)) {
-      return false;
-    }
+    const isBootc =
+      image.Labels['containers.bootc'] === '1' ||
+      image.Labels['ostree.bootable'] === 'true';
 
-    return (
-      'containers.bootc' in image.Labels &&
-      image.Labels['containers.bootc'] === '1'
-    );
+    return isBootc;
   };
 };
 
-export const toBootcDistro = (
-  image: ValidatedPodmanImage,
-): BootcDistributionItem => {
-  // at the moment we're filtering out all non-rhel image mode
-  // images so we're fine to assume the distro as being a rhel
-  // variant. We'll have to re-think this a little bit later on
-  const d = `rhel-${image.Labels.version}`;
+export const toBootcDistro = () => {
+  return (image: ValidatedPodmanImage): BootcDistributionItem => {
+    const { distro, name } = inferDistro(image);
 
-  return {
-    arch: image.Labels.architecture,
-    distro: d,
-    reference: image.Names[0],
-    // Align with the hosted API naming pattern
-    name: `Red Hat Enterprise Linux (RHEL) ${image.Labels.version}`,
-    // we're hardcoding the image type in here
-    // because this is the only target we support
-    // on-prem at the moment
-    type: 'guest-image',
+    return {
+      arch: normalizeArch(image.Architecture) ?? '',
+      distro,
+      reference: image.Names[0],
+      name,
+      type: 'guest-image',
+    };
   };
 };
