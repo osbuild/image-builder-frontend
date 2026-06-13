@@ -1,4 +1,5 @@
 import { type OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
+import { getHostArch } from '@/Utilities/getHostInfo';
 
 import {
   filterBootcImages,
@@ -26,14 +27,19 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
     // when consumers pass different optional params (e.g. distro).
     serializeQueryArgs: ({ queryArgs }) => ({ arch: queryArgs.arch }),
     queryFn: onPremQueryHandler(async ({ queryArgs: { arch } }) => {
-      const result = await listPodmanImages();
+      const [result, hostArch] = await Promise.all([
+        listPodmanImages(),
+        getHostArch().catch(() => undefined),
+      ]);
       const parsed = parseJsonUnsafe<PodmanImageInfo[]>(result);
 
       if (!Array.isArray(parsed)) {
         throw new Error('Unexpected podman images output');
       }
 
-      return parsed.filter(filterBootcImages(arch)).map(toBootcDistro());
+      return parsed
+        .filter(filterBootcImages(arch, hostArch))
+        .map(toBootcDistro(hostArch));
     }),
   }),
   getArchitectures: builder.query<

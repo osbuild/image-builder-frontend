@@ -146,4 +146,10 @@ describe('toBootcDistro', () => {
       type: 'guest-image',
     });
   });
+
+  it('falls back to hostArch when image Architecture is empty', () => {
+    const result = toBootcDistro('x86_64')(makeImage({}, undefined, ''));
+
+    expect(result.arch).toBe('x86_64');
+  });
 });

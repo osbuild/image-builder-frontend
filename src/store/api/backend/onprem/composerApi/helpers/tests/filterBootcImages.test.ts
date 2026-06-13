@@ -134,4 +134,19 @@ describe('filterBootcImages', () => {
 
     expect(predicate(image)).toBe(false);
   });
+
+  it('falls back to hostArch when image Architecture is empty', () => {
+    const predicate = filterBootcImages('x86_64', 'x86_64');
+    expect(predicate(makeImage({ Architecture: '' }))).toBe(true);
+  });
+
+  it('rejects when image Architecture is empty and hostArch does not match filter', () => {
+    const predicate = filterBootcImages('aarch64', 'x86_64');
+    expect(predicate(makeImage({ Architecture: '' }))).toBe(false);
+  });
+
+  it('rejects when image Architecture is empty and no hostArch provided', () => {
+    const predicate = filterBootcImages('x86_64');
+    expect(predicate(makeImage({ Architecture: '' }))).toBe(false);
+  });
 });

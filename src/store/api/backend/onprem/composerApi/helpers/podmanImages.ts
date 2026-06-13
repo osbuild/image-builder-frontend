@@ -37,11 +37,11 @@ export const listPodmanImages = async () => {
   }
 };
 
-export const filterBootcImages = (arch: string | undefined) => {
+export const filterBootcImages = (
+  arch: string | undefined,
+  hostArch?: string,
+) => {
   return (image: PodmanImageInfo): image is ValidatedPodmanImage => {
-    // we use the names to get the full image reference,
-    // if this is empty, there isn't really a fallback,
-    // so we should just filter this item out
     if (!image.Names?.length) {
       return false;
     }
@@ -51,8 +51,9 @@ export const filterBootcImages = (arch: string | undefined) => {
     }
 
     const filterArch = normalizeArch(arch);
-    const imageArch = normalizeArch(image.Architecture);
-    if (!arch || !imageArch || imageArch !== filterArch) {
+    const imageArch =
+      normalizeArch(image.Architecture) ?? normalizeArch(hostArch);
+    if (!filterArch || !imageArch || imageArch !== filterArch) {
       return false;
     }
 
@@ -64,12 +65,12 @@ export const filterBootcImages = (arch: string | undefined) => {
   };
 };
 
-export const toBootcDistro = () => {
+export const toBootcDistro = (hostArch?: string) => {
   return (image: ValidatedPodmanImage): BootcDistributionItem => {
     const { distro, name } = inferDistro(image);
 
     return {
-      arch: normalizeArch(image.Architecture) ?? '',
+      arch: normalizeArch(image.Architecture) ?? normalizeArch(hostArch) ?? '',
       distro,
       reference: image.Names[0],
       name,
