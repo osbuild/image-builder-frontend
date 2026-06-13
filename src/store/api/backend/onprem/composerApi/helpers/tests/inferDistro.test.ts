@@ -27,7 +27,7 @@ describe('inferDistro', () => {
       });
     });
 
-    it('returns rhel-unknown when redhat.id is present but version is missing', () => {
+    it('returns rhel-unknown when redhat.id is present but version is missing and tag is not numeric', () => {
       const image = makeImage({ 'redhat.id': 'rhel' }, [
         'registry.redhat.io/rhel10/rhel-bootc:latest',
       ]);
@@ -35,6 +35,17 @@ describe('inferDistro', () => {
       expect(inferDistro(image)).toEqual({
         distro: 'rhel-unknown',
         name: 'Red Hat Enterprise Linux (RHEL) unknown',
+      });
+    });
+
+    it('extracts version from tag when redhat.id is present but version label is missing', () => {
+      const image = makeImage({ 'redhat.id': 'rhel' }, [
+        'registry.redhat.io/rhel10/rhel-bootc:10.0',
+      ]);
+
+      expect(inferDistro(image)).toEqual({
+        distro: 'rhel-10.0',
+        name: 'Red Hat Enterprise Linux (RHEL) 10.0',
       });
     });
 
@@ -97,14 +108,23 @@ describe('inferDistro', () => {
       });
     });
 
-    it('returns fedora without version when version is missing', () => {
+    it('extracts version from tag when version label is missing', () => {
+      const image = makeImage({}, ['quay.io/fedora/fedora-bootc:44']);
+
+      expect(inferDistro(image)).toEqual({
+        distro: 'fedora-44',
+        name: 'Fedora 44',
+      });
+    });
+
+    it('shows reference in brackets when tag is not version-like', () => {
       const image = makeImage({ name: 'Fedora Linux' }, [
         'quay.io/fedora/fedora-bootc:latest',
       ]);
 
       expect(inferDistro(image)).toEqual({
         distro: 'fedora',
-        name: 'Fedora',
+        name: 'Fedora (quay.io/fedora/fedora-bootc:latest)',
       });
     });
   });
@@ -132,14 +152,25 @@ describe('inferDistro', () => {
       });
     });
 
-    it('returns centos without version when version is missing', () => {
+    it('extracts version from stream tag when version label is missing', () => {
+      const image = makeImage({ name: 'CentOS Stream' }, [
+        'quay.io/centos-bootc/centos-bootc:stream10',
+      ]);
+
+      expect(inferDistro(image)).toEqual({
+        distro: 'centos-10',
+        name: 'CentOS Stream 10',
+      });
+    });
+
+    it('shows reference in brackets when tag is not version-like', () => {
       const image = makeImage({ name: 'CentOS Stream' }, [
         'quay.io/centos-bootc/centos-bootc:latest',
       ]);
 
       expect(inferDistro(image)).toEqual({
         distro: 'centos',
-        name: 'CentOS Stream',
+        name: 'CentOS Stream (quay.io/centos-bootc/centos-bootc:latest)',
       });
     });
   });
