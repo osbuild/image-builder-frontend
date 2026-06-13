@@ -73,7 +73,7 @@ const ImageOutputStep = () => {
           Learn more about <DocumentationButton />.
         </Content>
       </Content>
-      {!(distribution as string).startsWith('fedora') && <BlueprintMode />}
+      <BlueprintMode />
       {isImageMode && <ImageSourceSelect />}
       {!isImageMode && (
         <>
