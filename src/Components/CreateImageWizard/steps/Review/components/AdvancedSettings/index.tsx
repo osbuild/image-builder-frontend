@@ -55,7 +55,11 @@ const AdvancedSettingsOverview = ({
             oscapServices={oscapServices}
           />
           <Firewall shouldHide={restrictions.firewall.shouldHide} />
-          <Users shouldHide={restrictions.users.shouldHide} />
+          <Users
+            shouldHide={
+              restrictions.users.shouldHide || restrictions.users.required
+            }
+          />
           <UserGroups shouldHide={restrictions.users.shouldHide} />
           <Firstboot shouldHide={restrictions.firstBoot.shouldHide} />
         </ReviewList>

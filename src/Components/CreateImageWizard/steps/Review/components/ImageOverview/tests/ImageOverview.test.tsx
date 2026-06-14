@@ -3,11 +3,28 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { RHEL_10, X86_64 } from '@/constants';
+import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { renderWithRedux } from '@/test/testUtils';
 
+import { adminUser } from '../../AdvancedSettings/tests/mocks';
+import { createDefaultRestrictions } from '../../tests/helpers';
 import ImageOverview from '../index';
 
+vi.mock('@/store/api/distributions', async () => {
+  const actual = await vi.importActual('@/store/api/distributions');
+  return {
+    ...actual,
+    useCustomizationRestrictions: vi.fn(),
+  };
+});
+
 describe('ImageOverview', () => {
+  beforeEach(() => {
+    vi.mocked(useCustomizationRestrictions).mockReturnValue({
+      restrictions: createDefaultRestrictions(),
+    });
+  });
+
   test('renders the card with image overview title', () => {
     renderWithRedux(<ImageOverview />);
 
@@ -228,6 +245,37 @@ describe('ImageOverview', () => {
       expect(
         screen.queryByText('Miscellaneous formats'),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Users', () => {
+    test('renders users section when users are required', () => {
+      vi.mocked(useCustomizationRestrictions).mockReturnValue({
+        restrictions: createDefaultRestrictions({
+          users: { required: true },
+        }),
+      });
+
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['guest-image'],
+        users: [adminUser],
+      });
+
+      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getByText('admin')).toBeInTheDocument();
+    });
+
+    test('does not render users section when users are not required', () => {
+      vi.mocked(useCustomizationRestrictions).mockReturnValue({
+        restrictions: createDefaultRestrictions(),
+      });
+
+      renderWithRedux(<ImageOverview />, {
+        imageTypes: ['guest-image'],
+        users: [adminUser],
+      });
+
+      expect(screen.queryByText('Users')).not.toBeInTheDocument();
     });
   });
 });

@@ -4,6 +4,7 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { ON_PREM_RELEASES, RELEASES } from '@/constants';
 import { useTargetEnvironmentCategories } from '@/Hooks';
+import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
@@ -18,6 +19,7 @@ import {
 
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
+import { Users } from '../AdvancedSettings/components';
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 
 const ImageOverview = () => {
@@ -29,8 +31,12 @@ const ImageOverview = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
 
+  const environments = useAppSelector(selectImageTypes);
   const { publicClouds, privateClouds, miscFormats } =
-    useTargetEnvironmentCategories(useAppSelector(selectImageTypes));
+    useTargetEnvironmentCategories(environments);
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: environments,
+  });
 
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
@@ -70,6 +76,11 @@ const ImageOverview = () => {
           <PrivateClouds environments={privateClouds} />
           <PublicClouds environments={publicClouds} />
           <MiscFormats environments={miscFormats} />
+          <Users
+            shouldHide={
+              restrictions.users.shouldHide || !restrictions.users.required
+            }
+          />
         </ReviewList>
       </CardBody>
     </Card>

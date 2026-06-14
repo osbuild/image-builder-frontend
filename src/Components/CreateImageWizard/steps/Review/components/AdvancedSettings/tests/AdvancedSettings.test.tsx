@@ -901,6 +901,34 @@ echo 'Hello there, General Kenobi!'`;
       expect(screen.getByText('guest')).toBeInTheDocument();
       expect(screen.getAllByText('*****')).toHaveLength(3);
     });
+
+    test('renders users section when users are not required', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser],
+        },
+      );
+
+      expect(screen.getByText('Users')).toBeInTheDocument();
+    });
+
+    test('does not render users section when users are required', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview
+          restrictions={createDefaultRestrictions({
+            users: { required: true },
+          })}
+        />,
+        {
+          imageTypes: ['guest-image'],
+          users: [adminUser],
+        },
+      );
+
+      expect(screen.queryByText('Users')).not.toBeInTheDocument();
+    });
   });
 
   describe('Firewall', () => {
