@@ -34,7 +34,17 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'automatic',
+            filesystem: {
+              mode: 'automatic',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                partitions: [],
+                type: undefined,
+              },
+              fileSystem: { partitions: [] },
+              partitioningMode: undefined,
+            },
           },
         );
 
@@ -48,7 +58,17 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'automatic',
+            filesystem: {
+              mode: 'automatic',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                partitions: [],
+                type: undefined,
+              },
+              fileSystem: { partitions: [] },
+              partitioningMode: undefined,
+            },
           },
         );
 
@@ -66,9 +86,18 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'basic',
-            fileSystem: {
-              partitions: basicPartitions.singleRoot,
+            filesystem: {
+              mode: 'basic',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                partitions: [],
+                type: undefined,
+              },
+              fileSystem: {
+                partitions: basicPartitions.singleRoot,
+              },
+              partitioningMode: undefined,
             },
           },
         );
@@ -83,9 +112,18 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'basic',
-            fileSystem: {
-              partitions: basicPartitions.rootAndHome,
+            filesystem: {
+              mode: 'basic',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                partitions: [],
+                type: undefined,
+              },
+              fileSystem: {
+                partitions: basicPartitions.rootAndHome,
+              },
+              partitioningMode: undefined,
             },
           },
         );
@@ -100,9 +138,18 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'basic',
-            fileSystem: {
-              partitions: basicPartitions.rootAndHome,
+            filesystem: {
+              mode: 'basic',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                partitions: [],
+                type: undefined,
+              },
+              fileSystem: {
+                partitions: basicPartitions.rootAndHome,
+              },
+              partitioningMode: undefined,
             },
           },
         );
@@ -120,12 +167,16 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'advanced',
-            disk: {
-              minsize: '',
-              unit: 'GiB',
-              type: 'gpt',
-              partitions: advancedPartitions.singlePlain,
+            filesystem: {
+              mode: 'advanced',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                type: 'gpt',
+                partitions: advancedPartitions.singlePlain,
+              },
+              fileSystem: { partitions: [] },
+              partitioningMode: undefined,
             },
           },
         );
@@ -140,12 +191,16 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'advanced',
-            disk: {
-              minsize: '',
-              unit: 'GiB',
-              type: 'gpt',
-              partitions: advancedPartitions.withLvm,
+            filesystem: {
+              mode: 'advanced',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                type: 'gpt',
+                partitions: advancedPartitions.withLvm,
+              },
+              fileSystem: { partitions: [] },
+              partitioningMode: undefined,
             },
           },
         );
@@ -161,12 +216,16 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'advanced',
-            disk: {
-              minsize: '',
-              unit: 'GiB',
-              type: 'gpt',
-              partitions: advancedPartitions.withLvm,
+            filesystem: {
+              mode: 'advanced',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                type: 'gpt',
+                partitions: advancedPartitions.withLvm,
+              },
+              fileSystem: { partitions: [] },
+              partitioningMode: undefined,
             },
           },
         );
@@ -185,9 +244,18 @@ describe('AdvancedSettingsOverview', () => {
           />,
           {
             imageTypes: ['guest-image'],
-            fscMode: 'basic',
-            fileSystem: {
-              partitions: basicPartitions.smallPartition,
+            filesystem: {
+              mode: 'basic',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                partitions: [],
+                type: undefined,
+              },
+              fileSystem: {
+                partitions: basicPartitions.smallPartition,
+              },
+              partitioningMode: undefined,
             },
           },
         );

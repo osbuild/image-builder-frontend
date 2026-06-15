@@ -54,32 +54,35 @@ describe('wizardSlice core reducers', () => {
     it('should reset partitions to empty arrays', () => {
       const stateWithPartitions: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [
-            { id: '1', mountpoint: '/', min_size: '10', unit: 'GiB' },
-          ],
-        },
-        disk: {
-          minsize: '50',
-          unit: 'GiB',
-          partitions: [
-            {
-              id: '2',
-              mountpoint: '/home',
-              fs_type: 'xfs',
-              min_size: '20',
-              unit: 'GiB',
-              type: 'plain',
-            },
-          ],
-          type: 'gpt',
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [
+              { id: '1', mountpoint: '/', min_size: '10', unit: 'GiB' },
+            ],
+          },
+          disk: {
+            minsize: '50',
+            unit: 'GiB',
+            partitions: [
+              {
+                id: '2',
+                mountpoint: '/home',
+                fs_type: 'xfs',
+                min_size: '20',
+                unit: 'GiB',
+                type: 'plain',
+              },
+            ],
+            type: 'gpt',
+          },
         },
       };
 
       const result = wizardReducer(stateWithPartitions, initializeWizard());
 
-      expect(result.fileSystem.partitions).toEqual([]);
-      expect(result.disk.partitions).toEqual([]);
+      expect(result.filesystem.fileSystem.partitions).toEqual([]);
+      expect(result.filesystem.disk.partitions).toEqual([]);
     });
   });
 

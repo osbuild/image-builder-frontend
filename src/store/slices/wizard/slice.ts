@@ -163,12 +163,14 @@ export type wizardState = {
     profileID: string | undefined;
     policyTitle: string | undefined;
   };
-  fscMode: FscModeType;
-  disk: FscDisk;
-  fileSystem: {
-    partitions: FilesystemPartition[];
+  filesystem: {
+    mode: FscModeType;
+    disk: FscDisk;
+    fileSystem: {
+      partitions: FilesystemPartition[];
+    };
+    partitioningMode: PartitioningModeType;
   };
-  partitioning_mode: PartitioningModeType;
   snapshotting: {
     useLatest: boolean;
     snapshotDate: string;
@@ -274,17 +276,19 @@ export const initialState: wizardState = {
     profileID: undefined,
     policyTitle: undefined,
   },
-  fscMode: 'automatic',
-  disk: {
-    minsize: '',
-    unit: 'GiB',
-    partitions: [],
-    type: undefined,
+  filesystem: {
+    mode: 'automatic',
+    disk: {
+      minsize: '',
+      unit: 'GiB',
+      partitions: [],
+      type: undefined,
+    },
+    fileSystem: {
+      partitions: [],
+    },
+    partitioningMode: undefined,
   },
-  fileSystem: {
-    partitions: [],
-  },
-  partitioning_mode: undefined,
   snapshotting: {
     useLatest: true,
     snapshotDate: '',
@@ -480,31 +484,31 @@ export const selectComplianceType = (state: RootState) => {
 };
 
 export const selectFscMode = (state: RootState) => {
-  return state.wizard.fscMode;
+  return state.wizard.filesystem.mode;
 };
 
 export const selectDiskType = (state: RootState) => {
-  return state.wizard.disk.type;
+  return state.wizard.filesystem.disk.type;
 };
 
 export const selectDiskMinsize = (state: RootState) => {
-  return state.wizard.disk.minsize;
+  return state.wizard.filesystem.disk.minsize;
 };
 
 export const selectDiskUnit = (state: RootState) => {
-  return state.wizard.disk.unit;
+  return state.wizard.filesystem.disk.unit;
 };
 
 export const selectDiskPartitions = (state: RootState) => {
-  return state.wizard.disk.partitions;
+  return state.wizard.filesystem.disk.partitions;
 };
 
 export const selectFilesystemPartitions = (state: RootState) => {
-  return state.wizard.fileSystem.partitions;
+  return state.wizard.filesystem.fileSystem.partitions;
 };
 
 export const selectPartitioningMode = (state: RootState) => {
-  return state.wizard.partitioning_mode;
+  return state.wizard.filesystem.partitioningMode;
 };
 
 export const selectUseLatest = (state: RootState) => {
@@ -967,20 +971,20 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<FilesystemPartition[]>,
     ) => {
-      state.fileSystem.partitions = action.payload;
+      state.filesystem.fileSystem.partitions = action.payload;
     },
     changeFscMode: (state, action: PayloadAction<FscModeType>) => {
-      const currentMode = state.fscMode;
+      const currentMode = state.filesystem.mode;
 
       // Only trigger if mode is being *changed*
       if (currentMode !== action.payload) {
-        state.fscMode = action.payload;
+        state.filesystem.mode = action.payload;
         switch (action.payload) {
           case 'automatic':
-            state.fileSystem.partitions = [];
+            state.filesystem.fileSystem.partitions = [];
             break;
           case 'basic':
-            state.fileSystem.partitions = [
+            state.filesystem.fileSystem.partitions = [
               {
                 id: uuidv4(),
                 mountpoint: '/',
@@ -990,7 +994,7 @@ export const wizardSlice = createSlice({
             ];
             break;
           case 'advanced':
-            state.disk.partitions = [
+            state.filesystem.disk.partitions = [
               {
                 id: uuidv4(),
                 mountpoint: '/',
@@ -1005,10 +1009,10 @@ export const wizardSlice = createSlice({
       }
     },
     clearPartitions: (state) => {
-      const currentMode = state.fscMode;
+      const currentMode = state.filesystem.mode;
 
       if (currentMode === 'basic') {
-        state.fileSystem.partitions = [
+        state.filesystem.fileSystem.partitions = [
           {
             id: uuidv4(),
             mountpoint: '/',
@@ -1020,28 +1024,28 @@ export const wizardSlice = createSlice({
     },
     addPartition: (state, action: PayloadAction<FilesystemPartition>) => {
       // Duplicate partitions are allowed temporarily, the wizard is responsible for final validation
-      state.fileSystem.partitions.push(action.payload);
+      state.filesystem.fileSystem.partitions.push(action.payload);
     },
     removePartition: (
       state,
       action: PayloadAction<FilesystemPartition['id']>,
     ) => {
-      const index = state.fileSystem.partitions.findIndex(
+      const index = state.filesystem.fileSystem.partitions.findIndex(
         (partition) => partition.id === action.payload,
       );
       if (index !== -1) {
-        state.fileSystem.partitions.splice(index, 1);
+        state.filesystem.fileSystem.partitions.splice(index, 1);
       }
     },
     removePartitionByMountpoint: (
       state,
       action: PayloadAction<FilesystemPartition['mountpoint']>,
     ) => {
-      const index = state.fileSystem.partitions.findIndex(
+      const index = state.filesystem.fileSystem.partitions.findIndex(
         (partition) => partition.mountpoint === action.payload,
       );
       if (index !== -1) {
-        state.fileSystem.partitions.splice(index, 1);
+        state.filesystem.fileSystem.partitions.splice(index, 1);
       }
     },
     changePartitionMountpoint: (
@@ -1053,19 +1057,23 @@ export const wizardSlice = createSlice({
       }>,
     ) => {
       const { id, mountpoint, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
-        (partition) => partition.id === id,
-      );
+      const partitionIndex = state.filesystem[
+        customization
+      ].partitions.findIndex((partition) => partition.id === id);
 
       if (partitionIndex !== -1) {
-        if ('mountpoint' in state[customization].partitions[partitionIndex]) {
-          state[customization].partitions[partitionIndex].mountpoint =
-            mountpoint;
+        if (
+          'mountpoint' in
+          state.filesystem[customization].partitions[partitionIndex]
+        ) {
+          state.filesystem[customization].partitions[
+            partitionIndex
+          ].mountpoint = mountpoint;
           return;
         }
       }
 
-      for (const partition of state.disk.partitions) {
+      for (const partition of state.filesystem.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
             (lv) => lv.id === id,
@@ -1087,15 +1095,15 @@ export const wizardSlice = createSlice({
       }>,
     ) => {
       const { id, unit, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
-        (partition) => partition.id === id,
-      );
+      const partitionIndex = state.filesystem[
+        customization
+      ].partitions.findIndex((partition) => partition.id === id);
       if (partitionIndex !== -1) {
-        state[customization].partitions[partitionIndex].unit = unit;
+        state.filesystem[customization].partitions[partitionIndex].unit = unit;
         return;
       }
 
-      for (const partition of state.disk.partitions) {
+      for (const partition of state.filesystem.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
             (lv) => lv.id === id,
@@ -1116,15 +1124,16 @@ export const wizardSlice = createSlice({
       }>,
     ) => {
       const { id, min_size, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
-        (partition) => partition.id === id,
-      );
+      const partitionIndex = state.filesystem[
+        customization
+      ].partitions.findIndex((partition) => partition.id === id);
       if (partitionIndex !== -1) {
-        state[customization].partitions[partitionIndex].min_size = min_size;
+        state.filesystem[customization].partitions[partitionIndex].min_size =
+          min_size;
         return;
       }
 
-      for (const partition of state.disk.partitions) {
+      for (const partition of state.filesystem.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
             (lv) => lv.id === id,
@@ -1145,18 +1154,19 @@ export const wizardSlice = createSlice({
       }>,
     ) => {
       const { id, fs_type, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
-        (partition) => partition.id === id,
-      );
+      const partitionIndex = state.filesystem[
+        customization
+      ].partitions.findIndex((partition) => partition.id === id);
       if (
         partitionIndex !== -1 &&
-        'fs_type' in state[customization].partitions[partitionIndex]
+        'fs_type' in state.filesystem[customization].partitions[partitionIndex]
       ) {
-        state[customization].partitions[partitionIndex].fs_type = fs_type;
+        state.filesystem[customization].partitions[partitionIndex].fs_type =
+          fs_type;
         return;
       }
 
-      for (const partition of state.disk.partitions) {
+      for (const partition of state.filesystem.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
             (lv) => lv.id === id,
@@ -1177,18 +1187,18 @@ export const wizardSlice = createSlice({
       }>,
     ) => {
       const { id, name, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
-        (partition) => partition.id === id,
-      );
+      const partitionIndex = state.filesystem[
+        customization
+      ].partitions.findIndex((partition) => partition.id === id);
       if (
         partitionIndex !== -1 &&
-        'name' in state[customization].partitions[partitionIndex]
+        'name' in state.filesystem[customization].partitions[partitionIndex]
       ) {
-        state[customization].partitions[partitionIndex].name = name;
+        state.filesystem[customization].partitions[partitionIndex].name = name;
         return;
       }
 
-      for (const partition of state.disk.partitions) {
+      for (const partition of state.filesystem.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
             (lv) => lv.id === id,
@@ -1201,33 +1211,33 @@ export const wizardSlice = createSlice({
       }
     },
     changeDiskMinsize: (state, action: PayloadAction<string>) => {
-      state.disk.minsize = action.payload;
+      state.filesystem.disk.minsize = action.payload;
     },
     changeDiskUnit: (state, action: PayloadAction<Units>) => {
-      state.disk.unit = action.payload;
+      state.filesystem.disk.unit = action.payload;
     },
     changeDiskType: (
       state,
       action: PayloadAction<'gpt' | 'dos' | undefined>,
     ) => {
-      state.disk.type = action.payload;
+      state.filesystem.disk.type = action.payload;
     },
     addDiskPartition: (state, action: PayloadAction<DiskPartition>) => {
-      state.disk.partitions.push(action.payload);
+      state.filesystem.disk.partitions.push(action.payload);
     },
     removeDiskPartition: (
       state,
       action: PayloadAction<DiskPartition['id']>,
     ) => {
-      const index = state.disk.partitions.findIndex(
+      const index = state.filesystem.disk.partitions.findIndex(
         (partition) => partition.id === action.payload,
       );
       if (index !== -1) {
-        state.disk.partitions.splice(index, 1);
+        state.filesystem.disk.partitions.splice(index, 1);
         return;
       }
 
-      for (const partition of state.disk.partitions) {
+      for (const partition of state.filesystem.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
             (lv) => lv.id === action.payload,
@@ -1244,11 +1254,11 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{ id: string; min_size: string }>,
     ) => {
       const { id, min_size } = action.payload;
-      const partitionIndex = state.disk.partitions.findIndex(
+      const partitionIndex = state.filesystem.disk.partitions.findIndex(
         (partition) => partition.id === id,
       );
       if (partitionIndex !== -1) {
-        state.disk.partitions[partitionIndex].min_size = min_size;
+        state.filesystem.disk.partitions[partitionIndex].min_size = min_size;
       }
     },
     changeDiskPartitionName: (
@@ -1256,14 +1266,14 @@ export const wizardSlice = createSlice({
       action: PayloadAction<{ id: string; name: string }>,
     ) => {
       const { id, name } = action.payload;
-      const partitionIndex = state.disk.partitions.findIndex(
+      const partitionIndex = state.filesystem.disk.partitions.findIndex(
         (partition) => partition.id === id,
       );
       if (
         partitionIndex !== -1 &&
-        'name' in state.disk.partitions[partitionIndex]
+        'name' in state.filesystem.disk.partitions[partitionIndex]
       ) {
-        state.disk.partitions[partitionIndex].name = name;
+        state.filesystem.disk.partitions[partitionIndex].name = name;
       }
     },
     addLogicalVolumeToVolumeGroup: (
@@ -1274,14 +1284,14 @@ export const wizardSlice = createSlice({
       }>,
     ) => {
       const { vgId, logicalVolume } = action.payload;
-      const partitionIndex = state.disk.partitions.findIndex(
+      const partitionIndex = state.filesystem.disk.partitions.findIndex(
         (partition) => partition.id === vgId,
       );
       if (
         partitionIndex !== -1 &&
-        'logical_volumes' in state.disk.partitions[partitionIndex]
+        'logical_volumes' in state.filesystem.disk.partitions[partitionIndex]
       ) {
-        state.disk.partitions[partitionIndex].logical_volumes.push(
+        state.filesystem.disk.partitions[partitionIndex].logical_volumes.push(
           logicalVolume,
         );
       }
@@ -1290,7 +1300,7 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<PartitioningModeType>,
     ) => {
-      state.partitioning_mode = action.payload;
+      state.filesystem.partitioningMode = action.payload;
     },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.snapshotting.snapshotDate === '') {
