@@ -553,9 +553,11 @@ function commonRequestToState(
     imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
     isoPayloadReference: request.bootc?.iso_payload_reference,
     imageTypes: request.image_requests.map((image) => image.image_type),
-    azure: azureTargetOptions(azureUploadOptions),
-    gcp: gcpTargetOptions(gcpUploadOptions),
-    aws: awsTargetOptions(awsUploadOptions),
+    cloudProviders: {
+      azure: azureTargetOptions(azureUploadOptions),
+      gcp: gcpTargetOptions(gcpUploadOptions),
+      aws: awsTargetOptions(awsUploadOptions),
+    },
     snapshotting: {
       useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
       snapshotDate: snapshot_date,

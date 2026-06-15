@@ -84,9 +84,12 @@ describe('GCP Component', () => {
 
     test('changes label based on account type', async () => {
       renderGcpStep({
-        gcp: {
-          accountType: 'domain',
-          email: '',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'domain',
+            email: '',
+          },
         },
       });
 
@@ -100,11 +103,15 @@ describe('GCP Component', () => {
       const { store } = renderGcpStep();
       const user = createUser();
 
-      expect(store.getState().wizard.gcp.accountType).toBe('user');
+      expect(store.getState().wizard.cloudProviders.gcp.accountType).toBe(
+        'user',
+      );
 
       await selectAccountType(user, 'Service account');
 
-      expect(store.getState().wizard.gcp.accountType).toBe('serviceAccount');
+      expect(store.getState().wizard.cloudProviders.gcp.accountType).toBe(
+        'serviceAccount',
+      );
     });
 
     test('selects Google account type', async () => {
@@ -178,9 +185,12 @@ describe('GCP Component', () => {
 
     test('validates domain for domain account type', async () => {
       renderGcpStep({
-        gcp: {
-          accountType: 'domain',
-          email: '',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'domain',
+            email: '',
+          },
         },
       });
       const user = createUser();
@@ -195,9 +205,12 @@ describe('GCP Component', () => {
 
     test('displays domain error for invalid domain', async () => {
       renderGcpStep({
-        gcp: {
-          accountType: 'domain',
-          email: '',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'domain',
+            email: '',
+          },
         },
       });
       const user = createUser();
@@ -226,9 +239,12 @@ describe('GCP Component', () => {
 
     test('renders with pre-populated values', async () => {
       renderGcpStep({
-        gcp: {
-          accountType: 'serviceAccount',
-          email: 'service@example.com',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'serviceAccount',
+            email: 'service@example.com',
+          },
         },
       });
 
@@ -242,18 +258,23 @@ describe('GCP Component', () => {
       const { store } = renderGcpStep();
       const user = createUser();
 
-      expect(store.getState().wizard.gcp.email).toBe('');
+      expect(store.getState().wizard.cloudProviders.gcp.email).toBe('');
 
       await fillPrincipalValue(user, 'test@example.com');
 
-      expect(store.getState().wizard.gcp.email).toBe('test@example.com');
+      expect(store.getState().wizard.cloudProviders.gcp.email).toBe(
+        'test@example.com',
+      );
     });
 
     test('clears principal when clear button is clicked', async () => {
       const { store } = renderGcpStep({
-        gcp: {
-          accountType: 'user',
-          email: 'test@example.com',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'user',
+            email: 'test@example.com',
+          },
         },
       });
       const user = createUser();
@@ -263,7 +284,7 @@ describe('GCP Component', () => {
       });
       await clickWithWait(user, clearButton);
 
-      expect(store.getState().wizard.gcp.email).toBe('');
+      expect(store.getState().wizard.cloudProviders.gcp.email).toBe('');
     });
   });
 });
@@ -271,9 +292,12 @@ describe('GCP Component', () => {
 describe('GCP CreateBlueprintRequest payload', () => {
   test('generates correct payload with Google account', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'user',
-        email: 'test@gmail.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'user',
+          email: 'test@gmail.com',
+        },
       },
     });
 
@@ -301,9 +325,12 @@ describe('GCP CreateBlueprintRequest payload', () => {
 
   test('generates correct payload with Service account', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'serviceAccount',
-        email: 'test@gmail.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'serviceAccount',
+          email: 'test@gmail.com',
+        },
       },
     });
 
@@ -320,9 +347,12 @@ describe('GCP CreateBlueprintRequest payload', () => {
 
   test('generates correct payload with Google group', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'group',
-        email: 'test@gmail.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'group',
+          email: 'test@gmail.com',
+        },
       },
     });
 
@@ -339,9 +369,12 @@ describe('GCP CreateBlueprintRequest payload', () => {
 
   test('generates correct payload with domain', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'domain',
-        email: 'example.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'domain',
+          email: 'example.com',
+        },
       },
     });
 
@@ -358,9 +391,12 @@ describe('GCP CreateBlueprintRequest payload', () => {
 
   test('sets upload_request type to gcp', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'user',
-        email: 'test@example.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'user',
+          email: 'test@example.com',
+        },
       },
     });
 
@@ -375,9 +411,12 @@ describe('GCP CreateBlueprintRequest payload', () => {
 
   test('sets architecture to x86_64 by default', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'user',
-        email: 'test@example.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'user',
+          email: 'test@example.com',
+        },
       },
     });
 
@@ -391,9 +430,12 @@ describe('GCP CreateBlueprintRequest payload', () => {
 
   test('omits subscription customization when registration is register-later', () => {
     const store = createStoreWithGcpState({
-      gcp: {
-        accountType: 'user',
-        email: 'test@example.com',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        gcp: {
+          accountType: 'user',
+          email: 'test@example.com',
+        },
       },
     });
 
@@ -417,6 +459,8 @@ describe('Form submission', () => {
     await typeWithWait(user, principalInput, 'user@example.com{Enter}');
 
     expect(principalInput).toBeInTheDocument();
-    expect(store.getState().wizard.gcp.email).toBe('user@example.com');
+    expect(store.getState().wizard.cloudProviders.gcp.email).toBe(
+      'user@example.com',
+    );
   });
 });

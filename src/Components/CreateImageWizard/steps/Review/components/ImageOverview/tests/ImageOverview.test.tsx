@@ -4,6 +4,7 @@ import { screen } from '@testing-library/react';
 
 import { RHEL_10, X86_64 } from '@/constants';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
+import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { adminUser } from '../../AdvancedSettings/tests/mocks';
@@ -125,11 +126,14 @@ describe('ImageOverview', () => {
     test('displays AWS details when selected', () => {
       renderWithRedux(<ImageOverview />, {
         imageTypes: ['aws'],
-        aws: {
-          accountId: '123456789012',
-          shareMethod: 'manual',
-          source: undefined,
-          region: 'us-west-2',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          aws: {
+            accountId: '123456789012',
+            shareMethod: 'manual',
+            source: undefined,
+            region: 'us-west-2',
+          },
         },
       });
 
@@ -144,9 +148,12 @@ describe('ImageOverview', () => {
     test('displays GCP details when selected', () => {
       renderWithRedux(<ImageOverview />, {
         imageTypes: ['gcp'],
-        gcp: {
-          accountType: 'user',
-          email: 'test@example.com',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'user',
+            email: 'test@example.com',
+          },
         },
       });
 
@@ -162,11 +169,14 @@ describe('ImageOverview', () => {
     test('displays Azure details when selected', () => {
       renderWithRedux(<ImageOverview />, {
         imageTypes: ['azure'],
-        azure: {
-          tenantId: 'tenant-123',
-          subscriptionId: 'sub-456',
-          resourceGroup: 'my-resource-group',
-          hyperVGeneration: 'V2',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          azure: {
+            tenantId: 'tenant-123',
+            subscriptionId: 'sub-456',
+            resourceGroup: 'my-resource-group',
+            hyperVGeneration: 'V2',
+          },
         },
       });
 
