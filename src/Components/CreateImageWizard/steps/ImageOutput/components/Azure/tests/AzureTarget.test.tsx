@@ -253,11 +253,14 @@ describe('Azure Component', () => {
 
     test('renders with pre-populated values', async () => {
       renderAzureStep({
-        azure: {
-          tenantId: 'e4e46e25-3c82-4de8-8923-511d03cda11e',
-          subscriptionId: 'ed0768a6-ed56-4bf3-bddd-5060460810e8',
-          resourceGroup: 'test-resource-group',
-          hyperVGeneration: 'V1',
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          azure: {
+            tenantId: 'e4e46e25-3c82-4de8-8923-511d03cda11e',
+            subscriptionId: 'ed0768a6-ed56-4bf3-bddd-5060460810e8',
+            resourceGroup: 'test-resource-group',
+            hyperVGeneration: 'V1',
+          },
         },
       });
 
@@ -273,7 +276,9 @@ describe('Azure Component', () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.azure.hyperVGeneration).toBe('V2');
+      expect(
+        store.getState().wizard.cloudProviders.azure.hyperVGeneration,
+      ).toBe('V2');
 
       await openHyperVGenerationDropdown(user);
       await clickWithWait(
@@ -283,18 +288,22 @@ describe('Azure Component', () => {
         }),
       );
 
-      expect(store.getState().wizard.azure.hyperVGeneration).toBe('V1');
+      expect(
+        store.getState().wizard.cloudProviders.azure.hyperVGeneration,
+      ).toBe('V1');
     });
 
     test('updates store when tenant GUID changes', async () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.azure.tenantId).toBe(undefined);
+      expect(store.getState().wizard.cloudProviders.azure.tenantId).toBe(
+        undefined,
+      );
 
       await fillTenantGuidValue(user, 'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022');
 
-      expect(store.getState().wizard.azure.tenantId).toBe(
+      expect(store.getState().wizard.cloudProviders.azure.tenantId).toBe(
         'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022',
       );
     });
@@ -303,14 +312,16 @@ describe('Azure Component', () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.azure.subscriptionId).toBe(undefined);
+      expect(store.getState().wizard.cloudProviders.azure.subscriptionId).toBe(
+        undefined,
+      );
 
       await fillSubscriptionIdValue(
         user,
         '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
       );
 
-      expect(store.getState().wizard.azure.subscriptionId).toBe(
+      expect(store.getState().wizard.cloudProviders.azure.subscriptionId).toBe(
         '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
       );
     });
@@ -319,11 +330,13 @@ describe('Azure Component', () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.azure.resourceGroup).toBe(undefined);
+      expect(store.getState().wizard.cloudProviders.azure.resourceGroup).toBe(
+        undefined,
+      );
 
       await fillResourceGroupValue(user, 'test-resource-group');
 
-      expect(store.getState().wizard.azure.resourceGroup).toBe(
+      expect(store.getState().wizard.cloudProviders.azure.resourceGroup).toBe(
         'test-resource-group',
       );
     });
@@ -333,11 +346,14 @@ describe('Azure Component', () => {
 describe('Azure CreateBlueprintRequest payload', () => {
   test('generates correct payload with default Hyper-V generation (V2)', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-        subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
-        resourceGroup: 'testResourceGroup',
-        hyperVGeneration: 'V2',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+          subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
+          resourceGroup: 'testResourceGroup',
+          hyperVGeneration: 'V2',
+        },
       },
     });
 
@@ -368,11 +384,14 @@ describe('Azure CreateBlueprintRequest payload', () => {
 
   test('generates correct payload with Hyper-V generation V1', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-        subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
-        resourceGroup: 'testResourceGroup',
-        hyperVGeneration: 'V1',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+          subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
+          resourceGroup: 'testResourceGroup',
+          hyperVGeneration: 'V1',
+        },
       },
     });
 
@@ -396,11 +415,14 @@ describe('Azure CreateBlueprintRequest payload', () => {
 
   test('sets upload_request type to azure', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'e4e46e25-3c82-4de8-8923-511d03cda11e',
-        subscriptionId: 'ed0768a6-ed56-4bf3-bddd-5060460810e8',
-        resourceGroup: 'my-resource-group',
-        hyperVGeneration: 'V2',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'e4e46e25-3c82-4de8-8923-511d03cda11e',
+          subscriptionId: 'ed0768a6-ed56-4bf3-bddd-5060460810e8',
+          resourceGroup: 'my-resource-group',
+          hyperVGeneration: 'V2',
+        },
       },
     });
 
@@ -415,11 +437,14 @@ describe('Azure CreateBlueprintRequest payload', () => {
 
   test('defaults resource_group to empty string when undefined', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-        subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
-        resourceGroup: undefined,
-        hyperVGeneration: 'V2',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+          subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
+          resourceGroup: undefined,
+          hyperVGeneration: 'V2',
+        },
       },
     });
 
@@ -434,11 +459,14 @@ describe('Azure CreateBlueprintRequest payload', () => {
 
   test('includes all required Azure upload options', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022',
-        subscriptionId: '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
-        resourceGroup: 'production-rg',
-        hyperVGeneration: 'V2',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022',
+          subscriptionId: '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
+          resourceGroup: 'production-rg',
+          hyperVGeneration: 'V2',
+        },
       },
     });
 
@@ -458,11 +486,14 @@ describe('Azure CreateBlueprintRequest payload', () => {
 
   test('sets architecture to x86_64 by default', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-        subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
-        resourceGroup: 'testResourceGroup',
-        hyperVGeneration: 'V2',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+          subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
+          resourceGroup: 'testResourceGroup',
+          hyperVGeneration: 'V2',
+        },
       },
     });
 
@@ -476,11 +507,14 @@ describe('Azure CreateBlueprintRequest payload', () => {
 
   test('omits subscription customization when registration is register-later', () => {
     const store = createStoreWithAzureState({
-      azure: {
-        tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-        subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
-        resourceGroup: 'testResourceGroup',
-        hyperVGeneration: 'V2',
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        azure: {
+          tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+          subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
+          resourceGroup: 'testResourceGroup',
+          hyperVGeneration: 'V2',
+        },
       },
     });
 
@@ -511,7 +545,7 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(tenantInput).toBeInTheDocument();
-    expect(store.getState().wizard.azure.tenantId).toBe(
+    expect(store.getState().wizard.cloudProviders.azure.tenantId).toBe(
       'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
     );
   });
@@ -533,7 +567,7 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(subscriptionInput).toBeInTheDocument();
-    expect(store.getState().wizard.azure.subscriptionId).toBe(
+    expect(store.getState().wizard.cloudProviders.azure.subscriptionId).toBe(
       '60631143-a7dc-4d15-988b-ba83f3c99711',
     );
   });
@@ -551,7 +585,7 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(resourceGroupInput).toBeInTheDocument();
-    expect(store.getState().wizard.azure.resourceGroup).toBe(
+    expect(store.getState().wizard.cloudProviders.azure.resourceGroup).toBe(
       'test-resource-group',
     );
   });

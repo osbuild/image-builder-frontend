@@ -131,22 +131,24 @@ export type wizardState = {
     tlsCertificateAuthority: string | undefined;
     skipTlsVerification: boolean | undefined;
   };
-  aws: {
-    accountId: string;
-    shareMethod: AwsShareMethod;
-    source: V1ListSourceResponseItem | undefined;
-    sourceId?: string | undefined;
-    region?: string | undefined;
-  };
-  azure: {
-    tenantId: string | undefined;
-    subscriptionId: string | undefined;
-    resourceGroup: string | undefined;
-    hyperVGeneration: 'V1' | 'V2';
-  };
-  gcp: {
-    accountType: GcpAccountType;
-    email: string;
+  cloudProviders: {
+    aws: {
+      accountId: string;
+      shareMethod: AwsShareMethod;
+      source: V1ListSourceResponseItem | undefined;
+      sourceId?: string | undefined;
+      region?: string | undefined;
+    };
+    azure: {
+      tenantId: string | undefined;
+      subscriptionId: string | undefined;
+      resourceGroup: string | undefined;
+      hyperVGeneration: 'V1' | 'V2';
+    };
+    gcp: {
+      accountType: GcpAccountType;
+      email: string;
+    };
   };
   registration: {
     registrationType: RegistrationType;
@@ -245,21 +247,23 @@ export const initialState: wizardState = {
     tlsCertificateAuthority: undefined,
     skipTlsVerification: undefined,
   },
-  aws: {
-    accountId: '',
-    shareMethod: 'manual',
-    source: undefined,
-    region: 'us-east-1',
-  },
-  azure: {
-    tenantId: undefined,
-    subscriptionId: undefined,
-    resourceGroup: undefined,
-    hyperVGeneration: 'V2',
-  },
-  gcp: {
-    accountType: 'user',
-    email: '',
+  cloudProviders: {
+    aws: {
+      accountId: '',
+      shareMethod: 'manual',
+      source: undefined,
+      region: 'us-east-1',
+    },
+    azure: {
+      tenantId: undefined,
+      subscriptionId: undefined,
+      resourceGroup: undefined,
+      hyperVGeneration: 'V2',
+    },
+    gcp: {
+      accountType: 'user',
+      email: '',
+    },
   },
   registration: {
     registrationType: 'register-now-rhc',
@@ -392,35 +396,35 @@ export const selectImageTypes = (state: RootState) => {
 };
 
 export const selectAwsAccountId = (state: RootState): string => {
-  return state.wizard.aws.accountId;
+  return state.wizard.cloudProviders.aws.accountId;
 };
 
 export const selectAwsRegion = (state: RootState) => {
-  return state.wizard.aws.region;
+  return state.wizard.cloudProviders.aws.region;
 };
 
 export const selectAzureTenantId = (state: RootState) => {
-  return state.wizard.azure.tenantId;
+  return state.wizard.cloudProviders.azure.tenantId;
 };
 
 export const selectAzureSubscriptionId = (state: RootState) => {
-  return state.wizard.azure.subscriptionId;
+  return state.wizard.cloudProviders.azure.subscriptionId;
 };
 
 export const selectAzureResourceGroup = (state: RootState) => {
-  return state.wizard.azure.resourceGroup;
+  return state.wizard.cloudProviders.azure.resourceGroup;
 };
 
 export const selectAzureHyperVGeneration = (state: RootState) => {
-  return state.wizard.azure.hyperVGeneration;
+  return state.wizard.cloudProviders.azure.hyperVGeneration;
 };
 
 export const selectGcpAccountType = (state: RootState) => {
-  return state.wizard.gcp.accountType;
+  return state.wizard.cloudProviders.gcp.accountType;
 };
 
 export const selectGcpEmail = (state: RootState) => {
-  return state.wizard.gcp.email;
+  return state.wizard.cloudProviders.gcp.email;
 };
 
 export const selectRegistrationType = (state: RootState) => {
@@ -861,52 +865,52 @@ export const wizardSlice = createSlice({
       }
     },
     changeAwsAccountId: (state, action: PayloadAction<string>) => {
-      state.aws.accountId = action.payload;
+      state.cloudProviders.aws.accountId = action.payload;
     },
     changeAwsShareMethod: (state, action: PayloadAction<AwsShareMethod>) => {
-      state.aws.shareMethod = action.payload;
+      state.cloudProviders.aws.shareMethod = action.payload;
     },
     changeAwsSourceId: (state, action: PayloadAction<string | undefined>) => {
-      state.aws.sourceId = action.payload;
+      state.cloudProviders.aws.sourceId = action.payload;
     },
     changeAwsRegion: (state, action: PayloadAction<string | undefined>) => {
-      state.aws.region = action.payload;
+      state.cloudProviders.aws.region = action.payload;
     },
     reinitializeAws: (state) => {
-      state.aws.accountId = '';
-      state.aws.shareMethod = 'manual';
-      state.aws.source = undefined;
-      state.aws.region = 'us-east-1';
+      state.cloudProviders.aws.accountId = '';
+      state.cloudProviders.aws.shareMethod = 'manual';
+      state.cloudProviders.aws.source = undefined;
+      state.cloudProviders.aws.region = 'us-east-1';
     },
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
-      state.azure.tenantId = action.payload;
+      state.cloudProviders.azure.tenantId = action.payload;
     },
     changeAzureSubscriptionId: (state, action: PayloadAction<string>) => {
-      state.azure.subscriptionId = action.payload;
+      state.cloudProviders.azure.subscriptionId = action.payload;
     },
     changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
-      state.azure.resourceGroup = action.payload;
+      state.cloudProviders.azure.resourceGroup = action.payload;
     },
     changeAzureHyperVGeneration: (
       state,
       action: PayloadAction<'V1' | 'V2'>,
     ) => {
-      state.azure.hyperVGeneration = action.payload;
+      state.cloudProviders.azure.hyperVGeneration = action.payload;
     },
     reinitializeAzure: (state) => {
-      state.azure.tenantId = undefined;
-      state.azure.subscriptionId = undefined;
-      state.azure.resourceGroup = undefined;
+      state.cloudProviders.azure.tenantId = undefined;
+      state.cloudProviders.azure.subscriptionId = undefined;
+      state.cloudProviders.azure.resourceGroup = undefined;
     },
     changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
-      state.gcp.accountType = action.payload;
+      state.cloudProviders.gcp.accountType = action.payload;
     },
     changeGcpEmail: (state, action: PayloadAction<string>) => {
-      state.gcp.email = action.payload;
+      state.cloudProviders.gcp.email = action.payload;
     },
     reinitializeGcp: (state) => {
-      state.gcp.accountType = 'user';
-      state.gcp.email = '';
+      state.cloudProviders.gcp.accountType = 'user';
+      state.cloudProviders.gcp.email = '';
     },
     changeRegistrationType: (
       state,
