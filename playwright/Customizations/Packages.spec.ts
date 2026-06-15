@@ -60,21 +60,21 @@ test('Create a blueprint with Packages customization', async ({
       .click();
   });
 
-  await test.step('Verify on-premise wildcard search instructions', async (step) => {
-    step.skip(isHosted(), 'Skip on-premise specific tests on hosted');
-
-    await expect(
-      frame.getByRole('textbox', { name: /Search packages/i }),
-    ).toBeVisible();
-    await expect(
-      frame.getByText(/glob using asterisk wildcards \(\*\)/i),
-    ).toBeVisible();
-    await expect(
-      frame.getByText(
-        /Search for package groups by starting your search with the '@' character/i,
-      ),
-    ).toBeHidden();
-  });
+  if (!isHosted()) {
+    await test.step('Verify on-premise wildcard search instructions', async () => {
+      await expect(
+        frame.getByRole('textbox', { name: /Search packages/i }),
+      ).toBeVisible();
+      await expect(
+        frame.getByText(/glob using asterisk wildcards \(\*\)/i),
+      ).toBeVisible();
+      await expect(
+        frame.getByText(
+          /Search for package groups by starting your search with the '@' character/i,
+        ),
+      ).toBeHidden();
+    });
+  }
 
   await test.step('Add packages', async () => {
     await frame
@@ -137,13 +137,11 @@ test('Create a blueprint with Packages customization', async ({
     });
   });
 
-  await test.step('Review exported BP', async (step) => {
-    step.skip(
-      isHosted(),
-      'Only verify the contents of the exported blueprint in cockpit',
-    );
-    verifyExportedBlueprint(exportedBP, exportedPackagesBP(blueprintName));
-  });
+  if (!isHosted()) {
+    await test.step('Review exported BP', async () => {
+      verifyExportedBlueprint(exportedBP, exportedPackagesBP(blueprintName));
+    });
+  }
 
   await test.step('Import blueprint', async () => {
     await importBlueprint(frame, exportedBP);
