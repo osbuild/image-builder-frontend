@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import wizardReducer, {
+import {
   addGroupToUserByUserIndex,
   addUser,
   addUserGroup,
@@ -14,6 +14,7 @@ import wizardReducer, {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   type UserWithAdditionalInfo,
+  wizardReducer,
   type wizardState,
 } from '@/store/slices/wizard';
 

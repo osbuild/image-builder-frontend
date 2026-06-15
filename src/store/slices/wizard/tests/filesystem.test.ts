@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { RootState } from '@/store';
-import wizardReducer, {
+import {
   addPartition,
   changeFscMode,
   changePartitionMinSize,
@@ -16,6 +16,7 @@ import wizardReducer, {
   selectFSConfigurationsCount,
   selectLogicalVolumeCount,
   selectPartitionCount,
+  wizardReducer,
   type wizardState,
 } from '@/store/slices/wizard';
 
