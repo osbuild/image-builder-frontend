@@ -6,7 +6,7 @@ import type {
   PackageRepository,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
 import type { Module } from '@/store/api/backend';
-import wizardReducer, {
+import {
   addModule,
   addPackage,
   addPackageGroup,
@@ -14,6 +14,7 @@ import wizardReducer, {
   removeModule,
   removePackage,
   removePackageGroup,
+  wizardReducer,
   type wizardState,
 } from '@/store/slices/wizard';
 
