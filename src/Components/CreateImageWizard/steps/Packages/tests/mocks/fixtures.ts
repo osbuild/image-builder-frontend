@@ -81,3 +81,9 @@ export const mockArchitectures: Record<string, Architectures> = {
     },
   ],
 };
+
+export const mockRecommendations: string[] = [
+  'recommendedPackage1',
+  'recommendedPackage2',
+  'recommendedPackage3',
+];

@@ -7,6 +7,7 @@ import {
   clearWithWait,
   clickWithWait,
   renderWithRedux,
+  type RenderWithReduxOptions,
   typeWithWait,
   type UserEventInstance,
   type WizardStateOverrides,
@@ -16,12 +17,17 @@ import PackagesStep from '../index';
 
 export const renderPackagesStep = (
   wizardStateOverrides: WizardStateOverrides = {},
+  options: RenderWithReduxOptions = {},
 ) => {
-  return renderWithRedux(<PackagesStep />, {
-    distribution: RHEL_10,
-    architecture: 'x86_64',
-    ...wizardStateOverrides,
-  });
+  return renderWithRedux(
+    <PackagesStep />,
+    {
+      distribution: RHEL_10,
+      architecture: 'x86_64',
+      ...wizardStateOverrides,
+    },
+    options,
+  );
 };
 
 export const typeIntoSearchBox = async (

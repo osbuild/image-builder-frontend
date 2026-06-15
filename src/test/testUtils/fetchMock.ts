@@ -149,10 +149,18 @@ export const createTemplatesHandler = (
 };
 
 // Recommendations handler
-export const createRecommendationsHandler = (): FetchHandler => {
+export type RecommendationsHandlerOptions = {
+  packages?: string[];
+};
+
+export const createRecommendationsHandler = (
+  options: RecommendationsHandlerOptions = {},
+): FetchHandler => {
+  const { packages = [] } = options;
+
   return ({ url, method }: FetchRequest) => {
     if (url.endsWith('/experimental/recommendations') && method === 'POST') {
-      return JSON.stringify({ body: { packages: [] } });
+      return JSON.stringify({ packages });
     }
     return null;
   };

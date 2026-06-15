@@ -27,6 +27,7 @@ import {
   mockOscapCustomizations,
   mockOscapProfile,
   mockOscapSearchResults,
+  mockRecommendations,
   mockSearchResults,
 } from './mocks';
 
@@ -594,10 +595,75 @@ describe('Packages Component', () => {
     });
   });
 
-  describe('Package Recommendations Gating', () => {
-    test('do not show recommendations for RHEL 10', async () => {
+  describe('Package Recommendations', () => {
+    test('shows recommendations after selecting a package', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockSearchResults,
+          recommendations: mockRecommendations,
+        }),
+      );
+      renderPackagesStep();
+      const user = createUser();
+
+      await typeIntoSearchBox(user, 'test');
+      await selectPkgOption(user, 'test');
+      await clickOnSearchBox(user);
+
+      await screen.findByRole('option', { name: /recommendedPackage1/i });
+      await screen.findByRole('option', { name: /recommendedPackage2/i });
+      await screen.findByRole('option', { name: /recommendedPackage3/i });
+    });
+
+    test('allows adding recommendations to selected packages', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockSearchResults,
+          recommendations: mockRecommendations,
+        }),
+      );
+      renderPackagesStep();
+      const user = createUser();
+
+      await typeIntoSearchBox(user, 'test');
+      await selectPkgOption(user, 'test');
+      await clickOnSearchBox(user);
+
+      const recommendation = await screen.findByRole('option', {
+        name: /recommendedPackage1/i,
+      });
+      await clickWithWait(user, recommendation);
+
+      expect(
+        await screen.findByRole('cell', { name: /recommendedPackage1/i }),
+      ).toBeVisible();
+    });
+
+    test('do not show recommendations before selecting a package', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
+      const user = createUser();
+
+      await typeIntoSearchBox(user, 'test');
+      await clickOnSearchBox(user);
+
+      const options = await screen.findAllByRole('option');
+      options.forEach((option) => {
+        expect(option).not.toHaveTextContent(/suggested based on/i);
+      });
+    });
+
+    test('do not show recommendations on-premise', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockSearchResults,
+          recommendations: mockRecommendations,
+        }),
+      );
+      renderPackagesStep(
+        {},
+        { preloadedState: { env: { isOnPremise: true } } },
+      );
       const user = createUser();
 
       await typeIntoSearchBox(user, 'test');
@@ -606,6 +672,7 @@ describe('Packages Component', () => {
 
       const options = await screen.findAllByRole('option');
       options.forEach((option) => {
+        expect(option).not.toHaveTextContent(/recommendedPackage/i);
         expect(option).not.toHaveTextContent(/suggested based on/i);
       });
     });
