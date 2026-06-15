@@ -60,7 +60,11 @@ const AdvancedSettingsOverview = ({
               restrictions.users.shouldHide || restrictions.users.required
             }
           />
-          <UserGroups shouldHide={restrictions.users.shouldHide} />
+          <UserGroups
+            shouldHide={
+              restrictions.users.shouldHide || restrictions.users.required
+            }
+          />
           <Firstboot shouldHide={restrictions.firstBoot.shouldHide} />
         </ReviewList>
       </CardBody>

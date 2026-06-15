@@ -1,1 +1,1 @@
-export { adminUser, developerUser, guestUser } from './users';
+export { adminUser, developerUser, guestUser, userGroups } from './users';
