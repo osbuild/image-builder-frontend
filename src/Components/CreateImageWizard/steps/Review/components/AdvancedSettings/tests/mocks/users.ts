@@ -29,3 +29,10 @@ export const guestUser = {
   groups: [] as string[],
   isAdministrator: false,
 };
+
+export const userGroups = [
+  {
+    name: 'developers',
+    gid: 1000,
+  },
+];

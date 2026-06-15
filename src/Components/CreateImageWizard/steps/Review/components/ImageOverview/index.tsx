@@ -4,7 +4,6 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { ON_PREM_RELEASES, RELEASES } from '@/constants';
 import { useTargetEnvironmentCategories } from '@/Hooks';
-import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
@@ -20,9 +19,11 @@ import {
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
 import { Users } from '../AdvancedSettings/components';
+import { UserGroups } from '../AdvancedSettings/components/UserGroups';
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
+import { ReviewCardProps } from '../types';
 
-const ImageOverview = () => {
+const ImageOverview = ({ restrictions }: ReviewCardProps) => {
   const imageName = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
   const isOnPremise = useAppSelector(selectIsOnPremise);
@@ -34,9 +35,6 @@ const ImageOverview = () => {
   const environments = useAppSelector(selectImageTypes);
   const { publicClouds, privateClouds, miscFormats } =
     useTargetEnvironmentCategories(environments);
-  const { restrictions } = useCustomizationRestrictions({
-    selectedImageTypes: environments,
-  });
 
   const releases = isOnPremise ? ON_PREM_RELEASES : RELEASES;
 
@@ -77,6 +75,11 @@ const ImageOverview = () => {
           <PublicClouds environments={publicClouds} />
           <MiscFormats environments={miscFormats} />
           <Users
+            shouldHide={
+              restrictions.users.shouldHide || !restrictions.users.required
+            }
+          />
+          <UserGroups
             shouldHide={
               restrictions.users.shouldHide || !restrictions.users.required
             }

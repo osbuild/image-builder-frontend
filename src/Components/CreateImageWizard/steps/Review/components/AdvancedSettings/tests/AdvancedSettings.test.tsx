@@ -8,7 +8,7 @@ import {
 } from '@/store/slices/wizard/tests/mocks';
 import { renderWithRedux } from '@/test/testUtils';
 
-import { adminUser, developerUser, guestUser } from './mocks';
+import { adminUser, developerUser, guestUser, userGroups } from './mocks';
 
 import { createDefaultRestrictions } from '../../tests/helpers';
 import AdvancedSettingsOverview from '../index';
@@ -976,10 +976,12 @@ echo 'Hello there, General Kenobi!'`;
         {
           imageTypes: ['guest-image'],
           users: [adminUser],
+          userGroups: userGroups,
         },
       );
 
       expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getByText('User groups')).toBeInTheDocument();
     });
 
     test('does not render users section when users are required', () => {
@@ -992,10 +994,12 @@ echo 'Hello there, General Kenobi!'`;
         {
           imageTypes: ['guest-image'],
           users: [adminUser],
+          userGroups: userGroups,
         },
       );
 
       expect(screen.queryByText('Users')).not.toBeInTheDocument();
+      expect(screen.queryByText('User groups')).not.toBeInTheDocument();
     });
   });
 

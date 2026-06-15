@@ -33,7 +33,7 @@ const ReviewStep = () => {
   return (
     <>
       <FormHeader />
-      <ImageOverview />
+      <ImageOverview restrictions={restrictions} />
       <Registration restrictions={restrictions} />
       <RepeatableBuild restrictions={restrictions} />
       <Security restrictions={restrictions} security={security} />
