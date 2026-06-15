@@ -508,40 +508,42 @@ function commonRequestToState(
           script: getFirstBootScript(request.customizations.files),
         }
       : initialState.firstBoot,
-    fscMode: request.customizations.filesystem
-      ? ('basic' as FscModeType)
-      : request.customizations.disk
-        ? ('advanced' as FscModeType)
-        : ('automatic' as FscModeType),
-    disk: request.customizations.disk
-      ? (() => {
-          const [size, unit] =
-            request.customizations.disk.minsize?.split(' ') || [];
-          return {
-            type: request.customizations.disk.type || undefined,
-            minsize: size || '',
-            unit: (unit || 'GiB') as Units,
-            partitions: request.customizations.disk.partitions.map((d) =>
-              convertDiskToFscDisk(d),
+    filesystem: {
+      mode: request.customizations.filesystem
+        ? ('basic' as FscModeType)
+        : request.customizations.disk
+          ? ('advanced' as FscModeType)
+          : ('automatic' as FscModeType),
+      disk: request.customizations.disk
+        ? (() => {
+            const [size, unit] =
+              request.customizations.disk.minsize?.split(' ') || [];
+            return {
+              type: request.customizations.disk.type || undefined,
+              minsize: size || '',
+              unit: (unit || 'GiB') as Units,
+              partitions: request.customizations.disk.partitions.map((d) =>
+                convertDiskToFscDisk(d),
+              ),
+            };
+          })()
+        : {
+            minsize: '',
+            unit: 'GiB' as Units,
+            partitions: [],
+            type: undefined,
+          },
+      fileSystem: request.customizations.filesystem
+        ? {
+            partitions: request.customizations.filesystem.map((fs) =>
+              convertFilesystemToPartition(fs),
             ),
-          };
-        })()
-      : {
-          minsize: '',
-          unit: 'GiB' as Units,
-          partitions: [],
-          type: undefined,
-        },
-    fileSystem: request.customizations.filesystem
-      ? {
-          partitions: request.customizations.filesystem.map((fs) =>
-            convertFilesystemToPartition(fs),
-          ),
-        }
-      : {
-          partitions: [],
-        },
-    partitioning_mode: request.customizations.partitioning_mode,
+          }
+        : {
+            partitions: [],
+          },
+      partitioningMode: request.customizations.partitioning_mode,
+    },
     architecture: arch,
     // Legacy on-prem bootc blueprints may have undefined distribution.
     // Fall back to initialState so the wizard state type stays satisfied;

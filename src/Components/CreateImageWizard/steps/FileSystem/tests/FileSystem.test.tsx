@@ -10,22 +10,26 @@ describe('FileSystem Component', () => {
   describe('Form submission', () => {
     test('pressing Enter in mountpoint input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<FileSystemStep />, {
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [
-            {
-              id: '642a10c4-4ffc-471b-803d-44405ae4abf4',
-              mountpoint: '/',
-              min_size: '10',
-              unit: 'GiB',
-            },
-            {
-              id: '46acd579-e5a6-474a-875c-017394d70382',
-              mountpoint: '',
-              min_size: '10',
-              unit: 'GiB',
-            },
-          ],
+        filesystem: {
+          mode: 'basic',
+          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
+          fileSystem: {
+            partitions: [
+              {
+                id: '642a10c4-4ffc-471b-803d-44405ae4abf4',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+              },
+              {
+                id: '46acd579-e5a6-474a-875c-017394d70382',
+                mountpoint: '',
+                min_size: '10',
+                unit: 'GiB',
+              },
+            ],
+          },
+          partitioningMode: undefined,
         },
       });
       const user = createUser();
@@ -36,23 +40,27 @@ describe('FileSystem Component', () => {
       await typeWithWait(user, mountpointInputs[1], '/var{Enter}');
 
       expect(mountpointInputs[1]).toBeInTheDocument();
-      expect(store.getState().wizard.fileSystem.partitions[1].mountpoint).toBe(
-        '/var',
-      );
+      expect(
+        store.getState().wizard.filesystem.fileSystem.partitions[1].mountpoint,
+      ).toBe('/var');
     });
 
     test('pressing Enter in minimum size input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<FileSystemStep />, {
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [
-            {
-              id: '1',
-              mountpoint: '/var',
-              min_size: '',
-              unit: 'GiB',
-            },
-          ],
+        filesystem: {
+          mode: 'basic',
+          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
+          fileSystem: {
+            partitions: [
+              {
+                id: '1',
+                mountpoint: '/var',
+                min_size: '',
+                unit: 'GiB',
+              },
+            ],
+          },
+          partitioningMode: undefined,
         },
       });
       const user = createUser();
@@ -63,9 +71,9 @@ describe('FileSystem Component', () => {
       await typeWithWait(user, minSizeInput, '20{Enter}');
 
       expect(minSizeInput).toBeInTheDocument();
-      expect(store.getState().wizard.fileSystem.partitions[0].min_size).toBe(
-        '20',
-      );
+      expect(
+        store.getState().wizard.filesystem.fileSystem.partitions[0].min_size,
+      ).toBe('20');
     });
   });
 });

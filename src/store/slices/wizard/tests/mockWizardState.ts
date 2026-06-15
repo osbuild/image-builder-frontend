@@ -63,11 +63,14 @@ export const createStateWithUser = (
 
 // Helper to create a state with partitions for filesystem tests
 export const createStateWithPartitions = (
-  partitions: wizardState['fileSystem']['partitions'],
+  partitions: wizardState['filesystem']['fileSystem']['partitions'],
 ): RootState =>
   createMockState({
-    fileSystem: {
-      partitions,
+    filesystem: {
+      ...wizardInitialState.filesystem,
+      fileSystem: {
+        partitions,
+      },
     },
   });
 

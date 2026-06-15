@@ -34,9 +34,12 @@ describe('filesystem reducers', () => {
     it('should set mode to automatic and clear partitions', () => {
       const stateWithPartitions: wizardState = {
         ...initialState,
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [createPartition({ mountpoint: '/' })],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'basic',
+          fileSystem: {
+            partitions: [createPartition({ mountpoint: '/' })],
+          },
         },
       };
 
@@ -45,27 +48,27 @@ describe('filesystem reducers', () => {
         changeFscMode('automatic'),
       );
 
-      expect(result.fscMode).toBe('automatic');
-      expect(result.fileSystem.partitions).toEqual([]);
+      expect(result.filesystem.mode).toBe('automatic');
+      expect(result.filesystem.fileSystem.partitions).toEqual([]);
     });
 
     it('should set mode to basic and create root partition', () => {
       const result = wizardReducer(initialState, changeFscMode('basic'));
 
-      expect(result.fscMode).toBe('basic');
-      expect(result.fileSystem.partitions).toHaveLength(1);
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/');
-      expect(result.fileSystem.partitions[0].min_size).toBe('10');
-      expect(result.fileSystem.partitions[0].unit).toBe('GiB');
+      expect(result.filesystem.mode).toBe('basic');
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(1);
+      expect(result.filesystem.fileSystem.partitions[0].mountpoint).toBe('/');
+      expect(result.filesystem.fileSystem.partitions[0].min_size).toBe('10');
+      expect(result.filesystem.fileSystem.partitions[0].unit).toBe('GiB');
     });
 
     it('should set mode to advanced and create root disk partition', () => {
       const result = wizardReducer(initialState, changeFscMode('advanced'));
 
-      expect(result.fscMode).toBe('advanced');
-      expect(result.disk.partitions).toHaveLength(1);
+      expect(result.filesystem.mode).toBe('advanced');
+      expect(result.filesystem.disk.partitions).toHaveLength(1);
 
-      const partition = result.disk.partitions[0];
+      const partition = result.filesystem.disk.partitions[0];
       // Advanced mode creates a PlainPartitionWithBase (has mountpoint and fs_type)
       expect(partition).toHaveProperty('mountpoint', '/');
       expect(partition).toHaveProperty('fs_type', 'xfs');
@@ -75,22 +78,25 @@ describe('filesystem reducers', () => {
     it('should not change state when mode is same as current', () => {
       const stateWithBasicMode: wizardState = {
         ...initialState,
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [
-            createPartition({
-              id: 'existing',
-              mountpoint: '/',
-              min_size: '50',
-            }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'basic',
+          fileSystem: {
+            partitions: [
+              createPartition({
+                id: 'existing',
+                mountpoint: '/',
+                min_size: '50',
+              }),
+            ],
+          },
         },
       };
 
       const result = wizardReducer(stateWithBasicMode, changeFscMode('basic'));
 
       // Should preserve existing partitions since mode didn't change
-      expect(result.fileSystem.partitions[0].min_size).toBe('50');
+      expect(result.filesystem.fileSystem.partitions[0].min_size).toBe('50');
     });
   });
 
@@ -98,32 +104,38 @@ describe('filesystem reducers', () => {
     it('should reset to default root partition in basic mode', () => {
       const stateWithPartitions: wizardState = {
         ...initialState,
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [
-            createPartition({ mountpoint: '/' }),
-            createPartition({ mountpoint: '/home' }),
-            createPartition({ mountpoint: '/var' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'basic',
+          fileSystem: {
+            partitions: [
+              createPartition({ mountpoint: '/' }),
+              createPartition({ mountpoint: '/home' }),
+              createPartition({ mountpoint: '/var' }),
+            ],
+          },
         },
       };
 
       const result = wizardReducer(stateWithPartitions, clearPartitions());
 
-      expect(result.fileSystem.partitions).toHaveLength(1);
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/');
-      expect(result.fileSystem.partitions[0].min_size).toBe('10');
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(1);
+      expect(result.filesystem.fileSystem.partitions[0].mountpoint).toBe('/');
+      expect(result.filesystem.fileSystem.partitions[0].min_size).toBe('10');
     });
 
     it('should do nothing in automatic mode', () => {
       const state: wizardState = {
         ...initialState,
-        fscMode: 'automatic',
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'automatic',
+        },
       };
 
       const result = wizardReducer(state, clearPartitions());
 
-      expect(result.fileSystem.partitions).toEqual([]);
+      expect(result.filesystem.fileSystem.partitions).toEqual([]);
     });
   });
 
@@ -133,15 +145,20 @@ describe('filesystem reducers', () => {
 
       const result = wizardReducer(initialState, addPartition(partition));
 
-      expect(result.fileSystem.partitions).toHaveLength(1);
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/home');
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(1);
+      expect(result.filesystem.fileSystem.partitions[0].mountpoint).toBe(
+        '/home',
+      );
     });
 
     it('should add partition to existing list', () => {
       const stateWithPartition: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [createPartition({ mountpoint: '/' })],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [createPartition({ mountpoint: '/' })],
+          },
         },
       };
 
@@ -151,14 +168,17 @@ describe('filesystem reducers', () => {
         addPartition(newPartition),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(2);
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(2);
     });
 
     it('should allow duplicate mountpoints (validation handled elsewhere)', () => {
       const stateWithPartition: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [createPartition({ id: 'p1', mountpoint: '/home' })],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [createPartition({ id: 'p1', mountpoint: '/home' })],
+          },
         },
       };
 
@@ -171,9 +191,13 @@ describe('filesystem reducers', () => {
         addPartition(duplicatePartition),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(2);
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/home');
-      expect(result.fileSystem.partitions[1].mountpoint).toBe('/home');
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(2);
+      expect(result.filesystem.fileSystem.partitions[0].mountpoint).toBe(
+        '/home',
+      );
+      expect(result.filesystem.fileSystem.partitions[1].mountpoint).toBe(
+        '/home',
+      );
     });
   });
 
@@ -181,28 +205,34 @@ describe('filesystem reducers', () => {
     it('should remove partition by id', () => {
       const stateWithPartitions: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [
-            createPartition({ id: 'p1', mountpoint: '/' }),
-            createPartition({ id: 'p2', mountpoint: '/home' }),
-            createPartition({ id: 'p3', mountpoint: '/var' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [
+              createPartition({ id: 'p1', mountpoint: '/' }),
+              createPartition({ id: 'p2', mountpoint: '/home' }),
+              createPartition({ id: 'p3', mountpoint: '/var' }),
+            ],
+          },
         },
       };
 
       const result = wizardReducer(stateWithPartitions, removePartition('p2'));
 
-      expect(result.fileSystem.partitions).toHaveLength(2);
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(2);
       expect(
-        result.fileSystem.partitions.find((p) => p.id === 'p2'),
+        result.filesystem.fileSystem.partitions.find((p) => p.id === 'p2'),
       ).toBeUndefined();
     });
 
     it('should do nothing when id not found', () => {
       const stateWithPartitions: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [createPartition({ id: 'p1', mountpoint: '/' })],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [createPartition({ id: 'p1', mountpoint: '/' })],
+          },
         },
       };
 
@@ -211,7 +241,7 @@ describe('filesystem reducers', () => {
         removePartition('nonexistent'),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(1);
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(1);
     });
   });
 
@@ -219,11 +249,14 @@ describe('filesystem reducers', () => {
     it('should remove partition by mountpoint', () => {
       const stateWithPartitions: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [
-            createPartition({ id: 'p1', mountpoint: '/' }),
-            createPartition({ id: 'p2', mountpoint: '/home' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [
+              createPartition({ id: 'p1', mountpoint: '/' }),
+              createPartition({ id: 'p2', mountpoint: '/home' }),
+            ],
+          },
         },
       };
 
@@ -232,18 +265,21 @@ describe('filesystem reducers', () => {
         removePartitionByMountpoint('/home'),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(1);
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/');
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(1);
+      expect(result.filesystem.fileSystem.partitions[0].mountpoint).toBe('/');
     });
 
     it('should only remove first matching partition', () => {
       const stateWithDuplicates: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [
-            createPartition({ id: 'p1', mountpoint: '/home' }),
-            createPartition({ id: 'p2', mountpoint: '/home' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [
+              createPartition({ id: 'p1', mountpoint: '/home' }),
+              createPartition({ id: 'p2', mountpoint: '/home' }),
+            ],
+          },
         },
       };
 
@@ -252,7 +288,7 @@ describe('filesystem reducers', () => {
         removePartitionByMountpoint('/home'),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(1);
+      expect(result.filesystem.fileSystem.partitions).toHaveLength(1);
     });
   });
 
@@ -260,8 +296,11 @@ describe('filesystem reducers', () => {
     it('should update partition mountpoint', () => {
       const stateWithPartition: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [createPartition({ id: 'p1', mountpoint: '/' })],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [createPartition({ id: 'p1', mountpoint: '/' })],
+          },
         },
       };
 
@@ -274,7 +313,9 @@ describe('filesystem reducers', () => {
         }),
       );
 
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/home');
+      expect(result.filesystem.fileSystem.partitions[0].mountpoint).toBe(
+        '/home',
+      );
     });
   });
 
@@ -282,8 +323,11 @@ describe('filesystem reducers', () => {
     it('should update partition unit', () => {
       const stateWithPartition: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [createPartition({ id: 'p1', unit: 'GiB' })],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [createPartition({ id: 'p1', unit: 'GiB' })],
+          },
         },
       };
 
@@ -296,7 +340,7 @@ describe('filesystem reducers', () => {
         }),
       );
 
-      expect(result.fileSystem.partitions[0].unit).toBe('MiB');
+      expect(result.filesystem.fileSystem.partitions[0].unit).toBe('MiB');
     });
   });
 
@@ -304,8 +348,11 @@ describe('filesystem reducers', () => {
     it('should update partition min_size', () => {
       const stateWithPartition: wizardState = {
         ...initialState,
-        fileSystem: {
-          partitions: [createPartition({ id: 'p1', min_size: '10' })],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [createPartition({ id: 'p1', min_size: '10' })],
+          },
         },
       };
 
@@ -318,29 +365,38 @@ describe('filesystem reducers', () => {
         }),
       );
 
-      expect(result.fileSystem.partitions[0].min_size).toBe('50');
+      expect(result.filesystem.fileSystem.partitions[0].min_size).toBe('50');
     });
   });
 });
 
 // Helper to create minimal RootState for selector tests
-const createState = (wizardOverrides: Partial<wizardState>): RootState =>
-  ({
+const createState = (wizardOverrides: Partial<wizardState>): RootState => {
+  const { filesystem: fsOverrides, ...rest } = wizardOverrides;
+  return {
     wizard: {
       ...initialState,
-      ...wizardOverrides,
+      ...rest,
+      filesystem: {
+        ...initialState.filesystem,
+        ...fsOverrides,
+      },
     },
-  }) as RootState;
+  } as RootState;
+};
 
 describe('filesystem selectors', () => {
   describe('selectBasicPartitionCount', () => {
     it('returns count of basic partitions', () => {
       const state = createState({
-        fileSystem: {
-          partitions: [
-            createPartition({ mountpoint: '/' }),
-            createPartition({ mountpoint: '/home' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: {
+            partitions: [
+              createPartition({ mountpoint: '/' }),
+              createPartition({ mountpoint: '/home' }),
+            ],
+          },
         },
       });
 
@@ -349,7 +405,10 @@ describe('filesystem selectors', () => {
 
     it('returns 0 when no partitions', () => {
       const state = createState({
-        fileSystem: { partitions: [] },
+        filesystem: {
+          ...initialState.filesystem,
+          fileSystem: { partitions: [] },
+        },
       });
 
       expect(selectBasicPartitionCount(state)).toBe(0);
@@ -359,14 +418,17 @@ describe('filesystem selectors', () => {
   describe('selectAdvancedPartitionCount', () => {
     it('counts plain partitions', () => {
       const state = createState({
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [
-            createPlainPartition({ mountpoint: '/boot' }),
-            createPlainPartition({ mountpoint: '/efi' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [
+              createPlainPartition({ mountpoint: '/boot' }),
+              createPlainPartition({ mountpoint: '/efi' }),
+            ],
+          },
         },
       });
 
@@ -375,23 +437,26 @@ describe('filesystem selectors', () => {
 
     it('excludes LVM volume groups from count', () => {
       const state = createState({
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [
-            createPlainPartition({ mountpoint: '/boot' }),
-            createVolumeGroup([
-              {
-                id: 'lv1',
-                mountpoint: '/',
-                min_size: '10',
-                unit: 'GiB',
-                name: 'root',
-                fs_type: 'xfs',
-              },
-            ]),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [
+              createPlainPartition({ mountpoint: '/boot' }),
+              createVolumeGroup([
+                {
+                  id: 'lv1',
+                  mountpoint: '/',
+                  min_size: '10',
+                  unit: 'GiB',
+                  name: 'root',
+                  fs_type: 'xfs',
+                },
+              ]),
+            ],
+          },
         },
       });
 
@@ -402,12 +467,15 @@ describe('filesystem selectors', () => {
   describe('selectLogicalVolumeCount', () => {
     it('returns 0 when no LVM partitions', () => {
       const state = createState({
-        fscMode: 'advanced',
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [createPlainPartition({ mountpoint: '/boot' })],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'advanced',
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [createPlainPartition({ mountpoint: '/boot' })],
+          },
         },
       });
 
@@ -416,31 +484,34 @@ describe('filesystem selectors', () => {
 
     it('counts logical volumes inside LVM groups', () => {
       const state = createState({
-        fscMode: 'advanced',
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [
-            createVolumeGroup([
-              {
-                id: 'lv1',
-                mountpoint: '/',
-                min_size: '10',
-                unit: 'GiB',
-                name: 'root',
-                fs_type: 'xfs',
-              },
-              {
-                id: 'lv2',
-                mountpoint: '/home',
-                min_size: '5',
-                unit: 'GiB',
-                name: 'home',
-                fs_type: 'xfs',
-              },
-            ]),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'advanced',
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [
+              createVolumeGroup([
+                {
+                  id: 'lv1',
+                  mountpoint: '/',
+                  min_size: '10',
+                  unit: 'GiB',
+                  name: 'root',
+                  fs_type: 'xfs',
+                },
+                {
+                  id: 'lv2',
+                  mountpoint: '/home',
+                  min_size: '5',
+                  unit: 'GiB',
+                  name: 'home',
+                  fs_type: 'xfs',
+                },
+              ]),
+            ],
+          },
         },
       });
 
@@ -449,41 +520,44 @@ describe('filesystem selectors', () => {
 
     it('sums logical volumes across multiple LVM groups', () => {
       const state = createState({
-        fscMode: 'advanced',
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [
-            createVolumeGroup([
-              {
-                id: 'lv1',
-                mountpoint: '/',
-                min_size: '10',
-                unit: 'GiB',
-                name: 'root',
-                fs_type: 'xfs',
-              },
-            ]),
-            createVolumeGroup([
-              {
-                id: 'lv2',
-                mountpoint: '/var',
-                min_size: '5',
-                unit: 'GiB',
-                name: 'var',
-                fs_type: 'xfs',
-              },
-              {
-                id: 'lv3',
-                mountpoint: '/home',
-                min_size: '20',
-                unit: 'GiB',
-                name: 'home',
-                fs_type: 'xfs',
-              },
-            ]),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'advanced',
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [
+              createVolumeGroup([
+                {
+                  id: 'lv1',
+                  mountpoint: '/',
+                  min_size: '10',
+                  unit: 'GiB',
+                  name: 'root',
+                  fs_type: 'xfs',
+                },
+              ]),
+              createVolumeGroup([
+                {
+                  id: 'lv2',
+                  mountpoint: '/var',
+                  min_size: '5',
+                  unit: 'GiB',
+                  name: 'var',
+                  fs_type: 'xfs',
+                },
+                {
+                  id: 'lv3',
+                  mountpoint: '/home',
+                  min_size: '20',
+                  unit: 'GiB',
+                  name: 'home',
+                  fs_type: 'xfs',
+                },
+              ]),
+            ],
+          },
         },
       });
 
@@ -494,12 +568,15 @@ describe('filesystem selectors', () => {
   describe('selectPartitionCount', () => {
     it('returns basic count in basic mode', () => {
       const state = createState({
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [
-            createPartition({ mountpoint: '/' }),
-            createPartition({ mountpoint: '/home' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'basic',
+          fileSystem: {
+            partitions: [
+              createPartition({ mountpoint: '/' }),
+              createPartition({ mountpoint: '/home' }),
+            ],
+          },
         },
       });
 
@@ -508,15 +585,18 @@ describe('filesystem selectors', () => {
 
     it('returns advanced count in advanced mode', () => {
       const state = createState({
-        fscMode: 'advanced',
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [
-            createPlainPartition({ mountpoint: '/boot' }),
-            createPlainPartition({ mountpoint: '/efi' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'advanced',
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [
+              createPlainPartition({ mountpoint: '/boot' }),
+              createPlainPartition({ mountpoint: '/efi' }),
+            ],
+          },
         },
       });
 
@@ -525,7 +605,10 @@ describe('filesystem selectors', () => {
 
     it('returns 0 in automatic mode', () => {
       const state = createState({
-        fscMode: 'automatic',
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'automatic',
+        },
       });
 
       expect(selectPartitionCount(state)).toBe(0);
@@ -535,32 +618,35 @@ describe('filesystem selectors', () => {
   describe('selectFSConfigurationsCount', () => {
     it('returns sum of partitions and logical volumes', () => {
       const state = createState({
-        fscMode: 'advanced',
-        disk: {
-          minsize: '',
-          unit: 'GiB',
-          type: 'gpt',
-          partitions: [
-            createPlainPartition({ mountpoint: '/boot' }),
-            createVolumeGroup([
-              {
-                id: 'lv1',
-                mountpoint: '/',
-                min_size: '10',
-                unit: 'GiB',
-                name: 'root',
-                fs_type: 'xfs',
-              },
-              {
-                id: 'lv2',
-                mountpoint: '/home',
-                min_size: '5',
-                unit: 'GiB',
-                name: 'home',
-                fs_type: 'xfs',
-              },
-            ]),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'advanced',
+          disk: {
+            minsize: '',
+            unit: 'GiB',
+            type: 'gpt',
+            partitions: [
+              createPlainPartition({ mountpoint: '/boot' }),
+              createVolumeGroup([
+                {
+                  id: 'lv1',
+                  mountpoint: '/',
+                  min_size: '10',
+                  unit: 'GiB',
+                  name: 'root',
+                  fs_type: 'xfs',
+                },
+                {
+                  id: 'lv2',
+                  mountpoint: '/home',
+                  min_size: '5',
+                  unit: 'GiB',
+                  name: 'home',
+                  fs_type: 'xfs',
+                },
+              ]),
+            ],
+          },
         },
       });
 
@@ -570,12 +656,15 @@ describe('filesystem selectors', () => {
 
     it('returns basic partition count in basic mode', () => {
       const state = createState({
-        fscMode: 'basic',
-        fileSystem: {
-          partitions: [
-            createPartition({ mountpoint: '/' }),
-            createPartition({ mountpoint: '/home' }),
-          ],
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'basic',
+          fileSystem: {
+            partitions: [
+              createPartition({ mountpoint: '/' }),
+              createPartition({ mountpoint: '/home' }),
+            ],
+          },
         },
       });
 
