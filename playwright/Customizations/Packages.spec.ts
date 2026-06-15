@@ -86,6 +86,23 @@ test('Create a blueprint with Packages customization', async ({
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
   });
 
+  await test.step('Verify packages persist when navigating forward and back', async () => {
+    await frame.getByRole('button', { name: 'Review image' }).click();
+    await expect(
+      frame.getByRole('heading', { name: /review image configuration/i }),
+    ).toBeVisible();
+
+    await frame
+      .getByRole('button', { name: 'Repositories and packages' })
+      .click();
+
+    // Verify selected packages are still visible
+    await expect(frame.getByRole('gridcell', { name: 'bash' })).toBeVisible();
+    await expect(
+      frame.getByRole('gridcell', { name: 'vim-minimal' }),
+    ).toBeVisible();
+  });
+
   await test.step('Review and create blueprint', async () => {
     await frame.getByRole('button', { name: 'Review image' }).click();
     await createBlueprint(frame, blueprintName);

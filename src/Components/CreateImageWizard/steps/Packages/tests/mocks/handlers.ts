@@ -24,6 +24,7 @@ type FetchHandlerOverrides = {
   rpms?: ApiSearchRpmResponse[];
   groups?: ApiSearchPackageGroupResponse[];
   oscap?: GetOscapCustomizationsApiResponse;
+  recommendations?: string[];
 };
 
 export const createFetchHandler = (
@@ -35,7 +36,9 @@ export const createFetchHandler = (
     createArchitecturesHandler({ architectures: mockArchitectures }),
     createRepositoriesHandler(),
     createTemplatesHandler(),
-    createRecommendationsHandler(),
+    createRecommendationsHandler(
+      overrides.recommendations ? { packages: overrides.recommendations } : {},
+    ),
     createOscapHandler(
       overrides.oscap ? { customizations: overrides.oscap } : {},
     ),
