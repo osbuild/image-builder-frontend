@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import wizardReducer, {
+import {
   changeAwsAccountId,
   changeAwsRegion,
   changeAwsSourceId,
@@ -14,6 +14,7 @@ import wizardReducer, {
   reinitializeAws,
   reinitializeAzure,
   reinitializeGcp,
+  wizardReducer,
   type wizardState,
 } from '@/store/slices/wizard';
 

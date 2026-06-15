@@ -1899,4 +1899,4 @@ export const {
   changeFips,
   setVerifiedLocaleLangpacks,
 } = wizardSlice.actions;
-export default wizardSlice.reducer;
+export const wizardReducer = wizardSlice.reducer;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import wizardReducer, {
+import {
   addImageType,
   changeArchitecture,
   changeDistribution,
@@ -11,6 +11,7 @@ import wizardReducer, {
   initialState,
   loadWizardState,
   removeImageType,
+  wizardReducer,
   type wizardState,
 } from '@/store/slices/wizard';
 
