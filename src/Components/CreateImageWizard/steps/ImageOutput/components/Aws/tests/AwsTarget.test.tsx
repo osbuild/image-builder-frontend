@@ -132,10 +132,13 @@ describe('AWS Component', () => {
 
     test('displays error when field is cleared after having a value', async () => {
       renderAwsStep({
-        aws: {
-          accountId: '123456789012',
-          shareMethod: 'manual',
-          source: undefined,
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          aws: {
+            accountId: '123456789012',
+            shareMethod: 'manual',
+            source: undefined,
+          },
         },
       });
       const user = createUser();
@@ -163,10 +166,13 @@ describe('AWS Component', () => {
 
     test('renders with pre-populated account ID', async () => {
       renderAwsStep({
-        aws: {
-          accountId: '123123123123',
-          shareMethod: 'manual',
-          source: undefined,
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          aws: {
+            accountId: '123123123123',
+            shareMethod: 'manual',
+            source: undefined,
+          },
         },
       });
 
@@ -179,19 +185,24 @@ describe('AWS Component', () => {
       const { store } = renderAwsStep();
       const user = createUser();
 
-      expect(store.getState().wizard.aws.accountId).toBe('');
+      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe('');
 
       await fillAccountIdValue(user, '123456789012');
 
-      expect(store.getState().wizard.aws.accountId).toBe('123456789012');
+      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe(
+        '123456789012',
+      );
     });
 
     test('clears account ID when clear button is clicked', async () => {
       const { store } = renderAwsStep({
-        aws: {
-          accountId: '123456789012',
-          shareMethod: 'manual',
-          source: undefined,
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          aws: {
+            accountId: '123456789012',
+            shareMethod: 'manual',
+            source: undefined,
+          },
         },
       });
       const user = createUser();
@@ -201,7 +212,7 @@ describe('AWS Component', () => {
       });
       await clickWithWait(user, clearButton);
 
-      expect(store.getState().wizard.aws.accountId).toBe('');
+      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe('');
     });
   });
 });
@@ -209,10 +220,13 @@ describe('AWS Component', () => {
 describe('AWS CreateBlueprintRequest payload', () => {
   test('generates correct payload with account ID', () => {
     const store = createStoreWithAwsState({
-      aws: {
-        accountId: '123123123123',
-        shareMethod: 'manual',
-        source: undefined,
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        aws: {
+          accountId: '123123123123',
+          shareMethod: 'manual',
+          source: undefined,
+        },
       },
     });
 
@@ -240,10 +254,13 @@ describe('AWS CreateBlueprintRequest payload', () => {
 
   test('sets upload_request type to aws', () => {
     const store = createStoreWithAwsState({
-      aws: {
-        accountId: '999888777666',
-        shareMethod: 'manual',
-        source: undefined,
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        aws: {
+          accountId: '999888777666',
+          shareMethod: 'manual',
+          source: undefined,
+        },
       },
     });
 
@@ -258,10 +275,13 @@ describe('AWS CreateBlueprintRequest payload', () => {
 
   test('includes account ID in share_with_accounts', () => {
     const store = createStoreWithAwsState({
-      aws: {
-        accountId: '111222333444',
-        shareMethod: 'manual',
-        source: undefined,
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        aws: {
+          accountId: '111222333444',
+          shareMethod: 'manual',
+          source: undefined,
+        },
       },
     });
 
@@ -276,10 +296,13 @@ describe('AWS CreateBlueprintRequest payload', () => {
 
   test('sets architecture to x86_64 by default', () => {
     const store = createStoreWithAwsState({
-      aws: {
-        accountId: '123123123123',
-        shareMethod: 'manual',
-        source: undefined,
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        aws: {
+          accountId: '123123123123',
+          shareMethod: 'manual',
+          source: undefined,
+        },
       },
     });
 
@@ -293,10 +316,13 @@ describe('AWS CreateBlueprintRequest payload', () => {
 
   test('omits subscription customization when registration is register-later', () => {
     const store = createStoreWithAwsState({
-      aws: {
-        accountId: '123123123123',
-        shareMethod: 'manual',
-        source: undefined,
+      cloudProviders: {
+        ...initialState.cloudProviders,
+        aws: {
+          accountId: '123123123123',
+          shareMethod: 'manual',
+          source: undefined,
+        },
       },
     });
 
@@ -320,6 +346,8 @@ describe('Form submission', () => {
     await typeWithWait(user, accountIdInput, '123456789012{Enter}');
 
     expect(accountIdInput).toBeInTheDocument();
-    expect(store.getState().wizard.aws.accountId).toBe('123456789012');
+    expect(store.getState().wizard.cloudProviders.aws.accountId).toBe(
+      '123456789012',
+    );
   });
 });
