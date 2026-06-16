@@ -13,7 +13,10 @@ describe('Registration', () => {
     renderWithRedux(
       <Registration restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
       },
     );
 
@@ -30,7 +33,10 @@ describe('Registration', () => {
           })}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
         },
       );
 
@@ -46,7 +52,10 @@ describe('Registration', () => {
           })}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -75,7 +84,10 @@ describe('Registration', () => {
           })}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
         },
       );
 
@@ -88,7 +100,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             type: 'register-later',
@@ -112,7 +127,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             type: 'register-now',
@@ -139,7 +157,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             type: 'register-now-insights',
@@ -164,7 +185,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             type: 'register-now-rhc',
@@ -196,7 +220,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             type: 'register-satellite',
@@ -219,7 +246,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -242,7 +272,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -267,7 +300,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -294,7 +330,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -316,7 +355,10 @@ describe('Registration', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -344,7 +386,10 @@ aWRnaXRzIFB0eSBMdGQwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjBF
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {
@@ -366,7 +411,10 @@ aWRnaXRzIFB0eSBMdGQwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjBF
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           registration: {
             ...initialState.registration,
             aap: {

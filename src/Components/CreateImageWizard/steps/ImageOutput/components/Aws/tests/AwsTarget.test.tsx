@@ -27,7 +27,10 @@ const createStoreWithAwsState = (
     preloadedState: {
       wizard: {
         ...initialState,
-        imageTypes: ['aws'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['aws'],
+        },
         registration: {
           ...initialState.registration,
           type: 'register-later',

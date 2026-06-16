@@ -438,7 +438,7 @@ function commonRequestToState(
     .options as AzureUploadRequestOptions;
 
   const arch =
-    request.image_requests[0]?.architecture ?? initialState.architecture;
+    request.image_requests[0]?.architecture ?? initialState.output.architecture;
   if (!['x86_64', 'aarch64'].includes(arch)) {
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
@@ -536,15 +536,19 @@ function commonRequestToState(
           },
       partitioningMode: request.customizations.partitioning_mode,
     },
-    architecture: arch,
-    // Legacy on-prem bootc blueprints may have undefined distribution.
-    // Fall back to initialState so the wizard state type stays satisfied;
-    // the user can pick the correct distro in the wizard.
-    distribution:
-      getLatestRelease(request.distribution) ?? initialState.distribution,
-    imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
-    isoPayloadReference: request.bootc?.iso_payload_reference,
-    imageTypes: request.image_requests.map((image) => image.image_type),
+    output: {
+      architecture: arch,
+      // Legacy on-prem bootc blueprints may have undefined distribution.
+      // Fall back to initialState so the wizard state type stays satisfied;
+      // the user can pick the correct distro in the wizard.
+      distribution:
+        getLatestRelease(request.distribution) ??
+        initialState.output.distribution,
+      imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
+      isoPayloadReference: request.bootc?.iso_payload_reference,
+      imageTypes: request.image_requests.map((image) => image.image_type),
+      bootcDistributions: [],
+    },
     cloudProviders: {
       azure: azureTargetOptions(azureUploadOptions),
       gcp: gcpTargetOptions(gcpUploadOptions),
@@ -642,7 +646,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   return {
     wizardMode,
     blueprintMode,
-    bootcDistributions: [],
     blueprintId: request.id,
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
@@ -755,7 +758,6 @@ export const mapBlueprintExportToState = (
   return {
     wizardMode,
     blueprintMode: blueprint.bootc ? 'image' : 'package',
-    bootcDistributions: [],
     metadata: getMetadata(blueprint.metadata),
     registration: {
       ...initialState.registration,

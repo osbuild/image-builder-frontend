@@ -20,9 +20,12 @@ describe('wizardSlice core reducers', () => {
     it('should reset state to initial state', () => {
       const modifiedState: wizardState = {
         ...initialState,
-        distribution: 'rhel-8',
-        architecture: 'aarch64',
-        imageTypes: ['aws', 'gcp'],
+        output: {
+          ...initialState.output,
+          distribution: 'rhel-8',
+          architecture: 'aarch64',
+          imageTypes: ['aws', 'gcp'],
+        },
         system: {
           ...initialState.system,
           hostname: 'modified-hostname',
@@ -96,8 +99,11 @@ describe('wizardSlice core reducers', () => {
     it('should load provided state', () => {
       const stateToLoad: wizardState = {
         ...initialState,
-        distribution: 'rhel-9',
-        architecture: 'aarch64',
+        output: {
+          ...initialState.output,
+          distribution: 'rhel-9',
+          architecture: 'aarch64',
+        },
         system: {
           ...initialState.system,
           hostname: 'loaded-hostname',
@@ -106,8 +112,8 @@ describe('wizardSlice core reducers', () => {
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
-      expect(result.distribution).toBe('rhel-9');
-      expect(result.architecture).toBe('aarch64');
+      expect(result.output.distribution).toBe('rhel-9');
+      expect(result.output.architecture).toBe('aarch64');
       expect(result.system.hostname).toBe('loaded-hostname');
     });
 
@@ -150,7 +156,7 @@ describe('wizardSlice core reducers', () => {
     it('should update distribution', () => {
       const result = wizardReducer(initialState, changeDistribution('rhel-9'));
 
-      expect(result.distribution).toBe('rhel-9');
+      expect(result.output.distribution).toBe('rhel-9');
     });
   });
 
@@ -158,7 +164,7 @@ describe('wizardSlice core reducers', () => {
     it('should update architecture', () => {
       const result = wizardReducer(initialState, changeArchitecture('aarch64'));
 
-      expect(result.architecture).toBe('aarch64');
+      expect(result.output.architecture).toBe('aarch64');
     });
   });
 
@@ -167,8 +173,8 @@ describe('wizardSlice core reducers', () => {
       it('should add an image type to empty array', () => {
         const result = wizardReducer(initialState, addImageType('aws'));
 
-        expect(result.imageTypes).toContain('aws');
-        expect(result.imageTypes).toHaveLength(1);
+        expect(result.output.imageTypes).toContain('aws');
+        expect(result.output.imageTypes).toHaveLength(1);
       });
 
       it('should add multiple image types', () => {
@@ -176,14 +182,14 @@ describe('wizardSlice core reducers', () => {
         state = wizardReducer(state, addImageType('gcp'));
         state = wizardReducer(state, addImageType('azure'));
 
-        expect(state.imageTypes).toEqual(['aws', 'gcp', 'azure']);
+        expect(state.output.imageTypes).toEqual(['aws', 'gcp', 'azure']);
       });
 
       it('should not add duplicate image types', () => {
         let state = wizardReducer(initialState, addImageType('aws'));
         state = wizardReducer(state, addImageType('aws'));
 
-        expect(state.imageTypes).toEqual(['aws']);
+        expect(state.output.imageTypes).toEqual(['aws']);
       });
     });
 
@@ -191,23 +197,29 @@ describe('wizardSlice core reducers', () => {
       it('should remove an existing image type', () => {
         const stateWithTypes: wizardState = {
           ...initialState,
-          imageTypes: ['aws', 'gcp', 'azure'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['aws', 'gcp', 'azure'],
+          },
         };
 
         const result = wizardReducer(stateWithTypes, removeImageType('gcp'));
 
-        expect(result.imageTypes).toEqual(['aws', 'azure']);
+        expect(result.output.imageTypes).toEqual(['aws', 'azure']);
       });
 
       it('should do nothing when removing non-existent type', () => {
         const stateWithTypes: wizardState = {
           ...initialState,
-          imageTypes: ['aws', 'gcp'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['aws', 'gcp'],
+          },
         };
 
         const result = wizardReducer(stateWithTypes, removeImageType('azure'));
 
-        expect(result.imageTypes).toEqual(['aws', 'gcp']);
+        expect(result.output.imageTypes).toEqual(['aws', 'gcp']);
       });
     });
 
@@ -215,7 +227,10 @@ describe('wizardSlice core reducers', () => {
       it('should replace all image types', () => {
         const stateWithTypes: wizardState = {
           ...initialState,
-          imageTypes: ['aws', 'gcp'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['aws', 'gcp'],
+          },
         };
 
         const result = wizardReducer(
@@ -223,25 +238,31 @@ describe('wizardSlice core reducers', () => {
           changeImageTypes(['azure', 'vsphere']),
         );
 
-        expect(result.imageTypes).toEqual(['azure', 'vsphere']);
+        expect(result.output.imageTypes).toEqual(['azure', 'vsphere']);
       });
 
       it('should set empty array', () => {
         const stateWithTypes: wizardState = {
           ...initialState,
-          imageTypes: ['aws', 'gcp'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['aws', 'gcp'],
+          },
         };
 
         const result = wizardReducer(stateWithTypes, changeImageTypes([]));
 
-        expect(result.imageTypes).toEqual([]);
+        expect(result.output.imageTypes).toEqual([]);
       });
 
       it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
         const stateWithIso: wizardState = {
           ...initialState,
-          imageTypes: ['bootable-container-iso'],
-          isoPayloadReference: 'registry.example.org/payload:latest',
+          output: {
+            ...initialState.output,
+            imageTypes: ['bootable-container-iso'],
+            isoPayloadReference: 'registry.example.org/payload:latest',
+          },
         };
 
         const result = wizardReducer(
@@ -249,7 +270,7 @@ describe('wizardSlice core reducers', () => {
           changeImageTypes(['guest-image']),
         );
 
-        expect(result.isoPayloadReference).toBeUndefined();
+        expect(result.output.isoPayloadReference).toBeUndefined();
       });
     });
   });

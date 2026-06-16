@@ -13,7 +13,10 @@ describe('ContentOverview', () => {
     renderWithRedux(
       <ContentOverview restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
       },
     );
 
@@ -25,7 +28,10 @@ describe('ContentOverview', () => {
       renderWithRedux(
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             repositories: {
@@ -48,7 +54,10 @@ describe('ContentOverview', () => {
       renderWithRedux(
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             packages: [],
@@ -64,7 +73,10 @@ describe('ContentOverview', () => {
       renderWithRedux(
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             packages: [
@@ -87,7 +99,10 @@ describe('ContentOverview', () => {
       renderWithRedux(
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             packages: [
@@ -108,7 +123,10 @@ describe('ContentOverview', () => {
           oscapPackages={['aide', 'audit']}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             packages: [
@@ -135,7 +153,10 @@ describe('ContentOverview', () => {
           oscapPackages={['aide']}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             packages: [
@@ -164,7 +185,10 @@ describe('ContentOverview', () => {
       renderWithRedux(
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             groups: [],
@@ -180,7 +204,10 @@ describe('ContentOverview', () => {
       renderWithRedux(
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           content: {
             ...initialState.content,
             groups: [

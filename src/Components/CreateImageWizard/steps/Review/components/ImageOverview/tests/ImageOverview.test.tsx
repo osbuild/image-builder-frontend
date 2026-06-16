@@ -55,7 +55,7 @@ describe('ImageOverview', () => {
     renderWithRedux(
       <ImageOverview restrictions={createDefaultRestrictions()} />,
       {
-        distribution: RHEL_10,
+        output: { ...initialState.output, distribution: RHEL_10 },
         blueprintMode: 'package',
       },
     );
@@ -70,7 +70,7 @@ describe('ImageOverview', () => {
     renderWithRedux(
       <ImageOverview restrictions={createDefaultRestrictions()} />,
       {
-        architecture: X86_64,
+        output: { ...initialState.output, architecture: X86_64 },
       },
     );
 
@@ -91,7 +91,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['vsphere'],
+          output: { ...initialState.output, imageTypes: ['vsphere'] },
         },
       );
 
@@ -103,7 +103,10 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['vsphere-ova'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['vsphere-ova'],
+          },
         },
       );
 
@@ -115,7 +118,10 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['vsphere', 'vsphere-ova'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['vsphere', 'vsphere-ova'],
+          },
         },
       );
 
@@ -127,7 +133,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['aws'],
+          output: { ...initialState.output, imageTypes: ['aws'] },
         },
       );
 
@@ -140,7 +146,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['aws'],
+          output: { ...initialState.output, imageTypes: ['aws'] },
           cloudProviders: {
             ...initialState.cloudProviders,
             aws: {
@@ -165,7 +171,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['gcp'],
+          output: { ...initialState.output, imageTypes: ['gcp'] },
           cloudProviders: {
             ...initialState.cloudProviders,
             gcp: {
@@ -189,7 +195,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['azure'],
+          output: { ...initialState.output, imageTypes: ['azure'] },
           cloudProviders: {
             ...initialState.cloudProviders,
             azure: {
@@ -214,7 +220,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['oci'],
+          output: { ...initialState.output, imageTypes: ['oci'] },
         },
       );
 
@@ -227,7 +233,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['vsphere'],
+          output: { ...initialState.output, imageTypes: ['vsphere'] },
         },
       );
 
@@ -240,7 +246,10 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
         },
       );
 
@@ -252,7 +261,10 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['image-installer'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['image-installer'],
+          },
         },
       );
 
@@ -263,7 +275,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['wsl'],
+          output: { ...initialState.output, imageTypes: ['wsl'] },
         },
       );
 
@@ -276,7 +288,10 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image', 'image-installer', 'wsl'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image', 'image-installer', 'wsl'],
+          },
         },
       );
 
@@ -291,7 +306,7 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['aws'],
+          output: { ...initialState.output, imageTypes: ['aws'] },
         },
       );
 
@@ -310,7 +325,10 @@ describe('ImageOverview', () => {
           })}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [adminUser],
@@ -329,7 +347,10 @@ describe('ImageOverview', () => {
       renderWithRedux(
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [adminUser],

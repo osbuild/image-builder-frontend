@@ -478,7 +478,10 @@ const createStoreWithRepositoriesState = (
   } = {},
 ) => {
   return createTestStore({
-    imageTypes: ['guest-image'],
+    output: {
+      ...initialState.output,
+      imageTypes: ['guest-image'],
+    },
     registration: {
       ...initialState.registration,
       type: 'register-later',

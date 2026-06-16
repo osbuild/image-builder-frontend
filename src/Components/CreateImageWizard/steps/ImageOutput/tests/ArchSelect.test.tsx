@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { AARCH64, X86_64 } from '@/constants';
-import { selectArchitecture } from '@/store/slices/wizard';
+import { initialState, selectArchitecture } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import { openArchSelect, renderArchSelect, selectArch } from './helpers';
@@ -22,7 +22,9 @@ describe('ArchSelect', () => {
   });
 
   test('renders with aarch64 architecture when set in state', () => {
-    renderArchSelect({ architecture: AARCH64 });
+    renderArchSelect({
+      output: { ...initialState.output, architecture: AARCH64 },
+    });
 
     const toggle = screen.getByTestId('arch_select');
     expect(toggle).toHaveTextContent(AARCH64);
@@ -52,7 +54,9 @@ describe('ArchSelect', () => {
 
   test('selects x86_64 after switching from aarch64', async () => {
     const user = createUser();
-    const { store } = renderArchSelect({ architecture: AARCH64 });
+    const { store } = renderArchSelect({
+      output: { ...initialState.output, architecture: AARCH64 },
+    });
 
     await selectArch(user, X86_64);
 
