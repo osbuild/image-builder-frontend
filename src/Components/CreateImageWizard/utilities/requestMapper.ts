@@ -490,19 +490,30 @@ function commonRequestToState(
     compliance:
       compliancePolicyID !== undefined
         ? {
-            complianceType: 'compliance' as ComplianceType,
+            type: 'compliance' as ComplianceType,
             policyID: compliancePolicyID,
             profileID: undefined,
             policyTitle: undefined,
+            fips: {
+              enabled: request.customizations.fips?.enabled || false,
+            },
           }
         : oscapProfile !== undefined
           ? {
-              complianceType: 'openscap' as ComplianceType,
+              type: 'openscap' as ComplianceType,
               profileID: oscapProfile,
               policyID: undefined,
               policyTitle: undefined,
+              fips: {
+                enabled: request.customizations.fips?.enabled || false,
+              },
             }
-          : initialState.compliance,
+          : {
+              ...initialState.compliance,
+              fips: {
+                enabled: request.customizations.fips?.enabled || false,
+              },
+            },
     firstBoot: request.customizations.files
       ? {
           script: getFirstBootScript(request.customizations.files),
@@ -610,9 +621,6 @@ function commonRequestToState(
         enabled: request.customizations.firewall?.services?.enabled || [],
         disabled: request.customizations.firewall?.services?.disabled || [],
       },
-    },
-    fips: {
-      enabled: request.customizations.fips?.enabled || false,
     },
   };
 }

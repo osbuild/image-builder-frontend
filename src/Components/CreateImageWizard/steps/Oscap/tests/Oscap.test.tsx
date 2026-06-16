@@ -16,10 +16,11 @@ describe('Oscap Component', () => {
     test('pressing Enter in profile search does not trigger page reload', async () => {
       renderWithRedux(<OscapStep />, {
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: undefined,
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
       });
       const user = createUser();
@@ -94,10 +95,11 @@ describe('Oscap Component', () => {
     test('switching back to none from openscap deselects profile', async () => {
       renderWithRedux(<OscapStep />, {
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: undefined,
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
       });
       const user = createUser();
