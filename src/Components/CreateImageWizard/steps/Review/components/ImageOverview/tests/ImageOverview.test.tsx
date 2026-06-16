@@ -268,7 +268,7 @@ describe('ImageOverview', () => {
 
       renderWithRedux(<ImageOverview />, {
         imageTypes: ['guest-image'],
-        users: [adminUser],
+        system: { ...initialState.system, users: [adminUser] },
       });
 
       expect(screen.getByText('Users')).toBeInTheDocument();
@@ -282,7 +282,7 @@ describe('ImageOverview', () => {
 
       renderWithRedux(<ImageOverview />, {
         imageTypes: ['guest-image'],
-        users: [adminUser],
+        system: { ...initialState.system, users: [adminUser] },
       });
 
       expect(screen.queryByText('Users')).not.toBeInTheDocument();

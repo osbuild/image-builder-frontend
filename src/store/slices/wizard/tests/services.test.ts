@@ -21,15 +21,18 @@ describe('services reducers', () => {
       it('should add a service to enabled list', () => {
         const result = wizardReducer(initialState, addEnabledService('httpd'));
 
-        expect(result.services.enabled).toContain('httpd');
+        expect(result.system.services.enabled).toContain('httpd');
       });
 
       it('should not add duplicate services', () => {
         const stateWithService: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            enabled: ['httpd'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              enabled: ['httpd'],
+            },
           },
         };
 
@@ -38,7 +41,7 @@ describe('services reducers', () => {
           addEnabledService('httpd'),
         );
 
-        expect(result.services.enabled).toEqual(['httpd']);
+        expect(result.system.services.enabled).toEqual(['httpd']);
       });
 
       it('should add multiple different services', () => {
@@ -46,7 +49,11 @@ describe('services reducers', () => {
         state = wizardReducer(state, addEnabledService('sshd'));
         state = wizardReducer(state, addEnabledService('nginx'));
 
-        expect(state.services.enabled).toEqual(['httpd', 'sshd', 'nginx']);
+        expect(state.system.services.enabled).toEqual([
+          'httpd',
+          'sshd',
+          'nginx',
+        ]);
       });
     });
 
@@ -54,9 +61,12 @@ describe('services reducers', () => {
       it('should remove a service from enabled list', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            enabled: ['httpd', 'sshd', 'nginx'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              enabled: ['httpd', 'sshd', 'nginx'],
+            },
           },
         };
 
@@ -65,15 +75,18 @@ describe('services reducers', () => {
           removeEnabledService('sshd'),
         );
 
-        expect(result.services.enabled).toEqual(['httpd', 'nginx']);
+        expect(result.system.services.enabled).toEqual(['httpd', 'nginx']);
       });
 
       it('should do nothing when service not found', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            enabled: ['httpd'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              enabled: ['httpd'],
+            },
           },
         };
 
@@ -82,7 +95,7 @@ describe('services reducers', () => {
           removeEnabledService('nonexistent'),
         );
 
-        expect(result.services.enabled).toEqual(['httpd']);
+        expect(result.system.services.enabled).toEqual(['httpd']);
       });
     });
 
@@ -90,9 +103,12 @@ describe('services reducers', () => {
       it('should replace all enabled services', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            enabled: ['httpd', 'sshd'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              enabled: ['httpd', 'sshd'],
+            },
           },
         };
 
@@ -101,15 +117,18 @@ describe('services reducers', () => {
           changeEnabledServices(['nginx', 'postgresql']),
         );
 
-        expect(result.services.enabled).toEqual(['nginx', 'postgresql']);
+        expect(result.system.services.enabled).toEqual(['nginx', 'postgresql']);
       });
 
       it('should set empty array', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            enabled: ['httpd', 'sshd'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              enabled: ['httpd', 'sshd'],
+            },
           },
         };
 
@@ -118,7 +137,7 @@ describe('services reducers', () => {
           changeEnabledServices([]),
         );
 
-        expect(result.services.enabled).toEqual([]);
+        expect(result.system.services.enabled).toEqual([]);
       });
     });
   });
@@ -131,15 +150,18 @@ describe('services reducers', () => {
           addMaskedService('firewalld'),
         );
 
-        expect(result.services.masked).toContain('firewalld');
+        expect(result.system.services.masked).toContain('firewalld');
       });
 
       it('should not add duplicate services', () => {
         const stateWithService: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            masked: ['firewalld'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              masked: ['firewalld'],
+            },
           },
         };
 
@@ -148,7 +170,7 @@ describe('services reducers', () => {
           addMaskedService('firewalld'),
         );
 
-        expect(result.services.masked).toEqual(['firewalld']);
+        expect(result.system.services.masked).toEqual(['firewalld']);
       });
     });
 
@@ -156,9 +178,12 @@ describe('services reducers', () => {
       it('should remove a service from masked list', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            masked: ['firewalld', 'iptables'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              masked: ['firewalld', 'iptables'],
+            },
           },
         };
 
@@ -167,7 +192,7 @@ describe('services reducers', () => {
           removeMaskedService('firewalld'),
         );
 
-        expect(result.services.masked).toEqual(['iptables']);
+        expect(result.system.services.masked).toEqual(['iptables']);
       });
     });
 
@@ -175,9 +200,12 @@ describe('services reducers', () => {
       it('should replace all masked services', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            masked: ['firewalld'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              masked: ['firewalld'],
+            },
           },
         };
 
@@ -186,7 +214,7 @@ describe('services reducers', () => {
           changeMaskedServices(['iptables', 'nftables']),
         );
 
-        expect(result.services.masked).toEqual(['iptables', 'nftables']);
+        expect(result.system.services.masked).toEqual(['iptables', 'nftables']);
       });
     });
   });
@@ -196,15 +224,18 @@ describe('services reducers', () => {
       it('should add a service to disabled list', () => {
         const result = wizardReducer(initialState, addDisabledService('cups'));
 
-        expect(result.services.disabled).toContain('cups');
+        expect(result.system.services.disabled).toContain('cups');
       });
 
       it('should not add duplicate services', () => {
         const stateWithService: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            disabled: ['cups'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              disabled: ['cups'],
+            },
           },
         };
 
@@ -213,7 +244,7 @@ describe('services reducers', () => {
           addDisabledService('cups'),
         );
 
-        expect(result.services.disabled).toEqual(['cups']);
+        expect(result.system.services.disabled).toEqual(['cups']);
       });
     });
 
@@ -221,9 +252,12 @@ describe('services reducers', () => {
       it('should remove a service from disabled list', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            disabled: ['cups', 'bluetooth'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              disabled: ['cups', 'bluetooth'],
+            },
           },
         };
 
@@ -232,7 +266,7 @@ describe('services reducers', () => {
           removeDisabledService('cups'),
         );
 
-        expect(result.services.disabled).toEqual(['bluetooth']);
+        expect(result.system.services.disabled).toEqual(['bluetooth']);
       });
     });
 
@@ -240,9 +274,12 @@ describe('services reducers', () => {
       it('should replace all disabled services', () => {
         const stateWithServices: wizardState = {
           ...initialState,
-          services: {
-            ...initialState.services,
-            disabled: ['cups'],
+          system: {
+            ...initialState.system,
+            services: {
+              ...initialState.system.services,
+              disabled: ['cups'],
+            },
           },
         };
 
@@ -251,7 +288,10 @@ describe('services reducers', () => {
           changeDisabledServices(['bluetooth', 'avahi-daemon']),
         );
 
-        expect(result.services.disabled).toEqual(['bluetooth', 'avahi-daemon']);
+        expect(result.system.services.disabled).toEqual([
+          'bluetooth',
+          'avahi-daemon',
+        ]);
       });
     });
   });
@@ -262,9 +302,9 @@ describe('services reducers', () => {
       state = wizardReducer(state, addMaskedService('firewalld'));
       state = wizardReducer(state, addDisabledService('cups'));
 
-      expect(state.services.enabled).toEqual(['httpd']);
-      expect(state.services.masked).toEqual(['firewalld']);
-      expect(state.services.disabled).toEqual(['cups']);
+      expect(state.system.services.enabled).toEqual(['httpd']);
+      expect(state.system.services.masked).toEqual(['firewalld']);
+      expect(state.system.services.disabled).toEqual(['cups']);
     });
 
     it('should allow same service name in different categories', () => {
@@ -273,9 +313,9 @@ describe('services reducers', () => {
       state = wizardReducer(state, addMaskedService('test'));
       state = wizardReducer(state, addDisabledService('test'));
 
-      expect(state.services.enabled).toContain('test');
-      expect(state.services.masked).toContain('test');
-      expect(state.services.disabled).toContain('test');
+      expect(state.system.services.enabled).toContain('test');
+      expect(state.system.services.masked).toContain('test');
+      expect(state.system.services.disabled).toContain('test');
     });
   });
 });

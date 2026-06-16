@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import {
@@ -223,10 +224,13 @@ describe('Services Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated enabled services from state', async () => {
       renderServicesStep({
-        services: {
-          enabled: ['httpd', 'sshd'],
-          disabled: [],
-          masked: [],
+        system: {
+          ...initialState.system,
+          services: {
+            enabled: ['httpd', 'sshd'],
+            disabled: [],
+            masked: [],
+          },
         },
       });
 
@@ -236,10 +240,13 @@ describe('Services Component', () => {
 
     test('renders with pre-populated disabled services from state', async () => {
       renderServicesStep({
-        services: {
-          enabled: [],
-          disabled: ['telnet', 'rsh'],
-          masked: [],
+        system: {
+          ...initialState.system,
+          services: {
+            enabled: [],
+            disabled: ['telnet', 'rsh'],
+            masked: [],
+          },
         },
       });
 
@@ -249,10 +256,13 @@ describe('Services Component', () => {
 
     test('renders with pre-populated masked services from state', async () => {
       renderServicesStep({
-        services: {
-          enabled: [],
-          disabled: [],
-          masked: ['nfs-server', 'rpcbind'],
+        system: {
+          ...initialState.system,
+          services: {
+            enabled: [],
+            disabled: [],
+            masked: ['nfs-server', 'rpcbind'],
+          },
         },
       });
 
@@ -266,50 +276,63 @@ describe('Services Component', () => {
       const { store } = renderServicesStep();
       const user = createUser();
 
-      expect(store.getState().wizard.services.enabled).toHaveLength(0);
+      expect(store.getState().wizard.system.services.enabled).toHaveLength(0);
 
       await addEnabledService(user, 'httpd');
 
-      expect(store.getState().wizard.services.enabled).toContain('httpd');
+      expect(store.getState().wizard.system.services.enabled).toContain(
+        'httpd',
+      );
     });
 
     test('updates store when disabled service is added', async () => {
       const { store } = renderServicesStep();
       const user = createUser();
 
-      expect(store.getState().wizard.services.disabled).toHaveLength(0);
+      expect(store.getState().wizard.system.services.disabled).toHaveLength(0);
 
       await addDisabledService(user, 'telnet');
 
-      expect(store.getState().wizard.services.disabled).toContain('telnet');
+      expect(store.getState().wizard.system.services.disabled).toContain(
+        'telnet',
+      );
     });
 
     test('updates store when masked service is added', async () => {
       const { store } = renderServicesStep();
       const user = createUser();
 
-      expect(store.getState().wizard.services.masked).toHaveLength(0);
+      expect(store.getState().wizard.system.services.masked).toHaveLength(0);
 
       await addMaskedService(user, 'nfs-server');
 
-      expect(store.getState().wizard.services.masked).toContain('nfs-server');
+      expect(store.getState().wizard.system.services.masked).toContain(
+        'nfs-server',
+      );
     });
 
     test('updates store when service is removed', async () => {
       const { store } = renderServicesStep({
-        services: {
-          enabled: ['httpd'],
-          disabled: [],
-          masked: [],
+        system: {
+          ...initialState.system,
+          services: {
+            enabled: ['httpd'],
+            disabled: [],
+            masked: [],
+          },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.services.enabled).toContain('httpd');
+      expect(store.getState().wizard.system.services.enabled).toContain(
+        'httpd',
+      );
 
       await removeService(user, 'httpd');
 
-      expect(store.getState().wizard.services.enabled).not.toContain('httpd');
+      expect(store.getState().wizard.system.services.enabled).not.toContain(
+        'httpd',
+      );
     });
   });
 });

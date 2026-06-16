@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import {
   advancedPartitions,
   basicPartitions,
@@ -271,9 +272,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          timezone: {
-            timezone: 'America/New_York',
-            ntpservers: [],
+          system: {
+            ...initialState.system,
+            timezone: {
+              timezone: 'America/New_York',
+              ntpservers: [],
+            },
           },
         },
       );
@@ -287,9 +291,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          timezone: {
-            timezone: '',
-            ntpservers: [],
+          system: {
+            ...initialState.system,
+            timezone: {
+              timezone: '',
+              ntpservers: [],
+            },
           },
         },
       );
@@ -302,9 +309,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          timezone: {
-            timezone: 'UTC',
-            ntpservers: ['0.pool.ntp.org', '1.pool.ntp.org'],
+          system: {
+            ...initialState.system,
+            timezone: {
+              timezone: 'UTC',
+              ntpservers: ['0.pool.ntp.org', '1.pool.ntp.org'],
+            },
           },
         },
       );
@@ -319,9 +329,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          timezone: {
-            timezone: 'Europe/London',
-            ntpservers: [],
+          system: {
+            ...initialState.system,
+            timezone: {
+              timezone: 'Europe/London',
+              ntpservers: [],
+            },
           },
         },
       );
@@ -336,9 +349,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          locale: {
-            languages: ['en_US.UTF-8'],
-            keyboard: 'us',
+          system: {
+            ...initialState.system,
+            locale: {
+              languages: ['en_US.UTF-8'],
+              keyboard: 'us',
+            },
           },
         },
       );
@@ -354,9 +370,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          locale: {
-            languages: ['en_US.UTF-8', 'es_ES.UTF-8', 'fr_FR.UTF-8'],
-            keyboard: 'us',
+          system: {
+            ...initialState.system,
+            locale: {
+              languages: ['en_US.UTF-8', 'es_ES.UTF-8', 'fr_FR.UTF-8'],
+              keyboard: 'us',
+            },
           },
         },
       );
@@ -371,9 +390,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          locale: {
-            languages: [],
-            keyboard: 'us',
+          system: {
+            ...initialState.system,
+            locale: {
+              languages: [],
+              keyboard: 'us',
+            },
           },
         },
       );
@@ -388,9 +410,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          locale: {
-            languages: ['en_US.UTF-8'],
-            keyboard: '',
+          system: {
+            ...initialState.system,
+            locale: {
+              languages: ['en_US.UTF-8'],
+              keyboard: '',
+            },
           },
         },
       );
@@ -405,9 +430,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          locale: {
-            languages: [],
-            keyboard: '',
+          system: {
+            ...initialState.system,
+            locale: {
+              languages: [],
+              keyboard: '',
+            },
           },
         },
       );
@@ -423,7 +451,7 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          hostname: 'my-server.example.com',
+          system: { ...initialState.system, hostname: 'my-server.example.com' },
         },
       );
 
@@ -436,7 +464,7 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          hostname: '',
+          system: { ...initialState.system, hostname: '' },
         },
       );
 
@@ -450,9 +478,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: 'kernel-rt',
-            append: [],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: 'kernel-rt',
+              append: [],
+            },
           },
         },
       );
@@ -466,9 +497,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: '',
-            append: ['quiet', 'splash', 'rhgb'],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: '',
+              append: ['quiet', 'splash', 'rhgb'],
+            },
           },
         },
       );
@@ -487,9 +521,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: 'kernel-debug',
-            append: ['debug', 'console=ttyS0'],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: 'kernel-debug',
+              append: ['debug', 'console=ttyS0'],
+            },
           },
         },
       );
@@ -506,9 +543,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: '',
-            append: [],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: '',
+              append: [],
+            },
           },
         },
       );
@@ -522,9 +562,12 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: '',
-            append: ['quiet', 'splash'],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: '',
+              append: ['quiet', 'splash'],
+            },
           },
         },
       );
@@ -544,9 +587,12 @@ describe('AdvancedSettingsOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: '',
-            append: ['audit=1'],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: '',
+              append: ['audit=1'],
+            },
           },
         },
       );
@@ -565,9 +611,12 @@ describe('AdvancedSettingsOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          kernel: {
-            name: '',
-            append: ['audit=1', 'quiet'],
+          system: {
+            ...initialState.system,
+            kernel: {
+              name: '',
+              append: ['audit=1', 'quiet'],
+            },
           },
         },
       );
@@ -587,10 +636,13 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: [],
-            disabled: [],
-            masked: [],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: [],
+              disabled: [],
+              masked: [],
+            },
           },
         },
       );
@@ -606,10 +658,13 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: ['httpd', 'sshd'],
-            disabled: [],
-            masked: [],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: ['httpd', 'sshd'],
+              disabled: [],
+              masked: [],
+            },
           },
         },
       );
@@ -626,10 +681,13 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: [],
-            disabled: ['bluetooth', 'cups'],
-            masked: [],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: [],
+              disabled: ['bluetooth', 'cups'],
+              masked: [],
+            },
           },
         },
       );
@@ -643,10 +701,13 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: [],
-            disabled: [],
-            masked: ['firewalld'],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: [],
+              disabled: [],
+              masked: ['firewalld'],
+            },
           },
         },
       );
@@ -659,10 +720,13 @@ describe('AdvancedSettingsOverview', () => {
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: ['httpd'],
-            disabled: ['cups'],
-            masked: ['firewalld'],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: ['httpd'],
+              disabled: ['cups'],
+              masked: ['firewalld'],
+            },
           },
         },
       );
@@ -690,10 +754,13 @@ describe('AdvancedSettingsOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: ['auditd'],
-            disabled: ['autofs'],
-            masked: ['nfs-server'],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: ['auditd'],
+              disabled: ['autofs'],
+              masked: ['nfs-server'],
+            },
           },
         },
       );
@@ -720,10 +787,13 @@ describe('AdvancedSettingsOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          services: {
-            enabled: ['auditd', 'httpd'],
-            disabled: [],
-            masked: [],
+          system: {
+            ...initialState.system,
+            services: {
+              enabled: ['auditd', 'httpd'],
+              disabled: [],
+              masked: [],
+            },
           },
         },
       );
@@ -747,7 +817,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firstBoot: { script: '' },
+          system: { ...initialState.system, firstBoot: { script: '' } },
         },
       );
 
@@ -761,7 +831,10 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firstBoot: { script: firstBootScript },
+          system: {
+            ...initialState.system,
+            firstBoot: { script: firstBootScript },
+          },
         },
       );
 
@@ -773,7 +846,10 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firstBoot: { script: firstBootScript },
+          system: {
+            ...initialState.system,
+            firstBoot: { script: firstBootScript },
+          },
         },
       );
 
@@ -787,7 +863,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [],
+          system: { ...initialState.system, users: [] },
         },
       );
 
@@ -799,16 +875,19 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [
-            {
-              name: '',
-              password: '',
-              hasPassword: false,
-              ssh_key: '',
-              groups: [],
-              isAdministrator: false,
-            },
-          ],
+          system: {
+            ...initialState.system,
+            users: [
+              {
+                name: '',
+                password: '',
+                hasPassword: false,
+                ssh_key: '',
+                groups: [],
+                isAdministrator: false,
+              },
+            ],
+          },
         },
       );
 
@@ -820,17 +899,20 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [
-            {
-              name: '',
-              password: '',
-              hasPassword: false,
-              ssh_key: '',
-              groups: [],
-              isAdministrator: false,
-            },
-            adminUser,
-          ],
+          system: {
+            ...initialState.system,
+            users: [
+              {
+                name: '',
+                password: '',
+                hasPassword: false,
+                ssh_key: '',
+                groups: [],
+                isAdministrator: false,
+              },
+              adminUser,
+            ],
+          },
         },
       );
 
@@ -844,7 +926,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser, developerUser],
+          system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
 
@@ -856,7 +938,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [],
+          system: { ...initialState.system, users: [] },
         },
       );
 
@@ -872,7 +954,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser],
+          system: { ...initialState.system, users: [adminUser] },
         },
       );
 
@@ -888,7 +970,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser, developerUser],
+          system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
 
@@ -901,7 +983,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser, developerUser],
+          system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
 
@@ -915,7 +997,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser, developerUser],
+          system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
 
@@ -930,7 +1012,10 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [{ ...adminUser, ssh_key: 'ssh-rsa AAAA' }],
+          system: {
+            ...initialState.system,
+            users: [{ ...adminUser, ssh_key: 'ssh-rsa AAAA' }],
+          },
         },
       );
 
@@ -943,7 +1028,10 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [{ ...adminUser, groups: ['wheel', 'docker'] }],
+          system: {
+            ...initialState.system,
+            users: [{ ...adminUser, groups: ['wheel', 'docker'] }],
+          },
         },
       );
 
@@ -956,11 +1044,18 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [
-            { ...adminUser, ssh_key: 'ssh-rsa adminkey', groups: ['wheel'] },
-            { ...developerUser, ssh_key: 'ssh-rsa devkey', groups: ['docker'] },
-            guestUser,
-          ],
+          system: {
+            ...initialState.system,
+            users: [
+              { ...adminUser, ssh_key: 'ssh-rsa adminkey', groups: ['wheel'] },
+              {
+                ...developerUser,
+                ssh_key: 'ssh-rsa devkey',
+                groups: ['docker'],
+              },
+              guestUser,
+            ],
+          },
         },
       );
 
@@ -975,7 +1070,7 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser],
+          system: { ...initialState.system, users: [adminUser] },
         },
       );
 
@@ -991,7 +1086,7 @@ echo 'Hello there, General Kenobi!'`;
         />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser],
+          system: { ...initialState.system, users: [adminUser] },
         },
       );
 
@@ -1005,11 +1100,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: [],
-            services: {
-              enabled: [],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: [],
+              services: {
+                enabled: [],
+                disabled: [],
+              },
             },
           },
         },
@@ -1023,11 +1121,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: ['22/tcp', '443/tcp'],
-            services: {
-              enabled: [],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: ['22/tcp', '443/tcp'],
+              services: {
+                enabled: [],
+                disabled: [],
+              },
             },
           },
         },
@@ -1042,11 +1143,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: [],
-            services: {
-              enabled: ['httpd'],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: [],
+              services: {
+                enabled: ['httpd'],
+                disabled: [],
+              },
             },
           },
         },
@@ -1060,11 +1164,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: ['22/tcp', '443/tcp', '8080/tcp'],
-            services: {
-              enabled: [],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: ['22/tcp', '443/tcp', '8080/tcp'],
+              services: {
+                enabled: [],
+                disabled: [],
+              },
             },
           },
         },
@@ -1081,11 +1188,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: [],
-            services: {
-              enabled: ['httpd', 'sshd'],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: [],
+              services: {
+                enabled: ['httpd', 'sshd'],
+                disabled: [],
+              },
             },
           },
         },
@@ -1101,11 +1211,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: [],
-            services: {
-              enabled: [],
-              disabled: ['cups', 'bluetooth'],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: [],
+              services: {
+                enabled: [],
+                disabled: ['cups', 'bluetooth'],
+              },
             },
           },
         },
@@ -1121,11 +1234,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: ['22/tcp', '443/tcp', '8080/tcp'],
-            services: {
-              enabled: ['httpd'],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: ['22/tcp', '443/tcp', '8080/tcp'],
+              services: {
+                enabled: ['httpd'],
+                disabled: [],
+              },
             },
           },
         },
@@ -1142,11 +1258,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: ['22/tcp'],
-            services: {
-              enabled: ['httpd', 'sshd'],
-              disabled: ['cups'],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: ['22/tcp'],
+              services: {
+                enabled: ['httpd', 'sshd'],
+                disabled: ['cups'],
+              },
             },
           },
         },
@@ -1167,11 +1286,14 @@ echo 'Hello there, General Kenobi!'`;
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          firewall: {
-            ports: [],
-            services: {
-              enabled: [],
-              disabled: [],
+          system: {
+            ...initialState.system,
+            firewall: {
+              ports: [],
+              services: {
+                enabled: [],
+                disabled: [],
+              },
             },
           },
         },

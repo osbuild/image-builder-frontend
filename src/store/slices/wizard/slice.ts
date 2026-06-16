@@ -192,34 +192,36 @@ export type wizardState = {
     };
     verifiedLocaleLangpacks: string[];
   };
-  users: UserWithAdditionalInfo[];
-  userGroups: UserGroup[];
-  firstBoot: {
-    script: string;
+  system: {
+    services: {
+      enabled: string[];
+      masked: string[];
+      disabled: string[];
+    };
+    kernel: {
+      name: string;
+      append: string[];
+    };
+    locale: Locale;
+    timezone: Timezone;
+    hostname: string;
+    firewall: {
+      ports: string[];
+      services: {
+        enabled: string[];
+        disabled: string[];
+      };
+    };
+    firstBoot: {
+      script: string;
+    };
+    users: UserWithAdditionalInfo[];
+    groups: UserGroup[];
   };
-  services: {
-    enabled: string[];
-    masked: string[];
-    disabled: string[];
-  };
-  kernel: {
-    name: string;
-    append: string[];
-  };
-  locale: Locale;
   details: {
     blueprintName: string;
     isCustomName: boolean;
     blueprintDescription: string;
-  };
-  timezone: Timezone;
-  hostname: string;
-  firewall: {
-    ports: string[];
-    services: {
-      enabled: string[];
-      disabled: string[];
-    };
   };
   metadata?: {
     parent_id: string | null;
@@ -312,39 +314,41 @@ export const initialState: wizardState = {
     },
     verifiedLocaleLangpacks: [],
   },
-  services: {
-    enabled: [],
-    masked: [],
-    disabled: [],
-  },
-  kernel: {
-    name: '',
-    append: [],
-  },
-  locale: {
-    languages: ['C.UTF-8'],
-    keyboard: '',
+  system: {
+    services: {
+      enabled: [],
+      masked: [],
+      disabled: [],
+    },
+    kernel: {
+      name: '',
+      append: [],
+    },
+    locale: {
+      languages: ['C.UTF-8'],
+      keyboard: '',
+    },
+    timezone: {
+      timezone: '',
+      ntpservers: [],
+    },
+    hostname: '',
+    firewall: {
+      ports: [],
+      services: {
+        enabled: [],
+        disabled: [],
+      },
+    },
+    firstBoot: { script: '' },
+    users: [],
+    groups: [{ name: '' }],
   },
   details: {
     blueprintName: generateDefaultName(RHEL_10, X86_64),
     isCustomName: false,
     blueprintDescription: '',
   },
-  timezone: {
-    timezone: '',
-    ntpservers: [],
-  },
-  hostname: '',
-  firewall: {
-    ports: [],
-    services: {
-      enabled: [],
-      disabled: [],
-    },
-  },
-  firstBoot: { script: '' },
-  users: [],
-  userGroups: [{ name: '' }],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -560,11 +564,11 @@ export const selectPackageGroups = (state: RootState) => {
 };
 
 export const selectServices = (state: RootState) => {
-  return state.wizard.services;
+  return state.wizard.system.services;
 };
 
 export const selectUsers = (state: RootState) => {
-  return state.wizard.users;
+  return state.wizard.system.users;
 };
 
 export const selectNonEmptyUsers = createSelector([selectUsers], (users) =>
@@ -578,19 +582,19 @@ export const selectNonEmptyUsers = createSelector([selectUsers], (users) =>
 );
 
 export const selectUserGroups = (state: RootState) => {
-  return state.wizard.userGroups;
+  return state.wizard.system.groups;
 };
 
 export const selectKernel = (state: RootState) => {
-  return state.wizard.kernel;
+  return state.wizard.system.kernel;
 };
 
 export const selectLanguages = (state: RootState) => {
-  return state.wizard.locale.languages;
+  return state.wizard.system.locale.languages;
 };
 
 export const selectKeyboard = (state: RootState) => {
-  return state.wizard.locale.keyboard;
+  return state.wizard.system.locale.keyboard;
 };
 
 export const selectBlueprintName = (state: RootState) => {
@@ -610,23 +614,23 @@ export const selectBlueprintDescription = (state: RootState) => {
 };
 
 export const selectFirstBootScript = (state: RootState) => {
-  return state.wizard.firstBoot.script;
+  return state.wizard.system.firstBoot.script;
 };
 
 export const selectTimezone = (state: RootState) => {
-  return state.wizard.timezone.timezone;
+  return state.wizard.system.timezone.timezone;
 };
 
 export const selectNtpServers = (state: RootState) => {
-  return state.wizard.timezone.ntpservers;
+  return state.wizard.system.timezone.ntpservers;
 };
 
 export const selectHostname = (state: RootState) => {
-  return state.wizard.hostname;
+  return state.wizard.system.hostname;
 };
 
 export const selectFirewall = (state: RootState) => {
-  return state.wizard.firewall;
+  return state.wizard.system.firewall;
 };
 
 export const selectFips = (state: RootState) => {
@@ -1445,19 +1449,19 @@ export const wizardSlice = createSlice({
     },
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
-        state.locale.languages &&
-        !state.locale.languages.some((lang) => lang === action.payload)
+        state.system.locale.languages &&
+        !state.system.locale.languages.some((lang) => lang === action.payload)
       ) {
-        state.locale.languages.push(action.payload);
+        state.system.locale.languages.push(action.payload);
       }
     },
     removeLanguage: (state, action: PayloadAction<string>) => {
-      if (state.locale.languages) {
-        const index = state.locale.languages.findIndex(
+      if (state.system.locale.languages) {
+        const index = state.system.locale.languages.findIndex(
           (lang) => lang === action.payload,
         );
         if (index !== -1) {
-          state.locale.languages.splice(index, 1);
+          state.system.locale.languages.splice(index, 1);
         }
       }
     },
@@ -1465,24 +1469,24 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<{ oldLanguage: string; newLanguage: string }>,
     ) => {
-      if (state.locale.languages) {
-        const index = state.locale.languages.findIndex(
+      if (state.system.locale.languages) {
+        const index = state.system.locale.languages.findIndex(
           (lang) => lang === action.payload.oldLanguage,
         );
         if (index !== -1) {
-          state.locale.languages[index] = action.payload.newLanguage;
+          state.system.locale.languages[index] = action.payload.newLanguage;
         }
       }
     },
     clearLanguages: (state) => {
-      state.locale.languages = [];
+      state.system.locale.languages = [];
     },
     clearLocale: (state) => {
-      state.locale.languages = [];
-      state.locale.keyboard = '';
+      state.system.locale.languages = [];
+      state.system.locale.keyboard = '';
     },
     changeKeyboard: (state, action: PayloadAction<string>) => {
-      state.locale.keyboard = action.payload;
+      state.system.locale.keyboard = action.payload;
     },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
@@ -1494,149 +1498,157 @@ export const wizardSlice = createSlice({
       state.details.blueprintDescription = action.payload;
     },
     setFirstBootScript: (state, action: PayloadAction<string>) => {
-      state.firstBoot.script = action.payload;
+      state.system.firstBoot.script = action.payload;
     },
     changeEnabledServices: (state, action: PayloadAction<string[]>) => {
-      state.services.enabled = action.payload;
+      state.system.services.enabled = action.payload;
     },
     addEnabledService: (state, action: PayloadAction<string>) => {
       if (
-        !state.services.enabled.some((service) => service === action.payload)
+        !state.system.services.enabled.some(
+          (service) => service === action.payload,
+        )
       ) {
-        state.services.enabled.push(action.payload);
+        state.system.services.enabled.push(action.payload);
       }
     },
     removeEnabledService: (state, action: PayloadAction<string>) => {
-      const index = state.services.enabled.findIndex(
+      const index = state.system.services.enabled.findIndex(
         (service) => service === action.payload,
       );
       if (index !== -1) {
-        state.services.enabled.splice(index, 1);
+        state.system.services.enabled.splice(index, 1);
       }
     },
     changeMaskedServices: (state, action: PayloadAction<string[]>) => {
-      state.services.masked = action.payload;
+      state.system.services.masked = action.payload;
     },
     addMaskedService: (state, action: PayloadAction<string>) => {
       if (
-        !state.services.masked.some((service) => service === action.payload)
+        !state.system.services.masked.some(
+          (service) => service === action.payload,
+        )
       ) {
-        state.services.masked.push(action.payload);
+        state.system.services.masked.push(action.payload);
       }
     },
     removeMaskedService: (state, action: PayloadAction<string>) => {
-      const index = state.services.masked.findIndex(
+      const index = state.system.services.masked.findIndex(
         (service) => service === action.payload,
       );
       if (index !== -1) {
-        state.services.masked.splice(index, 1);
+        state.system.services.masked.splice(index, 1);
       }
     },
     changeDisabledServices: (state, action: PayloadAction<string[]>) => {
-      state.services.disabled = action.payload;
+      state.system.services.disabled = action.payload;
     },
     addDisabledService: (state, action: PayloadAction<string>) => {
       if (
-        !state.services.disabled.some((service) => service === action.payload)
+        !state.system.services.disabled.some(
+          (service) => service === action.payload,
+        )
       ) {
-        state.services.disabled.push(action.payload);
+        state.system.services.disabled.push(action.payload);
       }
     },
     removeDisabledService: (state, action: PayloadAction<string>) => {
-      const index = state.services.disabled.findIndex(
+      const index = state.system.services.disabled.findIndex(
         (service) => service === action.payload,
       );
       if (index !== -1) {
-        state.services.disabled.splice(index, 1);
+        state.system.services.disabled.splice(index, 1);
       }
     },
     changeKernelName: (state, action: PayloadAction<string>) => {
-      state.kernel.name = action.payload;
+      state.system.kernel.name = action.payload;
     },
     addKernelArg: (state, action: PayloadAction<string>) => {
-      const existingArgIndex = state.kernel.append.findIndex(
+      const existingArgIndex = state.system.kernel.append.findIndex(
         (arg) => arg === action.payload,
       );
 
       if (existingArgIndex !== -1) {
-        state.kernel.append[existingArgIndex] = action.payload;
+        state.system.kernel.append[existingArgIndex] = action.payload;
       } else {
-        state.kernel.append.push(action.payload);
+        state.system.kernel.append.push(action.payload);
       }
     },
     removeKernelArg: (state, action: PayloadAction<string>) => {
-      if (state.kernel.append.length > 0) {
-        const index = state.kernel.append.findIndex(
+      if (state.system.kernel.append.length > 0) {
+        const index = state.system.kernel.append.findIndex(
           (arg) => arg === action.payload,
         );
         if (index !== -1) {
-          state.kernel.append.splice(index, 1);
+          state.system.kernel.append.splice(index, 1);
         }
       }
     },
     clearKernelAppend: (state) => {
-      state.kernel.append = [];
+      state.system.kernel.append = [];
     },
     addEnabledFirewallService: (state, action: PayloadAction<string>) => {
       if (
-        !state.firewall.services.enabled.some(
+        !state.system.firewall.services.enabled.some(
           (service) => service === action.payload,
         )
       ) {
-        state.firewall.services.enabled.push(action.payload);
+        state.system.firewall.services.enabled.push(action.payload);
       }
     },
     removeEnabledFirewallService: (state, action: PayloadAction<string>) => {
-      const index = state.firewall.services.enabled.findIndex(
+      const index = state.system.firewall.services.enabled.findIndex(
         (service) => service === action.payload,
       );
       if (index !== -1) {
-        state.firewall.services.enabled.splice(index, 1);
+        state.system.firewall.services.enabled.splice(index, 1);
       }
     },
     addDisabledFirewallService: (state, action: PayloadAction<string>) => {
       if (
-        !state.firewall.services.disabled.some(
+        !state.system.firewall.services.disabled.some(
           (service) => service === action.payload,
         )
       ) {
-        state.firewall.services.disabled.push(action.payload);
+        state.system.firewall.services.disabled.push(action.payload);
       }
     },
     removeDisabledFirewallService: (state, action: PayloadAction<string>) => {
-      const index = state.firewall.services.disabled.findIndex(
+      const index = state.system.firewall.services.disabled.findIndex(
         (service) => service === action.payload,
       );
       if (index !== -1) {
-        state.firewall.services.disabled.splice(index, 1);
+        state.system.firewall.services.disabled.splice(index, 1);
       }
     },
     changeTimezone: (state, action: PayloadAction<string>) => {
-      state.timezone.timezone = action.payload;
+      state.system.timezone.timezone = action.payload;
     },
     addNtpServer: (state, action: PayloadAction<string>) => {
       if (
-        !state.timezone.ntpservers?.some((server) => server === action.payload)
+        !state.system.timezone.ntpservers?.some(
+          (server) => server === action.payload,
+        )
       ) {
-        state.timezone.ntpservers?.push(action.payload);
+        state.system.timezone.ntpservers?.push(action.payload);
       }
     },
     removeNtpServer: (state, action: PayloadAction<string>) => {
-      if (state.timezone.ntpservers) {
-        const index = state.timezone.ntpservers.findIndex(
+      if (state.system.timezone.ntpservers) {
+        const index = state.system.timezone.ntpservers.findIndex(
           (server) => server === action.payload,
         );
         if (index !== -1) {
-          state.timezone.ntpservers.splice(index, 1);
+          state.system.timezone.ntpservers.splice(index, 1);
         }
       }
     },
     clearTimezone: (state) => {
-      state.timezone.timezone = '';
-      state.timezone.ntpservers = [];
+      state.system.timezone.timezone = '';
+      state.system.timezone.ntpservers = [];
     },
     changeHostname: (state, action: PayloadAction<string>) => {
-      state.hostname = action.payload;
+      state.system.hostname = action.payload;
     },
     addUser: (state) => {
       const newUser = {
@@ -1648,34 +1660,39 @@ export const wizardSlice = createSlice({
         hasPassword: false,
       };
 
-      state.users.push(newUser);
+      state.system.users.push(newUser);
     },
     removeUser: (state, action: PayloadAction<number>) => {
-      state.users = state.users.filter((_, index) => index !== action.payload);
+      state.system.users = state.system.users.filter(
+        (_, index) => index !== action.payload,
+      );
     },
     setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
-      state.users[action.payload.index].name = action.payload.name;
+      state.system.users[action.payload.index].name = action.payload.name;
     },
     setUserPasswordByIndex: (
       state,
       action: PayloadAction<UserPasswordPayload>,
     ) => {
-      state.users[action.payload.index].password = action.payload.password;
+      state.system.users[action.payload.index].password =
+        action.payload.password;
     },
     setUserSshKeyByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
-      state.users[action.payload.index].ssh_key = action.payload.sshKey;
+      state.system.users[action.payload.index].ssh_key = action.payload.sshKey;
     },
     addPort: (state, action: PayloadAction<string>) => {
-      if (!state.firewall.ports.some((port) => port === action.payload)) {
-        state.firewall.ports.push(action.payload);
+      if (
+        !state.system.firewall.ports.some((port) => port === action.payload)
+      ) {
+        state.system.firewall.ports.push(action.payload);
       }
     },
     removePort: (state, action: PayloadAction<string>) => {
-      const index = state.firewall.ports.findIndex(
+      const index = state.system.firewall.ports.findIndex(
         (port) => port === action.payload,
       );
       if (index !== -1) {
-        state.firewall.ports.splice(index, 1);
+        state.system.firewall.ports.splice(index, 1);
       }
     },
     setUserAdministratorByIndex: (
@@ -1683,7 +1700,7 @@ export const wizardSlice = createSlice({
       action: PayloadAction<UserAdministratorPayload>,
     ) => {
       const { index, isAdministrator } = action.payload;
-      const user = state.users[index];
+      const user = state.system.users[index];
 
       user.isAdministrator = isAdministrator;
       if (isAdministrator) {
@@ -1698,14 +1715,14 @@ export const wizardSlice = createSlice({
     ) => {
       const { index, group } = action.payload;
       if (
-        !state.users[index].groups.some(
+        !state.system.users[index].groups.some(
           (existingGroup) => existingGroup === group,
         )
       ) {
-        state.users[index].groups.push(group);
+        state.system.users[index].groups.push(group);
 
         if (group === 'wheel') {
-          state.users[index].isAdministrator = true;
+          state.system.users[index].isAdministrator = true;
         }
       }
     },
@@ -1713,19 +1730,19 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<UserGroupPayload>,
     ) => {
-      const groupIndex = state.users[action.payload.index].groups.findIndex(
-        (group) => group === action.payload.group,
-      );
+      const groupIndex = state.system.users[
+        action.payload.index
+      ].groups.findIndex((group) => group === action.payload.group);
       if (groupIndex !== -1) {
         if (action.payload.group === 'wheel') {
-          state.users[action.payload.index].isAdministrator = false;
+          state.system.users[action.payload.index].isAdministrator = false;
         }
-        state.users[action.payload.index].groups.splice(groupIndex, 1);
+        state.system.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
     addUserGroup: (state) => {
       const existingGids = new Set(
-        state.userGroups
+        state.system.groups
           .map((g) => g.gid)
           .filter((gid): gid is number => gid !== undefined),
       );
@@ -1734,9 +1751,9 @@ export const wizardSlice = createSlice({
         nextGid++;
       }
       if (nextGid <= MAX_REGULAR_GID) {
-        state.userGroups.push({ name: '', gid: nextGid });
+        state.system.groups.push({ name: '', gid: nextGid });
       } else {
-        state.userGroups.push({ name: '' });
+        state.system.groups.push({ name: '' });
       }
     },
     setUserGroupNameByIndex: (
@@ -1744,12 +1761,12 @@ export const wizardSlice = createSlice({
       action: PayloadAction<UserGroupNamePayload>,
     ) => {
       const { index, name } = action.payload;
-      state.userGroups[index].name = name.trim();
+      state.system.groups[index].name = name.trim();
       if (name.trim() === '') {
-        delete state.userGroups[index].gid;
-      } else if (state.userGroups[index].gid === undefined) {
+        delete state.system.groups[index].gid;
+      } else if (state.system.groups[index].gid === undefined) {
         const existingGids = new Set(
-          state.userGroups
+          state.system.groups
             .map((g) => g.gid)
             .filter((gid): gid is number => gid !== undefined),
         );
@@ -1758,7 +1775,7 @@ export const wizardSlice = createSlice({
           nextGid++;
         }
         if (nextGid <= MAX_REGULAR_GID) {
-          state.userGroups[index].gid = nextGid;
+          state.system.groups[index].gid = nextGid;
         }
       }
     },
@@ -1768,13 +1785,13 @@ export const wizardSlice = createSlice({
     ) => {
       const { index, gid } = action.payload;
       if (gid === undefined) {
-        delete state.userGroups[index].gid;
+        delete state.system.groups[index].gid;
       } else {
-        state.userGroups[index].gid = gid;
+        state.system.groups[index].gid = gid;
       }
     },
     removeUserGroup: (state, action: PayloadAction<number>) => {
-      state.userGroups = state.userGroups.filter(
+      state.system.groups = state.system.groups.filter(
         (_, index) => index !== action.payload,
       );
     },

@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import {
@@ -167,9 +168,12 @@ describe('Kernel Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated kernel name from state', async () => {
       renderKernelStep({
-        kernel: {
-          name: 'kernel-debug',
-          append: [],
+        system: {
+          ...initialState.system,
+          kernel: {
+            name: 'kernel-debug',
+            append: [],
+          },
         },
       });
 
@@ -180,9 +184,12 @@ describe('Kernel Component', () => {
 
     test('renders with pre-populated kernel arguments from state', async () => {
       renderKernelStep({
-        kernel: {
-          name: '',
-          append: ['nosmt=force', 'audit=1'],
+        system: {
+          ...initialState.system,
+          kernel: {
+            name: '',
+            append: ['nosmt=force', 'audit=1'],
+          },
         },
       });
 
@@ -196,23 +203,25 @@ describe('Kernel Component', () => {
       const { store } = renderKernelStep();
       const user = createUser();
 
-      expect(store.getState().wizard.kernel.name).toBe('');
+      expect(store.getState().wizard.system.kernel.name).toBe('');
 
       await openKernelNameDropdown(user);
       await selectKernelOption(user, 'kernel-debug');
 
-      expect(store.getState().wizard.kernel.name).toBe('kernel-debug');
+      expect(store.getState().wizard.system.kernel.name).toBe('kernel-debug');
     });
 
     test('updates store when kernel argument is added', async () => {
       const { store } = renderKernelStep();
       const user = createUser();
 
-      expect(store.getState().wizard.kernel.append).toHaveLength(0);
+      expect(store.getState().wizard.system.kernel.append).toHaveLength(0);
 
       await addKernelArgument(user, 'nosmt=force');
 
-      expect(store.getState().wizard.kernel.append).toContain('nosmt=force');
+      expect(store.getState().wizard.system.kernel.append).toContain(
+        'nosmt=force',
+      );
     });
 
     test('updates store when multiple kernel arguments are added', async () => {
@@ -222,25 +231,30 @@ describe('Kernel Component', () => {
       await addKernelArgument(user, 'nosmt=force');
       await addKernelArgument(user, 'page_poison=1');
 
-      const append = store.getState().wizard.kernel.append;
+      const append = store.getState().wizard.system.kernel.append;
       expect(append).toContain('nosmt=force');
       expect(append).toContain('page_poison=1');
     });
 
     test('updates store when kernel argument is removed', async () => {
       const { store } = renderKernelStep({
-        kernel: {
-          name: '',
-          append: ['nosmt=force'],
+        system: {
+          ...initialState.system,
+          kernel: {
+            name: '',
+            append: ['nosmt=force'],
+          },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.kernel.append).toContain('nosmt=force');
+      expect(store.getState().wizard.system.kernel.append).toContain(
+        'nosmt=force',
+      );
 
       await removeKernelArgument(user, 'nosmt=force');
 
-      expect(store.getState().wizard.kernel.append).not.toContain(
+      expect(store.getState().wizard.system.kernel.append).not.toContain(
         'nosmt=force',
       );
     });
