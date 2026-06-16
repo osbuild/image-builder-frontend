@@ -56,7 +56,7 @@ describe('mapRequestToState', () => {
 
     const state = mapRequestToState(response);
 
-    expect(state.blueprintMode).toBe('package');
+    expect(state.details.blueprint.mode).toBe('package');
   });
 
   it('sets blueprintMode to image when bootc is present', () => {
@@ -66,7 +66,7 @@ describe('mapRequestToState', () => {
 
     const state = mapRequestToState(response);
 
-    expect(state.blueprintMode).toBe('image');
+    expect(state.details.blueprint.mode).toBe('image');
   });
 
   it('maps imageSource from bootc reference', () => {
@@ -116,7 +116,7 @@ describe('mapBlueprintExportToState', () => {
 
     const state = mapBlueprintExportToState(blueprint, []);
 
-    expect(state.blueprintMode).toBe('package');
+    expect(state.details.blueprint.mode).toBe('package');
   });
 
   it('sets blueprintMode to image when bootc is present', () => {
@@ -126,7 +126,7 @@ describe('mapBlueprintExportToState', () => {
 
     const state = mapBlueprintExportToState(blueprint, []);
 
-    expect(state.blueprintMode).toBe('image');
+    expect(state.details.blueprint.mode).toBe('image');
   });
 
   it('falls back to initial state distribution for legacy bootc blueprints with undefined distribution', () => {

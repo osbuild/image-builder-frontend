@@ -109,9 +109,21 @@ export type UserGroup = {
 };
 
 export type wizardState = {
-  blueprintId?: string;
-  wizardMode: WizardModeOptions;
-  blueprintMode: BlueprintModeOptions;
+  details: {
+    blueprintId?: string;
+    mode: WizardModeOptions;
+    blueprint: {
+      name: string;
+      isCustomName: boolean;
+      description: string;
+      mode: BlueprintModeOptions;
+    };
+    metadata?: {
+      parent_id: string | null;
+      exported_at: string;
+      is_on_prem: boolean;
+    };
+  };
   output: {
     imageSource?: ImageSource | undefined;
     /** Embedded OS image ref for bootable-container-iso (installer ref is the bootc `reference` for that target). */
@@ -220,21 +232,18 @@ export type wizardState = {
     users: UserWithAdditionalInfo[];
     groups: UserGroup[];
   };
-  details: {
-    blueprintName: string;
-    isCustomName: boolean;
-    blueprintDescription: string;
-  };
-  metadata?: {
-    parent_id: string | null;
-    exported_at: string;
-    is_on_prem: boolean;
-  };
 };
 
 export const initialState: wizardState = {
-  wizardMode: 'create',
-  blueprintMode: 'package',
+  details: {
+    mode: 'create',
+    blueprint: {
+      name: generateDefaultName(RHEL_10, X86_64),
+      isCustomName: false,
+      description: '',
+      mode: 'package',
+    },
+  },
   output: {
     bootcDistributions: [],
     architecture: X86_64,
@@ -348,11 +357,6 @@ export const initialState: wizardState = {
     users: [],
     groups: [{ name: '' }],
   },
-  details: {
-    blueprintName: generateDefaultName(RHEL_10, X86_64),
-    isCustomName: false,
-    blueprintDescription: '',
-  },
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -360,11 +364,11 @@ export const selectServerUrl = (state: RootState) => {
 };
 
 export const selectWizardMode = (state: RootState) => {
-  return state.wizard.wizardMode;
+  return state.wizard.details.mode;
 };
 
 export const selectBlueprintMode = (state: RootState) => {
-  return state.wizard.blueprintMode;
+  return state.wizard.details.blueprint.mode;
 };
 
 export const selectImageSource = (state: RootState) => {
@@ -380,7 +384,7 @@ export const selectBootcDistributions = (state: RootState) => {
 };
 
 export const selectBlueprintId = (state: RootState) => {
-  return state.wizard.blueprintId;
+  return state.wizard.details.blueprintId;
 };
 
 export const selectBaseUrl = (state: RootState) => {
@@ -602,19 +606,19 @@ export const selectKeyboard = (state: RootState) => {
 };
 
 export const selectBlueprintName = (state: RootState) => {
-  return state.wizard.details.blueprintName;
+  return state.wizard.details.blueprint.name;
 };
 
 export const selectIsCustomName = (state: RootState) => {
-  return state.wizard.details.isCustomName;
+  return state.wizard.details.blueprint.isCustomName;
 };
 
 export const selectMetadata = (state: RootState) => {
-  return state.wizard.metadata;
+  return state.wizard.details.metadata;
 };
 
 export const selectBlueprintDescription = (state: RootState) => {
-  return state.wizard.details.blueprintDescription;
+  return state.wizard.details.blueprint.description;
 };
 
 export const selectFirstBootScript = (state: RootState) => {
@@ -819,7 +823,7 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<BlueprintModeOptions>,
     ) => {
-      state.blueprintMode = action.payload;
+      state.details.blueprint.mode = action.payload;
     },
     changeImageSource: (
       state,
@@ -1493,13 +1497,13 @@ export const wizardSlice = createSlice({
       state.system.locale.keyboard = action.payload;
     },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
-      state.details.blueprintName = action.payload;
+      state.details.blueprint.name = action.payload;
     },
     setIsCustomName: (state) => {
-      state.details.isCustomName = true;
+      state.details.blueprint.isCustomName = true;
     },
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
-      state.details.blueprintDescription = action.payload;
+      state.details.blueprint.description = action.payload;
     },
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.system.firstBoot.script = action.payload;

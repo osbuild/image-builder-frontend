@@ -213,9 +213,13 @@ describe('ImageOutput Step', () => {
           architecture: 'x86_64',
         },
         details: {
-          blueprintName: 'my-custom-blueprint',
-          blueprintDescription: '',
-          isCustomName: true,
+          ...initialState.details,
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'my-custom-blueprint',
+            description: '',
+            isCustomName: true,
+          },
         },
       });
 

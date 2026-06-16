@@ -4,6 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import {
+  initialState,
   selectDistribution,
   selectImageSource as selectImageSourceState,
 } from '@/store/slices/wizard';
@@ -39,7 +40,10 @@ vi.mock('@/store/api/backend', async (importOriginal) => {
 
 const renderHostedImageSourceSelect = () => {
   return renderWithRedux(<ImageSourceSelect />, {
-    blueprintMode: 'image',
+    details: {
+      ...initialState.details,
+      blueprint: { ...initialState.details.blueprint, mode: 'image' },
+    },
   });
 };
 
