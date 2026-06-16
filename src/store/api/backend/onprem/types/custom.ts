@@ -98,6 +98,16 @@ type PodmanLabels = Record<string, string | undefined> & {
   ['ostree.bootable']?: string | undefined;
 };
 
+export type RegistryAuthStatus =
+  | { status: 'authenticated'; username: string }
+  | { status: 'not-logged-in' }
+  | { status: 'auth-failed'; username: string };
+
+export type RegistryLoginApiArg = {
+  username: string;
+  password: string;
+};
+
 export type PodmanImageInfo = {
   Id: string;
   Architecture?: string | undefined;

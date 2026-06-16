@@ -28,6 +28,7 @@ import ImageSourceSelect from '../components/ImageSourceSelect';
 
 const mockRefetch = vi.fn();
 const mockUseGetDistributionsQuery = vi.fn();
+const mockRegistryLogin = vi.fn().mockReturnValue({ unwrap: vi.fn() });
 
 vi.mock('@/store/api/backend', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/store/api/backend')>();
@@ -35,6 +36,16 @@ vi.mock('@/store/api/backend', async (importOriginal) => {
     ...actual,
     useGetDistributionsQuery: (...args: unknown[]) =>
       mockUseGetDistributionsQuery(...args),
+    useGetRegistryAuthStatusQuery: () => ({
+      data: { status: 'authenticated', username: 'testuser' },
+      isLoading: false,
+      isError: false,
+      error: undefined,
+    }),
+    useRegistryLoginMutation: () => [
+      mockRegistryLogin,
+      { isLoading: false, error: undefined },
+    ],
   };
 });
 

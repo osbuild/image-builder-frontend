@@ -34,6 +34,8 @@ import {
   selectImageSource,
 } from '@/store/slices/wizard';
 
+import RegistryAuthSection from './RegistryAuthSection';
+
 const CopyInlineCompact = ({ text }: { text: string }) => (
   <ClipboardCopy
     copyAriaLabel='Copy podman pull command'
@@ -178,6 +180,7 @@ const ImageSourceSelect = () => {
 
   return (
     <FormGroup label='Image source' isRequired>
+      {isOnPremise && <RegistryAuthSection />}
       {isError && (
         <Alert
           title='Error loading bootc images'

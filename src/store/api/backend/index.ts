@@ -104,8 +104,10 @@ export {
 export {
   toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
+  useGetRegistryAuthStatusQuery,
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
+  useRegistryLoginMutation,
   useUpdateWorkerConfigMutation,
 } from './onprem';
 
@@ -137,6 +139,8 @@ export type {
   WorkerConfigFile,
   WorkerConfigRequest,
   WorkerConfigResponse,
+  // Registry auth types (on-prem only)
+  RegistryAuthStatus,
   // Non-conflicting generated types
   Bootc,
   LocalUploadStatus,
