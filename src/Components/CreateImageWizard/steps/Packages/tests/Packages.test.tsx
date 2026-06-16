@@ -721,10 +721,11 @@ describe('Packages Component', () => {
 
       return renderPackagesStep({
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: mockOscapProfile,
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
         packages: [
           {
@@ -846,10 +847,11 @@ describe('Packages Component', () => {
 
       const { store } = renderPackagesStep({
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: mockOscapProfile,
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
         packages: [
           {
@@ -897,10 +899,11 @@ describe('Packages Component', () => {
 
       const { store } = renderPackagesStep({
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: mockOscapProfile,
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
         packages: [
           {
@@ -991,10 +994,11 @@ describe('Packages Component', () => {
 
       const { store } = renderPackagesStep({
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: mockOscapProfile,
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
         // aide is required but NOT in the initial packages list
         packages: [],

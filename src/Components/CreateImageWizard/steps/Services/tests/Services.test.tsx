@@ -73,10 +73,11 @@ describe('Services Component', () => {
     test('shows OpenSCAP label with correct count when compliance profile is active', async () => {
       renderServicesStep({
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
       });
 

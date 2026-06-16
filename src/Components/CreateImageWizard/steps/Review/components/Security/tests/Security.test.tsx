@@ -36,8 +36,12 @@ describe('Security', () => {
     test('displays FIPS enabled status', () => {
       renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
         imageTypes: ['guest-image'],
-        fips: {
-          enabled: true,
+        compliance: {
+          type: 'none',
+          policyID: undefined,
+          profileID: undefined,
+          policyTitle: undefined,
+          fips: { enabled: true },
         },
       });
 
@@ -48,8 +52,12 @@ describe('Security', () => {
     test('does not render FIPS when disabled', () => {
       renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
         imageTypes: ['guest-image'],
-        fips: {
-          enabled: false,
+        compliance: {
+          type: 'none',
+          policyID: undefined,
+          profileID: undefined,
+          policyTitle: undefined,
+          fips: { enabled: false },
         },
       });
 
@@ -78,10 +86,11 @@ describe('Security', () => {
         {
           imageTypes: ['guest-image'],
           compliance: {
-            complianceType: 'openscap',
+            type: 'openscap',
             profileID: 'xccdf_org.ssgproject.content_profile_cis',
             policyID: undefined,
             policyTitle: undefined,
+            fips: { enabled: false },
           },
         },
       );
@@ -109,10 +118,11 @@ describe('Security', () => {
         {
           imageTypes: ['guest-image'],
           compliance: {
-            complianceType: 'compliance',
+            type: 'compliance',
             profileID: undefined,
             policyID: 'policy-123',
             policyTitle: 'My Compliance Policy',
+            fips: { enabled: false },
           },
         },
       );
@@ -125,10 +135,11 @@ describe('Security', () => {
       renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
         imageTypes: ['guest-image'],
         compliance: {
-          complianceType: 'openscap',
+          type: 'openscap',
           profileID: 'test-profile',
           policyID: undefined,
           policyTitle: undefined,
+          fips: { enabled: false },
         },
       });
 

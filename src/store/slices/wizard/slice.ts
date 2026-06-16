@@ -158,10 +158,13 @@ export type wizardState = {
     };
   };
   compliance: {
-    complianceType: ComplianceType;
+    type: ComplianceType;
     policyID: string | undefined;
     profileID: string | undefined;
     policyTitle: string | undefined;
+    fips: {
+      enabled: boolean;
+    };
   };
   filesystem: {
     mode: FscModeType;
@@ -214,9 +217,6 @@ export type wizardState = {
       enabled: string[];
       disabled: string[];
     };
-  };
-  fips: {
-    enabled: boolean;
   };
   verifiedLocaleLangpacks: string[];
   metadata?: {
@@ -271,10 +271,13 @@ export const initialState: wizardState = {
     },
   },
   compliance: {
-    complianceType: 'none',
+    type: 'none',
     policyID: undefined,
     profileID: undefined,
     policyTitle: undefined,
+    fips: {
+      enabled: false,
+    },
   },
   filesystem: {
     mode: 'automatic',
@@ -333,9 +336,6 @@ export const initialState: wizardState = {
       enabled: [],
       disabled: [],
     },
-  },
-  fips: {
-    enabled: false,
   },
   firstBoot: { script: '' },
   verifiedLocaleLangpacks: [],
@@ -480,7 +480,7 @@ export const selectCompliancePolicyTitle = (state: RootState) => {
 };
 
 export const selectComplianceType = (state: RootState) => {
-  return state.wizard.compliance.complianceType;
+  return state.wizard.compliance.type;
 };
 
 export const selectFscMode = (state: RootState) => {
@@ -626,7 +626,7 @@ export const selectFirewall = (state: RootState) => {
 };
 
 export const selectFips = (state: RootState) => {
-  return state.wizard.fips;
+  return state.wizard.compliance.fips;
 };
 
 export const selectVerifiedLocaleLangpacks = (state: RootState) => {
@@ -952,7 +952,7 @@ export const wizardSlice = createSlice({
       state.registration.orgId = action.payload;
     },
     changeComplianceType: (state, action: PayloadAction<ComplianceType>) => {
-      state.compliance.complianceType = action.payload;
+      state.compliance.type = action.payload;
     },
     setCompliancePolicy: (
       state,
@@ -1775,7 +1775,7 @@ export const wizardSlice = createSlice({
       );
     },
     changeFips: (state, action: PayloadAction<boolean>) => {
-      state.fips.enabled = action.payload;
+      state.compliance.fips.enabled = action.payload;
     },
     setVerifiedLocaleLangpacks: (state, action: PayloadAction<string[]>) => {
       state.verifiedLocaleLangpacks = action.payload;
