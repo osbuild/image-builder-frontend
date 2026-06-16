@@ -311,8 +311,11 @@ describe('ImageOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser],
-          userGroups: userGroups,
+          system: {
+            ...initialState.system,
+            users: [adminUser],
+            groups: userGroups,
+          },
         },
       );
 
@@ -327,8 +330,11 @@ describe('ImageOverview', () => {
         <ImageOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          users: [adminUser],
-          userGroups: userGroups,
+          system: {
+            ...initialState.system,
+            users: [adminUser],
+            groups: userGroups,
+          },
         },
       );
 

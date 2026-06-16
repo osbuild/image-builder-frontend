@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {
@@ -71,7 +72,12 @@ describe('Locale Component', () => {
     });
 
     test('disables Add language button while new language row is visible', async () => {
-      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
+      renderLocaleStep({
+        system: {
+          ...initialState.system,
+          locale: { languages: [], keyboard: '' },
+        },
+      });
       const user = createUser();
 
       const addButton = await screen.findByRole('button', {
@@ -141,7 +147,12 @@ describe('Locale Component', () => {
 
   describe('Language Selection', () => {
     test('can select a language', async () => {
-      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
+      renderLocaleStep({
+        system: {
+          ...initialState.system,
+          locale: { languages: [], keyboard: '' },
+        },
+      });
       const user = createUser();
 
       await clickAddLanguage(user);
@@ -157,20 +168,28 @@ describe('Locale Component', () => {
 
     test('removing the last language shows an empty selection row', async () => {
       const { store } = renderLocaleStep({
-        locale: { languages: ['en_US.UTF-8'], keyboard: '' },
+        system: {
+          ...initialState.system,
+          locale: { languages: ['en_US.UTF-8'], keyboard: '' },
+        },
       });
       const user = createUser();
 
       await removeLanguageAtIndex(user, 0);
 
-      expect(store.getState().wizard.locale.languages).toHaveLength(0);
+      expect(store.getState().wizard.system.locale.languages).toHaveLength(0);
       expect(
         screen.getByRole('button', { name: /select a language/i }),
       ).toBeInTheDocument();
     });
 
     test('can select multiple languages', async () => {
-      renderLocaleStep({ locale: { languages: [], keyboard: '' } });
+      renderLocaleStep({
+        system: {
+          ...initialState.system,
+          locale: { languages: [], keyboard: '' },
+        },
+      });
       const user = createUser();
 
       await clickAddLanguage(user);
@@ -254,9 +273,12 @@ describe('Locale Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated languages from state', async () => {
       renderLocaleStep({
-        locale: {
-          languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
-          keyboard: '',
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
+            keyboard: '',
+          },
         },
       });
 
@@ -274,9 +296,12 @@ describe('Locale Component', () => {
 
     test('renders with pre-populated keyboard from state', async () => {
       renderLocaleStep({
-        locale: {
-          languages: [],
-          keyboard: 'de',
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: [],
+            keyboard: 'de',
+          },
         },
       });
 
@@ -289,27 +314,35 @@ describe('Locale Component', () => {
   describe('State Updates', () => {
     test('updates store when language is selected', async () => {
       const { store } = renderLocaleStep({
-        locale: {
-          languages: [],
-          keyboard: '',
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: [],
+            keyboard: '',
+          },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.locale.languages).toHaveLength(0);
+      expect(store.getState().wizard.system.locale.languages).toHaveLength(0);
 
       await clickAddLanguage(user);
       await searchForLanguage(user, 'nl');
       await selectLanguageOption(user, 'Dutch - Netherlands (nl_NL.UTF-8)');
 
-      expect(store.getState().wizard.locale.languages).toContain('nl_NL.UTF-8');
+      expect(store.getState().wizard.system.locale.languages).toContain(
+        'nl_NL.UTF-8',
+      );
     });
 
     test('updates store when multiple languages are selected', async () => {
       const { store } = renderLocaleStep({
-        locale: {
-          languages: [],
-          keyboard: '',
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: [],
+            keyboard: '',
+          },
         },
       });
       const user = createUser();
@@ -325,26 +358,29 @@ describe('Locale Component', () => {
         'English - United Kingdom (en_GB.UTF-8)',
       );
 
-      const languages = store.getState().wizard.locale.languages;
+      const languages = store.getState().wizard.system.locale.languages;
       expect(languages).toContain('nl_NL.UTF-8');
       expect(languages).toContain('en_GB.UTF-8');
     });
 
     test('updates store when keyboard is selected', async () => {
       const { store } = renderLocaleStep({
-        locale: {
-          languages: [],
-          keyboard: '',
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: [],
+            keyboard: '',
+          },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.locale.keyboard).toBe('');
+      expect(store.getState().wizard.system.locale.keyboard).toBe('');
 
       await searchForKeyboard(user, 'us');
       await selectKeyboardOption(user, 'us');
 
-      expect(store.getState().wizard.locale.keyboard).toBe('us');
+      expect(store.getState().wizard.system.locale.keyboard).toBe('us');
     });
   });
 

@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
@@ -193,9 +194,12 @@ describe('Timezone Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated timezone from state', async () => {
       renderTimezoneStep({
-        timezone: {
-          timezone: 'Europe/Amsterdam',
-          ntpservers: [],
+        system: {
+          ...initialState.system,
+          timezone: {
+            timezone: 'Europe/Amsterdam',
+            ntpservers: [],
+          },
         },
       });
 
@@ -206,9 +210,12 @@ describe('Timezone Component', () => {
 
     test('renders with pre-populated NTP servers from state', async () => {
       renderTimezoneStep({
-        timezone: {
-          timezone: 'Etc/UTC',
-          ntpservers: ['0.nl.pool.ntp.org', '1.nl.pool.ntp.org'],
+        system: {
+          ...initialState.system,
+          timezone: {
+            timezone: 'Etc/UTC',
+            ntpservers: ['0.nl.pool.ntp.org', '1.nl.pool.ntp.org'],
+          },
         },
       });
 
@@ -222,12 +229,12 @@ describe('Timezone Component', () => {
       const { store } = renderTimezoneStep();
       const user = createUser();
 
-      expect(store.getState().wizard.timezone.timezone).toBe('');
+      expect(store.getState().wizard.system.timezone.timezone).toBe('');
 
       await openTimezoneDropdown(user);
       await selectTimezoneOption(user, /Europe\/Amsterdam/i);
 
-      expect(store.getState().wizard.timezone.timezone).toBe(
+      expect(store.getState().wizard.system.timezone.timezone).toBe(
         'Europe/Amsterdam',
       );
     });
@@ -236,11 +243,13 @@ describe('Timezone Component', () => {
       const { store } = renderTimezoneStep();
       const user = createUser();
 
-      expect(store.getState().wizard.timezone.ntpservers).toHaveLength(0);
+      expect(store.getState().wizard.system.timezone.ntpservers).toHaveLength(
+        0,
+      );
 
       await addNtpServer(user, '0.nl.pool.ntp.org');
 
-      expect(store.getState().wizard.timezone.ntpservers).toContain(
+      expect(store.getState().wizard.system.timezone.ntpservers).toContain(
         '0.nl.pool.ntp.org',
       );
     });
@@ -252,27 +261,30 @@ describe('Timezone Component', () => {
       await addNtpServer(user, '0.nl.pool.ntp.org');
       await addNtpServer(user, '1.nl.pool.ntp.org');
 
-      const ntpservers = store.getState().wizard.timezone.ntpservers;
+      const ntpservers = store.getState().wizard.system.timezone.ntpservers;
       expect(ntpservers).toContain('0.nl.pool.ntp.org');
       expect(ntpservers).toContain('1.nl.pool.ntp.org');
     });
 
     test('updates store when NTP server is removed', async () => {
       const { store } = renderTimezoneStep({
-        timezone: {
-          timezone: 'Etc/UTC',
-          ntpservers: ['0.nl.pool.ntp.org'],
+        system: {
+          ...initialState.system,
+          timezone: {
+            timezone: 'Etc/UTC',
+            ntpservers: ['0.nl.pool.ntp.org'],
+          },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.timezone.ntpservers).toContain(
+      expect(store.getState().wizard.system.timezone.ntpservers).toContain(
         '0.nl.pool.ntp.org',
       );
 
       await removeNtpServer(user, '0.nl.pool.ntp.org');
 
-      expect(store.getState().wizard.timezone.ntpservers).not.toContain(
+      expect(store.getState().wizard.system.timezone.ntpservers).not.toContain(
         '0.nl.pool.ntp.org',
       );
     });
@@ -290,7 +302,7 @@ describe('Timezone Component', () => {
 
       expect(searchInput).toBeInTheDocument();
       expect(searchInput).toHaveValue('Europe');
-      expect(store.getState().wizard.timezone.timezone).toBe('');
+      expect(store.getState().wizard.system.timezone.timezone).toBe('');
     });
   });
 });

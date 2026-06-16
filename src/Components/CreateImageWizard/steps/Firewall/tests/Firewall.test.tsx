@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import {
@@ -220,11 +221,14 @@ describe('Firewall Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated ports from state', async () => {
       renderFirewallStep({
-        firewall: {
-          ports: ['80:tcp', '443:udp'],
-          services: {
-            enabled: [],
-            disabled: [],
+        system: {
+          ...initialState.system,
+          firewall: {
+            ports: ['80:tcp', '443:udp'],
+            services: {
+              enabled: [],
+              disabled: [],
+            },
           },
         },
       });
@@ -235,11 +239,14 @@ describe('Firewall Component', () => {
 
     test('renders with pre-populated enabled services from state', async () => {
       renderFirewallStep({
-        firewall: {
-          ports: [],
-          services: {
-            enabled: ['ssh', 'http'],
-            disabled: [],
+        system: {
+          ...initialState.system,
+          firewall: {
+            ports: [],
+            services: {
+              enabled: ['ssh', 'http'],
+              disabled: [],
+            },
           },
         },
       });
@@ -250,11 +257,14 @@ describe('Firewall Component', () => {
 
     test('renders with pre-populated disabled services from state', async () => {
       renderFirewallStep({
-        firewall: {
-          ports: [],
-          services: {
-            enabled: [],
-            disabled: ['telnet', 'ftp'],
+        system: {
+          ...initialState.system,
+          firewall: {
+            ports: [],
+            services: {
+              enabled: [],
+              disabled: ['telnet', 'ftp'],
+            },
           },
         },
       });
@@ -269,11 +279,11 @@ describe('Firewall Component', () => {
       const { store } = renderFirewallStep();
       const user = createUser();
 
-      expect(store.getState().wizard.firewall.ports).toHaveLength(0);
+      expect(store.getState().wizard.system.firewall.ports).toHaveLength(0);
 
       await addPort(user, '80:tcp');
 
-      expect(store.getState().wizard.firewall.ports).toContain('80:tcp');
+      expect(store.getState().wizard.system.firewall.ports).toContain('80:tcp');
     });
 
     test('updates store when multiple ports are added', async () => {
@@ -283,79 +293,89 @@ describe('Firewall Component', () => {
       await addPort(user, '80:tcp');
       await addPort(user, '443:udp');
 
-      const ports = store.getState().wizard.firewall.ports;
+      const ports = store.getState().wizard.system.firewall.ports;
       expect(ports).toContain('80:tcp');
       expect(ports).toContain('443:udp');
     });
 
     test('updates store when port is removed', async () => {
       const { store } = renderFirewallStep({
-        firewall: {
-          ports: ['80:tcp'],
-          services: {
-            enabled: [],
-            disabled: [],
+        system: {
+          ...initialState.system,
+          firewall: {
+            ports: ['80:tcp'],
+            services: {
+              enabled: [],
+              disabled: [],
+            },
           },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.firewall.ports).toContain('80:tcp');
+      expect(store.getState().wizard.system.firewall.ports).toContain('80:tcp');
 
       await removeItem(user, '80:tcp');
 
-      expect(store.getState().wizard.firewall.ports).not.toContain('80:tcp');
+      expect(store.getState().wizard.system.firewall.ports).not.toContain(
+        '80:tcp',
+      );
     });
 
     test('updates store when enabled service is added', async () => {
       const { store } = renderFirewallStep();
       const user = createUser();
 
-      expect(store.getState().wizard.firewall.services.enabled).toHaveLength(0);
+      expect(
+        store.getState().wizard.system.firewall.services.enabled,
+      ).toHaveLength(0);
 
       await addEnabledService(user, 'ssh');
 
-      expect(store.getState().wizard.firewall.services.enabled).toContain(
-        'ssh',
-      );
+      expect(
+        store.getState().wizard.system.firewall.services.enabled,
+      ).toContain('ssh');
     });
 
     test('updates store when disabled service is added', async () => {
       const { store } = renderFirewallStep();
       const user = createUser();
 
-      expect(store.getState().wizard.firewall.services.disabled).toHaveLength(
-        0,
-      );
+      expect(
+        store.getState().wizard.system.firewall.services.disabled,
+      ).toHaveLength(0);
 
       await addDisabledService(user, 'telnet');
 
-      expect(store.getState().wizard.firewall.services.disabled).toContain(
-        'telnet',
-      );
+      expect(
+        store.getState().wizard.system.firewall.services.disabled,
+      ).toContain('telnet');
     });
 
     test('updates store when service is removed', async () => {
       const { store } = renderFirewallStep({
-        firewall: {
-          ports: [],
-          services: {
-            enabled: ['ssh'],
-            disabled: [],
+        system: {
+          ...initialState.system,
+          firewall: {
+            ports: [],
+            services: {
+              enabled: ['ssh'],
+              disabled: [],
+            },
           },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.firewall.services.enabled).toContain(
-        'ssh',
-      );
+      expect(
+        store.getState().wizard.system.firewall.services.enabled,
+      ).toContain('ssh');
 
       await removeItem(user, 'ssh');
 
-      expect(store.getState().wizard.firewall.services.enabled).not.toContain(
-        'ssh',
-      );
+      expect(
+        store.getState().wizard.system.firewall.services.enabled,
+      ).not.toContain('ssh');
     });
   });
 });

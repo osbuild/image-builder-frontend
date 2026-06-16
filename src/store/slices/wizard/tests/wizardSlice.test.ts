@@ -23,7 +23,10 @@ describe('wizardSlice core reducers', () => {
         distribution: 'rhel-8',
         architecture: 'aarch64',
         imageTypes: ['aws', 'gcp'],
-        hostname: 'modified-hostname',
+        system: {
+          ...initialState.system,
+          hostname: 'modified-hostname',
+        },
       };
 
       const result = wizardReducer(modifiedState, initializeWizard());
@@ -34,21 +37,24 @@ describe('wizardSlice core reducers', () => {
     it('should reset users array to empty', () => {
       const stateWithUsers: wizardState = {
         ...initialState,
-        users: [
-          {
-            name: 'user1',
-            password: 'pass',
-            ssh_key: 'key',
-            groups: ['wheel'],
-            isAdministrator: true,
-            hasPassword: true,
-          },
-        ],
+        system: {
+          ...initialState.system,
+          users: [
+            {
+              name: 'user1',
+              password: 'pass',
+              ssh_key: 'key',
+              groups: ['wheel'],
+              isAdministrator: true,
+              hasPassword: true,
+            },
+          ],
+        },
       };
 
       const result = wizardReducer(stateWithUsers, initializeWizard());
 
-      expect(result.users).toEqual([]);
+      expect(result.system.users).toEqual([]);
     });
 
     it('should reset partitions to empty arrays', () => {
@@ -92,42 +98,51 @@ describe('wizardSlice core reducers', () => {
         ...initialState,
         distribution: 'rhel-9',
         architecture: 'aarch64',
-        hostname: 'loaded-hostname',
+        system: {
+          ...initialState.system,
+          hostname: 'loaded-hostname',
+        },
       };
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
       expect(result.distribution).toBe('rhel-9');
       expect(result.architecture).toBe('aarch64');
-      expect(result.hostname).toBe('loaded-hostname');
+      expect(result.system.hostname).toBe('loaded-hostname');
     });
 
     it('should completely replace existing state', () => {
       const existingState: wizardState = {
         ...initialState,
-        hostname: 'existing-hostname',
-        users: [
-          {
-            name: 'existinguser',
-            password: '',
-            ssh_key: '',
-            groups: [],
-            isAdministrator: false,
-            hasPassword: false,
-          },
-        ],
+        system: {
+          ...initialState.system,
+          hostname: 'existing-hostname',
+          users: [
+            {
+              name: 'existinguser',
+              password: '',
+              ssh_key: '',
+              groups: [],
+              isAdministrator: false,
+              hasPassword: false,
+            },
+          ],
+        },
       };
 
       const newState: wizardState = {
         ...initialState,
-        hostname: 'new-hostname',
-        users: [],
+        system: {
+          ...initialState.system,
+          hostname: 'new-hostname',
+          users: [],
+        },
       };
 
       const result = wizardReducer(existingState, loadWizardState(newState));
 
-      expect(result.hostname).toBe('new-hostname');
-      expect(result.users).toEqual([]);
+      expect(result.system.hostname).toBe('new-hostname');
+      expect(result.system.users).toEqual([]);
     });
   });
 
@@ -243,23 +258,26 @@ describe('wizardSlice core reducers', () => {
     it('should reset languages and keyboard', () => {
       const stateWithLocale: wizardState = {
         ...initialState,
-        locale: {
-          languages: ['en_US.UTF-8', 'fr_FR.UTF-8'],
-          keyboard: 'us',
+        system: {
+          ...initialState.system,
+          locale: {
+            languages: ['en_US.UTF-8', 'fr_FR.UTF-8'],
+            keyboard: 'us',
+          },
         },
       };
 
       const result = wizardReducer(stateWithLocale, clearLocale());
 
-      expect(result.locale.languages).toEqual([]);
-      expect(result.locale.keyboard).toBe('');
+      expect(result.system.locale.languages).toEqual([]);
+      expect(result.system.locale.keyboard).toBe('');
     });
 
     it('should be a no-op on already empty locale state', () => {
       const result = wizardReducer(initialState, clearLocale());
 
-      expect(result.locale.languages).toEqual([]);
-      expect(result.locale.keyboard).toBe('');
+      expect(result.system.locale.languages).toEqual([]);
+      expect(result.system.locale.keyboard).toBe('');
     });
   });
 
@@ -267,23 +285,26 @@ describe('wizardSlice core reducers', () => {
     it('should reset timezone and ntpservers', () => {
       const stateWithTimezone: wizardState = {
         ...initialState,
-        timezone: {
-          timezone: 'America/New_York',
-          ntpservers: ['0.pool.ntp.org', '1.pool.ntp.org'],
+        system: {
+          ...initialState.system,
+          timezone: {
+            timezone: 'America/New_York',
+            ntpservers: ['0.pool.ntp.org', '1.pool.ntp.org'],
+          },
         },
       };
 
       const result = wizardReducer(stateWithTimezone, clearTimezone());
 
-      expect(result.timezone.timezone).toBe('');
-      expect(result.timezone.ntpservers).toEqual([]);
+      expect(result.system.timezone.timezone).toBe('');
+      expect(result.system.timezone.ntpservers).toEqual([]);
     });
 
     it('should be a no-op on already empty timezone state', () => {
       const result = wizardReducer(initialState, clearTimezone());
 
-      expect(result.timezone.timezone).toBe('');
-      expect(result.timezone.ntpservers).toEqual([]);
+      expect(result.system.timezone.timezone).toBe('');
+      expect(result.system.timezone.ntpservers).toEqual([]);
     });
   });
 });

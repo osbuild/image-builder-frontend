@@ -69,18 +69,18 @@ describe('Hostname Component', () => {
       await enterHostname(user, 'my-new-hostname');
 
       const state = store.getState();
-      expect(state.wizard.hostname).toBe('my-new-hostname');
+      expect(state.wizard.system.hostname).toBe('my-new-hostname');
     });
 
     test('clears store when hostname is cleared via X button', async () => {
       const { store } = renderHostnameStep({ hostname: 'existing-hostname' });
       const user = createUser();
 
-      expect(store.getState().wizard.hostname).toBe('existing-hostname');
+      expect(store.getState().wizard.system.hostname).toBe('existing-hostname');
 
       await clearHostname(user);
 
-      expect(store.getState().wizard.hostname).toBe('');
+      expect(store.getState().wizard.system.hostname).toBe('');
     });
   });
 
@@ -184,7 +184,7 @@ describe('Hostname Component', () => {
         screen.getByRole('heading', { name: /Hostname/i }),
       ).toBeInTheDocument();
       expect(hostnameInput).toBeInTheDocument();
-      expect(store.getState().wizard.hostname).toBe('test-hostname');
+      expect(store.getState().wizard.system.hostname).toBe('test-hostname');
     });
   });
 });

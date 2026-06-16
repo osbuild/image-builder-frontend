@@ -45,20 +45,23 @@ export const createMockState = (
 
 // Helper to create a state with a user for user-related tests
 export const createStateWithUser = (
-  userOverrides: Partial<wizardState['users'][0]> = {},
+  userOverrides: Partial<wizardState['system']['users'][0]> = {},
 ): RootState =>
   createMockState({
-    users: [
-      {
-        name: 'testuser',
-        password: '',
-        ssh_key: '',
-        groups: [],
-        isAdministrator: false,
-        hasPassword: false,
-        ...userOverrides,
-      },
-    ],
+    system: {
+      ...wizardInitialState.system,
+      users: [
+        {
+          name: 'testuser',
+          password: '',
+          ssh_key: '',
+          groups: [],
+          isAdministrator: false,
+          hasPassword: false,
+          ...userOverrides,
+        },
+      ],
+    },
   });
 
 // Helper to create a state with partitions for filesystem tests
