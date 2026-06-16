@@ -151,11 +151,11 @@ export const mockBootcDistributionsMixed: BootcDistributionItem[] = [
     reference: 'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
   },
   {
-    distro: 'fedora-42',
-    name: 'Fedora 42',
+    distro: 'fedora-44',
+    name: 'Fedora 44',
     type: 'guest-image',
     arch: 'x86_64',
-    reference: 'quay.io/fedora/fedora-bootc:42',
+    reference: 'quay.io/fedora/fedora-bootc:44',
   },
   {
     distro: 'centos-10',

@@ -429,7 +429,7 @@ describe('ImageSourceSelect', () => {
         }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('option', { name: /fedora 42/i }),
+        screen.getByRole('option', { name: /fedora 44/i }),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('option', { name: /centos stream 10/i }),
@@ -457,15 +457,15 @@ describe('ImageSourceSelect', () => {
       });
       await clickWithWait(user, toggle);
       const fedoraOption = await screen.findByRole('option', {
-        name: /fedora 42/i,
+        name: /fedora 44/i,
       });
       await clickWithWait(user, fedoraOption);
 
       await waitFor(() => {
         expect(selectImageSourceState(store.getState())).toBe(
-          'quay.io/fedora/fedora-bootc:42',
+          'quay.io/fedora/fedora-bootc:44',
         );
-        expect(selectDistribution(store.getState())).toBe('fedora-42');
+        expect(selectDistribution(store.getState())).toBe('fedora-44');
       });
     });
 
