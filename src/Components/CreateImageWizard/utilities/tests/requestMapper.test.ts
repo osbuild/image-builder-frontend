@@ -76,7 +76,7 @@ describe('mapRequestToState', () => {
 
     const state = mapRequestToState(response);
 
-    expect(state.imageSource).toBe('quay.io/org/image:latest');
+    expect(state.output.imageSource).toBe('quay.io/org/image:latest');
   });
 
   it('sets imageSource to undefined for package-mode blueprints', () => {
@@ -84,7 +84,7 @@ describe('mapRequestToState', () => {
 
     const state = mapRequestToState(response);
 
-    expect(state.imageSource).toBeUndefined();
+    expect(state.output.imageSource).toBeUndefined();
   });
 
   it('normalizes distribution via getLatestRelease', () => {
@@ -94,7 +94,7 @@ describe('mapRequestToState', () => {
 
     const state = mapRequestToState(response);
 
-    expect(state.distribution).toBe(RHEL_9);
+    expect(state.output.distribution).toBe(RHEL_9);
   });
 
   it('falls back to initial state distribution for legacy bootc blueprints with undefined distribution', () => {
@@ -106,7 +106,7 @@ describe('mapRequestToState', () => {
     const state = mapRequestToState(response);
 
     // Falls back to initialState.distribution, not a hardcoded default
-    expect(state.distribution).toBe(RHEL_10);
+    expect(state.output.distribution).toBe(RHEL_10);
   });
 });
 
@@ -138,7 +138,7 @@ describe('mapBlueprintExportToState', () => {
     const state = mapBlueprintExportToState(blueprint, []);
 
     // Falls back to initialState.distribution, not a hardcoded default
-    expect(state.distribution).toBe(RHEL_10);
+    expect(state.output.distribution).toBe(RHEL_10);
   });
 });
 

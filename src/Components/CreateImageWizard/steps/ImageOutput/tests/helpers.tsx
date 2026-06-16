@@ -3,6 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { RHEL_10 } from '@/constants';
+import { initialState } from '@/store/slices/wizard';
 import {
   clickWithWait,
   renderWithRedux,
@@ -19,8 +20,11 @@ import ImageOutputStep from '../index';
 
 // Default state overrides for most tests
 const defaultStateOverrides: WizardStateOverrides = {
-  distribution: RHEL_10,
-  architecture: 'x86_64',
+  output: {
+    ...initialState.output,
+    distribution: RHEL_10,
+    architecture: 'x86_64',
+  },
 };
 
 export const renderImageOutputStep = (

@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
-import { selectBlueprintName } from '@/store/slices/wizard';
+import { initialState, selectBlueprintName } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { clickWithWait, createUser, fetchMock } from '@/test/testUtils';
 
@@ -79,7 +79,9 @@ describe('ImageOutput Step', () => {
 
   describe('Conditional rendering', () => {
     test('displays release lifecycle for RHEL 9', async () => {
-      renderImageOutputStep({ distribution: RHEL_9 });
+      renderImageOutputStep({
+        output: { ...initialState.output, distribution: RHEL_9 },
+      });
 
       expect(
         await screen.findByRole('button', {
@@ -89,7 +91,9 @@ describe('ImageOutput Step', () => {
     });
 
     test('displays release lifecycle for RHEL 8', async () => {
-      renderImageOutputStep({ distribution: RHEL_8 });
+      renderImageOutputStep({
+        output: { ...initialState.output, distribution: RHEL_8 },
+      });
 
       expect(
         await screen.findByRole('button', {
@@ -99,7 +103,9 @@ describe('ImageOutput Step', () => {
     });
 
     test('does not display release lifecycle for RHEL 10', async () => {
-      renderImageOutputStep({ distribution: RHEL_10 });
+      renderImageOutputStep({
+        output: { ...initialState.output, distribution: RHEL_10 },
+      });
 
       await screen.findByRole('heading', { name: /image output/i });
 
@@ -111,7 +117,9 @@ describe('ImageOutput Step', () => {
     });
 
     test('displays CentOS acknowledgement for CentOS distribution', async () => {
-      renderImageOutputStep({ distribution: CENTOS_9 });
+      renderImageOutputStep({
+        output: { ...initialState.output, distribution: CENTOS_9 },
+      });
 
       expect(
         await screen.findByText(
@@ -121,7 +129,9 @@ describe('ImageOutput Step', () => {
     });
 
     test('does not display CentOS acknowledgement for RHEL distribution', async () => {
-      renderImageOutputStep({ distribution: RHEL_10 });
+      renderImageOutputStep({
+        output: { ...initialState.output, distribution: RHEL_10 },
+      });
 
       await screen.findByRole('heading', { name: /image output/i });
 
@@ -136,8 +146,11 @@ describe('ImageOutput Step', () => {
   describe('Auto-generated blueprint name', () => {
     test('generates default name from distribution and architecture', async () => {
       const { store } = renderImageOutputStep({
-        distribution: RHEL_10,
-        architecture: 'x86_64',
+        output: {
+          ...initialState.output,
+          distribution: RHEL_10,
+          architecture: 'x86_64',
+        },
       });
 
       await screen.findByRole('heading', { name: /image output/i });
@@ -149,8 +162,11 @@ describe('ImageOutput Step', () => {
     test('updates name when architecture changes', async () => {
       const user = createUser();
       const { store } = renderImageOutputStep({
-        distribution: RHEL_10,
-        architecture: 'x86_64',
+        output: {
+          ...initialState.output,
+          distribution: RHEL_10,
+          architecture: 'x86_64',
+        },
       });
 
       await screen.findByRole('heading', { name: /image output/i });
@@ -169,8 +185,11 @@ describe('ImageOutput Step', () => {
     test('updates name when distribution changes', async () => {
       const user = createUser();
       const { store } = renderImageOutputStep({
-        distribution: RHEL_10,
-        architecture: 'x86_64',
+        output: {
+          ...initialState.output,
+          distribution: RHEL_10,
+          architecture: 'x86_64',
+        },
       });
 
       await screen.findByRole('heading', { name: /image output/i });
@@ -188,8 +207,11 @@ describe('ImageOutput Step', () => {
 
     test('preserves custom name on initial render', async () => {
       const { store } = renderImageOutputStep({
-        distribution: RHEL_10,
-        architecture: 'x86_64',
+        output: {
+          ...initialState.output,
+          distribution: RHEL_10,
+          architecture: 'x86_64',
+        },
         details: {
           blueprintName: 'my-custom-blueprint',
           blueprintDescription: '',

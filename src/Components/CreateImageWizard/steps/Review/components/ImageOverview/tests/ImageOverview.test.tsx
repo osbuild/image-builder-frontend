@@ -60,7 +60,7 @@ describe('ImageOverview', () => {
 
   test('displays the base release for package mode', () => {
     renderWithRedux(<ImageOverview />, {
-      distribution: RHEL_10,
+      output: { ...initialState.output, distribution: RHEL_10 },
       blueprintMode: 'package',
     });
 
@@ -72,7 +72,7 @@ describe('ImageOverview', () => {
 
   test('displays the architecture', () => {
     renderWithRedux(<ImageOverview />, {
-      architecture: X86_64,
+      output: { ...initialState.output, architecture: X86_64 },
     });
 
     expect(screen.getByText('Architecture')).toBeInTheDocument();
@@ -88,7 +88,7 @@ describe('ImageOverview', () => {
   describe('Private clouds', () => {
     test('displays vsphere when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['vsphere'],
+        output: { ...initialState.output, imageTypes: ['vsphere'] },
       });
 
       expect(screen.getByText('Private cloud')).toBeInTheDocument();
@@ -97,7 +97,10 @@ describe('ImageOverview', () => {
 
     test('displays vsphere-ova when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['vsphere-ova'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['vsphere-ova'],
+        },
       });
 
       expect(screen.getByText('Private cloud')).toBeInTheDocument();
@@ -106,7 +109,10 @@ describe('ImageOverview', () => {
 
     test('displays multiple private clouds when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['vsphere', 'vsphere-ova'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['vsphere', 'vsphere-ova'],
+        },
       });
 
       expect(screen.getByText('VMware vSphere (.vmdk)')).toBeInTheDocument();
@@ -115,7 +121,7 @@ describe('ImageOverview', () => {
 
     test('does not display private cloud section when none selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['aws'],
+        output: { ...initialState.output, imageTypes: ['aws'] },
       });
 
       expect(screen.queryByText('Private cloud')).not.toBeInTheDocument();
@@ -125,7 +131,7 @@ describe('ImageOverview', () => {
   describe('Public clouds', () => {
     test('displays AWS details when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['aws'],
+        output: { ...initialState.output, imageTypes: ['aws'] },
         cloudProviders: {
           ...initialState.cloudProviders,
           aws: {
@@ -147,7 +153,7 @@ describe('ImageOverview', () => {
 
     test('displays GCP details when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['gcp'],
+        output: { ...initialState.output, imageTypes: ['gcp'] },
         cloudProviders: {
           ...initialState.cloudProviders,
           gcp: {
@@ -168,7 +174,7 @@ describe('ImageOverview', () => {
 
     test('displays Azure details when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['azure'],
+        output: { ...initialState.output, imageTypes: ['azure'] },
         cloudProviders: {
           ...initialState.cloudProviders,
           azure: {
@@ -190,7 +196,7 @@ describe('ImageOverview', () => {
 
     test('displays OCI when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['oci'],
+        output: { ...initialState.output, imageTypes: ['oci'] },
       });
 
       expect(
@@ -200,7 +206,7 @@ describe('ImageOverview', () => {
 
     test('does not display public cloud section when none selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['vsphere'],
+        output: { ...initialState.output, imageTypes: ['vsphere'] },
       });
 
       expect(screen.queryByText('Public cloud')).not.toBeInTheDocument();
@@ -210,7 +216,10 @@ describe('ImageOverview', () => {
   describe('Miscellaneous formats', () => {
     test('displays guest-image when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
       });
 
       expect(screen.getByText('Miscellaneous formats')).toBeInTheDocument();
@@ -219,7 +228,10 @@ describe('ImageOverview', () => {
 
     test('displays image-installer when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['image-installer'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['image-installer'],
+        },
       });
 
       expect(screen.getByText('Baremetal (.iso)')).toBeInTheDocument();
@@ -227,7 +239,7 @@ describe('ImageOverview', () => {
 
     test('displays wsl when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['wsl'],
+        output: { ...initialState.output, imageTypes: ['wsl'] },
       });
 
       expect(
@@ -237,7 +249,10 @@ describe('ImageOverview', () => {
 
     test('displays multiple misc formats when selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['guest-image', 'image-installer', 'wsl'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image', 'image-installer', 'wsl'],
+        },
       });
 
       expect(screen.getByText('Virtualization (.qcow2)')).toBeInTheDocument();
@@ -249,7 +264,7 @@ describe('ImageOverview', () => {
 
     test('does not display misc formats section when none selected', () => {
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['aws'],
+        output: { ...initialState.output, imageTypes: ['aws'] },
       });
 
       expect(
@@ -267,7 +282,10 @@ describe('ImageOverview', () => {
       });
 
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         system: { ...initialState.system, users: [adminUser] },
       });
 
@@ -281,7 +299,10 @@ describe('ImageOverview', () => {
       });
 
       renderWithRedux(<ImageOverview />, {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         system: { ...initialState.system, users: [adminUser] },
       });
 

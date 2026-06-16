@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { createDefaultRestrictions } from '../../tests/helpers';
@@ -23,7 +24,10 @@ describe('Security', () => {
         security={mockSecuritySummary}
       />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
       },
     );
 
@@ -35,7 +39,10 @@ describe('Security', () => {
   describe('FIPS', () => {
     test('displays FIPS enabled status', () => {
       renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         compliance: {
           type: 'none',
           policyID: undefined,
@@ -51,7 +58,10 @@ describe('Security', () => {
 
     test('does not render FIPS when disabled', () => {
       renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         compliance: {
           type: 'none',
           policyID: undefined,
@@ -84,7 +94,10 @@ describe('Security', () => {
           security={mockSummaryWithCIS}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           compliance: {
             type: 'openscap',
             profileID: 'xccdf_org.ssgproject.content_profile_cis',
@@ -116,7 +129,10 @@ describe('Security', () => {
           security={mockComplianceSummary}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           compliance: {
             type: 'compliance',
             profileID: undefined,
@@ -133,7 +149,10 @@ describe('Security', () => {
 
     test('does not display added items when no packages or services', () => {
       renderWithRedux(<Security restrictions={createDefaultRestrictions()} />, {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         compliance: {
           type: 'openscap',
           profileID: 'test-profile',

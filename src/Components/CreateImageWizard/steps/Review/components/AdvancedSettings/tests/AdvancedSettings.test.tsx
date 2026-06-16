@@ -19,7 +19,10 @@ describe('AdvancedSettingsOverview', () => {
     renderWithRedux(
       <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
       },
     );
 
@@ -34,7 +37,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'automatic',
               disk: {
@@ -58,7 +64,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'automatic',
               disk: {
@@ -86,7 +95,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'basic',
               disk: {
@@ -112,7 +124,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'basic',
               disk: {
@@ -138,7 +153,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'basic',
               disk: {
@@ -167,7 +185,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'advanced',
               disk: {
@@ -191,7 +212,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'advanced',
               disk: {
@@ -216,7 +240,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'advanced',
               disk: {
@@ -244,7 +271,10 @@ describe('AdvancedSettingsOverview', () => {
             restrictions={createDefaultRestrictions()}
           />,
           {
-            imageTypes: ['guest-image'],
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
             filesystem: {
               mode: 'basic',
               disk: {
@@ -271,7 +301,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             timezone: {
@@ -290,7 +323,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             timezone: {
@@ -308,7 +344,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             timezone: {
@@ -328,7 +367,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             timezone: {
@@ -348,7 +390,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             locale: {
@@ -369,7 +414,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             locale: {
@@ -389,7 +437,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             locale: {
@@ -409,7 +460,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             locale: {
@@ -429,7 +483,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             locale: {
@@ -450,7 +507,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, hostname: 'my-server.example.com' },
         },
       );
@@ -463,7 +523,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, hostname: '' },
         },
       );
@@ -477,7 +540,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -496,7 +562,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -520,7 +589,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -542,7 +614,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -561,7 +636,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -586,7 +664,10 @@ describe('AdvancedSettingsOverview', () => {
           oscapKernelArgs={['audit=1', 'audit_backlog_limit=8192']}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -610,7 +691,10 @@ describe('AdvancedSettingsOverview', () => {
           oscapKernelArgs={['audit=1']}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             kernel: {
@@ -635,7 +719,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -657,7 +744,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -680,7 +770,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -700,7 +793,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -719,7 +815,10 @@ describe('AdvancedSettingsOverview', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -753,7 +852,10 @@ describe('AdvancedSettingsOverview', () => {
           }}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -786,7 +888,10 @@ describe('AdvancedSettingsOverview', () => {
           }}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             services: {
@@ -816,7 +921,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, firstBoot: { script: '' } },
         },
       );
@@ -830,7 +938,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firstBoot: { script: firstBootScript },
@@ -845,7 +956,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firstBoot: { script: firstBootScript },
@@ -862,7 +976,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [] },
         },
       );
@@ -874,7 +991,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [
@@ -898,7 +1018,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [
@@ -925,7 +1048,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
@@ -937,7 +1063,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [] },
         },
       );
@@ -953,7 +1082,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser] },
         },
       );
@@ -969,7 +1101,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
@@ -982,7 +1117,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
@@ -996,7 +1134,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser, developerUser] },
         },
       );
@@ -1011,7 +1152,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [{ ...adminUser, ssh_key: 'ssh-rsa AAAA' }],
@@ -1027,7 +1171,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [{ ...adminUser, groups: ['wheel', 'docker'] }],
@@ -1043,7 +1190,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             users: [
@@ -1069,7 +1219,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser] },
         },
       );
@@ -1085,7 +1238,10 @@ echo 'Hello there, General Kenobi!'`;
           })}
         />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: { ...initialState.system, users: [adminUser] },
         },
       );
@@ -1099,7 +1255,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1120,7 +1279,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1142,7 +1304,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1163,7 +1328,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1187,7 +1355,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1210,7 +1381,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1233,7 +1407,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1257,7 +1434,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {
@@ -1285,7 +1465,10 @@ echo 'Hello there, General Kenobi!'`;
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
-          imageTypes: ['guest-image'],
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
           system: {
             ...initialState.system,
             firewall: {

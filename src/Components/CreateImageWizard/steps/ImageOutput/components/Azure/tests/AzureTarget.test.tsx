@@ -34,7 +34,10 @@ const createStoreWithAzureState = (
     preloadedState: {
       wizard: {
         ...initialState,
-        imageTypes: ['azure'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['azure'],
+        },
         registration: {
           ...initialState.registration,
           type: 'register-later',

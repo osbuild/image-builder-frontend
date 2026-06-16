@@ -13,7 +13,10 @@ describe('RepeatableBuild', () => {
     renderWithRedux(
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         content: {
           ...initialState.content,
           snapshotting: {
@@ -35,7 +38,10 @@ describe('RepeatableBuild', () => {
     renderWithRedux(
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         content: {
           ...initialState.content,
           snapshotting: {
@@ -56,7 +62,10 @@ describe('RepeatableBuild', () => {
     renderWithRedux(
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         content: {
           ...initialState.content,
           snapshotting: {
@@ -76,7 +85,10 @@ describe('RepeatableBuild', () => {
     renderWithRedux(
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
-        imageTypes: ['guest-image'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
         content: {
           ...initialState.content,
           snapshotting: {

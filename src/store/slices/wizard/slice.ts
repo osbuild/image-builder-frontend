@@ -112,13 +112,15 @@ export type wizardState = {
   blueprintId?: string;
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
-  imageSource?: ImageSource | undefined;
-  /** Embedded OS image ref for bootable-container-iso (installer ref is the bootc `reference` for that target). */
-  isoPayloadReference?: string | undefined;
-  bootcDistributions: BootcDistributionItem[];
-  architecture: ImageRequest['architecture'];
-  distribution: Distributions;
-  imageTypes: ImageTypes[];
+  output: {
+    imageSource?: ImageSource | undefined;
+    /** Embedded OS image ref for bootable-container-iso (installer ref is the bootc `reference` for that target). */
+    isoPayloadReference?: string | undefined;
+    bootcDistributions: BootcDistributionItem[];
+    architecture: ImageRequest['architecture'];
+    distribution: Distributions;
+    imageTypes: ImageTypes[];
+  };
   cloudProviders: {
     aws: {
       accountId: string;
@@ -233,10 +235,12 @@ export type wizardState = {
 export const initialState: wizardState = {
   wizardMode: 'create',
   blueprintMode: 'package',
-  bootcDistributions: [],
-  architecture: X86_64,
-  distribution: RHEL_10,
-  imageTypes: [],
+  output: {
+    bootcDistributions: [],
+    architecture: X86_64,
+    distribution: RHEL_10,
+    imageTypes: [],
+  },
   cloudProviders: {
     aws: {
       accountId: '',
@@ -364,15 +368,15 @@ export const selectBlueprintMode = (state: RootState) => {
 };
 
 export const selectImageSource = (state: RootState) => {
-  return state.wizard.imageSource;
+  return state.wizard.output.imageSource;
 };
 
 export const selectIsoPayloadReference = (state: RootState) => {
-  return state.wizard.isoPayloadReference;
+  return state.wizard.output.isoPayloadReference;
 };
 
 export const selectBootcDistributions = (state: RootState) => {
-  return state.wizard.bootcDistributions;
+  return state.wizard.output.bootcDistributions;
 };
 
 export const selectBlueprintId = (state: RootState) => {
@@ -388,15 +392,15 @@ export const selectProxy = (state: RootState) => {
 };
 
 export const selectArchitecture = (state: RootState) => {
-  return state.wizard.architecture;
+  return state.wizard.output.architecture;
 };
 
 export const selectDistribution = (state: RootState) => {
-  return state.wizard.distribution;
+  return state.wizard.output.distribution;
 };
 
 export const selectImageTypes = (state: RootState) => {
-  return state.wizard.imageTypes;
+  return state.wizard.output.imageTypes;
 };
 
 export const selectAwsAccountId = (state: RootState): string => {
@@ -821,28 +825,28 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<ImageSource | undefined>,
     ) => {
-      state.imageSource = action.payload;
+      state.output.imageSource = action.payload;
     },
     changeIsoPayloadReference: (
       state,
       action: PayloadAction<string | undefined>,
     ) => {
-      state.isoPayloadReference = action.payload;
+      state.output.isoPayloadReference = action.payload;
     },
     changeBootcDistributions: (
       state,
       action: PayloadAction<BootcDistributionItem[]>,
     ) => {
-      state.bootcDistributions = action.payload;
+      state.output.bootcDistributions = action.payload;
     },
     changeArchitecture: (
       state,
       action: PayloadAction<ImageRequest['architecture']>,
     ) => {
-      state.architecture = action.payload;
+      state.output.architecture = action.payload;
     },
     changeDistribution: (state, action: PayloadAction<Distributions>) => {
-      state.distribution = action.payload;
+      state.output.distribution = action.payload;
 
       if (process.env.IS_ON_PREMISE && !isRhel(action.payload)) {
         state.registration.type = 'register-later';
@@ -850,22 +854,22 @@ export const wizardSlice = createSlice({
     },
     addImageType: (state, action: PayloadAction<ImageTypes>) => {
       // Remove (if present) before adding to avoid duplicates
-      state.imageTypes = state.imageTypes.filter(
+      state.output.imageTypes = state.output.imageTypes.filter(
         (imageType) => imageType !== action.payload,
       );
-      state.imageTypes.push(action.payload);
+      state.output.imageTypes.push(action.payload);
     },
     removeImageType: (state, action: PayloadAction<ImageTypes>) => {
-      state.imageTypes = state.imageTypes.filter(
+      state.output.imageTypes = state.output.imageTypes.filter(
         (imageType) => imageType !== action.payload,
       );
     },
     changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
-      state.imageTypes = action.payload;
+      state.output.imageTypes = action.payload;
       // isoPayloadReference is only relevant for bootable-container-iso,
       // clear it when that image type is no longer selected
       if (!action.payload.includes('bootable-container-iso')) {
-        state.isoPayloadReference = undefined;
+        state.output.isoPayloadReference = undefined;
       }
     },
     changeAwsAccountId: (state, action: PayloadAction<string>) => {

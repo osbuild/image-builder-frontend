@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 
 import { RHEL_10 } from '@/constants';
 import { Distributions } from '@/store/api/backend';
-import { selectImageTypes } from '@/store/slices/wizard';
+import { initialState, selectImageTypes } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clickWithWait,
@@ -183,7 +183,12 @@ describe('TargetEnvironment', () => {
     });
 
     test('disables other targets when network installer is selected', async () => {
-      renderTargetEnvironment({ imageTypes: ['network-installer'] });
+      renderTargetEnvironment({
+        output: {
+          ...initialState.output,
+          imageTypes: ['network-installer'],
+        },
+      });
 
       await screen.findByRole('checkbox', { name: /Network installer/i });
 
@@ -196,7 +201,12 @@ describe('TargetEnvironment', () => {
     });
 
     test('shows info alert when network installer is selected', async () => {
-      renderTargetEnvironment({ imageTypes: ['network-installer'] });
+      renderTargetEnvironment({
+        output: {
+          ...initialState.output,
+          imageTypes: ['network-installer'],
+        },
+      });
 
       expect(
         await screen.findByText(
@@ -206,7 +216,12 @@ describe('TargetEnvironment', () => {
     });
 
     test('disables network installer when other targets are selected', async () => {
-      renderTargetEnvironment({ imageTypes: ['guest-image'] });
+      renderTargetEnvironment({
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
+      });
 
       const networkInstallerCheckbox = await screen.findByRole('checkbox', {
         name: /Network installer/i,
@@ -251,7 +266,10 @@ describe('TargetEnvironment', () => {
   describe('Image mode', () => {
     const imageModeOverrides: WizardStateOverrides = {
       blueprintMode: 'image',
-      distribution: RHEL_10 as Distributions,
+      output: {
+        ...initialState.output,
+        distribution: RHEL_10 as Distributions,
+      },
     };
 
     const createImageModeHandler = (
