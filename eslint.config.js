@@ -96,6 +96,9 @@ module.exports = defineConfig([
         ignoreMemberSort: false,
       }],
       'no-duplicate-imports': 'error',
+      'prefer-const': ['error', {
+        destructuring: 'any',
+      }],
       // NOTE: we can enable this after the revamp and after summit. We can live with
       // the mixture of alias imports and relative imports. We can then enable the warning
       // or maybe errors (after summit). We can slowly migrate during the revamp, but adding
@@ -106,8 +109,18 @@ module.exports = defineConfig([
       //     message: 'Avoid deep relative imports (../../ or deeper). Use @/ alias instead.',
       //   }],
       // }],
-      'prefer-const': ['error', {
-        destructuring: 'any',
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: [
+            '**/store/api/backend/index.hosted*',
+            '**/store/api/backend/index.onprem*',
+            '**/store/api/contentSources/index.hosted*',
+            '**/store/api/contentSources/index.onprem*',
+            '**/Utilities/useGetEnvironment/index.hosted*',
+            '**/Utilities/useGetEnvironment/index.onprem*',
+          ],
+          message: 'Import from the alias (e.g. @/store/api/backend) instead of the platform-specific file directly. Webpack/tsconfig aliases handle platform switching.',
+        }],
       }],
       'no-console': 'error',
       'eqeqeq': 'error',
@@ -183,6 +196,17 @@ module.exports = defineConfig([
     ],
     rules: {
       'no-console': 'off',
+    },
+  },
+
+  { // Allow direct imports of platform-specific files in their own tests
+    files: [
+      'src/store/api/backend/tests/**',
+      'src/store/api/contentSources/tests/**',
+      'src/Utilities/useGetEnvironment/tests/**',
+    ],
+    rules: {
+      'no-restricted-imports': 'off',
     },
   },
 
