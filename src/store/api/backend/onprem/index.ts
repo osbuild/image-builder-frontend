@@ -14,10 +14,12 @@ export {
   useGetComposeStatusQuery,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
+  useGetRegistryAuthStatusQuery,
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
   useLazyGetBlueprintsQuery,
   useLazyGetOscapCustomizationsQuery,
+  useRegistryLoginMutation,
   useUpdateBlueprintMutation,
   useUpdateWorkerConfigMutation,
 } from './composerApi';

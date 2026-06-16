@@ -25,6 +25,10 @@ declare module 'cockpit' {
     err?: 'message' | 'out' | 'ignore';
   };
 
+  type SpawnProcess = Promise<string | Uint8Array> & {
+    input(data: string): SpawnProcess;
+  };
+
   type HttpOptions = {
     superuser?: 'try' | 'require';
   };
@@ -56,7 +60,7 @@ declare module 'cockpit' {
     jump(url: string, host: string): void;
     user(): Promise<UserInfo>;
     file(path: string, options?: FileOptions): FileHandle;
-    spawn(args: string[], options?: SpawnOptions): Promise<string | Uint8Array>;
+    spawn(args: string[], options?: SpawnOptions): SpawnProcess;
     script(script: string): Promise<string | Uint8Array>;
     http(address: string, options?: HttpOptions): HttpClient;
     permission(options: PermissionOptions): PermissionObject;

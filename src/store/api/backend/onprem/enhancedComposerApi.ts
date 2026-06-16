@@ -6,6 +6,7 @@ const enhancedApi = composerApi.enhanceEndpoints({
     'Blueprints',
     'Compose',
     'BlueprintComposes',
+    'RegistryAuth',
     'WorkerConfig',
   ],
   endpoints: {
@@ -41,8 +42,14 @@ const enhancedApi = composerApi.enhanceEndpoints({
     getBlueprintComposes: {
       providesTags: [{ type: 'BlueprintComposes' }],
     },
+    getRegistryAuthStatus: {
+      providesTags: [{ type: 'RegistryAuth' }],
+    },
     getWorkerConfig: {
       providesTags: [{ type: 'WorkerConfig' }],
+    },
+    registryLogin: {
+      invalidatesTags: [{ type: 'RegistryAuth' }],
     },
     updateWorkerConfig: {
       invalidatesTags: [{ type: 'WorkerConfig' }],
