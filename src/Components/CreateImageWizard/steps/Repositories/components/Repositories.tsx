@@ -31,7 +31,7 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
-  selectGroups,
+  selectPackageGroups,
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
@@ -80,7 +80,7 @@ const Repositories = () => {
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
+  const groups = useAppSelector(selectPackageGroups);
   const templateUuid = useAppSelector(selectTemplate);
 
   const version = releaseToVersion(distribution);

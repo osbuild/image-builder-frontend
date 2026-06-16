@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { createDefaultRestrictions } from '../../tests/helpers';
@@ -25,11 +26,14 @@ describe('ContentOverview', () => {
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          repositories: {
-            customRepositories: [],
-            payloadRepositories: [],
-            recommendedRepositories: [],
-            redHatRepositories: [],
+          content: {
+            ...initialState.content,
+            repositories: {
+              customRepositories: [],
+              payloadRepositories: [],
+              recommendedRepositories: [],
+              redHatRepositories: [],
+            },
           },
         },
       );
@@ -45,7 +49,10 @@ describe('ContentOverview', () => {
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          packages: [],
+          content: {
+            ...initialState.content,
+            packages: [],
+          },
         },
       );
 
@@ -58,10 +65,17 @@ describe('ContentOverview', () => {
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          packages: [
-            { name: 'vim', summary: 'Text editor', repository: 'distro' },
-            { name: 'htop', summary: 'Process viewer', repository: 'distro' },
-          ],
+          content: {
+            ...initialState.content,
+            packages: [
+              { name: 'vim', summary: 'Text editor', repository: 'distro' },
+              {
+                name: 'htop',
+                summary: 'Process viewer',
+                repository: 'distro',
+              },
+            ],
+          },
         },
       );
 
@@ -74,9 +88,12 @@ describe('ContentOverview', () => {
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          packages: [
-            { name: 'vim', summary: 'Text editor', repository: 'distro' },
-          ],
+          content: {
+            ...initialState.content,
+            packages: [
+              { name: 'vim', summary: 'Text editor', repository: 'distro' },
+            ],
+          },
         },
       );
 
@@ -92,13 +109,16 @@ describe('ContentOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          packages: [
-            {
-              name: 'aide',
-              summary: 'Intrusion detection',
-              repository: 'distro',
-            },
-          ],
+          content: {
+            ...initialState.content,
+            packages: [
+              {
+                name: 'aide',
+                summary: 'Intrusion detection',
+                repository: 'distro',
+              },
+            ],
+          },
         },
       );
 
@@ -116,14 +136,17 @@ describe('ContentOverview', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          packages: [
-            {
-              name: 'aide',
-              summary: 'Intrusion detection',
-              repository: 'distro',
-            },
-            { name: 'vim', summary: 'Text editor', repository: 'distro' },
-          ],
+          content: {
+            ...initialState.content,
+            packages: [
+              {
+                name: 'aide',
+                summary: 'Intrusion detection',
+                repository: 'distro',
+              },
+              { name: 'vim', summary: 'Text editor', repository: 'distro' },
+            ],
+          },
         },
       );
 
@@ -142,7 +165,10 @@ describe('ContentOverview', () => {
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          groups: [],
+          content: {
+            ...initialState.content,
+            groups: [],
+          },
         },
       );
 
@@ -155,18 +181,21 @@ describe('ContentOverview', () => {
         <ContentOverview restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          groups: [
-            {
-              name: 'Development Tools',
-              description: 'Dev tools',
-              repository: 'distro',
-            },
-            {
-              name: 'Web Server',
-              description: 'Web server packages',
-              repository: 'distro',
-            },
-          ],
+          content: {
+            ...initialState.content,
+            groups: [
+              {
+                name: 'Development Tools',
+                description: 'Dev tools',
+                repository: 'distro',
+              },
+              {
+                name: 'Web Server',
+                description: 'Web server packages',
+                repository: 'distro',
+              },
+            ],
+          },
         },
       );
 

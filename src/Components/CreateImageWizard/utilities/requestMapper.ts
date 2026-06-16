@@ -75,7 +75,6 @@ import {
   selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
-  selectGroups,
   selectHostname,
   selectImageSource,
   selectImageTypes,
@@ -87,6 +86,7 @@ import {
   selectMetadata,
   selectModules,
   selectNtpServers,
+  selectPackageGroups,
   selectPackages,
   selectPartitioningMode,
   selectPayloadRepositories,
@@ -569,34 +569,37 @@ function commonRequestToState(
       gcp: gcpTargetOptions(gcpUploadOptions),
       aws: awsTargetOptions(awsUploadOptions),
     },
-    snapshotting: {
-      useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
-      snapshotDate: snapshot_date,
-      template: request.image_requests[0]?.content_template || '',
-      templateName: request.image_requests[0]?.content_template_name || '',
+    content: {
+      repositories: {
+        customRepositories: request.customizations.custom_repositories || [],
+        payloadRepositories: request.customizations.payload_repositories || [],
+        recommendedRepositories: [],
+        redHatRepositories: [],
+      },
+      packages: otherPackageNames.map((pkg) => ({
+        name: pkg,
+        summary: '',
+        repository: '' as PackageRepository,
+      })),
+      enabledModules: request.customizations.enabled_modules || [],
+      groups:
+        request.customizations.packages
+          ?.filter((grp) => grp.startsWith('@'))
+          .map((grp) => ({
+            name: grp.substr(1),
+            description: '',
+            repository: '' as PackageRepository,
+            package_list: [],
+          })) || [],
+      snapshotting: {
+        useLatest:
+          !snapshot_date && !request.image_requests[0]?.content_template,
+        snapshotDate: snapshot_date,
+        template: request.image_requests[0]?.content_template || '',
+        templateName: request.image_requests[0]?.content_template_name || '',
+      },
+      verifiedLocaleLangpacks: localeLangpacks,
     },
-    repositories: {
-      customRepositories: request.customizations.custom_repositories || [],
-      payloadRepositories: request.customizations.payload_repositories || [],
-      recommendedRepositories: [],
-      redHatRepositories: [],
-    },
-    packages: otherPackageNames.map((pkg) => ({
-      name: pkg,
-      summary: '',
-      repository: '' as PackageRepository,
-    })),
-    verifiedLocaleLangpacks: localeLangpacks,
-    groups:
-      request.customizations.packages
-        ?.filter((grp) => grp.startsWith('@'))
-        .map((grp) => ({
-          name: grp.substr(1),
-          description: '',
-          repository: '' as PackageRepository,
-          package_list: [],
-        })) || [],
-    enabled_modules: request.customizations.enabled_modules || [],
     locale: {
       languages: request.customizations.locale?.languages || [],
       keyboard: request.customizations.locale?.keyboard || '',
@@ -726,8 +729,11 @@ export const mapBlueprintExportToState = (
 
   const commonState = commonRequestToState(blueprintResponse);
 
-  let { snapshotting } = commonState;
-  if (blueprint.snapshot_date && !commonState.snapshotting.snapshotDate) {
+  let snapshotting = commonState.content.snapshotting;
+  if (
+    blueprint.snapshot_date &&
+    !commonState.content.snapshotting.snapshotDate
+  ) {
     let normalizedDate = '';
     if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(blueprint.snapshot_date)) {
       normalizedDate = blueprint.snapshot_date;
@@ -764,7 +770,10 @@ export const mapBlueprintExportToState = (
       },
     },
     ...commonState,
-    snapshotting,
+    content: {
+      ...commonState.content,
+      snapshotting,
+    },
   };
 };
 
@@ -1163,7 +1172,7 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
 
 const getPackages = (state: RootState) => {
   const packages = selectPackages(state);
-  const groups = selectGroups(state);
+  const groups = selectPackageGroups(state);
   const verifiedLocaleLangpacks = selectVerifiedLocaleLangpacks(state);
   const packageNames = new Set(packages.map((pkg) => pkg.name));
   for (const pkg of verifiedLocaleLangpacks) {
