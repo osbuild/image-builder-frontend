@@ -109,11 +109,6 @@ export type UserGroup = {
 };
 
 export type wizardState = {
-  env: {
-    serverUrl: string;
-    baseUrl: string;
-    proxy: string | undefined;
-  };
   blueprintId?: string;
   wizardMode: WizardModeOptions;
   blueprintMode: BlueprintModeOptions;
@@ -124,13 +119,6 @@ export type wizardState = {
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
-  aapRegistration: {
-    enabled: boolean;
-    callbackUrl: string | undefined;
-    hostConfigKey: string | undefined;
-    tlsCertificateAuthority: string | undefined;
-    skipTlsVerification: boolean | undefined;
-  };
   cloudProviders: {
     aws: {
       accountId: string;
@@ -151,12 +139,22 @@ export type wizardState = {
     };
   };
   registration: {
-    registrationType: RegistrationType;
+    serverUrl: string;
+    baseUrl: string;
+    proxy: string | undefined;
+    type: RegistrationType;
     activationKey: ActivationKeys['name'];
     orgId: string | undefined;
     satelliteRegistration: {
       command: string | undefined;
       caCert: string | undefined;
+    };
+    aap: {
+      enabled: boolean;
+      callbackUrl: string | undefined;
+      hostConfigKey: string | undefined;
+      tlsCertificateAuthority: string | undefined;
+      skipTlsVerification: boolean | undefined;
     };
   };
   compliance: {
@@ -229,24 +227,12 @@ export type wizardState = {
 };
 
 export const initialState: wizardState = {
-  env: {
-    serverUrl: '',
-    baseUrl: '',
-    proxy: undefined,
-  },
   wizardMode: 'create',
   blueprintMode: 'package',
   bootcDistributions: [],
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
-  aapRegistration: {
-    enabled: false,
-    callbackUrl: undefined,
-    hostConfigKey: undefined,
-    tlsCertificateAuthority: undefined,
-    skipTlsVerification: undefined,
-  },
   cloudProviders: {
     aws: {
       accountId: '',
@@ -266,12 +252,22 @@ export const initialState: wizardState = {
     },
   },
   registration: {
-    registrationType: 'register-now-rhc',
+    serverUrl: '',
+    baseUrl: '',
+    proxy: undefined,
+    type: 'register-now-rhc',
     activationKey: undefined,
     orgId: undefined,
     satelliteRegistration: {
       command: undefined,
       caCert: undefined,
+    },
+    aap: {
+      enabled: false,
+      callbackUrl: undefined,
+      hostConfigKey: undefined,
+      tlsCertificateAuthority: undefined,
+      skipTlsVerification: undefined,
     },
   },
   compliance: {
@@ -348,7 +344,7 @@ export const initialState: wizardState = {
 };
 
 export const selectServerUrl = (state: RootState) => {
-  return state.wizard.env.serverUrl;
+  return state.wizard.registration.serverUrl;
 };
 
 export const selectWizardMode = (state: RootState) => {
@@ -376,11 +372,11 @@ export const selectBlueprintId = (state: RootState) => {
 };
 
 export const selectBaseUrl = (state: RootState) => {
-  return state.wizard.env.baseUrl;
+  return state.wizard.registration.baseUrl;
 };
 
 export const selectProxy = (state: RootState) => {
-  return state.wizard.env.proxy;
+  return state.wizard.registration.proxy;
 };
 
 export const selectArchitecture = (state: RootState) => {
@@ -428,7 +424,7 @@ export const selectGcpEmail = (state: RootState) => {
 };
 
 export const selectRegistrationType = (state: RootState) => {
-  return state.wizard.registration.registrationType;
+  return state.wizard.registration.type;
 };
 
 export const selectActivationKey = (state: RootState) => {
@@ -448,27 +444,27 @@ export const selectSatelliteCaCertificate = (state: RootState) => {
 };
 
 export const selectAapRegistration = (state: RootState) => {
-  return state.wizard.aapRegistration;
+  return state.wizard.registration.aap;
 };
 
 export const selectAapEnabled = (state: RootState) => {
-  return state.wizard.aapRegistration.enabled;
+  return state.wizard.registration.aap.enabled;
 };
 
 export const selectAapCallbackUrl = (state: RootState) => {
-  return state.wizard.aapRegistration.callbackUrl;
+  return state.wizard.registration.aap.callbackUrl;
 };
 
 export const selectAapHostConfigKey = (state: RootState) => {
-  return state.wizard.aapRegistration.hostConfigKey;
+  return state.wizard.registration.aap.hostConfigKey;
 };
 
 export const selectAapTlsCertificateAuthority = (state: RootState) => {
-  return state.wizard.aapRegistration.tlsCertificateAuthority;
+  return state.wizard.registration.aap.tlsCertificateAuthority;
 };
 
 export const selectAapTlsConfirmation = (state: RootState) => {
-  return state.wizard.aapRegistration.skipTlsVerification;
+  return state.wizard.registration.aap.skipTlsVerification;
 };
 
 export const selectComplianceProfileID = (state: RootState) => {
@@ -799,13 +795,13 @@ export const wizardSlice = createSlice({
     loadWizardState: (state, action: PayloadAction<wizardState>) =>
       action.payload,
     changeServerUrl: (state, action: PayloadAction<string>) => {
-      state.env.serverUrl = action.payload;
+      state.registration.serverUrl = action.payload;
     },
     changeBaseUrl: (state, action: PayloadAction<string>) => {
-      state.env.baseUrl = action.payload;
+      state.registration.baseUrl = action.payload;
     },
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
-      state.env.proxy = action.payload;
+      state.registration.proxy = action.payload;
     },
     changeBlueprintMode: (
       state,
@@ -841,7 +837,7 @@ export const wizardSlice = createSlice({
       state.distribution = action.payload;
 
       if (process.env.IS_ON_PREMISE && !isRhel(action.payload)) {
-        state.registration.registrationType = 'register-later';
+        state.registration.type = 'register-later';
       }
     },
     addImageType: (state, action: PayloadAction<ImageTypes>) => {
@@ -916,7 +912,7 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<RegistrationType>,
     ) => {
-      state.registration.registrationType = action.payload;
+      state.registration.type = action.payload;
     },
     changeSatelliteRegistrationCommand: (
       state,
@@ -928,23 +924,23 @@ export const wizardSlice = createSlice({
       state.registration.satelliteRegistration.caCert = action.payload;
     },
     changeAapEnabled: (state, action: PayloadAction<boolean>) => {
-      state.aapRegistration.enabled = action.payload;
+      state.registration.aap.enabled = action.payload;
     },
     changeAapCallbackUrl: (state, action: PayloadAction<string>) => {
-      state.aapRegistration.callbackUrl = action.payload;
+      state.registration.aap.callbackUrl = action.payload;
     },
 
     changeAapHostConfigKey: (state, action: PayloadAction<string>) => {
-      state.aapRegistration.hostConfigKey = action.payload;
+      state.registration.aap.hostConfigKey = action.payload;
     },
     changeAapTlsCertificateAuthority: (
       state,
       action: PayloadAction<string>,
     ) => {
-      state.aapRegistration.tlsCertificateAuthority = action.payload;
+      state.registration.aap.tlsCertificateAuthority = action.payload;
     },
     changeAapTlsConfirmation: (state, action: PayloadAction<boolean>) => {
-      state.aapRegistration.skipTlsVerification = action.payload;
+      state.registration.aap.skipTlsVerification = action.payload;
     },
     changeActivationKey: (
       state,

@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
@@ -118,12 +119,15 @@ describe('AAP Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated callback URL from state', async () => {
       renderAAPStep({
-        aapRegistration: {
-          enabled: true,
-          callbackUrl: 'https://existing.controller.com/callback/',
-          hostConfigKey: '',
-          tlsCertificateAuthority: '',
-          skipTlsVerification: false,
+        registration: {
+          ...initialState.registration,
+          aap: {
+            enabled: true,
+            callbackUrl: 'https://existing.controller.com/callback/',
+            hostConfigKey: '',
+            tlsCertificateAuthority: '',
+            skipTlsVerification: false,
+          },
         },
       });
 
@@ -135,12 +139,15 @@ describe('AAP Component', () => {
 
     test('renders with pre-populated host config key from state', async () => {
       renderAAPStep({
-        aapRegistration: {
-          enabled: true,
-          callbackUrl: '',
-          hostConfigKey: 'existing-key',
-          tlsCertificateAuthority: '',
-          skipTlsVerification: false,
+        registration: {
+          ...initialState.registration,
+          aap: {
+            enabled: true,
+            callbackUrl: '',
+            hostConfigKey: 'existing-key',
+            tlsCertificateAuthority: '',
+            skipTlsVerification: false,
+          },
         },
       });
 
@@ -152,12 +159,15 @@ describe('AAP Component', () => {
 
     test('renders with insecure checkbox checked when skipTlsVerification is true', async () => {
       renderAAPStep({
-        aapRegistration: {
-          enabled: true,
-          callbackUrl: 'https://controller.example.com/callback/',
-          hostConfigKey: '',
-          tlsCertificateAuthority: '',
-          skipTlsVerification: true,
+        registration: {
+          ...initialState.registration,
+          aap: {
+            enabled: true,
+            callbackUrl: 'https://controller.example.com/callback/',
+            hostConfigKey: '',
+            tlsCertificateAuthority: '',
+            skipTlsVerification: true,
+          },
         },
       });
 
@@ -175,7 +185,7 @@ describe('AAP Component', () => {
 
       await enterCallbackUrl(user, 'https://controller.example.com/callback/');
 
-      expect(store.getState().wizard.aapRegistration.callbackUrl).toBe(
+      expect(store.getState().wizard.registration.aap.callbackUrl).toBe(
         'https://controller.example.com/callback/',
       );
     });
@@ -186,30 +196,33 @@ describe('AAP Component', () => {
 
       await enterHostConfigKey(user, 'my-host-config-key');
 
-      expect(store.getState().wizard.aapRegistration.hostConfigKey).toBe(
+      expect(store.getState().wizard.registration.aap.hostConfigKey).toBe(
         'my-host-config-key',
       );
     });
 
     test('updates store when insecure checkbox is toggled', async () => {
       const { store } = renderAAPStep({
-        aapRegistration: {
-          enabled: true,
-          callbackUrl: 'https://controller.example.com/callback/',
-          hostConfigKey: '',
-          tlsCertificateAuthority: '',
-          skipTlsVerification: false,
+        registration: {
+          ...initialState.registration,
+          aap: {
+            enabled: true,
+            callbackUrl: 'https://controller.example.com/callback/',
+            hostConfigKey: '',
+            tlsCertificateAuthority: '',
+            skipTlsVerification: false,
+          },
         },
       });
       const user = createUser();
 
-      expect(store.getState().wizard.aapRegistration.skipTlsVerification).toBe(
+      expect(store.getState().wizard.registration.aap.skipTlsVerification).toBe(
         false,
       );
 
       await toggleInsecureCheckbox(user);
 
-      expect(store.getState().wizard.aapRegistration.skipTlsVerification).toBe(
+      expect(store.getState().wizard.registration.aap.skipTlsVerification).toBe(
         true,
       );
     });
@@ -233,7 +246,7 @@ describe('AAP Component', () => {
         screen.getByRole('textbox', { name: /host config key/i }),
       ).toBeInTheDocument();
       expect(callbackUrlInput).toBeInTheDocument();
-      expect(store.getState().wizard.aapRegistration.callbackUrl).toBe(
+      expect(store.getState().wizard.registration.aap.callbackUrl).toBe(
         'https://controller.example.com/callback/',
       );
     });
@@ -251,7 +264,7 @@ describe('AAP Component', () => {
         screen.getByRole('textbox', { name: /ansible callback url/i }),
       ).toBeInTheDocument();
       expect(hostConfigKeyInput).toBeInTheDocument();
-      expect(store.getState().wizard.aapRegistration.hostConfigKey).toBe(
+      expect(store.getState().wizard.registration.aap.hostConfigKey).toBe(
         'test-config-key',
       );
     });
