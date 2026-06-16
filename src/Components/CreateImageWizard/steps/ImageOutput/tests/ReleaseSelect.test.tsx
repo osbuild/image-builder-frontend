@@ -25,14 +25,18 @@ describe('ReleaseSelect', () => {
     });
 
     test('renders with RHEL 9 when set in state', () => {
-      renderReleaseSelect({ distribution: RHEL_9 });
+      renderReleaseSelect({
+        output: { ...initialState.output, distribution: RHEL_9 },
+      });
 
       const toggle = screen.getByTestId('release_select');
       expect(toggle).toHaveTextContent(/Red Hat Enterprise Linux \(RHEL\) 9/i);
     });
 
     test('renders with RHEL 8 when set in state', () => {
-      renderReleaseSelect({ distribution: RHEL_8 });
+      renderReleaseSelect({
+        output: { ...initialState.output, distribution: RHEL_8 },
+      });
 
       const toggle = screen.getByTestId('release_select');
       expect(toggle).toHaveTextContent(/Red Hat Enterprise Linux \(RHEL\) 8/i);
@@ -162,7 +166,7 @@ describe('ReleaseSelect', () => {
     test('selecting RHEL sets registration type to register-now-rhc', async () => {
       const user = createUser();
       const { store } = renderReleaseSelect({
-        distribution: CENTOS_9,
+        output: { ...initialState.output, distribution: CENTOS_9 },
         registration: {
           ...initialState.registration,
           type: 'register-later',

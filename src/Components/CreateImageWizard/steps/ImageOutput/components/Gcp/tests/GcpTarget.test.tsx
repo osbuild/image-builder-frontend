@@ -29,7 +29,10 @@ const createStoreWithGcpState = (
     preloadedState: {
       wizard: {
         ...initialState,
-        imageTypes: ['gcp'],
+        output: {
+          ...initialState.output,
+          imageTypes: ['gcp'],
+        },
         registration: {
           ...initialState.registration,
           type: 'register-later',

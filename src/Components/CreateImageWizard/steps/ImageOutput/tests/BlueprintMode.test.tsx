@@ -106,11 +106,13 @@ describe('BlueprintMode', () => {
     test('does not change distribution when switching to image mode', async () => {
       const { store } = renderBlueprintMode();
       const user = createUser();
-      const distributionBefore = store.getState().wizard.distribution;
+      const distributionBefore = store.getState().wizard.output.distribution;
 
       await toggleBlueprintMode(user, 'image');
 
-      expect(store.getState().wizard.distribution).toBe(distributionBefore);
+      expect(store.getState().wizard.output.distribution).toBe(
+        distributionBefore,
+      );
     });
 
     test('updates store when switching to package mode', async () => {
