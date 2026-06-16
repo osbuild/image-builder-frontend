@@ -54,7 +54,15 @@ describe('Kernel Component', () => {
     });
 
     test('displays FIPS alert when FIPS is enabled', async () => {
-      renderKernelStep({ fips: { enabled: true } });
+      renderKernelStep({
+        compliance: {
+          type: 'none',
+          policyID: undefined,
+          profileID: undefined,
+          policyTitle: undefined,
+          fips: { enabled: true },
+        },
+      });
 
       expect(
         await screen.findByText(/kernel will be configured to use FIPS/i),

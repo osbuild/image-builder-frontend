@@ -59,10 +59,11 @@ describe('useSecuritySummary', () => {
   test('returns empty values when no profile or policy is selected', () => {
     renderWithRedux(<TestComponent />, {
       compliance: {
-        complianceType: 'openscap',
+        type: 'openscap',
         profileID: undefined,
         policyID: undefined,
         policyTitle: undefined,
+        fips: { enabled: false },
       },
     });
 
@@ -75,10 +76,11 @@ describe('useSecuritySummary', () => {
   test('returns policy title when compliance type is compliance', () => {
     renderWithRedux(<TestComponent />, {
       compliance: {
-        complianceType: 'compliance',
+        type: 'compliance',
         profileID: undefined,
         policyID: 'policy-123',
         policyTitle: 'My Test Policy',
+        fips: { enabled: false },
       },
     });
 
@@ -88,10 +90,11 @@ describe('useSecuritySummary', () => {
   test('returns profile ID as fallback title when openscap profile is selected', () => {
     renderWithRedux(<TestComponent />, {
       compliance: {
-        complianceType: 'openscap',
+        type: 'openscap',
         profileID: 'xccdf_org.ssgproject.content_profile_cis',
         policyID: undefined,
         policyTitle: undefined,
+        fips: { enabled: false },
       },
     });
 
@@ -104,10 +107,11 @@ describe('useSecuritySummary', () => {
   test('initializes services with empty arrays', () => {
     renderWithRedux(<TestComponent />, {
       compliance: {
-        complianceType: 'openscap',
+        type: 'openscap',
         profileID: undefined,
         policyID: undefined,
         policyTitle: undefined,
+        fips: { enabled: false },
       },
     });
 
