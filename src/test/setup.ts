@@ -102,6 +102,9 @@ beforeAll(() => {
     if (message.includes('Maximum update depth exceeded')) {
       return;
     }
+    if (message.includes('which is more than the warning threshold of 32ms')) {
+      return;
+    }
     throw new Error(`Console warning:\n${message}`);
   });
 });

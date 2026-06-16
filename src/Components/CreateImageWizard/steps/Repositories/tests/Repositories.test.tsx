@@ -323,16 +323,16 @@ describe('Repositories Component', () => {
       const user = createUser();
 
       expect(
-        store.getState().wizard.repositories.customRepositories,
+        store.getState().wizard.content.repositories.customRepositories,
       ).toHaveLength(0);
       expect(
-        store.getState().wizard.repositories.payloadRepositories,
+        store.getState().wizard.content.repositories.payloadRepositories,
       ).toHaveLength(0);
 
       await selectRepo(user, '01-test-valid-repo');
 
       const customRepositories =
-        store.getState().wizard.repositories.customRepositories;
+        store.getState().wizard.content.repositories.customRepositories;
       expect(customRepositories).toHaveLength(1);
       expect(customRepositories[0].name).toBe('01-test-valid-repo');
       expect(customRepositories[0].id).toBe(
@@ -343,7 +343,7 @@ describe('Repositories Component', () => {
       ]);
 
       const payloadRepositories =
-        store.getState().wizard.repositories.payloadRepositories;
+        store.getState().wizard.content.repositories.payloadRepositories;
       expect(payloadRepositories).toHaveLength(1);
       expect(payloadRepositories[0].id).toBe(
         'ae39f556-6986-478a-95d1-f9c7e33d066c',
@@ -362,18 +362,18 @@ describe('Repositories Component', () => {
 
       await selectRepo(user, '01-test-valid-repo');
       expect(
-        store.getState().wizard.repositories.customRepositories,
+        store.getState().wizard.content.repositories.customRepositories,
       ).toHaveLength(1);
       expect(
-        store.getState().wizard.repositories.payloadRepositories,
+        store.getState().wizard.content.repositories.payloadRepositories,
       ).toHaveLength(1);
 
       await removeRepo(user);
       expect(
-        store.getState().wizard.repositories.customRepositories,
+        store.getState().wizard.content.repositories.customRepositories,
       ).toHaveLength(0);
       expect(
-        store.getState().wizard.repositories.payloadRepositories,
+        store.getState().wizard.content.repositories.payloadRepositories,
       ).toHaveLength(0);
     });
 
@@ -389,7 +389,7 @@ describe('Repositories Component', () => {
 
       await waitFor(() => {
         const customRepositories =
-          store.getState().wizard.repositories.customRepositories;
+          store.getState().wizard.content.repositories.customRepositories;
         expect(customRepositories).toHaveLength(2);
         expect(customRepositories.map((p) => p.name)).toEqual([
           '01-test-valid-repo',
@@ -398,7 +398,7 @@ describe('Repositories Component', () => {
       });
       await waitFor(() => {
         const payloadRepositories =
-          store.getState().wizard.repositories.payloadRepositories;
+          store.getState().wizard.content.repositories.payloadRepositories;
         expect(payloadRepositories).toHaveLength(2);
         expect(payloadRepositories.map((p) => p.id)).toEqual([
           'ae39f556-6986-478a-95d1-f9c7e33d066c',
@@ -413,43 +413,46 @@ describe('Repositories Component', () => {
       );
       const user = createUser();
       const { store } = renderRepositoriesStep({
-        repositories: {
-          customRepositories: [
-            {
-              name: '01-test-valid-repo',
-              id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
-              baseurl: ['http://valid.link.to.repo.org/x86_64/'],
-            },
-            {
-              name: '04-test-another-valid-repo',
-              id: '34718648-0946-4b09-abef-3a20647f2b1f',
-              baseurl: ['http://also.valid.link.to.repo.org/x86_64/'],
-            },
-          ],
-          payloadRepositories: [
-            {
-              id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
-              baseurl: 'http://valid.link.to.repo.org/x86_64/',
-              rhsm: false,
-            },
-            {
-              id: '34718648-0946-4b09-abef-3a20647f2b1f',
-              baseurl: 'http://also.valid.link.to.repo.org/x86_64/',
-              rhsm: false,
-            },
-          ],
-          redHatRepositories: [],
-          recommendedRepositories: [],
+        content: {
+          ...initialState.content,
+          repositories: {
+            customRepositories: [
+              {
+                name: '01-test-valid-repo',
+                id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+                baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+              },
+              {
+                name: '04-test-another-valid-repo',
+                id: '34718648-0946-4b09-abef-3a20647f2b1f',
+                baseurl: ['http://also.valid.link.to.repo.org/x86_64/'],
+              },
+            ],
+            payloadRepositories: [
+              {
+                id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+                baseurl: 'http://valid.link.to.repo.org/x86_64/',
+                rhsm: false,
+              },
+              {
+                id: '34718648-0946-4b09-abef-3a20647f2b1f',
+                baseurl: 'http://also.valid.link.to.repo.org/x86_64/',
+                rhsm: false,
+              },
+            ],
+            redHatRepositories: [],
+            recommendedRepositories: [],
+          },
         },
       });
 
       await selectRepo(user, '05-test-very-valid-repo');
 
       expect(
-        store.getState().wizard.repositories.customRepositories,
+        store.getState().wizard.content.repositories.customRepositories,
       ).toHaveLength(3);
       expect(
-        store.getState().wizard.repositories.payloadRepositories,
+        store.getState().wizard.content.repositories.payloadRepositories,
       ).toHaveLength(3);
 
       expect(
@@ -469,7 +472,11 @@ describe('Repositories Component', () => {
   });
 });
 
-const createStoreWithRepositoriesState = (wizardStateOverrides = {}) => {
+const createStoreWithRepositoriesState = (
+  overrides: {
+    repositories?: typeof initialState.content.repositories;
+  } = {},
+) => {
   return createTestStore({
     imageTypes: ['guest-image'],
     registration: {
@@ -482,7 +489,12 @@ const createStoreWithRepositoriesState = (wizardStateOverrides = {}) => {
         caCert: undefined,
       },
     },
-    ...wizardStateOverrides,
+    content: {
+      ...initialState.content,
+      ...(overrides.repositories
+        ? { repositories: overrides.repositories }
+        : {}),
+    },
   });
 };
 

@@ -174,26 +174,29 @@ export type wizardState = {
     };
     partitioningMode: PartitioningModeType;
   };
-  snapshotting: {
-    useLatest: boolean;
-    snapshotDate: string;
-    template: string;
-    templateName: string;
+  content: {
+    repositories: {
+      customRepositories: CustomRepository[];
+      payloadRepositories: Repository[];
+      recommendedRepositories: ApiRepositoryResponseRead[];
+      redHatRepositories: Repository[];
+    };
+    packages: IBPackageWithRepositoryInfo[];
+    enabledModules: Module[];
+    groups: GroupWithRepositoryInfo[];
+    snapshotting: {
+      useLatest: boolean;
+      snapshotDate: string;
+      template: string;
+      templateName: string;
+    };
+    verifiedLocaleLangpacks: string[];
   };
   users: UserWithAdditionalInfo[];
   userGroups: UserGroup[];
   firstBoot: {
     script: string;
   };
-  repositories: {
-    customRepositories: CustomRepository[];
-    payloadRepositories: Repository[];
-    recommendedRepositories: ApiRepositoryResponseRead[];
-    redHatRepositories: Repository[];
-  };
-  packages: IBPackageWithRepositoryInfo[];
-  enabled_modules: Module[];
-  groups: GroupWithRepositoryInfo[];
   services: {
     enabled: string[];
     masked: string[];
@@ -218,7 +221,6 @@ export type wizardState = {
       disabled: string[];
     };
   };
-  verifiedLocaleLangpacks: string[];
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -292,21 +294,24 @@ export const initialState: wizardState = {
     },
     partitioningMode: undefined,
   },
-  snapshotting: {
-    useLatest: true,
-    snapshotDate: '',
-    template: '',
-    templateName: '',
+  content: {
+    repositories: {
+      customRepositories: [],
+      payloadRepositories: [],
+      recommendedRepositories: [],
+      redHatRepositories: [],
+    },
+    packages: [],
+    enabledModules: [],
+    groups: [],
+    snapshotting: {
+      useLatest: true,
+      snapshotDate: '',
+      template: '',
+      templateName: '',
+    },
+    verifiedLocaleLangpacks: [],
   },
-  repositories: {
-    customRepositories: [],
-    payloadRepositories: [],
-    recommendedRepositories: [],
-    redHatRepositories: [],
-  },
-  packages: [],
-  enabled_modules: [],
-  groups: [],
   services: {
     enabled: [],
     masked: [],
@@ -338,7 +343,6 @@ export const initialState: wizardState = {
     },
   },
   firstBoot: { script: '' },
-  verifiedLocaleLangpacks: [],
   users: [],
   userGroups: [{ name: '' }],
 };
@@ -512,47 +516,47 @@ export const selectPartitioningMode = (state: RootState) => {
 };
 
 export const selectUseLatest = (state: RootState) => {
-  return state.wizard.snapshotting.useLatest;
+  return state.wizard.content.snapshotting.useLatest;
 };
 
 export const selectSnapshotDate = (state: RootState) => {
-  return state.wizard.snapshotting.snapshotDate;
+  return state.wizard.content.snapshotting.snapshotDate;
 };
 
 export const selectTemplate = (state: RootState) => {
-  return state.wizard.snapshotting.template;
+  return state.wizard.content.snapshotting.template;
 };
 
 export const selectTemplateName = (state: RootState) => {
-  return state.wizard.snapshotting.templateName;
+  return state.wizard.content.snapshotting.templateName;
 };
 
 export const selectCustomRepositories = (state: RootState) => {
-  return state.wizard.repositories.customRepositories;
+  return state.wizard.content.repositories.customRepositories;
 };
 
 export const selectPayloadRepositories = (state: RootState) => {
-  return state.wizard.repositories.payloadRepositories;
+  return state.wizard.content.repositories.payloadRepositories;
 };
 
 export const selectRecommendedRepositories = (state: RootState) => {
-  return state.wizard.repositories.recommendedRepositories;
+  return state.wizard.content.repositories.recommendedRepositories;
 };
 
 export const selectRedHatRepositories = (state: RootState) => {
-  return state.wizard.repositories.redHatRepositories;
+  return state.wizard.content.repositories.redHatRepositories;
 };
 
 export const selectPackages = (state: RootState) => {
-  return state.wizard.packages;
+  return state.wizard.content.packages;
 };
 
 export const selectModules = (state: RootState) => {
-  return state.wizard.enabled_modules;
+  return state.wizard.content.enabledModules;
 };
 
-export const selectGroups = (state: RootState) => {
-  return state.wizard.groups;
+export const selectPackageGroups = (state: RootState) => {
+  return state.wizard.content.groups;
 };
 
 export const selectServices = (state: RootState) => {
@@ -630,7 +634,7 @@ export const selectFips = (state: RootState) => {
 };
 
 export const selectVerifiedLocaleLangpacks = (state: RootState) => {
-  return state.wizard.verifiedLocaleLangpacks;
+  return state.wizard.content.verifiedLocaleLangpacks;
 };
 
 const extractLanguageCode = (locale: string): string | undefined => {
@@ -1303,35 +1307,35 @@ export const wizardSlice = createSlice({
       state.filesystem.partitioningMode = action.payload;
     },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
-      if (!action.payload && state.snapshotting.snapshotDate === '') {
-        state.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
+      if (!action.payload && state.content.snapshotting.snapshotDate === '') {
+        state.content.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
       }
 
-      state.snapshotting.useLatest = action.payload;
+      state.content.snapshotting.useLatest = action.payload;
     },
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
       // Store DatePicker's YYYY-MM-DD format as RFC3339 e.g. "2025-11-26T00:00:00.000Z" in state
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
       if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
-        state.snapshotting.snapshotDate = date.toISOString();
+        state.content.snapshotting.snapshotDate = date.toISOString();
       } else {
         // For empty strings or already-ISO formatted strings, store as-is
-        state.snapshotting.snapshotDate = action.payload;
+        state.content.snapshotting.snapshotDate = action.payload;
       }
     },
     changeTemplate: (state, action: PayloadAction<string>) => {
-      state.snapshotting.template = action.payload;
+      state.content.snapshotting.template = action.payload;
     },
     changeTemplateName: (state, action: PayloadAction<string>) => {
-      state.snapshotting.templateName = action.payload;
+      state.content.snapshotting.templateName = action.payload;
     },
     importCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>,
     ) => {
-      state.repositories.customRepositories = [
-        ...state.repositories.customRepositories,
+      state.content.repositories.customRepositories = [
+        ...state.content.repositories.customRepositories,
         ...action.payload,
       ];
     },
@@ -1339,104 +1343,104 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<CustomRepository[]>,
     ) => {
-      state.repositories.customRepositories = action.payload;
+      state.content.repositories.customRepositories = action.payload;
     },
     changePayloadRepositories: (state, action: PayloadAction<Repository[]>) => {
-      state.repositories.payloadRepositories = action.payload;
+      state.content.repositories.payloadRepositories = action.payload;
     },
     changeRedHatRepositories: (state, action: PayloadAction<Repository[]>) => {
-      state.repositories.redHatRepositories = action.payload;
+      state.content.repositories.redHatRepositories = action.payload;
     },
     addRecommendedRepository: (
       state,
       action: PayloadAction<ApiRepositoryResponseRead>,
     ) => {
       if (
-        !state.repositories.recommendedRepositories.some(
+        !state.content.repositories.recommendedRepositories.some(
           (repo) => repo.url === action.payload.url,
         )
       ) {
-        state.repositories.recommendedRepositories.push(action.payload);
+        state.content.repositories.recommendedRepositories.push(action.payload);
       }
     },
     removeRecommendedRepository: (
       state,
       action: PayloadAction<ApiRepositoryResponseRead>,
     ) => {
-      state.repositories.recommendedRepositories =
-        state.repositories.recommendedRepositories.filter(
+      state.content.repositories.recommendedRepositories =
+        state.content.repositories.recommendedRepositories.filter(
           (repo) => repo.url !== action.payload.url,
         );
     },
     addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
-      const existingPackageIndex = state.packages.findIndex(
+      const existingPackageIndex = state.content.packages.findIndex(
         (pkg) => pkg.name === action.payload.name,
       );
 
       if (existingPackageIndex !== -1) {
-        state.packages[existingPackageIndex] = action.payload;
+        state.content.packages[existingPackageIndex] = action.payload;
       } else {
-        state.packages.push(action.payload);
+        state.content.packages.push(action.payload);
       }
     },
     removePackage: (
       state,
       action: PayloadAction<IBPackageWithRepositoryInfo['name']>,
     ) => {
-      const index = state.packages.findIndex(
+      const index = state.content.packages.findIndex(
         (pkg) => pkg.name === action.payload,
       );
       if (index !== -1) {
-        state.packages.splice(index, 1);
+        state.content.packages.splice(index, 1);
       }
     },
     addModule: (state, action: PayloadAction<Module>) => {
-      const existingModuleIndex = state.enabled_modules.findIndex(
+      const existingModuleIndex = state.content.enabledModules.findIndex(
         (module) => module.name === action.payload.name,
       );
 
       if (existingModuleIndex !== -1) {
-        state.enabled_modules[existingModuleIndex] = action.payload;
+        state.content.enabledModules[existingModuleIndex] = action.payload;
       } else {
-        state.enabled_modules.push(action.payload);
+        state.content.enabledModules.push(action.payload);
       }
     },
     removeModule: (state, action: PayloadAction<Module['name']>) => {
-      const index = state.enabled_modules.findIndex(
+      const index = state.content.enabledModules.findIndex(
         (module) => module.name === action.payload,
       );
       // count other packages from the same module
-      const pkgCount = state.packages.filter(
+      const pkgCount = state.content.packages.filter(
         (pkg) => pkg.module_name === action.payload,
       );
       // if the module exists and it's not connected to any packages, remove it
       if (index !== -1 && pkgCount.length < 1) {
-        state.enabled_modules.splice(index, 1);
+        state.content.enabledModules.splice(index, 1);
       }
     },
     addPackageGroup: (
       state,
       action: PayloadAction<GroupWithRepositoryInfo>,
     ) => {
-      const existingGrpIndex = state.groups.findIndex(
+      const existingGrpIndex = state.content.groups.findIndex(
         (grp) => grp.name === action.payload.name,
       );
 
       if (existingGrpIndex !== -1) {
-        state.groups[existingGrpIndex] = action.payload;
+        state.content.groups[existingGrpIndex] = action.payload;
       } else {
-        state.groups.push(action.payload);
+        state.content.groups.push(action.payload);
       }
     },
     removePackageGroup: (
       state,
       action: PayloadAction<GroupWithRepositoryInfo['name']>,
     ) => {
-      const index = state.groups.findIndex(
+      const index = state.content.groups.findIndex(
         (grp) => grp.name === action.payload,
       );
       if (index !== -1) {
-        state.groups.splice(index, 1);
+        state.content.groups.splice(index, 1);
       }
     },
     addLanguage: (state, action: PayloadAction<string>) => {
@@ -1778,7 +1782,7 @@ export const wizardSlice = createSlice({
       state.compliance.fips.enabled = action.payload;
     },
     setVerifiedLocaleLangpacks: (state, action: PayloadAction<string[]>) => {
-      state.verifiedLocaleLangpacks = action.payload;
+      state.content.verifiedLocaleLangpacks = action.payload;
     },
   },
 });

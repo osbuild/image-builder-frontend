@@ -22,7 +22,7 @@ import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
   selectDistribution,
-  selectGroups,
+  selectPackageGroups,
   selectPackages,
   selectRecommendedRepositories,
   selectUseLatest,
@@ -55,7 +55,7 @@ const RepositorySearch = ({
   const distribution = useAppSelector(selectDistribution);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
+  const groups = useAppSelector(selectPackageGroups);
   const useLatestContent = useAppSelector(selectUseLatest);
   const version = releaseToVersion(distribution);
 

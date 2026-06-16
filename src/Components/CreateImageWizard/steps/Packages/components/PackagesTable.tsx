@@ -19,7 +19,7 @@ import {
   removePackage,
   removePackageGroup,
   removeRecommendedRepository,
-  selectGroups,
+  selectPackageGroups,
   selectPackages,
   selectRecommendedRepositories,
 } from '@/store/slices/wizard';
@@ -47,7 +47,7 @@ const PackagesTable = ({
   const dispatch = useAppDispatch();
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
+  const groups = useAppSelector(selectPackageGroups);
   const { packages: requiredPkgNames } = useSecuritySummary();
   const requiredSet = useMemo(
     () => new Set(requiredPkgNames),

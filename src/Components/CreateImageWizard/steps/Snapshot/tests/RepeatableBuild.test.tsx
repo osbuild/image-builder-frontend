@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clearWithWait,
@@ -251,11 +252,14 @@ describe('Repeatable Build Component', () => {
   describe('Initial State', () => {
     test('renders with pre-populated snapshot date', async () => {
       renderRepeatableBuildStep({
-        snapshotting: {
-          useLatest: false,
-          snapshotDate: '2026-01-01',
-          template: '',
-          templateName: '',
+        content: {
+          ...initialState.content,
+          snapshotting: {
+            useLatest: false,
+            snapshotDate: '2026-01-01',
+            template: '',
+            templateName: '',
+          },
         },
       });
 
@@ -264,11 +268,14 @@ describe('Repeatable Build Component', () => {
 
     test('renders with pre-populated template', async () => {
       renderRepeatableBuildStep({
-        snapshotting: {
-          useLatest: false,
-          snapshotDate: '',
-          template: '80b958f8-37f7-4b91-b992-c8f84c05ea2a',
-          templateName: 'template-def',
+        content: {
+          ...initialState.content,
+          snapshotting: {
+            useLatest: false,
+            snapshotDate: '',
+            template: '80b958f8-37f7-4b91-b992-c8f84c05ea2a',
+            templateName: 'template-def',
+          },
         },
       });
 
@@ -285,59 +292,83 @@ describe('Repeatable Build Component', () => {
       const { store } = renderRepeatableBuildStep();
       const user = createUser();
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(true);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
-      expect(store.getState().wizard.snapshotting.template).toBe('');
-      expect(store.getState().wizard.snapshotting.templateName).toBe('');
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(true);
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
+        '',
+      );
+      expect(store.getState().wizard.content.snapshotting.template).toBe('');
+      expect(store.getState().wizard.content.snapshotting.templateName).toBe(
+        '',
+      );
 
       await selectEnableRepeatableBuild(user);
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(false);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toContain(
-        yyyyMMddFormat(new Date()),
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(
+        false,
       );
-      expect(store.getState().wizard.snapshotting.template).toBe('');
-      expect(store.getState().wizard.snapshotting.templateName).toBe('');
+      expect(
+        store.getState().wizard.content.snapshotting.snapshotDate,
+      ).toContain(yyyyMMddFormat(new Date()));
+      expect(store.getState().wizard.content.snapshotting.template).toBe('');
+      expect(store.getState().wizard.content.snapshotting.templateName).toBe(
+        '',
+      );
     });
 
     test('updates store when snapshot date changes', async () => {
       const { store } = renderRepeatableBuildStep();
       const user = createUser();
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(true);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
-      expect(store.getState().wizard.snapshotting.template).toBe('');
-      expect(store.getState().wizard.snapshotting.templateName).toBe('');
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(true);
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
+        '',
+      );
+      expect(store.getState().wizard.content.snapshotting.template).toBe('');
+      expect(store.getState().wizard.content.snapshotting.templateName).toBe(
+        '',
+      );
 
       await selectEnableRepeatableBuild(user);
       await clearAndFillDatePickerInput(user, '2026-01-01');
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(false);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe(
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(
+        false,
+      );
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
         '2026-01-01T00:00:00.000Z',
       );
-      expect(store.getState().wizard.snapshotting.template).toBe('');
-      expect(store.getState().wizard.snapshotting.templateName).toBe('');
+      expect(store.getState().wizard.content.snapshotting.template).toBe('');
+      expect(store.getState().wizard.content.snapshotting.templateName).toBe(
+        '',
+      );
     });
 
     test('updates store when Use a content template is selected', async () => {
       const { store } = renderRepeatableBuildStep();
       const user = createUser();
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(true);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
-      expect(store.getState().wizard.snapshotting.template).toBe('');
-      expect(store.getState().wizard.snapshotting.templateName).toBe('');
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(true);
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
+        '',
+      );
+      expect(store.getState().wizard.content.snapshotting.template).toBe('');
+      expect(store.getState().wizard.content.snapshotting.templateName).toBe(
+        '',
+      );
 
       await selectUseAContentTemplate(user);
       await selectTemplate(user, 'template-def');
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(false);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
-      expect(store.getState().wizard.snapshotting.template).toBe(
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(
+        false,
+      );
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
+        '',
+      );
+      expect(store.getState().wizard.content.snapshotting.template).toBe(
         '80b958f8-37f7-4b91-b992-c8f84c05ea2a',
       );
-      expect(store.getState().wizard.snapshotting.templateName).toBe(
+      expect(store.getState().wizard.content.snapshotting.templateName).toBe(
         'template-def',
       );
     });
@@ -346,15 +377,19 @@ describe('Repeatable Build Component', () => {
       const { store } = renderRepeatableBuildStep();
       const user = createUser();
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(true);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(true);
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
+        '',
+      );
 
       await selectEnableRepeatableBuild(user);
       await clearAndFillDatePickerInput(user, '2026-01-01');
       await selectDisableRepeatableBuild(user);
 
-      expect(store.getState().wizard.snapshotting.useLatest).toBe(true);
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe('');
+      expect(store.getState().wizard.content.snapshotting.useLatest).toBe(true);
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
+        '',
+      );
     });
   });
 
@@ -375,7 +410,7 @@ describe('Repeatable Build Component', () => {
       expect(
         screen.getByRole('radio', { name: /Enable repeatable build/i }),
       ).toBeChecked();
-      expect(store.getState().wizard.snapshotting.snapshotDate).toBe(
+      expect(store.getState().wizard.content.snapshotting.snapshotDate).toBe(
         '2026-03-15T00:00:00.000Z',
       );
     });
