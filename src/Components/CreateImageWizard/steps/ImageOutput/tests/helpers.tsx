@@ -140,7 +140,10 @@ export const renderImageSourceSelect = (
   return renderWithRedux(
     <ImageSourceSelect />,
     {
-      blueprintMode: 'image',
+      details: {
+        ...initialState.details,
+        blueprint: { ...initialState.details.blueprint, mode: 'image' },
+      },
       ...wizardStateOverrides,
     },
     {

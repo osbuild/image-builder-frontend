@@ -74,7 +74,10 @@ describe('Details Component', () => {
       renderDetailsStep({
         details: {
           ...initialState.details,
-          blueprintName: 'Initial Name',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'Initial Name',
+          },
         },
       });
       const user = createUser();
@@ -185,10 +188,13 @@ describe('Details Component', () => {
 
       // When editing, the blueprintId matches the returned blueprint's id
       renderDetailsStep({
-        blueprintId: 'existing-blueprint-id',
         details: {
           ...initialState.details,
-          blueprintName: 'Existing Blueprint',
+          blueprintId: 'existing-blueprint-id',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'Existing Blueprint',
+          },
         },
       });
 
@@ -206,7 +212,10 @@ describe('Details Component', () => {
       renderDetailsStep({
         details: {
           ...initialState.details,
-          blueprintName: 'Valid Name',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'Valid Name',
+          },
         },
       });
       const user = createUser();
@@ -223,7 +232,10 @@ describe('Details Component', () => {
       renderDetailsStep({
         details: {
           ...initialState.details,
-          blueprintName: 'Valid Name',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'Valid Name',
+          },
         },
       });
       const user = createUser();
@@ -240,7 +252,10 @@ describe('Details Component', () => {
       renderDetailsStep({
         details: {
           ...initialState.details,
-          blueprintName: 'Valid Name',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'Valid Name',
+          },
         },
       });
 
@@ -255,7 +270,10 @@ describe('Details Component', () => {
       renderDetailsStep({
         details: {
           ...initialState.details,
-          blueprintName: 'My Custom Blueprint',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'My Custom Blueprint',
+          },
         },
       });
 
@@ -269,7 +287,10 @@ describe('Details Component', () => {
       renderDetailsStep({
         details: {
           ...initialState.details,
-          blueprintDescription: 'A detailed description',
+          blueprint: {
+            ...initialState.details.blueprint,
+            description: 'A detailed description',
+          },
         },
       });
 
@@ -288,7 +309,7 @@ describe('Details Component', () => {
       await enterBlueprintName(user, 'New Blueprint Name');
 
       const state = store.getState();
-      expect(state.wizard.details.blueprintName).toBe('New Blueprint Name');
+      expect(state.wizard.details.blueprint.name).toBe('New Blueprint Name');
     });
 
     test('updates store when description is changed', async () => {
@@ -298,18 +319,22 @@ describe('Details Component', () => {
       await enterBlueprintDescription(user, 'New description');
 
       const state = store.getState();
-      expect(state.wizard.details.blueprintDescription).toBe('New description');
+      expect(state.wizard.details.blueprint.description).toBe(
+        'New description',
+      );
     });
 
     test('sets isCustomName when name is changed', async () => {
       const { store } = renderDetailsStep();
       const user = createUser();
 
-      expect(store.getState().wizard.details.isCustomName).toBe(false);
+      expect(store.getState().wizard.details.blueprint.isCustomName).toBe(
+        false,
+      );
 
       await enterBlueprintName(user, 'Custom Name');
 
-      expect(store.getState().wizard.details.isCustomName).toBe(true);
+      expect(store.getState().wizard.details.blueprint.isCustomName).toBe(true);
     });
   });
 
@@ -328,7 +353,7 @@ describe('Details Component', () => {
         screen.getByRole('heading', { name: /Details/i }),
       ).toBeInTheDocument();
       expect(nameInput).toBeInTheDocument();
-      expect(store.getState().wizard.details.blueprintName).toBe(
+      expect(store.getState().wizard.details.blueprint.name).toBe(
         'custom-blueprint-name',
       );
     });
@@ -346,7 +371,7 @@ describe('Details Component', () => {
         screen.getByRole('heading', { name: /Details/i }),
       ).toBeInTheDocument();
       expect(descriptionInput).toBeInTheDocument();
-      expect(store.getState().wizard.details.blueprintDescription).toBe(
+      expect(store.getState().wizard.details.blueprint.description).toBe(
         'Test description',
       );
     });
