@@ -24,9 +24,13 @@ describe('ImageOverview', () => {
       <ImageOverview restrictions={createDefaultRestrictions()} />,
       {
         details: {
-          blueprintName: 'my-test-blueprint',
-          blueprintDescription: '',
-          isCustomName: true,
+          ...initialState.details,
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'my-test-blueprint',
+            description: '',
+            isCustomName: true,
+          },
         },
       },
     );
@@ -40,9 +44,13 @@ describe('ImageOverview', () => {
       <ImageOverview restrictions={createDefaultRestrictions()} />,
       {
         details: {
-          blueprintName: 'test-blueprint',
-          blueprintDescription: 'This is a test description',
-          isCustomName: true,
+          ...initialState.details,
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'test-blueprint',
+            description: 'This is a test description',
+            isCustomName: true,
+          },
         },
       },
     );
@@ -56,7 +64,10 @@ describe('ImageOverview', () => {
       <ImageOverview restrictions={createDefaultRestrictions()} />,
       {
         output: { ...initialState.output, distribution: RHEL_10 },
-        blueprintMode: 'package',
+        details: {
+          ...initialState.details,
+          blueprint: { ...initialState.details.blueprint, mode: 'package' },
+        },
       },
     );
 

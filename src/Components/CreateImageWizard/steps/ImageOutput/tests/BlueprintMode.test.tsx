@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import { renderBlueprintMode, toggleBlueprintMode } from './helpers';
@@ -69,7 +70,12 @@ describe('BlueprintMode', () => {
     });
 
     test('displays image mode description when image mode selected', async () => {
-      renderBlueprintMode({ blueprintMode: 'image' });
+      renderBlueprintMode({
+        details: {
+          ...initialState.details,
+          blueprint: { ...initialState.details.blueprint, mode: 'image' },
+        },
+      });
 
       expect(
         await screen.findByText(
@@ -79,7 +85,12 @@ describe('BlueprintMode', () => {
     });
 
     test('can switch back to package mode', async () => {
-      renderBlueprintMode({ blueprintMode: 'image' });
+      renderBlueprintMode({
+        details: {
+          ...initialState.details,
+          blueprint: { ...initialState.details.blueprint, mode: 'image' },
+        },
+      });
       const user = createUser();
 
       await toggleBlueprintMode(user, 'package');
@@ -96,11 +107,11 @@ describe('BlueprintMode', () => {
       const { store } = renderBlueprintMode();
       const user = createUser();
 
-      expect(store.getState().wizard.blueprintMode).toBe('package');
+      expect(store.getState().wizard.details.blueprint.mode).toBe('package');
 
       await toggleBlueprintMode(user, 'image');
 
-      expect(store.getState().wizard.blueprintMode).toBe('image');
+      expect(store.getState().wizard.details.blueprint.mode).toBe('image');
     });
 
     test('does not change distribution when switching to image mode', async () => {
@@ -116,16 +127,26 @@ describe('BlueprintMode', () => {
     });
 
     test('updates store when switching to package mode', async () => {
-      const { store } = renderBlueprintMode({ blueprintMode: 'image' });
+      const { store } = renderBlueprintMode({
+        details: {
+          ...initialState.details,
+          blueprint: { ...initialState.details.blueprint, mode: 'image' },
+        },
+      });
       const user = createUser();
 
       await toggleBlueprintMode(user, 'package');
 
-      expect(store.getState().wizard.blueprintMode).toBe('package');
+      expect(store.getState().wizard.details.blueprint.mode).toBe('package');
     });
 
     test('renders with pre-populated image mode from state', async () => {
-      renderBlueprintMode({ blueprintMode: 'image' });
+      renderBlueprintMode({
+        details: {
+          ...initialState.details,
+          blueprint: { ...initialState.details.blueprint, mode: 'image' },
+        },
+      });
 
       const imageModeButton = await screen.findByRole('button', {
         name: /image mode/i,

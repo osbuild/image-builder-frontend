@@ -469,9 +469,13 @@ function commonRequestToState(
 
   return {
     details: {
-      blueprintName: request.name || '',
-      isCustomName: true,
-      blueprintDescription: request.description || '',
+      mode: 'create' as const,
+      blueprint: {
+        name: request.name || '',
+        isCustomName: true,
+        description: request.description || '',
+        mode: 'package' as const,
+      },
     },
     compliance:
       compliancePolicyID !== undefined
@@ -641,12 +645,18 @@ function commonRequestToState(
  * @returns wizardState
  */
 export const mapRequestToState = (request: BlueprintResponse): wizardState => {
-  const wizardMode = 'edit';
-  const blueprintMode = request.bootc ? 'image' : 'package';
+  const commonState = commonRequestToState(request);
   return {
-    wizardMode,
-    blueprintMode,
-    blueprintId: request.id,
+    ...commonState,
+    details: {
+      ...commonState.details,
+      blueprintId: request.id,
+      mode: 'edit',
+      blueprint: {
+        ...commonState.details.blueprint,
+        mode: request.bootc ? 'image' : 'package',
+      },
+    },
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -673,7 +683,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           request.customizations.aap_registration?.skip_tls_verification,
       },
     },
-    ...commonRequestToState(request),
   };
 };
 
@@ -722,7 +731,6 @@ export const mapBlueprintExportToState = (
   blueprint: BlueprintExportResponse,
   image_requests: ImageRequest[],
 ): wizardState => {
-  const wizardMode = 'create';
   const blueprintResponse: CreateBlueprintRequest = {
     name: blueprint.name,
     description: blueprint.description,
@@ -756,9 +764,16 @@ export const mapBlueprintExportToState = (
   }
 
   return {
-    wizardMode,
-    blueprintMode: blueprint.bootc ? 'image' : 'package',
-    metadata: getMetadata(blueprint.metadata),
+    ...commonState,
+    details: {
+      ...commonState.details,
+      mode: 'create',
+      blueprint: {
+        ...commonState.details.blueprint,
+        mode: blueprint.bootc ? 'image' : 'package',
+      },
+      metadata: getMetadata(blueprint.metadata),
+    },
     registration: {
       ...initialState.registration,
       aap: {
@@ -773,7 +788,6 @@ export const mapBlueprintExportToState = (
           blueprint.customizations.aap_registration?.skip_tls_verification,
       },
     },
-    ...commonState,
     content: {
       ...commonState.content,
       snapshotting,

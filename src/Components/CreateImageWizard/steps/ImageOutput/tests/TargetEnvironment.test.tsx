@@ -265,7 +265,10 @@ describe('TargetEnvironment', () => {
 
   describe('Image mode', () => {
     const imageModeOverrides: WizardStateOverrides = {
-      blueprintMode: 'image',
+      details: {
+        ...initialState.details,
+        blueprint: { ...initialState.details.blueprint, mode: 'image' },
+      },
       output: {
         ...initialState.output,
         distribution: RHEL_10 as Distributions,
