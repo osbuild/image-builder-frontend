@@ -631,13 +631,11 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     blueprintMode,
     bootcDistributions: [],
     blueprintId: request.id,
-    env: {
+    registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
       proxy: request.customizations.subscription?.insights_client_proxy,
-    },
-    registration: {
-      registrationType: getRegistrationType(request),
+      type: getRegistrationType(request),
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,
@@ -648,16 +646,16 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         command: getSatelliteCommand(request.customizations.files),
         caCert: request.customizations.cacerts?.pem_certs[0],
       },
-    },
-    aapRegistration: {
-      enabled: request.customizations.aap_registration !== undefined,
-      callbackUrl:
-        request.customizations.aap_registration?.ansible_callback_url,
-      hostConfigKey: request.customizations.aap_registration?.host_config_key,
-      tlsCertificateAuthority:
-        request.customizations.aap_registration?.tls_certificate_authority,
-      skipTlsVerification:
-        request.customizations.aap_registration?.skip_tls_verification,
+      aap: {
+        enabled: request.customizations.aap_registration !== undefined,
+        callbackUrl:
+          request.customizations.aap_registration?.ansible_callback_url,
+        hostConfigKey: request.customizations.aap_registration?.host_config_key,
+        tlsCertificateAuthority:
+          request.customizations.aap_registration?.tls_certificate_authority,
+        skipTlsVerification:
+          request.customizations.aap_registration?.skip_tls_verification,
+      },
     },
     ...commonRequestToState(request),
   };
@@ -743,17 +741,19 @@ export const mapBlueprintExportToState = (
     blueprintMode: blueprint.bootc ? 'image' : 'package',
     bootcDistributions: [],
     metadata: getMetadata(blueprint.metadata),
-    env: initialState.env,
-    registration: initialState.registration,
-    aapRegistration: {
-      enabled: blueprint.customizations.aap_registration !== undefined,
-      callbackUrl:
-        blueprint.customizations.aap_registration?.ansible_callback_url,
-      hostConfigKey: blueprint.customizations.aap_registration?.host_config_key,
-      tlsCertificateAuthority:
-        blueprint.customizations.aap_registration?.tls_certificate_authority,
-      skipTlsVerification:
-        blueprint.customizations.aap_registration?.skip_tls_verification,
+    registration: {
+      ...initialState.registration,
+      aap: {
+        enabled: blueprint.customizations.aap_registration !== undefined,
+        callbackUrl:
+          blueprint.customizations.aap_registration?.ansible_callback_url,
+        hostConfigKey:
+          blueprint.customizations.aap_registration?.host_config_key,
+        tlsCertificateAuthority:
+          blueprint.customizations.aap_registration?.tls_certificate_authority,
+        skipTlsVerification:
+          blueprint.customizations.aap_registration?.skip_tls_verification,
+      },
     },
     ...commonState,
     snapshotting,

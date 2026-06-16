@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
 import {
+  initialState,
   selectDistribution,
   selectRegistrationType,
 } from '@/store/slices/wizard';
@@ -163,7 +164,8 @@ describe('ReleaseSelect', () => {
       const { store } = renderReleaseSelect({
         distribution: CENTOS_9,
         registration: {
-          registrationType: 'register-later',
+          ...initialState.registration,
+          type: 'register-later',
           activationKey: undefined,
           orgId: undefined,
           satelliteRegistration: {

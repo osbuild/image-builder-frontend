@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { createDefaultRestrictions } from '../../tests/helpers';
@@ -46,12 +47,15 @@ describe('Registration', () => {
         />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: true,
-            callbackUrl: 'https://aap.example.com/callback/',
-            hostConfigKey: 'my-host-config-key',
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: true,
+              callbackUrl: 'https://aap.example.com/callback/',
+              hostConfigKey: 'my-host-config-key',
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -86,7 +90,8 @@ describe('Registration', () => {
         {
           imageTypes: ['guest-image'],
           registration: {
-            registrationType: 'register-later',
+            ...initialState.registration,
+            type: 'register-later',
             activationKey: undefined,
             orgId: undefined,
             satelliteRegistration: {
@@ -109,7 +114,8 @@ describe('Registration', () => {
         {
           imageTypes: ['guest-image'],
           registration: {
-            registrationType: 'register-now',
+            ...initialState.registration,
+            type: 'register-now',
             activationKey: 'my-key',
             orgId: '12345',
             satelliteRegistration: {
@@ -135,7 +141,8 @@ describe('Registration', () => {
         {
           imageTypes: ['guest-image'],
           registration: {
-            registrationType: 'register-now-insights',
+            ...initialState.registration,
+            type: 'register-now-insights',
             activationKey: 'insights-key',
             orgId: '67890',
             satelliteRegistration: {
@@ -159,7 +166,8 @@ describe('Registration', () => {
         {
           imageTypes: ['guest-image'],
           registration: {
-            registrationType: 'register-now-rhc',
+            ...initialState.registration,
+            type: 'register-now-rhc',
             activationKey: 'rhc-key',
             orgId: '11111',
             satelliteRegistration: {
@@ -190,7 +198,8 @@ describe('Registration', () => {
         {
           imageTypes: ['guest-image'],
           registration: {
-            registrationType: 'register-satellite',
+            ...initialState.registration,
+            type: 'register-satellite',
             activationKey: undefined,
             orgId: undefined,
             satelliteRegistration: {
@@ -211,12 +220,15 @@ describe('Registration', () => {
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: false,
-            callbackUrl: undefined,
-            hostConfigKey: undefined,
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: false,
+              callbackUrl: undefined,
+              hostConfigKey: undefined,
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -231,13 +243,16 @@ describe('Registration', () => {
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: true,
-            callbackUrl:
-              'https://aap.example.com/api/v2/job_templates/42/callback/',
-            hostConfigKey: 'my-host-config-key',
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: true,
+              callbackUrl:
+                'https://aap.example.com/api/v2/job_templates/42/callback/',
+              hostConfigKey: 'my-host-config-key',
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -253,13 +268,16 @@ describe('Registration', () => {
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: true,
-            callbackUrl:
-              'https://aap.example.com/api/v2/job_templates/42/callback/',
-            hostConfigKey: 'my-host-config-key',
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: true,
+              callbackUrl:
+                'https://aap.example.com/api/v2/job_templates/42/callback/',
+              hostConfigKey: 'my-host-config-key',
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -277,12 +295,15 @@ describe('Registration', () => {
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: true,
-            callbackUrl: 'https://aap.example.com/callback/',
-            hostConfigKey: 'my-host-config-key',
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: true,
+              callbackUrl: 'https://aap.example.com/callback/',
+              hostConfigKey: 'my-host-config-key',
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -296,12 +317,15 @@ describe('Registration', () => {
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: true,
-            callbackUrl: 'https://aap.example.com/callback/',
-            hostConfigKey: 'my-host-config-key',
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: true,
+              callbackUrl: 'https://aap.example.com/callback/',
+              hostConfigKey: 'my-host-config-key',
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -321,12 +345,15 @@ aWRnaXRzIFB0eSBMdGQwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjBF
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: true,
-            callbackUrl: 'https://aap.example.com/callback/',
-            hostConfigKey: 'my-host-config-key',
-            tlsCertificateAuthority: caCert,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: true,
+              callbackUrl: 'https://aap.example.com/callback/',
+              hostConfigKey: 'my-host-config-key',
+              tlsCertificateAuthority: caCert,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
@@ -340,12 +367,15 @@ aWRnaXRzIFB0eSBMdGQwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjBF
         <Registration restrictions={createDefaultRestrictions()} />,
         {
           imageTypes: ['guest-image'],
-          aapRegistration: {
-            enabled: false,
-            callbackUrl: undefined,
-            hostConfigKey: undefined,
-            tlsCertificateAuthority: undefined,
-            skipTlsVerification: undefined,
+          registration: {
+            ...initialState.registration,
+            aap: {
+              enabled: false,
+              callbackUrl: undefined,
+              hostConfigKey: undefined,
+              tlsCertificateAuthority: undefined,
+              skipTlsVerification: undefined,
+            },
           },
         },
       );
