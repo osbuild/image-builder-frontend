@@ -37,7 +37,7 @@ const createStoreWithAzureState = (
         imageTypes: ['azure'],
         registration: {
           ...initialState.registration,
-          registrationType: 'register-later',
+          type: 'register-later',
         },
         ...overrides,
       },

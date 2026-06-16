@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { CreateBlueprintRequest } from '@/store/api/backend';
+import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clickWithWait,
@@ -472,7 +473,8 @@ const createStoreWithRepositoriesState = (wizardStateOverrides = {}) => {
   return createTestStore({
     imageTypes: ['guest-image'],
     registration: {
-      registrationType: 'register-later',
+      ...initialState.registration,
+      type: 'register-later',
       activationKey: undefined,
       orgId: undefined,
       satelliteRegistration: {
