@@ -473,20 +473,6 @@ function commonRequestToState(
       isCustomName: true,
       blueprintDescription: request.description || '',
     },
-    users:
-      request.customizations.users?.map((user) => ({
-        name: user.name,
-        password: '', // The image-builder API does not return the password.
-        ssh_key: user.ssh_key || '',
-        groups: user.groups || [],
-        isAdministrator: user.groups?.includes('wheel') || false,
-        hasPassword: user.hasPassword || false,
-      })) || [],
-    userGroups:
-      request.customizations.groups?.map((group) => ({
-        name: group.name,
-        ...(group.gid !== undefined && { gid: group.gid }),
-      })) || [],
     compliance:
       compliancePolicyID !== undefined
         ? {
@@ -514,11 +500,6 @@ function commonRequestToState(
                 enabled: request.customizations.fips?.enabled || false,
               },
             },
-    firstBoot: request.customizations.files
-      ? {
-          script: getFirstBootScript(request.customizations.files),
-        }
-      : initialState.firstBoot,
     filesystem: {
       mode: request.customizations.filesystem
         ? ('basic' as FscModeType)
@@ -600,30 +581,51 @@ function commonRequestToState(
       },
       verifiedLocaleLangpacks: localeLangpacks,
     },
-    locale: {
-      languages: request.customizations.locale?.languages || [],
-      keyboard: request.customizations.locale?.keyboard || '',
-    },
-    services: {
-      enabled: request.customizations.services?.enabled || [],
-      masked: request.customizations.services?.masked || [],
-      disabled: request.customizations.services?.disabled || [],
-    },
-    kernel: {
-      name: request.customizations.kernel?.name || '',
-      append: request.customizations.kernel?.append?.split(' ') || [],
-    },
-    timezone: {
-      timezone: request.customizations.timezone?.timezone || '',
-      ntpservers: request.customizations.timezone?.ntpservers || [],
-    },
-    hostname: request.customizations.hostname || '',
-    firewall: {
-      ports: request.customizations.firewall?.ports || [],
+    system: {
       services: {
-        enabled: request.customizations.firewall?.services?.enabled || [],
-        disabled: request.customizations.firewall?.services?.disabled || [],
+        enabled: request.customizations.services?.enabled || [],
+        masked: request.customizations.services?.masked || [],
+        disabled: request.customizations.services?.disabled || [],
       },
+      kernel: {
+        name: request.customizations.kernel?.name || '',
+        append: request.customizations.kernel?.append?.split(' ') || [],
+      },
+      locale: {
+        languages: request.customizations.locale?.languages || [],
+        keyboard: request.customizations.locale?.keyboard || '',
+      },
+      timezone: {
+        timezone: request.customizations.timezone?.timezone || '',
+        ntpservers: request.customizations.timezone?.ntpservers || [],
+      },
+      hostname: request.customizations.hostname || '',
+      firewall: {
+        ports: request.customizations.firewall?.ports || [],
+        services: {
+          enabled: request.customizations.firewall?.services?.enabled || [],
+          disabled: request.customizations.firewall?.services?.disabled || [],
+        },
+      },
+      firstBoot: request.customizations.files
+        ? {
+            script: getFirstBootScript(request.customizations.files),
+          }
+        : initialState.system.firstBoot,
+      users:
+        request.customizations.users?.map((user) => ({
+          name: user.name,
+          password: '', // The image-builder API does not return the password.
+          ssh_key: user.ssh_key || '',
+          groups: user.groups || [],
+          isAdministrator: user.groups?.includes('wheel') || false,
+          hasPassword: user.hasPassword || false,
+        })) || [],
+      groups:
+        request.customizations.groups?.map((group) => ({
+          name: group.name,
+          ...(group.gid !== undefined && { gid: group.gid }),
+        })) || [],
     },
   };
 }

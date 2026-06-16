@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { FIRST_BOOT_SERVICE } from '@/constants';
+import { initialState } from '@/store/slices/wizard';
 import { createUser, waitForAction } from '@/test/testUtils';
 
 import { renderFirstBootStep, uploadScript } from './helpers';
@@ -78,8 +79,11 @@ describe('FirstBoot Component', () => {
 
     test('does not show empty state when script is pre-populated', async () => {
       renderFirstBootStep({
-        firstBoot: {
-          script: VALID_SCRIPT,
+        system: {
+          ...initialState.system,
+          firstBoot: {
+            script: VALID_SCRIPT,
+          },
         },
       });
 
@@ -115,7 +119,7 @@ describe('FirstBoot Component', () => {
   describe('Custom Controls', () => {
     test('displays revert button', async () => {
       renderFirstBootStep({
-        firstBoot: { script: VALID_SCRIPT },
+        system: { ...initialState.system, firstBoot: { script: VALID_SCRIPT } },
       });
 
       expect(
@@ -130,7 +134,9 @@ describe('FirstBoot Component', () => {
       await uploadScript(user, VALID_SCRIPT);
 
       await waitForAction(() => {
-        expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
+        expect(store.getState().wizard.system.firstBoot.script).toBe(
+          VALID_SCRIPT,
+        );
       });
 
       const revertButton = screen.getByRole('button', {
@@ -139,7 +145,9 @@ describe('FirstBoot Component', () => {
       await waitForAction(() => user.click(revertButton));
 
       await waitForAction(() => {
-        expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
+        expect(store.getState().wizard.system.firstBoot.script).toBe(
+          VALID_SCRIPT,
+        );
       });
     });
   });
@@ -149,12 +157,14 @@ describe('FirstBoot Component', () => {
       const { store } = renderFirstBootStep();
       const user = createUser();
 
-      expect(store.getState().wizard.firstBoot.script).toBe('');
+      expect(store.getState().wizard.system.firstBoot.script).toBe('');
 
       await uploadScript(user, VALID_SCRIPT);
 
       await waitForAction(() => {
-        expect(store.getState().wizard.firstBoot.script).toBe(VALID_SCRIPT);
+        expect(store.getState().wizard.system.firstBoot.script).toBe(
+          VALID_SCRIPT,
+        );
       });
     });
 
@@ -165,7 +175,7 @@ describe('FirstBoot Component', () => {
       await uploadScript(user, VALID_SCRIPT);
 
       await waitForAction(() => {
-        expect(store.getState().wizard.services.enabled).toContain(
+        expect(store.getState().wizard.system.services.enabled).toContain(
           FIRST_BOOT_SERVICE,
         );
       });
@@ -178,7 +188,7 @@ describe('FirstBoot Component', () => {
       await uploadScript(user, CRLF_SCRIPT);
 
       await waitForAction(() => {
-        const storedScript = store.getState().wizard.firstBoot.script;
+        const storedScript = store.getState().wizard.system.firstBoot.script;
         expect(storedScript).toBe(LF_SCRIPT);
         expect(storedScript).not.toContain('\r\n');
       });
