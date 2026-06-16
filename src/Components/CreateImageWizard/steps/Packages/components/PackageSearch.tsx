@@ -57,8 +57,8 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
-  selectGroups,
   selectModules,
+  selectPackageGroups,
   selectPackages,
   selectRecommendedRepositories,
   selectSnapshotDate,
@@ -107,7 +107,7 @@ const PackageSearch = ({
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectGroups);
+  const groups = useAppSelector(selectPackageGroups);
   const modules = useAppSelector(selectModules);
   const customRepositories = useAppSelector(selectCustomRepositories);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);

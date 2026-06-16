@@ -1,5 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clearWithWait,
@@ -434,7 +435,7 @@ describe('Packages Component', () => {
       const user = createUser();
 
       // Initial state should have no packages
-      expect(store.getState().wizard.packages).toHaveLength(0);
+      expect(store.getState().wizard.content.packages).toHaveLength(0);
 
       await typeIntoSearchBox(user, 'test');
       await screen.findByRole('option', { name: /test-lib/ });
@@ -443,7 +444,7 @@ describe('Packages Component', () => {
       await selectPkgOption(user, 'test');
 
       // Verify Redux state was updated
-      const packages = store.getState().wizard.packages;
+      const packages = store.getState().wizard.content.packages;
       expect(packages).toHaveLength(1);
       expect(packages[0].name).toBe('test');
     });
@@ -458,11 +459,11 @@ describe('Packages Component', () => {
 
       // Select then deselect
       await selectPkgOption(user, 'test');
-      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
 
       await clickOnSearchBox(user);
       await selectPkgOption(user, 'test');
-      expect(store.getState().wizard.packages).toHaveLength(0);
+      expect(store.getState().wizard.content.packages).toHaveLength(0);
     });
 
     test('selecting multiple packages updates Redux state correctly', async () => {
@@ -481,7 +482,7 @@ describe('Packages Component', () => {
       await selectPkgOption(user, 'testPkg');
 
       await waitFor(() => {
-        const packages = store.getState().wizard.packages;
+        const packages = store.getState().wizard.content.packages;
         expect(packages).toHaveLength(3);
         expect(packages.map((p) => p.name).sort()).toEqual([
           'test',
@@ -499,7 +500,7 @@ describe('Packages Component', () => {
       const user = createUser();
 
       // Initial state should have no groups
-      expect(store.getState().wizard.groups).toHaveLength(0);
+      expect(store.getState().wizard.content.groups).toHaveLength(0);
 
       await switchToPackageGroups(user);
       await typeIntoSearchBox(user, 'grouper');
@@ -507,7 +508,7 @@ describe('Packages Component', () => {
 
       await selectPkgOption(user, 'grouper');
 
-      const groups = store.getState().wizard.groups;
+      const groups = store.getState().wizard.content.groups;
       expect(groups).toHaveLength(1);
       expect(groups[0].name).toBe('grouper');
     });
@@ -520,7 +521,7 @@ describe('Packages Component', () => {
       const user = createUser();
 
       // Initial state should have no modules
-      expect(store.getState().wizard.enabled_modules).toHaveLength(0);
+      expect(store.getState().wizard.content.enabledModules).toHaveLength(0);
 
       await typeIntoSearchBox(user, 'testModule');
       await screen.findByText(/1\.24/);
@@ -529,7 +530,7 @@ describe('Packages Component', () => {
       const options = await screen.findAllByRole('option');
       await clickWithWait(user, options[0]);
 
-      const modules = store.getState().wizard.enabled_modules;
+      const modules = store.getState().wizard.content.enabledModules;
       expect(modules).toHaveLength(1);
       expect(modules[0].name).toBe('testModule');
       expect(modules[0].stream).toBe('1.24');
@@ -537,22 +538,25 @@ describe('Packages Component', () => {
 
     test('preloaded packages state persists in Selected view', async () => {
       const { store } = renderPackagesStep({
-        packages: [
-          {
-            name: 'preloaded-pkg',
-            summary: 'A preloaded package',
-            repository: 'distro',
-          },
-          {
-            name: 'another-pkg',
-            summary: 'Another package',
-            repository: 'distro',
-          },
-        ],
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'preloaded-pkg',
+              summary: 'A preloaded package',
+              repository: 'distro',
+            },
+            {
+              name: 'another-pkg',
+              summary: 'Another package',
+              repository: 'distro',
+            },
+          ],
+        },
       });
 
       // Verify initial Redux state has preloaded packages
-      expect(store.getState().wizard.packages).toHaveLength(2);
+      expect(store.getState().wizard.content.packages).toHaveLength(2);
 
       // Verify packages appear in UI
       const rows = await screen.findAllByTestId('package-row');
@@ -727,28 +731,31 @@ describe('Packages Component', () => {
           policyTitle: undefined,
           fips: { enabled: false },
         },
-        packages: [
-          {
-            name: 'aide',
-            summary: 'Required by chosen OpenSCAP profile',
-            repository: 'distro',
-          },
-          {
-            name: 'neovim',
-            summary: 'Required by chosen OpenSCAP profile',
-            repository: 'distro',
-          },
-          {
-            name: 'zsh',
-            summary: 'User selected package',
-            repository: 'distro',
-          },
-          {
-            name: 'curl',
-            summary: 'User selected package',
-            repository: 'distro',
-          },
-        ],
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'aide',
+              summary: 'Required by chosen OpenSCAP profile',
+              repository: 'distro',
+            },
+            {
+              name: 'neovim',
+              summary: 'Required by chosen OpenSCAP profile',
+              repository: 'distro',
+            },
+            {
+              name: 'zsh',
+              summary: 'User selected package',
+              repository: 'distro',
+            },
+            {
+              name: 'curl',
+              summary: 'User selected package',
+              repository: 'distro',
+            },
+          ],
+        },
       });
     };
 
@@ -809,18 +816,21 @@ describe('Packages Component', () => {
 
     test('without oscap profile, all packages have remove buttons', async () => {
       renderPackagesStep({
-        packages: [
-          {
-            name: 'zsh',
-            summary: 'User selected package',
-            repository: 'distro',
-          },
-          {
-            name: 'curl',
-            summary: 'User selected package',
-            repository: 'distro',
-          },
-        ],
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'zsh',
+              summary: 'User selected package',
+              repository: 'distro',
+            },
+            {
+              name: 'curl',
+              summary: 'User selected package',
+              repository: 'distro',
+            },
+          ],
+        },
       });
 
       const rows = await screen.findAllByTestId('package-row');
@@ -853,20 +863,23 @@ describe('Packages Component', () => {
           policyTitle: undefined,
           fips: { enabled: false },
         },
-        packages: [
-          {
-            name: 'aide',
-            summary: 'Advanced Intrusion Detection Environment',
-            repository: 'distro',
-          },
-        ],
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'aide',
+              summary: 'Advanced Intrusion Detection Environment',
+              repository: 'distro',
+            },
+          ],
+        },
       });
 
       const user = createUser();
 
       // Verify the required package is in state
-      expect(store.getState().wizard.packages).toHaveLength(1);
-      expect(store.getState().wizard.packages[0].name).toBe('aide');
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages[0].name).toBe('aide');
 
       // Search for the required package
       await typeIntoSearchBox(user, 'aide');
@@ -885,8 +898,8 @@ describe('Packages Component', () => {
       await clickWithWait(user, aideOption);
 
       // Package should still be in state
-      expect(store.getState().wizard.packages).toHaveLength(1);
-      expect(store.getState().wizard.packages[0].name).toBe('aide');
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages[0].name).toBe('aide');
     });
 
     test('onSelect guard prevents removal of required packages even when click bypasses disabled state', async () => {
@@ -905,18 +918,21 @@ describe('Packages Component', () => {
           policyTitle: undefined,
           fips: { enabled: false },
         },
-        packages: [
-          {
-            name: 'aide',
-            summary: 'Advanced Intrusion Detection Environment',
-            repository: 'distro',
-          },
-        ],
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'aide',
+              summary: 'Advanced Intrusion Detection Environment',
+              repository: 'distro',
+            },
+          ],
+        },
       });
 
       const user = createUser();
 
-      expect(store.getState().wizard.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
 
       await typeIntoSearchBox(user, 'aide');
 
@@ -931,28 +947,31 @@ describe('Packages Component', () => {
       fireEvent.click(aideOption);
 
       // The onSelect guard should prevent the package from being removed
-      expect(store.getState().wizard.packages).toHaveLength(1);
-      expect(store.getState().wizard.packages[0].name).toBe('aide');
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages[0].name).toBe('aide');
     });
 
     test('without compliance, search results are not disabled and packages can be toggled freely', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
 
       const { store } = renderPackagesStep({
-        packages: [
-          {
-            name: 'test-lib',
-            summary: 'test-lib package summary',
-            repository: 'distro',
-          },
-        ],
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'test-lib',
+              summary: 'test-lib package summary',
+              repository: 'distro',
+            },
+          ],
+        },
       });
 
       const user = createUser();
 
       // Verify the package is in state
-      expect(store.getState().wizard.packages).toHaveLength(1);
-      expect(store.getState().wizard.packages[0].name).toBe('test-lib');
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages[0].name).toBe('test-lib');
 
       // Search for the already-selected package
       await typeIntoSearchBox(user, 'test');
@@ -970,7 +989,7 @@ describe('Packages Component', () => {
 
       // Clicking the selected package should remove it
       await clickWithWait(user, testLibOption);
-      expect(store.getState().wizard.packages).toHaveLength(0);
+      expect(store.getState().wizard.content.packages).toHaveLength(0);
 
       // Re-search and re-add the package
       await clearSearchInput(user);
@@ -980,8 +999,8 @@ describe('Packages Component', () => {
         name: /test-lib/i,
       });
       await clickWithWait(user, testLibOptionAgain);
-      expect(store.getState().wizard.packages).toHaveLength(1);
-      expect(store.getState().wizard.packages[0].name).toBe('test-lib');
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages[0].name).toBe('test-lib');
     });
 
     test('required package not yet selected can still be added via search', async () => {
@@ -1001,7 +1020,10 @@ describe('Packages Component', () => {
           fips: { enabled: false },
         },
         // aide is required but NOT in the initial packages list
-        packages: [],
+        content: {
+          ...initialState.content,
+          packages: [],
+        },
       });
 
       const user = createUser();
@@ -1017,8 +1039,8 @@ describe('Packages Component', () => {
       await clickWithWait(user, aideOption);
 
       // Verify it was added to Redux state
-      expect(store.getState().wizard.packages).toHaveLength(1);
-      expect(store.getState().wizard.packages[0].name).toBe('aide');
+      expect(store.getState().wizard.content.packages).toHaveLength(1);
+      expect(store.getState().wizard.content.packages[0].name).toBe('aide');
 
       // Re-open search and verify it's now disabled (required AND selected)
       await clearSearchInput(user);

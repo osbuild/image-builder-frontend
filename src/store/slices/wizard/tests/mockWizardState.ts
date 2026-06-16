@@ -76,10 +76,13 @@ export const createStateWithPartitions = (
 
 // Helper to create a state with packages for content tests
 export const createStateWithPackages = (
-  packages: wizardState['packages'],
-  modules: wizardState['enabled_modules'] = [],
+  packages: wizardState['content']['packages'],
+  modules: wizardState['content']['enabledModules'] = [],
 ): RootState =>
   createMockState({
-    packages,
-    enabled_modules: modules,
+    content: {
+      ...wizardInitialState.content,
+      packages,
+      enabledModules: modules,
+    },
   });

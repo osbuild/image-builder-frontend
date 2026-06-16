@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { createDefaultRestrictions } from '../../tests/helpers';
@@ -13,11 +14,14 @@ describe('RepeatableBuild', () => {
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
         imageTypes: ['guest-image'],
-        snapshotting: {
-          useLatest: false,
-          snapshotDate: '',
-          template: '',
-          templateName: '',
+        content: {
+          ...initialState.content,
+          snapshotting: {
+            useLatest: false,
+            snapshotDate: '',
+            template: '',
+            templateName: '',
+          },
         },
       },
     );
@@ -32,11 +36,14 @@ describe('RepeatableBuild', () => {
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
         imageTypes: ['guest-image'],
-        snapshotting: {
-          useLatest: false,
-          snapshotDate: '2026-04-10',
-          template: '',
-          templateName: '',
+        content: {
+          ...initialState.content,
+          snapshotting: {
+            useLatest: false,
+            snapshotDate: '2026-04-10',
+            template: '',
+            templateName: '',
+          },
         },
       },
     );
@@ -50,11 +57,14 @@ describe('RepeatableBuild', () => {
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
         imageTypes: ['guest-image'],
-        snapshotting: {
-          useLatest: true,
-          snapshotDate: '',
-          template: '',
-          templateName: '',
+        content: {
+          ...initialState.content,
+          snapshotting: {
+            useLatest: true,
+            snapshotDate: '',
+            template: '',
+            templateName: '',
+          },
         },
       },
     );
@@ -67,11 +77,14 @@ describe('RepeatableBuild', () => {
       <RepeatableBuild restrictions={createDefaultRestrictions()} />,
       {
         imageTypes: ['guest-image'],
-        snapshotting: {
-          useLatest: true,
-          snapshotDate: '',
-          template: '',
-          templateName: '',
+        content: {
+          ...initialState.content,
+          snapshotting: {
+            useLatest: true,
+            snapshotDate: '',
+            template: '',
+            templateName: '',
+          },
         },
       },
     );

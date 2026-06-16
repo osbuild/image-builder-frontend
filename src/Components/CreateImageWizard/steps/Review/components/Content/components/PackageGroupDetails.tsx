@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectGroups } from '@/store/slices';
+import { selectPackageGroups } from '@/store/slices';
 
 import { LabelMapper, ReviewGroup } from '../../shared';
 import { Hideable } from '../../types';
 
 export const PackageGroupDetails = ({ shouldHide }: Hideable) => {
-  const groups = useAppSelector(selectGroups);
+  const groups = useAppSelector(selectPackageGroups);
 
   if (shouldHide) {
     return null;
