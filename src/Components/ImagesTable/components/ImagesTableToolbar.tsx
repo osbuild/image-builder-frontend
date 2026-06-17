@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-  Alert,
-  AlertActionLink,
-  ExpandableSection,
-  List,
-  ListItem,
   Pagination,
   Title,
   Toolbar,
@@ -28,7 +23,11 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../../Hooks';
+import BlueprintErrorsAlert from './BlueprintErrorsAlert';
+import BlueprintVersionAlert from './BlueprintVersionAlert';
+import BlueprintWarningAlert from './BlueprintWarningAlert';
+import CentOSStream8Alert from './CentOSStream8Alert';
+
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintActionsMenu } from '../../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../../Blueprints/BlueprintDiffModal';
@@ -37,7 +36,7 @@ import { BuildImagesButton } from '../../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../../Blueprints/DeleteBlueprintModal';
 import { EditBlueprintButton } from '../../Blueprints/EditBlueprintButton';
 
-interface imagesTableToolbarProps {
+type ImagesTableToolbarProps = {
   itemCount: number;
   perPage: number;
   page: number;
@@ -49,23 +48,18 @@ interface imagesTableToolbarProps {
       | React.KeyboardEvent<Element>,
     perPage: number,
   ) => void;
-}
+};
 
-const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
+const ImagesTableToolbar: React.FC<ImagesTableToolbarProps> = ({
   itemCount,
   perPage,
   page,
   setPage,
   onPerPageSelect,
-}: imagesTableToolbarProps) => {
+}: ImagesTableToolbarProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
-  const [isLintExp, setIsLintExp] = React.useState(true);
-  const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
-    setIsLintExp(isExpanded);
-  };
-  const [warningExpanded, setWarningExpanded] = useState(true);
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -77,8 +71,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     { id: selectedBlueprintId! },
     { skip: !selectedBlueprintId },
   );
-
-  const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
 
   const lintWarnings = React.useMemo(
     // there is a mismatch between API type and real data
@@ -178,89 +170,24 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
           </Title>
         </ToolbarContent>
         {hasErrors && (
-          <Alert
-            variant='warning'
-            isInline
-            title='The selected blueprint has compliance errors that can be automatically fixed, action required.'
-            actionLinks={[
-              <AlertActionLink
-                key='fix'
-                onClick={async () => {
-                  await fixupBlueprint({ id: selectedBlueprintId! });
-                }}
-                id='blueprint_fix_errors_automatically'
-              >
-                Fix errors automatically (updates the blueprint)
-              </AlertActionLink>,
-            ]}
-          >
-            <ExpandableSection
-              toggleText={isLintExp ? 'Show less' : 'Show more'}
-              onToggle={onToggleLintExp}
-              isExpanded={isLintExp}
-            >
-              <List isPlain>
-                {blueprintDetails.lint.errors.map((err) => (
-                  <ListItem key={err.description}>
-                    {err.name}: {err.description}
-                  </ListItem>
-                ))}
-              </List>
-            </ExpandableSection>
-          </Alert>
+          <BlueprintErrorsAlert
+            selectedBlueprintId={selectedBlueprintId}
+            blueprintDetails={blueprintDetails}
+          />
         )}
         {selectedBlueprintId && hasWarnings && (
-          <Alert
-            variant='info'
-            isInline
-            title='The selected blueprint has compliance warnings, no action required.'
-          >
-            <ExpandableSection
-              toggleText={warningExpanded ? 'Show less' : 'Show more'}
-              onToggle={(_, isExpanded) => setWarningExpanded(isExpanded)}
-              isExpanded={warningExpanded}
-            >
-              <List isPlain>
-                {lintWarnings.map((warning) => (
-                  <ListItem key={warning.name}>
-                    {warning.name}: {warning.description}
-                  </ListItem>
-                ))}
-              </List>
-            </ExpandableSection>
-          </Alert>
+          <BlueprintWarningAlert lintWarnings={lintWarnings} />
         )}
         {!isOnPremise && itemCount > 0 && isBlueprintOutSync && (
-          <Alert
-            style={{
-              margin:
-                '0 var(--pf-v6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
-            }}
-            isInline
-            title={`The selected blueprint is at version ${selectedBlueprintVersion}, the latest images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
-            actionLinks={
-              <AlertActionLink
-                onClick={() => setShowDiffModal(true)}
-                id='blueprint_view_version_difference'
-              >
-                View the difference
-              </AlertActionLink>
-            }
+          <BlueprintVersionAlert
+            selectedBlueprintVersion={selectedBlueprintVersion}
+            latestImageVersion={latestImageVersion}
+            setShowDiffModal={setShowDiffModal}
           />
         )}{' '}
         {blueprintsComposes &&
           blueprintsComposes.data.length > 0 &&
-          isBlueprintDistroCentos8() && (
-            <Alert
-              style={{
-                margin:
-                  '0 var(--pf-v6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
-              }}
-              isInline
-              variant='warning'
-              title='CentOS Stream 8 is no longer supported, building images from this blueprint will fail. Edit blueprint to update the release to CentOS Stream 9.'
-            />
-          )}
+          isBlueprintDistroCentos8() && <CentOSStream8Alert />}
         <ToolbarContent>
           {selectedBlueprintId && (
             <>
