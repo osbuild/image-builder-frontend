@@ -25,17 +25,16 @@ import {
 } from '@patternfly/react-icons';
 
 import {
+  AWS_S3_EXPIRATION_TIME_IN_HOURS,
+  OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
+} from '@/constants';
+import {
   ComposerComposesResponseItem,
   ComposesResponseItem,
   ComposeStatus,
   ComposeStatusError,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
-import {
-  AWS_S3_EXPIRATION_TIME_IN_HOURS,
-  OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
-} from '../../constants';
 
 type ComposeStatusPropTypes = {
   compose: ComposesResponseItem | ComposerComposesResponseItem;

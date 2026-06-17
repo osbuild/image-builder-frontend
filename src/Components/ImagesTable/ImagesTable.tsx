@@ -53,7 +53,7 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-import ImagesEmptyState from './EmptyState';
+import ImagesEmptyState from './components/EmptyState';
 import {
   AwsDetails,
   AwsS3Details,
@@ -61,12 +61,12 @@ import {
   GcpDetails,
   LocalDetails,
   OciDetails,
-} from './ImageDetails';
-import ImagesTableToolbar from './ImagesTableToolbar';
-import { AwsS3Instance, LocalInstance } from './Instance';
-import Release from './Release';
-import { CloudStatus, ExpiringStatus, LocalStatus } from './Status';
-import { AwsTarget, Target } from './Target';
+} from './components/ImageDetails';
+import ImagesTableToolbar from './components/ImagesTableToolbar';
+import { AwsS3Instance, LocalInstance } from './components/Instance';
+import Release from './components/Release';
+import { CloudStatus, ExpiringStatus, LocalStatus } from './components/Status';
+import { AwsTarget, Target } from './components/Target';
 
 import {
   AMPLITUDE_MODULE_NAME,
