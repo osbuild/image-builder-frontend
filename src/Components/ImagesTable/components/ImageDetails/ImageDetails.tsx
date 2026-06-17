@@ -19,9 +19,9 @@ import {
 } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-import { AMPLITUDE_MODULE_NAME } from '../../../constants';
-import { useGetUser } from '../../../Hooks';
-import { useAppSelector } from '../../../store/hooks';
+import { AMPLITUDE_MODULE_NAME } from '../../../../constants';
+import { useGetUser } from '../../../../Hooks';
+import { useAppSelector } from '../../../../store/hooks';
 import {
   isAwsUploadRequestOptions,
   isAzureUploadRequestOptions,
@@ -29,7 +29,7 @@ import {
   isGcpUploadRequestOptions,
   isGcpUploadStatus,
   isOciUploadStatus,
-} from '../../../store/typeGuards';
+} from '../../../../store/typeGuards';
 
 export const parseGcpSharedWith = (
   sharedWith: GcpUploadRequestOptions['share_with_accounts'],
