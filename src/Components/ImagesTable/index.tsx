@@ -61,9 +61,9 @@ import {
   GcpDetails,
   LocalDetails,
   OciDetails,
-} from './components/ImageDetails/ImageDetails';
+} from './components/ImageDetails';
 import ImagesTableToolbar from './components/ImagesTableToolbar';
-import { AwsS3Instance, LocalInstance } from './components/Instance/Instance';
+import { AwsS3Instance, LocalInstance } from './components/Instance';
 import Release from './components/Release';
 import {
   CloudStatus,
