@@ -26,7 +26,7 @@ import { openWizardModal } from '../../store/slices/wizardModal';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import CreateImageWizard from '../CreateImageWizard/CreateImageWizard';
-import ImagesTable from '../ImagesTable/ImagesTable';
+import ImagesTable from '../ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
