@@ -14,14 +14,17 @@ import {
 } from '@/store/api/backend';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import { useCockpitMachinesAvailable } from '../../Hooks';
-import { useAppSelector } from '../../store/hooks';
-import { hasBootcRequest, isAwss3UploadStatus } from '../../store/typeGuards';
+import { AMPLITUDE_MODULE_NAME } from '../../../constants';
+import { useCockpitMachinesAvailable } from '../../../Hooks';
+import { useAppSelector } from '../../../store/hooks';
+import {
+  hasBootcRequest,
+  isAwss3UploadStatus,
+} from '../../../store/typeGuards';
 import {
   bootcReferenceToOSShortId,
   distributionToOSShortId,
-} from '../../Utilities/distributionToOSShortId';
+} from '../../../Utilities/distributionToOSShortId';
 
 type AwsS3InstancePropTypes = {
   compose: ComposesResponseItem;

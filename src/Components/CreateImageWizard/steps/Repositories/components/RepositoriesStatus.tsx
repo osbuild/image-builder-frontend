@@ -21,7 +21,7 @@ import {
 import { CONTENT_URL } from '@/constants';
 import { ApiRepositoryResponse } from '@/store/api/contentSources';
 
-import '@/Components/ImagesTable/ImageBuildStatus.scss';
+import '@/Components/ImagesTable/components/ImageBuildStatus.scss';
 import { getLastIntrospection } from '../repositoriesUtilities';
 
 type RepositoryStatusProps = {

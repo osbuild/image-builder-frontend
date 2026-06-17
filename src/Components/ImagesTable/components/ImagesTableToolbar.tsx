@@ -28,14 +28,14 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
-import { useAppSelector } from '../../store/hooks';
-import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
-import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';
-import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
-import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
-import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
-import { EditBlueprintButton } from '../Blueprints/EditBlueprintButton';
+import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../../Hooks';
+import { useAppSelector } from '../../../store/hooks';
+import { BlueprintActionsMenu } from '../../Blueprints/BlueprintActionsMenu';
+import BlueprintDiffModal from '../../Blueprints/BlueprintDiffModal';
+import BlueprintVersionFilter from '../../Blueprints/BlueprintVersionFilter';
+import { BuildImagesButton } from '../../Blueprints/BuildImagesButton';
+import { DeleteBlueprintModal } from '../../Blueprints/DeleteBlueprintModal';
+import { EditBlueprintButton } from '../../Blueprints/EditBlueprintButton';
 
 interface imagesTableToolbarProps {
   itemCount: number;
