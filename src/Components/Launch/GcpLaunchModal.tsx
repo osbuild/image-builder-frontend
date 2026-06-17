@@ -29,7 +29,7 @@ import {
   isGcpUploadRequestOptions,
   isGcpUploadStatus,
 } from '../../store/typeGuards';
-import { parseGcpSharedWith } from '../ImagesTable/components/ImageDetails';
+import { parseGcpSharedWith } from '../ImagesTable/components/ImageDetails/ImageDetails';
 
 type LaunchProps = { compose: ComposesResponseItem };
 

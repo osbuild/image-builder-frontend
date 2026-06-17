@@ -61,11 +61,15 @@ import {
   GcpDetails,
   LocalDetails,
   OciDetails,
-} from './components/ImageDetails';
+} from './components/ImageDetails/ImageDetails';
 import ImagesTableToolbar from './components/ImagesTableToolbar';
-import { AwsS3Instance, LocalInstance } from './components/Instance';
+import { AwsS3Instance, LocalInstance } from './components/Instance/Instance';
 import Release from './components/Release';
-import { CloudStatus, ExpiringStatus, LocalStatus } from './components/Status';
+import {
+  CloudStatus,
+  ExpiringStatus,
+  LocalStatus,
+} from './components/Status/Status';
 import { AwsTarget, Target } from './components/Target';
 
 import {

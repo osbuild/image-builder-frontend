@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './ImageBuildStatus.scss';
+import './../ImageBuildStatus.scss';
 import {
   Alert,
   Button,
