@@ -30,6 +30,7 @@ import {
   DiskPartitionBase,
   FilesystemMode,
   FilesystemPartition,
+  filesystemState,
   FSType,
   getConversionFactor,
   PartitioningCustomization,
@@ -117,19 +118,7 @@ export const initialState: WizardState = {
       enabled: false,
     },
   },
-  filesystem: {
-    mode: 'automatic',
-    disk: {
-      minsize: '',
-      unit: 'GiB',
-      partitions: [],
-      type: undefined,
-    },
-    fileSystem: {
-      partitions: [],
-    },
-    partitioningMode: undefined,
-  },
+  filesystem: filesystemState,
   content: {
     repositories: {
       customRepositories: [],
