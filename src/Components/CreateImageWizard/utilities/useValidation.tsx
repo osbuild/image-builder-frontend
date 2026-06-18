@@ -10,6 +10,8 @@ import {
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  DiskPartition,
+  FilesystemPartition,
   MAX_REGULAR_GID,
   MIN_REGULAR_GID,
   selectAapCallbackUrl,
@@ -61,10 +63,6 @@ import {
   UNIQUE_VALIDATION_DELAY,
 } from '../../../constants';
 import { useAppSelector } from '../../../store/hooks';
-import {
-  DiskPartition,
-  FilesystemPartition,
-} from '../steps/FileSystem/fscTypes';
 import { keyboardsList } from '../steps/Locale/data/keyboardsList';
 import { languagesList } from '../steps/Locale/data/languagesList';
 import { timezones } from '../steps/Timezone/timezonesList';

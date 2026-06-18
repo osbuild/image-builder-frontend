@@ -16,6 +16,8 @@ import {
   addDiskPartition,
   addLogicalVolumeToVolumeGroup,
   changeDiskPartitionName,
+  DiskPartition,
+  DiskPartitionBase,
   removeDiskPartition,
   selectDiskPartitions,
   selectFilesystemPartitions,
@@ -29,7 +31,6 @@ import SizeUnit from './SizeUnit';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { DiskPartition, DiskPartitionBase } from '../fscTypes';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
 type VolumeGroupType =

@@ -3,17 +3,15 @@ import React from 'react';
 import {
   changePartitionMinSize,
   changePartitionUnit,
+  FilesystemPartition,
+  LogicalVolumeWithBase,
+  PartitioningCustomization,
+  VolumeGroupWithExtendedLV,
 } from '@/store/slices/wizard';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import {
-  FilesystemPartition,
-  LogicalVolumeWithBase,
-  PartitioningCustomization,
-  VolumeGroupWithExtendedLV,
-} from '../fscTypes';
 
 type MinimumSizePropTypes = {
   partition:

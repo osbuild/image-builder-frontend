@@ -2,15 +2,6 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { FscModeType } from '@/Components/CreateImageWizard/steps/FileSystem';
-import type {
-  DiskPartition,
-  DiskPartitionBase,
-  FilesystemPartition,
-  FscDisk,
-  FSType,
-  PartitioningCustomization,
-  Units,
-} from '@/Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import { getConversionFactor } from '@/Components/CreateImageWizard/steps/FileSystem/fscUtilities';
 import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
 import type { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
@@ -39,6 +30,16 @@ import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import type { ActivationKeys } from '@/store/api/rhsm';
 import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
+
+import type {
+  DiskPartition,
+  DiskPartitionBase,
+  FilesystemPartition,
+  FscDisk,
+  FSType,
+  PartitioningCustomization,
+  Units,
+} from './filesystem';
 
 // GID range for regular groups per LOGIN.DEFS(5) defaults
 export const MIN_REGULAR_GID = 1000;
