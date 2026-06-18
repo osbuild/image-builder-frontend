@@ -12,6 +12,8 @@ import {
   changePartitionMountpoint,
   changePartitionType,
   FSType,
+  getNextAvailableMountpoint,
+  isPartitionTypeAvailable,
   LogicalVolumeWithBase,
   PartitioningCustomization,
   selectDiskPartitions,
@@ -20,10 +22,6 @@ import {
 } from '@/store/slices/wizard';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  getNextAvailableMountpoint,
-  isPartitionTypeAvailable,
-} from '../fscUtilities';
 
 const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
