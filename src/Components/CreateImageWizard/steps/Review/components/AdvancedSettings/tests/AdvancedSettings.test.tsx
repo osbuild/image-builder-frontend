@@ -6,7 +6,7 @@ import { initialState } from '@/store/slices/wizard';
 import {
   advancedPartitions,
   basicPartitions,
-} from '@/store/slices/wizard/tests/mocks';
+} from '@/store/slices/wizard/filesystem/tests/mocks';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { adminUser, developerUser, guestUser, userGroups } from './mocks';

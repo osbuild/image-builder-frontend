@@ -3,7 +3,7 @@ import type {
   LogicalVolumeWithBase,
   PlainPartitionWithBase,
   VolumeGroupWithExtendedLV,
-} from '@/store/slices/wizard/filesystem/types';
+} from '../../types';
 
 // Basic filesystem partition factory
 export const createBasicPartition = (
