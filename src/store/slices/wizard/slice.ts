@@ -1,7 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getConversionFactor } from '@/Components/CreateImageWizard/steps/FileSystem/fscUtilities';
 import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
 import type { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
 import {
@@ -26,12 +25,13 @@ import type { ActivationKeys } from '@/store/api/rhsm';
 import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
-import type {
+import {
   DiskPartition,
   DiskPartitionBase,
   FilesystemMode,
   FilesystemPartition,
   FSType,
+  getConversionFactor,
   PartitioningCustomization,
   PartitioningModeType,
   Units,

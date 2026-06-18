@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   addPartition,
+  getNextAvailableMountpoint,
   selectBlueprintMode,
   selectDiskPartitions,
   selectFilesystemPartitions,
@@ -15,7 +16,6 @@ import FileSystemTable from './FileSystemTable';
 import PartitioningMode from './PartitioningMode';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const FileSystemConfiguration = () => {
   const blueprintMode = useAppSelector(selectBlueprintMode);

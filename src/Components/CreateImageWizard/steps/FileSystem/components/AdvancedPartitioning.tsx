@@ -19,6 +19,7 @@ import {
   addDiskPartition,
   changeDiskMinsize,
   changeDiskUnit,
+  getNextAvailableMountpoint,
   selectDiskMinsize,
   selectDiskPartitions,
   selectDiskUnit,
@@ -33,7 +34,6 @@ import VolumeGroups from './VolumeGroups';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const units = ['GiB', 'MiB'];
 

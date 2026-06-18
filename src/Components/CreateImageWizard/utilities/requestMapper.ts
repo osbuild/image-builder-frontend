@@ -43,6 +43,7 @@ import {
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
+  getConversionFactor,
   initialState,
   RegistrationType,
   selectAapCallbackUrl,
@@ -129,7 +130,6 @@ import {
 } from '../../../constants';
 import { RootState } from '../../../store';
 import isRhel from '../../../Utilities/isRhel';
-import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { AwsShareMethod } from '../steps/ImageOutput/components/Aws';
 import { GcpAccountType } from '../steps/ImageOutput/components/Gcp';
 import { PackageRepository } from '../steps/Packages/packagesTypes';

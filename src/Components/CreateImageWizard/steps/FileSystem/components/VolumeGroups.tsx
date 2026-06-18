@@ -18,6 +18,7 @@ import {
   changeDiskPartitionName,
   DiskPartition,
   DiskPartitionBase,
+  getNextAvailableMountpoint,
   removeDiskPartition,
   selectDiskPartitions,
   selectFilesystemPartitions,
@@ -31,7 +32,6 @@ import SizeUnit from './SizeUnit';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { getNextAvailableMountpoint } from '../fscUtilities';
 
 type VolumeGroupType =
   | Extract<DiskPartition, VolumeGroup & DiskPartitionBase>
