@@ -25,6 +25,7 @@ import type { ActivationKeys } from '@/store/api/rhsm';
 import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
+import { initializeWizard, loadWizardState } from './actions';
 import {
   DiskPartition,
   DiskPartitionBase,
@@ -506,9 +507,6 @@ export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,
   reducers: {
-    initializeWizard: () => initialState,
-    loadWizardState: (state, action: PayloadAction<WizardState>) =>
-      action.payload,
     changeServerUrl: (state, action: PayloadAction<string>) => {
       state.registration.serverUrl = action.payload;
     },
@@ -1509,10 +1507,17 @@ export const wizardSlice = createSlice({
       state.content.verifiedLocaleLangpacks = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(initializeWizard, () => initialState)
+      .addCase(
+        loadWizardState,
+        (_, action: PayloadAction<WizardState>) => action.payload,
+      );
+  },
 });
 
 export const {
-  initializeWizard,
   changeServerUrl,
   changeBaseUrl,
   changeProxy,
@@ -1592,7 +1597,6 @@ export const {
   changeBlueprintName,
   setIsCustomName,
   changeBlueprintDescription,
-  loadWizardState,
   setFirstBootScript,
   changeEnabledServices,
   addEnabledService,
