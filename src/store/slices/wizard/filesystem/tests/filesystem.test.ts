@@ -2,21 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { RootState } from '@/store';
 import {
-  addPartition,
-  changeFscMode,
-  changePartitionMinSize,
-  changePartitionMountpoint,
-  changePartitionUnit,
-  clearPartitions,
-  type CombinedWizardState,
+  CombinedWizardState,
   combinedInitialState as initialState,
-  removePartition,
-  removePartitionByMountpoint,
-  selectAdvancedPartitionCount,
-  selectBasicPartitionCount,
-  selectFSConfigurationsCount,
-  selectLogicalVolumeCount,
-  selectPartitionCount,
   wizardReducer,
 } from '@/store/slices/wizard';
 
@@ -25,6 +12,22 @@ import {
   createPlainPartition,
   createVolumeGroup,
 } from './mocks';
+
+import {
+  addPartition,
+  changeFscMode,
+  changePartitionMinSize,
+  changePartitionMountpoint,
+  changePartitionUnit,
+  clearPartitions,
+  removePartition,
+  removePartitionByMountpoint,
+  selectAdvancedPartitionCount,
+  selectBasicPartitionCount,
+  selectFSConfigurationsCount,
+  selectLogicalVolumeCount,
+  selectPartitionCount,
+} from '..';
 
 // Alias for backward compatibility with existing tests
 const createPartition = createBasicPartition;
