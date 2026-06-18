@@ -2,9 +2,8 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
+import ProgressStatus from '@/Components/ImagesTable/components/Status/components/ProgressStatus';
 import { ComposeRequest, ComposeStatus } from '@/store/api/backend';
-
-import { ProgressStatus } from '../../../Components/ImagesTable/components/Status/Status';
 
 const request: ComposeRequest = {
   distribution: 'rhel-8',
