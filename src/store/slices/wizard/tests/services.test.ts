@@ -12,7 +12,7 @@ import {
   removeEnabledService,
   removeMaskedService,
   wizardReducer,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 describe('services reducers', () => {
@@ -25,7 +25,7 @@ describe('services reducers', () => {
       });
 
       it('should not add duplicate services', () => {
-        const stateWithService: wizardState = {
+        const stateWithService: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -59,7 +59,7 @@ describe('services reducers', () => {
 
     describe('removeEnabledService', () => {
       it('should remove a service from enabled list', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -79,7 +79,7 @@ describe('services reducers', () => {
       });
 
       it('should do nothing when service not found', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -101,7 +101,7 @@ describe('services reducers', () => {
 
     describe('changeEnabledServices', () => {
       it('should replace all enabled services', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -121,7 +121,7 @@ describe('services reducers', () => {
       });
 
       it('should set empty array', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -154,7 +154,7 @@ describe('services reducers', () => {
       });
 
       it('should not add duplicate services', () => {
-        const stateWithService: wizardState = {
+        const stateWithService: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -176,7 +176,7 @@ describe('services reducers', () => {
 
     describe('removeMaskedService', () => {
       it('should remove a service from masked list', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -198,7 +198,7 @@ describe('services reducers', () => {
 
     describe('changeMaskedServices', () => {
       it('should replace all masked services', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -228,7 +228,7 @@ describe('services reducers', () => {
       });
 
       it('should not add duplicate services', () => {
-        const stateWithService: wizardState = {
+        const stateWithService: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -250,7 +250,7 @@ describe('services reducers', () => {
 
     describe('removeDisabledService', () => {
       it('should remove a service from disabled list', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,
@@ -272,7 +272,7 @@ describe('services reducers', () => {
 
     describe('changeDisabledServices', () => {
       it('should replace all disabled services', () => {
-        const stateWithServices: wizardState = {
+        const stateWithServices: WizardState = {
           ...initialState,
           system: {
             ...initialState.system,

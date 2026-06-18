@@ -110,7 +110,7 @@ import {
   selectVerifiedLocaleLangpacks,
   Units,
   UserWithAdditionalInfo,
-  wizardState,
+  WizardState,
 } from '@/store/slices/wizard';
 
 import { parseSizeUnit } from './parseSizeUnit';
@@ -642,7 +642,7 @@ function commonRequestToState(
  * @param source  V1ListSourceResponseItem
  * @returns wizardState
  */
-export const mapRequestToState = (request: BlueprintResponse): wizardState => {
+export const mapRequestToState = (request: BlueprintResponse): WizardState => {
   const commonState = commonRequestToState(request);
   return {
     ...commonState,
@@ -728,7 +728,7 @@ const getMetadata = (metadata: BlueprintMetadata) => {
 export const mapBlueprintExportToState = (
   blueprint: BlueprintExportResponse,
   image_requests: ImageRequest[],
-): wizardState => {
+): WizardState => {
   const blueprintResponse: CreateBlueprintRequest = {
     name: blueprint.name,
     description: blueprint.description,

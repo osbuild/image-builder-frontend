@@ -8,7 +8,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
-import type { V1ListSourceResponseItem } from '@/Components/CreateImageWizard/types';
 import { generateDefaultName } from '@/Components/CreateImageWizard/utilities/useGenerateDefaultName';
 import { RHEL_10, UNIT_GIB, X86_64 } from '@/constants';
 import type { RootState } from '@/store';
@@ -18,12 +17,9 @@ import type {
   Distributions,
   ImageRequest,
   ImageTypes,
-  Locale,
   LogicalVolume,
   Module,
   Repository,
-  Timezone,
-  User,
 } from '@/store/api/backend';
 import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import type { ActivationKeys } from '@/store/api/rhsm';
@@ -35,198 +31,31 @@ import type {
   DiskPartitionBase,
   FilesystemMode,
   FilesystemPartition,
-  FilesystemSlice,
   FSType,
   PartitioningCustomization,
   PartitioningModeType,
   Units,
 } from './filesystem';
+import {
+  BlueprintModeOptions,
+  ComplianceType,
+  ImageSource,
+  RegistrationType,
+  UserAdministratorPayload,
+  UserGroupGidPayload,
+  UserGroupNamePayload,
+  UserGroupPayload,
+  UserPasswordPayload,
+  UserPayload,
+  UserSshKeyPayload,
+  WizardState,
+} from './types';
 
 // GID range for regular groups per LOGIN.DEFS(5) defaults
 export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
-type WizardModeOptions = 'create' | 'edit';
-
-export type BlueprintModeOptions = 'image' | 'package';
-
-export type ImageSource = string;
-
-export type RegistrationType =
-  | 'register-later'
-  | 'register-now'
-  | 'register-now-insights'
-  | 'register-now-rhc'
-  | 'register-satellite'
-  | 'register-aap';
-
-export type ComplianceType = 'none' | 'openscap' | 'compliance';
-
-export type UserWithAdditionalInfo = {
-  [K in keyof User]-?: NonNullable<User[K]>;
-} & {
-  isAdministrator: boolean;
-};
-
-type UserPayload = {
-  index: number;
-  name: string;
-};
-
-type UserPasswordPayload = {
-  index: number;
-  password: string;
-};
-
-type UserSshKeyPayload = {
-  index: number;
-  sshKey: string;
-};
-
-type UserAdministratorPayload = {
-  index: number;
-  isAdministrator: boolean;
-};
-
-type UserGroupPayload = {
-  index: number;
-  group: string;
-};
-
-type UserGroupNamePayload = {
-  index: number;
-  name: string;
-};
-
-type UserGroupGidPayload = {
-  index: number;
-  gid: number | undefined;
-};
-
-export type UserGroup = {
-  name: string;
-  gid?: number;
-};
-
-export type wizardState = {
-  details: {
-    blueprintId?: string;
-    mode: WizardModeOptions;
-    blueprint: {
-      name: string;
-      isCustomName: boolean;
-      description: string;
-      mode: BlueprintModeOptions;
-    };
-    metadata?: {
-      parent_id: string | null;
-      exported_at: string;
-      is_on_prem: boolean;
-    };
-  };
-  output: {
-    imageSource?: ImageSource | undefined;
-    isoPayloadReference?: string | undefined;
-    bootcDistributions: BootcDistributionItem[];
-    architecture: ImageRequest['architecture'];
-    distribution: Distributions;
-    imageTypes: ImageTypes[];
-  };
-  cloudProviders: {
-    aws: {
-      accountId: string;
-      shareMethod: AwsShareMethod;
-      source: V1ListSourceResponseItem | undefined;
-      sourceId?: string | undefined;
-      region?: string | undefined;
-    };
-    azure: {
-      tenantId: string | undefined;
-      subscriptionId: string | undefined;
-      resourceGroup: string | undefined;
-      hyperVGeneration: 'V1' | 'V2';
-    };
-    gcp: {
-      accountType: GcpAccountType;
-      email: string;
-    };
-  };
-  registration: {
-    serverUrl: string;
-    baseUrl: string;
-    proxy: string | undefined;
-    type: RegistrationType;
-    activationKey: ActivationKeys['name'];
-    orgId: string | undefined;
-    satelliteRegistration: {
-      command: string | undefined;
-      caCert: string | undefined;
-    };
-    aap: {
-      enabled: boolean;
-      callbackUrl: string | undefined;
-      hostConfigKey: string | undefined;
-      tlsCertificateAuthority: string | undefined;
-      skipTlsVerification: boolean | undefined;
-    };
-  };
-  compliance: {
-    type: ComplianceType;
-    policyID: string | undefined;
-    profileID: string | undefined;
-    policyTitle: string | undefined;
-    fips: {
-      enabled: boolean;
-    };
-  };
-  filesystem: FilesystemSlice;
-  content: {
-    repositories: {
-      customRepositories: CustomRepository[];
-      payloadRepositories: Repository[];
-      recommendedRepositories: ApiRepositoryResponseRead[];
-      redHatRepositories: Repository[];
-    };
-    packages: IBPackageWithRepositoryInfo[];
-    enabledModules: Module[];
-    groups: GroupWithRepositoryInfo[];
-    snapshotting: {
-      useLatest: boolean;
-      snapshotDate: string;
-      template: string;
-      templateName: string;
-    };
-    verifiedLocaleLangpacks: string[];
-  };
-  system: {
-    services: {
-      enabled: string[];
-      masked: string[];
-      disabled: string[];
-    };
-    kernel: {
-      name: string;
-      append: string[];
-    };
-    locale: Locale;
-    timezone: Timezone;
-    hostname: string;
-    firewall: {
-      ports: string[];
-      services: {
-        enabled: string[];
-        disabled: string[];
-      };
-    };
-    firstBoot: {
-      script: string;
-    };
-    users: UserWithAdditionalInfo[];
-    groups: UserGroup[];
-  };
-};
-
-export const initialState: wizardState = {
+export const initialState: WizardState = {
   details: {
     mode: 'create',
     blueprint: {
@@ -800,7 +629,7 @@ export const wizardSlice = createSlice({
   initialState,
   reducers: {
     initializeWizard: () => initialState,
-    loadWizardState: (state, action: PayloadAction<wizardState>) =>
+    loadWizardState: (state, action: PayloadAction<WizardState>) =>
       action.payload,
     changeServerUrl: (state, action: PayloadAction<string>) => {
       state.registration.serverUrl = action.payload;

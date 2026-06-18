@@ -12,13 +12,13 @@ import {
   loadWizardState,
   removeImageType,
   wizardReducer,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 describe('wizardSlice core reducers', () => {
   describe('initializeWizard', () => {
     it('should reset state to initial state', () => {
-      const modifiedState: wizardState = {
+      const modifiedState: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -38,7 +38,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should reset users array to empty', () => {
-      const stateWithUsers: wizardState = {
+      const stateWithUsers: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -61,7 +61,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should reset partitions to empty arrays', () => {
-      const stateWithPartitions: wizardState = {
+      const stateWithPartitions: WizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -97,7 +97,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('loadWizardState', () => {
     it('should load provided state', () => {
-      const stateToLoad: wizardState = {
+      const stateToLoad: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -118,7 +118,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should completely replace existing state', () => {
-      const existingState: wizardState = {
+      const existingState: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -136,7 +136,7 @@ describe('wizardSlice core reducers', () => {
         },
       };
 
-      const newState: wizardState = {
+      const newState: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -195,7 +195,7 @@ describe('wizardSlice core reducers', () => {
 
     describe('removeImageType', () => {
       it('should remove an existing image type', () => {
-        const stateWithTypes: wizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -209,7 +209,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should do nothing when removing non-existent type', () => {
-        const stateWithTypes: wizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -225,7 +225,7 @@ describe('wizardSlice core reducers', () => {
 
     describe('changeImageTypes', () => {
       it('should replace all image types', () => {
-        const stateWithTypes: wizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -242,7 +242,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should set empty array', () => {
-        const stateWithTypes: wizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -256,7 +256,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
-        const stateWithIso: wizardState = {
+        const stateWithIso: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -277,7 +277,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('clearLocale', () => {
     it('should reset languages and keyboard', () => {
-      const stateWithLocale: wizardState = {
+      const stateWithLocale: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -304,7 +304,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('clearTimezone', () => {
     it('should reset timezone and ntpservers', () => {
-      const stateWithTimezone: wizardState = {
+      const stateWithTimezone: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
