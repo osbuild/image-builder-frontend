@@ -155,7 +155,6 @@ export type WizardState = {
       enabled: boolean;
     };
   };
-  filesystem: FilesystemSlice;
   content: {
     repositories: {
       customRepositories: CustomRepository[];
@@ -201,3 +200,5 @@ export type WizardState = {
     groups: UserGroup[];
   };
 };
+
+export type CombinedWizardState = WizardState & { filesystem: FilesystemSlice };

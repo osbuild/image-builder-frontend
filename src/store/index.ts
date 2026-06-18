@@ -22,7 +22,7 @@ import {
   selectIsImageMode,
   selectIsOnPremise,
   wizardModalSlice,
-  wizardSlice,
+  wizardReducer,
 } from './slices';
 
 export const serviceReducer = combineReducers({
@@ -31,7 +31,7 @@ export const serviceReducer = combineReducers({
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
-  wizard: wizardSlice.reducer,
+  wizard: wizardReducer,
   wizardModal: wizardModalSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,
@@ -46,7 +46,7 @@ export const onPremReducer = combineReducers({
   // TODO: add other endpoints so we can remove this.
   // It's still needed to get things to work.
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
-  wizard: wizardSlice.reducer,
+  wizard: wizardReducer,
   wizardModal: wizardModalSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,

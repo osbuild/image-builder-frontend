@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { serviceMiddleware, serviceReducer } from '@/store';
 import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
-import { initialState } from '@/store/slices/wizard';
+import { combinedInitialState as initialState } from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,

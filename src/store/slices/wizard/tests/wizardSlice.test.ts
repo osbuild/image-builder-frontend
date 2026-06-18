@@ -7,18 +7,18 @@ import {
   changeImageTypes,
   clearLocale,
   clearTimezone,
+  type CombinedWizardState,
   initializeWizard,
-  initialState,
+  combinedInitialState as initialState,
   loadWizardState,
   removeImageType,
   wizardReducer,
-  type WizardState,
 } from '@/store/slices/wizard';
 
 describe('wizardSlice core reducers', () => {
   describe('initializeWizard', () => {
     it('should reset state to initial state', () => {
-      const modifiedState: WizardState = {
+      const modifiedState: CombinedWizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -38,7 +38,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should reset users array to empty', () => {
-      const stateWithUsers: WizardState = {
+      const stateWithUsers: CombinedWizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -61,7 +61,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should reset partitions to empty arrays', () => {
-      const stateWithPartitions: WizardState = {
+      const stateWithPartitions: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -96,8 +96,8 @@ describe('wizardSlice core reducers', () => {
   });
 
   describe('loadWizardState', () => {
-    it('should load provided state', () => {
-      const stateToLoad: WizardState = {
+    it('should load provided state across all slices', () => {
+      const stateToLoad: CombinedWizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -108,6 +108,15 @@ describe('wizardSlice core reducers', () => {
           ...initialState.system,
           hostname: 'loaded-hostname',
         },
+        filesystem: {
+          ...initialState.filesystem,
+          mode: 'basic',
+          disk: {
+            ...initialState.filesystem.disk,
+            minsize: '20',
+            unit: 'GiB',
+          },
+        },
       };
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
@@ -115,10 +124,12 @@ describe('wizardSlice core reducers', () => {
       expect(result.output.distribution).toBe('rhel-9');
       expect(result.output.architecture).toBe('aarch64');
       expect(result.system.hostname).toBe('loaded-hostname');
+      expect(result.filesystem.mode).toBe('basic');
+      expect(result.filesystem.disk.minsize).toBe('20');
     });
 
     it('should completely replace existing state', () => {
-      const existingState: WizardState = {
+      const existingState: CombinedWizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -136,7 +147,7 @@ describe('wizardSlice core reducers', () => {
         },
       };
 
-      const newState: WizardState = {
+      const newState: CombinedWizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -149,6 +160,17 @@ describe('wizardSlice core reducers', () => {
 
       expect(result.system.hostname).toBe('new-hostname');
       expect(result.system.users).toEqual([]);
+    });
+
+    it('loadWizardState should fall back to initialState when filesystem is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        filesystem: undefined,
+      } as unknown as CombinedWizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.filesystem).toEqual(initialState.filesystem);
     });
   });
 
@@ -195,7 +217,7 @@ describe('wizardSlice core reducers', () => {
 
     describe('removeImageType', () => {
       it('should remove an existing image type', () => {
-        const stateWithTypes: WizardState = {
+        const stateWithTypes: CombinedWizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -209,7 +231,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should do nothing when removing non-existent type', () => {
-        const stateWithTypes: WizardState = {
+        const stateWithTypes: CombinedWizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -225,7 +247,7 @@ describe('wizardSlice core reducers', () => {
 
     describe('changeImageTypes', () => {
       it('should replace all image types', () => {
-        const stateWithTypes: WizardState = {
+        const stateWithTypes: CombinedWizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -242,7 +264,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should set empty array', () => {
-        const stateWithTypes: WizardState = {
+        const stateWithTypes: CombinedWizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -256,7 +278,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
-        const stateWithIso: WizardState = {
+        const stateWithIso: CombinedWizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -277,7 +299,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('clearLocale', () => {
     it('should reset languages and keyboard', () => {
-      const stateWithLocale: WizardState = {
+      const stateWithLocale: CombinedWizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -304,7 +326,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('clearTimezone', () => {
     it('should reset timezone and ntpservers', () => {
-      const stateWithTimezone: WizardState = {
+      const stateWithTimezone: CombinedWizardState = {
         ...initialState,
         system: {
           ...initialState.system,

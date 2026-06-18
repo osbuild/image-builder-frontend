@@ -1,5 +1,9 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  createSelector,
+  createSlice,
+  PayloadAction,
+  Reducer,
+} from '@reduxjs/toolkit';
 
 import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
 import type { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
@@ -16,7 +20,6 @@ import type {
   Distributions,
   ImageRequest,
   ImageTypes,
-  LogicalVolume,
   Module,
   Repository,
 } from '@/store/api/backend';
@@ -26,19 +29,10 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import {
-  DiskPartition,
-  DiskPartitionBase,
-  FilesystemMode,
-  FilesystemPartition,
-  filesystemState,
-  FSType,
-  PartitioningCustomization,
-  PartitioningModeType,
-  Units,
-} from './filesystem';
+import { filesystemSlice, filesystemState } from './filesystem';
 import {
   BlueprintModeOptions,
+  CombinedWizardState,
   ComplianceType,
   ImageSource,
   RegistrationType,
@@ -118,7 +112,6 @@ export const initialState: WizardState = {
       enabled: false,
     },
   },
-  filesystem: filesystemState,
   content: {
     repositories: {
       customRepositories: [],
@@ -680,341 +673,6 @@ export const wizardSlice = createSlice({
     setOscapProfile: (state, action: PayloadAction<string | undefined>) => {
       state.compliance.profileID = action.payload;
     },
-    changeFileSystemConfiguration: (
-      state,
-      action: PayloadAction<FilesystemPartition[]>,
-    ) => {
-      state.filesystem.fileSystem.partitions = action.payload;
-    },
-    changeFscMode: (state, action: PayloadAction<FilesystemMode>) => {
-      const currentMode = state.filesystem.mode;
-
-      // Only trigger if mode is being *changed*
-      if (currentMode !== action.payload) {
-        state.filesystem.mode = action.payload;
-        switch (action.payload) {
-          case 'automatic':
-            state.filesystem.fileSystem.partitions = [];
-            break;
-          case 'basic':
-            state.filesystem.fileSystem.partitions = [
-              {
-                id: uuidv4(),
-                mountpoint: '/',
-                min_size: '10',
-                unit: 'GiB',
-              },
-            ];
-            break;
-          case 'advanced':
-            state.filesystem.disk.partitions = [
-              {
-                id: uuidv4(),
-                mountpoint: '/',
-                fs_type: 'xfs',
-                min_size: '10',
-                unit: 'GiB',
-                type: 'plain',
-              },
-            ];
-            break;
-        }
-      }
-    },
-    clearPartitions: (state) => {
-      const currentMode = state.filesystem.mode;
-
-      if (currentMode === 'basic') {
-        state.filesystem.fileSystem.partitions = [
-          {
-            id: uuidv4(),
-            mountpoint: '/',
-            min_size: '10',
-            unit: 'GiB',
-          },
-        ];
-      }
-    },
-    addPartition: (state, action: PayloadAction<FilesystemPartition>) => {
-      // Duplicate partitions are allowed temporarily, the wizard is responsible for final validation
-      state.filesystem.fileSystem.partitions.push(action.payload);
-    },
-    removePartition: (
-      state,
-      action: PayloadAction<FilesystemPartition['id']>,
-    ) => {
-      const index = state.filesystem.fileSystem.partitions.findIndex(
-        (partition) => partition.id === action.payload,
-      );
-      if (index !== -1) {
-        state.filesystem.fileSystem.partitions.splice(index, 1);
-      }
-    },
-    removePartitionByMountpoint: (
-      state,
-      action: PayloadAction<FilesystemPartition['mountpoint']>,
-    ) => {
-      const index = state.filesystem.fileSystem.partitions.findIndex(
-        (partition) => partition.mountpoint === action.payload,
-      );
-      if (index !== -1) {
-        state.filesystem.fileSystem.partitions.splice(index, 1);
-      }
-    },
-    changePartitionMountpoint: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        mountpoint: string;
-        customization: PartitioningCustomization;
-      }>,
-    ) => {
-      const { id, mountpoint, customization } = action.payload;
-      const partitionIndex = state.filesystem[
-        customization
-      ].partitions.findIndex((partition) => partition.id === id);
-
-      if (partitionIndex !== -1) {
-        if (
-          'mountpoint' in
-          state.filesystem[customization].partitions[partitionIndex]
-        ) {
-          state.filesystem[customization].partitions[
-            partitionIndex
-          ].mountpoint = mountpoint;
-          return;
-        }
-      }
-
-      for (const partition of state.filesystem.disk.partitions) {
-        if (partition.type === 'lvm') {
-          const logicalVolumeIndex = partition.logical_volumes.findIndex(
-            (lv) => lv.id === id,
-          );
-
-          if (logicalVolumeIndex !== -1) {
-            partition.logical_volumes[logicalVolumeIndex].mountpoint =
-              mountpoint;
-          }
-        }
-      }
-    },
-    changePartitionUnit: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        unit: Units;
-        customization: PartitioningCustomization;
-      }>,
-    ) => {
-      const { id, unit, customization } = action.payload;
-      const partitionIndex = state.filesystem[
-        customization
-      ].partitions.findIndex((partition) => partition.id === id);
-      if (partitionIndex !== -1) {
-        state.filesystem[customization].partitions[partitionIndex].unit = unit;
-        return;
-      }
-
-      for (const partition of state.filesystem.disk.partitions) {
-        if (partition.type === 'lvm') {
-          const logicalVolumeIndex = partition.logical_volumes.findIndex(
-            (lv) => lv.id === id,
-          );
-
-          if (logicalVolumeIndex !== -1) {
-            partition.logical_volumes[logicalVolumeIndex].unit = unit;
-          }
-        }
-      }
-    },
-    changePartitionMinSize: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        min_size: string;
-        customization: PartitioningCustomization;
-      }>,
-    ) => {
-      const { id, min_size, customization } = action.payload;
-      const partitionIndex = state.filesystem[
-        customization
-      ].partitions.findIndex((partition) => partition.id === id);
-      if (partitionIndex !== -1) {
-        state.filesystem[customization].partitions[partitionIndex].min_size =
-          min_size;
-        return;
-      }
-
-      for (const partition of state.filesystem.disk.partitions) {
-        if (partition.type === 'lvm') {
-          const logicalVolumeIndex = partition.logical_volumes.findIndex(
-            (lv) => lv.id === id,
-          );
-
-          if (logicalVolumeIndex !== -1) {
-            partition.logical_volumes[logicalVolumeIndex].min_size = min_size;
-          }
-        }
-      }
-    },
-    changePartitionType: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        fs_type: FSType;
-        customization: PartitioningCustomization;
-      }>,
-    ) => {
-      const { id, fs_type, customization } = action.payload;
-      const partitionIndex = state.filesystem[
-        customization
-      ].partitions.findIndex((partition) => partition.id === id);
-      if (
-        partitionIndex !== -1 &&
-        'fs_type' in state.filesystem[customization].partitions[partitionIndex]
-      ) {
-        state.filesystem[customization].partitions[partitionIndex].fs_type =
-          fs_type;
-        return;
-      }
-
-      for (const partition of state.filesystem.disk.partitions) {
-        if (partition.type === 'lvm') {
-          const logicalVolumeIndex = partition.logical_volumes.findIndex(
-            (lv) => lv.id === id,
-          );
-
-          if (logicalVolumeIndex !== -1) {
-            partition.logical_volumes[logicalVolumeIndex].fs_type = fs_type;
-          }
-        }
-      }
-    },
-    changePartitionName: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        name: string;
-        customization: PartitioningCustomization;
-      }>,
-    ) => {
-      const { id, name, customization } = action.payload;
-      const partitionIndex = state.filesystem[
-        customization
-      ].partitions.findIndex((partition) => partition.id === id);
-      if (
-        partitionIndex !== -1 &&
-        'name' in state.filesystem[customization].partitions[partitionIndex]
-      ) {
-        state.filesystem[customization].partitions[partitionIndex].name = name;
-        return;
-      }
-
-      for (const partition of state.filesystem.disk.partitions) {
-        if (partition.type === 'lvm') {
-          const logicalVolumeIndex = partition.logical_volumes.findIndex(
-            (lv) => lv.id === id,
-          );
-
-          if (logicalVolumeIndex !== -1) {
-            partition.logical_volumes[logicalVolumeIndex].name = name;
-          }
-        }
-      }
-    },
-    changeDiskMinsize: (state, action: PayloadAction<string>) => {
-      state.filesystem.disk.minsize = action.payload;
-    },
-    changeDiskUnit: (state, action: PayloadAction<Units>) => {
-      state.filesystem.disk.unit = action.payload;
-    },
-    changeDiskType: (
-      state,
-      action: PayloadAction<'gpt' | 'dos' | undefined>,
-    ) => {
-      state.filesystem.disk.type = action.payload;
-    },
-    addDiskPartition: (state, action: PayloadAction<DiskPartition>) => {
-      state.filesystem.disk.partitions.push(action.payload);
-    },
-    removeDiskPartition: (
-      state,
-      action: PayloadAction<DiskPartition['id']>,
-    ) => {
-      const index = state.filesystem.disk.partitions.findIndex(
-        (partition) => partition.id === action.payload,
-      );
-      if (index !== -1) {
-        state.filesystem.disk.partitions.splice(index, 1);
-        return;
-      }
-
-      for (const partition of state.filesystem.disk.partitions) {
-        if (partition.type === 'lvm') {
-          const logicalVolumeIndex = partition.logical_volumes.findIndex(
-            (lv) => lv.id === action.payload,
-          );
-
-          if (logicalVolumeIndex !== -1) {
-            partition.logical_volumes.splice(logicalVolumeIndex, 1);
-          }
-        }
-      }
-    },
-    changeDiskPartitionMinsize: (
-      state,
-      action: PayloadAction<{ id: string; min_size: string }>,
-    ) => {
-      const { id, min_size } = action.payload;
-      const partitionIndex = state.filesystem.disk.partitions.findIndex(
-        (partition) => partition.id === id,
-      );
-      if (partitionIndex !== -1) {
-        state.filesystem.disk.partitions[partitionIndex].min_size = min_size;
-      }
-    },
-    changeDiskPartitionName: (
-      state,
-      action: PayloadAction<{ id: string; name: string }>,
-    ) => {
-      const { id, name } = action.payload;
-      const partitionIndex = state.filesystem.disk.partitions.findIndex(
-        (partition) => partition.id === id,
-      );
-      if (
-        partitionIndex !== -1 &&
-        'name' in state.filesystem.disk.partitions[partitionIndex]
-      ) {
-        state.filesystem.disk.partitions[partitionIndex].name = name;
-      }
-    },
-    addLogicalVolumeToVolumeGroup: (
-      state,
-      action: PayloadAction<{
-        vgId: string;
-        logicalVolume: LogicalVolume & DiskPartitionBase;
-      }>,
-    ) => {
-      const { vgId, logicalVolume } = action.payload;
-      const partitionIndex = state.filesystem.disk.partitions.findIndex(
-        (partition) => partition.id === vgId,
-      );
-      if (
-        partitionIndex !== -1 &&
-        'logical_volumes' in state.filesystem.disk.partitions[partitionIndex]
-      ) {
-        state.filesystem.disk.partitions[partitionIndex].logical_volumes.push(
-          logicalVolume,
-        );
-      }
-    },
-    changePartitioningMode: (
-      state,
-      action: PayloadAction<PartitioningModeType>,
-    ) => {
-      state.filesystem.partitioningMode = action.payload;
-    },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.content.snapshotting.snapshotDate === '') {
         state.content.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
@@ -1549,26 +1207,6 @@ export const {
   setCompliancePolicy,
   setOscapProfile,
   changeComplianceType,
-  changeFileSystemConfiguration,
-  changeFscMode,
-  clearPartitions,
-  addPartition,
-  removePartition,
-  removePartitionByMountpoint,
-  changePartitionMountpoint,
-  changePartitionUnit,
-  changePartitionMinSize,
-  changePartitionType,
-  changePartitionName,
-  changeDiskMinsize,
-  changeDiskUnit,
-  changeDiskType,
-  addDiskPartition,
-  removeDiskPartition,
-  changeDiskPartitionMinsize,
-  changeDiskPartitionName,
-  addLogicalVolumeToVolumeGroup,
-  changePartitioningMode,
   changeUseLatest,
   changeSnapshotDate,
   changeTemplate,
@@ -1641,4 +1279,25 @@ export const {
   changeFips,
   setVerifiedLocaleLangpacks,
 } = wizardSlice.actions;
-export const wizardReducer = wizardSlice.reducer;
+
+// we can't use RTK query's `combineSlices` helper yet, we
+// first need to convert all the items into submodules and
+// then we can compose the slice using the `combineSlices`.
+// The reason for this is that there is no way to nest the
+// child slice under the parent slice yet, we would need
+// to temporarily change the slice shape, which is not ideal
+export const combinedInitialState: CombinedWizardState = {
+  ...initialState,
+  filesystem: filesystemState,
+};
+
+export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
+  const coreState = wizardSlice.reducer(
+    state as WizardState | undefined,
+    action,
+  );
+  return {
+    ...coreState,
+    filesystem: filesystemSlice.reducer(state?.filesystem, action),
+  };
+};
