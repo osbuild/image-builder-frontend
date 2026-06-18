@@ -7,6 +7,9 @@ import {
 
 export type PartitioningCustomization = 'disk' | 'fileSystem';
 
+export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
+
+export type FilesystemMode = 'automatic' | 'basic' | 'advanced';
 export type FilesystemPartition = {
   id: string;
   mountpoint: string;
@@ -55,4 +58,13 @@ export type MountpointPolicyType = {
 
 export type MountpointPoliciesType = {
   [mountpoint: string]: MountpointPolicyType;
+};
+
+export type FilesystemSlice = {
+  mode: FilesystemMode;
+  disk: FscDisk;
+  fileSystem: {
+    partitions: FilesystemPartition[];
+  };
+  partitioningMode: PartitioningModeType;
 };

@@ -15,8 +15,6 @@ import FileSystemPartition from './components/FileSystemPartition';
 const DOCS_URL =
   'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html-single/deploying_and_managing_rhel_systems_in_hybrid_clouds/index#additional-modifications-to-a-blueprint_creating-blueprints-and-blueprint-images';
 
-export type FscModeType = 'automatic' | 'basic' | 'advanced';
-
 const FileSystemStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const fscMode = useAppSelector(selectFscMode);
