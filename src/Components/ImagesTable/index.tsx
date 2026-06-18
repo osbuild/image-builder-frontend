@@ -65,11 +65,7 @@ import {
 import ImagesTableToolbar from './components/ImagesTableToolbar';
 import { AwsS3Instance, LocalInstance } from './components/Instance';
 import Release from './components/Release';
-import {
-  CloudStatus,
-  ExpiringStatus,
-  LocalStatus,
-} from './components/Status/Status';
+import { CloudStatus, ExpiringStatus, LocalStatus } from './components/Status';
 import { AwsTarget, Target } from './components/Target';
 
 import {
