@@ -1,5 +1,5 @@
 export { default as AwsDetailsStatus } from './components/AwsDetailsStatus';
-export { default as Azurestatus } from './components/Azurestatus';
+export { default as AzureStatus } from './components/AzureStatus';
 export { default as CloudStatus } from './components/CloudStatus';
 export { default as ErrorStatus } from './components/ErrorStatus';
 export { default as ExpiringStatus } from './components/ExpiringStatus';
