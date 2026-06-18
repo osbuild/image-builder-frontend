@@ -13,9 +13,9 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
-import { FscModeType } from '@/Components/CreateImageWizard/steps/FileSystem';
 import {
   changeFscMode,
+  FilesystemMode,
   selectComplianceProfileID,
   selectFscMode,
 } from '@/store/slices/wizard';
@@ -54,7 +54,7 @@ const FileSystemPartition = () => {
   }
 
   const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
-    dispatch(changeFscMode(selection as FscModeType));
+    dispatch(changeFscMode(selection as FilesystemMode));
     setIsOpen(false);
   };
 

@@ -1,7 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { FscModeType } from '@/Components/CreateImageWizard/steps/FileSystem';
 import { getConversionFactor } from '@/Components/CreateImageWizard/steps/FileSystem/fscUtilities';
 import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
 import type { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
@@ -34,10 +33,12 @@ import { yyyyMMddFormat } from '@/Utilities/time';
 import type {
   DiskPartition,
   DiskPartitionBase,
+  FilesystemMode,
   FilesystemPartition,
-  FscDisk,
+  FilesystemSlice,
   FSType,
   PartitioningCustomization,
+  PartitioningModeType,
   Units,
 } from './filesystem';
 
@@ -58,8 +59,6 @@ export type RegistrationType =
   | 'register-now-rhc'
   | 'register-satellite'
   | 'register-aap';
-
-export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
 
 export type ComplianceType = 'none' | 'openscap' | 'compliance';
 
@@ -180,14 +179,7 @@ export type wizardState = {
       enabled: boolean;
     };
   };
-  filesystem: {
-    mode: FscModeType;
-    disk: FscDisk;
-    fileSystem: {
-      partitions: FilesystemPartition[];
-    };
-    partitioningMode: PartitioningModeType;
-  };
+  filesystem: FilesystemSlice;
   content: {
     repositories: {
       customRepositories: CustomRepository[];
@@ -989,7 +981,7 @@ export const wizardSlice = createSlice({
     ) => {
       state.filesystem.fileSystem.partitions = action.payload;
     },
-    changeFscMode: (state, action: PayloadAction<FscModeType>) => {
+    changeFscMode: (state, action: PayloadAction<FilesystemMode>) => {
       const currentMode = state.filesystem.mode;
 
       // Only trigger if mode is being *changed*

@@ -41,6 +41,7 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   ComplianceType,
   DiskPartition,
+  FilesystemMode,
   FilesystemPartition,
   initialState,
   RegistrationType,
@@ -128,7 +129,6 @@ import {
 } from '../../../constants';
 import { RootState } from '../../../store';
 import isRhel from '../../../Utilities/isRhel';
-import { FscModeType } from '../steps/FileSystem';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { AwsShareMethod } from '../steps/ImageOutput/components/Aws';
 import { GcpAccountType } from '../steps/ImageOutput/components/Gcp';
@@ -504,10 +504,10 @@ function commonRequestToState(
             },
     filesystem: {
       mode: request.customizations.filesystem
-        ? ('basic' as FscModeType)
+        ? ('basic' as FilesystemMode)
         : request.customizations.disk
-          ? ('advanced' as FscModeType)
-          : ('automatic' as FscModeType),
+          ? ('advanced' as FilesystemMode)
+          : ('automatic' as FilesystemMode),
       disk: request.customizations.disk
         ? (() => {
             const [size, unit] =
