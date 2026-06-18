@@ -39,6 +39,7 @@ import {
 import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  CombinedWizardState,
   ComplianceType,
   convertToBytes,
   DiskPartition,
@@ -112,7 +113,6 @@ import {
   selectVerifiedLocaleLangpacks,
   Units,
   UserWithAdditionalInfo,
-  WizardState,
 } from '@/store/slices/wizard';
 
 import {
@@ -639,9 +639,11 @@ function commonRequestToState(
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
  * @param source  V1ListSourceResponseItem
- * @returns wizardState
+ * @returns CombinedWizardState
  */
-export const mapRequestToState = (request: BlueprintResponse): WizardState => {
+export const mapRequestToState = (
+  request: BlueprintResponse,
+): CombinedWizardState => {
   const commonState = commonRequestToState(request);
   return {
     ...commonState,
@@ -727,7 +729,7 @@ const getMetadata = (metadata: BlueprintMetadata) => {
 export const mapBlueprintExportToState = (
   blueprint: BlueprintExportResponse,
   image_requests: ImageRequest[],
-): WizardState => {
+): CombinedWizardState => {
   const blueprintResponse: CreateBlueprintRequest = {
     name: blueprint.name,
     description: blueprint.description,

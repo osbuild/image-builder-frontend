@@ -4,7 +4,8 @@ import {
   changeBlueprintDescription,
   changeBlueprintMode,
   changeBlueprintName,
-  initialState,
+  type CombinedWizardState,
+  combinedInitialState as initialState,
   loadWizardState,
   selectBlueprintDescription,
   selectBlueprintId,
@@ -15,7 +16,6 @@ import {
   selectWizardMode,
   setIsCustomName,
   wizardReducer,
-  type WizardState,
 } from '@/store/slices/wizard';
 
 import { createMockState } from './mockWizardState';
@@ -53,7 +53,7 @@ describe('details submodule', () => {
     });
 
     it('loadWizardState should load full state including details', () => {
-      const stateToLoad: WizardState = {
+      const stateToLoad: CombinedWizardState = {
         ...initialState,
         details: {
           ...initialState.details,

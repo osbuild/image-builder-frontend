@@ -33,7 +33,7 @@ import {
   useBulkImportRepositoriesMutation,
 } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { loadWizardState, WizardState } from '@/store/slices/wizard';
+import { CombinedWizardState, loadWizardState } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
@@ -65,7 +65,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
-    React.useState<WizardState>();
+    React.useState<CombinedWizardState>();
   const [isInvalidFormat, setIsInvalidFormat] = React.useState(false);
   const [filename, setFilename] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);

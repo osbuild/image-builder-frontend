@@ -10,12 +10,12 @@ import {
   changeAzureTenantId,
   changeGcpAccountType,
   changeGcpEmail,
-  initialState,
+  type CombinedWizardState,
+  combinedInitialState as initialState,
   reinitializeAws,
   reinitializeAzure,
   reinitializeGcp,
   wizardReducer,
-  type WizardState,
 } from '@/store/slices/wizard';
 
 describe('target environment reducers', () => {
@@ -42,7 +42,7 @@ describe('target environment reducers', () => {
       });
 
       it('should clear source ID with undefined', () => {
-        const stateWithSource: WizardState = {
+        const stateWithSource: CombinedWizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,
@@ -75,7 +75,7 @@ describe('target environment reducers', () => {
 
     describe('reinitializeAws', () => {
       it('should reset all AWS fields to defaults', () => {
-        const modifiedState: WizardState = {
+        const modifiedState: CombinedWizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,
@@ -98,7 +98,7 @@ describe('target environment reducers', () => {
       });
 
       it('should not affect other state', () => {
-        const modifiedState: WizardState = {
+        const modifiedState: CombinedWizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,
@@ -181,7 +181,7 @@ describe('target environment reducers', () => {
 
     describe('reinitializeAzure', () => {
       it('should reset all Azure fields to undefined', () => {
-        const modifiedState: WizardState = {
+        const modifiedState: CombinedWizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,
@@ -202,7 +202,7 @@ describe('target environment reducers', () => {
       });
 
       it('should preserve hyperVGeneration', () => {
-        const modifiedState: WizardState = {
+        const modifiedState: CombinedWizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,
@@ -274,7 +274,7 @@ describe('target environment reducers', () => {
 
     describe('reinitializeGcp', () => {
       it('should reset all GCP fields to defaults', () => {
-        const modifiedState: WizardState = {
+        const modifiedState: CombinedWizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,

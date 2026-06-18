@@ -8,7 +8,8 @@ import {
   changePartitionMountpoint,
   changePartitionUnit,
   clearPartitions,
-  initialState,
+  type CombinedWizardState,
+  combinedInitialState as initialState,
   removePartition,
   removePartitionByMountpoint,
   selectAdvancedPartitionCount,
@@ -17,7 +18,6 @@ import {
   selectLogicalVolumeCount,
   selectPartitionCount,
   wizardReducer,
-  type WizardState,
 } from '@/store/slices/wizard';
 
 import {
@@ -32,7 +32,7 @@ const createPartition = createBasicPartition;
 describe('filesystem reducers', () => {
   describe('changeFscMode', () => {
     it('should set mode to automatic and clear partitions', () => {
-      const stateWithPartitions: WizardState = {
+      const stateWithPartitions: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -76,7 +76,7 @@ describe('filesystem reducers', () => {
     });
 
     it('should not change state when mode is same as current', () => {
-      const stateWithBasicMode: WizardState = {
+      const stateWithBasicMode: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -102,7 +102,7 @@ describe('filesystem reducers', () => {
 
   describe('clearPartitions', () => {
     it('should reset to default root partition in basic mode', () => {
-      const stateWithPartitions: WizardState = {
+      const stateWithPartitions: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -125,7 +125,7 @@ describe('filesystem reducers', () => {
     });
 
     it('should do nothing in automatic mode', () => {
-      const state: WizardState = {
+      const state: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -152,7 +152,7 @@ describe('filesystem reducers', () => {
     });
 
     it('should add partition to existing list', () => {
-      const stateWithPartition: WizardState = {
+      const stateWithPartition: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -172,7 +172,7 @@ describe('filesystem reducers', () => {
     });
 
     it('should allow duplicate mountpoints (validation handled elsewhere)', () => {
-      const stateWithPartition: WizardState = {
+      const stateWithPartition: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -203,7 +203,7 @@ describe('filesystem reducers', () => {
 
   describe('removePartition', () => {
     it('should remove partition by id', () => {
-      const stateWithPartitions: WizardState = {
+      const stateWithPartitions: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -226,7 +226,7 @@ describe('filesystem reducers', () => {
     });
 
     it('should do nothing when id not found', () => {
-      const stateWithPartitions: WizardState = {
+      const stateWithPartitions: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -247,7 +247,7 @@ describe('filesystem reducers', () => {
 
   describe('removePartitionByMountpoint', () => {
     it('should remove partition by mountpoint', () => {
-      const stateWithPartitions: WizardState = {
+      const stateWithPartitions: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -270,7 +270,7 @@ describe('filesystem reducers', () => {
     });
 
     it('should only remove first matching partition', () => {
-      const stateWithDuplicates: WizardState = {
+      const stateWithDuplicates: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -294,7 +294,7 @@ describe('filesystem reducers', () => {
 
   describe('changePartitionMountpoint', () => {
     it('should update partition mountpoint', () => {
-      const stateWithPartition: WizardState = {
+      const stateWithPartition: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -321,7 +321,7 @@ describe('filesystem reducers', () => {
 
   describe('changePartitionUnit', () => {
     it('should update partition unit', () => {
-      const stateWithPartition: WizardState = {
+      const stateWithPartition: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -346,7 +346,7 @@ describe('filesystem reducers', () => {
 
   describe('changePartitionMinSize', () => {
     it('should update partition min_size', () => {
-      const stateWithPartition: WizardState = {
+      const stateWithPartition: CombinedWizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -371,7 +371,9 @@ describe('filesystem reducers', () => {
 });
 
 // Helper to create minimal RootState for selector tests
-const createState = (wizardOverrides: Partial<WizardState>): RootState => {
+const createState = (
+  wizardOverrides: Partial<CombinedWizardState>,
+): RootState => {
   const { filesystem: fsOverrides, ...rest } = wizardOverrides;
   return {
     wizard: {
