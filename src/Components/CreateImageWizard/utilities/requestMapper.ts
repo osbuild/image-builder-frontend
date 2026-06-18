@@ -40,11 +40,12 @@ import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   ComplianceType,
+  convertToBytes,
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
-  getConversionFactor,
   initialState,
+  parseSizeUnit,
   RegistrationType,
   selectAapCallbackUrl,
   selectAapEnabled,
@@ -113,8 +114,6 @@ import {
   UserWithAdditionalInfo,
   WizardState,
 } from '@/store/slices/wizard';
-
-import { parseSizeUnit } from './parseSizeUnit';
 
 import {
   CENTOS_9,
@@ -1166,18 +1165,11 @@ const getDisk = (state: RootState): Disk | undefined => {
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
   const fscMode = selectFscMode(state);
 
-  const convertToBytes = (minSize: string, conversionFactor: number) => {
-    return minSize.length > 0 ? parseInt(minSize) * conversionFactor : 0;
-  };
-
   if (fscMode === 'basic') {
     const partitions = selectFilesystemPartitions(state);
     const fileSystem = partitions.map((partition) => {
       return {
-        min_size: convertToBytes(
-          partition.min_size,
-          getConversionFactor(partition.unit),
-        ),
+        min_size: convertToBytes(partition.min_size, partition.unit),
         mountpoint: partition.mountpoint,
       };
     });

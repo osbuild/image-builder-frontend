@@ -23,6 +23,32 @@ export const getConversionFactor = (units: Units) => {
   }
 };
 
+export const convertToBytes = (minSize: string, unit: Units): number => {
+  return minSize.length > 0 ? parseInt(minSize) * getConversionFactor(unit) : 0;
+};
+
+export const parseSizeUnit = (bytesize: string): [string, Units] => {
+  const parsed = parseInt(bytesize, 10);
+  let size: number;
+  let unit: Units = 'GiB';
+
+  if (parsed % UNIT_GIB === 0) {
+    size = parsed / UNIT_GIB;
+    unit = 'GiB';
+  } else if (parsed % UNIT_MIB === 0) {
+    size = parsed / UNIT_MIB;
+    unit = 'MiB';
+  } else if (parsed) {
+    size = parsed;
+    unit = 'B';
+  } else {
+    size = 10;
+    unit = 'GiB';
+  }
+
+  return [String(size), unit];
+};
+
 export const isPartitionTypeAvailable = (
   type: FSType,
   partition: FilesystemPartition | DiskPartition,
