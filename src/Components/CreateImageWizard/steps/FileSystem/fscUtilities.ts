@@ -1,4 +1,9 @@
-import { DiskPartition, FilesystemPartition, FSType, Units } from './fscTypes';
+import {
+  DiskPartition,
+  FilesystemPartition,
+  FSType,
+  Units,
+} from '@/store/slices/wizard';
 
 import { UNIT_GIB, UNIT_MIB } from '../../../../constants';
 

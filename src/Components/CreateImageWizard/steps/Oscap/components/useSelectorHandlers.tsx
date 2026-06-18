@@ -14,11 +14,11 @@ import {
   changeMaskedServices,
   clearKernelAppend,
   clearPartitions,
+  FilesystemPartition,
   removePackage,
   selectServices,
+  Units,
 } from '@/store/slices/wizard';
-
-import { FilesystemPartition, Units } from '../../FileSystem/fscTypes';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();

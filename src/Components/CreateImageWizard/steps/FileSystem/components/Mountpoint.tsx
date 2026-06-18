@@ -4,18 +4,16 @@ import { Tooltip } from '@patternfly/react-core';
 
 import {
   changePartitionMountpoint,
+  FilesystemPartition,
+  LogicalVolumeWithBase,
+  PartitioningCustomization,
+  PlainPartitionWithBase,
   selectFilesystemPartitions,
 } from '@/store/slices/wizard';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import {
-  FilesystemPartition,
-  LogicalVolumeWithBase,
-  PartitioningCustomization,
-  PlainPartitionWithBase,
-} from '../fscTypes';
 
 type MountpointProps = {
   partition:

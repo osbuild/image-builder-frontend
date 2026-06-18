@@ -11,16 +11,14 @@ import {
 import {
   changePartitionMinSize,
   changePartitionUnit,
-} from '@/store/slices/wizard';
-
-import { useAppDispatch } from '../../../../../store/hooks';
-import {
   FilesystemPartition,
   LogicalVolumeWithBase,
   PartitioningCustomization,
   Units,
   VolumeGroupWithExtendedLV,
-} from '../fscTypes';
+} from '@/store/slices/wizard';
+
+import { useAppDispatch } from '../../../../../store/hooks';
 
 const units = ['GiB', 'MiB'];
 

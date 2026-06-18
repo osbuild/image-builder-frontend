@@ -11,17 +11,15 @@ import {
 import {
   changePartitionMountpoint,
   changePartitionType,
+  FSType,
+  LogicalVolumeWithBase,
+  PartitioningCustomization,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  FSType,
-  LogicalVolumeWithBase,
-  PartitioningCustomization,
-} from '../fscTypes';
 import {
   getNextAvailableMountpoint,
   isPartitionTypeAvailable,

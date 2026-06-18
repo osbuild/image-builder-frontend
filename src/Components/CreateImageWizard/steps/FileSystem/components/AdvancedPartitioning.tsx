@@ -24,6 +24,7 @@ import {
   selectDiskUnit,
   selectFilesystemPartitions,
   selectIsImageMode,
+  Units,
 } from '@/store/slices/wizard';
 
 import FileSystemTable from './FileSystemTable';
@@ -32,7 +33,6 @@ import VolumeGroups from './VolumeGroups';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { Units } from '../fscTypes';
 import { getNextAvailableMountpoint } from '../fscUtilities';
 
 const units = ['GiB', 'MiB'];

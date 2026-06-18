@@ -1,12 +1,13 @@
 import {
-  ImageModeMountpointPolicies,
-  MountpointPolicies,
-} from './steps/FileSystem/fscPolicies';
-import {
   DiskPartition,
   FilesystemPartition,
   VolumeGroupWithExtendedLV,
-} from './steps/FileSystem/fscTypes';
+} from '@/store/slices/wizard';
+
+import {
+  ImageModeMountpointPolicies,
+  MountpointPolicies,
+} from './steps/FileSystem/fscPolicies';
 
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (

@@ -5,6 +5,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
 import {
+  DiskPartition,
   removeDiskPartition,
   selectDiskPartitions,
 } from '@/store/slices/wizard';
@@ -16,7 +17,6 @@ import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { DiskPartition } from '../fscTypes';
 
 type DiskRowPropTypes = {
   partition: DiskPartition;

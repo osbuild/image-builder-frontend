@@ -40,6 +40,8 @@ import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   ComplianceType,
+  DiskPartition,
+  FilesystemPartition,
   initialState,
   RegistrationType,
   selectAapCallbackUrl,
@@ -105,6 +107,7 @@ import {
   selectUserGroups,
   selectUsers,
   selectVerifiedLocaleLangpacks,
+  Units,
   UserWithAdditionalInfo,
   wizardState,
 } from '@/store/slices/wizard';
@@ -126,11 +129,6 @@ import {
 import { RootState } from '../../../store';
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
-import {
-  DiskPartition,
-  FilesystemPartition,
-  Units,
-} from '../steps/FileSystem/fscTypes';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { AwsShareMethod } from '../steps/ImageOutput/components/Aws';
 import { GcpAccountType } from '../steps/ImageOutput/components/Gcp';

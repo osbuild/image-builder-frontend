@@ -1,16 +1,16 @@
 import React from 'react';
 
 import { VolumeGroup } from '@/store/api/backend';
-import { changePartitionName } from '@/store/slices/wizard';
+import {
+  changePartitionName,
+  DiskPartitionBase,
+  LogicalVolumeWithBase,
+  PartitioningCustomization,
+} from '@/store/slices/wizard';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import {
-  DiskPartitionBase,
-  LogicalVolumeWithBase,
-  PartitioningCustomization,
-} from '../fscTypes';
 
 type PartitionNamePropTypes = {
   partition: (VolumeGroup & DiskPartitionBase) | LogicalVolumeWithBase;

@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { DiskPartition, FilesystemPartition } from '@/store/slices/wizard';
+
 import DiskRow from './DiskRow';
 import Row from './Row';
-
-import { DiskPartition, FilesystemPartition } from '../fscTypes';
 
 type FileSystemTableTypes =
   | {
