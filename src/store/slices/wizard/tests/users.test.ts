@@ -15,10 +15,10 @@ import {
   setUserSshKeyByIndex,
   type UserWithAdditionalInfo,
   wizardReducer,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
-const createUserState = (users: UserWithAdditionalInfo[]): wizardState => ({
+const createUserState = (users: UserWithAdditionalInfo[]): WizardState => ({
   ...initialState,
   system: {
     ...initialState.system,
@@ -297,7 +297,7 @@ describe('user group reducers', () => {
     });
 
     it('should skip already used GIDs', () => {
-      const stateWithExistingGid: wizardState = {
+      const stateWithExistingGid: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -314,7 +314,7 @@ describe('user group reducers', () => {
 
   describe('setUserGroupNameByIndex', () => {
     it('should update group name', () => {
-      const state: wizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -331,7 +331,7 @@ describe('user group reducers', () => {
     });
 
     it('should trim whitespace from name', () => {
-      const state: wizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -348,7 +348,7 @@ describe('user group reducers', () => {
     });
 
     it('should remove GID when name is set to empty', () => {
-      const state: wizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -366,7 +366,7 @@ describe('user group reducers', () => {
     });
 
     it('should assign GID when name is set on group without GID', () => {
-      const state: wizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -386,7 +386,7 @@ describe('user group reducers', () => {
 
   describe('removeUserGroup', () => {
     it('should remove user group at index', () => {
-      const state: wizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,

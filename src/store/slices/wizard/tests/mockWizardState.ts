@@ -1,7 +1,7 @@
 import type { RootState } from '@/store';
 import {
   initialState as wizardInitialState,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 // Minimal mock state that satisfies RootState for wizard tests
@@ -34,7 +34,7 @@ export const mockRootState: RootState = {
 
 // Helper to create a modified RootState with wizard overrides
 export const createMockState = (
-  wizardOverrides: Partial<wizardState>,
+  wizardOverrides: Partial<WizardState>,
 ): RootState => ({
   ...mockRootState,
   wizard: {
@@ -45,7 +45,7 @@ export const createMockState = (
 
 // Helper to create a state with a user for user-related tests
 export const createStateWithUser = (
-  userOverrides: Partial<wizardState['system']['users'][0]> = {},
+  userOverrides: Partial<WizardState['system']['users'][0]> = {},
 ): RootState =>
   createMockState({
     system: {
@@ -66,7 +66,7 @@ export const createStateWithUser = (
 
 // Helper to create a state with partitions for filesystem tests
 export const createStateWithPartitions = (
-  partitions: wizardState['filesystem']['fileSystem']['partitions'],
+  partitions: WizardState['filesystem']['fileSystem']['partitions'],
 ): RootState =>
   createMockState({
     filesystem: {
@@ -79,8 +79,8 @@ export const createStateWithPartitions = (
 
 // Helper to create a state with packages for content tests
 export const createStateWithPackages = (
-  packages: wizardState['content']['packages'],
-  modules: wizardState['content']['enabledModules'] = [],
+  packages: WizardState['content']['packages'],
+  modules: WizardState['content']['enabledModules'] = [],
 ): RootState =>
   createMockState({
     content: {

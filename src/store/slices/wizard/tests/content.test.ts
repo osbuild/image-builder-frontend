@@ -15,7 +15,7 @@ import {
   removePackage,
   removePackageGroup,
   wizardReducer,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 const createPackage = (
@@ -72,7 +72,7 @@ describe('content reducers', () => {
       });
 
       it('should update existing package if same name', () => {
-        const stateWithPackage: wizardState = {
+        const stateWithPackage: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -93,7 +93,7 @@ describe('content reducers', () => {
 
     describe('removePackage', () => {
       it('should remove package by name', () => {
-        const stateWithPackages: wizardState = {
+        const stateWithPackages: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -115,7 +115,7 @@ describe('content reducers', () => {
       });
 
       it('should do nothing when package not found', () => {
-        const stateWithPackages: wizardState = {
+        const stateWithPackages: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -146,7 +146,7 @@ describe('content reducers', () => {
       });
 
       it('should update existing module if same name', () => {
-        const stateWithModule: wizardState = {
+        const stateWithModule: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -174,7 +174,7 @@ describe('content reducers', () => {
 
     describe('removeModule', () => {
       it('should remove module when no packages are linked', () => {
-        const stateWithModule: wizardState = {
+        const stateWithModule: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -189,7 +189,7 @@ describe('content reducers', () => {
       });
 
       it('should NOT remove module when packages are linked to it', () => {
-        const stateWithModuleAndPackage: wizardState = {
+        const stateWithModuleAndPackage: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -209,7 +209,7 @@ describe('content reducers', () => {
       });
 
       it('should remove module when last linked package is removed first', () => {
-        let state: wizardState = {
+        let state: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -228,7 +228,7 @@ describe('content reducers', () => {
       });
 
       it('should do nothing when module not found', () => {
-        const stateWithModule: wizardState = {
+        const stateWithModule: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -258,7 +258,7 @@ describe('content reducers', () => {
       });
 
       it('should update existing group if same name', () => {
-        const stateWithGroup: wizardState = {
+        const stateWithGroup: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -283,7 +283,7 @@ describe('content reducers', () => {
 
     describe('removePackageGroup', () => {
       it('should remove package group by name', () => {
-        const stateWithGroups: wizardState = {
+        const stateWithGroups: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -301,7 +301,7 @@ describe('content reducers', () => {
       });
 
       it('should do nothing when group not found', () => {
-        const stateWithGroup: wizardState = {
+        const stateWithGroup: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,

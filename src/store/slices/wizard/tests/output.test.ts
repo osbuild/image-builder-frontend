@@ -18,7 +18,7 @@ import {
   selectImageTypes,
   selectIsoPayloadReference,
   wizardReducer,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 import { createMockState } from './mockWizardState';
@@ -35,7 +35,7 @@ describe('output reducers', () => {
     });
 
     it('should clear image source with undefined', () => {
-      const stateWithSource: wizardState = {
+      const stateWithSource: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -65,7 +65,7 @@ describe('output reducers', () => {
     });
 
     it('should clear iso payload reference with undefined', () => {
-      const stateWithRef: wizardState = {
+      const stateWithRef: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -137,7 +137,7 @@ describe('output reducers', () => {
 
   describe('removeImageType', () => {
     it('should remove an existing image type from output', () => {
-      const stateWithTypes: wizardState = {
+      const stateWithTypes: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -153,7 +153,7 @@ describe('output reducers', () => {
 
   describe('changeImageTypes', () => {
     it('should replace all image types under output', () => {
-      const stateWithTypes: wizardState = {
+      const stateWithTypes: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -170,7 +170,7 @@ describe('output reducers', () => {
     });
 
     it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
-      const stateWithIso: wizardState = {
+      const stateWithIso: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -188,7 +188,7 @@ describe('output reducers', () => {
     });
 
     it('should preserve isoPayloadReference when bootable-container-iso is selected', () => {
-      const stateWithIso: wizardState = {
+      const stateWithIso: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,

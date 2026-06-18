@@ -15,7 +15,7 @@ import {
   selectWizardMode,
   setIsCustomName,
   wizardReducer,
-  type wizardState,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 import { createMockState } from './mockWizardState';
@@ -53,7 +53,7 @@ describe('details submodule', () => {
     });
 
     it('loadWizardState should load full state including details', () => {
-      const stateToLoad: wizardState = {
+      const stateToLoad: WizardState = {
         ...initialState,
         details: {
           ...initialState.details,
