@@ -18,11 +18,10 @@ import {
 } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import {
+  removeBetaFromRelease,
   selectComplianceProfileID,
   selectDistribution,
 } from '@/store/slices/wizard';
-
-import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 const ProfileDetails = (): JSX.Element => {
   const releaseRaw = useAppSelector(selectDistribution);

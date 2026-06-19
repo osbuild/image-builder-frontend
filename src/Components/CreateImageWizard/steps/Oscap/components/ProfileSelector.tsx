@@ -30,6 +30,7 @@ import {
   changeFips,
   changeFscMode,
   clearKernelAppend,
+  removeBetaFromRelease,
   selectComplianceProfileID,
   selectComplianceType,
   selectDistribution,
@@ -37,8 +38,6 @@ import {
 } from '@/store/slices/wizard';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
-
-import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionValueType = {
   profileID?: DistributionProfileItem;

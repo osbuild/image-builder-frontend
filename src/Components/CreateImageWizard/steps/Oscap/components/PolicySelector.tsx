@@ -20,6 +20,7 @@ import {
   changeFips,
   changeFscMode,
   clearKernelAppend,
+  removeBetaFromRelease,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
   selectDistribution,
@@ -28,8 +29,6 @@ import {
 } from '@/store/slices/wizard';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
-
-import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type ComplianceSelectOptionValueType = {
   policyID?: string;

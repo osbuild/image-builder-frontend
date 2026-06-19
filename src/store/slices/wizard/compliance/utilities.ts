@@ -3,6 +3,8 @@ import { Distributions } from '@/store/api/backend';
 
 // The beta releases won't have any oscap profiles associated with them,
 // so just use the ones from the major release.
+// TODO: this can be moved to a derived selector once we've finished breaking
+// up the wizard slice into sub slices
 export const removeBetaFromRelease = (dist: Distributions): Distributions => {
   switch (dist) {
     case RHEL_10_BETA:

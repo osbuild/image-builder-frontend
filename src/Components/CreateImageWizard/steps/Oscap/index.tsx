@@ -66,8 +66,8 @@ import PolicyDetails from './components/PolicyDetails';
 import PolicySelector from './components/PolicySelector';
 import OpenScapProfileDetails from './components/ProfileDetails';
 import ProfileSelector from './components/ProfileSelector';
-import { removeBetaFromRelease } from './removeBetaFromRelease';
 
+import { removeBetaFromRelease } from '../../../../store/slices/wizard/compliance/utilities';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
