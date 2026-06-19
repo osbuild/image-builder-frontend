@@ -31,6 +31,7 @@ import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
+  useLazyListRepositoriesQuery,
 } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { CombinedWizardState, loadWizardState } from '@/store/slices/wizard';
@@ -74,6 +75,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isCheckedImportRepos, setIsCheckedImportRepos] = React.useState(true);
   const addNotification = useAddNotification();
   const [importRepositories] = useBulkImportRepositoriesMutation();
+  const [listRepositories] = useLazyListRepositoriesQuery();
 
   const handleFileInputChange = (_event: DropEvent, file: File) => {
     setFileContent('');
@@ -83,53 +85,103 @@ export const ImportBlueprintModal: React.FunctionComponent<
   async function handleRepositoryImport(
     blueprintExportedResponse: BlueprintExportResponse,
   ): Promise<CustomRepository[] | undefined> {
-    if (isCheckedImportRepos && blueprintExportedResponse.content_sources) {
-      const customRepositories: ApiRepositoryRequest[] =
-        blueprintExportedResponse.content_sources.map(
-          (item) => item as ApiRepositoryRequest,
-        );
+    if (!isCheckedImportRepos || !blueprintExportedResponse.content_sources) {
+      return;
+    }
 
-      try {
-        const result = await importRepositories({
-          body: customRepositories,
-        }).unwrap();
-        if (Array.isArray(result)) {
-          const importedRepositoryNames: string[] = [];
-          const newCustomRepos: CustomRepository[] = [];
-          result.forEach((repository) => {
-            const contentSourcesRepo =
-              repository as ApiRepositoryImportResponseRead;
-            if (contentSourcesRepo.uuid) {
-              newCustomRepos.push(
-                ...mapToCustomRepositories(contentSourcesRepo),
-              );
-            }
-            if (repository.warnings?.length === 0 && repository.url) {
-              importedRepositoryNames.push(repository.url);
-              return;
-            }
-            addNotification({
-              variant: 'warning',
-              title: 'Failed to import custom repositories',
-              description: JSON.stringify(repository.warnings),
-            });
-          });
+    const contentSources =
+      blueprintExportedResponse.content_sources as ApiRepositoryRequest[];
+    const allUrls = contentSources
+      .map((cs) => cs.url)
+      .filter((url): url is string => !!url);
 
-          if (importedRepositoryNames.length !== 0) {
-            addNotification({
-              variant: 'info',
-              title: 'Successfully imported custom repositories',
-              description: importedRepositoryNames.join(', '),
-            });
-          }
-          return newCustomRepos;
+    if (allUrls.length === 0) {
+      return;
+    }
+
+    // Look up which repos already exist in the user's content sources
+    const existingCustomRepos: CustomRepository[] = [];
+    const existingUrls = new Set<string>();
+
+    try {
+      const listResult = await listRepositories({
+        url: allUrls.join(','),
+        limit: allUrls.length,
+      }).unwrap();
+
+      for (const repo of listResult.data ?? []) {
+        if (repo.url) {
+          existingUrls.add(repo.url);
         }
-      } catch {
+        existingCustomRepos.push(...mapToCustomRepositories(repo));
+      }
+
+      if (existingUrls.size > 0) {
         addNotification({
-          variant: 'danger',
-          title: 'Custom repositories import failed',
+          variant: 'info',
+          title: 'Custom repositories already exist',
+          description: [...existingUrls].join(', '),
         });
       }
+    } catch (error) {
+      // If the lookup fails, fall through and try to import all repos
+      // eslint-disable-next-line no-console
+      console.error('Failed to look up existing repositories:', error);
+    }
+
+    // Filter to only repos that don't already exist
+    const newContentSources = contentSources.filter(
+      (cs: ApiRepositoryRequest) => !cs.url || !existingUrls.has(cs.url),
+    );
+
+    if (newContentSources.length === 0) {
+      return existingCustomRepos;
+    }
+
+    // Import only the genuinely new repos
+    try {
+      const result = await importRepositories({
+        body: newContentSources,
+      }).unwrap();
+      if (Array.isArray(result)) {
+        const importedRepositoryNames: string[] = [];
+        const newCustomRepos: CustomRepository[] = [];
+        result.forEach((repository) => {
+          const contentSourcesRepo =
+            repository as ApiRepositoryImportResponseRead;
+          if (contentSourcesRepo.uuid) {
+            newCustomRepos.push(...mapToCustomRepositories(contentSourcesRepo));
+          }
+          if (repository.warnings?.length === 0 && repository.url) {
+            importedRepositoryNames.push(repository.url);
+            return;
+          }
+          addNotification({
+            variant: 'warning',
+            title: 'Failed to import custom repositories',
+            description: JSON.stringify(repository.warnings),
+          });
+        });
+
+        if (importedRepositoryNames.length !== 0) {
+          addNotification({
+            variant: 'info',
+            title: 'Successfully imported custom repositories',
+            description: importedRepositoryNames.join(', '),
+          });
+        }
+        return [...existingCustomRepos, ...newCustomRepos];
+      }
+    } catch {
+      addNotification({
+        variant: 'danger',
+        title: 'Custom repositories import failed',
+      });
+    }
+
+    // If bulk import failed, still return any existing repos we found
+    if (existingCustomRepos.length > 0) {
+      return existingCustomRepos;
     }
   }
 
