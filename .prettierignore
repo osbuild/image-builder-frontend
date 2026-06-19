@@ -9,4 +9,17 @@ coverage/
 # Vendored
 cockpit/public/
 
+# github directory
+.github/
+
+package.json
 package-lock.json
+
+# all yaml files
+*.yml
+*.yaml
+**/*.yml
+**/*.yaml
+
+# all markdown files
+*.md
