@@ -106,6 +106,20 @@ module.exports = defineConfig([
       //     message: 'Avoid deep relative imports (../../ or deeper). Use @/ alias instead.',
       //   }],
       // }],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@/store/slices/wizard/filesystem/*.ts',
+              ],
+              message:
+                'Import from @/store/slices/wizard instead. Direct imports into slice internals bypass the barrel and fragment createSelector memoization caches.',
+            },
+          ],
+        },
+      ],
       'prefer-const': ['error', {
         destructuring: 'any',
       }],
