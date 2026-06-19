@@ -130,7 +130,10 @@ module.exports = defineConfig([
         {
           patterns: [
             {
-              group: ['@/store/slices/wizard/filesystem/*.ts'],
+              group: [
+                '@/store/slices/wizard/details/*',
+                '@/store/slices/wizard/filesystem/*.ts',
+              ],
               message:
                 'Import from @/store/slices/wizard instead. Direct imports into slice internals bypass the barrel and fragment createSelector memoization caches.',
             },
