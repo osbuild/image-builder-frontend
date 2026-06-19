@@ -99,9 +99,17 @@ export const createRepositoriesHandler = (
 
       let filteredRepos = repositories;
 
+      const urlParam = urlObj.searchParams.get('url');
+      if (urlParam) {
+        const urls = urlParam.split(',');
+        filteredRepos = filteredRepos.filter((repo) =>
+          urls.includes(repo.url || ''),
+        );
+      }
+
       if (uuidParam) {
         const uuids = uuidParam.split(',');
-        filteredRepos = repositories.filter((repo) =>
+        filteredRepos = filteredRepos.filter((repo) =>
           uuids.includes(repo.uuid || ''),
         );
       }
