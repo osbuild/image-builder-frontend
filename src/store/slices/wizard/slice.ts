@@ -28,7 +28,7 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import { ComplianceType } from './compliance';
+import { complianceState, ComplianceType } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
@@ -93,15 +93,7 @@ export const initialState: WizardState = {
       skipTlsVerification: undefined,
     },
   },
-  compliance: {
-    type: 'none',
-    policyID: undefined,
-    profileID: undefined,
-    policyTitle: undefined,
-    fips: {
-      enabled: false,
-    },
-  },
+  compliance: complianceState,
   content: {
     repositories: {
       customRepositories: [],
