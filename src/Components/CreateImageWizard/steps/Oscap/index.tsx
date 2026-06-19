@@ -46,6 +46,7 @@ import {
   changeMaskedServices,
   clearKernelAppend,
   ComplianceType,
+  removeBetaFromRelease,
   removePackage,
   selectCompliancePolicyID,
   selectComplianceProfileID,
@@ -67,7 +68,6 @@ import PolicySelector from './components/PolicySelector';
 import OpenScapProfileDetails from './components/ProfileDetails';
 import ProfileSelector from './components/ProfileSelector';
 
-import { removeBetaFromRelease } from '../../../../store/slices/wizard/compliance/utilities';
 import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
