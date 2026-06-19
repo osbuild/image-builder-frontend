@@ -68,7 +68,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   useFlag: vi.fn((flag) => {
     switch (flag) {
       case 'image-builder.images-table-revamp.enabled':
-        return true;
       default:
         return false;
     }
