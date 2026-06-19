@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { describe, expect, it } from 'vitest';
 
+import { combinedInitialState, wizardReducer } from '@/store/slices/wizard';
+
 import {
   changeComplianceType,
   changeFips,
-  combinedInitialState,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
   selectComplianceProfileID,
@@ -12,10 +13,8 @@ import {
   selectFips,
   setCompliancePolicy,
   setOscapProfile,
-  wizardReducer,
-} from '@/store/slices/wizard';
-
-import { createMockState } from './mockWizardState';
+} from '..';
+import { createMockState } from '../../tests/mockWizardState';
 
 const createStore = (overrides: Partial<typeof combinedInitialState> = {}) =>
   configureStore({
