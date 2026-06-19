@@ -157,14 +157,6 @@ export const selectServerUrl = (state: RootState) => {
   return state.wizard.registration.serverUrl;
 };
 
-export const selectWizardMode = (state: RootState) => {
-  return state.wizard.details.mode;
-};
-
-export const selectBlueprintMode = (state: RootState) => {
-  return state.wizard.details.blueprint.mode;
-};
-
 export const selectImageSource = (state: RootState) => {
   return state.wizard.output.imageSource;
 };
@@ -175,10 +167,6 @@ export const selectIsoPayloadReference = (state: RootState) => {
 
 export const selectBootcDistributions = (state: RootState) => {
   return state.wizard.output.bootcDistributions;
-};
-
-export const selectBlueprintId = (state: RootState) => {
-  return state.wizard.details.blueprintId;
 };
 
 export const selectBaseUrl = (state: RootState) => {
@@ -371,22 +359,6 @@ export const selectKeyboard = (state: RootState) => {
   return state.wizard.system.locale.keyboard;
 };
 
-export const selectBlueprintName = (state: RootState) => {
-  return state.wizard.details.blueprint.name;
-};
-
-export const selectIsCustomName = (state: RootState) => {
-  return state.wizard.details.blueprint.isCustomName;
-};
-
-export const selectMetadata = (state: RootState) => {
-  return state.wizard.details.metadata;
-};
-
-export const selectBlueprintDescription = (state: RootState) => {
-  return state.wizard.details.blueprint.description;
-};
-
 export const selectFirstBootScript = (state: RootState) => {
   return state.wizard.system.firstBoot.script;
 };
@@ -455,12 +427,6 @@ export const selectFirewallEnabled = createSelector(
     if (firewall.services.disabled.length > 0) return true;
     return false;
   },
-);
-
-// Derived selector for checking if we're in image mode
-export const selectIsImageMode = createSelector(
-  [selectBlueprintMode],
-  (mode) => mode === 'image',
 );
 
 export const selectAapTlsConfigured = createSelector(
