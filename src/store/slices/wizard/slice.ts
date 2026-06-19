@@ -28,7 +28,7 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import { BlueprintModeOptions, detailsState } from './details';
+import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
   CombinedWizardState,
@@ -50,7 +50,6 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  details: detailsState,
   output: {
     bootcDistributions: [],
     architecture: X86_64,
@@ -466,12 +465,6 @@ export const wizardSlice = createSlice({
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
       state.registration.proxy = action.payload;
     },
-    changeBlueprintMode: (
-      state,
-      action: PayloadAction<BlueprintModeOptions>,
-    ) => {
-      state.details.blueprint.mode = action.payload;
-    },
     changeImageSource: (
       state,
       action: PayloadAction<ImageSource | undefined>,
@@ -808,15 +801,6 @@ export const wizardSlice = createSlice({
     changeKeyboard: (state, action: PayloadAction<string>) => {
       state.system.locale.keyboard = action.payload;
     },
-    changeBlueprintName: (state, action: PayloadAction<string>) => {
-      state.details.blueprint.name = action.payload;
-    },
-    setIsCustomName: (state) => {
-      state.details.blueprint.isCustomName = true;
-    },
-    changeBlueprintDescription: (state, action: PayloadAction<string>) => {
-      state.details.blueprint.description = action.payload;
-    },
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.system.firstBoot.script = action.payload;
     },
@@ -1136,7 +1120,6 @@ export const {
   changeServerUrl,
   changeBaseUrl,
   changeProxy,
-  changeBlueprintMode,
   changeImageSource,
   changeIsoPayloadReference,
   changeBootcDistributions,
@@ -1189,9 +1172,6 @@ export const {
   clearLanguages,
   clearLocale,
   changeKeyboard,
-  changeBlueprintName,
-  setIsCustomName,
-  changeBlueprintDescription,
   setFirstBootScript,
   changeEnabledServices,
   addEnabledService,
@@ -1245,6 +1225,7 @@ export const {
 // to temporarily change the slice shape, which is not ideal
 export const combinedInitialState: CombinedWizardState = {
   ...initialState,
+  details: detailsState,
   filesystem: filesystemState,
 };
 
@@ -1255,6 +1236,7 @@ export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
   );
   return {
     ...coreState,
+    details: detailsSlice.reducer(state?.details, action),
     filesystem: filesystemSlice.reducer(state?.filesystem, action),
   };
 };

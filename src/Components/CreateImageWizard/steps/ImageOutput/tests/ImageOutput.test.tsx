@@ -1,7 +1,10 @@
 import { screen } from '@testing-library/react';
 
 import { CENTOS_9, FEDORA_44, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
-import { initialState, selectBlueprintName } from '@/store/slices/wizard';
+import {
+  combinedInitialState as initialState,
+  selectBlueprintName,
+} from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { clickWithWait, createUser, fetchMock } from '@/test/testUtils';
 

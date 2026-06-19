@@ -82,7 +82,6 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  details: DetailsSlice;
   output: {
     imageSource?: ImageSource | undefined;
     isoPayloadReference?: string | undefined;
@@ -184,4 +183,7 @@ export type WizardState = {
   };
 };
 
-export type CombinedWizardState = WizardState & { filesystem: FilesystemSlice };
+export type CombinedWizardState = WizardState & {
+  details: DetailsSlice;
+  filesystem: FilesystemSlice;
+};

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { combinedInitialState as initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import { clearWithWait, createUser, typeWithWait } from '@/test/testUtils';
 

@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import {
-  initialState,
+  combinedInitialState as initialState,
   selectDistribution,
   selectImageSource as selectImageSourceState,
 } from '@/store/slices/wizard';
