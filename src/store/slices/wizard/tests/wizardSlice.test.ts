@@ -117,6 +117,12 @@ describe('wizardSlice core reducers', () => {
             unit: 'GiB',
           },
         },
+        compliance: {
+          ...initialState.compliance,
+          type: 'openscap',
+          profileID: 'xccdf_org.ssgproject.content_profile_cis',
+          fips: { enabled: true },
+        },
         details: {
           ...initialState.details,
           mode: 'edit',
@@ -136,6 +142,11 @@ describe('wizardSlice core reducers', () => {
       expect(result.system.hostname).toBe('loaded-hostname');
       expect(result.filesystem.mode).toBe('advanced');
       expect(result.filesystem.disk.minsize).toBe('20');
+      expect(result.compliance.type).toBe('openscap');
+      expect(result.compliance.profileID).toBe(
+        'xccdf_org.ssgproject.content_profile_cis',
+      );
+      expect(result.compliance.fips.enabled).toBe(true);
       expect(result.details.mode).toBe('edit');
       expect(result.details.blueprintId).toBe('bp-123');
       expect(result.details.blueprint.name).toBe('loaded-blueprint');
@@ -185,6 +196,17 @@ describe('wizardSlice core reducers', () => {
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
       expect(result.filesystem).toEqual(initialState.filesystem);
+    });
+
+    it('loadWizardState should fall back to initialState when compliance is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        compliance: undefined,
+      } as unknown as CombinedWizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.compliance).toEqual(initialState.compliance);
     });
 
     it('loadWizardState should fall back to initialState when details is missing', () => {

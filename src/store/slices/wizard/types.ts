@@ -127,7 +127,6 @@ export type WizardState = {
       skipTlsVerification: boolean | undefined;
     };
   };
-  compliance: ComplianceSlice;
   content: {
     repositories: {
       customRepositories: CustomRepository[];
@@ -175,6 +174,7 @@ export type WizardState = {
 };
 
 export type CombinedWizardState = WizardState & {
+  compliance: ComplianceSlice;
   details: DetailsSlice;
   filesystem: FilesystemSlice;
 };

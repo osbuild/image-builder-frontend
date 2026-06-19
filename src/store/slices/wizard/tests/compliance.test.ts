@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   changeComplianceType,
   changeFips,
-  initialState,
+  combinedInitialState,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
   selectComplianceProfileID,
@@ -12,23 +12,23 @@ import {
   selectFips,
   setCompliancePolicy,
   setOscapProfile,
-  wizardSlice,
+  wizardReducer,
 } from '@/store/slices/wizard';
 
 import { createMockState } from './mockWizardState';
 
-const createStore = (overrides: Partial<typeof initialState> = {}) =>
+const createStore = (overrides: Partial<typeof combinedInitialState> = {}) =>
   configureStore({
-    reducer: { wizard: wizardSlice.reducer },
+    reducer: { wizard: wizardReducer },
     preloadedState: {
-      wizard: { ...initialState, ...overrides },
+      wizard: { ...combinedInitialState, ...overrides },
     },
   });
 
 describe('compliance submodule', () => {
   describe('initial state', () => {
     it('has compliance nested with type, policyID, profileID, policyTitle, and fips', () => {
-      const state = initialState;
+      const state = combinedInitialState;
 
       expect(state.compliance).toEqual({
         type: 'none',
@@ -42,12 +42,14 @@ describe('compliance submodule', () => {
     });
 
     it('does not have a top-level fips key', () => {
-      expect(initialState).not.toHaveProperty('fips');
+      expect(combinedInitialState).not.toHaveProperty('fips');
     });
 
     it('does not have complianceType inside compliance (uses type instead)', () => {
-      expect(initialState.compliance).not.toHaveProperty('complianceType');
-      expect(initialState.compliance).toHaveProperty('type');
+      expect(combinedInitialState.compliance).not.toHaveProperty(
+        'complianceType',
+      );
+      expect(combinedInitialState.compliance).toHaveProperty('type');
     });
   });
 
@@ -55,7 +57,7 @@ describe('compliance submodule', () => {
     it('selectComplianceType reads from compliance.type', () => {
       const state = createMockState({
         compliance: {
-          ...initialState.compliance,
+          ...combinedInitialState.compliance,
           type: 'openscap',
         },
       });
@@ -66,7 +68,7 @@ describe('compliance submodule', () => {
     it('selectCompliancePolicyID reads from compliance.policyID', () => {
       const state = createMockState({
         compliance: {
-          ...initialState.compliance,
+          ...combinedInitialState.compliance,
           policyID: 'policy-123',
         },
       });
@@ -77,7 +79,7 @@ describe('compliance submodule', () => {
     it('selectComplianceProfileID reads from compliance.profileID', () => {
       const state = createMockState({
         compliance: {
-          ...initialState.compliance,
+          ...combinedInitialState.compliance,
           profileID: 'profile-456',
         },
       });
@@ -88,7 +90,7 @@ describe('compliance submodule', () => {
     it('selectCompliancePolicyTitle reads from compliance.policyTitle', () => {
       const state = createMockState({
         compliance: {
-          ...initialState.compliance,
+          ...combinedInitialState.compliance,
           policyTitle: 'My Policy',
         },
       });
@@ -99,7 +101,7 @@ describe('compliance submodule', () => {
     it('selectFips reads from compliance.fips', () => {
       const state = createMockState({
         compliance: {
-          ...initialState.compliance,
+          ...combinedInitialState.compliance,
           fips: { enabled: true },
         },
       });
