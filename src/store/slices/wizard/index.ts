@@ -3,4 +3,5 @@ export * from './slice';
 export * from './types';
 
 // submodules
+export * from './details';
 export * from './filesystem';

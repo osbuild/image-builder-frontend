@@ -20,11 +20,8 @@ import {
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import { ActivationKeys } from '@/store/api/rhsm';
 
+import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
-
-type WizardModeOptions = 'create' | 'edit';
-
-export type BlueprintModeOptions = 'image' | 'package';
 
 export type ImageSource = string;
 
@@ -85,21 +82,7 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  details: {
-    blueprintId?: string;
-    mode: WizardModeOptions;
-    blueprint: {
-      name: string;
-      isCustomName: boolean;
-      description: string;
-      mode: BlueprintModeOptions;
-    };
-    metadata?: {
-      parent_id: string | null;
-      exported_at: string;
-      is_on_prem: boolean;
-    };
-  };
+  details: DetailsSlice;
   output: {
     imageSource?: ImageSource | undefined;
     isoPayloadReference?: string | undefined;
