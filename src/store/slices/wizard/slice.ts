@@ -28,7 +28,7 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import { BlueprintModeOptions, generateDefaultName } from './details';
+import { BlueprintModeOptions, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
   CombinedWizardState,
@@ -50,15 +50,7 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  details: {
-    mode: 'create',
-    blueprint: {
-      name: generateDefaultName(RHEL_10, X86_64),
-      isCustomName: false,
-      description: '',
-      mode: 'package',
-    },
-  },
+  details: detailsState,
   output: {
     bootcDistributions: [],
     architecture: X86_64,
