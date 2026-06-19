@@ -10,6 +10,7 @@ import {
   changeArchitecture,
   changeBlueprintName,
   changeImageSource,
+  generateDefaultName,
   selectArchitecture,
   selectBlueprintName,
   selectDistribution,
@@ -25,8 +26,6 @@ import ImageSourceSelect from './components/ImageSourceSelect';
 import ReleaseLifecycle from './components/ReleaseLifecycle';
 import ReleaseSelect from './components/ReleaseSelect';
 import TargetEnvironment from './components/TargetEnvironment';
-
-import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
   const dispatch = useAppDispatch();
