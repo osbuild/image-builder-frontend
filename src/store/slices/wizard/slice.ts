@@ -29,9 +29,9 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
+import { BlueprintModeOptions } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
-  BlueprintModeOptions,
   CombinedWizardState,
   ComplianceType,
   ImageSource,
