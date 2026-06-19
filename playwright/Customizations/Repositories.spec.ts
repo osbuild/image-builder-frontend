@@ -108,10 +108,8 @@ test('Create blueprint with repository and test edit mode removal', async ({
   });
 
   await test.step('Remove repository and verify warning modal', async () => {
-    const removeButton = frame.getByRole('button', {
-      name: /remove repository/i,
-    });
-    await removeButton.click();
+    const repoRow = frame.getByRole('row', { name: repositoryName });
+    await repoRow.getByRole('button', { name: /remove repository/i }).click();
 
     await expect(frame.getByText(/Are you sure?/)).toBeVisible();
 

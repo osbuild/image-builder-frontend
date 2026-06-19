@@ -125,13 +125,38 @@ const Repositories = () => {
     { refetchOnMountOrArgChange: false, skip: isTemplateSelected },
   );
 
+  const requiredUrls = useMemo(
+    () => requiredRedHatRepos(arch, version) || [],
+    [arch, version],
+  );
+
+  const { data: { data: requiredReposData = [] } = {} } =
+    useListRepositoriesQuery(
+      {
+        url: requiredUrls.join(','),
+        limit: requiredUrls.length,
+      },
+      { skip: requiredUrls.length === 0 || isTemplateSelected },
+    );
+
   const requiredRedHatRepoUUIDs = useMemo(() => {
-    const requiredUrls = requiredRedHatRepos(arch, version) || [];
-    return previousReposData
-      .filter((repo) => requiredUrls.includes(repo.url!))
-      .map((repo) => repo.uuid!)
+    // First try to find the required repos in the previousReposData
+    // (works when initialSelectedState is empty since the API returns all repos)
+    const fromPrevious = previousReposData
+      .filter((repo) => repo.url && requiredUrls.includes(repo.url))
+      .map((repo) => repo.uuid)
       .filter((uuid): uuid is string => !!uuid);
-  }, [arch, version, previousReposData]);
+
+    if (fromPrevious.length > 0) {
+      return fromPrevious;
+    }
+
+    // Fall back to the dedicated URL query when previousReposData is
+    // filtered by UUID and doesn't include the required repos
+    return requiredReposData
+      .map((repo) => repo.uuid)
+      .filter((uuid): uuid is string => !!uuid);
+  }, [previousReposData, requiredUrls, requiredReposData]);
 
   const hasReposToShow =
     selected.size > 0 || requiredRedHatRepoUUIDs.length > 0;
