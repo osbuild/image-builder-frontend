@@ -110,7 +110,7 @@ describe('wizardSlice core reducers', () => {
         },
         filesystem: {
           ...initialState.filesystem,
-          mode: 'basic',
+          mode: 'advanced',
           disk: {
             ...initialState.filesystem.disk,
             minsize: '20',
@@ -124,7 +124,7 @@ describe('wizardSlice core reducers', () => {
       expect(result.output.distribution).toBe('rhel-9');
       expect(result.output.architecture).toBe('aarch64');
       expect(result.system.hostname).toBe('loaded-hostname');
-      expect(result.filesystem.mode).toBe('basic');
+      expect(result.filesystem.mode).toBe('advanced');
       expect(result.filesystem.disk.minsize).toBe('20');
     });
 
