@@ -10,7 +10,11 @@ const { PackageURL } = require('packageurl-js');
 
 // Parse deny-packages from config
 function loadDeniedPackages() {
-  const configPath = path.join(process.cwd(), '.github', 'dependency-review-config.yml');
+  const configPath = path.join(
+    process.cwd(),
+    '.github',
+    'dependency-review-config.yml',
+  );
 
   if (!fs.existsSync(configPath)) {
     console.error('Error: .github/dependency-review-config.yml not found');
@@ -26,7 +30,12 @@ function loadDeniedPackages() {
       inDenyPackages = true;
       continue;
     }
-    if (inDenyPackages && line[0] !== ' ' && line[0] !== '-' && line.trim() !== '') {
+    if (
+      inDenyPackages &&
+      line[0] !== ' ' &&
+      line[0] !== '-' &&
+      line.trim() !== ''
+    ) {
       break;
     }
     if (inDenyPackages && line.trim().startsWith('- ')) {
@@ -69,7 +78,9 @@ function checkPackages() {
   for (const purlString of deniedPackages) {
     try {
       const purl = PackageURL.fromString(purlString);
-      const fullName = purl.namespace ? `${purl.namespace}/${purl.name}` : purl.name;
+      const fullName = purl.namespace
+        ? `${purl.namespace}/${purl.name}`
+        : purl.name;
       if (!compromisedByName.has(fullName)) {
         compromisedByName.set(fullName, []);
       }
@@ -109,7 +120,7 @@ function checkPackages() {
           name,
           info.version,
           null,
-          null
+          null,
         );
 
         // Convert to string and check if it's in the denied list
@@ -120,14 +131,14 @@ function checkPackages() {
         if (deniedPackages.has(purlString)) {
           found.push({
             purl: purlString,
-            displayName: displayName
+            displayName: displayName,
           });
         } else if (compromisedByName.has(fullName)) {
           // Package exists but at a different version
           if (!differentVersions.has(fullName)) {
             differentVersions.set(fullName, {
               installed: new Set(),
-              compromised: compromisedByName.get(fullName)
+              compromised: compromisedByName.get(fullName),
             });
           }
           differentVersions.get(fullName).installed.add(info.version);
@@ -140,24 +151,34 @@ function checkPackages() {
   }
 
   if (packageLock.packages) scan(packageLock.packages);
-  
+
   // Report results
   if (found.length > 0) {
     console.error(`\n❌ Found ${found.length} compromised package(s):`);
-    found.forEach(pkg => console.error(`  - ${pkg.displayName}`));
-    console.error('\nThese packages are from a supply chain attack. DO NOT MERGE!');
-    console.error('See: https://socket.dev/blog/npm-author-qix-compromised-in-major-supply-chain-attack\n');
+    found.forEach((pkg) => console.error(`  - ${pkg.displayName}`));
+    console.error(
+      '\nThese packages are from a supply chain attack. DO NOT MERGE!',
+    );
+    console.error(
+      'See: https://socket.dev/blog/npm-author-qix-compromised-in-major-supply-chain-attack\n',
+    );
     process.exit(1);
   } else {
-    console.log(`✅ No compromised packages detected (checked ${deniedPackages.size} packages)`);
-    
+    console.log(
+      `✅ No compromised packages detected (checked ${deniedPackages.size} packages)`,
+    );
+
     // Show packages with different versions if any
     if (differentVersions.size > 0) {
-      console.log(`\nℹ️  Found ${differentVersions.size} package(s) at different (safe) versions:`);
+      console.log(
+        `\nℹ️  Found ${differentVersions.size} package(s) at different (safe) versions:`,
+      );
       for (const [pkgName, versions] of differentVersions.entries()) {
         const installedList = Array.from(versions.installed).sort().join(', ');
         const compromisedList = versions.compromised.join(', ');
-        console.log(`  - ${pkgName}@${installedList} ✓ (compromised: ${compromisedList})`);
+        console.log(
+          `  - ${pkgName}@${installedList} ✓ (compromised: ${compromisedList})`,
+        );
       }
     }
   }

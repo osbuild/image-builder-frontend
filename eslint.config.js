@@ -14,7 +14,8 @@ const globals = require('globals');
 const prettierConfig = require('eslint-config-prettier');
 
 module.exports = defineConfig([
-  { // Ignore programatically generated files
+  {
+    // Ignore programatically generated files
     ignores: [
       '**/mockServiceWorker.js',
       '**/imageBuilderApi.ts',
@@ -25,30 +26,35 @@ module.exports = defineConfig([
     ],
   },
 
-  { // Base config for js/ts files
+  {
+    // Base config for js/ts files
     files: ['**/*.{js,ts,jsx,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: ['./tsconfig.json', './tsconfig.vitest.json', './playwright/tsconfig.json']
+        project: [
+          './tsconfig.json',
+          './tsconfig.vitest.json',
+          './playwright/tsconfig.json',
+        ],
       },
       globals: {
         ...globals.browser,
         // node
-        'JSX': 'readonly',
-        'process': 'readonly',
-        '__dirname': 'readonly',
-        'require': 'readonly',
+        JSX: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        require: 'readonly',
         // vitest
-        'describe': 'readonly',
-        'it': 'readonly',
-        'test': 'readonly',
-        'expect': 'readonly',
-        'vi': 'readonly',
-        'beforeAll': 'readonly',
-        'beforeEach': 'readonly',
-        'afterAll': 'readonly',
-        'afterEach': 'readonly'
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        afterAll: 'readonly',
+        afterEach: 'readonly',
       },
     },
     plugins: {
@@ -68,33 +74,46 @@ module.exports = defineConfig([
       ...pluginReactRedux.configs.recommended.rules,
       ...pluginJsxA11y.configs.recommended.rules,
       ...fecConfig.rules,
-      'import/order': ['error', {
-        groups: ['builtin', 'external', 'internal', 'sibling', 'parent', 'index'],
-        alphabetize: {
-          order: 'asc',
-          caseInsensitive: true
-        },
-        'newlines-between': 'always',
-        pathGroups: [
-          // ensures the import of React is always on top
-          {
-            pattern: 'react',
-            group: 'builtin',
-            position: 'before'
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'sibling',
+            'parent',
+            'index',
+          ],
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
           },
-          {
-            pattern: '@/**',
-            group: 'internal',
-            position: 'before'
-          }
-        ],
-        pathGroupsExcludedImportTypes: ['react']
-      }],
-      'sort-imports': ['error', {
-        ignoreCase: true,
-        ignoreDeclarationSort: true,
-        ignoreMemberSort: false,
-      }],
+          'newlines-between': 'always',
+          pathGroups: [
+            // ensures the import of React is always on top
+            {
+              pattern: 'react',
+              group: 'builtin',
+              position: 'before',
+            },
+            {
+              pattern: '@/**',
+              group: 'internal',
+              position: 'before',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['react'],
+        },
+      ],
+      'sort-imports': [
+        'error',
+        {
+          ignoreCase: true,
+          ignoreDeclarationSort: true,
+          ignoreMemberSort: false,
+        },
+      ],
       'no-duplicate-imports': 'error',
       // NOTE: we can enable this after the revamp and after summit. We can live with
       // the mixture of alias imports and relative imports. We can then enable the warning
@@ -111,28 +130,32 @@ module.exports = defineConfig([
         {
           patterns: [
             {
-              group: [
-                '@/store/slices/wizard/filesystem/*.ts',
-              ],
+              group: ['@/store/slices/wizard/filesystem/*.ts'],
               message:
                 'Import from @/store/slices/wizard instead. Direct imports into slice internals bypass the barrel and fragment createSelector memoization caches.',
             },
           ],
         },
       ],
-      'prefer-const': ['error', {
-        destructuring: 'any',
-      }],
+      'prefer-const': [
+        'error',
+        {
+          destructuring: 'any',
+        },
+      ],
       'no-console': 'error',
-      'eqeqeq': 'error',
+      eqeqeq: 'error',
       'array-callback-return': 'warn',
-      '@typescript-eslint/ban-ts-comment': ['error', {
-        'ts-expect-error': 'allow-with-description',
-        'ts-ignore': 'allow-with-description',
-        'ts-nocheck': true,
-        'ts-check': true,
-        minimumDescriptionLength: 5,
-      }],
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        {
+          'ts-expect-error': 'allow-with-description',
+          'ts-ignore': 'allow-with-description',
+          'ts-nocheck': true,
+          'ts-check': true,
+          minimumDescriptionLength: 5,
+        },
+      ],
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unsafe-function-type': 'error',
@@ -155,7 +178,8 @@ module.exports = defineConfig([
     },
   },
 
-  { // Override for test files
+  {
+    // Override for test files
     files: ['src/test/**/*.{ts,tsx}'],
     plugins: {
       'jest-dom': jestDom,
@@ -166,11 +190,12 @@ module.exports = defineConfig([
       ...pluginTestingLibrary.configs.react.rules,
       'react/display-name': 'off',
       'react/prop-types': 'off',
-      'testing-library/no-debugging-utils': 'error'
+      'testing-library/no-debugging-utils': 'error',
     },
   },
 
-  { // Override for Playwright tests
+  {
+    // Override for Playwright tests
     files: ['playwright/**/*.ts'],
     plugins: {
       playwright: pluginPlaywright,
@@ -182,8 +207,8 @@ module.exports = defineConfig([
       'playwright/no-skipped-test': [
         'error',
         {
-          'allowConditional': true
-        }
+          allowConditional: true,
+        },
       ],
       '@typescript-eslint/await-thenable': 'error',
       '@typescript-eslint/no-floating-promises': 'error',

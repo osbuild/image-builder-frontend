@@ -9,7 +9,7 @@ const plugins = [];
 
 function add_define(key, value) {
   const definePluginIndex = plugins.findIndex(
-    (plugin) => plugin instanceof webpack.DefinePlugin
+    (plugin) => plugin instanceof webpack.DefinePlugin,
   );
   if (definePluginIndex !== -1) {
     const definePlugin = plugins[definePluginIndex];
@@ -24,7 +24,7 @@ function add_define(key, value) {
     plugins.push(
       new webpack.DefinePlugin({
         [key]: JSON.stringify(value),
-      })
+      }),
     );
   }
 }
@@ -47,7 +47,7 @@ if (process.env.ENABLE_SENTRY) {
         project: 'image-builder-rhel',
         release,
       }),
-    })
+    }),
   );
 }
 
@@ -115,11 +115,11 @@ module.exports = {
       './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
       './ImageBuilderWidget': path.resolve(
         __dirname,
-        './src/Components/Widgets/image-builder-widget.tsx'
+        './src/Components/Widgets/image-builder-widget.tsx',
       ),
     },
     shared: [{ 'react-router-dom': { singleton: true, version: '*' } }],
     exclude: ['react-router-dom'],
   },
-  frontendCRDPath: path.resolve(__dirname, './deploy/frontend-clowder.yml')
+  frontendCRDPath: path.resolve(__dirname, './deploy/frontend-clowder.yml'),
 };

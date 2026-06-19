@@ -102,8 +102,8 @@
   "scripts": {
     "lint": "eslint src playwright --fix --cache",
     "lint:check": "eslint src playwright",
-    "format": "prettier --write src playwright",
-    "format:check": "prettier --check src playwright",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "start": "fec dev-proxy",
     "start:stage": "fec dev-proxy --clouddotEnv=stage",
     "start:prod": "fec dev-proxy --clouddotEnv=prod",
