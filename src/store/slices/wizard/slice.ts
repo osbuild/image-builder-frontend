@@ -256,22 +256,6 @@ export const selectAapTlsConfirmation = (state: RootState) => {
   return state.wizard.registration.aap.skipTlsVerification;
 };
 
-export const selectComplianceProfileID = (state: RootState) => {
-  return state.wizard.compliance.profileID;
-};
-
-export const selectCompliancePolicyID = (state: RootState) => {
-  return state.wizard.compliance.policyID;
-};
-
-export const selectCompliancePolicyTitle = (state: RootState) => {
-  return state.wizard.compliance.policyTitle;
-};
-
-export const selectComplianceType = (state: RootState) => {
-  return state.wizard.compliance.type;
-};
-
 export const selectUseLatest = (state: RootState) => {
   return state.wizard.content.snapshotting.useLatest;
 };
@@ -368,10 +352,6 @@ export const selectHostname = (state: RootState) => {
 
 export const selectFirewall = (state: RootState) => {
   return state.wizard.system.firewall;
-};
-
-export const selectFips = (state: RootState) => {
-  return state.wizard.compliance.fips;
 };
 
 export const selectVerifiedLocaleLangpacks = (state: RootState) => {
