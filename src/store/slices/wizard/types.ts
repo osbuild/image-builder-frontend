@@ -20,6 +20,7 @@ import {
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import { ActivationKeys } from '@/store/api/rhsm';
 
+import { ComplianceSlice } from './compliance';
 import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
 
@@ -32,8 +33,6 @@ export type RegistrationType =
   | 'register-now-rhc'
   | 'register-satellite'
   | 'register-aap';
-
-export type ComplianceType = 'none' | 'openscap' | 'compliance';
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
@@ -128,15 +127,7 @@ export type WizardState = {
       skipTlsVerification: boolean | undefined;
     };
   };
-  compliance: {
-    type: ComplianceType;
-    policyID: string | undefined;
-    profileID: string | undefined;
-    policyTitle: string | undefined;
-    fips: {
-      enabled: boolean;
-    };
-  };
+  compliance: ComplianceSlice;
   content: {
     repositories: {
       customRepositories: CustomRepository[];
