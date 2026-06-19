@@ -2,7 +2,7 @@ import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
   schemaFile:
-    'https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml',
+    'https://raw.githubusercontent.com/osbuild/image-builder-crc/main/internal/v1/api.yaml',
   apiFile: '../../src/store/api/backend/hosted/emptyImageBuilderApi.ts',
   apiImport: 'emptyImageBuilderApi',
   outputFile: '../../src/store/api/backend/hosted/imageBuilderApi.ts',
