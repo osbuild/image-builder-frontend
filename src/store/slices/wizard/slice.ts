@@ -28,11 +28,11 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
+import { ComplianceType } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
   CombinedWizardState,
-  ComplianceType,
   ImageSource,
   RegistrationType,
   UserAdministratorPayload,
