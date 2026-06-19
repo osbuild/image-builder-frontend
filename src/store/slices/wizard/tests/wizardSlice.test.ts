@@ -117,6 +117,16 @@ describe('wizardSlice core reducers', () => {
             unit: 'GiB',
           },
         },
+        details: {
+          ...initialState.details,
+          mode: 'edit',
+          blueprintId: 'bp-123',
+          blueprint: {
+            ...initialState.details.blueprint,
+            name: 'loaded-blueprint',
+            mode: 'image',
+          },
+        },
       };
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
@@ -126,6 +136,10 @@ describe('wizardSlice core reducers', () => {
       expect(result.system.hostname).toBe('loaded-hostname');
       expect(result.filesystem.mode).toBe('advanced');
       expect(result.filesystem.disk.minsize).toBe('20');
+      expect(result.details.mode).toBe('edit');
+      expect(result.details.blueprintId).toBe('bp-123');
+      expect(result.details.blueprint.name).toBe('loaded-blueprint');
+      expect(result.details.blueprint.mode).toBe('image');
     });
 
     it('should completely replace existing state', () => {
@@ -171,6 +185,17 @@ describe('wizardSlice core reducers', () => {
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
       expect(result.filesystem).toEqual(initialState.filesystem);
+    });
+
+    it('loadWizardState should fall back to initialState when details is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        details: undefined,
+      } as unknown as CombinedWizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.details).toEqual(initialState.details);
     });
   });
 

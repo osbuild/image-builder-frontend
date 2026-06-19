@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  initialState,
+  combinedInitialState as initialState,
   selectBlueprintMode,
   selectIsImageMode,
 } from '@/store/slices/wizard';

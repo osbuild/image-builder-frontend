@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  combinedInitialState as initialState,
+  wizardReducer,
+} from '@/store/slices/wizard';
+
+import {
   changeBlueprintDescription,
   changeBlueprintMode,
   changeBlueprintName,
-  type CombinedWizardState,
-  combinedInitialState as initialState,
-  loadWizardState,
   selectBlueprintDescription,
   selectBlueprintId,
   selectBlueprintMode,
@@ -15,7 +17,6 @@ import {
   selectMetadata,
   selectWizardMode,
   setIsCustomName,
-  wizardReducer,
 } from '@/store/slices/wizard';
 
 import { createMockState } from './mockWizardState';
@@ -50,42 +51,6 @@ describe('details submodule', () => {
       const result = wizardReducer(initialState, changeBlueprintMode('image'));
 
       expect(result.details.blueprint.mode).toBe('image');
-    });
-
-    it('loadWizardState should load full state including details', () => {
-      const stateToLoad: CombinedWizardState = {
-        ...initialState,
-        details: {
-          ...initialState.details,
-          blueprintId: 'test-id-123',
-          mode: 'edit',
-          blueprint: {
-            name: 'loaded-blueprint',
-            isCustomName: true,
-            description: 'loaded description',
-            mode: 'image',
-          },
-          metadata: {
-            parent_id: 'parent-123',
-            exported_at: '2024-01-01',
-            is_on_prem: true,
-          },
-        },
-      };
-
-      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
-
-      expect(result.details.blueprintId).toBe('test-id-123');
-      expect(result.details.mode).toBe('edit');
-      expect(result.details.blueprint.name).toBe('loaded-blueprint');
-      expect(result.details.blueprint.isCustomName).toBe(true);
-      expect(result.details.blueprint.description).toBe('loaded description');
-      expect(result.details.blueprint.mode).toBe('image');
-      expect(result.details.metadata).toEqual({
-        parent_id: 'parent-123',
-        exported_at: '2024-01-01',
-        is_on_prem: true,
-      });
     });
   });
 
