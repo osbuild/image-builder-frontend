@@ -33,3 +33,6 @@ export const {
   useListTemplatesQuery,
   useGetTemplateQuery,
 } = hostedQueries;
+
+// Lazy hooks from the API instance (not exported by codegen)
+export const { useLazyListRepositoriesQuery } = hostedQueries.contentSourcesApi;
