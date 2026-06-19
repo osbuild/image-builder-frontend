@@ -11,7 +11,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
-import { generateDefaultName } from '@/Components/CreateImageWizard/utilities/useGenerateDefaultName';
 import { RHEL_10, X86_64 } from '@/constants';
 import type { RootState } from '@/store';
 import type {
@@ -29,7 +28,7 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import { BlueprintModeOptions } from './details';
+import { BlueprintModeOptions, generateDefaultName } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
   CombinedWizardState,

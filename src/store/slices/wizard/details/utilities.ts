@@ -1,5 +1,8 @@
 import { Distributions, ImageRequest } from '@/store/api/backend';
 
+// TODO: this can be converted into a derived selector once we've
+// moved all the other wizard slices to their own submodule, it's
+// too complicated to do now
 export const generateDefaultName = (
   distribution: Distributions,
   arch: ImageRequest['architecture'],
