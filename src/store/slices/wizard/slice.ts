@@ -28,7 +28,7 @@ import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import { complianceState, ComplianceType } from './compliance';
+import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import {
@@ -93,7 +93,6 @@ export const initialState: WizardState = {
       skipTlsVerification: undefined,
     },
   },
-  compliance: complianceState,
   content: {
     repositories: {
       customRepositories: [],
@@ -579,22 +578,6 @@ export const wizardSlice = createSlice({
     changeOrgId: (state, action: PayloadAction<string>) => {
       state.registration.orgId = action.payload;
     },
-    changeComplianceType: (state, action: PayloadAction<ComplianceType>) => {
-      state.compliance.type = action.payload;
-    },
-    setCompliancePolicy: (
-      state,
-      action: PayloadAction<{
-        policyID: string | undefined;
-        policyTitle: string | undefined;
-      }>,
-    ) => {
-      state.compliance.policyID = action.payload.policyID;
-      state.compliance.policyTitle = action.payload.policyTitle;
-    },
-    setOscapProfile: (state, action: PayloadAction<string | undefined>) => {
-      state.compliance.profileID = action.payload;
-    },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.content.snapshotting.snapshotDate === '') {
         state.content.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
@@ -1071,9 +1054,6 @@ export const wizardSlice = createSlice({
         (_, index) => index !== action.payload,
       );
     },
-    changeFips: (state, action: PayloadAction<boolean>) => {
-      state.compliance.fips.enabled = action.payload;
-    },
     setVerifiedLocaleLangpacks: (state, action: PayloadAction<string[]>) => {
       state.content.verifiedLocaleLangpacks = action.payload;
     },
@@ -1116,9 +1096,6 @@ export const {
   changeRegistrationType,
   changeActivationKey,
   changeOrgId,
-  setCompliancePolicy,
-  setOscapProfile,
-  changeComplianceType,
   changeUseLatest,
   changeSnapshotDate,
   changeTemplate,
@@ -1185,7 +1162,6 @@ export const {
   addGroupToUserByUserIndex,
   removeGroupFromUserByIndex,
   changeRedHatRepositories,
-  changeFips,
   setVerifiedLocaleLangpacks,
 } = wizardSlice.actions;
 
@@ -1197,6 +1173,7 @@ export const {
 // to temporarily change the slice shape, which is not ideal
 export const combinedInitialState: CombinedWizardState = {
   ...initialState,
+  compliance: complianceState,
   details: detailsState,
   filesystem: filesystemState,
 };
@@ -1208,6 +1185,7 @@ export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
   );
   return {
     ...coreState,
+    compliance: complianceSlice.reducer(state?.compliance, action),
     details: detailsSlice.reducer(state?.details, action),
     filesystem: filesystemSlice.reducer(state?.filesystem, action),
   };

@@ -39,13 +39,13 @@ import {
 import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  combinedInitialState,
   CombinedWizardState,
   ComplianceType,
   convertToBytes,
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
-  initialState,
   parseSizeUnit,
   RegistrationType,
   selectAapCallbackUrl,
@@ -435,7 +435,8 @@ function commonRequestToState(
     .options as AzureUploadRequestOptions;
 
   const arch =
-    request.image_requests[0]?.architecture ?? initialState.output.architecture;
+    request.image_requests[0]?.architecture ??
+    combinedInitialState.output.architecture;
   if (!['x86_64', 'aarch64'].includes(arch)) {
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
@@ -496,7 +497,7 @@ function commonRequestToState(
               },
             }
           : {
-              ...initialState.compliance,
+              ...combinedInitialState.compliance,
               fips: {
                 enabled: request.customizations.fips?.enabled || false,
               },
@@ -544,7 +545,7 @@ function commonRequestToState(
       // the user can pick the correct distro in the wizard.
       distribution:
         getLatestRelease(request.distribution) ??
-        initialState.output.distribution,
+        combinedInitialState.output.distribution,
       imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
       isoPayloadReference: request.bootc?.iso_payload_reference,
       imageTypes: request.image_requests.map((image) => image.image_type),
@@ -616,7 +617,7 @@ function commonRequestToState(
         ? {
             script: getFirstBootScript(request.customizations.files),
           }
-        : initialState.system.firstBoot,
+        : combinedInitialState.system.firstBoot,
       users:
         request.customizations.users?.map((user) => ({
           name: user.name,
@@ -774,7 +775,7 @@ export const mapBlueprintExportToState = (
       metadata: getMetadata(blueprint.metadata),
     },
     registration: {
-      ...initialState.registration,
+      ...combinedInitialState.registration,
       aap: {
         enabled: blueprint.customizations.aap_registration !== undefined,
         callbackUrl:
