@@ -36,7 +36,10 @@ import {
   User,
   VolumeGroup,
 } from '@/store/api/backend';
-import { ApiRepositoryImportResponseRead } from '@/store/api/contentSources';
+import {
+  ApiRepositoryImportResponseRead,
+  ApiRepositoryResponseRead,
+} from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   CombinedWizardState,
@@ -686,7 +689,7 @@ export const mapRequestToState = (
 };
 
 export function mapToCustomRepositories(
-  repo: ApiRepositoryImportResponseRead,
+  repo: ApiRepositoryImportResponseRead | ApiRepositoryResponseRead,
 ): CustomRepository[] {
   if (!repo.uuid) return [];
   return [
