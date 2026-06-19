@@ -17,9 +17,8 @@ import {
   selectMetadata,
   selectWizardMode,
   setIsCustomName,
-} from '@/store/slices/wizard';
-
-import { createMockState } from './mockWizardState';
+} from '..';
+import { createMockState } from '../../tests/mockWizardState';
 
 describe('details submodule', () => {
   describe('reducers', () => {
