@@ -27,6 +27,7 @@ import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import CreateImageWizard from '../CreateImageWizard/CreateImageWizard';
 import ImagesTable from '../ImagesTable';
+import NewImagesTable from '../ImagesTable/NewImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
@@ -39,6 +40,9 @@ export const LandingPage = () => {
   const { composeId } = useParams();
   const [searchParams] = useSearchParams();
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
+  const isImagesTableRevampEnabled = useFlag(
+    'image-builder.images-table-revamp.enabled',
+  );
 
   // Open wizard modal when on /imagewizard path
   useEffect(() => {
@@ -60,25 +64,29 @@ export const LandingPage = () => {
         {serviceUnavailable && <ServiceUnavailableAlert />}
         {/* New feature alert */}
         {/*!isOnPremise && showAlert && <NewAlert setShowAlert={setShowAlert} />*/}
-        <Sidebar hasBorder className='pf-v6-u-background-color-100'>
-          <SidebarPanel
-            variant='sticky'
-            width={{ default: 'width_25' }}
-            className='sidebar-panel'
-          >
-            <Toolbar>
-              <ToolbarContent>
-                <Title headingLevel='h2'>{'Blueprints'}</Title>
-              </ToolbarContent>
-            </Toolbar>
-            <SidebarContent hasPadding>
-              <BlueprintsSidebar />
+        {!isImagesTableRevampEnabled ? (
+          <Sidebar hasBorder className='pf-v6-u-background-color-100'>
+            <SidebarPanel
+              variant='sticky'
+              width={{ default: 'width_25' }}
+              className='sidebar-panel'
+            >
+              <Toolbar>
+                <ToolbarContent>
+                  <Title headingLevel='h2'>{'Blueprints'}</Title>
+                </ToolbarContent>
+              </Toolbar>
+              <SidebarContent hasPadding>
+                <BlueprintsSidebar />
+              </SidebarContent>
+            </SidebarPanel>
+            <SidebarContent>
+              <ImagesTable />
             </SidebarContent>
-          </SidebarPanel>
-          <SidebarContent>
-            <ImagesTable />
-          </SidebarContent>
-        </Sidebar>
+          </Sidebar>
+        ) : (
+          <NewImagesTable />
+        )}
       </PageSection>
     </>
   );

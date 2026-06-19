@@ -40,7 +40,6 @@ export const useFlagWithEphemDefault = (
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
     case 'image-builder.images-table-revamp.enabled':
-      return true;
     default:
       return false;
   }

@@ -30,6 +30,7 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '@/Utilities/time';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import Release from '../../Release';
 import { Target } from '../../Target';
@@ -64,6 +65,10 @@ const Row = ({
   const dispatch = useDispatch();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const bootcCompose = hasBootcRequest(compose) ? compose : undefined;
+
+  const isImagesTableRevampEnabled = useFlag(
+    'image-builder.images-table-revamp.enabled',
+  );
 
   const { data } = useGetComposeStatusQuery({
     composeId: compose.id,
@@ -141,7 +146,7 @@ const Row = ({
         <Td dataLabel='Target'>
           {target ? target : <Target compose={compose} />}
         </Td>
-        {!isOnPremise && (
+        {!isOnPremise && !isImagesTableRevampEnabled && (
           <Td dataLabel='Version'>
             <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
           </Td>
