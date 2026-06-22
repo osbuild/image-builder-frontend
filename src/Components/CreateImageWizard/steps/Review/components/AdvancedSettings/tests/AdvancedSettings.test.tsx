@@ -715,7 +715,7 @@ describe('AdvancedSettingsOverview', () => {
   });
 
   describe('Services', () => {
-    test('displays all service sections with empty messages by default', () => {
+    test('hides services section when no services configured', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
@@ -734,10 +734,15 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
-      expect(screen.getByText('Enabled systemd services')).toBeInTheDocument();
-      expect(screen.getByText('Disabled systemd services')).toBeInTheDocument();
-      expect(screen.getByText('Masked systemd services')).toBeInTheDocument();
-      expect(screen.getAllByText('No services selected')).toHaveLength(3);
+      expect(
+        screen.queryByText('Enabled systemd services'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Disabled systemd services'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Masked systemd services'),
+      ).not.toBeInTheDocument();
     });
 
     test('displays enabled services', () => {
