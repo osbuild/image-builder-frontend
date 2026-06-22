@@ -31,9 +31,9 @@ import { initializeWizard, loadWizardState } from './actions';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
+import { ImageSource } from './output';
 import {
   CombinedWizardState,
-  ImageSource,
   RegistrationType,
   UserAdministratorPayload,
   UserGroupGidPayload,
