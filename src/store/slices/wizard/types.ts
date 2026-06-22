@@ -6,11 +6,7 @@ import {
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
 import { V1ListSourceResponseItem } from '@/Components/CreateImageWizard/types';
 import {
-  BootcDistributionItem,
   CustomRepository,
-  Distributions,
-  ImageRequest,
-  ImageTypes,
   Locale,
   Module,
   Repository,
@@ -23,8 +19,7 @@ import { ActivationKeys } from '@/store/api/rhsm';
 import { ComplianceSlice } from './compliance';
 import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
-
-export type ImageSource = string;
+import { OutputSlice } from './output';
 
 export type RegistrationType =
   | 'register-later'
@@ -81,14 +76,7 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  output: {
-    imageSource?: ImageSource | undefined;
-    isoPayloadReference?: string | undefined;
-    bootcDistributions: BootcDistributionItem[];
-    architecture: ImageRequest['architecture'];
-    distribution: Distributions;
-    imageTypes: ImageTypes[];
-  };
+  output: OutputSlice;
   cloudProviders: {
     aws: {
       accountId: string;
