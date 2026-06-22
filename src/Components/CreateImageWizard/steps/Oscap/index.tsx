@@ -387,7 +387,7 @@ const OscapContent = () => {
               <HelperTextItem>
                 {fipsRequired
                   ? 'FIPS mode is required by the selected compliance profile and cannot be disabled.'
-                  : 'Enable FIPS 140-2 compliant cryptographic algorithms. This setting is applied at build time and persists on boot.'}
+                  : 'Enable FIPS mode at build time to ensure that all cryptographic key material is generated using FIPS-approved algorithms. This setting persists on boot, ensuring full compliance.'}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
