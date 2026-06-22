@@ -136,6 +136,10 @@ export type ComposeId = ObjectReference & {
 };
 export type Bootc = {
   reference: string;
+  /** Optional container image reference used as the build container.
+    When not set, the base reference is used for building as well.
+     */
+  build_reference?: string | undefined;
   /** Optional container image reference for a payload container to embed
     in the ISO's container storage. When set, the payload container is
     available at install/boot time. Only valid for bootable-container-iso
