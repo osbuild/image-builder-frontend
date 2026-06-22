@@ -29,7 +29,7 @@ import { initializeWizard, loadWizardState } from './actions';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
-import { ImageSource, isRhel, outputState } from './output';
+import { ImageSource, outputState } from './output';
 import {
   CombinedWizardState,
   RegistrationType,
@@ -436,10 +436,6 @@ export const wizardSlice = createSlice({
     },
     changeDistribution: (state, action: PayloadAction<Distributions>) => {
       state.output.distribution = action.payload;
-
-      if (process.env.IS_ON_PREMISE && !isRhel(action.payload)) {
-        state.registration.type = 'register-later';
-      }
     },
     addImageType: (state, action: PayloadAction<ImageTypes>) => {
       // Remove (if present) before adding to avoid duplicates

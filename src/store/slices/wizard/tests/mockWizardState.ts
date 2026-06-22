@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import type { RootState } from '@/store';
 import {
   type CombinedWizardState,
@@ -76,6 +78,27 @@ export const createStateWithPartitions = (
       },
     },
   });
+
+// Factory for a mock RTK listener API object.
+// Satisfies the shape expected by listener effects without wiring up
+// the full middleware.
+export const createListenerApi = (state: RootState = mockRootState) => ({
+  getState: vi.fn(() => state),
+  dispatch: vi.fn(),
+  condition: vi.fn(),
+  take: vi.fn(),
+  cancelActiveListeners: vi.fn(),
+  cancel: vi.fn(),
+  throwIfCancelled: vi.fn(),
+  delay: vi.fn(),
+  fork: vi.fn(),
+  unsubscribe: vi.fn(),
+  subscribe: vi.fn(),
+  signal: new AbortController().signal,
+  pause: vi.fn(),
+  extra: undefined,
+  getOriginalState: vi.fn(() => state),
+});
 
 // Helper to create a state with packages for content tests
 export const createStateWithPackages = (
