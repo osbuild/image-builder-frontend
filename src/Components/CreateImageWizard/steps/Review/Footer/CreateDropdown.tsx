@@ -82,7 +82,7 @@ export const CreateSaveAndBuildBtn = ({
     }
     if (requestBody) {
       const blueprint = (await createBlueprint({
-        createBlueprintRequest: requestBody,
+        createBlueprintRequest: requestBody as CreateBlueprintRequest,
       })) as CreateBlueprintResponse;
 
       buildBlueprint({ id: blueprint.id, body: {} });
@@ -181,7 +181,7 @@ export const CreateSaveButton = ({
     }
     if (requestBody) {
       const blueprint = (await createBlueprint({
-        createBlueprintRequest: requestBody,
+        createBlueprintRequest: requestBody as CreateBlueprintRequest,
       })) as CreateBlueprintResponse;
       dispatch(setBlueprintId(blueprint.id));
     }
