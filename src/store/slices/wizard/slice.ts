@@ -140,36 +140,12 @@ export const selectServerUrl = (state: RootState) => {
   return state.wizard.registration.serverUrl;
 };
 
-export const selectImageSource = (state: RootState) => {
-  return state.wizard.output.imageSource;
-};
-
-export const selectIsoPayloadReference = (state: RootState) => {
-  return state.wizard.output.isoPayloadReference;
-};
-
-export const selectBootcDistributions = (state: RootState) => {
-  return state.wizard.output.bootcDistributions;
-};
-
 export const selectBaseUrl = (state: RootState) => {
   return state.wizard.registration.baseUrl;
 };
 
 export const selectProxy = (state: RootState) => {
   return state.wizard.registration.proxy;
-};
-
-export const selectArchitecture = (state: RootState) => {
-  return state.wizard.output.architecture;
-};
-
-export const selectDistribution = (state: RootState) => {
-  return state.wizard.output.distribution;
-};
-
-export const selectImageTypes = (state: RootState) => {
-  return state.wizard.output.imageTypes;
 };
 
 export const selectAwsAccountId = (state: RootState): string => {
