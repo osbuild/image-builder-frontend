@@ -3,11 +3,12 @@ import type { WizardListenerEffect } from '@/store/middleware/types';
 
 import { selectIsImageMode } from './details';
 import {
+  isRhel,
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
 } from './output';
-import { changeImageTypes } from './slice';
+import { changeImageTypes, changeRegistrationType } from './slice';
 
 export const filterImageTypes: WizardListenerEffect = (
   _action,
@@ -39,4 +40,17 @@ export const filterImageTypes: WizardListenerEffect = (
   listenerApi.dispatch(
     changeImageTypes(imageTypes.filter((t) => allowed?.includes(t))),
   );
+};
+
+// This was previously a mutation inside the changeDistribution reducer.
+// As a listener it fires *after* the reducer commits, so any other listener
+// reading the `registration.type` in the same tick will observe the old value
+// until this dispatch is processed.
+export const registerLater: WizardListenerEffect = (_action, listenerApi) => {
+  const state = listenerApi.getState();
+  const distribution = selectDistribution(state);
+
+  if (process.env.IS_ON_PREMISE && !isRhel(distribution)) {
+    listenerApi.dispatch(changeRegistrationType('register-later'));
+  }
 };

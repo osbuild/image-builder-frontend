@@ -5,7 +5,7 @@ import { WizardStartListening } from './types';
 import { changeArchitecture, changeDistribution } from '../slices/wizard';
 // export from slices/wizard/listeners rather than slices/wizard
 // this is needed to avoid circular dependencies
-import { filterImageTypes } from '../slices/wizard/listeners';
+import { filterImageTypes, registerLater } from '../slices/wizard/listeners';
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -20,4 +20,9 @@ startListening({
 startListening({
   actionCreator: changeDistribution,
   effect: filterImageTypes,
+});
+
+startListening({
+  actionCreator: changeDistribution,
+  effect: registerLater,
 });

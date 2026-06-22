@@ -1,32 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { RootState } from '@/store';
 import { type Architectures, backendApi } from '@/store/api/backend';
 import { changeImageTypes, combinedInitialState } from '@/store/slices/wizard';
 import {
+  createListenerApi,
   createMockState,
-  mockRootState,
 } from '@/store/slices/wizard/tests/mockWizardState';
 
 import { filterImageTypes } from '../listeners';
-
-const createListenerApi = (state: RootState = mockRootState) => ({
-  getState: vi.fn(() => state),
-  dispatch: vi.fn(),
-  condition: vi.fn(),
-  take: vi.fn(),
-  cancelActiveListeners: vi.fn(),
-  cancel: vi.fn(),
-  throwIfCancelled: vi.fn(),
-  delay: vi.fn(),
-  fork: vi.fn(),
-  unsubscribe: vi.fn(),
-  subscribe: vi.fn(),
-  signal: new AbortController().signal,
-  pause: vi.fn(),
-  extra: undefined,
-  getOriginalState: vi.fn(() => state),
-});
 
 const mockArchitecturesSelector = (data: Architectures) => {
   const selectSpy = vi.spyOn(backendApi.endpoints.getArchitectures, 'select');
