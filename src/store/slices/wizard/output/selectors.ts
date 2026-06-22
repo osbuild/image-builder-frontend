@@ -1,0 +1,25 @@
+import { RootState } from '@/store';
+
+export const selectImageSource = (state: RootState) => {
+  return state.wizard.output.imageSource;
+};
+
+export const selectIsoPayloadReference = (state: RootState) => {
+  return state.wizard.output.isoPayloadReference;
+};
+
+export const selectBootcDistributions = (state: RootState) => {
+  return state.wizard.output.bootcDistributions;
+};
+
+export const selectArchitecture = (state: RootState) => {
+  return state.wizard.output.architecture;
+};
+
+export const selectDistribution = (state: RootState) => {
+  return state.wizard.output.distribution;
+};
+
+export const selectImageTypes = (state: RootState) => {
+  return state.wizard.output.imageTypes;
+};
