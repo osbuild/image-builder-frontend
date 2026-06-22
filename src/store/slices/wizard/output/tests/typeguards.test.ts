@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isPrivateCloud, isPublicCloud, isRhel } from '../output/typeguards';
+import { isPrivateCloud, isPublicCloud, isRhel } from '../typeguards';
 
 describe('isRhel', () => {
   it.each(['rhel-8', 'rhel-9', 'rhel-9-beta', 'rhel-10', 'rhel-10-beta'])(

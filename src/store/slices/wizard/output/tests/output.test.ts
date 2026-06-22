@@ -21,7 +21,7 @@ import {
   wizardReducer,
 } from '@/store/slices/wizard';
 
-import { createMockState } from './mockWizardState';
+import { createMockState } from '../../tests/mockWizardState';
 
 describe('output reducers', () => {
   describe('changeImageSource', () => {
