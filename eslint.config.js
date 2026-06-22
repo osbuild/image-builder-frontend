@@ -134,6 +134,7 @@ module.exports = defineConfig([
                 '@/store/slices/wizard/compliance/*',
                 '@/store/slices/wizard/details/*',
                 '@/store/slices/wizard/filesystem/*.ts',
+                '@/store/slices/wizard/output/*.ts',
               ],
               message:
                 'Import from @/store/slices/wizard instead. Direct imports into slice internals bypass the barrel and fragment createSelector memoization caches.',
