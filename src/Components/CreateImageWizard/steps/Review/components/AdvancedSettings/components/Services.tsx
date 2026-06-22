@@ -38,7 +38,10 @@ export const Services = ({
     [services, oscapServices],
   );
 
-  if (shouldHide) {
+  const isCustomized =
+    enabled.length > 0 || disabled.length > 0 || masked.length > 0;
+
+  if (shouldHide || !isCustomized) {
     return null;
   }
 
