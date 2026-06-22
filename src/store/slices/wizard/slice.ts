@@ -12,15 +12,7 @@ import {
   IBPackageWithRepositoryInfo,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
 import type { RootState } from '@/store';
-import type {
-  BootcDistributionItem,
-  CustomRepository,
-  Distributions,
-  ImageRequest,
-  ImageTypes,
-  Module,
-  Repository,
-} from '@/store/api/backend';
+import type { CustomRepository, Module, Repository } from '@/store/api/backend';
 import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import type { ActivationKeys } from '@/store/api/rhsm';
 import { yyyyMMddFormat } from '@/Utilities/time';
@@ -29,7 +21,7 @@ import { initializeWizard, loadWizardState } from './actions';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
-import { ImageSource, outputState } from './output';
+import { outputSlice, outputState } from './output';
 import {
   CombinedWizardState,
   RegistrationType,
@@ -48,7 +40,6 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  output: outputState,
   cloudProviders: {
     aws: {
       accountId: '',
@@ -409,53 +400,6 @@ export const wizardSlice = createSlice({
     },
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
       state.registration.proxy = action.payload;
-    },
-    changeImageSource: (
-      state,
-      action: PayloadAction<ImageSource | undefined>,
-    ) => {
-      state.output.imageSource = action.payload;
-    },
-    changeIsoPayloadReference: (
-      state,
-      action: PayloadAction<string | undefined>,
-    ) => {
-      state.output.isoPayloadReference = action.payload;
-    },
-    changeBootcDistributions: (
-      state,
-      action: PayloadAction<BootcDistributionItem[]>,
-    ) => {
-      state.output.bootcDistributions = action.payload;
-    },
-    changeArchitecture: (
-      state,
-      action: PayloadAction<ImageRequest['architecture']>,
-    ) => {
-      state.output.architecture = action.payload;
-    },
-    changeDistribution: (state, action: PayloadAction<Distributions>) => {
-      state.output.distribution = action.payload;
-    },
-    addImageType: (state, action: PayloadAction<ImageTypes>) => {
-      // Remove (if present) before adding to avoid duplicates
-      state.output.imageTypes = state.output.imageTypes.filter(
-        (imageType) => imageType !== action.payload,
-      );
-      state.output.imageTypes.push(action.payload);
-    },
-    removeImageType: (state, action: PayloadAction<ImageTypes>) => {
-      state.output.imageTypes = state.output.imageTypes.filter(
-        (imageType) => imageType !== action.payload,
-      );
-    },
-    changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
-      state.output.imageTypes = action.payload;
-      // isoPayloadReference is only relevant for bootable-container-iso,
-      // clear it when that image type is no longer selected
-      if (!action.payload.includes('bootable-container-iso')) {
-        state.output.isoPayloadReference = undefined;
-      }
     },
     changeAwsAccountId: (state, action: PayloadAction<string>) => {
       state.cloudProviders.aws.accountId = action.payload;
@@ -1042,14 +986,6 @@ export const {
   changeServerUrl,
   changeBaseUrl,
   changeProxy,
-  changeImageSource,
-  changeIsoPayloadReference,
-  changeBootcDistributions,
-  changeArchitecture,
-  changeDistribution,
-  addImageType,
-  removeImageType,
-  changeImageTypes,
   changeAwsAccountId,
   changeAwsShareMethod,
   changeAwsSourceId,
@@ -1146,6 +1082,7 @@ export const combinedInitialState: CombinedWizardState = {
   compliance: complianceState,
   details: detailsState,
   filesystem: filesystemState,
+  output: outputState,
 };
 
 export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
@@ -1158,5 +1095,6 @@ export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
     compliance: complianceSlice.reducer(state?.compliance, action),
     details: detailsSlice.reducer(state?.details, action),
     filesystem: filesystemSlice.reducer(state?.filesystem, action),
+    output: outputSlice.reducer(state?.output, action),
   };
 };

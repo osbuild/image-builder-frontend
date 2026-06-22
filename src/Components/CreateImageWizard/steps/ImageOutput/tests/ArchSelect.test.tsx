@@ -1,7 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { AARCH64, X86_64 } from '@/constants';
-import { initialState, selectArchitecture } from '@/store/slices/wizard';
+import {
+  combinedInitialState as initialState,
+  selectArchitecture,
+} from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import { openArchSelect, renderArchSelect, selectArch } from './helpers';

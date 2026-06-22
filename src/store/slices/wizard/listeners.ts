@@ -3,12 +3,13 @@ import type { WizardListenerEffect } from '@/store/middleware/types';
 
 import { selectIsImageMode } from './details';
 import {
+  changeImageTypes,
   isRhel,
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
 } from './output';
-import { changeImageTypes, changeRegistrationType } from './slice';
+import { changeRegistrationType } from './slice';
 
 export const filterImageTypes: WizardListenerEffect = (
   _action,

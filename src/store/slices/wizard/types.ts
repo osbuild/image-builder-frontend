@@ -76,7 +76,6 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  output: OutputSlice;
   cloudProviders: {
     aws: {
       accountId: string;
@@ -165,4 +164,5 @@ export type CombinedWizardState = WizardState & {
   compliance: ComplianceSlice;
   details: DetailsSlice;
   filesystem: FilesystemSlice;
+  output: OutputSlice;
 };
