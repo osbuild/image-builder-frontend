@@ -11,7 +11,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
-import { RHEL_10, X86_64 } from '@/constants';
 import type { RootState } from '@/store';
 import type {
   BootcDistributionItem,
@@ -30,7 +29,7 @@ import { initializeWizard, loadWizardState } from './actions';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
-import { ImageSource, isRhel } from './output';
+import { ImageSource, isRhel, outputState } from './output';
 import {
   CombinedWizardState,
   RegistrationType,
@@ -49,12 +48,7 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  output: {
-    bootcDistributions: [],
-    architecture: X86_64,
-    distribution: RHEL_10,
-    imageTypes: [],
-  },
+  output: outputState,
   cloudProviders: {
     aws: {
       accountId: '',
