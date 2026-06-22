@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
 import {
-  initialState,
+  combinedInitialState as initialState,
   selectDistribution,
   selectRegistrationType,
 } from '@/store/slices/wizard';
