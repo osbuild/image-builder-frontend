@@ -321,6 +321,11 @@ export const selectUserGroups = (state: RootState) => {
   return state.wizard.system.groups;
 };
 
+export const selectNonEmptyUserGroups = createSelector(
+  [selectUserGroups],
+  (groups) => groups.filter((group) => group.name.trim() || group.gid),
+);
+
 export const selectKernel = (state: RootState) => {
   return state.wizard.system.kernel;
 };

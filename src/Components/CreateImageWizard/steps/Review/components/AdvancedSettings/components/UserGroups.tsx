@@ -3,13 +3,13 @@ import React from 'react';
 import { Flex } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectUserGroups } from '@/store/slices/wizard';
+import { selectNonEmptyUserGroups } from '@/store/slices/wizard';
 
 import { FlexColumn, ReviewGroup } from '../../shared';
 import { Hideable } from '../../types';
 
 export const UserGroups = ({ shouldHide }: Hideable) => {
-  const userGroups = useAppSelector(selectUserGroups);
+  const userGroups = useAppSelector(selectNonEmptyUserGroups);
 
   if (shouldHide || userGroups.length === 0) {
     return null;
