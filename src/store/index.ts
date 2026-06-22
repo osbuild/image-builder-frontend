@@ -8,19 +8,11 @@ import {
   imageBuilderApi,
   rhsmApi,
 } from './api';
-import { listenerMiddleware, startAppListening } from './listenerMiddleware';
+import { listenerMiddleware } from './middleware';
 import {
   blueprintsSlice,
-  changeArchitecture,
-  changeDistribution,
-  changeImageTypes,
   cloudProviderConfigSlice,
   envSlice,
-  selectArchitecture,
-  selectDistribution,
-  selectImageTypes,
-  selectIsImageMode,
-  selectIsOnPremise,
   wizardModalSlice,
   wizardReducer,
 } from './slices';
@@ -50,78 +42,6 @@ export const onPremReducer = combineReducers({
   wizardModal: wizardModalSlice.reducer,
   blueprints: blueprintsSlice.reducer,
   cloudConfig: cloudProviderConfigSlice.reducer,
-});
-
-startAppListening({
-  actionCreator: changeArchitecture,
-  effect: (action, listenerApi) => {
-    const state = listenerApi.getState();
-
-    const isOnPremise = selectIsOnPremise(state);
-    const distribution = selectDistribution(state);
-    const imageTypes = selectImageTypes(state);
-    const architecture = action.payload;
-
-    // Image-mode gets allowed types from bootc distributions, not getArchitectures
-    if (selectIsImageMode(state)) {
-      return;
-    }
-
-    // The response from the RTKQ getArchitectures hook
-    const architecturesResponse = isOnPremise
-      ? composerApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as onPremState)
-      : imageBuilderApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as serviceState);
-
-    const allowedImageTypes = architecturesResponse.data?.find(
-      (elem) => elem.arch === architecture,
-    )?.image_types;
-
-    const filteredImageTypes = imageTypes.filter((imageType: string) =>
-      allowedImageTypes?.includes(imageType),
-    );
-
-    listenerApi.dispatch(changeImageTypes(filteredImageTypes));
-  },
-});
-
-startAppListening({
-  actionCreator: changeDistribution,
-  effect: (action, listenerApi) => {
-    const state = listenerApi.getState();
-
-    const isOnPremise = selectIsOnPremise(state);
-    const distribution = action.payload;
-    const imageTypes = selectImageTypes(state);
-    const architecture = selectArchitecture(state);
-
-    // Image-mode gets allowed types from bootc distributions, not getArchitectures
-    if (selectIsImageMode(state)) {
-      return;
-    }
-
-    // The response from the RTKQ getArchitectures hook
-    const architecturesResponse = isOnPremise
-      ? composerApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as onPremState)
-      : imageBuilderApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as serviceState);
-
-    const allowedImageTypes = architecturesResponse.data?.find(
-      (elem) => elem.arch === architecture,
-    )?.image_types;
-
-    const filteredImageTypes = imageTypes.filter((imageType: string) =>
-      allowedImageTypes?.includes(imageType),
-    );
-
-    listenerApi.dispatch(changeImageTypes(filteredImageTypes));
-  },
 });
 
 // Listener middleware must be prepended according to RTK docs:
