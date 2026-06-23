@@ -23,13 +23,6 @@ import {
   selectGcpEmail,
 } from '@/store/slices/wizard';
 
-export type GcpAccountType =
-  | 'user'
-  | 'serviceAccount'
-  | 'group'
-  | 'domain'
-  | undefined;
-
 export const GCP_ACCOUNT_TYPE_OPTIONS = new Map([
   ['user', 'Google account'],
   ['serviceAccount', 'Service account'],

@@ -11,6 +11,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
+  type AzureHyperVGeneration,
   changeAzureHyperVGeneration,
   selectAzureHyperVGeneration,
 } from '@/store/slices/wizard';
@@ -27,7 +28,7 @@ const AzureHyperVSelect = () => {
     selection?: string | number,
   ) => {
     if (selection === undefined) return;
-    dispatch(changeAzureHyperVGeneration(selection as 'V1' | 'V2'));
+    dispatch(changeAzureHyperVGeneration(selection as AzureHyperVGeneration));
     setIsOpen(false);
   };
 

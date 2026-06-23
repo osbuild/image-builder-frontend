@@ -3,6 +3,7 @@ export * from './slice';
 export * from './types';
 
 // submodules
+export * from './cloud';
 export * from './compliance/';
 export * from './details';
 export * from './filesystem';
