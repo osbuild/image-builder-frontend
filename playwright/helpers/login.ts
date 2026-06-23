@@ -54,8 +54,8 @@ export const ensureAuthenticated = async (
 
   // Check for authentication success indicator
   const successIndicator = isHosted()
-    ? page.getByRole('heading', { name: 'All images' })
-    : ibFrame(page).getByRole('heading', { name: 'All images' });
+    ? page.getByRole('heading', { name: 'Image builder' })
+    : ibFrame(page).getByRole('heading', { name: 'Image builder' });
 
   let isAuthenticated = false;
   try {
@@ -162,7 +162,7 @@ const loginConsole = async (page: Page, user: string, password: string) => {
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
 
-  const allImagesHeading = page.getByRole('heading', { name: 'All images' });
+  const allImagesHeading = page.getByRole('heading', { name: 'Image builder' });
   await expect(allImagesHeading).toBeVisible({ timeout: 30_000 });
 };
 

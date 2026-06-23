@@ -34,13 +34,6 @@ test('Image mode blueprint create, edit, export, import', async ({
     window.localStorage.setItem('imageBuilder.saveAndBuildModalSeen', 'true');
   });
 
-  // Enable preview so the image-mode Unleash flag is active
-  const previewToggle = page.locator('#preview-toggle');
-  if (!(await previewToggle.isChecked())) {
-    await previewToggle.click();
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(2000);
-  }
   await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible({
     timeout: 30000,
   });
