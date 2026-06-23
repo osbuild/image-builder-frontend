@@ -74,7 +74,6 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  cloudProviders: CloudProviderSlice;
   registration: {
     serverUrl: string;
     baseUrl: string;
@@ -141,6 +140,7 @@ export type WizardState = {
 };
 
 export type CombinedWizardState = WizardState & {
+  cloudProviders: CloudProviderSlice;
   compliance: ComplianceSlice;
   details: DetailsSlice;
   filesystem: FilesystemSlice;

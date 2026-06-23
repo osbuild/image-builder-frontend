@@ -16,12 +16,7 @@ import type { ActivationKeys } from '@/store/api/rhsm';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import {
-  type AwsShareMethod,
-  type AzureHyperVGeneration,
-  cloudProvidersState,
-  type GcpAccountType,
-} from './cloud';
+import { cloudProvidersSlice, cloudProvidersState } from './cloud';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
@@ -44,7 +39,6 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  cloudProviders: cloudProvidersState,
   registration: {
     serverUrl: '',
     baseUrl: '',
@@ -355,54 +349,6 @@ export const wizardSlice = createSlice({
     },
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
       state.registration.proxy = action.payload;
-    },
-    changeAwsAccountId: (state, action: PayloadAction<string>) => {
-      state.cloudProviders.aws.accountId = action.payload;
-    },
-    changeAwsShareMethod: (state, action: PayloadAction<AwsShareMethod>) => {
-      state.cloudProviders.aws.shareMethod = action.payload;
-    },
-    changeAwsSourceId: (state, action: PayloadAction<string | undefined>) => {
-      state.cloudProviders.aws.sourceId = action.payload;
-    },
-    changeAwsRegion: (state, action: PayloadAction<string | undefined>) => {
-      state.cloudProviders.aws.region = action.payload;
-    },
-    reinitializeAws: (state) => {
-      state.cloudProviders.aws.accountId = '';
-      state.cloudProviders.aws.shareMethod = 'manual';
-      state.cloudProviders.aws.source = undefined;
-      state.cloudProviders.aws.region = 'us-east-1';
-    },
-    changeAzureTenantId: (state, action: PayloadAction<string>) => {
-      state.cloudProviders.azure.tenantId = action.payload;
-    },
-    changeAzureSubscriptionId: (state, action: PayloadAction<string>) => {
-      state.cloudProviders.azure.subscriptionId = action.payload;
-    },
-    changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
-      state.cloudProviders.azure.resourceGroup = action.payload;
-    },
-    changeAzureHyperVGeneration: (
-      state,
-      action: PayloadAction<AzureHyperVGeneration>,
-    ) => {
-      state.cloudProviders.azure.hyperVGeneration = action.payload;
-    },
-    reinitializeAzure: (state) => {
-      state.cloudProviders.azure.tenantId = undefined;
-      state.cloudProviders.azure.subscriptionId = undefined;
-      state.cloudProviders.azure.resourceGroup = undefined;
-    },
-    changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
-      state.cloudProviders.gcp.accountType = action.payload;
-    },
-    changeGcpEmail: (state, action: PayloadAction<string>) => {
-      state.cloudProviders.gcp.email = action.payload;
-    },
-    reinitializeGcp: (state) => {
-      state.cloudProviders.gcp.accountType = 'user';
-      state.cloudProviders.gcp.email = '';
     },
     changeRegistrationType: (
       state,
@@ -941,19 +887,6 @@ export const {
   changeServerUrl,
   changeBaseUrl,
   changeProxy,
-  changeAwsAccountId,
-  changeAwsShareMethod,
-  changeAwsSourceId,
-  changeAwsRegion,
-  reinitializeAws,
-  changeAzureTenantId,
-  changeAzureSubscriptionId,
-  changeAzureResourceGroup,
-  changeAzureHyperVGeneration,
-  reinitializeAzure,
-  changeGcpAccountType,
-  changeGcpEmail,
-  reinitializeGcp,
   changeRegistrationType,
   changeActivationKey,
   changeOrgId,
@@ -1034,6 +967,7 @@ export const {
 // to temporarily change the slice shape, which is not ideal
 export const combinedInitialState: CombinedWizardState = {
   ...initialState,
+  cloudProviders: cloudProvidersState,
   compliance: complianceState,
   details: detailsState,
   filesystem: filesystemState,
@@ -1047,6 +981,7 @@ export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
   );
   return {
     ...coreState,
+    cloudProviders: cloudProvidersSlice.reducer(state?.cloudProviders, action),
     compliance: complianceSlice.reducer(state?.compliance, action),
     details: detailsSlice.reducer(state?.details, action),
     filesystem: filesystemSlice.reducer(state?.filesystem, action),

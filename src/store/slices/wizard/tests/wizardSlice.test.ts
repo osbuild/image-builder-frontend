@@ -230,6 +230,17 @@ describe('wizardSlice core reducers', () => {
 
       expect(result.output).toEqual(initialState.output);
     });
+
+    it('loadWizardState should fall back to initialState when cloudProviders is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        cloudProviders: undefined,
+      } as unknown as CombinedWizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.cloudProviders).toEqual(initialState.cloudProviders);
+    });
   });
 
   describe('changeDistribution', () => {
