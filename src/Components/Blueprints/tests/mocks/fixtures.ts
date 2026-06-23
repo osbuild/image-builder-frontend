@@ -24,6 +24,15 @@ export const anotherExistingRepo: ApiRepositoryResponseRead = {
   module_hotfixes: false,
 };
 
+export const newRepoUrl = 'http://brand-new.repo.example.com/x86_64/';
+
+export const importedNewRepo = {
+  uuid: 'new-uuid-1',
+  url: newRepoUrl,
+  name: 'brand-new-repo',
+  warnings: [],
+};
+
 export const createBlueprintJson = (
   contentSources: { url: string; name?: string }[],
 ) =>

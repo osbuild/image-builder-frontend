@@ -11,6 +11,8 @@ import {
   createFetchHandler,
   existingRepo,
   fetchMock,
+  importedNewRepo,
+  newRepoUrl,
 } from './mocks';
 
 import { ImportBlueprintModal } from '../ImportBlueprintModal';
@@ -71,7 +73,6 @@ const uploadBlueprintFile = async (content: string) => {
 describe('ImportBlueprintModal repository import', () => {
   test('does not import repos when checkbox is unchecked', async () => {
     const user = userEvent.setup();
-    const newRepoUrl = 'http://brand-new.repo.example.com/x86_64/';
 
     fetchMock.mockResponse(
       createFetchHandler({
@@ -113,18 +114,10 @@ describe('ImportBlueprintModal repository import', () => {
   });
 
   test('imports all repos when none already exist', async () => {
-    const newRepoUrl = 'http://brand-new.repo.example.com/x86_64/';
-    const importedRepo = {
-      uuid: 'new-uuid-1',
-      url: newRepoUrl,
-      name: 'brand-new-repo',
-      warnings: [],
-    };
-
     fetchMock.mockResponse(
       createFetchHandler({
         list: { repositories: [] },
-        bulkImport: { response: [importedRepo] },
+        bulkImport: { response: [importedNewRepo] },
       }),
     );
 
@@ -180,18 +173,10 @@ describe('ImportBlueprintModal repository import', () => {
   });
 
   test('imports only new repos when some already exist', async () => {
-    const newRepoUrl = 'http://brand-new.repo.example.com/x86_64/';
-    const importedRepo = {
-      uuid: 'new-uuid-1',
-      url: newRepoUrl,
-      name: 'brand-new-repo',
-      warnings: [],
-    };
-
     fetchMock.mockResponse(
       createFetchHandler({
         list: { repositories: [existingRepo] },
-        bulkImport: { response: [importedRepo] },
+        bulkImport: { response: [importedNewRepo] },
       }),
     );
 
@@ -305,7 +290,6 @@ describe('ImportBlueprintModal repository import', () => {
       }),
     );
 
-    const newRepoUrl = 'http://brand-new.repo.example.com/x86_64/';
     renderModal();
     await uploadBlueprintFile(
       createBlueprintJson([
