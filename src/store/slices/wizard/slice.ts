@@ -16,10 +16,11 @@ import type { ActivationKeys } from '@/store/api/rhsm';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
-import type {
-  AwsShareMethod,
-  AzureHyperVGeneration,
-  GcpAccountType,
+import {
+  type AwsShareMethod,
+  type AzureHyperVGeneration,
+  cloudProvidersState,
+  type GcpAccountType,
 } from './cloud';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
@@ -43,24 +44,7 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  cloudProviders: {
-    aws: {
-      accountId: '',
-      shareMethod: 'manual',
-      source: undefined,
-      region: 'us-east-1',
-    },
-    azure: {
-      tenantId: undefined,
-      subscriptionId: undefined,
-      resourceGroup: undefined,
-      hyperVGeneration: 'V2',
-    },
-    gcp: {
-      accountType: 'user',
-      email: '',
-    },
-  },
+  cloudProviders: cloudProvidersState,
   registration: {
     serverUrl: '',
     baseUrl: '',
