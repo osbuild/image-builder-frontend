@@ -75,11 +75,7 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     await frame
       .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
       .click();
-    const profileDropdown = frame
-      .getByRole('textbox', {
-        name: 'Type to filter',
-      })
-      .nth(1);
+    const profileDropdown = frame.getByTestId('profileSelect');
     await expect(profileDropdown).toBeEnabled({ timeout: 30000 });
     await profileDropdown.click();
     await expect(frame.getByRole('option').first()).toBeVisible({
@@ -88,7 +84,7 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     await frame
       .getByRole('option', { name: new RegExp(oscapProfileName, 'i') })
       .click();
-    await expect(profileDropdown).toHaveValue(
+    await expect(profileDropdown).toHaveText(
       'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation',
     );
   });
