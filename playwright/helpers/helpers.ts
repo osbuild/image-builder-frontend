@@ -9,32 +9,17 @@ import {
   type Page,
 } from '@playwright/test';
 
-export const togglePreview = async (page: Page) => {
+export const disablePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
 
-  if (!(await toggleSwitch.isChecked())) {
+  if (await toggleSwitch.isChecked()) {
     await toggleSwitch.click();
   }
 
-  const turnOnButton = page.getByRole('button', { name: 'Turn on' });
-  if (await turnOnButton.isVisible()) {
-    await turnOnButton.click();
-  }
-
-  await expect(toggleSwitch).toBeChecked();
-
-  // TODO: Temporary fix to wait for the preview to be turned on and the modal to load
-  await page.waitForTimeout(3000);
-};
-
-export const enablePreview = async (page: Page) => {
-  const toggleSwitch = page.locator('#preview-toggle');
-
-  if (!(await toggleSwitch.isChecked())) {
-    await toggleSwitch.click();
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(4000);
-  }
+  await expect(toggleSwitch).not.toBeChecked();
+  await expect(
+    page.getByText(/To see new pre-production features, turn on Preview mode/i),
+  ).toBeVisible();
 };
 
 export const isHosted = (): boolean => {

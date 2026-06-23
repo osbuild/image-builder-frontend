@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { ensureRepositoryExists } from '../helpers/apiHelpers';
-import { enablePreview, isHosted } from '../helpers/helpers';
+import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -45,11 +45,6 @@ test('Create a blueprint with Repeatable build customization', async ({
   });
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));
-
-  await enablePreview(page);
-  await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible({
-    timeout: 30000,
-  });
 
   await test.step('Navigate to IB landing page', async () => {
     await navigateToLandingPage(page);
