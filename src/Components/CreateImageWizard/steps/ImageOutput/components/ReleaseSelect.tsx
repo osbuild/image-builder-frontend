@@ -28,9 +28,9 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeDistribution,
   changeRegistrationType,
+  isRhel,
   selectDistribution,
 } from '@/store/slices/wizard';
-import isRhel from '@/Utilities/isRhel';
 import { toMonthAndYear } from '@/Utilities/time';
 
 const ReleaseSelect = () => {

@@ -49,6 +49,7 @@ import {
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
+  isRhel,
   parseSizeUnit,
   RegistrationType,
   selectAapCallbackUrl,
@@ -131,7 +132,6 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
-import isRhel from '../../../Utilities/isRhel';
 import { AwsShareMethod } from '../steps/ImageOutput/components/Aws';
 import { GcpAccountType } from '../steps/ImageOutput/components/Gcp';
 import { PackageRepository } from '../steps/Packages/packagesTypes';

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Content } from '@patternfly/react-core';
 
-import type { PrivateCloudType } from '@/Hooks/Utilities/useTargetEnvironmentCategories';
+import type { PrivateCloudType } from '@/store/slices/wizard';
 
 import { ReviewGroup } from '../../shared';
 
