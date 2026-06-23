@@ -1,10 +1,7 @@
-import { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
-import { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
-import { V1ListSourceResponseItem } from '@/Components/CreateImageWizard/types';
 import {
   CustomRepository,
   Locale,
@@ -16,6 +13,7 @@ import {
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import { ActivationKeys } from '@/store/api/rhsm';
 
+import { CloudProviderSlice } from './cloud';
 import { ComplianceSlice } from './compliance';
 import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
@@ -76,25 +74,7 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  cloudProviders: {
-    aws: {
-      accountId: string;
-      shareMethod: AwsShareMethod;
-      source: V1ListSourceResponseItem | undefined;
-      sourceId?: string | undefined;
-      region?: string | undefined;
-    };
-    azure: {
-      tenantId: string | undefined;
-      subscriptionId: string | undefined;
-      resourceGroup: string | undefined;
-      hyperVGeneration: 'V1' | 'V2';
-    };
-    gcp: {
-      accountType: GcpAccountType;
-      email: string;
-    };
-  };
+  cloudProviders: CloudProviderSlice;
   registration: {
     serverUrl: string;
     baseUrl: string;

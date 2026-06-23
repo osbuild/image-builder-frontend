@@ -42,6 +42,7 @@ import {
 } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  AwsShareMethod,
   combinedInitialState,
   CombinedWizardState,
   ComplianceType,
@@ -49,6 +50,7 @@ import {
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
+  GcpAccountType,
   isRhel,
   parseSizeUnit,
   RegistrationType,
@@ -132,8 +134,6 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
-import { AwsShareMethod } from '../steps/ImageOutput/components/Aws';
-import { GcpAccountType } from '../steps/ImageOutput/components/Gcp';
 import { PackageRepository } from '../steps/Packages/packagesTypes';
 import {
   convertSchemaToIBCustomRepo,

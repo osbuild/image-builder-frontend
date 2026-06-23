@@ -26,8 +26,6 @@ import {
   selectAwsRegion,
 } from '@/store/slices/wizard';
 
-export type AwsShareMethod = 'manual';
-
 type FormGroupProps<T> = {
   value: string;
   onChange: (value: T) => void;

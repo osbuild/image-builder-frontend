@@ -5,8 +5,6 @@ import {
   Reducer,
 } from '@reduxjs/toolkit';
 
-import type { AwsShareMethod } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Aws';
-import type { GcpAccountType } from '@/Components/CreateImageWizard/steps/ImageOutput/components/Gcp';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
@@ -18,6 +16,11 @@ import type { ActivationKeys } from '@/store/api/rhsm';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
+import type {
+  AwsShareMethod,
+  AzureHyperVGeneration,
+  GcpAccountType,
+} from './cloud';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
@@ -430,7 +433,7 @@ export const wizardSlice = createSlice({
     },
     changeAzureHyperVGeneration: (
       state,
-      action: PayloadAction<'V1' | 'V2'>,
+      action: PayloadAction<AzureHyperVGeneration>,
     ) => {
       state.cloudProviders.azure.hyperVGeneration = action.payload;
     },
