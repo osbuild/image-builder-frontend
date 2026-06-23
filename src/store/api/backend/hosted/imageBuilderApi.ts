@@ -11,7 +11,7 @@ const injectedRtkApi = api.injectEndpoints({
           kind: queryArg.kind,
           distro: queryArg.distro,
           arch: queryArg.arch,
-          type: queryArg["type"],
+          type: queryArg['type'],
         },
       }),
     }),
@@ -390,11 +390,11 @@ export type DistributionsResponse = (
   | DistributionItem
   | BootcDistributionItem
 )[];
-export type DistributionKind = "bootc";
-export type PartitionType = "gpt" | "dos";
+export type DistributionKind = 'bootc';
+export type PartitionType = 'gpt' | 'dos';
 export type Minsize = string;
 export type FilesystemTyped = {
-  type?: "plain" | undefined;
+  type?: 'plain' | undefined;
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -403,7 +403,7 @@ export type FilesystemTyped = {
   label?: string | undefined;
   /** The filesystem type. Swap partitions must have an empty mountpoint.
    */
-  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
 };
 export type BtrfsSubvolume = {
   /** The name of the subvolume, which defines the location (path) on the root volume
@@ -414,7 +414,7 @@ export type BtrfsSubvolume = {
   mountpoint: string;
 };
 export type BtrfsVolume = {
-  type: "btrfs";
+  type: 'btrfs';
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -430,10 +430,10 @@ export type LogicalVolume = {
   label?: string | undefined;
   /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
    */
-  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
 };
 export type VolumeGroup = {
-  type: "lvm";
+  type: 'lvm';
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -447,11 +447,11 @@ export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
 export type Disk = {
   /** Type of the partition table
    */
-  type?: ("gpt" | "dos") | undefined;
+  type?: ('gpt' | 'dos') | undefined;
   minsize?: Minsize | undefined;
   partitions: Partition[];
 };
-export type BootMode = "legacy" | "uefi" | "hybrid" | "none";
+export type BootMode = 'legacy' | 'uefi' | 'hybrid' | 'none';
 export type ImageTypeInfo = {
   /** Image type name */
   name: string;
