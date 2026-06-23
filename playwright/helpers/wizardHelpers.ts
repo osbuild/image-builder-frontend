@@ -5,11 +5,11 @@ import * as path from 'path';
 
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
+import { isRhel } from '@/store/slices/wizard';
+
 import { callApi } from './apiHelpers';
 import { closePopupsIfExist, getHostDistroKey, isHosted } from './helpers';
 import { ibFrame, navigateToLandingPage } from './navHelpers';
-
-import isRhel from '../../src/Utilities/isRhel';
 
 export const openWizard = async (scope: Page | FrameLocator) => {
   await scope.getByRole('button', { name: 'Build new image' }).first().click();

@@ -24,14 +24,13 @@ import type {
 } from '@/store/api/backend';
 import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import type { ActivationKeys } from '@/store/api/rhsm';
-import isRhel from '@/Utilities/isRhel';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
 import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
-import { ImageSource } from './output';
+import { ImageSource, isRhel } from './output';
 import {
   CombinedWizardState,
   RegistrationType,

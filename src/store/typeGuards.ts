@@ -6,15 +6,12 @@ import {
   ComposesResponseItem,
   GcpUploadRequestOptions,
   GcpUploadStatus,
-  ImageTypes,
   OciUploadStatus,
   UploadRequest,
   UploadStatus,
 } from './api/backend/hosted';
 // import from ./api/backend/onprem to break circular dependency
 import { Bootc } from './api/backend/onprem';
-
-import { targetOptions } from '../constants';
 
 export const isGcpUploadRequestOptions = (
   _options: UploadRequest['options'],
@@ -68,8 +65,4 @@ export const hasBootcRequest = (
   compose: ComposesResponseItem,
 ): compose is ComposeWithBootc => {
   return 'bootc' in compose.request;
-};
-
-export const isImageType = (key: string): key is ImageTypes => {
-  return key in targetOptions;
 };

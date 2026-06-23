@@ -5,13 +5,13 @@ import { ImageTypes } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  isImageType,
+  isRhel,
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
   selectIsImageMode,
 } from '@/store/slices/wizard';
-import { isImageType } from '@/store/typeGuards';
-import isRhel from '@/Utilities/isRhel';
 
 import { ALL_CUSTOMIZATIONS } from './constants';
 import { distroDetailsApi as api } from './distributionDetailsApi';

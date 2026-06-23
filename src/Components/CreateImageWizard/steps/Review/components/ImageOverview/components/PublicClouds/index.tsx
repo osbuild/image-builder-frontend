@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Flex, FlexItem } from '@patternfly/react-core';
 
-import { PublicCloudType } from '@/Hooks/Utilities/useTargetEnvironmentCategories';
+import type { PublicCloudType } from '@/store/slices/wizard';
 
 import { AWSDetails } from './AWSDetails';
 import { AzureDetails } from './AzureDetails';

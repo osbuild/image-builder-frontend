@@ -1,4 +1,4 @@
-import isRhel from '@/Utilities/isRhel';
+import { isRhel } from '@/store/slices/wizard';
 
 import {
   ALL_CUSTOMIZATIONS,

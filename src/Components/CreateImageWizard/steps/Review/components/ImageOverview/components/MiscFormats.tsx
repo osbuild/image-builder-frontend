@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Content } from '@patternfly/react-core';
 
-import { MiscFormatType } from '@/Hooks/Utilities/useTargetEnvironmentCategories';
+import type { MiscFormatType } from '@/store/slices/wizard';
 
 import { ReviewGroup } from '../../shared';
 
