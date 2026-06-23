@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -137,6 +137,22 @@ const NewImagesTable = () => {
     ? isLoadingBlueprintsCompose
     : isLoadingComposes;
 
+  useEffect(() => {
+    if (!isOnPremise) {
+      const orgId = userData?.identity.internal?.org_id;
+
+      analytics.group(orgId, {
+        imagebuilder_image_count: composesData?.meta.count,
+      });
+    }
+    // analytics is an external API and doesn't need to be in deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isOnPremise,
+    userData?.identity.internal?.org_id,
+    composesData?.meta.count,
+  ]);
+
   if (isLoading) {
     return (
       <Bullseye>
@@ -188,14 +204,6 @@ const NewImagesTable = () => {
     });
   }
   const itemCount = data?.meta.count || 0;
-
-  if (!isOnPremise) {
-    const orgId = userData?.identity.internal?.org_id;
-
-    analytics.group(orgId, {
-      imagebuilder_image_count: composesData?.meta.count,
-    });
-  }
 
   return (
     <PageSection>
