@@ -16,7 +16,6 @@ import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
 import { registrationSlice, registrationState } from './registration';
 import {
-  CombinedWizardState,
   UserAdministratorPayload,
   UserGroupGidPayload,
   UserGroupNamePayload,
@@ -24,8 +23,8 @@ import {
   UserPasswordPayload,
   UserPayload,
   UserSshKeyPayload,
-  WizardState,
-} from './types';
+} from './system';
+import { CombinedWizardState, WizardState } from './types';
 
 // GID range for regular groups per LOGIN.DEFS(5) defaults
 export const MIN_REGULAR_GID = 1000;
