@@ -15,8 +15,15 @@ const prettierConfig = require('eslint-config-prettier');
 
 module.exports = defineConfig([
   {
-    // Ignore programatically generated files
+    // Ignore programatically generated files and build artifacts
     ignores: [
+      // Build outputs
+      'dist/**',
+      'cockpit/public/**',
+      '.cache/**',
+      'playwright-report/**',
+      'pkg/**',
+      // Generated API code
       '**/mockServiceWorker.js',
       '**/imageBuilderApi.ts',
       '**/hosted/contentSourcesApi.ts',
@@ -31,20 +38,10 @@ module.exports = defineConfig([
     files: ['**/*.{js,ts,jsx,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
-      parserOptions: {
-        project: [
-          './tsconfig.json',
-          './tsconfig.vitest.json',
-          './playwright/tsconfig.json',
-        ],
-      },
       globals: {
         ...globals.browser,
-        // node
+        ...globals.node,
         JSX: 'readonly',
-        process: 'readonly',
-        __dirname: 'readonly',
-        require: 'readonly',
         // vitest
         describe: 'readonly',
         it: 'readonly',
@@ -166,8 +163,6 @@ module.exports = defineConfig([
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unsafe-function-type': 'error',
-      '@typescript-eslint/no-require-imports': 'error',
-      '@typescript-eslint/no-unnecessary-condition': 'error',
       'no-unused-vars': 'off', // disable js rule in favor of @typescript-eslint's rule
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -182,6 +177,26 @@ module.exports = defineConfig([
       react: {
         version: 'detect', // Automatically detect React version
       },
+    },
+  },
+
+  {
+    // TypeScript parser with project for source files only
+    files: ['src/**/*.{js,ts,jsx,tsx}', 'playwright/**/*.ts'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: [
+          './tsconfig.json',
+          './tsconfig.vitest.json',
+          './playwright/tsconfig.json',
+        ],
+      },
+    },
+    rules: {
+      // Type-aware rules that require parserOptions.project
+      '@typescript-eslint/no-require-imports': 'error',
+      '@typescript-eslint/no-unnecessary-condition': 'error',
     },
   },
 
