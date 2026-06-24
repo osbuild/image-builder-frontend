@@ -9,8 +9,7 @@ import {
   changeImageSource,
   changeImageTypes,
   changeIsoPayloadReference,
-  type CombinedWizardState,
-  combinedInitialState as initialState,
+  initialState,
   removeImageType,
   selectArchitecture,
   selectBootcDistributions,
@@ -19,6 +18,7 @@ import {
   selectImageTypes,
   selectIsoPayloadReference,
   wizardReducer,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 import { createMockState } from '../../tests/mockWizardState';
@@ -35,7 +35,7 @@ describe('output reducers', () => {
     });
 
     it('should clear image source with undefined', () => {
-      const stateWithSource: CombinedWizardState = {
+      const stateWithSource: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -65,7 +65,7 @@ describe('output reducers', () => {
     });
 
     it('should clear iso payload reference with undefined', () => {
-      const stateWithRef: CombinedWizardState = {
+      const stateWithRef: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -137,7 +137,7 @@ describe('output reducers', () => {
 
   describe('removeImageType', () => {
     it('should remove an existing image type from output', () => {
-      const stateWithTypes: CombinedWizardState = {
+      const stateWithTypes: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -153,7 +153,7 @@ describe('output reducers', () => {
 
   describe('changeImageTypes', () => {
     it('should replace all image types under output', () => {
-      const stateWithTypes: CombinedWizardState = {
+      const stateWithTypes: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -170,7 +170,7 @@ describe('output reducers', () => {
     });
 
     it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
-      const stateWithIso: CombinedWizardState = {
+      const stateWithIso: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -188,7 +188,7 @@ describe('output reducers', () => {
     });
 
     it('should preserve isoPayloadReference when bootable-container-iso is selected', () => {
-      const stateWithIso: CombinedWizardState = {
+      const stateWithIso: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,

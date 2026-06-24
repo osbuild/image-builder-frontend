@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { wizardInitialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import {
@@ -222,7 +222,7 @@ describe('Firewall Component', () => {
     test('renders with pre-populated ports from state', async () => {
       renderFirewallStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           firewall: {
             ports: ['80:tcp', '443:udp'],
             services: {
@@ -240,7 +240,7 @@ describe('Firewall Component', () => {
     test('renders with pre-populated enabled services from state', async () => {
       renderFirewallStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           firewall: {
             ports: [],
             services: {
@@ -258,7 +258,7 @@ describe('Firewall Component', () => {
     test('renders with pre-populated disabled services from state', async () => {
       renderFirewallStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           firewall: {
             ports: [],
             services: {
@@ -301,7 +301,7 @@ describe('Firewall Component', () => {
     test('updates store when port is removed', async () => {
       const { store } = renderFirewallStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           firewall: {
             ports: ['80:tcp'],
             services: {
@@ -355,7 +355,7 @@ describe('Firewall Component', () => {
     test('updates store when service is removed', async () => {
       const { store } = renderFirewallStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           firewall: {
             ports: [],
             services: {

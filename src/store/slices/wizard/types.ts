@@ -7,11 +7,11 @@ import { OutputSlice } from './output';
 import { RegistrationSlice } from './registration';
 import { SystemSlice } from './system';
 
-export type WizardState = {
+export type RemainingState = {
   system: SystemSlice;
 };
 
-export type CombinedWizardState = WizardState & {
+export type WizardState = RemainingState & {
   cloudProviders: CloudProviderSlice;
   compliance: ComplianceSlice;
   content: ContentSlice;

@@ -11,12 +11,9 @@ import {
   serviceMiddleware,
   serviceReducer,
 } from '@/store';
-import {
-  combinedInitialState,
-  type CombinedWizardState,
-} from '@/store/slices/wizard';
+import { initialState, type WizardState } from '@/store/slices/wizard';
 
-export type WizardStateOverrides = Partial<CombinedWizardState>;
+export type WizardStateOverrides = Partial<WizardState>;
 
 export type RenderWithReduxResult = RenderResult & {
   store: EnhancedStore<RootState>;
@@ -51,7 +48,7 @@ export const createTestStore = (
     middleware: isOnPremise ? onPremMiddleware : serviceMiddleware,
     preloadedState: {
       wizard: {
-        ...combinedInitialState,
+        ...initialState,
         ...wizardStateOverrides,
       },
       ...preloadedState,

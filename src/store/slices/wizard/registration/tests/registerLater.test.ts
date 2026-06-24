@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  changeRegistrationType,
-  combinedInitialState,
-} from '@/store/slices/wizard';
+import { changeRegistrationType, initialState } from '@/store/slices/wizard';
 import {
   createListenerApi,
   createMockState,
@@ -22,7 +19,7 @@ describe('registerLater', () => {
     process.env = { ...ORIGINAL_ENV, IS_ON_PREMISE: 'true' };
     const state = createMockState({
       output: {
-        ...combinedInitialState.output,
+        ...initialState.output,
         distribution: 'centos-9',
       },
     });
@@ -39,7 +36,7 @@ describe('registerLater', () => {
     process.env = { ...ORIGINAL_ENV, IS_ON_PREMISE: 'true' };
     const state = createMockState({
       output: {
-        ...combinedInitialState.output,
+        ...initialState.output,
         distribution: 'rhel-10',
       },
     });
@@ -55,7 +52,7 @@ describe('registerLater', () => {
     delete process.env.IS_ON_PREMISE;
     const state = createMockState({
       output: {
-        ...combinedInitialState.output,
+        ...initialState.output,
         distribution: 'centos-9',
       },
     });

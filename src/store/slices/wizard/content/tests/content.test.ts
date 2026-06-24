@@ -5,15 +5,15 @@ import {
   addModule,
   addPackage,
   addPackageGroup,
-  type CombinedWizardState,
   type GroupWithRepositoryInfo,
   type IBPackageWithRepositoryInfo,
-  combinedInitialState as initialState,
+  initialState,
   type PackageRepository,
   removeModule,
   removePackage,
   removePackageGroup,
   wizardReducer,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 const createPackage = (
@@ -70,7 +70,7 @@ describe('content reducers', () => {
       });
 
       it('should update existing package if same name', () => {
-        const stateWithPackage: CombinedWizardState = {
+        const stateWithPackage: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -91,7 +91,7 @@ describe('content reducers', () => {
 
     describe('removePackage', () => {
       it('should remove package by name', () => {
-        const stateWithPackages: CombinedWizardState = {
+        const stateWithPackages: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -113,7 +113,7 @@ describe('content reducers', () => {
       });
 
       it('should do nothing when package not found', () => {
-        const stateWithPackages: CombinedWizardState = {
+        const stateWithPackages: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -144,7 +144,7 @@ describe('content reducers', () => {
       });
 
       it('should update existing module if same name', () => {
-        const stateWithModule: CombinedWizardState = {
+        const stateWithModule: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -172,7 +172,7 @@ describe('content reducers', () => {
 
     describe('removeModule', () => {
       it('should remove module when no packages are linked', () => {
-        const stateWithModule: CombinedWizardState = {
+        const stateWithModule: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -187,7 +187,7 @@ describe('content reducers', () => {
       });
 
       it('should NOT remove module when packages are linked to it', () => {
-        const stateWithModuleAndPackage: CombinedWizardState = {
+        const stateWithModuleAndPackage: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -207,7 +207,7 @@ describe('content reducers', () => {
       });
 
       it('should remove module when last linked package is removed first', () => {
-        let state: CombinedWizardState = {
+        let state: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -226,7 +226,7 @@ describe('content reducers', () => {
       });
 
       it('should do nothing when module not found', () => {
-        const stateWithModule: CombinedWizardState = {
+        const stateWithModule: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -256,7 +256,7 @@ describe('content reducers', () => {
       });
 
       it('should update existing group if same name', () => {
-        const stateWithGroup: CombinedWizardState = {
+        const stateWithGroup: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -281,7 +281,7 @@ describe('content reducers', () => {
 
     describe('removePackageGroup', () => {
       it('should remove package group by name', () => {
-        const stateWithGroups: CombinedWizardState = {
+        const stateWithGroups: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,
@@ -299,7 +299,7 @@ describe('content reducers', () => {
       });
 
       it('should do nothing when group not found', () => {
-        const stateWithGroup: CombinedWizardState = {
+        const stateWithGroup: WizardState = {
           ...initialState,
           content: {
             ...initialState.content,

@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { wizardInitialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import {
@@ -225,7 +225,7 @@ describe('Services Component', () => {
     test('renders with pre-populated enabled services from state', async () => {
       renderServicesStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           services: {
             enabled: ['httpd', 'sshd'],
             disabled: [],
@@ -241,7 +241,7 @@ describe('Services Component', () => {
     test('renders with pre-populated disabled services from state', async () => {
       renderServicesStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           services: {
             enabled: [],
             disabled: ['telnet', 'rsh'],
@@ -257,7 +257,7 @@ describe('Services Component', () => {
     test('renders with pre-populated masked services from state', async () => {
       renderServicesStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           services: {
             enabled: [],
             disabled: [],
@@ -314,7 +314,7 @@ describe('Services Component', () => {
     test('updates store when service is removed', async () => {
       const { store } = renderServicesStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           services: {
             enabled: ['httpd'],
             disabled: [],

@@ -4,8 +4,7 @@ import {
   addGroupToUserByUserIndex,
   addUser,
   addUserGroup,
-  type CombinedWizardState,
-  combinedInitialState as initialState,
+  initialState,
   removeGroupFromUserByIndex,
   removeUser,
   removeUserGroup,
@@ -16,11 +15,10 @@ import {
   setUserSshKeyByIndex,
   type UserWithAdditionalInfo,
   wizardReducer,
+  type WizardState,
 } from '@/store/slices/wizard';
 
-const createUserState = (
-  users: UserWithAdditionalInfo[],
-): CombinedWizardState => ({
+const createUserState = (users: UserWithAdditionalInfo[]): WizardState => ({
   ...initialState,
   system: {
     ...initialState.system,
@@ -299,7 +297,7 @@ describe('user group reducers', () => {
     });
 
     it('should skip already used GIDs', () => {
-      const stateWithExistingGid: CombinedWizardState = {
+      const stateWithExistingGid: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -316,7 +314,7 @@ describe('user group reducers', () => {
 
   describe('setUserGroupNameByIndex', () => {
     it('should update group name', () => {
-      const state: CombinedWizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -333,7 +331,7 @@ describe('user group reducers', () => {
     });
 
     it('should trim whitespace from name', () => {
-      const state: CombinedWizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -350,7 +348,7 @@ describe('user group reducers', () => {
     });
 
     it('should remove GID when name is set to empty', () => {
-      const state: CombinedWizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -368,7 +366,7 @@ describe('user group reducers', () => {
     });
 
     it('should assign GID when name is set on group without GID', () => {
-      const state: CombinedWizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -388,7 +386,7 @@ describe('user group reducers', () => {
 
   describe('removeUserGroup', () => {
     it('should remove user group at index', () => {
-      const state: CombinedWizardState = {
+      const state: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,

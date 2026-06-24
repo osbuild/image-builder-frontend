@@ -20,15 +20,15 @@ import {
   UserPayload,
   UserSshKeyPayload,
 } from './system';
-import { CombinedWizardState, WizardState } from './types';
+import { RemainingState, WizardState } from './types';
 
-export const initialState: WizardState = {
+export const wizardInitialState: RemainingState = {
   system: systemState,
 };
 
 export const wizardSlice = createSlice({
   name: 'wizard',
-  initialState,
+  initialState: wizardInitialState,
   reducers: {
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
@@ -377,10 +377,10 @@ export const wizardSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(initializeWizard, () => initialState)
+      .addCase(initializeWizard, () => wizardInitialState)
       .addCase(
         loadWizardState,
-        (_, action: PayloadAction<WizardState>) => action.payload,
+        (_, action: PayloadAction<RemainingState>) => action.payload,
       );
   },
 });
@@ -437,8 +437,8 @@ export const {
 // The reason for this is that there is no way to nest the
 // child slice under the parent slice yet, we would need
 // to temporarily change the slice shape, which is not ideal
-export const combinedInitialState: CombinedWizardState = {
-  ...initialState,
+export const initialState: WizardState = {
+  ...wizardInitialState,
   cloudProviders: cloudProvidersState,
   compliance: complianceState,
   content: contentState,
@@ -448,9 +448,9 @@ export const combinedInitialState: CombinedWizardState = {
   registration: registrationState,
 };
 
-export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
+export const wizardReducer: Reducer<WizardState> = (state, action) => {
   const coreState = wizardSlice.reducer(
-    state as WizardState | undefined,
+    state as RemainingState | undefined,
     action,
   );
   return {
