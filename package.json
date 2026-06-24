@@ -94,8 +94,8 @@
     "webpack-bundle-analyzer": "5.3.0"
   },
   "scripts": {
-    "lint": "eslint src playwright --fix --cache",
-    "lint:check": "eslint src playwright",
+    "lint": "eslint . --fix --cache",
+    "lint:check": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "start": "fec dev-proxy",
