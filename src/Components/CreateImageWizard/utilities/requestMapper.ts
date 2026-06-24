@@ -43,14 +43,13 @@ import {
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   AwsShareMethod,
-  combinedInitialState,
-  CombinedWizardState,
   ComplianceType,
   convertToBytes,
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
   GcpAccountType,
+  initialState,
   isRhel,
   PackageRepository,
   parseSizeUnit,
@@ -121,6 +120,7 @@ import {
   selectVerifiedLocaleLangpacks,
   Units,
   UserWithAdditionalInfo,
+  WizardState,
 } from '@/store/slices/wizard';
 
 import {
@@ -437,8 +437,7 @@ function commonRequestToState(
     .options as AzureUploadRequestOptions;
 
   const arch =
-    request.image_requests[0]?.architecture ??
-    combinedInitialState.output.architecture;
+    request.image_requests[0]?.architecture ?? initialState.output.architecture;
   if (!['x86_64', 'aarch64'].includes(arch)) {
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
@@ -499,7 +498,7 @@ function commonRequestToState(
               },
             }
           : {
-              ...combinedInitialState.compliance,
+              ...initialState.compliance,
               fips: {
                 enabled: request.customizations.fips?.enabled || false,
               },
@@ -547,7 +546,7 @@ function commonRequestToState(
       // the user can pick the correct distro in the wizard.
       distribution:
         getLatestRelease(request.distribution) ??
-        combinedInitialState.output.distribution,
+        initialState.output.distribution,
       imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
       isoPayloadReference: request.bootc?.iso_payload_reference,
       imageTypes: request.image_requests.map((image) => image.image_type),
@@ -619,7 +618,7 @@ function commonRequestToState(
         ? {
             script: getFirstBootScript(request.customizations.files),
           }
-        : combinedInitialState.system.firstBoot,
+        : initialState.system.firstBoot,
       users:
         request.customizations.users?.map((user) => ({
           name: user.name,
@@ -642,11 +641,9 @@ function commonRequestToState(
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
  * @param source  V1ListSourceResponseItem
- * @returns CombinedWizardState
+ * @returns WizardState
  */
-export const mapRequestToState = (
-  request: BlueprintResponse,
-): CombinedWizardState => {
+export const mapRequestToState = (request: BlueprintResponse): WizardState => {
   const commonState = commonRequestToState(request);
   return {
     ...commonState,
@@ -732,7 +729,7 @@ const getMetadata = (metadata: BlueprintMetadata) => {
 export const mapBlueprintExportToState = (
   blueprint: BlueprintExportResponse,
   image_requests: ImageRequest[],
-): CombinedWizardState => {
+): WizardState => {
   const blueprintResponse: CreateBlueprintRequest = {
     name: blueprint.name,
     description: blueprint.description,
@@ -777,7 +774,7 @@ export const mapBlueprintExportToState = (
       metadata: getMetadata(blueprint.metadata),
     },
     registration: {
-      ...combinedInitialState.registration,
+      ...initialState.registration,
       aap: {
         enabled: blueprint.customizations.aap_registration !== undefined,
         callbackUrl:

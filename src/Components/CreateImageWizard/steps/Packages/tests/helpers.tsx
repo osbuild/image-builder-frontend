@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { RHEL_10 } from '@/constants';
-import { combinedInitialState as initialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import {
   clearWithWait,
   clickWithWait,

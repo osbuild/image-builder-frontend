@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { type Architectures, backendApi } from '@/store/api/backend';
-import { changeImageTypes, combinedInitialState } from '@/store/slices/wizard';
+import { changeImageTypes, initialState } from '@/store/slices/wizard';
 import {
   createListenerApi,
   createMockState,
@@ -21,9 +21,9 @@ describe('filterImageTypes', () => {
   it('returns early when in image mode', () => {
     const state = createMockState({
       details: {
-        ...combinedInitialState.details,
+        ...initialState.details,
         blueprint: {
-          ...combinedInitialState.details.blueprint,
+          ...initialState.details.blueprint,
           mode: 'image',
         },
       },
@@ -38,7 +38,7 @@ describe('filterImageTypes', () => {
   it('filters image types to only those allowed by getArchitectures', () => {
     const state = createMockState({
       output: {
-        ...combinedInitialState.output,
+        ...initialState.output,
         architecture: 'x86_64',
         distribution: 'rhel-10',
         imageTypes: ['aws', 'gcp', 'vsphere'],
@@ -62,7 +62,7 @@ describe('filterImageTypes', () => {
   it('clears all image types when architecture has no matches', () => {
     const state = createMockState({
       output: {
-        ...combinedInitialState.output,
+        ...initialState.output,
         architecture: 'aarch64',
         distribution: 'rhel-10',
         imageTypes: ['aws', 'gcp'],

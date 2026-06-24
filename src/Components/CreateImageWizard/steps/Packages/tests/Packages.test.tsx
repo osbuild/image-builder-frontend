@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { combinedInitialState as initialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clearWithWait,

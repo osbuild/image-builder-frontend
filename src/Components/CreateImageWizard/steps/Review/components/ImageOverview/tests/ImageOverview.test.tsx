@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { RHEL_10, X86_64 } from '@/constants';
-import { combinedInitialState as initialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import { adminUser, userGroups } from '../../AdvancedSettings/tests/mocks';

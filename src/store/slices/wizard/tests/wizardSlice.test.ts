@@ -7,18 +7,18 @@ import {
   changeImageTypes,
   clearLocale,
   clearTimezone,
-  type CombinedWizardState,
   initializeWizard,
-  combinedInitialState as initialState,
+  initialState,
   loadWizardState,
   removeImageType,
   wizardReducer,
+  type WizardState,
 } from '@/store/slices/wizard';
 
 describe('wizardSlice core reducers', () => {
   describe('initializeWizard', () => {
     it('should reset state to initial state', () => {
-      const modifiedState: CombinedWizardState = {
+      const modifiedState: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -38,7 +38,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should reset users array to empty', () => {
-      const stateWithUsers: CombinedWizardState = {
+      const stateWithUsers: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -61,7 +61,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should reset partitions to empty arrays', () => {
-      const stateWithPartitions: CombinedWizardState = {
+      const stateWithPartitions: WizardState = {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
@@ -97,7 +97,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('loadWizardState', () => {
     it('should load provided state across all slices', () => {
-      const stateToLoad: CombinedWizardState = {
+      const stateToLoad: WizardState = {
         ...initialState,
         output: {
           ...initialState.output,
@@ -154,7 +154,7 @@ describe('wizardSlice core reducers', () => {
     });
 
     it('should completely replace existing state', () => {
-      const existingState: CombinedWizardState = {
+      const existingState: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -172,7 +172,7 @@ describe('wizardSlice core reducers', () => {
         },
       };
 
-      const newState: CombinedWizardState = {
+      const newState: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -191,7 +191,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         filesystem: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -202,7 +202,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         compliance: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -213,7 +213,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         details: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -224,7 +224,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         output: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -235,7 +235,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         cloudProviders: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -246,7 +246,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         registration: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -257,7 +257,7 @@ describe('wizardSlice core reducers', () => {
       const stateToLoad = {
         ...initialState,
         content: undefined,
-      } as unknown as CombinedWizardState;
+      } as unknown as WizardState;
 
       const result = wizardReducer(initialState, loadWizardState(stateToLoad));
 
@@ -308,7 +308,7 @@ describe('wizardSlice core reducers', () => {
 
     describe('removeImageType', () => {
       it('should remove an existing image type', () => {
-        const stateWithTypes: CombinedWizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -322,7 +322,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should do nothing when removing non-existent type', () => {
-        const stateWithTypes: CombinedWizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -338,7 +338,7 @@ describe('wizardSlice core reducers', () => {
 
     describe('changeImageTypes', () => {
       it('should replace all image types', () => {
-        const stateWithTypes: CombinedWizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -355,7 +355,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should set empty array', () => {
-        const stateWithTypes: CombinedWizardState = {
+        const stateWithTypes: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -369,7 +369,7 @@ describe('wizardSlice core reducers', () => {
       });
 
       it('should clear isoPayloadReference when bootable-container-iso is not selected', () => {
-        const stateWithIso: CombinedWizardState = {
+        const stateWithIso: WizardState = {
           ...initialState,
           output: {
             ...initialState.output,
@@ -390,7 +390,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('clearLocale', () => {
     it('should reset languages and keyboard', () => {
-      const stateWithLocale: CombinedWizardState = {
+      const stateWithLocale: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,
@@ -417,7 +417,7 @@ describe('wizardSlice core reducers', () => {
 
   describe('clearTimezone', () => {
     it('should reset timezone and ntpservers', () => {
-      const stateWithTimezone: CombinedWizardState = {
+      const stateWithTimezone: WizardState = {
         ...initialState,
         system: {
           ...initialState.system,

@@ -1,10 +1,7 @@
 import { vi } from 'vitest';
 
 import type { RootState } from '@/store';
-import {
-  type CombinedWizardState,
-  combinedInitialState as wizardInitialState,
-} from '@/store/slices/wizard';
+import { initialState, type WizardState } from '@/store/slices/wizard';
 
 // Minimal mock state that satisfies RootState for wizard tests
 // We only need the slices that selectors might access
@@ -12,7 +9,7 @@ export const mockRootState: RootState = {
   env: {
     isOnPremise: false,
   },
-  wizard: { ...wizardInitialState },
+  wizard: { ...initialState },
   wizardModal: {
     isModalOpen: false,
     mode: 'create',
@@ -36,7 +33,7 @@ export const mockRootState: RootState = {
 
 // Helper to create a modified RootState with wizard overrides
 export const createMockState = (
-  wizardOverrides: Partial<CombinedWizardState>,
+  wizardOverrides: Partial<WizardState>,
 ): RootState => ({
   ...mockRootState,
   wizard: {
@@ -47,11 +44,11 @@ export const createMockState = (
 
 // Helper to create a state with a user for user-related tests
 export const createStateWithUser = (
-  userOverrides: Partial<CombinedWizardState['system']['users'][0]> = {},
+  userOverrides: Partial<WizardState['system']['users'][0]> = {},
 ): RootState =>
   createMockState({
     system: {
-      ...wizardInitialState.system,
+      ...initialState.system,
       users: [
         {
           name: 'testuser',
@@ -68,11 +65,11 @@ export const createStateWithUser = (
 
 // Helper to create a state with partitions for filesystem tests
 export const createStateWithPartitions = (
-  partitions: CombinedWizardState['filesystem']['fileSystem']['partitions'],
+  partitions: WizardState['filesystem']['fileSystem']['partitions'],
 ): RootState =>
   createMockState({
     filesystem: {
-      ...wizardInitialState.filesystem,
+      ...initialState.filesystem,
       fileSystem: {
         partitions,
       },
@@ -102,12 +99,12 @@ export const createListenerApi = (state: RootState = mockRootState) => ({
 
 // Helper to create a state with packages for content tests
 export const createStateWithPackages = (
-  packages: CombinedWizardState['content']['packages'],
-  modules: CombinedWizardState['content']['enabledModules'] = [],
+  packages: WizardState['content']['packages'],
+  modules: WizardState['content']['enabledModules'] = [],
 ): RootState =>
   createMockState({
     content: {
-      ...wizardInitialState.content,
+      ...initialState.content,
       packages,
       enabledModules: modules,
     },

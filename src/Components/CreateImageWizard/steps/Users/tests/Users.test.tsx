@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { wizardInitialState } from '@/store/slices/wizard';
 import { createUser, renderWithRedux, typeWithWait } from '@/test/testUtils';
 
 import UsersStep from '../index';
@@ -12,7 +12,7 @@ describe('Users Component', () => {
     test('pressing Enter in username input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           users: [
             {
               name: '',
@@ -39,7 +39,7 @@ describe('Users Component', () => {
     test('pressing Enter in password input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           users: [
             {
               name: 'testuser',
@@ -66,7 +66,7 @@ describe('Users Component', () => {
     test('pressing Enter in SSH key input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           users: [
             {
               name: 'testuser',

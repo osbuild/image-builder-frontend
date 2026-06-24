@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  combinedInitialState as initialState,
-  wizardReducer,
-} from '@/store/slices/wizard';
+import { initialState, wizardReducer } from '@/store/slices/wizard';
 
 import {
   changeBlueprintDescription,

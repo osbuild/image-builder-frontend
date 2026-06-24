@@ -1,6 +1,6 @@
 import { screen, within } from '@testing-library/react';
 
-import { combinedInitialState as initialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import {
   clearWithWait,
   clickWithWait,

@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { FIRST_BOOT_SERVICE } from '@/constants';
-import { initialState } from '@/store/slices/wizard';
+import { wizardInitialState } from '@/store/slices/wizard';
 import { createUser, waitForAction } from '@/test/testUtils';
 
 import { renderFirstBootStep, uploadScript } from './helpers';
@@ -80,7 +80,7 @@ describe('FirstBoot Component', () => {
     test('does not show empty state when script is pre-populated', async () => {
       renderFirstBootStep({
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           firstBoot: {
             script: VALID_SCRIPT,
           },
@@ -119,7 +119,10 @@ describe('FirstBoot Component', () => {
   describe('Custom Controls', () => {
     test('displays revert button', async () => {
       renderFirstBootStep({
-        system: { ...initialState.system, firstBoot: { script: VALID_SCRIPT } },
+        system: {
+          ...wizardInitialState.system,
+          firstBoot: { script: VALID_SCRIPT },
+        },
       });
 
       expect(

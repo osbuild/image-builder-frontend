@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { combinedInitialState as initialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import { renderBlueprintMode, toggleBlueprintMode } from './helpers';

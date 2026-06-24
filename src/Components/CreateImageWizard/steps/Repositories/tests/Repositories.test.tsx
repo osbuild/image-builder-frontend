@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { CreateBlueprintRequest } from '@/store/api/backend';
-import { combinedInitialState as initialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clickWithWait,

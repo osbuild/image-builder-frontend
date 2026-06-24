@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { wizardInitialState } from '@/store/slices/wizard';
 import { createUser, renderWithRedux, typeWithWait } from '@/test/testUtils';
 
 import UserGroupsStep from '../index';
@@ -12,7 +12,7 @@ describe('UserGroups Component', () => {
     test('pressing Enter in group name input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UserGroupsStep />, {
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           groups: [
             {
               name: '',
@@ -34,7 +34,7 @@ describe('UserGroups Component', () => {
     test('pressing Enter in group ID input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UserGroupsStep />, {
         system: {
-          ...initialState.system,
+          ...wizardInitialState.system,
           groups: [
             {
               name: 'developers',

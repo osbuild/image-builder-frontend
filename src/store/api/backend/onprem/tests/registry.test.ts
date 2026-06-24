@@ -1,6 +1,6 @@
+import cockpit from 'cockpit';
 import { describe, expect, it, vi } from 'vitest';
 
-import cockpit from 'cockpit';
 
 import { registryEndpoints } from '../composerApi/registry';
 
