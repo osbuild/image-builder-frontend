@@ -6,7 +6,7 @@ import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-} from '../packagesTypes';
+} from '@/store/slices/wizard';
 
 type RemovePackageButtonProps = {
   item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo;

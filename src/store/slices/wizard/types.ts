@@ -1,8 +1,4 @@
 import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
-import {
   CustomRepository,
   Locale,
   Module,
@@ -14,6 +10,10 @@ import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 
 import { CloudProviderSlice } from './cloud';
 import { ComplianceSlice } from './compliance';
+import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+} from './content';
 import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
 import { OutputSlice } from './output';

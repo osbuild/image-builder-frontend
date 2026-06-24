@@ -5,10 +5,6 @@ import {
   Reducer,
 } from '@reduxjs/toolkit';
 
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
 import type { RootState } from '@/store';
 import type { CustomRepository, Module, Repository } from '@/store/api/backend';
 import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
@@ -17,6 +13,10 @@ import { yyyyMMddFormat } from '@/Utilities/time';
 import { initializeWizard, loadWizardState } from './actions';
 import { cloudProvidersSlice, cloudProvidersState } from './cloud';
 import { complianceSlice, complianceState } from './compliance';
+import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+} from './content';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';

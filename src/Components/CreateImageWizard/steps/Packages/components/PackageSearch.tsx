@@ -50,6 +50,9 @@ import {
   addModule,
   addPackage,
   addPackageGroup,
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+  ItemWithSources,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -71,11 +74,6 @@ import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
 
 import ManageRepositoriesButton from '../../Repositories/components/ManageRepositoriesButton';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  ItemWithSources,
-} from '../packagesTypes';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';

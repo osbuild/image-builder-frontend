@@ -1,4 +1,4 @@
-import { IBPackageWithRepositoryInfo } from './packagesTypes';
+import { IBPackageWithRepositoryInfo } from '@/store/slices/wizard';
 
 export const getPackageUniqueKey = (
   pkg: IBPackageWithRepositoryInfo,

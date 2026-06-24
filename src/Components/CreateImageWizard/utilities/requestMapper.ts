@@ -52,6 +52,7 @@ import {
   FilesystemPartition,
   GcpAccountType,
   isRhel,
+  PackageRepository,
   parseSizeUnit,
   RegistrationType,
   selectAapCallbackUrl,
@@ -134,7 +135,6 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
-import { PackageRepository } from '../steps/Packages/packagesTypes';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,

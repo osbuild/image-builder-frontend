@@ -15,6 +15,8 @@ import { useSecuritySummary } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -27,11 +29,6 @@ import {
 import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
-
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '../packagesTypes';
 
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;

@@ -1,17 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import type {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  PackageRepository,
-} from '@/Components/CreateImageWizard/steps/Packages/packagesTypes';
 import type { Module } from '@/store/api/backend';
 import {
   addModule,
   addPackage,
   addPackageGroup,
   type CombinedWizardState,
+  type GroupWithRepositoryInfo,
+  type IBPackageWithRepositoryInfo,
   combinedInitialState as initialState,
+  type PackageRepository,
   removeModule,
   removePackage,
   removePackageGroup,
