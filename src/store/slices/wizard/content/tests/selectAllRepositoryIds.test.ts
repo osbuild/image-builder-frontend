@@ -4,7 +4,7 @@ import type { CustomRepository, Repository } from '@/store/api/backend';
 import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import { selectAllRepositoryIds } from '@/store/slices/wizard';
 
-import { createMockState, mockRootState } from './mockWizardState';
+import { createMockState, mockRootState } from '../../tests/mockWizardState';
 
 const customRepo = (id: string): CustomRepository => ({ id });
 
