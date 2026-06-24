@@ -14,6 +14,7 @@ import { initializeWizard, loadWizardState } from './actions';
 import { cloudProvidersSlice, cloudProvidersState } from './cloud';
 import { complianceSlice, complianceState } from './compliance';
 import {
+  contentState,
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from './content';
@@ -38,24 +39,7 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  content: {
-    repositories: {
-      customRepositories: [],
-      payloadRepositories: [],
-      recommendedRepositories: [],
-      redHatRepositories: [],
-    },
-    packages: [],
-    enabledModules: [],
-    groups: [],
-    snapshotting: {
-      useLatest: true,
-      snapshotDate: '',
-      template: '',
-      templateName: '',
-    },
-    verifiedLocaleLangpacks: [],
-  },
+  content: contentState,
   system: {
     services: {
       enabled: [],
