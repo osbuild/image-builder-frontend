@@ -9,18 +9,25 @@ import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 
 import CreateImageWizard from '../CreateImageWizard';
 
-export const renderWithQueryParams = async (
-  queryString: string = '',
+type RenderWizardOptions = {
+  preloadedState?: Partial<RootState>;
+  initialRoute?: string;
+  waitForHeading?: RegExp;
+};
+
+const renderWizard = async (
+  options: RenderWizardOptions = {},
 ): Promise<{ store: EnhancedStore<RootState> }> => {
+  const {
+    preloadedState = {},
+    initialRoute = '/insights/image-builder/',
+    waitForHeading,
+  } = options;
+
   const store = configureStore({
     reducer: serviceReducer,
     middleware: serviceMiddleware,
-    preloadedState: {
-      wizardModal: {
-        isModalOpen: true,
-        mode: 'create' as const,
-      },
-    },
+    preloadedState,
   });
 
   const routes = [
@@ -31,7 +38,7 @@ export const renderWithQueryParams = async (
   ];
 
   const router = createMemoryRouter(routes, {
-    initialEntries: [`/insights/image-builder${queryString}`],
+    initialEntries: [initialRoute],
   });
 
   render(
@@ -45,17 +52,32 @@ export const renderWithQueryParams = async (
     </Provider>,
   );
 
-  await screen.findByRole('heading', { name: /image output/i });
+  if (waitForHeading) {
+    await screen.findByRole('heading', { name: waitForHeading });
+  }
 
   return { store };
+};
+
+export const renderWithQueryParams = async (
+  queryString: string = '',
+): Promise<{ store: EnhancedStore<RootState> }> => {
+  return renderWizard({
+    preloadedState: {
+      wizardModal: {
+        isModalOpen: true,
+        mode: 'create' as const,
+      },
+    },
+    initialRoute: `/insights/image-builder${queryString}`,
+    waitForHeading: /image output/i,
+  });
 };
 
 export const renderEditMode = async (
   blueprintId: string,
 ): Promise<{ store: EnhancedStore<RootState> }> => {
-  const store = configureStore({
-    reducer: serviceReducer,
-    middleware: serviceMiddleware,
+  return renderWizard({
     preloadedState: {
       wizardModal: {
         isModalOpen: true,
@@ -69,31 +91,7 @@ export const renderEditMode = async (
         versionFilter: 'latest' as const,
       },
     },
+    initialRoute: '/insights/image-builder/',
+    waitForHeading: /review image configuration/i,
   });
-
-  const routes = [
-    {
-      path: 'insights/image-builder/',
-      element: <CreateImageWizard />,
-    },
-  ];
-
-  const router = createMemoryRouter(routes, {
-    initialEntries: ['/insights/image-builder/'],
-  });
-
-  render(
-    <Provider store={store}>
-      <RouterProvider
-        router={router}
-        future={{
-          v7_startTransition: true,
-        }}
-      />
-    </Provider>,
-  );
-
-  await screen.findByRole('heading', { name: /review image configuration/i });
-
-  return { store };
 };
