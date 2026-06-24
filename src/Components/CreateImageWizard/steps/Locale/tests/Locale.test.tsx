@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react';
 
-import { replaceLanguage, wizardInitialState } from '@/store/slices/wizard';
+import { initialState, replaceLanguage } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import {
@@ -74,7 +74,7 @@ describe('Locale Component', () => {
     test('disables Add language button while new language row is visible', async () => {
       renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: { languages: [], keyboard: '' },
         },
       });
@@ -149,7 +149,7 @@ describe('Locale Component', () => {
     test('can select a language', async () => {
       renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: { languages: [], keyboard: '' },
         },
       });
@@ -169,7 +169,7 @@ describe('Locale Component', () => {
     test('removing the last language shows an empty selection row', async () => {
       const { store } = renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: { languages: ['en_US.UTF-8'], keyboard: '' },
         },
       });
@@ -186,7 +186,7 @@ describe('Locale Component', () => {
     test('can select multiple languages', async () => {
       renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: { languages: [], keyboard: '' },
         },
       });
@@ -274,7 +274,7 @@ describe('Locale Component', () => {
     test('renders with pre-populated languages from state', async () => {
       renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
             keyboard: '',
@@ -297,7 +297,7 @@ describe('Locale Component', () => {
     test('renders with pre-populated keyboard from state', async () => {
       renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: [],
             keyboard: 'de',
@@ -315,7 +315,7 @@ describe('Locale Component', () => {
     test('updates store when language is selected', async () => {
       const { store } = renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: [],
             keyboard: '',
@@ -338,7 +338,7 @@ describe('Locale Component', () => {
     test('updates store when multiple languages are selected', async () => {
       const { store } = renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: [],
             keyboard: '',
@@ -366,7 +366,7 @@ describe('Locale Component', () => {
     test('updates store when keyboard is selected', async () => {
       const { store } = renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: [],
             keyboard: '',
@@ -388,7 +388,7 @@ describe('Locale Component', () => {
     test('displays error for duplicate languages from state', async () => {
       renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: ['en_US.UTF-8', 'en_US.UTF-8'],
             keyboard: '',
@@ -404,7 +404,7 @@ describe('Locale Component', () => {
     test('replaceLanguage prevents creating duplicates', async () => {
       const { store } = renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
             keyboard: '',
@@ -426,7 +426,7 @@ describe('Locale Component', () => {
     test('replaceLanguage succeeds for valid non-duplicate replacement', async () => {
       const { store } = renderLocaleStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           locale: {
             languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
             keyboard: '',

@@ -1,4 +1,6 @@
-export const initialState = {
+import { SystemSlice } from './types';
+
+export const initialState: SystemSlice = {
   services: {
     enabled: [],
     masked: [],

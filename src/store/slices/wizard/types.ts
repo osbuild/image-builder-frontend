@@ -7,11 +7,7 @@ import { OutputSlice } from './output';
 import { RegistrationSlice } from './registration';
 import { SystemSlice } from './system';
 
-export type RemainingState = {
-  system: SystemSlice;
-};
-
-export type WizardState = RemainingState & {
+export type WizardState = {
   cloudProviders: CloudProviderSlice;
   compliance: ComplianceSlice;
   content: ContentSlice;
@@ -19,4 +15,5 @@ export type WizardState = RemainingState & {
   filesystem: FilesystemSlice;
   output: OutputSlice;
   registration: RegistrationSlice;
+  system: SystemSlice;
 };

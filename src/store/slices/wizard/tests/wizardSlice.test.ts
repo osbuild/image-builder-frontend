@@ -187,6 +187,17 @@ describe('wizardSlice core reducers', () => {
       expect(result.system.users).toEqual([]);
     });
 
+    it('loadWizardState should fall back to initialState when system is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        system: undefined,
+      } as unknown as WizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.system).toEqual(initialState.system);
+    });
+
     it('loadWizardState should fall back to initialState when filesystem is missing', () => {
       const stateToLoad = {
         ...initialState,

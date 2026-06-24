@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { wizardInitialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import {
@@ -169,7 +169,7 @@ describe('Kernel Component', () => {
     test('renders with pre-populated kernel name from state', async () => {
       renderKernelStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           kernel: {
             name: 'kernel-debug',
             append: [],
@@ -185,7 +185,7 @@ describe('Kernel Component', () => {
     test('renders with pre-populated kernel arguments from state', async () => {
       renderKernelStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           kernel: {
             name: '',
             append: ['nosmt=force', 'audit=1'],
@@ -239,7 +239,7 @@ describe('Kernel Component', () => {
     test('updates store when kernel argument is removed', async () => {
       const { store } = renderKernelStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           kernel: {
             name: '',
             append: ['nosmt=force'],

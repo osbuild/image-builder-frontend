@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { wizardInitialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import {
   clickWithWait,
   renderWithRedux,
@@ -15,11 +15,11 @@ import {
 import HostnameStep from '../index';
 
 export const renderHostnameStep = (
-  systemOverrides: Partial<typeof wizardInitialState.system> = {},
+  systemOverrides: Partial<typeof initialState.system> = {},
 ) => {
   const wizardStateOverrides: WizardStateOverrides =
     Object.keys(systemOverrides).length > 0
-      ? { system: { ...wizardInitialState.system, ...systemOverrides } }
+      ? { system: { ...initialState.system, ...systemOverrides } }
       : {};
   return renderWithRedux(<HostnameStep />, wizardStateOverrides);
 };
