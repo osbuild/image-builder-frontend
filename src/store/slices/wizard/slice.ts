@@ -21,7 +21,7 @@ import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
-import { RegistrationType } from './registration';
+import { registrationState, RegistrationType } from './registration';
 import {
   CombinedWizardState,
   UserAdministratorPayload,
@@ -39,25 +39,7 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  registration: {
-    serverUrl: '',
-    baseUrl: '',
-    proxy: undefined,
-    type: 'register-now-rhc',
-    activationKey: undefined,
-    orgId: undefined,
-    satelliteRegistration: {
-      command: undefined,
-      caCert: undefined,
-    },
-    aap: {
-      enabled: false,
-      callbackUrl: undefined,
-      hostConfigKey: undefined,
-      tlsCertificateAuthority: undefined,
-      skipTlsVerification: undefined,
-    },
-  },
+  registration: registrationState,
   content: {
     repositories: {
       customRepositories: [],
