@@ -316,7 +316,7 @@ export const selectFirewallEnabled = createSelector(
 export const selectAapTlsConfigured = createSelector(
   [selectAapTlsCertificateAuthority],
   (certificate) => {
-    return certificate && certificate !== '';
+    return !!certificate;
   },
 );
 
