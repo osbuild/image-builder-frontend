@@ -1,7 +1,6 @@
 import cockpit from 'cockpit';
 import { describe, expect, it, vi } from 'vitest';
 
-
 import { registryEndpoints } from '../composerApi/registry';
 
 vi.mock('cockpit', () => ({

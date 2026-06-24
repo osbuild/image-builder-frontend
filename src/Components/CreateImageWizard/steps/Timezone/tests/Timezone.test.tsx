@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { wizardInitialState } from '@/store/slices/wizard';
+import { initialState } from '@/store/slices/wizard';
 import { createUser, typeWithWait } from '@/test/testUtils';
 
 import {
@@ -195,7 +195,7 @@ describe('Timezone Component', () => {
     test('renders with pre-populated timezone from state', async () => {
       renderTimezoneStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           timezone: {
             timezone: 'Europe/Amsterdam',
             ntpservers: [],
@@ -211,7 +211,7 @@ describe('Timezone Component', () => {
     test('renders with pre-populated NTP servers from state', async () => {
       renderTimezoneStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           timezone: {
             timezone: 'Etc/UTC',
             ntpservers: ['0.nl.pool.ntp.org', '1.nl.pool.ntp.org'],
@@ -269,7 +269,7 @@ describe('Timezone Component', () => {
     test('updates store when NTP server is removed', async () => {
       const { store } = renderTimezoneStep({
         system: {
-          ...wizardInitialState.system,
+          ...initialState.system,
           timezone: {
             timezone: 'Etc/UTC',
             ntpservers: ['0.nl.pool.ntp.org'],
