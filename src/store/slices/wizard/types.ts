@@ -55,7 +55,6 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  content: ContentSlice;
   system: {
     services: {
       enabled: string[];
@@ -87,6 +86,7 @@ export type WizardState = {
 export type CombinedWizardState = WizardState & {
   cloudProviders: CloudProviderSlice;
   compliance: ComplianceSlice;
+  content: ContentSlice;
   details: DetailsSlice;
   filesystem: FilesystemSlice;
   output: OutputSlice;

@@ -252,6 +252,17 @@ describe('wizardSlice core reducers', () => {
 
       expect(result.registration).toEqual(initialState.registration);
     });
+
+    it('loadWizardState should fall back to initialState when content is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        content: undefined,
+      } as unknown as CombinedWizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.content).toEqual(initialState.content);
+    });
   });
 
   describe('changeDistribution', () => {

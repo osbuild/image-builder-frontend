@@ -6,18 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 
 import type { RootState } from '@/store';
-import type { CustomRepository, Module, Repository } from '@/store/api/backend';
-import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
-import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
 import { cloudProvidersSlice, cloudProvidersState } from './cloud';
 import { complianceSlice, complianceState } from './compliance';
-import {
-  contentState,
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from './content';
+import { contentSlice, contentState } from './content';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
@@ -39,7 +32,6 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  content: contentState,
   system: {
     services: {
       enabled: [],
@@ -177,143 +169,6 @@ export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,
   reducers: {
-    changeUseLatest: (state, action: PayloadAction<boolean>) => {
-      if (!action.payload && state.content.snapshotting.snapshotDate === '') {
-        state.content.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
-      }
-
-      state.content.snapshotting.useLatest = action.payload;
-    },
-    changeSnapshotDate: (state, action: PayloadAction<string>) => {
-      // Store DatePicker's YYYY-MM-DD format as RFC3339 e.g. "2025-11-26T00:00:00.000Z" in state
-      const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
-      const date = new Date(action.payload);
-      if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
-        state.content.snapshotting.snapshotDate = date.toISOString();
-      } else {
-        // For empty strings or already-ISO formatted strings, store as-is
-        state.content.snapshotting.snapshotDate = action.payload;
-      }
-    },
-    changeTemplate: (state, action: PayloadAction<string>) => {
-      state.content.snapshotting.template = action.payload;
-    },
-    changeTemplateName: (state, action: PayloadAction<string>) => {
-      state.content.snapshotting.templateName = action.payload;
-    },
-    importCustomRepositories: (
-      state,
-      action: PayloadAction<CustomRepository[]>,
-    ) => {
-      state.content.repositories.customRepositories = [
-        ...state.content.repositories.customRepositories,
-        ...action.payload,
-      ];
-    },
-    changeCustomRepositories: (
-      state,
-      action: PayloadAction<CustomRepository[]>,
-    ) => {
-      state.content.repositories.customRepositories = action.payload;
-    },
-    changePayloadRepositories: (state, action: PayloadAction<Repository[]>) => {
-      state.content.repositories.payloadRepositories = action.payload;
-    },
-    changeRedHatRepositories: (state, action: PayloadAction<Repository[]>) => {
-      state.content.repositories.redHatRepositories = action.payload;
-    },
-    addRecommendedRepository: (
-      state,
-      action: PayloadAction<ApiRepositoryResponseRead>,
-    ) => {
-      if (
-        !state.content.repositories.recommendedRepositories.some(
-          (repo) => repo.url === action.payload.url,
-        )
-      ) {
-        state.content.repositories.recommendedRepositories.push(action.payload);
-      }
-    },
-    removeRecommendedRepository: (
-      state,
-      action: PayloadAction<ApiRepositoryResponseRead>,
-    ) => {
-      state.content.repositories.recommendedRepositories =
-        state.content.repositories.recommendedRepositories.filter(
-          (repo) => repo.url !== action.payload.url,
-        );
-    },
-    addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
-      const existingPackageIndex = state.content.packages.findIndex(
-        (pkg) => pkg.name === action.payload.name,
-      );
-
-      if (existingPackageIndex !== -1) {
-        state.content.packages[existingPackageIndex] = action.payload;
-      } else {
-        state.content.packages.push(action.payload);
-      }
-    },
-    removePackage: (
-      state,
-      action: PayloadAction<IBPackageWithRepositoryInfo['name']>,
-    ) => {
-      const index = state.content.packages.findIndex(
-        (pkg) => pkg.name === action.payload,
-      );
-      if (index !== -1) {
-        state.content.packages.splice(index, 1);
-      }
-    },
-    addModule: (state, action: PayloadAction<Module>) => {
-      const existingModuleIndex = state.content.enabledModules.findIndex(
-        (module) => module.name === action.payload.name,
-      );
-
-      if (existingModuleIndex !== -1) {
-        state.content.enabledModules[existingModuleIndex] = action.payload;
-      } else {
-        state.content.enabledModules.push(action.payload);
-      }
-    },
-    removeModule: (state, action: PayloadAction<Module['name']>) => {
-      const index = state.content.enabledModules.findIndex(
-        (module) => module.name === action.payload,
-      );
-      // count other packages from the same module
-      const pkgCount = state.content.packages.filter(
-        (pkg) => pkg.module_name === action.payload,
-      );
-      // if the module exists and it's not connected to any packages, remove it
-      if (index !== -1 && pkgCount.length < 1) {
-        state.content.enabledModules.splice(index, 1);
-      }
-    },
-    addPackageGroup: (
-      state,
-      action: PayloadAction<GroupWithRepositoryInfo>,
-    ) => {
-      const existingGrpIndex = state.content.groups.findIndex(
-        (grp) => grp.name === action.payload.name,
-      );
-
-      if (existingGrpIndex !== -1) {
-        state.content.groups[existingGrpIndex] = action.payload;
-      } else {
-        state.content.groups.push(action.payload);
-      }
-    },
-    removePackageGroup: (
-      state,
-      action: PayloadAction<GroupWithRepositoryInfo['name']>,
-    ) => {
-      const index = state.content.groups.findIndex(
-        (grp) => grp.name === action.payload,
-      );
-      if (index !== -1) {
-        state.content.groups.splice(index, 1);
-      }
-    },
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
         state.system.locale.languages &&
@@ -653,9 +508,6 @@ export const wizardSlice = createSlice({
         (_, index) => index !== action.payload,
       );
     },
-    setVerifiedLocaleLangpacks: (state, action: PayloadAction<string[]>) => {
-      state.content.verifiedLocaleLangpacks = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -668,21 +520,6 @@ export const wizardSlice = createSlice({
 });
 
 export const {
-  changeUseLatest,
-  changeSnapshotDate,
-  changeTemplate,
-  changeTemplateName,
-  changeCustomRepositories,
-  importCustomRepositories,
-  changePayloadRepositories,
-  addRecommendedRepository,
-  removeRecommendedRepository,
-  addPackage,
-  removePackage,
-  addModule,
-  removeModule,
-  addPackageGroup,
-  removePackageGroup,
   addUserGroup,
   setUserGroupNameByIndex,
   setUserGroupGidByIndex,
@@ -726,8 +563,6 @@ export const {
   setUserAdministratorByIndex,
   addGroupToUserByUserIndex,
   removeGroupFromUserByIndex,
-  changeRedHatRepositories,
-  setVerifiedLocaleLangpacks,
 } = wizardSlice.actions;
 
 // we can't use RTK query's `combineSlices` helper yet, we
@@ -740,6 +575,7 @@ export const combinedInitialState: CombinedWizardState = {
   ...initialState,
   cloudProviders: cloudProvidersState,
   compliance: complianceState,
+  content: contentState,
   details: detailsState,
   filesystem: filesystemState,
   output: outputState,
@@ -755,6 +591,7 @@ export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
     ...coreState,
     cloudProviders: cloudProvidersSlice.reducer(state?.cloudProviders, action),
     compliance: complianceSlice.reducer(state?.compliance, action),
+    content: contentSlice.reducer(state?.content, action),
     details: detailsSlice.reducer(state?.details, action),
     filesystem: filesystemSlice.reducer(state?.filesystem, action),
     output: outputSlice.reducer(state?.output, action),
