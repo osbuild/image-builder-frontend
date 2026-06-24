@@ -1,17 +1,17 @@
 const js = require('@eslint/js');
-const tseslint = require('typescript-eslint');
+const fecConfig = require('@redhat-cloud-services/eslint-config-redhat-cloud-services');
+const { defineConfig } = require('eslint/config');
+const prettierConfig = require('eslint-config-prettier');
+const pluginImport = require('eslint-plugin-import');
+const jestDom = require('eslint-plugin-jest-dom');
+const pluginJsxA11y = require('eslint-plugin-jsx-a11y');
+const pluginPlaywright = require('eslint-plugin-playwright');
 const pluginReact = require('eslint-plugin-react');
 const pluginReactHooks = require('eslint-plugin-react-hooks');
 const pluginReactRedux = require('eslint-plugin-react-redux');
-const pluginImport = require('eslint-plugin-import');
-const fecConfig = require('@redhat-cloud-services/eslint-config-redhat-cloud-services');
-const pluginJsxA11y = require('eslint-plugin-jsx-a11y');
-const jestDom = require('eslint-plugin-jest-dom');
 const pluginTestingLibrary = require('eslint-plugin-testing-library');
-const pluginPlaywright = require('eslint-plugin-playwright');
-const { defineConfig } = require('eslint/config');
 const globals = require('globals');
-const prettierConfig = require('eslint-config-prettier');
+const tseslint = require('typescript-eslint');
 
 module.exports = defineConfig([
   {
@@ -169,6 +169,7 @@ module.exports = defineConfig([
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
         },
       ],
       'react-hooks/set-state-in-effect': 'warn', // TODO address issues and enable the rule

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 /**
  * Check for compromised packages from .github/dependency-review-config.yml
@@ -6,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+
 const { PackageURL } = require('packageurl-js');
 
 // Parse deny-packages from config
@@ -50,7 +52,7 @@ function loadDeniedPackages() {
           // Store the normalized purl string
           deniedPackages.add(purl.toString());
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Warning: Invalid purl format: ${purlString}`);
       }
     }
@@ -85,7 +87,7 @@ function checkPackages() {
         compromisedByName.set(fullName, []);
       }
       compromisedByName.get(fullName).push(purl.version);
-    } catch (error) {
+    } catch (_error) {
       continue;
     }
   }
@@ -143,7 +145,7 @@ function checkPackages() {
           }
           differentVersions.get(fullName).installed.add(info.version);
         }
-      } catch (error) {
+      } catch (_error) {
         // Skip packages that can't be parsed as purl
         continue;
       }

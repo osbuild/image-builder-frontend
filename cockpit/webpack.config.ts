@@ -1,6 +1,8 @@
 const path = require('path');
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const webpack = require('webpack'); // Add this line
+const webpack = require('webpack');
+
 const [mode, devtool] =
   process.env.NODE_ENV === 'production'
     ? ['production', 'source-map']
