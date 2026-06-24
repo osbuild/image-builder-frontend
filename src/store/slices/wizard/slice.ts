@@ -16,6 +16,8 @@ import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
 import { registrationSlice, registrationState } from './registration';
 import {
+  MAX_REGULAR_GID,
+  MIN_REGULAR_GID,
   systemState,
   UserAdministratorPayload,
   UserGroupGidPayload,
@@ -26,10 +28,6 @@ import {
   UserSshKeyPayload,
 } from './system';
 import { CombinedWizardState, WizardState } from './types';
-
-// GID range for regular groups per LOGIN.DEFS(5) defaults
-export const MIN_REGULAR_GID = 1000;
-export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
   system: systemState,
