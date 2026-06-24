@@ -1,5 +1,9 @@
 import { ActivationKeys } from '@/store/api/rhsm';
 
+import { REGISTER_NOW_TYPES } from './constants';
+
+export type RegisterNowType = (typeof REGISTER_NOW_TYPES)[number];
+
 export type RegistrationType =
   | 'register-later'
   | 'register-now'

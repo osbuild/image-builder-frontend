@@ -3,7 +3,11 @@ import React from 'react';
 import { Card, CardBody } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectAapEnabled, selectRegistrationType } from '@/store/slices';
+import {
+  isRegisterNowType,
+  selectAapEnabled,
+  selectRegistrationType,
+} from '@/store/slices/wizard';
 
 import {
   RegisterAAP,
@@ -11,7 +15,6 @@ import {
   RegisterNow,
   RegisterSatellite,
 } from './components';
-import { isRegisterNowType } from './types';
 
 import { ReviewCardHeader, ReviewList } from '../shared';
 import { ReviewCardProps } from '../types';
