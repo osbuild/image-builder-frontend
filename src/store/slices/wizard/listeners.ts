@@ -9,7 +9,7 @@ import {
   selectDistribution,
   selectImageTypes,
 } from './output';
-import { changeRegistrationType } from './slice';
+import { changeRegistrationType } from './registration';
 
 export const filterImageTypes: WizardListenerEffect = (
   _action,

@@ -241,6 +241,17 @@ describe('wizardSlice core reducers', () => {
 
       expect(result.cloudProviders).toEqual(initialState.cloudProviders);
     });
+
+    it('loadWizardState should fall back to initialState when registration is missing', () => {
+      const stateToLoad = {
+        ...initialState,
+        registration: undefined,
+      } as unknown as CombinedWizardState;
+
+      const result = wizardReducer(initialState, loadWizardState(stateToLoad));
+
+      expect(result.registration).toEqual(initialState.registration);
+    });
   });
 
   describe('changeDistribution', () => {
