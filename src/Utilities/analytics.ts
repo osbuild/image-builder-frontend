@@ -1,6 +1,6 @@
-import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizard/steps/Packages/packagesTypes';
 import { AMPLITUDE_MODULE_NAME } from '../constants';
 import { CreateBlueprintRequest } from '../store/api/backend';
+import { IBPackageWithRepositoryInfo } from '../store/slices/wizard';
 
 export const createAnalytics = (
   requestBody: CreateBlueprintRequest,

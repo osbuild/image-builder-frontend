@@ -21,17 +21,17 @@ import {
 import { useListRepositoriesQuery } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { selectDistribution, selectWizardMode } from '@/store/slices/wizard';
+import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+  selectDistribution,
+  selectWizardMode,
+} from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
 import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
 import RepositoryModal from './RepositoryModal';
-
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '../packagesTypes';
 
 const Packages = () => {
   const { analytics, isBeta } = useChrome();

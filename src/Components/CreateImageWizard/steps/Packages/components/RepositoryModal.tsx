@@ -21,17 +21,14 @@ import {
   addPackage,
   addPackageGroup,
   addRecommendedRepository,
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
   selectDistribution,
 } from '@/store/slices/wizard';
 import {
   getEpelDefinitionForDistribution,
   getEpelVersionForDistribution,
 } from '@/Utilities/epel';
-
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '../packagesTypes';
 
 type RepositoryModalProps = {
   isRepoModalOpen: boolean;
