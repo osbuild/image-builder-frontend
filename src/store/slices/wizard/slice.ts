@@ -12,7 +12,6 @@ import {
 import type { RootState } from '@/store';
 import type { CustomRepository, Module, Repository } from '@/store/api/backend';
 import type { ApiRepositoryResponseRead } from '@/store/api/contentSources';
-import type { ActivationKeys } from '@/store/api/rhsm';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initializeWizard, loadWizardState } from './actions';
@@ -21,7 +20,7 @@ import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
-import { registrationState, RegistrationType } from './registration';
+import { registrationSlice, registrationState } from './registration';
 import {
   CombinedWizardState,
   UserAdministratorPayload,
@@ -39,7 +38,6 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  registration: registrationState,
   content: {
     repositories: {
       customRepositories: [],
@@ -260,58 +258,6 @@ export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,
   reducers: {
-    changeServerUrl: (state, action: PayloadAction<string>) => {
-      state.registration.serverUrl = action.payload;
-    },
-    changeBaseUrl: (state, action: PayloadAction<string>) => {
-      state.registration.baseUrl = action.payload;
-    },
-    changeProxy: (state, action: PayloadAction<string | undefined>) => {
-      state.registration.proxy = action.payload;
-    },
-    changeRegistrationType: (
-      state,
-      action: PayloadAction<RegistrationType>,
-    ) => {
-      state.registration.type = action.payload;
-    },
-    changeSatelliteRegistrationCommand: (
-      state,
-      action: PayloadAction<string>,
-    ) => {
-      state.registration.satelliteRegistration.command = action.payload;
-    },
-    changeSatelliteCaCertificate: (state, action: PayloadAction<string>) => {
-      state.registration.satelliteRegistration.caCert = action.payload;
-    },
-    changeAapEnabled: (state, action: PayloadAction<boolean>) => {
-      state.registration.aap.enabled = action.payload;
-    },
-    changeAapCallbackUrl: (state, action: PayloadAction<string>) => {
-      state.registration.aap.callbackUrl = action.payload;
-    },
-
-    changeAapHostConfigKey: (state, action: PayloadAction<string>) => {
-      state.registration.aap.hostConfigKey = action.payload;
-    },
-    changeAapTlsCertificateAuthority: (
-      state,
-      action: PayloadAction<string>,
-    ) => {
-      state.registration.aap.tlsCertificateAuthority = action.payload;
-    },
-    changeAapTlsConfirmation: (state, action: PayloadAction<boolean>) => {
-      state.registration.aap.skipTlsVerification = action.payload;
-    },
-    changeActivationKey: (
-      state,
-      action: PayloadAction<ActivationKeys['name']>,
-    ) => {
-      state.registration.activationKey = action.payload;
-    },
-    changeOrgId: (state, action: PayloadAction<string>) => {
-      state.registration.orgId = action.payload;
-    },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.content.snapshotting.snapshotDate === '') {
         state.content.snapshotting.snapshotDate = `${yyyyMMddFormat(new Date())}T00:00:00.000Z`;
@@ -803,12 +749,6 @@ export const wizardSlice = createSlice({
 });
 
 export const {
-  changeServerUrl,
-  changeBaseUrl,
-  changeProxy,
-  changeRegistrationType,
-  changeActivationKey,
-  changeOrgId,
   changeUseLatest,
   changeSnapshotDate,
   changeTemplate,
@@ -853,13 +793,6 @@ export const {
   addEnabledFirewallService,
   removeEnabledFirewallService,
   changeTimezone,
-  changeSatelliteRegistrationCommand,
-  changeSatelliteCaCertificate,
-  changeAapEnabled,
-  changeAapCallbackUrl,
-  changeAapHostConfigKey,
-  changeAapTlsCertificateAuthority,
-  changeAapTlsConfirmation,
   addNtpServer,
   removeNtpServer,
   clearTimezone,
@@ -891,6 +824,7 @@ export const combinedInitialState: CombinedWizardState = {
   details: detailsState,
   filesystem: filesystemState,
   output: outputState,
+  registration: registrationState,
 };
 
 export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
@@ -905,5 +839,6 @@ export const wizardReducer: Reducer<CombinedWizardState> = (state, action) => {
     details: detailsSlice.reducer(state?.details, action),
     filesystem: filesystemSlice.reducer(state?.filesystem, action),
     output: outputSlice.reducer(state?.output, action),
+    registration: registrationSlice.reducer(state?.registration, action),
   };
 };

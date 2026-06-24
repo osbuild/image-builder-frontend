@@ -66,7 +66,6 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  registration: RegistrationSlice;
   content: {
     repositories: {
       customRepositories: CustomRepository[];
@@ -119,4 +118,5 @@ export type CombinedWizardState = WizardState & {
   details: DetailsSlice;
   filesystem: FilesystemSlice;
   output: OutputSlice;
+  registration: RegistrationSlice;
 };
