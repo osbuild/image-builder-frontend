@@ -16,6 +16,7 @@ import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
 import { registrationSlice, registrationState } from './registration';
 import {
+  systemState,
   UserAdministratorPayload,
   UserGroupGidPayload,
   UserGroupNamePayload,
@@ -31,36 +32,7 @@ export const MIN_REGULAR_GID = 1000;
 export const MAX_REGULAR_GID = 60000;
 
 export const initialState: WizardState = {
-  system: {
-    services: {
-      enabled: [],
-      masked: [],
-      disabled: [],
-    },
-    kernel: {
-      name: '',
-      append: [],
-    },
-    locale: {
-      languages: ['C.UTF-8'],
-      keyboard: '',
-    },
-    timezone: {
-      timezone: '',
-      ntpservers: [],
-    },
-    hostname: '',
-    firewall: {
-      ports: [],
-      services: {
-        enabled: [],
-        disabled: [],
-      },
-    },
-    firstBoot: { script: '' },
-    users: [],
-    groups: [{ name: '' }],
-  },
+  system: systemState,
 };
 
 export const selectServices = (state: RootState) => {
