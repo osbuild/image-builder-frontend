@@ -4,15 +4,15 @@ import { Content } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
 import {
+  isRegisterNowType,
   RegistrationType,
   selectActivationKey,
   selectOrgId,
-} from '@/store/slices';
+} from '@/store/slices/wizard';
 
 import { ReviewGroup, StatusItem } from '../../shared';
 import { Hideable } from '../../types';
 import { REGISTER_NOW_FEATURES } from '../constants';
-import { isRegisterNowType } from '../types';
 
 type RegisterNowProps = Hideable & {
   registrationType: RegistrationType;
