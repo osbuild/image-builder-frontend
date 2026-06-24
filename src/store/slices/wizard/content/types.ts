@@ -1,5 +1,13 @@
-import { Package } from '@/store/api/backend';
-import { ApiSearchRpmResponse } from '@/store/api/contentSources';
+import {
+  CustomRepository,
+  Module,
+  Package,
+  Repository,
+} from '@/store/api/backend';
+import {
+  ApiRepositoryResponseRead,
+  ApiSearchRpmResponse,
+} from '@/store/api/contentSources';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 
@@ -37,3 +45,22 @@ export enum Repos {
   INCLUDED = 'included-repos',
   OTHER = 'other-repos',
 }
+
+export type ContentSlice = {
+  repositories: {
+    customRepositories: CustomRepository[];
+    payloadRepositories: Repository[];
+    recommendedRepositories: ApiRepositoryResponseRead[];
+    redHatRepositories: Repository[];
+  };
+  packages: IBPackageWithRepositoryInfo[];
+  enabledModules: Module[];
+  groups: GroupWithRepositoryInfo[];
+  snapshotting: {
+    useLatest: boolean;
+    snapshotDate: string;
+    template: string;
+    templateName: string;
+  };
+  verifiedLocaleLangpacks: string[];
+};

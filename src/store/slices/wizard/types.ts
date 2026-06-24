@@ -1,19 +1,8 @@
-import {
-  CustomRepository,
-  Locale,
-  Module,
-  Repository,
-  Timezone,
-  User,
-} from '@/store/api/backend';
-import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
+import { Locale, Timezone, User } from '@/store/api/backend';
 
 import { CloudProviderSlice } from './cloud';
 import { ComplianceSlice } from './compliance';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from './content';
+import { ContentSlice } from './content';
 import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
 import { OutputSlice } from './output';
@@ -66,24 +55,7 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  content: {
-    repositories: {
-      customRepositories: CustomRepository[];
-      payloadRepositories: Repository[];
-      recommendedRepositories: ApiRepositoryResponseRead[];
-      redHatRepositories: Repository[];
-    };
-    packages: IBPackageWithRepositoryInfo[];
-    enabledModules: Module[];
-    groups: GroupWithRepositoryInfo[];
-    snapshotting: {
-      useLatest: boolean;
-      snapshotDate: string;
-      template: string;
-      templateName: string;
-    };
-    verifiedLocaleLangpacks: string[];
-  };
+  content: ContentSlice;
   system: {
     services: {
       enabled: string[];
