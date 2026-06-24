@@ -133,6 +133,7 @@ module.exports = defineConfig([
               group: [
                 '@/store/slices/wizard/cloud/*',
                 '@/store/slices/wizard/compliance/*',
+                '@/store/slices/wizard/content/*',
                 '@/store/slices/wizard/details/*',
                 '@/store/slices/wizard/filesystem/*.ts',
                 '@/store/slices/wizard/output/*',
