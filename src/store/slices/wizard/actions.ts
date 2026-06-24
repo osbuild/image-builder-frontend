@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import type { WizardState } from './types';
+import type { WizardState } from './slice';
 
 // we need to create standalone actions for the slice since we are
 // breaking the wizard slice into submodules. We need to be able to
