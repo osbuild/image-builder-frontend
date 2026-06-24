@@ -247,9 +247,9 @@ export const selectAllRepositoryIds = createSelector(
   (custom, payload, recommended) =>
     Array.from(
       new Set([
-        ...custom.map(({ id }) => id).flat(1),
-        ...payload.map(({ id }) => id),
-        ...recommended.map(({ uuid }) => uuid),
+        ...custom.map(({ id }) => id),
+        ...payload.flatMap(({ id }) => (id ? [id] : [])),
+        ...recommended.flatMap(({ uuid }) => (uuid ? [uuid] : [])),
       ]),
     ),
 );
