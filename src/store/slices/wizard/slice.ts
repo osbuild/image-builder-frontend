@@ -16,6 +16,7 @@ import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
 import { registrationSlice, registrationState } from './registration';
 import {
+  getLangpackNameForLocale,
   MAX_REGULAR_GID,
   MIN_REGULAR_GID,
   systemState,
@@ -90,24 +91,6 @@ export const selectHostname = (state: RootState) => {
 
 export const selectFirewall = (state: RootState) => {
   return state.wizard.system.firewall;
-};
-
-const extractLanguageCode = (locale: string): string | undefined => {
-  const [regionPart] = locale.split('.');
-  const [languageCode] = regionPart.split('_');
-  if (!languageCode) {
-    return undefined;
-  }
-  const lc = languageCode.toLowerCase();
-  if (lc === 'c') {
-    return undefined;
-  }
-  return lc;
-};
-
-const getLangpackNameForLocale = (locale: string): string | undefined => {
-  const code = extractLanguageCode(locale);
-  return code ? `langpacks-${code}` : undefined;
 };
 
 export const selectLocaleLangpackCandidates = createSelector(
