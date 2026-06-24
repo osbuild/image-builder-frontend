@@ -11,21 +11,13 @@ import {
   User,
 } from '@/store/api/backend';
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
-import { ActivationKeys } from '@/store/api/rhsm';
 
 import { CloudProviderSlice } from './cloud';
 import { ComplianceSlice } from './compliance';
 import { DetailsSlice } from './details';
 import { FilesystemSlice } from './filesystem';
 import { OutputSlice } from './output';
-
-export type RegistrationType =
-  | 'register-later'
-  | 'register-now'
-  | 'register-now-insights'
-  | 'register-now-rhc'
-  | 'register-satellite'
-  | 'register-aap';
+import { RegistrationSlice } from './registration';
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
@@ -74,25 +66,7 @@ export type UserGroup = {
 };
 
 export type WizardState = {
-  registration: {
-    serverUrl: string;
-    baseUrl: string;
-    proxy: string | undefined;
-    type: RegistrationType;
-    activationKey: ActivationKeys['name'];
-    orgId: string | undefined;
-    satelliteRegistration: {
-      command: string | undefined;
-      caCert: string | undefined;
-    };
-    aap: {
-      enabled: boolean;
-      callbackUrl: string | undefined;
-      hostConfigKey: string | undefined;
-      tlsCertificateAuthority: string | undefined;
-      skipTlsVerification: boolean | undefined;
-    };
-  };
+  registration: RegistrationSlice;
   content: {
     repositories: {
       customRepositories: CustomRepository[];

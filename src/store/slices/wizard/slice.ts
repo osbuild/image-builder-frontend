@@ -21,9 +21,9 @@ import { complianceSlice, complianceState } from './compliance';
 import { detailsSlice, detailsState } from './details';
 import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
+import { RegistrationType } from './registration';
 import {
   CombinedWizardState,
-  RegistrationType,
   UserAdministratorPayload,
   UserGroupGidPayload,
   UserGroupNamePayload,
