@@ -9,7 +9,7 @@ import {
   createMockState,
 } from '@/store/slices/wizard/tests/mockWizardState';
 
-import { registerLater } from '../listeners';
+import { registerLater } from '../../listeners';
 
 const ORIGINAL_ENV = process.env;
 
