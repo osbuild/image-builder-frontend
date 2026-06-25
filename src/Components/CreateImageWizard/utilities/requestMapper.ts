@@ -51,6 +51,7 @@ import {
   isSupportedImageType,
   mapComplianceCustomizations,
   mapContentCustomizations,
+  mapFileCustomizations,
   mapFilesystemCustomizations,
   PackageRepository,
   parseSizeUnit,
@@ -74,7 +75,6 @@ import {
   selectBootcDistributions,
   selectDistribution,
   selectFirewall,
-  selectFirstBootScript,
   selectGcpAccountType,
   selectGcpEmail,
   selectHostname,
@@ -91,7 +91,6 @@ import {
   selectProxy,
   selectRegistrationType,
   selectSatelliteCaCertificate,
-  selectSatelliteRegistrationCommand,
   selectServerUrl,
   selectServices,
   selectSnapshotDate,
@@ -108,15 +107,11 @@ import {
 
 import {
   CENTOS_9,
-  FIRST_BOOT_SERVICE_DATA,
   FIRSTBOOT_PATH,
-  FIRSTBOOT_SERVICE_PATH,
   RHEL_10,
   RHEL_8,
   RHEL_9,
   SATELLITE_PATH,
-  SATELLITE_SERVICE_DATA,
-  SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
 
@@ -944,42 +939,11 @@ const getImageOptions = (
 
 const getCustomizations = (state: RootState): Customizations => {
   const satCert = selectSatelliteCaCertificate(state);
-  const files: File[] = [];
-  if (selectFirstBootScript(state)) {
-    files.push({
-      path: FIRSTBOOT_SERVICE_PATH,
-      data: FIRST_BOOT_SERVICE_DATA,
-      data_encoding: 'base64',
-      ensure_parents: true,
-    });
-    files.push({
-      path: FIRSTBOOT_PATH,
-      data: btoa(selectFirstBootScript(state)),
-      data_encoding: 'base64',
-      mode: '0774',
-      ensure_parents: true,
-    });
-  }
-  const satCmd = selectSatelliteRegistrationCommand(state);
-  if (satCmd && selectRegistrationType(state) === 'register-satellite') {
-    files.push({
-      path: SATELLITE_SERVICE_PATH,
-      data: SATELLITE_SERVICE_DATA,
-      data_encoding: 'base64',
-      ensure_parents: true,
-    });
-    files.push({
-      path: SATELLITE_PATH,
-      data: btoa(satCmd),
-      mode: '0774',
-      data_encoding: 'base64',
-      ensure_parents: true,
-    });
-  }
   return {
     containers: undefined,
     directories: undefined,
-    files: files.length > 0 ? files : undefined,
+    // first boot & satellite use file customizations
+    ...mapFileCustomizations(state),
     subscription: getSubscription(state),
     // packages, modules, payload repos + custom repos
     ...mapContentCustomizations(state),
