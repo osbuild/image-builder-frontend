@@ -16,7 +16,6 @@ import {
   CreateBlueprintRequest,
   Customizations,
   CustomRepository,
-  Disk,
   DistributionProfileItem,
   Distributions,
   File,
@@ -43,7 +42,6 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   AwsShareMethod,
   ComplianceType,
-  convertToBytes,
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
@@ -53,6 +51,7 @@ import {
   isSupportedImageType,
   mapComplianceCustomizations,
   mapContentCustomizations,
+  mapFilesystemCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -73,15 +72,9 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
   selectBootcDistributions,
-  selectDiskMinsize,
-  selectDiskPartitions,
-  selectDiskType,
-  selectDiskUnit,
   selectDistribution,
-  selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
-  selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
   selectHostname,
@@ -95,7 +88,6 @@ import {
   selectMetadata,
   selectNtpServers,
   selectOrgId,
-  selectPartitioningMode,
   selectProxy,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -993,8 +985,8 @@ const getCustomizations = (state: RootState): Customizations => {
     ...mapContentCustomizations(state),
     // fips + openscap
     ...mapComplianceCustomizations(state),
-    disk: getDisk(state),
-    filesystem: getFileSystem(state),
+    // disk, filesystem + partition mode
+    ...mapFilesystemCustomizations(state),
     users: getUsers(state),
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
@@ -1006,7 +998,6 @@ const getCustomizations = (state: RootState): Customizations => {
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
-    partitioning_mode: selectPartitioningMode(state),
     cacerts:
       satCert && selectRegistrationType(state) === 'register-satellite'
         ? {
@@ -1087,71 +1078,6 @@ const getUserGroups = (state: RootState): Group[] | undefined => {
     });
 
   return arrayGroups.length > 0 ? arrayGroups : undefined;
-};
-
-const getDisk = (state: RootState): Disk | undefined => {
-  const fscMode = selectFscMode(state);
-  const minsize = selectDiskMinsize(state);
-  const unit = selectDiskUnit(state);
-  const partitions = selectDiskPartitions(state);
-  const diskPartitions = partitions.map((partition) => {
-    if (partition.type === 'lvm') {
-      return {
-        minsize: partition.min_size + ' ' + partition.unit,
-        name: partition.name,
-        type: partition.type,
-        logical_volumes: partition.logical_volumes.map((lv) => {
-          return {
-            minsize: lv.min_size + ' ' + lv.unit,
-            name: lv.name,
-            fs_type: lv.fs_type,
-            mountpoint: lv.mountpoint,
-          };
-        }),
-      };
-    }
-
-    if (partition.type === 'btrfs') {
-      return {
-        minsize: partition.min_size + ' ' + partition.unit,
-        type: partition.type,
-        subvolumes: partition.subvolumes,
-      };
-    }
-
-    return {
-      minsize: partition.min_size + ' ' + partition.unit,
-      fs_type: partition.fs_type,
-      mountpoint: partition.mountpoint,
-      type: partition.type,
-    };
-  });
-
-  if (fscMode === 'advanced') {
-    return {
-      type: selectDiskType(state),
-      minsize: minsize ? minsize + ' ' + unit : undefined,
-      partitions: diskPartitions,
-    };
-  }
-
-  return undefined;
-};
-
-const getFileSystem = (state: RootState): Filesystem[] | undefined => {
-  const fscMode = selectFscMode(state);
-
-  if (fscMode === 'basic') {
-    const partitions = selectFilesystemPartitions(state);
-    const fileSystem = partitions.map((partition) => {
-      return {
-        min_size: convertToBytes(partition.min_size, partition.unit),
-        mountpoint: partition.mountpoint,
-      };
-    });
-    return fileSystem;
-  }
-  return undefined;
 };
 
 const getTimezone = (state: RootState) => {
