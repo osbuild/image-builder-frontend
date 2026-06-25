@@ -27,7 +27,6 @@ import {
   ImageRequest,
   ImageTypes,
   LogicalVolume,
-  OpenScap,
   OpenScapCompliance,
   OpenScapProfile,
   Services,
@@ -54,6 +53,7 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
+  mapComplianceCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -74,9 +74,6 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
   selectBootcDistributions,
-  selectCompliancePolicyID,
-  selectComplianceProfileID,
-  selectComplianceType,
   selectCustomRepositories,
   selectDiskMinsize,
   selectDiskPartitions,
@@ -84,7 +81,6 @@ import {
   selectDiskUnit,
   selectDistribution,
   selectFilesystemPartitions,
-  selectFips,
   selectFirewall,
   selectFirstBootScript,
   selectFscMode,
@@ -1005,7 +1001,8 @@ const getCustomizations = (state: RootState): Customizations => {
     enabled_modules: getModules(state),
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
-    openscap: getOpenscap(state),
+    // fips + openscap
+    ...mapComplianceCustomizations(state),
     disk: getDisk(state),
     filesystem: getFileSystem(state),
     users: getUsers(state),
@@ -1020,7 +1017,6 @@ const getCustomizations = (state: RootState): Customizations => {
     fdo: undefined,
     ignition: undefined,
     partitioning_mode: selectPartitioningMode(state),
-    fips: getFips(state),
     cacerts:
       satCert && selectRegistrationType(state) === 'register-satellite'
         ? {
@@ -1047,20 +1043,6 @@ const getServices = (state: RootState): Services | undefined => {
     masked: services.masked.length ? services.masked : undefined,
     disabled: services.disabled.length ? services.disabled : undefined,
   };
-};
-
-const getOpenscap = (state: RootState): OpenScap | undefined => {
-  const complianceType = selectComplianceType(state);
-  const profile = selectComplianceProfileID(state);
-  const policy = selectCompliancePolicyID(state);
-
-  if (complianceType === 'openscap' && profile) {
-    return { profile_id: profile };
-  }
-  if (complianceType === 'compliance' && policy) {
-    return { policy_id: policy };
-  }
-  return undefined;
 };
 
 const getUsers = (state: RootState): User[] | undefined => {
@@ -1345,18 +1327,6 @@ const getPayloadRepositories = (state: RootState) => {
     return undefined;
   }
   return payloadAndRecommendedRepositories;
-};
-
-const getFips = (state: RootState) => {
-  const fips = selectFips(state);
-
-  if (!fips.enabled) {
-    return undefined;
-  }
-
-  return {
-    enabled: fips.enabled,
-  };
 };
 
 const getKernel = (state: RootState) => {
