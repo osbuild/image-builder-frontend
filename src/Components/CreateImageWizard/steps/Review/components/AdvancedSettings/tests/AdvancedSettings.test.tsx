@@ -1,3 +1,6 @@
+/* eslint-disable testing-library/no-node-access */
+// PatternFly Label components render text in child spans with color classes on the parent.
+// Tests need .closest() to access the label element for class assertions.
 import React from 'react';
 
 import { screen } from '@testing-library/react';

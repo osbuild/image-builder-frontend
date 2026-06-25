@@ -892,7 +892,7 @@ describe('Packages Component', () => {
       const testLibOption = await screen.findByRole('option', {
         name: /test-lib/i,
       });
-      expect(testLibOption).not.toBeDisabled();
+      expect(testLibOption).toBeEnabled();
 
       // Clicking the disabled option should not remove the package
       await clickWithWait(user, aideOption);
@@ -980,12 +980,12 @@ describe('Packages Component', () => {
       const testLibOption = await screen.findByRole('option', {
         name: /test-lib/i,
       });
-      expect(testLibOption).not.toBeDisabled();
+      expect(testLibOption).toBeEnabled();
 
       const testPkgOption = await screen.findByRole('option', {
         name: /testPkg/i,
       });
-      expect(testPkgOption).not.toBeDisabled();
+      expect(testPkgOption).toBeEnabled();
 
       // Clicking the selected package should remove it
       await clickWithWait(user, testLibOption);
@@ -1033,7 +1033,7 @@ describe('Packages Component', () => {
 
       // aide is required but not yet selected, so it should NOT be disabled
       const aideOption = await screen.findByRole('option', { name: /aide/i });
-      expect(aideOption).not.toBeDisabled();
+      expect(aideOption).toBeEnabled();
 
       // Select it — should be addable
       await clickWithWait(user, aideOption);

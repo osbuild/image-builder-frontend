@@ -58,6 +58,8 @@ const renderModal = () => {
 const uploadBlueprintFile = async (content: string) => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
+    // PatternFly FileUpload doesn't expose the file input via Testing Library queries
+    // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
 
   if (!fileInput) {

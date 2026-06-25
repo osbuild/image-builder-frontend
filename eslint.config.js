@@ -202,8 +202,12 @@ module.exports = defineConfig([
   },
 
   {
-    // Override for test files
-    files: ['src/test/**/*.{ts,tsx}'],
+    // Override for test files (legacy integration tests + co-located unit tests)
+    files: [
+      'src/test/**/*.{ts,tsx}',
+      '**/*.test.{ts,tsx}',
+      '**/tests/**/*.{ts,tsx}',
+    ],
     plugins: {
       'jest-dom': jestDom,
       'testing-library': pluginTestingLibrary,
