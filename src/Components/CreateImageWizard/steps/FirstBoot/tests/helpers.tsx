@@ -24,6 +24,8 @@ export const uploadScript = async (
   let fileInput: HTMLInputElement | null = null;
 
   await waitFor(() => {
+    // PatternFly FileUpload doesn't expose the file input via Testing Library queries
+    // eslint-disable-next-line testing-library/no-node-access
     fileInput = document.querySelector<HTMLInputElement>('input[type="file"]');
     if (!fileInput) {
       throw new Error('File input not found');

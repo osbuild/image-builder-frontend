@@ -111,7 +111,9 @@ describe('ContentOverview', () => {
           },
         },
       );
-
+      // PatternFly Label components render text in child spans with color classes on the parent.
+      // Tests need .closest() to access the label element for class assertions.
+      // eslint-disable-next-line testing-library/no-node-access
       const label = screen.getByText('vim').closest('.pf-v6-c-label');
       expect(label).toHaveClass('pf-m-blue');
     });
@@ -140,6 +142,9 @@ describe('ContentOverview', () => {
         },
       );
 
+      // PatternFly Label components render text in child spans with color classes on the parent.
+      // Tests need .closest() to access the label element for class assertions.
+      // eslint-disable-next-line testing-library/no-node-access
       const label = screen.getByText('aide').closest('.pf-v6-c-label');
       // Grey is the default color, so no color modifier class is applied
       expect(label).not.toHaveClass('pf-m-blue');
@@ -171,7 +176,11 @@ describe('ContentOverview', () => {
         },
       );
 
+      // PatternFly Label components render text in child spans with color classes on the parent.
+      // Tests need .closest() to access the label element for class assertions.
+      // eslint-disable-next-line testing-library/no-node-access
       const aideLabel = screen.getByText('aide').closest('.pf-v6-c-label');
+      // eslint-disable-next-line testing-library/no-node-access
       const vimLabel = screen.getByText('vim').closest('.pf-v6-c-label');
 
       // Oscap packages use grey (default), user packages use blue
