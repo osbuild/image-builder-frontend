@@ -44,6 +44,8 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   AwsShareMethod,
   ComplianceType,
+  convertSchemaToIBCustomRepo,
+  convertSchemaToIBPayloadRepo,
   convertToBytes,
   DiskPartition,
   FilesystemMode,
@@ -136,10 +138,6 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
-import {
-  convertSchemaToIBCustomRepo,
-  convertSchemaToIBPayloadRepo,
-} from '../steps/Repositories/repositoriesUtilities';
 
 /**
  * This function maps the wizard state to a valid CreateBlueprint request object
