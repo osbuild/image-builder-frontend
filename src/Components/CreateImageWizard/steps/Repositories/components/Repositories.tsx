@@ -28,6 +28,8 @@ import {
   changeCustomRepositories,
   changePayloadRepositories,
   changeRedHatRepositories,
+  convertSchemaToIBCustomRepo,
+  convertSchemaToIBPayloadRepo,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
@@ -60,8 +62,6 @@ import RepositoryUnavailable from './RepositoryUnavailable';
 import UploadRepositoryLabel from './UploadRepositoryLabel';
 
 import {
-  convertSchemaToIBCustomRepo,
-  convertSchemaToIBPayloadRepo,
   excludeEUSReposFilter,
   getReadableArchitecture,
   getReadableVersions,
