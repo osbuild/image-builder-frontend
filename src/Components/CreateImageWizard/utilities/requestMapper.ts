@@ -43,8 +43,6 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   AwsShareMethod,
   ComplianceType,
-  convertSchemaToIBCustomRepo,
-  convertSchemaToIBPayloadRepo,
   convertToBytes,
   DiskPartition,
   FilesystemMode,
@@ -54,6 +52,7 @@ import {
   isRhel,
   isSupportedImageType,
   mapComplianceCustomizations,
+  mapContentCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -74,7 +73,6 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
   selectBootcDistributions,
-  selectCustomRepositories,
   selectDiskMinsize,
   selectDiskPartitions,
   selectDiskType,
@@ -95,15 +93,10 @@ import {
   selectKeyboard,
   selectLanguages,
   selectMetadata,
-  selectModules,
   selectNtpServers,
   selectOrgId,
-  selectPackageGroups,
-  selectPackages,
   selectPartitioningMode,
-  selectPayloadRepositories,
   selectProxy,
-  selectRecommendedRepositories,
   selectRegistrationType,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
@@ -116,7 +109,6 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
-  selectVerifiedLocaleLangpacks,
   Units,
   UserWithAdditionalInfo,
   WizardState,
@@ -997,10 +989,8 @@ const getCustomizations = (state: RootState): Customizations => {
     directories: undefined,
     files: files.length > 0 ? files : undefined,
     subscription: getSubscription(state),
-    packages: getPackages(state),
-    enabled_modules: getModules(state),
-    payload_repositories: getPayloadRepositories(state),
-    custom_repositories: getCustomRepositories(state),
+    // packages, modules, payload repos + custom repos
+    ...mapContentCustomizations(state),
     // fips + openscap
     ...mapComplianceCustomizations(state),
     disk: getDisk(state),
@@ -1164,31 +1154,6 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
   return undefined;
 };
 
-const getPackages = (state: RootState) => {
-  const packages = selectPackages(state);
-  const groups = selectPackageGroups(state);
-  const verifiedLocaleLangpacks = selectVerifiedLocaleLangpacks(state);
-  const packageNames = new Set(packages.map((pkg) => pkg.name));
-  for (const pkg of verifiedLocaleLangpacks) {
-    packageNames.add(pkg);
-  }
-  const list = [...packageNames].concat(groups.map((grp) => '@' + grp.name));
-
-  if (list.length > 0) {
-    return list;
-  }
-  return undefined;
-};
-
-const getModules = (state: RootState) => {
-  const modules = selectModules(state);
-
-  if (modules.length > 0) {
-    return modules;
-  }
-  return undefined;
-};
-
 const getTimezone = (state: RootState) => {
   const timezone = selectTimezone(state);
   const ntpservers = selectNtpServers(state);
@@ -1285,48 +1250,6 @@ const getFirewall = (state: RootState) => {
   }
 
   return Object.keys(firewall).length > 0 ? firewall : undefined;
-};
-
-const getCustomRepositories = (state: RootState) => {
-  const customRepositories = selectCustomRepositories(state).map((cr) => {
-    return {
-      ...cr,
-      baseurl: cr.baseurl && cr.baseurl.length !== 0 ? cr.baseurl : undefined,
-    } as CustomRepository;
-  });
-
-  const recommendedRepositories = selectRecommendedRepositories(state);
-
-  const customAndRecommendedRepositories = [...customRepositories];
-
-  for (const repo in recommendedRepositories) {
-    customAndRecommendedRepositories.push(
-      convertSchemaToIBCustomRepo(recommendedRepositories[repo]),
-    );
-  }
-
-  if (customAndRecommendedRepositories.length === 0) {
-    return undefined;
-  }
-  return customAndRecommendedRepositories;
-};
-
-const getPayloadRepositories = (state: RootState) => {
-  const payloadRepositories = selectPayloadRepositories(state);
-  const recommendedRepositories = selectRecommendedRepositories(state);
-
-  const payloadAndRecommendedRepositories = [...payloadRepositories];
-
-  for (const repo in recommendedRepositories) {
-    payloadAndRecommendedRepositories.push(
-      convertSchemaToIBPayloadRepo(recommendedRepositories[repo]),
-    );
-  }
-
-  if (payloadAndRecommendedRepositories.length === 0) {
-    return undefined;
-  }
-  return payloadAndRecommendedRepositories;
 };
 
 const getKernel = (state: RootState) => {
