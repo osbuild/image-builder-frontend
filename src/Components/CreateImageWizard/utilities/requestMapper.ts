@@ -890,8 +890,6 @@ const getImageOptions = (
 
 const getCustomizations = (state: RootState): Customizations => {
   return {
-    containers: undefined,
-    directories: undefined,
     // first boot & satellite use file customizations
     ...mapFileCustomizations(state),
     // subscription, aap_registration + cacerts
@@ -904,8 +902,5 @@ const getCustomizations = (state: RootState): Customizations => {
     ...mapFilesystemCustomizations(state),
     // users, groups, services, hostname, kernel, timezone, locale + firewall
     ...mapSystemCustomizations(state),
-    installation_device: undefined,
-    fdo: undefined,
-    ignition: undefined,
   };
 };
