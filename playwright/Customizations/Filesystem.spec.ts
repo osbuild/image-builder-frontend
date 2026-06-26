@@ -247,3 +247,86 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });
+
+test('Filesystem configuration is hidden for ISO target only', async ({
+  page,
+  cleanup,
+}) => {
+  const blueprintName = 'test-' + uuidv4();
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+
+  await ensureAuthenticated(page);
+  await navigateToLandingPage(page);
+  const frame = ibFrame(page);
+  await openWizard(frame);
+  await fillInDetails(frame, blueprintName);
+
+  await test.step('Select only ISO target', async () => {
+    await fillInImageOutput(frame);
+    const imageInstallerCheckbox = frame.getByRole('checkbox', {
+      name: /bare metal installer/i,
+    });
+    await imageInstallerCheckbox.click();
+
+    const guestImageCheckbox = frame.getByRole('checkbox', {
+      name: /virtualization guest image/i,
+    });
+    if (await guestImageCheckbox.isChecked()) {
+      await guestImageCheckbox.click();
+    }
+  });
+
+  await test.step('Verify filesystem configuration is not available', async () => {
+    await registerLater(frame);
+    await frame.getByRole('button', { name: /Advanced settings/ }).click();
+
+    await expect(
+      frame.getByRole('button', { name: /Automatic partitioning/i }),
+    ).toBeHidden();
+  });
+});
+
+test('Filesystem configuration is available for ISO and other target', async ({
+  page,
+  cleanup,
+}) => {
+  const blueprintName = 'test-' + uuidv4();
+  cleanup.add(() => deleteBlueprint(page, blueprintName));
+
+  await ensureAuthenticated(page);
+  await navigateToLandingPage(page);
+  const frame = ibFrame(page);
+  await openWizard(frame);
+  await fillInDetails(frame, blueprintName);
+
+  await test.step('Select ISO and guest image targets', async () => {
+    await fillInImageOutput(frame);
+    const imageInstallerCheckbox = frame.getByRole('checkbox', {
+      name: /bare metal installer/i,
+    });
+    await imageInstallerCheckbox.click();
+
+    const guestImageCheckbox = frame.getByRole('checkbox', {
+      name: /virtualization guest image/i,
+    });
+    if (!(await guestImageCheckbox.isChecked())) {
+      await guestImageCheckbox.click();
+    }
+  });
+
+  await test.step('Verify manual partitioning is available', async () => {
+    await registerLater(frame);
+    await frame.getByRole('button', { name: /Advanced settings/ }).click();
+
+    await frame
+      .getByRole('button', { name: /Automatic partitioning/i })
+      .click();
+    await frame
+      .getByRole('option', { name: /Basic filesystem partitioning/i })
+      .click();
+
+    await expect(
+      frame.getByRole('button', { name: /Basic filesystem partitioning/i }),
+    ).toBeVisible();
+  });
+});
