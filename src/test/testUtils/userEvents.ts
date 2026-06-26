@@ -36,3 +36,10 @@ export const typeWithWait = async (
 export const tabWithWait = async (user: UserEventInstance) => {
   await waitForAction(() => user.tab());
 };
+
+export const keyboardWithWait = async (
+  user: UserEventInstance,
+  text: string,
+) => {
+  await waitForAction(() => user.keyboard(text));
+};

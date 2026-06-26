@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
+import { createUser, keyboardWithWait } from '@/test/testUtils';
 
 import CreateImageWizard from '../CreateImageWizard';
 
@@ -74,6 +75,21 @@ export const renderWithQueryParams = async (
   });
 };
 
+export const renderCreateMode = async (): Promise<{
+  store: EnhancedStore<RootState>;
+}> => {
+  return renderWizard({
+    preloadedState: {
+      wizardModal: {
+        isModalOpen: true,
+        mode: 'create' as const,
+      },
+    },
+    initialRoute: '/insights/image-builder/',
+    waitForHeading: /image output/i,
+  });
+};
+
 export const renderEditMode = async (
   blueprintId: string,
 ): Promise<{ store: EnhancedStore<RootState> }> => {
@@ -94,4 +110,12 @@ export const renderEditMode = async (
     initialRoute: '/insights/image-builder/',
     waitForHeading: /review image configuration/i,
   });
+};
+
+export const testCheckbox = async (checkbox: HTMLElement) => {
+  const user = createUser();
+
+  checkbox.focus();
+  await keyboardWithWait(user, ' ');
+  expect(checkbox).toBeChecked();
 };

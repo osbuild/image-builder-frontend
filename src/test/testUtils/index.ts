@@ -1,6 +1,7 @@
 export {
   clearWithWait,
   clickWithWait,
+  keyboardWithWait,
   tabWithWait,
   typeWithWait,
   waitForAction,
