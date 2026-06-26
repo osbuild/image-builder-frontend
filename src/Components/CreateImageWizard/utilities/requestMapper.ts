@@ -99,6 +99,7 @@ import {
   selectMetadata,
   selectModules,
   selectNtpServers,
+  selectOrgId,
   selectPackageGroups,
   selectPackages,
   selectPartitioningMode,
@@ -143,17 +144,15 @@ import {
 /**
  * This function maps the wizard state to a valid CreateBlueprint request object
  * @param {Store} store redux store
- * @param {string} orgID organization ID
  *
  * @returns {CreateBlueprintRequest} blueprint creation request payload
  */
 export const mapRequestFromState = (
   store: Store,
-  orgID: string,
 ): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
-  const customizations = getCustomizations(state, orgID);
+  const customizations = getCustomizations(state);
   const isImageMode = selectIsImageMode(state);
   const imageSource = selectImageSource(state);
 
@@ -964,7 +963,7 @@ const getImageOptions = (
   return {};
 };
 
-const getCustomizations = (state: RootState, orgID: string): Customizations => {
+const getCustomizations = (state: RootState): Customizations => {
   const satCert = selectSatelliteCaCertificate(state);
   const files: File[] = [];
   if (selectFirstBootScript(state)) {
@@ -1002,7 +1001,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     containers: undefined,
     directories: undefined,
     files: files.length > 0 ? files : undefined,
-    subscription: getSubscription(state, orgID),
+    subscription: getSubscription(state),
     packages: getPackages(state),
     enabled_modules: getModules(state),
     payload_repositories: getPayloadRepositories(state),
@@ -1227,10 +1226,7 @@ const getTimezone = (state: RootState) => {
   };
 };
 
-const getSubscription = (
-  state: RootState,
-  orgID: string,
-): Subscription | undefined => {
+const getSubscription = (state: RootState): Subscription | undefined => {
   const registrationType = selectRegistrationType(state);
   const activationKey = selectActivationKey(state);
 
@@ -1247,9 +1243,14 @@ const getSubscription = (
     );
   }
 
+  const orgId = selectOrgId(state);
+  if (!orgId) {
+    return undefined;
+  }
+
   const initialSubscription = {
     'activation-key': activationKey,
-    organization: Number(orgID),
+    organization: Number(orgId),
     'server-url': selectServerUrl(state),
     'base-url': selectBaseUrl(state),
     insights_client_proxy: selectProxy(state),

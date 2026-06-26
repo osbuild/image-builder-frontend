@@ -34,9 +34,10 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type CreateDropdownProps = {
-  getBlueprintPayload: () => Promise<
-    '' | CreateBlueprintRequest | ComposerCreateBlueprintRequest | undefined
-  >;
+  getBlueprintPayload: () =>
+    | CreateBlueprintRequest
+    | ComposerCreateBlueprintRequest
+    | undefined;
   setIsOpen: (isOpen: boolean) => void;
   isDisabled: boolean;
 };

@@ -9,12 +9,10 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
-import { selectOrgId } from '@/store/slices/wizard';
+import { selectPathResolver } from '@/store/slices/env';
 
 import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
@@ -35,8 +33,6 @@ const ReviewWizardFooter = () => {
   // initialize the server store with the data from RTK query
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
-  const { auth } = useChrome();
-  const isOnPremise = useAppSelector(selectIsOnPremise);
   const resolvePath = useAppSelector(selectPathResolver);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +42,6 @@ const ReviewWizardFooter = () => {
   };
   const navigate = useNavigate();
   const isValid = useIsBlueprintValid();
-  const orgId = useAppSelector(selectOrgId);
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -56,15 +51,8 @@ const ReviewWizardFooter = () => {
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
 
-  const getBlueprintPayload = async () => {
-    if (!isOnPremise) {
-      const userData = await auth.getUser();
-      const orgId = userData?.identity.internal?.org_id;
-      const requestBody = orgId && mapRequestFromState(store, orgId);
-      return requestBody;
-    }
-
-    return mapRequestFromState(store, orgId ?? '');
+  const getBlueprintPayload = () => {
+    return mapRequestFromState(store);
   };
 
   return (

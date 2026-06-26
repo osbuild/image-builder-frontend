@@ -41,8 +41,6 @@ const createStoreWithAwsState = (
   });
 };
 
-const MOCK_ORG_ID = '5';
-
 describe('AWS Component', () => {
   describe('Rendering', () => {
     test('displays step components', async () => {
@@ -233,10 +231,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
@@ -267,10 +262,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests[0].upload_request.type).toBe('aws');
     expect(request.image_requests[0].image_type).toBe('aws');
@@ -288,10 +280,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('share_with_accounts', ['111222333444']);
@@ -309,10 +298,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests[0].architecture).toBe('x86_64');
   });
@@ -329,10 +315,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.subscription).toBeUndefined();
   });

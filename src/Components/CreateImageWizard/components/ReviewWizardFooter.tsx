@@ -9,12 +9,9 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useStore } from 'react-redux';
 
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
-import { selectIsOnPremise } from '@/store/slices/env';
-import { selectOrgId } from '@/store/slices/wizard';
 import { selectWizardModalMode } from '@/store/slices/wizardModal';
 
 import {
@@ -40,8 +37,6 @@ const ReviewWizardFooter = () => {
 
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
-  const { auth } = useChrome();
-  const isOnPremise = useAppSelector(selectIsOnPremise);
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +45,6 @@ const ReviewWizardFooter = () => {
     setIsOpen(!isOpen);
   };
   const isValid = useIsBlueprintValid();
-  const orgId = useAppSelector(selectOrgId);
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -60,15 +54,8 @@ const ReviewWizardFooter = () => {
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, close]);
 
-  const getBlueprintPayload = async () => {
-    if (!isOnPremise) {
-      const userData = await auth.getUser();
-      const orgId = userData?.identity.internal?.org_id;
-      const requestBody = orgId && mapRequestFromState(store, orgId);
-      return requestBody;
-    }
-
-    return mapRequestFromState(store, orgId ?? '');
+  const getBlueprintPayload = () => {
+    return mapRequestFromState(store);
   };
 
   const isEditMode = mode === 'edit';

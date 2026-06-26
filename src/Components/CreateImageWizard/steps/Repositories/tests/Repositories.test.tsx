@@ -501,8 +501,6 @@ const createStoreWithRepositoriesState = (
   });
 };
 
-const MOCK_ORG_ID = '5';
-
 describe('Request Payload Generation', () => {
   test('generates correct custom_repositories from state', () => {
     const store = createStoreWithRepositoriesState({
@@ -535,10 +533,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.custom_repositories).toHaveLength(1);
     expect(request.customizations.custom_repositories![0]).toEqual({
@@ -579,10 +574,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.payload_repositories).toHaveLength(1);
     expect(request.customizations.payload_repositories![0]).toEqual({
@@ -624,10 +616,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.custom_repositories![0].module_hotfixes).toBe(
       true,
@@ -647,10 +636,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.custom_repositories).toBeUndefined();
     expect(request.customizations.payload_repositories).toBeUndefined();
@@ -678,10 +664,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(
       request.customizations.custom_repositories![0].baseurl,
@@ -720,10 +703,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.custom_repositories).toHaveLength(2);
     expect(request.customizations.payload_repositories).toHaveLength(2);
