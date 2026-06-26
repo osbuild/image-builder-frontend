@@ -2,7 +2,6 @@ import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  AapRegistration,
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   BlueprintExportResponse,
@@ -29,7 +28,6 @@ import {
   OpenScapCompliance,
   OpenScapProfile,
   Services,
-  Subscription,
   UploadTypes,
   User,
   VolumeGroup,
@@ -53,15 +51,10 @@ import {
   mapContentCustomizations,
   mapFileCustomizations,
   mapFilesystemCustomizations,
+  mapRegistrationCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
-  selectAapCallbackUrl,
-  selectAapEnabled,
-  selectAapHostConfigKey,
-  selectAapTlsCertificateAuthority,
-  selectAapTlsConfirmation,
-  selectActivationKey,
   selectArchitecture,
   selectAwsAccountId,
   selectAwsRegion,
@@ -69,7 +62,6 @@ import {
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
-  selectBaseUrl,
   selectBlueprintDescription,
   selectBlueprintName,
   selectBootcDistributions,
@@ -87,11 +79,6 @@ import {
   selectLanguages,
   selectMetadata,
   selectNtpServers,
-  selectOrgId,
-  selectProxy,
-  selectRegistrationType,
-  selectSatelliteCaCertificate,
-  selectServerUrl,
   selectServices,
   selectSnapshotDate,
   selectTemplate,
@@ -776,29 +763,6 @@ const getFirstBootScript = (files?: File[]): string => {
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
-const getAapRegistration = (state: RootState): AapRegistration | undefined => {
-  const enabled = selectAapEnabled(state);
-  if (!enabled) {
-    return undefined;
-  }
-
-  const callbackUrl = selectAapCallbackUrl(state);
-  const hostConfigKey = selectAapHostConfigKey(state);
-  const tlsCertificateAuthority = selectAapTlsCertificateAuthority(state);
-  const skipTlsVerification = selectAapTlsConfirmation(state);
-
-  if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
-    return undefined;
-  }
-
-  return {
-    ansible_callback_url: callbackUrl || '',
-    host_config_key: hostConfigKey || '',
-    tls_certificate_authority: tlsCertificateAuthority || undefined,
-    skip_tls_verification: skipTlsVerification || undefined,
-  };
-};
-
 const getImageRequests = (
   state: RootState,
 ): ImageRequest[] | ComposerImageRequest[] => {
@@ -938,13 +902,13 @@ const getImageOptions = (
 };
 
 const getCustomizations = (state: RootState): Customizations => {
-  const satCert = selectSatelliteCaCertificate(state);
   return {
     containers: undefined,
     directories: undefined,
     // first boot & satellite use file customizations
     ...mapFileCustomizations(state),
-    subscription: getSubscription(state),
+    // subscription, aap_registration + cacerts
+    ...mapRegistrationCustomizations(state),
     // packages, modules, payload repos + custom repos
     ...mapContentCustomizations(state),
     // fips + openscap
@@ -962,13 +926,6 @@ const getCustomizations = (state: RootState): Customizations => {
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
-    cacerts:
-      satCert && selectRegistrationType(state) === 'register-satellite'
-        ? {
-            pem_certs: [satCert],
-          }
-        : undefined,
-    aap_registration: getAapRegistration(state),
   };
 };
 
@@ -1060,46 +1017,6 @@ const getTimezone = (state: RootState) => {
     timezone: timezone ? timezone : undefined,
     ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
   };
-};
-
-const getSubscription = (state: RootState): Subscription | undefined => {
-  const registrationType = selectRegistrationType(state);
-  const activationKey = selectActivationKey(state);
-
-  if (
-    registrationType === 'register-later' ||
-    registrationType === 'register-satellite'
-  ) {
-    return undefined;
-  }
-
-  if (activationKey === undefined) {
-    throw new Error(
-      'Activation key unexpectedly undefined while generating subscription customization',
-    );
-  }
-
-  const orgId = selectOrgId(state);
-  if (!orgId) {
-    return undefined;
-  }
-
-  const initialSubscription = {
-    'activation-key': activationKey,
-    organization: Number(orgId),
-    'server-url': selectServerUrl(state),
-    'base-url': selectBaseUrl(state),
-    insights_client_proxy: selectProxy(state),
-  };
-
-  switch (registrationType) {
-    case 'register-now-rhc':
-      return { ...initialSubscription, insights: true, rhc: true };
-    case 'register-now-insights':
-      return { ...initialSubscription, insights: true, rhc: false };
-    case 'register-now':
-      return { ...initialSubscription, insights: false, rhc: false };
-  }
 };
 
 const getLocale = (state: RootState) => {

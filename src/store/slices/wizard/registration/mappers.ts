@@ -8,9 +8,132 @@ import {
 import type { File } from '@/store/api/backend';
 
 import {
+  selectAapCallbackUrl,
+  selectAapEnabled,
+  selectAapHostConfigKey,
+  selectAapTlsCertificateAuthority,
+  selectAapTlsConfirmation,
+  selectActivationKey,
+  selectBaseUrl,
+  selectOrgId,
+  selectProxy,
   selectRegistrationType,
+  selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
+  selectServerUrl,
 } from './selectors';
+
+const mapSubscription = createSelector(
+  [
+    selectRegistrationType,
+    selectActivationKey,
+    selectOrgId,
+    selectServerUrl,
+    selectBaseUrl,
+    selectProxy,
+  ],
+  (registrationType, activationKey, orgId, serverUrl, baseUrl, proxy) => {
+    if (
+      registrationType === 'register-later' ||
+      registrationType === 'register-satellite'
+    ) {
+      return undefined;
+    }
+
+    // this is existing behaviour, but maybe we should return
+    // undefined instead, since this is a bit of an anti-pattern
+    if (activationKey === undefined) {
+      throw new Error(
+        'Activation key unexpectedly undefined while generating subscription customization',
+      );
+    }
+
+    if (!orgId || isNaN(Number(orgId))) {
+      return undefined;
+    }
+
+    const subscription = {
+      'activation-key': activationKey,
+      organization: Number(orgId),
+      'server-url': serverUrl,
+      'base-url': baseUrl,
+      insights_client_proxy: proxy,
+      insights: false,
+      rhc: false,
+    };
+
+    if (registrationType === 'register-now') {
+      return { subscription };
+    }
+
+    if (registrationType === 'register-now-insights') {
+      return {
+        subscription: { ...subscription, insights: true },
+      };
+    }
+
+    if (registrationType === 'register-now-rhc') {
+      return {
+        subscription: { ...subscription, insights: true, rhc: true },
+      };
+    }
+
+    return undefined;
+  },
+);
+
+const mapAap = createSelector(
+  [
+    selectAapEnabled,
+    selectAapCallbackUrl,
+    selectAapHostConfigKey,
+    selectAapTlsCertificateAuthority,
+    selectAapTlsConfirmation,
+  ],
+  (
+    enabled,
+    callbackUrl,
+    hostConfigKey,
+    tlsCertificateAuthority,
+    skipTlsVerification,
+  ) => {
+    if (!enabled) {
+      return undefined;
+    }
+
+    if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
+      return undefined;
+    }
+
+    return {
+      aap_registration: {
+        ansible_callback_url: callbackUrl || '',
+        host_config_key: hostConfigKey || '',
+        tls_certificate_authority: tlsCertificateAuthority || undefined,
+        skip_tls_verification: skipTlsVerification || undefined,
+      },
+    };
+  },
+);
+
+const mapCaCerts = createSelector(
+  [selectRegistrationType, selectSatelliteCaCertificate],
+  (registrationType, cacert) => {
+    if (registrationType !== 'register-satellite') {
+      return undefined;
+    }
+
+    if (!cacert) {
+      return undefined;
+    }
+
+    return {
+      cacerts: {
+        pem_certs: [cacert],
+      },
+    };
+  },
+);
 
 // this needs to be exported because other slices
 // also have file customizations
@@ -39,4 +162,9 @@ export const mapSatelliteFiles = createSelector(
       },
     ];
   },
+);
+
+export const mapRegistrationCustomizations = createSelector(
+  [mapSubscription, mapCaCerts, mapAap],
+  (subscription, cacerts, aap) => ({ ...subscription, ...cacerts, ...aap }),
 );
