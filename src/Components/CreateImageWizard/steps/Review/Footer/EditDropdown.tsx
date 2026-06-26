@@ -27,9 +27,10 @@ import { useAppSelector } from '../../../../../store/hooks';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type EditDropdownProps = {
-  getBlueprintPayload: () => Promise<
-    '' | CreateBlueprintRequest | ComposerCreateBlueprintRequest | undefined
-  >;
+  getBlueprintPayload: () =>
+    | CreateBlueprintRequest
+    | ComposerCreateBlueprintRequest
+    | undefined;
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
   isDisabled: boolean;

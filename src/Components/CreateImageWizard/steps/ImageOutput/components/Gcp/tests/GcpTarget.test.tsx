@@ -43,8 +43,6 @@ const createStoreWithGcpState = (
   });
 };
 
-const MOCK_ORG_ID = '5';
-
 describe('GCP Component', () => {
   describe('Rendering', () => {
     test('displays step components', async () => {
@@ -304,10 +302,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
@@ -337,10 +332,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('share_with_accounts', [
@@ -359,10 +351,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('share_with_accounts', [
@@ -381,10 +370,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('share_with_accounts', [
@@ -403,10 +389,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests[0].upload_request.type).toBe('gcp');
     expect(request.image_requests[0].image_type).toBe('gcp');
@@ -423,10 +406,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests[0].architecture).toBe('x86_64');
   });
@@ -442,10 +422,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.subscription).toBeUndefined();
   });

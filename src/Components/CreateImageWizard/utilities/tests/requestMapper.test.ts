@@ -203,7 +203,7 @@ describe('round-trip: mapRequestToState + mapRequestFromState', () => {
       const response = toBlueprintResponse(expectedRequest);
       const wizardState = mapRequestToState(response);
       const store = createTestStore(wizardState);
-      const result = stripUndefined(mapRequestFromState(store, 'test-org-id'));
+      const result = stripUndefined(mapRequestFromState(store));
       expect(result).toEqual(expectedRequest);
     },
   );

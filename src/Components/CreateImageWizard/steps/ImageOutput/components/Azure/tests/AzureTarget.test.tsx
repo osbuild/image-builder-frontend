@@ -48,8 +48,6 @@ const createStoreWithAzureState = (
   });
 };
 
-const MOCK_ORG_ID = '5';
-
 describe('Azure Component', () => {
   describe('Rendering', () => {
     test('displays step components', async () => {
@@ -360,10 +358,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
@@ -398,10 +393,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests).toHaveLength(1);
     expect(request.image_requests[0].image_type).toBe('azure');
@@ -429,10 +421,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests[0].upload_request.type).toBe('azure');
     expect(request.image_requests[0].image_type).toBe('azure');
@@ -451,10 +440,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('resource_group', '');
@@ -473,10 +459,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toEqual({
@@ -500,10 +483,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.image_requests[0].architecture).toBe('x86_64');
   });
@@ -521,10 +501,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(
-      store,
-      MOCK_ORG_ID,
-    ) as CreateBlueprintRequest;
+    const request = mapRequestFromState(store) as CreateBlueprintRequest;
 
     expect(request.customizations.subscription).toBeUndefined();
   });
