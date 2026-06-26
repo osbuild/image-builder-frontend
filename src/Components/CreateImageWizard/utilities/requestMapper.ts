@@ -21,15 +21,12 @@ import {
   Filesystem,
   FilesystemTyped,
   GcpUploadRequestOptions,
-  Group,
   ImageRequest,
   ImageTypes,
   LogicalVolume,
   OpenScapCompliance,
   OpenScapProfile,
-  Services,
   UploadTypes,
-  User,
   VolumeGroup,
 } from '@/store/api/backend';
 import {
@@ -52,6 +49,7 @@ import {
   mapFileCustomizations,
   mapFilesystemCustomizations,
   mapRegistrationCustomizations,
+  mapSystemCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -66,29 +64,18 @@ import {
   selectBlueprintName,
   selectBootcDistributions,
   selectDistribution,
-  selectFirewall,
   selectGcpAccountType,
   selectGcpEmail,
-  selectHostname,
   selectImageSource,
   selectImageTypes,
   selectIsImageMode,
   selectIsoPayloadReference,
-  selectKernel,
-  selectKeyboard,
-  selectLanguages,
   selectMetadata,
-  selectNtpServers,
-  selectServices,
   selectSnapshotDate,
   selectTemplate,
   selectTemplateName,
-  selectTimezone,
   selectUseLatest,
-  selectUserGroups,
-  selectUsers,
   Units,
-  UserWithAdditionalInfo,
   WizardState,
 } from '@/store/slices/wizard';
 
@@ -915,171 +902,10 @@ const getCustomizations = (state: RootState): Customizations => {
     ...mapComplianceCustomizations(state),
     // disk, filesystem + partition mode
     ...mapFilesystemCustomizations(state),
-    users: getUsers(state),
-    services: getServices(state),
-    hostname: selectHostname(state) || undefined,
-    kernel: getKernel(state),
-    groups: getUserGroups(state),
-    timezone: getTimezone(state),
-    locale: getLocale(state),
-    firewall: getFirewall(state),
+    // users, groups, services, hostname, kernel, timezone, locale + firewall
+    ...mapSystemCustomizations(state),
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
   };
-};
-
-const getServices = (state: RootState): Services | undefined => {
-  const services = selectServices(state);
-  const enabledSvcs = services.enabled;
-  if (
-    enabledSvcs.length === 0 &&
-    services.masked.length === 0 &&
-    services.disabled.length === 0
-  ) {
-    return undefined;
-  }
-
-  return {
-    enabled: enabledSvcs.length ? enabledSvcs : undefined,
-    masked: services.masked.length ? services.masked : undefined,
-    disabled: services.disabled.length ? services.disabled : undefined,
-  };
-};
-
-const getUsers = (state: RootState): User[] | undefined => {
-  const users = selectUsers(state);
-
-  if (users.length === 0) {
-    return undefined;
-  }
-
-  const arrayUsers = users
-    .filter(
-      (user: UserWithAdditionalInfo) =>
-        user.name || user.password || user.ssh_key || user.groups.length > 0,
-    )
-    .map((user: UserWithAdditionalInfo) => {
-      const result: User = {
-        name: user.name,
-      };
-      if (user.password !== '') {
-        result.password = user.password;
-      }
-      if (user.ssh_key !== '') {
-        result.ssh_key = user.ssh_key;
-      }
-      if (user.groups.length > 0) {
-        result.groups = user.groups;
-      }
-      result.hasPassword = user.hasPassword || user.password !== '';
-      return result as User;
-    });
-
-  return arrayUsers.length > 0 ? arrayUsers : undefined;
-};
-
-const getUserGroups = (state: RootState): Group[] | undefined => {
-  const userGroups = selectUserGroups(state);
-
-  if (userGroups.length === 0) {
-    return undefined;
-  }
-
-  const arrayGroups = userGroups
-    .filter((group) => group.name && group.name.trim() !== '')
-    .map((group) => {
-      const result: Group = {
-        name: group.name,
-      };
-      if (group.gid !== undefined) {
-        result.gid = group.gid;
-      }
-      return result;
-    });
-
-  return arrayGroups.length > 0 ? arrayGroups : undefined;
-};
-
-const getTimezone = (state: RootState) => {
-  const timezone = selectTimezone(state);
-  const ntpservers = selectNtpServers(state);
-  const isImageMode = selectIsImageMode(state);
-
-  if (isImageMode) {
-    return undefined;
-  }
-
-  if (!timezone && ntpservers?.length === 0) {
-    return undefined;
-  }
-  return {
-    timezone: timezone ? timezone : undefined,
-    ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
-  };
-};
-
-const getLocale = (state: RootState) => {
-  const languages = selectLanguages(state);
-  const keyboard = selectKeyboard(state);
-  const isImageMode = selectIsImageMode(state);
-
-  if (isImageMode) {
-    return undefined;
-  }
-
-  if (languages?.length === 0 && !keyboard) {
-    return undefined;
-  }
-  return {
-    languages: languages && languages.length > 0 ? languages : undefined,
-    keyboard: keyboard ? keyboard : undefined,
-  };
-};
-
-const getFirewall = (state: RootState) => {
-  const ports = selectFirewall(state).ports;
-  const services = selectFirewall(state).services;
-
-  const firewall = {};
-
-  if (ports.length > 0) {
-    Object.assign(firewall, { ports: ports });
-  }
-
-  if (services.enabled.length > 0 || services.disabled.length > 0) {
-    Object.assign(firewall, {
-      services: {
-        enabled: services.enabled.length > 0 ? services.enabled : undefined,
-        disabled: services.disabled.length > 0 ? services.disabled : undefined,
-      },
-    });
-  }
-
-  return Object.keys(firewall).length > 0 ? firewall : undefined;
-};
-
-const getKernel = (state: RootState) => {
-  const kernel = selectKernel(state);
-  const kernelAppendString = selectKernel(state).append.join(' ');
-
-  const kernelRequest = {};
-
-  if (!kernel.name && kernel.append.length === 0) {
-    return undefined;
-  }
-
-  if (kernel.name) {
-    Object.assign(kernelRequest, {
-      name: kernel.name,
-    });
-  }
-
-  if (kernelAppendString !== '') {
-    Object.assign(kernelRequest, {
-      append: kernelAppendString,
-    });
-  }
-
-  return Object.keys(kernelRequest).length > 0 ? kernelRequest : undefined;
 };
