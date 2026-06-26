@@ -4,9 +4,18 @@ import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import TOML from 'smol-toml';
 
+import { mapOnPremToHosted } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
+import { mapBlueprintExportToState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
-import { createUser, keyboardWithWait } from '@/test/testUtils';
+import { BlueprintItem } from '@/store/api/backend';
+import {
+  clickWithWait,
+  createUser,
+  keyboardWithWait,
+  UserEventInstance,
+} from '@/test/testUtils';
 
 import CreateImageWizard from '../CreateImageWizard';
 
@@ -112,10 +121,48 @@ export const renderEditMode = async (
   });
 };
 
+export const renderImportMode = async (
+  blueprintToml: string,
+): Promise<{ store: EnhancedStore<RootState> }> => {
+  const tomlBlueprint = TOML.parse(blueprintToml);
+  const blueprintFromFile = await mapOnPremToHosted(
+    tomlBlueprint as BlueprintItem,
+  );
+  const importBlueprintState = mapBlueprintExportToState(blueprintFromFile, []);
+
+  return renderWizard({
+    preloadedState: {
+      wizardModal: {
+        isModalOpen: true,
+        mode: 'import' as const,
+      },
+      wizard: importBlueprintState,
+    },
+    initialRoute: '/insights/image-builder/',
+    waitForHeading: /build an image/i,
+  });
+};
+
 export const testCheckbox = async (checkbox: HTMLElement) => {
   const user = createUser();
 
   checkbox.focus();
   await keyboardWithWait(user, ' ');
   expect(checkbox).toBeChecked();
+};
+
+export const selectGuestImage = async (user: UserEventInstance) => {
+  await clickWithWait(
+    user,
+    await screen.findByRole('checkbox', {
+      name: /virtualization guest image/i,
+    }),
+  );
+};
+
+export const selectRegisterLater = async (user: UserEventInstance) => {
+  await clickWithWait(
+    user,
+    await screen.findByRole('radio', { name: /register later/i }),
+  );
 };
