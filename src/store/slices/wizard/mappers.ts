@@ -4,6 +4,9 @@
 // customizations object.
 import { createSelector } from '@reduxjs/toolkit';
 
+import type { CreateBlueprintRequest } from '@/store/api/backend';
+import type { RootState } from '@/store/index';
+
 import {
   mapAwsUploadRequest,
   mapAzureUploadRequest,
@@ -11,11 +14,18 @@ import {
 } from './cloud';
 import { mapComplianceCustomizations } from './compliance';
 import { mapContentCustomizations, mapContentImageRequest } from './content';
+import {
+  selectBlueprintDescription,
+  selectBlueprintName,
+  selectMetadata,
+} from './details';
 import { mapFilesystemCustomizations } from './filesystem';
 import {
+  mapBootcOptions,
   OCI_UPLOAD_OPTIONS,
   S3_UPLOAD_OPTIONS,
   selectArchitecture,
+  selectDistribution,
   selectImageTypes,
   type SupportedImageTypes,
 } from './output';
@@ -108,3 +118,21 @@ export const mapImageRequests = createSelector(
     };
   },
 );
+
+// This function breaks the pattern of using `createSelector`. The reason
+// for this is that it is the top-level composer and it is the entry point
+// to the mapping functions. This function is called from event handlers
+// and never during render, so using an RTK derived selector for that doesn't
+// really make sense. Whereas the middle layer mappers are declarative and
+// composable in nature.
+export const mapStateToRequest = (
+  state: RootState,
+): CreateBlueprintRequest => ({
+  name: selectBlueprintName(state),
+  metadata: selectMetadata(state),
+  description: selectBlueprintDescription(state),
+  distribution: selectDistribution(state),
+  ...mapBootcOptions(state),
+  ...mapImageRequests(state),
+  ...mapCustomizations(state),
+});

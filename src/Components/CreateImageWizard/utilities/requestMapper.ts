@@ -38,16 +38,10 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
-  mapBootcOptions,
-  mapCustomizations,
-  mapImageRequests,
+  mapStateToRequest,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
-  selectBlueprintDescription,
-  selectBlueprintName,
-  selectDistribution,
-  selectMetadata,
   Units,
   WizardState,
 } from '@/store/slices/wizard';
@@ -70,16 +64,7 @@ import {
 export const mapRequestFromState = (
   store: Store,
 ): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
-  const state = store.getState();
-  return {
-    name: selectBlueprintName(state),
-    metadata: selectMetadata(state),
-    description: selectBlueprintDescription(state),
-    distribution: selectDistribution(state),
-    ...mapBootcOptions(state),
-    ...mapImageRequests(state),
-    ...mapCustomizations(state),
-  };
+  return mapStateToRequest(store.getState());
 };
 
 const convertFilesystemToPartition = (
