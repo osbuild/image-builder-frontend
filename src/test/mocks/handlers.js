@@ -1,17 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-import {
-  COMPLIANCE_API,
-  CONTENT_SOURCES_API,
-  CREATE_BLUEPRINT,
-  IMAGE_BUILDER_API,
-  RHSM_API,
-} from '../../constants';
-import {
-  mockActivationKeyInformation,
-  mockActivationKeysResults,
-} from '../fixtures/activationKeys';
-import { mockArchitecturesByDistro } from '../fixtures/architectures';
+import { CREATE_BLUEPRINT, IMAGE_BUILDER_API } from '../../constants';
 import {
   mockBlueprintComposes,
   mockBlueprintComposesOutOfSync,
@@ -19,104 +8,15 @@ import {
   mockEmptyBlueprintsComposes,
   mockGetBlueprints,
 } from '../fixtures/blueprints';
-import { mockPolicies } from '../fixtures/compliance';
 import { composesEndpoint, mockStatus } from '../fixtures/composes';
 import { getMockBlueprintResponse } from '../fixtures/editMode';
-import { mockedFeatureResponse } from '../fixtures/features';
 import {
   distributionOscapProfiles,
   oscapCustomizations,
   oscapCustomizationsPolicy,
 } from '../fixtures/oscap';
-import {
-  mockPkgRecommendations,
-  mockSourcesGroupsResults,
-  mockSourcesPackagesResults,
-} from '../fixtures/packages';
-import {
-  mockPopularRepo,
-  mockRepositoryParameters,
-  mockRepositoryResults,
-} from '../fixtures/repositories';
-import { mockTemplateResults, testingTemplates } from '../fixtures/templates';
 
 export const handlers = [
-  http.post(`${CONTENT_SOURCES_API}/rpms/names`, async ({ request }) => {
-    const { search, urls } = await request.json();
-    return HttpResponse.json(mockSourcesPackagesResults(search, urls));
-  }),
-  http.post(
-    `${CONTENT_SOURCES_API}/package_groups/names`,
-    async ({ request }) => {
-      const { search, urls } = await request.json();
-      return HttpResponse.json(mockSourcesGroupsResults(search, urls));
-    },
-  ),
-  http.get(`${CONTENT_SOURCES_API}/features/`, async () => {
-    return HttpResponse.json(mockedFeatureResponse);
-  }),
-  http.post(`${CONTENT_SOURCES_API}/snapshots/for_date/`, async () => {
-    return HttpResponse.json(mockSourcesPackagesResults);
-  }),
-  http.get(`${IMAGE_BUILDER_API}/packages`, ({ request }) => {
-    const url = new URL(request.url);
-    const search = url.searchParams.get('search');
-    return HttpResponse.json(mockSourcesPackagesResults(search));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/architectures/:distro`, ({ params }) => {
-    const { distro } = params;
-    return HttpResponse.json(mockArchitecturesByDistro(distro));
-  }),
-  http.get(`${RHSM_API}/activation_keys`, () => {
-    return HttpResponse.json(mockActivationKeysResults());
-  }),
-  http.get(`${RHSM_API}/activation_keys/:key`, ({ params }) => {
-    const { key } = params;
-    return HttpResponse.json(mockActivationKeyInformation(key));
-  }),
-  http.get(`${CONTENT_SOURCES_API}/repositories/`, ({ request }) => {
-    const url = new URL(request.url);
-    const available_for_arch = url.searchParams.get('available_for_arch');
-    const available_for_version = url.searchParams.get('available_for_version');
-    const limit = url.searchParams.get('limit');
-    const offset = url.searchParams.get('offset');
-    const search = url.searchParams.get('search');
-    const uuid = url.searchParams.get('uuid');
-    const args = {
-      available_for_arch,
-      available_for_version,
-      limit,
-      offset,
-      search,
-      uuid,
-    };
-    return HttpResponse.json(mockRepositoryResults(args));
-  }),
-  http.get(`${CONTENT_SOURCES_API}/templates/`, ({ request }) => {
-    const url = new URL(request.url);
-    const arch = url.searchParams.get('arch');
-    const version = url.searchParams.get('version');
-    const limit = url.searchParams.get('limit');
-    const offset = url.searchParams.get('offset');
-    const args = {
-      arch,
-      version,
-      limit,
-      offset,
-    };
-    return HttpResponse.json(mockTemplateResults(args));
-  }),
-  http.get(`${CONTENT_SOURCES_API}/templates/:uuid`, ({ params }) => {
-    const { uuid } = params;
-    return HttpResponse.json(testingTemplates[uuid]);
-  }),
-  http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, ({ params }) => {
-    const { repo_id } = params;
-    return HttpResponse.json(mockPopularRepo(repo_id));
-  }),
-  http.get(`${CONTENT_SOURCES_API}/repository_parameters`, () => {
-    return HttpResponse.json(mockRepositoryParameters);
-  }),
   http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
     return HttpResponse.json(composesEndpoint(new URL(request.url)));
   }),
@@ -221,19 +121,4 @@ export const handlers = [
       return new HttpResponse(null, { status: 200 });
     },
   ),
-  http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, () => {
-    return HttpResponse.json(mockPkgRecommendations);
-  }),
-  http.get(`${COMPLIANCE_API}/policies`, () => {
-    return HttpResponse.json(mockPolicies);
-  }),
-  http.get(`${COMPLIANCE_API}/policies/:id`, ({ params }) => {
-    const id = params['id'];
-    for (const p of mockPolicies.data) {
-      if (p.id === id) {
-        return HttpResponse.json({ data: p });
-      }
-    }
-    return HttpResponse.error();
-  }),
 ];
