@@ -4,9 +4,21 @@
 // customizations object.
 import { createSelector } from '@reduxjs/toolkit';
 
+import {
+  mapAwsUploadRequest,
+  mapAzureUploadRequest,
+  mapGcpUploadRequest,
+} from './cloud';
 import { mapComplianceCustomizations } from './compliance';
-import { mapContentCustomizations } from './content';
+import { mapContentCustomizations, mapContentImageRequest } from './content';
 import { mapFilesystemCustomizations } from './filesystem';
+import {
+  OCI_UPLOAD_OPTIONS,
+  S3_UPLOAD_OPTIONS,
+  selectArchitecture,
+  selectImageTypes,
+  type SupportedImageTypes,
+} from './output';
 import {
   mapRegistrationCustomizations,
   mapSatelliteFiles,
@@ -49,4 +61,50 @@ export const mapCustomizations = createSelector(
       ...system,
     },
   }),
+);
+
+const mapUploadRequest = createSelector(
+  [mapAwsUploadRequest, mapAzureUploadRequest, mapGcpUploadRequest],
+  (awsUploadOptions, azureUploadOptions, gcpOptions) => {
+    return {
+      aws: awsUploadOptions,
+      ami: awsUploadOptions,
+      azure: azureUploadOptions,
+      vhd: azureUploadOptions,
+      gcp: gcpOptions,
+      oci: OCI_UPLOAD_OPTIONS,
+      wsl: S3_UPLOAD_OPTIONS,
+      'guest-image': S3_UPLOAD_OPTIONS,
+      'image-installer': S3_UPLOAD_OPTIONS,
+      'bootable-container-iso': S3_UPLOAD_OPTIONS,
+      'network-installer': S3_UPLOAD_OPTIONS,
+      vsphere: S3_UPLOAD_OPTIONS,
+      'vsphere-ova': S3_UPLOAD_OPTIONS,
+      'pxe-tar-xz': S3_UPLOAD_OPTIONS,
+    } satisfies Record<SupportedImageTypes, { upload_request: unknown }>;
+  },
+);
+
+export const mapImageRequests = createSelector(
+  [
+    selectImageTypes,
+    selectArchitecture,
+    mapContentImageRequest,
+    mapUploadRequest,
+  ],
+  (
+    imageTypes,
+    architecture,
+    contentStateToImageRequest,
+    uploadRequestOptions,
+  ) => {
+    return {
+      image_requests: imageTypes.map((imageType) => ({
+        architecture,
+        image_type: imageType,
+        ...uploadRequestOptions[imageType],
+        ...contentStateToImageRequest,
+      })),
+    };
+  },
 );
