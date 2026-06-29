@@ -10,11 +10,6 @@ import {
 } from '../fixtures/blueprints';
 import { composesEndpoint, mockStatus } from '../fixtures/composes';
 import { getMockBlueprintResponse } from '../fixtures/editMode';
-import {
-  distributionOscapProfiles,
-  oscapCustomizations,
-  oscapCustomizationsPolicy,
-} from '../fixtures/oscap';
 
 export const handlers = [
   http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
@@ -27,26 +22,6 @@ export const handlers = [
   http.post(`${IMAGE_BUILDER_API}/compose`, () => {
     return HttpResponse.json({});
   }),
-  http.get(
-    `${IMAGE_BUILDER_API}/oscap/:distribution/profiles`,
-    ({ request }) => {
-      return HttpResponse.json(distributionOscapProfiles(request));
-    },
-  ),
-  http.get(
-    `${IMAGE_BUILDER_API}/oscap/:distribution/:profile/customizations`,
-    ({ params }) => {
-      const { profile } = params;
-      return HttpResponse.json(oscapCustomizations(profile));
-    },
-  ),
-  http.get(
-    `${IMAGE_BUILDER_API}/oscap/:policy/:distribution/policy_customizations`,
-    ({ params }) => {
-      const { policy } = params;
-      return HttpResponse.json(oscapCustomizationsPolicy(policy));
-    },
-  ),
   http.get(`${IMAGE_BUILDER_API}/blueprints`, ({ request }) => {
     const url = new URL(request.url);
     const nameParam = url.searchParams.get('name');

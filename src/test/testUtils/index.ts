@@ -28,6 +28,7 @@ export {
   createBlueprintsHandler,
   createGroupsHandler,
   createOscapHandler,
+  createOscapProfilesHandler,
   createRecommendationsHandler,
   createRepositoriesHandler,
   createRpmHandler,
@@ -37,6 +38,7 @@ export {
   type BlueprintsHandlerOptions,
   type GroupsHandlerOptions,
   type OscapHandlerOptions,
+  type OscapProfilesHandlerOptions,
   type RpmHandlerOptions,
 } from './fetchMock';
 
