@@ -38,7 +38,10 @@ const config = {
       tsconfig: './tsconfig.vitest.json',
     },
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
+      reporter: ['json', 'lcov', 'text'],
+      reportsDirectory: './coverage/vitest',
+      reportOnFailure: true,
       exclude: ['**/test/**', '**/tests/**', '**/mocks/**', '**/*.scss'],
     },
     server: {

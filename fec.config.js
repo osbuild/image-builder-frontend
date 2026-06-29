@@ -3,7 +3,51 @@ const path = require('path');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const webpack = require('webpack');
 
-const plugins = [];
+const srcDir = path.resolve(__dirname, 'src');
+
+class IstanbulCoveragePlugin {
+  apply(compiler) {
+    if (process.env.COVERAGE !== 'true') {
+      return;
+    }
+
+    compiler.options.module = compiler.options.module || {};
+    compiler.options.module.rules = compiler.options.module.rules || [];
+    const rules = compiler.options.module.rules;
+    const alreadyAdded = rules.some((rule) =>
+      rule && Array.isArray(rule.use)
+        ? rule.use.some(
+            (u) =>
+              typeof u === 'object' &&
+              typeof u.loader === 'string' &&
+              u.loader.includes('istanbul'),
+          )
+        : typeof rule?.use === 'object' &&
+          typeof rule.use?.loader === 'string' &&
+          rule.use.loader.includes('istanbul'),
+    );
+    if (alreadyAdded) {
+      return;
+    }
+
+    rules.push({
+      test: /\.[jt]sx?$/,
+      include: srcDir,
+      exclude: /node_modules|\.test\.|\.spec\./,
+      enforce: 'post',
+      use: {
+        loader: '@jsdevtools/coverage-istanbul-loader',
+        options: {
+          esModules: true,
+          coverageGlobalScope: 'window',
+          coverageGlobalScopeFunc: false,
+        },
+      },
+    });
+  }
+}
+
+const plugins = [new IstanbulCoveragePlugin()];
 
 function add_define(key, value) {
   const definePluginIndex = plugins.findIndex(

@@ -14,3 +14,10 @@ ignore:
   - "api"
   - "playwright"
   - "src/store"
+flags:
+  vitest:
+    paths:
+      - src/
+  playwright:
+    paths:
+      - src/

@@ -1,0 +1,10 @@
+{
+  "include": ["src/**"],
+  "exclude": [
+    "src/test/**",
+    "src/**/tests/**",
+    "src/**/mocks/**",
+    "**/*.scss",
+    "**/*.test.*"
+  ]
+}

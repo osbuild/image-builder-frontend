@@ -47,9 +47,9 @@ jobs:
       - name: Update /etc/hosts
         run: sudo npm run patch:hosts
 
-      - name: Start front-end server
+      - name: Start front-end server with coverage instrumentation
         run: |
-          npm run start:federated &
+          COVERAGE=true npm run start:federated &
           npx wait-on http://localhost:8003/apps/image-builder/
 
       - name: Run testing proxy
@@ -60,6 +60,19 @@ jobs:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
           CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/Customizations playwright/Import playwright/Cockpit playwright/Basic
+
+      - name: Generate Playwright coverage report
+        if: always()
+        run: npm run e2e:coverage
+
+      - name: Upload Playwright coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/playwright/lcov.info
+          flags: playwright
+          verbose: true
 
       - name: Store front-end Test report
         uses: actions/upload-artifact@v4
