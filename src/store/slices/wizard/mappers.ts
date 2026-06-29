@@ -4,6 +4,9 @@
 // customizations object.
 import { createSelector } from '@reduxjs/toolkit';
 
+import type { CreateBlueprintRequest } from '@/store/api/backend';
+import type { RootState } from '@/store/index';
+
 import {
   mapAwsUploadRequest,
   mapAzureUploadRequest,
@@ -11,12 +14,20 @@ import {
 } from './cloud';
 import { mapComplianceCustomizations } from './compliance';
 import { mapContentCustomizations, mapContentImageRequest } from './content';
+import {
+  selectBlueprintDescription,
+  selectBlueprintName,
+  selectMetadata,
+} from './details';
 import { mapFilesystemCustomizations } from './filesystem';
 import {
+  mapBootcOptions,
   OCI_UPLOAD_OPTIONS,
   S3_UPLOAD_OPTIONS,
   selectArchitecture,
+  selectDistribution,
   selectImageTypes,
+  type SupportedImageTypes,
 } from './output';
 import {
   mapRegistrationCustomizations,
@@ -65,10 +76,6 @@ export const mapCustomizations = createSelector(
 const mapUploadRequest = createSelector(
   [mapAwsUploadRequest, mapAzureUploadRequest, mapGcpUploadRequest],
   (awsUploadOptions, azureUploadOptions, gcpOptions) => {
-    // this is essentially a lookup table that dynamically
-    // get's the cloud upload options (if they're set) and
-    // get's the default upload options for the other image
-    // types
     return {
       aws: awsUploadOptions,
       ami: awsUploadOptions,
@@ -84,7 +91,7 @@ const mapUploadRequest = createSelector(
       vsphere: S3_UPLOAD_OPTIONS,
       'vsphere-ova': S3_UPLOAD_OPTIONS,
       'pxe-tar-xz': S3_UPLOAD_OPTIONS,
-    };
+    } satisfies Record<SupportedImageTypes, { upload_request: unknown }>;
   },
 );
 
@@ -111,3 +118,19 @@ export const mapImageRequests = createSelector(
     };
   },
 );
+
+// Plain function instead of createSelector — this is the public entry point
+// called from event handlers, never during render, so memoization adds no
+// value. Keeping it as a plain function makes that intent explicit and avoids
+// suggesting this belongs in a useSelector call.
+export const mapStateToRequest = (
+  state: RootState,
+): CreateBlueprintRequest => ({
+  name: selectBlueprintName(state),
+  metadata: selectMetadata(state),
+  description: selectBlueprintDescription(state),
+  distribution: selectDistribution(state),
+  ...mapBootcOptions(state),
+  ...mapImageRequests(state),
+  ...mapCustomizations(state),
+});
