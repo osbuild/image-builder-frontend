@@ -53,6 +53,7 @@ import {
   GcpAccountType,
   initialState,
   isRhel,
+  isSupportedImageType,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -547,7 +548,10 @@ function commonRequestToState(
         initialState.output.distribution,
       imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
       isoPayloadReference: request.bootc?.iso_payload_reference,
-      imageTypes: request.image_requests.map((image) => image.image_type),
+      // Edge types are managed by a separate workflow; exclude them from this wizard
+      imageTypes: request.image_requests
+        .map((image) => image.image_type)
+        .filter(isSupportedImageType),
       bootcDistributions: [],
     },
     cloudProviders: {

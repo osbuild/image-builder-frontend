@@ -15,7 +15,6 @@ import { useTargetEnvironmentCategories } from '@/Hooks';
 import { rhsmApi } from '@/store/api';
 import {
   BootcDistributionItem,
-  ImageTypes,
   useGetArchitecturesQuery,
   useGetDistributionsQuery,
 } from '@/store/api/backend';
@@ -35,6 +34,7 @@ import {
   selectImageTypes,
   selectIsImageMode,
   selectIsoPayloadReference,
+  SupportedImageTypes,
 } from '@/store/slices/wizard';
 
 import Aws from './Aws';
@@ -177,7 +177,7 @@ const TargetEnvironment = () => {
   const { privateClouds, publicClouds, miscFormats } =
     useTargetEnvironmentCategories(supportedEnvironments);
 
-  const handleToggleEnvironment = (environment: ImageTypes) => {
+  const handleToggleEnvironment = (environment: SupportedImageTypes) => {
     if (environments.includes(environment)) {
       switch (environment) {
         case 'aws':
@@ -195,7 +195,7 @@ const TargetEnvironment = () => {
     }
   };
 
-  const handleSelectSingleEnvironment = (environment: ImageTypes) => {
+  const handleSelectSingleEnvironment = (environment: SupportedImageTypes) => {
     dispatch(changeImageTypes([environment]));
   };
 

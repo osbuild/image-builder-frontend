@@ -4,11 +4,10 @@ import {
   BootcDistributionItem,
   Distributions,
   ImageRequest,
-  ImageTypes,
 } from '@/store/api/backend';
 
 import { initialState } from './state';
-import { ImageSource } from './types';
+import { ImageSource, SupportedImageTypes } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
 
@@ -43,19 +42,19 @@ export const outputSlice = createSlice({
     changeDistribution: (state, action: PayloadAction<Distributions>) => {
       state.distribution = action.payload;
     },
-    addImageType: (state, action: PayloadAction<ImageTypes>) => {
+    addImageType: (state, action: PayloadAction<SupportedImageTypes>) => {
       // Remove (if present) before adding to avoid duplicates
       state.imageTypes = state.imageTypes.filter(
         (imageType) => imageType !== action.payload,
       );
       state.imageTypes.push(action.payload);
     },
-    removeImageType: (state, action: PayloadAction<ImageTypes>) => {
+    removeImageType: (state, action: PayloadAction<SupportedImageTypes>) => {
       state.imageTypes = state.imageTypes.filter(
         (imageType) => imageType !== action.payload,
       );
     },
-    changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
+    changeImageTypes: (state, action: PayloadAction<SupportedImageTypes[]>) => {
       state.imageTypes = action.payload;
       // isoPayloadReference is only relevant for bootable-container-iso,
       // clear it when that image type is no longer selected

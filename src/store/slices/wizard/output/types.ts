@@ -16,9 +16,11 @@ export type PublicCloudType = (typeof PUBLIC_CLOUD_TYPES)[number];
 export type PrivateCloudType = (typeof PRIVATE_CLOUD_TYPES)[number];
 export type EdgeType = (typeof EDGE_TYPES)[number];
 
+export type SupportedImageTypes = Exclude<ImageTypes, EdgeType>;
+
 export type MiscFormatType = Exclude<
-  ImageTypes,
-  PublicCloudType | PrivateCloudType | EdgeType
+  SupportedImageTypes,
+  PublicCloudType | PrivateCloudType
 >;
 
 export type ImageSource = string;
@@ -31,5 +33,5 @@ export type OutputSlice = {
   bootcDistributions: BootcDistributionItem[];
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
-  imageTypes: ImageTypes[];
+  imageTypes: SupportedImageTypes[];
 };
