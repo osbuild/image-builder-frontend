@@ -13,7 +13,6 @@ import {
   ComposerImageRequest,
   ComposerUploadTypes,
   CreateBlueprintRequest,
-  Customizations,
   CustomRepository,
   DistributionProfileItem,
   Distributions,
@@ -44,12 +43,7 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
-  mapComplianceCustomizations,
-  mapContentCustomizations,
-  mapFileCustomizations,
-  mapFilesystemCustomizations,
-  mapRegistrationCustomizations,
-  mapSystemCustomizations,
+  mapCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -100,7 +94,6 @@ export const mapRequestFromState = (
 ): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
-  const customizations = getCustomizations(state);
   const isImageMode = selectIsImageMode(state);
   const imageSource = selectImageSource(state);
 
@@ -142,7 +135,7 @@ export const mapRequestFromState = (
     distribution: selectDistribution(state),
     bootc: bootcBody,
     image_requests: imageRequests,
-    customizations,
+    ...mapCustomizations(state),
   };
 };
 
@@ -886,21 +879,4 @@ const getImageOptions = (
     }
   }
   return {};
-};
-
-const getCustomizations = (state: RootState): Customizations => {
-  return {
-    // first boot & satellite use file customizations
-    ...mapFileCustomizations(state),
-    // subscription, aap_registration + cacerts
-    ...mapRegistrationCustomizations(state),
-    // packages, modules, payload repos + custom repos
-    ...mapContentCustomizations(state),
-    // fips + openscap
-    ...mapComplianceCustomizations(state),
-    // disk, filesystem + partition mode
-    ...mapFilesystemCustomizations(state),
-    // users, groups, services, hostname, kernel, timezone, locale + firewall
-    ...mapSystemCustomizations(state),
-  };
 };
