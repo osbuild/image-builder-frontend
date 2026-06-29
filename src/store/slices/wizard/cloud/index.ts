@@ -1,3 +1,4 @@
+export * from './mappers';
 export * from './selectors';
 export * from './slice';
 export { initialState as cloudProvidersState } from './state';
