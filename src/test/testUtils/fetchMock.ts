@@ -232,6 +232,28 @@ export const createArchitecturesHandler = (
   };
 };
 
+// Oscap profiles handler
+export type OscapProfilesHandlerOptions = {
+  profiles?: string[];
+};
+
+export const createOscapProfilesHandler = (
+  options: OscapProfilesHandlerOptions = {},
+): FetchHandler => {
+  const { profiles = [] } = options;
+
+  return ({ url, method }: FetchRequest) => {
+    if (
+      url.includes('/oscap/') &&
+      url.endsWith('/profiles') &&
+      method === 'GET'
+    ) {
+      return JSON.stringify(profiles);
+    }
+    return null;
+  };
+};
+
 // Oscap customizations handler
 export type OscapHandlerOptions = {
   customizations?: GetOscapCustomizationsApiResponse;
