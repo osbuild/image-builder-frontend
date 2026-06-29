@@ -1,4 +1,3 @@
-import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -38,7 +37,6 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
-  mapStateToRequest,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
@@ -54,18 +52,6 @@ import {
   RHEL_9,
   SATELLITE_PATH,
 } from '../../../constants';
-
-/**
- * This function maps the wizard state to a valid CreateBlueprint request object
- * @param {Store} store redux store
- *
- * @returns {CreateBlueprintRequest} blueprint creation request payload
- */
-export const mapRequestFromState = (
-  store: Store,
-): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
-  return mapStateToRequest(store.getState());
-};
 
 const convertFilesystemToPartition = (
   filesystem: Filesystem,

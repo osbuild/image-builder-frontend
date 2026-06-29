@@ -175,6 +175,14 @@ module.exports = defineConfig([
         },
       ],
       'react-hooks/set-state-in-effect': 'warn', // TODO address issues and enable the rule
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "ImportSpecifier[imported.name='useAppStore']",
+          message:
+            'useAppStore exposes the raw store — only use it for store.getState() inside event handlers, never during render. Add an eslint-disable with justification if this usage is intentional.',
+        },
+      ],
     },
     settings: {
       react: {

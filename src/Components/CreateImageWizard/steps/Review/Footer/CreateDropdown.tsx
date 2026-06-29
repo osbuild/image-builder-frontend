@@ -16,13 +16,19 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import {
-  ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
   CreateBlueprintResponse,
 } from '@/store/api/backend';
+import {
+  useAppDispatch,
+  useAppSelector,
+  // store.getState() in click handlers to build request body
+  // eslint-disable-next-line no-restricted-syntax
+  useAppStore,
+} from '@/store/hooks';
 import { setBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { selectPackages } from '@/store/slices/wizard';
+import { mapStateToRequest, selectPackages } from '@/store/slices/wizard';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
@@ -30,20 +36,14 @@ import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useGetUser,
 } from '../../../../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type CreateDropdownProps = {
-  getBlueprintPayload: () =>
-    | CreateBlueprintRequest
-    | ComposerCreateBlueprintRequest
-    | undefined;
   setIsOpen: (isOpen: boolean) => void;
   isDisabled: boolean;
 };
 
 export const CreateSaveAndBuildBtn = ({
-  getBlueprintPayload,
   setIsOpen,
   isDisabled,
 }: CreateDropdownProps) => {
@@ -52,6 +52,7 @@ export const CreateSaveAndBuildBtn = ({
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const packages = useAppSelector(selectPackages);
+  const store = useAppStore();
 
   const { trigger: buildBlueprint } = useComposeBlueprintMutation();
   const { trigger: createBlueprint } = useCreateBlueprintMutation({
@@ -59,10 +60,10 @@ export const CreateSaveAndBuildBtn = ({
   });
   const dispatch = useAppDispatch();
   const onSaveAndBuild = async () => {
-    const requestBody = await getBlueprintPayload();
+    const requestBody = mapStateToRequest(store.getState());
     setIsOpen(false);
 
-    if (!isOnPremise && requestBody) {
+    if (!isOnPremise) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
@@ -81,14 +82,12 @@ export const CreateSaveAndBuildBtn = ({
         ),
       });
     }
-    if (requestBody) {
-      const blueprint = (await createBlueprint({
-        createBlueprintRequest: requestBody as CreateBlueprintRequest,
-      })) as CreateBlueprintResponse;
+    const blueprint = (await createBlueprint({
+      createBlueprintRequest: requestBody as CreateBlueprintRequest,
+    })) as CreateBlueprintResponse;
 
-      buildBlueprint({ id: blueprint.id, body: {} });
-      dispatch(setBlueprintId(blueprint.id));
-    }
+    buildBlueprint({ id: blueprint.id, body: {} });
+    dispatch(setBlueprintId(blueprint.id));
   };
 
   return (
@@ -133,7 +132,6 @@ const SaveAndBuildImagesModal = ({
 
 export const CreateSaveButton = ({
   setIsOpen,
-  getBlueprintPayload,
   isDisabled,
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
@@ -141,6 +139,7 @@ export const CreateSaveButton = ({
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const packages = useAppSelector(selectPackages);
+  const store = useAppStore();
 
   const { trigger: createBlueprint, isLoading } = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
@@ -165,10 +164,10 @@ export const CreateSaveButton = ({
   };
 
   const onSave = async () => {
-    const requestBody = await getBlueprintPayload();
+    const requestBody = mapStateToRequest(store.getState());
     setIsOpen(false);
 
-    if (!isOnPremise && requestBody) {
+    if (!isOnPremise) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
@@ -180,12 +179,10 @@ export const CreateSaveButton = ({
         account_id: userData?.identity.internal?.account_id || 'Not found',
       });
     }
-    if (requestBody) {
-      const blueprint = (await createBlueprint({
-        createBlueprintRequest: requestBody as CreateBlueprintRequest,
-      })) as CreateBlueprintResponse;
-      dispatch(setBlueprintId(blueprint.id));
-    }
+    const blueprint = (await createBlueprint({
+      createBlueprintRequest: requestBody as CreateBlueprintRequest,
+    })) as CreateBlueprintResponse;
+    dispatch(setBlueprintId(blueprint.id));
   };
 
   return (
