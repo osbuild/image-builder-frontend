@@ -10,12 +10,15 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { CreateBlueprintRequest } from '@/store/api/backend';
 import {
-  ComposerCreateBlueprintRequest,
-  CreateBlueprintRequest,
-} from '@/store/api/backend';
+  useAppSelector,
+  // store.getState() in click handlers to build request body
+  // eslint-disable-next-line no-restricted-syntax
+  useAppStore,
+} from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { selectPackages } from '@/store/slices/wizard';
+import { mapStateToRequest, selectPackages } from '@/store/slices/wizard';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
@@ -23,21 +26,15 @@ import {
   useGetUser,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
-import { useAppSelector } from '../../../../../store/hooks';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type EditDropdownProps = {
-  getBlueprintPayload: () =>
-    | CreateBlueprintRequest
-    | ComposerCreateBlueprintRequest
-    | undefined;
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
   isDisabled: boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
-  getBlueprintPayload,
   setIsOpen,
   blueprintId,
   isDisabled,
@@ -48,15 +45,16 @@ export const EditSaveAndBuildBtn = ({
 
   const { trigger: buildBlueprint } = useComposeBlueprintMutation();
   const packages = useAppSelector(selectPackages);
+  const store = useAppStore();
 
   const { trigger: updateBlueprint } = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
 
   const onSaveAndBuild = async () => {
-    const requestBody = await getBlueprintPayload();
+    const requestBody = mapStateToRequest(store.getState());
 
-    if (!isOnPremise && requestBody) {
+    if (!isOnPremise) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
@@ -76,12 +74,10 @@ export const EditSaveAndBuildBtn = ({
       });
     }
     setIsOpen(false);
-    if (requestBody) {
-      await updateBlueprint({
-        id: blueprintId,
-        createBlueprintRequest: requestBody as CreateBlueprintRequest,
-      });
-    }
+    await updateBlueprint({
+      id: blueprintId,
+      createBlueprintRequest: requestBody as CreateBlueprintRequest,
+    });
     buildBlueprint({ id: blueprintId, body: {} });
   };
 
@@ -96,7 +92,6 @@ export const EditSaveAndBuildBtn = ({
 
 export const EditSaveButton = ({
   setIsOpen,
-  getBlueprintPayload,
   blueprintId,
   isDisabled,
 }: EditDropdownProps) => {
@@ -105,14 +100,15 @@ export const EditSaveButton = ({
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const packages = useAppSelector(selectPackages);
+  const store = useAppStore();
 
   const { trigger: updateBlueprint, isLoading } = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
   const onSave = async () => {
-    const requestBody = await getBlueprintPayload();
+    const requestBody = mapStateToRequest(store.getState());
 
-    if (!isOnPremise && requestBody) {
+    if (!isOnPremise) {
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
@@ -125,12 +121,10 @@ export const EditSaveButton = ({
       });
     }
     setIsOpen(false);
-    if (requestBody) {
-      updateBlueprint({
-        id: blueprintId,
-        createBlueprintRequest: requestBody as CreateBlueprintRequest,
-      });
-    }
+    updateBlueprint({
+      id: blueprintId,
+      createBlueprintRequest: requestBody as CreateBlueprintRequest,
+    });
   };
   return (
     <MenuToggleAction

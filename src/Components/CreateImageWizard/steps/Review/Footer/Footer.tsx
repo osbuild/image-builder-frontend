@@ -9,7 +9,6 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
-import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { selectPathResolver } from '@/store/slices/env';
@@ -22,7 +21,6 @@ import {
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { useAppSelector } from '../../../../../store/hooks';
-import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
@@ -36,7 +34,6 @@ const ReviewWizardFooter = () => {
   const resolvePath = useAppSelector(selectPathResolver);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
-  const store = useStore();
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
@@ -50,10 +47,6 @@ const ReviewWizardFooter = () => {
       navigate(resolvePath(''));
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
-
-  const getBlueprintPayload = () => {
-    return mapRequestFromState(store);
-  };
 
   return (
     <WizardFooterWrapper>
@@ -73,7 +66,6 @@ const ReviewWizardFooter = () => {
                   ? [
                       <EditSaveButton
                         key='wizard-edit-save-btn'
-                        getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         blueprintId={composeId}
                         isDisabled={!isValid}
@@ -82,7 +74,6 @@ const ReviewWizardFooter = () => {
                   : [
                       <CreateSaveButton
                         key='wizard-create-save-btn'
-                        getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         isDisabled={!isValid}
                       />,
@@ -94,14 +85,12 @@ const ReviewWizardFooter = () => {
         >
           {composeId ? (
             <EditSaveAndBuildBtn
-              getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
               blueprintId={composeId}
               isDisabled={!isValid}
             />
           ) : (
             <CreateSaveAndBuildBtn
-              getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
               isDisabled={!isValid}
             />
