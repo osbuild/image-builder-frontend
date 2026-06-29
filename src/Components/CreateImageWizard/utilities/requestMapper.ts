@@ -38,6 +38,7 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
+  mapBootcOptions,
   mapCustomizations,
   mapImageRequests,
   PackageRepository,
@@ -45,12 +46,7 @@ import {
   RegistrationType,
   selectBlueprintDescription,
   selectBlueprintName,
-  selectBootcDistributions,
   selectDistribution,
-  selectImageSource,
-  selectImageTypes,
-  selectIsImageMode,
-  selectIsoPayloadReference,
   selectMetadata,
   Units,
   WizardState,
@@ -75,46 +71,12 @@ export const mapRequestFromState = (
   store: Store,
 ): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
   const state = store.getState();
-  const isImageMode = selectIsImageMode(state);
-  const imageSource = selectImageSource(state);
-
-  let bootcReference: string | undefined;
-  const imageTypes = selectImageTypes(state);
-  if (isImageMode && imageSource) {
-    const bootcDistributions = selectBootcDistributions(state);
-    const selectedDistro = bootcDistributions.find(
-      (d) => d.reference === imageSource,
-    );
-    if (selectedDistro && imageTypes.length > 0) {
-      const match = bootcDistributions.find(
-        (d) => d.name === selectedDistro.name && d.type === imageTypes[0],
-      );
-      if (match) {
-        bootcReference = match.reference;
-      }
-    }
-    if (!bootcReference) {
-      bootcReference = imageSource;
-    }
-  }
-
-  const isoPayloadRef = selectIsoPayloadReference(state);
-  const bootcBody =
-    bootcReference !== undefined
-      ? {
-          reference: bootcReference,
-          ...(imageTypes[0] === 'bootable-container-iso' && isoPayloadRef
-            ? { iso_payload_reference: isoPayloadRef }
-            : {}),
-        }
-      : undefined;
-
   return {
     name: selectBlueprintName(state),
     metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
     distribution: selectDistribution(state),
-    bootc: bootcBody,
+    ...mapBootcOptions(state),
     ...mapImageRequests(state),
     ...mapCustomizations(state),
   };
