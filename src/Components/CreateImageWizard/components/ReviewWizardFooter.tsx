@@ -9,7 +9,6 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
-import { useStore } from 'react-redux';
 
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectWizardModalMode } from '@/store/slices/wizardModal';
@@ -27,7 +26,6 @@ import {
   EditSaveAndBuildBtn,
   EditSaveButton,
 } from '../steps/Review/Footer/EditDropdown';
-import { mapRequestFromState } from '../utilities/requestMapper';
 import { useIsBlueprintValid } from '../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
@@ -40,7 +38,6 @@ const ReviewWizardFooter = () => {
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
   const [isOpen, setIsOpen] = useState(false);
-  const store = useStore();
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
@@ -53,10 +50,6 @@ const ReviewWizardFooter = () => {
       close();
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, close]);
-
-  const getBlueprintPayload = () => {
-    return mapRequestFromState(store);
-  };
 
   const isEditMode = mode === 'edit';
 
@@ -84,7 +77,6 @@ const ReviewWizardFooter = () => {
                   ? [
                       <EditSaveButton
                         key='wizard-edit-save-btn'
-                        getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         blueprintId={blueprintId || ''}
                         isDisabled={!isValid}
@@ -93,7 +85,6 @@ const ReviewWizardFooter = () => {
                   : [
                       <CreateSaveButton
                         key='wizard-create-save-btn'
-                        getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         isDisabled={!isValid}
                       />,
@@ -105,14 +96,12 @@ const ReviewWizardFooter = () => {
         >
           {isEditMode ? (
             <EditSaveAndBuildBtn
-              getBlueprintPayload={getBlueprintPayload}
               blueprintId={blueprintId || ''}
               setIsOpen={setIsOpen}
               isDisabled={!isValid}
             />
           ) : (
             <CreateSaveAndBuildBtn
-              getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
               isDisabled={!isValid}
             />

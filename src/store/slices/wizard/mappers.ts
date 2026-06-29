@@ -119,10 +119,12 @@ export const mapImageRequests = createSelector(
   },
 );
 
-// Plain function instead of createSelector — this is the public entry point
-// called from event handlers, never during render, so memoization adds no
-// value. Keeping it as a plain function makes that intent explicit and avoids
-// suggesting this belongs in a useSelector call.
+// This function breaks the pattern of using `createSelector`. The reason
+// for this is that it is the top-level composer and it is the entry point
+// to the mapping functions. This function is called from event handlers
+// and never during render, so using an RTK derived selector for that doesn't
+// really make sense. Whereas the middle layer mappers are declarative and
+// composable in nature.
 export const mapStateToRequest = (
   state: RootState,
 ): CreateBlueprintRequest => ({
