@@ -39,6 +39,7 @@ import {
   isSupportedImageType,
   PackageRepository,
   parseSizeUnit,
+  parseSystemFromRequest,
   RegistrationType,
   Units,
   WizardState,
@@ -46,7 +47,6 @@ import {
 
 import {
   CENTOS_9,
-  FIRSTBOOT_PATH,
   RHEL_10,
   RHEL_8,
   RHEL_9,
@@ -446,52 +446,6 @@ function commonRequestToState(
       },
       verifiedLocaleLangpacks: localeLangpacks,
     },
-    system: {
-      services: {
-        enabled: request.customizations.services?.enabled || [],
-        masked: request.customizations.services?.masked || [],
-        disabled: request.customizations.services?.disabled || [],
-      },
-      kernel: {
-        name: request.customizations.kernel?.name || '',
-        append: request.customizations.kernel?.append?.split(' ') || [],
-      },
-      locale: {
-        languages: request.customizations.locale?.languages || [],
-        keyboard: request.customizations.locale?.keyboard || '',
-      },
-      timezone: {
-        timezone: request.customizations.timezone?.timezone || '',
-        ntpservers: request.customizations.timezone?.ntpservers || [],
-      },
-      hostname: request.customizations.hostname || '',
-      firewall: {
-        ports: request.customizations.firewall?.ports || [],
-        services: {
-          enabled: request.customizations.firewall?.services?.enabled || [],
-          disabled: request.customizations.firewall?.services?.disabled || [],
-        },
-      },
-      firstBoot: request.customizations.files
-        ? {
-            script: getFirstBootScript(request.customizations.files),
-          }
-        : initialState.system.firstBoot,
-      users:
-        request.customizations.users?.map((user) => ({
-          name: user.name,
-          password: '', // The image-builder API does not return the password.
-          ssh_key: user.ssh_key || '',
-          groups: user.groups || [],
-          isAdministrator: user.groups?.includes('wheel') || false,
-          hasPassword: user.hasPassword || false,
-        })) || [],
-      groups:
-        request.customizations.groups?.map((group) => ({
-          name: group.name,
-          ...(group.gid !== undefined && { gid: group.gid }),
-        })) || [],
-    },
   };
 }
 
@@ -514,6 +468,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
         mode: request.bootc ? 'image' : 'package',
       },
     },
+    system: parseSystemFromRequest(request),
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -631,6 +586,7 @@ export const mapBlueprintExportToState = (
       },
       metadata: getMetadata(blueprint.metadata),
     },
+    system: parseSystemFromRequest(blueprint),
     registration: {
       ...initialState.registration,
       aap: {
@@ -650,11 +606,6 @@ export const mapBlueprintExportToState = (
       snapshotting,
     },
   };
-};
-
-const getFirstBootScript = (files?: File[]): string => {
-  const firstBootFile = files?.find((file) => file.path === FIRSTBOOT_PATH);
-  return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
 const getRegistrationType = (
