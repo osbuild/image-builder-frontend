@@ -1,4 +1,5 @@
 import { targetOptions } from '@/constants';
+import { ImageRequest } from '@/store/api/backend';
 import { ImageTypes } from '@/store/api/backend/hosted';
 
 import {
@@ -41,4 +42,10 @@ export const isSupportedImageType = (
   env: string,
 ): env is SupportedImageTypes => {
   return isImageType(env) && !isEdgeType(env);
+};
+
+export const isSupportedArchitecture = (
+  arch: string,
+): arch is ImageRequest['architecture'] => {
+  return arch === 'x86_64' || arch === 'aarch64';
 };

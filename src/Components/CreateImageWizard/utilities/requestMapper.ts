@@ -8,7 +8,6 @@ import {
   ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
   CustomRepository,
-  Distributions,
   File,
   GcpUploadRequestOptions,
   ImageRequest,
@@ -22,46 +21,16 @@ import {
   GcpAccountType,
   initialState,
   isRhel,
-  isSupportedImageType,
   parseComplianceFromRequest,
   parseContentFromRequest,
   parseFilesystemFromRequest,
+  parseOutputFromRequest,
   parseSystemFromRequest,
   RegistrationType,
   WizardState,
 } from '@/store/slices/wizard';
 
-import {
-  CENTOS_9,
-  RHEL_10,
-  RHEL_8,
-  RHEL_9,
-  SATELLITE_PATH,
-} from '../../../constants';
-
-/**
- * This function overwrites distribution of the blueprints with the major release
- * and deprecated CentOS 8 with CentOS 9
- * Minor releases were previously used and are still present in older blueprints
- * @param distribution blueprint distribution
- */
-const getLatestRelease = (
-  distribution: Distributions | undefined,
-): Distributions | undefined => {
-  if (distribution === undefined) {
-    return undefined;
-  }
-
-  return distribution.startsWith('rhel-10')
-    ? RHEL_10
-    : distribution.startsWith('rhel-9')
-      ? RHEL_9
-      : distribution.startsWith('rhel-8')
-        ? RHEL_8
-        : distribution === ('centos-8' as Distributions)
-          ? CENTOS_9
-          : distribution;
-};
+import { SATELLITE_PATH } from '../../../constants';
 
 const azureTargetOptions = (options: AzureUploadRequestOptions) => {
   // there is a mismatch between API type and real data
@@ -198,22 +167,6 @@ function commonRequestToState(
         mode: 'package' as const,
       },
     },
-    output: {
-      architecture: arch,
-      // Legacy on-prem bootc blueprints may have undefined distribution.
-      // Fall back to initialState so the wizard state type stays satisfied;
-      // the user can pick the correct distro in the wizard.
-      distribution:
-        getLatestRelease(request.distribution) ??
-        initialState.output.distribution,
-      imageSource: 'bootc' in request ? request.bootc?.reference : undefined,
-      isoPayloadReference: request.bootc?.iso_payload_reference,
-      // Edge types are managed by a separate workflow; exclude them from this wizard
-      imageTypes: request.image_requests
-        .map((image) => image.image_type)
-        .filter(isSupportedImageType),
-      bootcDistributions: [],
-    },
     cloudProviders: {
       azure: azureTargetOptions(azureUploadOptions),
       gcp: gcpTargetOptions(gcpUploadOptions),
@@ -245,6 +198,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
     filesystem: parseFilesystemFromRequest(request),
     compliance: parseComplianceFromRequest(request),
     content: parseContentFromRequest(request),
+    output: parseOutputFromRequest(request),
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -345,6 +299,7 @@ export const mapBlueprintExportToState = (
     filesystem: parseFilesystemFromRequest(blueprint),
     compliance: parseComplianceFromRequest(blueprint),
     content: parseContentFromRequest(blueprint),
+    output: parseOutputFromRequest(blueprint),
     registration: {
       ...initialState.registration,
       aap: {
