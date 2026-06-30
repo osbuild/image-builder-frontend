@@ -1,4 +1,13 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { UNIT_GIB, UNIT_MIB } from '@/constants';
+import {
+  BtrfsVolume,
+  Filesystem,
+  FilesystemTyped,
+  LogicalVolume,
+  VolumeGroup,
+} from '@/store/api/backend';
 
 import { DiskPartition, FilesystemPartition, FSType, Units } from './types';
 
@@ -134,4 +143,81 @@ export const getNextAvailableMountpoint = (
     }
   }
   return createNumberedMountpoint('/home', existingMountpoints);
+};
+
+export const convertFilesystemToPartition = (
+  filesystem: Filesystem,
+): FilesystemPartition => {
+  const id = uuidv4();
+  const [size, unit] = parseSizeUnit(filesystem.min_size);
+  const partition = {
+    mountpoint: filesystem.mountpoint,
+    min_size: size,
+    id: id,
+    unit: unit as Units,
+  };
+  return partition;
+};
+
+export const convertDiskToFscDisk = (
+  disk: FilesystemTyped | VolumeGroup | BtrfsVolume,
+): DiskPartition => {
+  const id = uuidv4();
+  let size;
+  let unit;
+
+  if (disk.minsize) {
+    [size, unit] = disk.minsize && disk.minsize.split(' ');
+  }
+
+  if ('logical_volumes' in disk) {
+    return {
+      id: id,
+      min_size: size,
+      unit: (unit || 'GiB') as Units,
+      name: disk.name,
+      type: disk.type,
+      logical_volumes: disk.logical_volumes.map((lv) =>
+        convertLogicalVolume(lv),
+      ),
+    };
+  }
+
+  if ('subvolumes' in disk) {
+    return {
+      id: id,
+      min_size: size,
+      unit: unit as Units,
+      type: disk.type,
+      subvolumes: disk.subvolumes,
+    };
+  }
+
+  return {
+    id: id,
+    fs_type: disk.fs_type,
+    mountpoint: disk.mountpoint,
+    min_size: size,
+    unit: (unit || 'GiB') as Units,
+    type: disk.type,
+  };
+};
+
+export const convertLogicalVolume = (volume: LogicalVolume) => {
+  const id = uuidv4();
+  let size;
+  let unit;
+
+  if (volume.minsize) {
+    [size, unit] = volume.minsize && volume.minsize.split(' ');
+  }
+
+  return {
+    id: id,
+    min_size: size,
+    unit: (unit || 'GiB') as Units,
+    name: volume.name,
+    fs_type: volume.fs_type,
+    mountpoint: volume.mountpoint,
+  };
 };

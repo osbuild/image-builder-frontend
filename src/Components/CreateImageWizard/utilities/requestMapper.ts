@@ -1,12 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import {
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   BlueprintExportResponse,
   BlueprintMetadata,
   BlueprintResponse,
-  BtrfsVolume,
   ComposerAwsUploadRequestOptions,
   ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
@@ -14,14 +11,10 @@ import {
   DistributionProfileItem,
   Distributions,
   File,
-  Filesystem,
-  FilesystemTyped,
   GcpUploadRequestOptions,
   ImageRequest,
-  LogicalVolume,
   OpenScapCompliance,
   OpenScapProfile,
-  VolumeGroup,
 } from '@/store/api/backend';
 import {
   ApiRepositoryImportResponseRead,
@@ -30,18 +23,14 @@ import {
 import {
   AwsShareMethod,
   ComplianceType,
-  DiskPartition,
-  FilesystemMode,
-  FilesystemPartition,
   GcpAccountType,
   initialState,
   isRhel,
   isSupportedImageType,
   PackageRepository,
-  parseSizeUnit,
+  parseFilesystemFromRequest,
   parseSystemFromRequest,
   RegistrationType,
-  Units,
   WizardState,
 } from '@/store/slices/wizard';
 
@@ -52,83 +41,6 @@ import {
   RHEL_9,
   SATELLITE_PATH,
 } from '../../../constants';
-
-const convertFilesystemToPartition = (
-  filesystem: Filesystem,
-): FilesystemPartition => {
-  const id = uuidv4();
-  const [size, unit] = parseSizeUnit(filesystem.min_size);
-  const partition = {
-    mountpoint: filesystem.mountpoint,
-    min_size: size,
-    id: id,
-    unit: unit as Units,
-  };
-  return partition;
-};
-
-const convertDiskToFscDisk = (
-  disk: FilesystemTyped | VolumeGroup | BtrfsVolume,
-): DiskPartition => {
-  const id = uuidv4();
-  let size;
-  let unit;
-
-  if (disk.minsize) {
-    [size, unit] = disk.minsize && disk.minsize.split(' ');
-  }
-
-  if ('logical_volumes' in disk) {
-    return {
-      id: id,
-      min_size: size,
-      unit: (unit || 'GiB') as Units,
-      name: disk.name,
-      type: disk.type,
-      logical_volumes: disk.logical_volumes.map((lv) =>
-        convertLogicalVolume(lv),
-      ),
-    };
-  }
-
-  if ('subvolumes' in disk) {
-    return {
-      id: id,
-      min_size: size,
-      unit: unit as Units,
-      type: disk.type,
-      subvolumes: disk.subvolumes,
-    };
-  }
-
-  return {
-    id: id,
-    fs_type: disk.fs_type,
-    mountpoint: disk.mountpoint,
-    min_size: size,
-    unit: (unit || 'GiB') as Units,
-    type: disk.type,
-  };
-};
-
-const convertLogicalVolume = (volume: LogicalVolume) => {
-  const id = uuidv4();
-  let size;
-  let unit;
-
-  if (volume.minsize) {
-    [size, unit] = volume.minsize && volume.minsize.split(' ');
-  }
-
-  return {
-    id: id,
-    min_size: size,
-    unit: (unit || 'GiB') as Units,
-    name: volume.name,
-    fs_type: volume.fs_type,
-    mountpoint: volume.mountpoint,
-  };
-};
 
 /**
  * This function overwrites distribution of the blueprints with the major release
@@ -358,42 +270,6 @@ function commonRequestToState(
                 enabled: request.customizations.fips?.enabled || false,
               },
             },
-    filesystem: {
-      mode: request.customizations.filesystem
-        ? ('basic' as FilesystemMode)
-        : request.customizations.disk
-          ? ('advanced' as FilesystemMode)
-          : ('automatic' as FilesystemMode),
-      disk: request.customizations.disk
-        ? (() => {
-            const [size, unit] =
-              request.customizations.disk.minsize?.split(' ') || [];
-            return {
-              type: request.customizations.disk.type || undefined,
-              minsize: size || '',
-              unit: (unit || 'GiB') as Units,
-              partitions: request.customizations.disk.partitions.map((d) =>
-                convertDiskToFscDisk(d),
-              ),
-            };
-          })()
-        : {
-            minsize: '',
-            unit: 'GiB' as Units,
-            partitions: [],
-            type: undefined,
-          },
-      fileSystem: request.customizations.filesystem
-        ? {
-            partitions: request.customizations.filesystem.map((fs) =>
-              convertFilesystemToPartition(fs),
-            ),
-          }
-        : {
-            partitions: [],
-          },
-      partitioningMode: request.customizations.partitioning_mode,
-    },
     output: {
       architecture: arch,
       // Legacy on-prem bootc blueprints may have undefined distribution.
@@ -469,6 +345,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
       },
     },
     system: parseSystemFromRequest(request),
+    filesystem: parseFilesystemFromRequest(request),
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -587,6 +464,7 @@ export const mapBlueprintExportToState = (
       metadata: getMetadata(blueprint.metadata),
     },
     system: parseSystemFromRequest(blueprint),
+    filesystem: parseFilesystemFromRequest(blueprint),
     registration: {
       ...initialState.registration,
       aap: {
