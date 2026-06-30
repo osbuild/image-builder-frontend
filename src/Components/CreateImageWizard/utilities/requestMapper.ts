@@ -8,13 +8,10 @@ import {
   ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
   CustomRepository,
-  DistributionProfileItem,
   Distributions,
   File,
   GcpUploadRequestOptions,
   ImageRequest,
-  OpenScapCompliance,
-  OpenScapProfile,
 } from '@/store/api/backend';
 import {
   ApiRepositoryImportResponseRead,
@@ -22,12 +19,12 @@ import {
 } from '@/store/api/contentSources';
 import {
   AwsShareMethod,
-  ComplianceType,
   GcpAccountType,
   initialState,
   isRhel,
   isSupportedImageType,
   PackageRepository,
+  parseComplianceFromRequest,
   parseFilesystemFromRequest,
   parseSystemFromRequest,
   RegistrationType,
@@ -209,20 +206,6 @@ function commonRequestToState(
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
 
-  let oscapProfile = undefined;
-  let compliancePolicyID = undefined;
-  if (request.customizations.openscap) {
-    const oscapAsProfile = request.customizations.openscap as OpenScapProfile;
-    if (oscapAsProfile.profile_id !== '') {
-      oscapProfile = oscapAsProfile.profile_id as DistributionProfileItem;
-    }
-    const oscapAsCompliance = request.customizations
-      .openscap as OpenScapCompliance;
-    if (oscapAsCompliance.policy_id !== '') {
-      compliancePolicyID = oscapAsCompliance.policy_id;
-    }
-  }
-
   const rawPackageNames =
     request.customizations.packages?.filter((pkg) => !pkg.startsWith('@')) ??
     [];
@@ -243,33 +226,6 @@ function commonRequestToState(
         mode: 'package' as const,
       },
     },
-    compliance:
-      compliancePolicyID !== undefined
-        ? {
-            type: 'compliance' as ComplianceType,
-            policyID: compliancePolicyID,
-            profileID: undefined,
-            policyTitle: undefined,
-            fips: {
-              enabled: request.customizations.fips?.enabled || false,
-            },
-          }
-        : oscapProfile !== undefined
-          ? {
-              type: 'openscap' as ComplianceType,
-              profileID: oscapProfile,
-              policyID: undefined,
-              policyTitle: undefined,
-              fips: {
-                enabled: request.customizations.fips?.enabled || false,
-              },
-            }
-          : {
-              ...initialState.compliance,
-              fips: {
-                enabled: request.customizations.fips?.enabled || false,
-              },
-            },
     output: {
       architecture: arch,
       // Legacy on-prem bootc blueprints may have undefined distribution.
@@ -346,6 +302,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
     },
     system: parseSystemFromRequest(request),
     filesystem: parseFilesystemFromRequest(request),
+    compliance: parseComplianceFromRequest(request),
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -465,6 +422,7 @@ export const mapBlueprintExportToState = (
     },
     system: parseSystemFromRequest(blueprint),
     filesystem: parseFilesystemFromRequest(blueprint),
+    compliance: parseComplianceFromRequest(blueprint),
     registration: {
       ...initialState.registration,
       aap: {
