@@ -71,3 +71,25 @@ jobs:
           echo "✓ No manual API changes."
           exit 0
         fi
+
+  pinned-versions:
+    name: Pinned Dependencies Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check for unpinned dependencies
+      run: |
+        UNPINNED=$(grep -F '": "^' package.json || true)
+        if [ -n "$UNPINNED" ]; then
+          echo
+          echo "✗ Found unpinned dependencies (using '^' prefix):"
+          echo "$UNPINNED"
+          echo
+          echo "Pin versions for reproducible builds and explicit Dependabot PRs."
+          echo "With '^', updates happen silently during npm install."
+          exit 1
+        else
+          echo
+          echo "✓ All dependencies are pinned."
+          exit 0
+        fi
