@@ -23,8 +23,8 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
-  PackageRepository,
   parseComplianceFromRequest,
+  parseContentFromRequest,
   parseFilesystemFromRequest,
   parseSystemFromRequest,
   RegistrationType,
@@ -174,24 +174,6 @@ function commonRequestToState(
     (image) => image.image_type === 'azure',
   );
 
-  const snapshotDateFromRequest =
-    request.image_requests.find((image) => !!image.snapshot_date)
-      ?.snapshot_date || '';
-  let snapshot_date = '';
-
-  // Previously DateOnly format of the snapshot date was used (YYYY-MM-DD),
-  // meaning this is a format that can be present in already existing blueprints.
-  // Currently used format is RFC3339 (YYYY-MM-DDTHH:MM:SSZ), this condition
-  // checks which format is getting parsed and converts DateOnly to RFC3339
-  // when necessary.
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(snapshotDateFromRequest)) {
-    snapshot_date = snapshotDateFromRequest;
-  } else if (/^\d{4}-\d{2}-\d{2}$/.test(snapshotDateFromRequest)) {
-    snapshot_date = snapshotDateFromRequest + 'T00:00:00Z';
-  } else {
-    snapshot_date = '';
-  }
-
   // we need to check for the region for on-prem
   const awsUploadOptions = aws?.upload_request
     .options as AwsUploadRequestOptions & { region?: string | undefined };
@@ -205,16 +187,6 @@ function commonRequestToState(
   if (!['x86_64', 'aarch64'].includes(arch)) {
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
-
-  const rawPackageNames =
-    request.customizations.packages?.filter((pkg) => !pkg.startsWith('@')) ??
-    [];
-  const localeLangpacks = rawPackageNames.filter((p) =>
-    /^langpacks-[a-z]+$/.test(p),
-  );
-  const otherPackageNames = rawPackageNames.filter(
-    (p) => !/^langpacks-[a-z]+$/.test(p),
-  );
 
   return {
     details: {
@@ -247,37 +219,6 @@ function commonRequestToState(
       gcp: gcpTargetOptions(gcpUploadOptions),
       aws: awsTargetOptions(awsUploadOptions),
     },
-    content: {
-      repositories: {
-        customRepositories: request.customizations.custom_repositories || [],
-        payloadRepositories: request.customizations.payload_repositories || [],
-        recommendedRepositories: [],
-        redHatRepositories: [],
-      },
-      packages: otherPackageNames.map((pkg) => ({
-        name: pkg,
-        summary: '',
-        repository: '' as PackageRepository,
-      })),
-      enabledModules: request.customizations.enabled_modules || [],
-      groups:
-        request.customizations.packages
-          ?.filter((grp) => grp.startsWith('@'))
-          .map((grp) => ({
-            name: grp.substr(1),
-            description: '',
-            repository: '' as PackageRepository,
-            package_list: [],
-          })) || [],
-      snapshotting: {
-        useLatest:
-          !snapshot_date && !request.image_requests[0]?.content_template,
-        snapshotDate: snapshot_date,
-        template: request.image_requests[0]?.content_template || '',
-        templateName: request.image_requests[0]?.content_template_name || '',
-      },
-      verifiedLocaleLangpacks: localeLangpacks,
-    },
   };
 }
 
@@ -303,6 +244,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
     system: parseSystemFromRequest(request),
     filesystem: parseFilesystemFromRequest(request),
     compliance: parseComplianceFromRequest(request),
+    content: parseContentFromRequest(request),
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -388,27 +330,6 @@ export const mapBlueprintExportToState = (
 
   const commonState = commonRequestToState(blueprintResponse);
 
-  let snapshotting = commonState.content.snapshotting;
-  if (
-    blueprint.snapshot_date &&
-    !commonState.content.snapshotting.snapshotDate
-  ) {
-    let normalizedDate = '';
-    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(blueprint.snapshot_date)) {
-      normalizedDate = blueprint.snapshot_date;
-    } else if (/^\d{4}-\d{2}-\d{2}$/.test(blueprint.snapshot_date)) {
-      normalizedDate = blueprint.snapshot_date + 'T00:00:00Z';
-    }
-    if (normalizedDate) {
-      snapshotting = {
-        useLatest: false,
-        snapshotDate: normalizedDate,
-        template: '',
-        templateName: '',
-      };
-    }
-  }
-
   return {
     ...commonState,
     details: {
@@ -423,6 +344,7 @@ export const mapBlueprintExportToState = (
     system: parseSystemFromRequest(blueprint),
     filesystem: parseFilesystemFromRequest(blueprint),
     compliance: parseComplianceFromRequest(blueprint),
+    content: parseContentFromRequest(blueprint),
     registration: {
       ...initialState.registration,
       aap: {
@@ -436,10 +358,6 @@ export const mapBlueprintExportToState = (
         skipTlsVerification:
           blueprint.customizations.aap_registration?.skip_tls_verification,
       },
-    },
-    content: {
-      ...commonState.content,
-      snapshotting,
     },
   };
 };

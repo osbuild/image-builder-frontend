@@ -45,3 +45,15 @@ export const convertSchemaToIBPayloadRepo = (
 
   return imageBuilderRepo;
 };
+
+// Previously DateOnly format of the snapshot date was used (YYYY-MM-DD),
+// meaning this is a format that can be present in already existing blueprints.
+// Currently used format is RFC3339 (YYYY-MM-DDTHH:MM:SSZ), this condition
+// checks which format is getting parsed and converts DateOnly to RFC3339
+// when necessary.
+export const normalizeSnapshotDate = (raw?: string): string => {
+  if (!raw) return '';
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(raw)) return raw;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return `${raw}T00:00:00Z`;
+  return '';
+};
