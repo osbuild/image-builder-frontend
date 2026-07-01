@@ -15,6 +15,18 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    getDistribution: build.query<
+      GetDistributionApiResponse,
+      GetDistributionApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/distributions/${queryArg.distro}`,
+        params: {
+          image_type: queryArg.imageType,
+          architecture: queryArg.architecture,
+        },
+      }),
+    }),
     getArchitectures: build.query<
       GetArchitecturesApiResponse,
       GetArchitecturesApiArg
@@ -199,6 +211,16 @@ export type GetDistributionsApiArg = {
    */
   type?: string;
 };
+export type GetDistributionApiResponse =
+  /** status 200 Distribution details */ DistributionDetails;
+export type GetDistributionApiArg = {
+  /** Name of the distribution */
+  distro: string;
+  /** Filter by image type. Multiple values can be specified. */
+  imageType?: string[];
+  /** Filter by architecture. Multiple values can be specified. */
+  architecture?: string[];
+};
 export type GetArchitecturesApiResponse =
   /** status 200 a list of available architectures and their associated image types */ Architectures;
 export type GetArchitecturesApiArg = {
@@ -369,6 +391,135 @@ export type DistributionsResponse = (
   | BootcDistributionItem
 )[];
 export type DistributionKind = 'bootc';
+export type PartitionType = 'gpt' | 'dos';
+export type Minsize = string;
+export type FilesystemTyped = {
+  type?: 'plain' | undefined;
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  minsize?: Minsize | undefined;
+  mountpoint?: string | undefined;
+  label?: string | undefined;
+  /** The filesystem type. Swap partitions must have an empty mountpoint.
+   */
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
+};
+export type BtrfsSubvolume = {
+  /** The name of the subvolume, which defines the location (path) on the root volume
+   */
+  name: string;
+  /** Mountpoint for the subvolume
+   */
+  mountpoint: string;
+};
+export type BtrfsVolume = {
+  type: 'btrfs';
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  minsize?: Minsize | undefined;
+  subvolumes: BtrfsSubvolume[];
+};
+export type LogicalVolume = {
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  /** Mountpoint for the logical volume
+   */
+  mountpoint?: string | undefined;
+  label?: string | undefined;
+  /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
+   */
+  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
+};
+export type VolumeGroup = {
+  type: 'lvm';
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  /** Volume group name (will be automatically generated if omitted)
+   */
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  logical_volumes: LogicalVolume[];
+};
+export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
+export type Disk = {
+  /** Type of the partition table
+   */
+  type?: ('gpt' | 'dos') | undefined;
+  minsize?: Minsize | undefined;
+  partitions: Partition[];
+};
+export type BootMode = 'legacy' | 'uefi' | 'hybrid' | 'none';
+export type ImageTypeInfo = {
+  /** Image type name */
+  name: string;
+  /** Alternative names for this image type */
+  aliases?: string[] | undefined;
+  /** Canonical filename for the image */
+  filename?: string | undefined;
+  /** MIME type of the image */
+  mime_type?: string | undefined;
+  /** Default OSTree ref for this image type */
+  ostree_ref?: string | undefined;
+  /** ISO label (only for ISO image types) */
+  iso_label?: string | undefined;
+  /** Default image size in bytes */
+  default_size?: number | undefined;
+  /** Partition table type */
+  partition_type?: PartitionType | undefined;
+  base_partition_table?: Disk | undefined;
+  /** Boot mode for the image */
+  boot_mode?: BootMode | undefined;
+  /** Package set names safe for custom packages via custom repos */
+  payload_package_sets?: string[] | undefined;
+  /** Names of stages that produce the build output */
+  exports?: string[] | undefined;
+  /** Customization options required by this image type */
+  required_blueprint_options?: string[] | undefined;
+  /** Customization options supported by this image type */
+  supported_blueprint_options?: string[] | undefined;
+};
+export type ArchitectureInfo = {
+  /** Architecture name */
+  name: string;
+  /** Map of image type names to their details */
+  image_types?:
+    | {
+        [key: string]: ImageTypeInfo;
+      }
+    | undefined;
+};
+export type DistributionDetails = {
+  /** Name of the distribution */
+  name: string;
+  /** Codename of the distribution */
+  codename?: string | undefined;
+  /** Release version used in repo files */
+  releasever?: string | undefined;
+  /** Full OS version including minor version */
+  os_version?: string | undefined;
+  /** Module platform ID for DNF modularity */
+  module_platform_id?: string | undefined;
+  /** Product name */
+  product?: string | undefined;
+  /** Default OSTree reference template */
+  ostree_ref?: string | undefined;
+  /** Map of architecture names to their details */
+  architectures?:
+    | {
+        [key: string]: ArchitectureInfo;
+      }
+    | undefined;
+};
+export type HttpError = {
+  title: string;
+  detail: string;
+};
+export type HttpErrorList = {
+  errors: HttpError[];
+};
 export type Repository = {
   /** An ID referring to a repository defined in content sources can be used instead of
     'baseurl', 'mirrorlist' or 'metalink'.
@@ -393,13 +544,6 @@ export type ArchitectureItem = {
   repositories: Repository[];
 };
 export type Architectures = ArchitectureItem[];
-export type HttpError = {
-  title: string;
-  detail: string;
-};
-export type HttpErrorList = {
-  errors: HttpError[];
-};
 export type Distributions =
   | 'rhel-8'
   | 'rhel-8-nightly'
@@ -696,65 +840,6 @@ export type Filesystem = {
   mountpoint: string;
   /** size of the filesystem in bytes */
   min_size: any;
-};
-export type Minsize = string;
-export type FilesystemTyped = {
-  type?: 'plain' | undefined;
-  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
-   */
-  part_type?: string | undefined;
-  minsize?: Minsize | undefined;
-  mountpoint?: string | undefined;
-  label?: string | undefined;
-  /** The filesystem type. Swap partitions must have an empty mountpoint.
-   */
-  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
-};
-export type BtrfsSubvolume = {
-  /** The name of the subvolume, which defines the location (path) on the root volume
-   */
-  name: string;
-  /** Mountpoint for the subvolume
-   */
-  mountpoint: string;
-};
-export type BtrfsVolume = {
-  type: 'btrfs';
-  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
-   */
-  part_type?: string | undefined;
-  minsize?: Minsize | undefined;
-  subvolumes: BtrfsSubvolume[];
-};
-export type LogicalVolume = {
-  name?: string | undefined;
-  minsize?: Minsize | undefined;
-  /** Mountpoint for the logical volume
-   */
-  mountpoint?: string | undefined;
-  label?: string | undefined;
-  /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
-   */
-  fs_type: 'ext4' | 'xfs' | 'vfat' | 'swap';
-};
-export type VolumeGroup = {
-  type: 'lvm';
-  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
-   */
-  part_type?: string | undefined;
-  /** Volume group name (will be automatically generated if omitted)
-   */
-  name?: string | undefined;
-  minsize?: Minsize | undefined;
-  logical_volumes: LogicalVolume[];
-};
-export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
-export type Disk = {
-  /** Type of the partition table
-   */
-  type?: ('gpt' | 'dos') | undefined;
-  minsize?: Minsize | undefined;
-  partitions: Partition[];
 };
 export type User = {
   name: string;
@@ -1080,6 +1165,8 @@ export type RecommendPackageRequest = {
 export const {
   useGetDistributionsQuery,
   useLazyGetDistributionsQuery,
+  useGetDistributionQuery,
+  useLazyGetDistributionQuery,
   useGetArchitecturesQuery,
   useLazyGetArchitecturesQuery,
   useGetBlueprintsQuery,
