@@ -1,3 +1,5 @@
+import { AwsUploadRequestOptions, UploadRequest } from '@/store/api/backend';
+
 export type AwsShareMethod = 'manual';
 
 export type AzureHyperVGeneration = 'V1' | 'V2';
@@ -10,6 +12,12 @@ export type V1ListSourceResponseItem = {
   name?: string;
   source_type_id?: string;
   uid?: string;
+};
+
+export type UploadOptions = UploadRequest['options'];
+
+export type AwsUploadOptions = AwsUploadRequestOptions & {
+  region?: string | undefined;
 };
 
 export type CloudProviderSlice = {

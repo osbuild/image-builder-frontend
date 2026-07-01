@@ -1,15 +1,11 @@
 import {
-  AwsUploadRequestOptions,
-  AzureUploadRequestOptions,
   BlueprintExportResponse,
   BlueprintMetadata,
   BlueprintResponse,
-  ComposerAwsUploadRequestOptions,
   ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
   CustomRepository,
   File,
-  GcpUploadRequestOptions,
   ImageRequest,
 } from '@/store/api/backend';
 import {
@@ -17,10 +13,9 @@ import {
   ApiRepositoryResponseRead,
 } from '@/store/api/contentSources';
 import {
-  AwsShareMethod,
-  GcpAccountType,
   initialState,
   isRhel,
+  parseCloudProvidersFromRequest,
   parseComplianceFromRequest,
   parseContentFromRequest,
   parseFilesystemFromRequest,
@@ -32,124 +27,13 @@ import {
 
 import { SATELLITE_PATH } from '../../../constants';
 
-const azureTargetOptions = (options: AzureUploadRequestOptions) => {
-  // there is a mismatch between API type and real data
-  // this check allows removing optional chaining from the rest of the code
-  // and disabling ESLint rule only in one place
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!options) {
-    return {
-      tenantId: undefined,
-      subscriptionId: undefined,
-      resourceGroup: undefined,
-      hyperVGeneration: 'V1' as const,
-    };
-  }
-
-  const resourceGroupIsDefined =
-    options.resource_group && options.resource_group !== '';
-  const subscriptionIdIsDefined =
-    options.subscription_id && options.subscription_id !== '';
-  const tenandIdIsDefined = options.tenant_id && options.tenant_id !== '';
-
-  const isAnyDefined =
-    resourceGroupIsDefined || subscriptionIdIsDefined || tenandIdIsDefined;
-
-  if (isAnyDefined) {
-    // Edge case but if one field is selected, that means that azure was chosen at some point,
-    // and we should show an error for other missing fields
-    return {
-      tenantId: options.tenant_id || '',
-      subscriptionId: options.subscription_id || '',
-      resourceGroup: options.resource_group || '',
-      hyperVGeneration: options.hyper_v_generation || 'V1',
-    };
-  } else {
-    return {
-      tenantId: undefined,
-      subscriptionId: undefined,
-      resourceGroup: undefined,
-      hyperVGeneration: options.hyper_v_generation || 'V1',
-    };
-  }
-};
-
-const gcpTargetOptions = (options: GcpUploadRequestOptions) => {
-  if (
-    // there is a mismatch between API type and real data
-    // this check allows removing optional chaining from the rest of the code
-    // and disabling ESLint rule only in one place
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    !options ||
-    !options.share_with_accounts ||
-    options.share_with_accounts.length === 0
-  ) {
-    return {
-      accountType: undefined as GcpAccountType | undefined,
-      email: '',
-    };
-  }
-
-  const [accountType, email] = options.share_with_accounts[0].split(':');
-
-  return {
-    accountType: accountType as GcpAccountType,
-    email: email || '',
-  };
-};
-
-const awsTargetOptions = (
-  options: AwsUploadRequestOptions | ComposerAwsUploadRequestOptions,
-) => {
-  // there is a mismatch between API type and real data
-  // this check allows removing optional chaining from the rest of the code
-  // and disabling ESLint rule only in one place
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!options) {
-    return {
-      accountId: '',
-      shareMethod: 'manual' as AwsShareMethod,
-      source: { id: undefined },
-      sourceId: undefined,
-      region: undefined,
-    };
-  }
-
-  return {
-    accountId: options.share_with_accounts?.[0] || '',
-    shareMethod: (options.share_with_sources
-      ? 'sources'
-      : 'manual') as AwsShareMethod,
-    source: { id: options.share_with_sources?.[0] },
-    sourceId: options.share_with_sources?.[0],
-    region: 'region' in options ? options.region : undefined,
-  };
-};
-
 function commonRequestToState(
   request:
     | BlueprintResponse
     | CreateBlueprintRequest
     | ComposerCreateBlueprintRequest,
 ) {
-  const gcp = request.image_requests.find(
-    (image) => image.image_type === 'gcp',
-  );
-  const aws = request.image_requests.find(
-    (image) => image.image_type === 'aws',
-  );
-
-  const azure = request.image_requests.find(
-    (image) => image.image_type === 'azure',
-  );
-
   // we need to check for the region for on-prem
-  const awsUploadOptions = aws?.upload_request
-    .options as AwsUploadRequestOptions & { region?: string | undefined };
-  const gcpUploadOptions = gcp?.upload_request
-    .options as GcpUploadRequestOptions;
-  const azureUploadOptions = azure?.upload_request
-    .options as AzureUploadRequestOptions;
 
   const arch =
     request.image_requests[0]?.architecture ?? initialState.output.architecture;
@@ -166,11 +50,6 @@ function commonRequestToState(
         description: request.description || '',
         mode: 'package' as const,
       },
-    },
-    cloudProviders: {
-      azure: azureTargetOptions(azureUploadOptions),
-      gcp: gcpTargetOptions(gcpUploadOptions),
-      aws: awsTargetOptions(awsUploadOptions),
     },
   };
 }
@@ -199,6 +78,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
     compliance: parseComplianceFromRequest(request),
     content: parseContentFromRequest(request),
     output: parseOutputFromRequest(request),
+    cloudProviders: parseCloudProvidersFromRequest(request),
     registration: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
@@ -300,6 +180,7 @@ export const mapBlueprintExportToState = (
     compliance: parseComplianceFromRequest(blueprint),
     content: parseContentFromRequest(blueprint),
     output: parseOutputFromRequest(blueprint),
+    cloudProviders: parseCloudProvidersFromRequest(blueprint),
     registration: {
       ...initialState.registration,
       aap: {
