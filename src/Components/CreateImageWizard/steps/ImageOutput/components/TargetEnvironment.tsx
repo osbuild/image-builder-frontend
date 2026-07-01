@@ -6,11 +6,15 @@ import {
   Content,
   EmptyState,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   Radio,
   Spinner,
   Tooltip,
 } from '@patternfly/react-core';
 
+import { useValidationContext } from '@/Components/CreateImageWizard/utilities/ValidationContext';
 import { useTargetEnvironmentCategories } from '@/Hooks';
 import { rhsmApi } from '@/store/api';
 import {
@@ -71,6 +75,7 @@ const TargetEnvironment = () => {
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
   const isImageMode = useAppSelector(selectIsImageMode);
+  const { forceShowErrors } = useValidationContext();
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -250,6 +255,15 @@ const TargetEnvironment = () => {
           ? 'Select a target environment for this image.'
           : 'Select one or more target environments for this image.'}
       </Content>
+      {forceShowErrors && environments.length === 0 && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant='error'>
+              Select at least one target environment.
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
 
       {publicClouds.length > 0 && (
         <FormGroup

@@ -15,6 +15,7 @@ import {
 import { TimesIcon } from '@patternfly/react-icons';
 
 import type { StepValidation } from './utilities/useValidation';
+import { useValidationContext } from './utilities/ValidationContext';
 
 type ValidatedTextInputPropTypes = Omit<
   TextInputGroupMainProps,
@@ -65,13 +66,14 @@ export const ValidatedInputAndTextArea = ({
 }: ValidationInputProp) => {
   const errorMessage = stepValidation.errors[fieldName] || '';
   const hasError = errorMessage !== '';
+  const { forceShowErrors } = useValidationContext();
 
   const [isPristine, setIsPristine] = useState(!value);
   const validated = getValidationState(
     isPristine,
     errorMessage,
     isRequired,
-    forceErrorDisplay,
+    forceErrorDisplay || forceShowErrors,
   );
 
   const handleBlur = () => {
@@ -173,17 +175,16 @@ export const ValidatedInput = ({
   ...props
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
+  const { forceShowErrors } = useValidationContext();
   const ariaLabel = props['aria-label'];
 
   const handleBlur = () => {
     setIsPristine(false);
   };
 
-  const validated = isPristine
-    ? undefined
-    : validator(value)
-      ? 'success'
-      : 'error';
+  const showError = forceShowErrors && !validator(value);
+  const validated =
+    showError || (!isPristine && !validator(value)) ? 'error' : undefined;
 
   return (
     <>
@@ -208,7 +209,7 @@ export const ValidatedInput = ({
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>
-      {!isPristine && !validator(value) && (
+      {validated === 'error' && (
         <HelperText>
           <HelperTextItem variant='error'>{helperText}</HelperTextItem>
         </HelperText>

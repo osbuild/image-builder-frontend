@@ -67,8 +67,6 @@ describe('ImportMode', () => {
     const clickNext = () => clickWithWait(user, nextButton);
 
     await selectGuestImage(user);
-    await clickNext();
-
     await selectRegisterLater(user);
     await clickNext();
 
@@ -139,8 +137,6 @@ describe('ImportMode', () => {
     const clickNext = () => clickWithWait(user, nextButton);
 
     await selectGuestImage(user);
-    await clickNext();
-
     await selectRegisterLater(user);
     await clickNext();
 

@@ -117,7 +117,15 @@ export type UsersStepValidation = {
   disabledNext: boolean;
 };
 
-export function useIsBlueprintValid(): boolean {
+type WizardStepId = 'base-settings-step' | 'advanced-settings-step';
+
+type BlueprintValidation = {
+  isValid: boolean;
+  firstErrorStepId: WizardStepId | null;
+};
+
+export function useBlueprintValidation(): BlueprintValidation {
+  const imageTypes = useAppSelector(selectImageTypes);
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
@@ -134,24 +142,42 @@ export function useIsBlueprintValid(): boolean {
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
-  return (
-    !registration.disabledNext &&
-    !filesystem.disabledNext &&
-    !snapshot.disabledNext &&
-    !timezone.disabledNext &&
-    !locale.disabledNext &&
-    !hostname.disabledNext &&
-    !kernel.disabledNext &&
-    !firewall.disabledNext &&
-    !services.disabledNext &&
-    !firstBoot.disabledNext &&
-    !details.disabledNext &&
-    !users.disabledNext &&
-    !userGroups.disabledNext &&
-    !azureTarget.disabledNext &&
-    !gcpTarget.disabledNext &&
-    !awsTarget.disabledNext
-  );
+
+  const baseSettingsInvalid =
+    imageTypes.length === 0 ||
+    details.disabledNext ||
+    registration.disabledNext ||
+    snapshot.disabledNext ||
+    awsTarget.disabledNext ||
+    gcpTarget.disabledNext ||
+    azureTarget.disabledNext;
+
+  const advancedSettingsInvalid =
+    filesystem.disabledNext ||
+    timezone.disabledNext ||
+    locale.disabledNext ||
+    hostname.disabledNext ||
+    kernel.disabledNext ||
+    firewall.disabledNext ||
+    services.disabledNext ||
+    firstBoot.disabledNext ||
+    users.disabledNext ||
+    userGroups.disabledNext;
+
+  const isValid = !baseSettingsInvalid && !advancedSettingsInvalid;
+
+  return {
+    isValid,
+    firstErrorStepId: !isValid
+      ? baseSettingsInvalid
+        ? 'base-settings-step'
+        : 'advanced-settings-step'
+      : null,
+  };
+}
+
+export function useIsBlueprintValid(): boolean {
+  return useBlueprintValidation().isValid;
 }
 
 type PasswordValidationResult = {
@@ -180,7 +206,7 @@ export function useRegistrationValidation(): StepValidation {
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
   const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
-  const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
+  const { isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
       { name: activationKey! },
       {
@@ -215,6 +241,9 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   if (registrationType !== 'register-satellite' && !activationKey) {
+    if (!isOnPremise) {
+      return { errors: {}, disabledNext: false };
+    }
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -224,7 +253,7 @@ export function useRegistrationValidation(): StepValidation {
   if (
     registrationType !== 'register-satellite' &&
     activationKey &&
-    (isFetchingKeyInfo || isErrorKeyInfo) &&
+    isErrorKeyInfo &&
     !isOnPremise
   ) {
     return {

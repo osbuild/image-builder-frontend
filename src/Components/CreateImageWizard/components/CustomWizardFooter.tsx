@@ -7,27 +7,59 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { flushSync } from 'react-dom';
 
 import { AMPLITUDE_MODULE_NAME } from '@/constants';
 
+import { scrollToFirstError } from '../utilities/scrollToFirstError';
+import { useValidationContext } from '../utilities/ValidationContext';
+
 type CustomWizardFooterPropType = {
   disableBack?: boolean;
-  disableNext: boolean;
+  hasErrors: boolean;
   beforeNext?: () => boolean;
   isOnPremise: boolean;
 };
 
 export const CustomWizardFooter = ({
   disableBack,
-  disableNext,
+  hasErrors,
   beforeNext,
   isOnPremise,
 }: CustomWizardFooterPropType) => {
   const { goToNextStep, goToPrevStep, goToStepById, close, activeStep } =
     useWizardContext();
   const { analytics } = useChrome();
+  const { setForceShowErrors } = useValidationContext();
   const reviewAndFinishBtnID = 'wizard-review-and-finish-btn';
   const cancelBtnID = 'wizard-cancel-btn';
+
+  const handleNext = () => {
+    if (hasErrors) {
+      flushSync(() => {
+        setForceShowErrors();
+      });
+      if (scrollToFirstError()) return;
+    }
+    if (!beforeNext || beforeNext()) goToNextStep();
+  };
+
+  const handleReview = () => {
+    if (!isOnPremise) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+        module: AMPLITUDE_MODULE_NAME,
+        button_id: reviewAndFinishBtnID,
+        active_step_id: activeStep.id,
+      });
+    }
+    if (hasErrors) {
+      flushSync(() => {
+        setForceShowErrors();
+      });
+      if (scrollToFirstError()) return;
+    }
+    if (!beforeNext || beforeNext()) goToStepById('review-step');
+  };
 
   return (
     <WizardFooterWrapper>
@@ -44,29 +76,10 @@ export const CustomWizardFooter = ({
         >
           Back
         </Button>
-        <Button
-          variant='secondary'
-          onClick={() => {
-            if (!beforeNext || beforeNext()) goToNextStep();
-          }}
-          isDisabled={disableNext}
-        >
+        <Button variant='secondary' onClick={handleNext}>
           Next
         </Button>
-        <Button
-          variant='primary'
-          onClick={() => {
-            if (!isOnPremise) {
-              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-                module: AMPLITUDE_MODULE_NAME,
-                button_id: reviewAndFinishBtnID,
-                active_step_id: activeStep.id,
-              });
-            }
-            if (!beforeNext || beforeNext()) goToStepById('review-step');
-          }}
-          isDisabled={disableNext}
-        >
+        <Button variant='primary' onClick={handleReview}>
           Review image
         </Button>
         <Button

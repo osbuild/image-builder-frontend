@@ -40,12 +40,14 @@ type CreateDropdownProps = {
     | undefined;
   setIsOpen: (isOpen: boolean) => void;
   isDisabled: boolean;
+  onBeforeAction?: () => boolean;
 };
 
 export const CreateSaveAndBuildBtn = ({
   getBlueprintPayload,
   setIsOpen,
   isDisabled,
+  onBeforeAction,
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -59,6 +61,7 @@ export const CreateSaveAndBuildBtn = ({
   });
   const dispatch = useAppDispatch();
   const onSaveAndBuild = async () => {
+    if (onBeforeAction && !onBeforeAction()) return;
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
@@ -93,7 +96,10 @@ export const CreateSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} isDisabled={isDisabled}>
+      <DropdownItem
+        onClick={onSaveAndBuild}
+        isDisabled={!onBeforeAction && isDisabled}
+      >
         Create blueprint and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -135,6 +141,7 @@ export const CreateSaveButton = ({
   setIsOpen,
   getBlueprintPayload,
   isDisabled,
+  onBeforeAction,
 }: CreateDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -156,6 +163,7 @@ export const CreateSaveButton = ({
   };
 
   const onClick = () => {
+    if (onBeforeAction && !onBeforeAction()) return;
     if (!wasModalSeen) {
       setShowModal(true);
       window.localStorage.setItem('imageBuilder.saveAndBuildModalSeen', 'true');
@@ -197,7 +205,7 @@ export const CreateSaveButton = ({
       <MenuToggleAction
         onClick={onClick}
         id='wizard-create-save-btn'
-        isDisabled={isDisabled}
+        isDisabled={!onBeforeAction && isDisabled}
       >
         <Flex display={{ default: 'inlineFlex' }}>
           {isLoading && (
