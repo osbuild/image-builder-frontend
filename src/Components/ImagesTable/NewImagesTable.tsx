@@ -203,6 +203,18 @@ const NewImagesTable = () => {
     });
   }
 
+  // TODO: Add server-side search parameter to the composes API endpoint
+  // This filters composes on the client-side because the API doesn't
+  // support searching through composes by their name
+  // We're limited to filtering only within the fetched 100 composes
+  if (blueprintSearchInput && composes) {
+    const searchLower = blueprintSearchInput.toLowerCase();
+    composes = composes.filter((compose) => {
+      const imageName = compose.image_name || compose.id;
+      return imageName.toLowerCase().includes(searchLower);
+    });
+  }
+
   const blueprintIdsWithComposes = new Set(
     composes?.map((compose) => compose.blueprint_id).filter(Boolean) ?? [],
   );
