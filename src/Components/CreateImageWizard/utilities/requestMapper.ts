@@ -1,10 +1,7 @@
 import {
   BlueprintExportResponse,
   BlueprintResponse,
-  ComposerCreateBlueprintRequest,
-  CreateBlueprintRequest,
   CustomRepository,
-  File,
   ImageRequest,
 } from '@/store/api/backend';
 import {
@@ -12,20 +9,16 @@ import {
   ApiRepositoryResponseRead,
 } from '@/store/api/contentSources';
 import {
-  initialState,
-  isRhel,
   parseCloudProvidersFromRequest,
   parseComplianceFromRequest,
   parseContentFromRequest,
   parseDetailsFromRequest,
   parseFilesystemFromRequest,
   parseOutputFromRequest,
+  parseRegistrationFromRequest,
   parseSystemFromRequest,
-  RegistrationType,
   WizardState,
 } from '@/store/slices/wizard';
-
-import { SATELLITE_PATH } from '../../../constants';
 
 /**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
@@ -42,32 +35,7 @@ export const mapRequestToState = (request: BlueprintResponse): WizardState => {
     content: parseContentFromRequest(request),
     output: parseOutputFromRequest(request),
     cloudProviders: parseCloudProvidersFromRequest(request),
-    registration: {
-      serverUrl: request.customizations.subscription?.['server-url'] || '',
-      baseUrl: request.customizations.subscription?.['base-url'] || '',
-      proxy: request.customizations.subscription?.insights_client_proxy,
-      type: getRegistrationType(request),
-      activationKey: isRhel(request.distribution)
-        ? request.customizations.subscription?.['activation-key']
-        : undefined,
-      orgId: isRhel(request.distribution)
-        ? request.customizations.subscription?.['organization']?.toString()
-        : undefined,
-      satelliteRegistration: {
-        command: getSatelliteCommand(request.customizations.files),
-        caCert: request.customizations.cacerts?.pem_certs[0],
-      },
-      aap: {
-        enabled: request.customizations.aap_registration !== undefined,
-        callbackUrl:
-          request.customizations.aap_registration?.ansible_callback_url,
-        hostConfigKey: request.customizations.aap_registration?.host_config_key,
-        tlsCertificateAuthority:
-          request.customizations.aap_registration?.tls_certificate_authority,
-        skipTlsVerification:
-          request.customizations.aap_registration?.skip_tls_verification,
-      },
-    },
+    registration: parseRegistrationFromRequest(request),
   };
 };
 
@@ -104,49 +72,6 @@ export const mapBlueprintExportToState = (
     content: parseContentFromRequest(blueprint),
     output: parseOutputFromRequest(blueprint),
     cloudProviders: parseCloudProvidersFromRequest(blueprint),
-    registration: {
-      ...initialState.registration,
-      aap: {
-        enabled: blueprint.customizations.aap_registration !== undefined,
-        callbackUrl:
-          blueprint.customizations.aap_registration?.ansible_callback_url,
-        hostConfigKey:
-          blueprint.customizations.aap_registration?.host_config_key,
-        tlsCertificateAuthority:
-          blueprint.customizations.aap_registration?.tls_certificate_authority,
-        skipTlsVerification:
-          blueprint.customizations.aap_registration?.skip_tls_verification,
-      },
-    },
+    registration: parseRegistrationFromRequest(blueprint),
   };
-};
-
-const getRegistrationType = (
-  request:
-    | BlueprintResponse
-    | CreateBlueprintRequest
-    | ComposerCreateBlueprintRequest,
-): RegistrationType => {
-  const subscription = request.customizations.subscription;
-  const distribution = request.distribution;
-  const files = request.customizations.files;
-
-  if (subscription && isRhel(distribution)) {
-    if (subscription.rhc) {
-      return 'register-now-rhc';
-    } else {
-      return 'register-now-insights';
-    }
-  } else if (getSatelliteCommand(files)) {
-    return 'register-satellite';
-  } else {
-    return 'register-later';
-  }
-};
-
-const getSatelliteCommand = (files?: File[]): string => {
-  const satelliteCommandFile = files?.find(
-    (file) => file.path === SATELLITE_PATH,
-  );
-  return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
