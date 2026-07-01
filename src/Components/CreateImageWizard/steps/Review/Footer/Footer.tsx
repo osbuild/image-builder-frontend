@@ -9,6 +9,7 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
+import { flushSync } from 'react-dom';
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -23,25 +24,43 @@ import {
 } from '../../../../../Hooks';
 import { useAppSelector } from '../../../../../store/hooks';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
-import { useIsBlueprintValid } from '../../../utilities/useValidation';
+import { scrollToFirstError } from '../../../utilities/scrollToFirstError';
+import { useBlueprintValidation } from '../../../utilities/useValidation';
+import { useValidationContext } from '../../../utilities/ValidationContext';
 
 const ReviewWizardFooter = () => {
-  const { goToPrevStep, close } = useWizardContext();
+  const { goToPrevStep, goToStepById, close } = useWizardContext();
+  const { setForceShowErrors } = useValidationContext();
   const { isSuccess: isCreateSuccess, reset: resetCreate } =
     useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
 
-  // initialize the server store with the data from RTK query
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const resolvePath = useAppSelector(selectPathResolver);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
+  const navigate = useNavigate();
+  const { isValid, firstErrorStepId } = useBlueprintValidation();
+
+  const handleValidationFail = () => {
+    if (!firstErrorStepId) return;
+    flushSync(() => {
+      setForceShowErrors();
+    });
+    goToStepById(firstErrorStepId);
+    requestAnimationFrame(() => {
+      scrollToFirstError();
+    });
+  };
+
   const onToggleClick = () => {
+    if (!isValid) {
+      handleValidationFail();
+      return;
+    }
     setIsOpen(!isOpen);
   };
-  const navigate = useNavigate();
-  const isValid = useIsBlueprintValid();
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -50,6 +69,14 @@ const ReviewWizardFooter = () => {
       navigate(resolvePath(''));
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
+
+  const onBeforeAction = (): boolean => {
+    if (!isValid) {
+      handleValidationFail();
+      return false;
+    }
+    return true;
+  };
 
   const getBlueprintPayload = () => {
     return mapRequestFromState(store);
@@ -67,7 +94,6 @@ const ReviewWizardFooter = () => {
               ref={toggleRef}
               onClick={onToggleClick}
               isExpanded={isOpen}
-              isDisabled={!isValid}
               splitButtonItems={
                 composeId
                   ? [
@@ -77,6 +103,7 @@ const ReviewWizardFooter = () => {
                         setIsOpen={setIsOpen}
                         blueprintId={composeId}
                         isDisabled={!isValid}
+                        onBeforeAction={onBeforeAction}
                       />,
                     ]
                   : [
@@ -85,6 +112,7 @@ const ReviewWizardFooter = () => {
                         getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         isDisabled={!isValid}
+                        onBeforeAction={onBeforeAction}
                       />,
                     ]
               }
@@ -98,12 +126,14 @@ const ReviewWizardFooter = () => {
               setIsOpen={setIsOpen}
               blueprintId={composeId}
               isDisabled={!isValid}
+              onBeforeAction={onBeforeAction}
             />
           ) : (
             <CreateSaveAndBuildBtn
               getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
               isDisabled={!isValid}
+              onBeforeAction={onBeforeAction}
             />
           )}
         </Dropdown>

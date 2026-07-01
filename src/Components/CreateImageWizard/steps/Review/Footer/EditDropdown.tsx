@@ -34,6 +34,7 @@ type EditDropdownProps = {
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
   isDisabled: boolean;
+  onBeforeAction?: () => boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
@@ -41,6 +42,7 @@ export const EditSaveAndBuildBtn = ({
   setIsOpen,
   blueprintId,
   isDisabled,
+  onBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -54,6 +56,7 @@ export const EditSaveAndBuildBtn = ({
   });
 
   const onSaveAndBuild = async () => {
+    if (onBeforeAction && !onBeforeAction()) return;
     const requestBody = await getBlueprintPayload();
 
     if (!isOnPremise && requestBody) {
@@ -87,7 +90,10 @@ export const EditSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} isDisabled={isDisabled}>
+      <DropdownItem
+        onClick={onSaveAndBuild}
+        isDisabled={!onBeforeAction && isDisabled}
+      >
         Save changes and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -99,6 +105,7 @@ export const EditSaveButton = ({
   getBlueprintPayload,
   blueprintId,
   isDisabled,
+  onBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -110,6 +117,7 @@ export const EditSaveButton = ({
     fixedCacheKey: 'updateBlueprintKey',
   });
   const onSave = async () => {
+    if (onBeforeAction && !onBeforeAction()) return;
     const requestBody = await getBlueprintPayload();
 
     if (!isOnPremise && requestBody) {
@@ -136,7 +144,7 @@ export const EditSaveButton = ({
     <MenuToggleAction
       onClick={onSave}
       id='wizard-edit-save-btn'
-      isDisabled={isDisabled}
+      isDisabled={!onBeforeAction && isDisabled}
     >
       <Flex display={{ default: 'inlineFlex' }}>
         {isLoading && (
