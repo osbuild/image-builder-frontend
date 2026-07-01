@@ -53,6 +53,7 @@ import {
 
 import CustomWizardFooter from './components/CustomWizardFooter';
 import ReviewWizardFooter from './components/ReviewWizardFooter';
+import { ValidationProvider } from './utilities/ValidationContext';
 
 import {
   AARCH64,
@@ -457,6 +458,7 @@ const CreateImageWizard = () => {
       onEscapePress={handleClose}
       style={{ height: '90vh', width: '80vw' }}
     >
+      <ValidationProvider>
       <Wizard
         onClose={handleClose}
         onStepChange={handleStepChange}
@@ -478,7 +480,7 @@ const CreateImageWizard = () => {
           footer={
             <CustomWizardFooter
               disableBack={true}
-              disableNext={baseSettingsHasErrors}
+              hasErrors={baseSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
           }
@@ -533,7 +535,7 @@ const CreateImageWizard = () => {
             restrictions.packages.shouldHide
           }
           footer={
-            <CustomWizardFooter disableNext={false} isOnPremise={isOnPremise} />
+            <CustomWizardFooter hasErrors={false} isOnPremise={isOnPremise} />
           }
         >
           <Form onSubmit={handleFormSubmit}>
@@ -572,7 +574,7 @@ const CreateImageWizard = () => {
           }
           footer={
             <CustomWizardFooter
-              disableNext={advancedSettingsHasErrors}
+              hasErrors={advancedSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
           }
@@ -653,6 +655,7 @@ const CreateImageWizard = () => {
           </Form>
         </WizardStep>
       </Wizard>
+      </ValidationProvider>
     </Modal>
   );
 };
