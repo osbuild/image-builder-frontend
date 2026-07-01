@@ -37,6 +37,7 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   isSupportedArchitecture,
   loadWizardState,
+  mapToCustomRepositories,
   parseStateFromRequest,
   WizardState,
 } from '@/store/slices/wizard';
@@ -46,7 +47,6 @@ import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
-import { mapToCustomRepositories } from '../CreateImageWizard/utilities/requestMapper';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
