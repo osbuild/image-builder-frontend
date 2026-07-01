@@ -1,6 +1,9 @@
 import { ContentOrigin } from '@/constants';
 import { CustomRepository, Repository } from '@/store/api/backend';
-import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
+import {
+  ApiRepositoryImportResponseRead,
+  ApiRepositoryResponseRead,
+} from '@/store/api/contentSources';
 
 export const convertSchemaToIBCustomRepo = (
   repo: ApiRepositoryResponseRead,
@@ -56,4 +59,22 @@ export const normalizeSnapshotDate = (raw?: string): string => {
   if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(raw)) return raw;
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return `${raw}T00:00:00Z`;
   return '';
+};
+
+export const mapToCustomRepositories = (
+  repo: ApiRepositoryImportResponseRead | ApiRepositoryResponseRead,
+): CustomRepository[] => {
+  if (!repo.uuid) return [];
+  return [
+    {
+      id: repo.uuid,
+      name: repo.name,
+      baseurl: repo.url ? [repo.url] : undefined,
+      gpgkey: repo.gpg_key ? [repo.gpg_key] : undefined,
+      check_gpg: repo.metadata_verification ?? undefined,
+      check_repo_gpg: repo.metadata_verification ?? undefined,
+      module_hotfixes: repo.module_hotfixes ?? undefined,
+      enabled: true,
+    },
+  ];
 };
