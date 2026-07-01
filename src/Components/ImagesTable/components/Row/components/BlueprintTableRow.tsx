@@ -32,9 +32,16 @@ import Status from '../../Status/components/Status';
 type BlueprintTableRowProps = {
   blueprint: BlueprintItem;
   rowIndex: number;
+  onSelect: (blueprintId: string) => void;
+  isSelected: boolean;
 };
 
-const BlueprintTableRow = ({ blueprint, rowIndex }: BlueprintTableRowProps) => {
+const BlueprintTableRow = ({
+  blueprint,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: BlueprintTableRowProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -43,6 +50,7 @@ const BlueprintTableRow = ({ blueprint, rowIndex }: BlueprintTableRowProps) => {
   });
 
   const handleToggle = () => setIsExpanded(!isExpanded);
+  const handleSelect = () => onSelect(blueprint.id);
 
   return (
     <Tbody key={blueprint.id} isExpanded={isExpanded}>
@@ -56,6 +64,13 @@ const BlueprintTableRow = ({ blueprint, rowIndex }: BlueprintTableRowProps) => {
             rowIndex: rowIndex,
             isExpanded: isExpanded,
             onToggle: handleToggle,
+          }}
+        />
+        <Td
+          select={{
+            rowIndex: rowIndex,
+            onSelect: handleSelect,
+            isSelected: isSelected,
           }}
         />
         <Td dataLabel='Name'>
@@ -110,7 +125,7 @@ const BlueprintTableRow = ({ blueprint, rowIndex }: BlueprintTableRowProps) => {
         </Td>
       </Tr>
       <Tr isExpanded={isExpanded}>
-        <Td colSpan={8}>
+        <Td colSpan={9}>
           <ExpandableRowContent>
             <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
               Blueprint Information

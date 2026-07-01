@@ -42,6 +42,9 @@ import { useAppSelector } from '../../store/hooks';
 const NewImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [selectedBlueprintId, setSelectedBlueprintId] = useState<
+    string | undefined
+  >(undefined);
 
   const effectiveBlueprintId = useEffectiveBlueprintId();
   const blueprintSearchInput =
@@ -54,6 +57,10 @@ const NewImagesTable = () => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+
+  const handleBlueprintSelect = (id: string) => {
+    setSelectedBlueprintId((prev) => (prev === id ? undefined : id));
+  };
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
     limit: 100,
@@ -262,6 +269,12 @@ const NewImagesTable = () => {
               style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }}
               aria-label='Details expandable'
             />
+            <Th
+              select={{
+                onSelect: () => {},
+                isSelected: false,
+              }}
+            />
             <Th>Name</Th>
             <Th>Last updated</Th>
             <Th>Operating system</Th>
@@ -290,6 +303,8 @@ const NewImagesTable = () => {
                 blueprint={item.blueprint}
                 rowIndex={rowIndex}
                 key={`blueprint-${item.blueprint.id}`}
+                onSelect={handleBlueprintSelect}
+                isSelected={selectedBlueprintId === item.blueprint.id}
               />
             );
           } else {
@@ -298,6 +313,8 @@ const NewImagesTable = () => {
                 compose={item.compose}
                 rowIndex={rowIndex}
                 key={`compose-${item.compose.id}`}
+                onSelect={handleBlueprintSelect}
+                isSelected={selectedBlueprintId === item.compose.id}
               />
             );
           }
