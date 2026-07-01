@@ -9,17 +9,18 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 
-const filterOptions = [
-  { value: 'name', label: 'Name' },
-  { value: 'latest', label: 'Last updated' },
-  { value: 'system', label: 'Operating system' },
-  { value: 'target', label: 'Target environment' },
-  { value: 'status', label: 'Status' },
-];
+import { filterOptions } from '../constants';
 
-const ImagesFilter = () => {
+type ImagesFilterProps = {
+  filterCategory: string;
+  setFilterCategory: (category: string) => void;
+};
+
+const ImagesFilter = ({
+  filterCategory,
+  setFilterCategory,
+}: ImagesFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [filterCategory, setFilterCategory] = useState('name');
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
