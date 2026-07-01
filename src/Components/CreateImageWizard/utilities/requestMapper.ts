@@ -1,4 +1,3 @@
-import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -10,8 +9,6 @@ import {
   BtrfsVolume,
   ComposerAwsUploadRequestOptions,
   ComposerCreateBlueprintRequest,
-  ComposerImageRequest,
-  ComposerUploadTypes,
   CreateBlueprintRequest,
   CustomRepository,
   DistributionProfileItem,
@@ -21,18 +18,15 @@ import {
   FilesystemTyped,
   GcpUploadRequestOptions,
   ImageRequest,
-  ImageTypes,
   LogicalVolume,
   OpenScapCompliance,
   OpenScapProfile,
-  UploadTypes,
   VolumeGroup,
 } from '@/store/api/backend';
 import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryResponseRead,
 } from '@/store/api/contentSources';
-import { selectIsOnPremise } from '@/store/slices/env';
 import {
   AwsShareMethod,
   ComplianceType,
@@ -43,32 +37,9 @@ import {
   initialState,
   isRhel,
   isSupportedImageType,
-  mapCustomizations,
   PackageRepository,
   parseSizeUnit,
   RegistrationType,
-  selectArchitecture,
-  selectAwsAccountId,
-  selectAwsRegion,
-  selectAzureHyperVGeneration,
-  selectAzureResourceGroup,
-  selectAzureSubscriptionId,
-  selectAzureTenantId,
-  selectBlueprintDescription,
-  selectBlueprintName,
-  selectBootcDistributions,
-  selectDistribution,
-  selectGcpAccountType,
-  selectGcpEmail,
-  selectImageSource,
-  selectImageTypes,
-  selectIsImageMode,
-  selectIsoPayloadReference,
-  selectMetadata,
-  selectSnapshotDate,
-  selectTemplate,
-  selectTemplateName,
-  selectUseLatest,
   Units,
   WizardState,
 } from '@/store/slices/wizard';
@@ -81,63 +52,6 @@ import {
   RHEL_9,
   SATELLITE_PATH,
 } from '../../../constants';
-import { RootState } from '../../../store';
-
-/**
- * This function maps the wizard state to a valid CreateBlueprint request object
- * @param {Store} store redux store
- *
- * @returns {CreateBlueprintRequest} blueprint creation request payload
- */
-export const mapRequestFromState = (
-  store: Store,
-): CreateBlueprintRequest | ComposerCreateBlueprintRequest => {
-  const state = store.getState();
-  const imageRequests = getImageRequests(state);
-  const isImageMode = selectIsImageMode(state);
-  const imageSource = selectImageSource(state);
-
-  let bootcReference: string | undefined;
-  const imageTypes = selectImageTypes(state);
-  if (isImageMode && imageSource) {
-    const bootcDistributions = selectBootcDistributions(state);
-    const selectedDistro = bootcDistributions.find(
-      (d) => d.reference === imageSource,
-    );
-    if (selectedDistro && imageTypes.length > 0) {
-      const match = bootcDistributions.find(
-        (d) => d.name === selectedDistro.name && d.type === imageTypes[0],
-      );
-      if (match) {
-        bootcReference = match.reference;
-      }
-    }
-    if (!bootcReference) {
-      bootcReference = imageSource;
-    }
-  }
-
-  const isoPayloadRef = selectIsoPayloadReference(state);
-  const bootcBody =
-    bootcReference !== undefined
-      ? {
-          reference: bootcReference,
-          ...(imageTypes[0] === 'bootable-container-iso' && isoPayloadRef
-            ? { iso_payload_reference: isoPayloadRef }
-            : {}),
-        }
-      : undefined;
-
-  return {
-    name: selectBlueprintName(state),
-    metadata: selectMetadata(state),
-    description: selectBlueprintDescription(state),
-    distribution: selectDistribution(state),
-    bootc: bootcBody,
-    image_requests: imageRequests,
-    ...mapCustomizations(state),
-  };
-};
 
 const convertFilesystemToPartition = (
   filesystem: Filesystem,
@@ -743,30 +657,6 @@ const getFirstBootScript = (files?: File[]): string => {
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
-const getImageRequests = (
-  state: RootState,
-): ImageRequest[] | ComposerImageRequest[] => {
-  const imageTypes = selectImageTypes(state);
-  const snapshotDate = selectSnapshotDate(state);
-  const useLatest = selectUseLatest(state);
-  const template = selectTemplate(state);
-  const templateName = selectTemplateName(state);
-  return imageTypes.map((type) => ({
-    architecture: selectArchitecture(state),
-    image_type: type,
-    upload_request: {
-      type: uploadTypeByTargetEnv(type),
-      options: getImageOptions(type, state),
-    },
-    // Only include snapshot_date when using snapshot mode (not latest or template)
-    // Convert empty strings to undefined
-    snapshot_date:
-      !useLatest && !template && snapshotDate ? snapshotDate : undefined,
-    content_template: template || undefined,
-    content_template_name: templateName || undefined,
-  }));
-};
-
 const getRegistrationType = (
   request:
     | BlueprintResponse
@@ -795,88 +685,4 @@ const getSatelliteCommand = (files?: File[]): string => {
     (file) => file.path === SATELLITE_PATH,
   );
   return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
-};
-
-const uploadTypeByTargetEnv = (
-  imageType: ImageTypes,
-): UploadTypes | ComposerUploadTypes => {
-  switch (imageType) {
-    case 'aws':
-      return 'aws';
-    case 'gcp':
-      return 'gcp';
-    case 'azure':
-      return 'azure';
-    case 'oci':
-      return 'oci.objectstorage';
-    case 'wsl':
-      return 'aws.s3';
-    case 'guest-image':
-      return 'aws.s3';
-    case 'image-installer':
-      return 'aws.s3';
-    case 'bootable-container-iso':
-      return 'aws.s3';
-    case 'network-installer':
-      return 'aws.s3';
-    case 'vsphere':
-      return 'aws.s3';
-    case 'vsphere-ova':
-      return 'aws.s3';
-    case 'ami':
-      return 'aws';
-    case 'pxe-tar-xz':
-      return 'aws.s3';
-    default: {
-      throw new Error(`image type: ${imageType} has no implementation yet`);
-    }
-  }
-};
-const getImageOptions = (
-  imageType: ImageTypes,
-  state: RootState,
-):
-  | AwsUploadRequestOptions
-  | AzureUploadRequestOptions
-  | GcpUploadRequestOptions
-  | ComposerAwsUploadRequestOptions => {
-  const isOnPremise = selectIsOnPremise(state);
-  switch (imageType) {
-    case 'aws':
-      if (!isOnPremise)
-        return { share_with_accounts: [selectAwsAccountId(state)] };
-
-      // TODO: we might want to update the image-builder-crc api
-      // to accept a region instead (with default us-east-1)
-      return {
-        share_with_accounts: [selectAwsAccountId(state)],
-        region: selectAwsRegion(state),
-      };
-    case 'azure':
-      return {
-        tenant_id: selectAzureTenantId(state),
-        subscription_id: selectAzureSubscriptionId(state),
-        resource_group: selectAzureResourceGroup(state) || '',
-        hyper_v_generation: selectAzureHyperVGeneration(state),
-      };
-    case 'gcp': {
-      const gcpEmail = selectGcpEmail(state);
-      let googleAccount: string = '';
-      switch (selectGcpAccountType(state)) {
-        case 'user':
-          googleAccount = `user:${gcpEmail}`;
-          break;
-        case 'serviceAccount':
-          googleAccount = `serviceAccount:${gcpEmail}`;
-          break;
-        case 'group':
-          googleAccount = `group:${gcpEmail}`;
-          break;
-        case 'domain':
-          googleAccount = `domain:${gcpEmail}`;
-      }
-      return { share_with_accounts: [googleAccount] };
-    }
-  }
-  return {};
 };

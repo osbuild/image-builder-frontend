@@ -1,8 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
-import { CreateBlueprintRequest } from '@/store/api/backend';
-import { initialState } from '@/store/slices/wizard';
+import { initialState, mapStateToRequest } from '@/store/slices/wizard';
 import { server } from '@/test/mocks/server';
 import {
   clickWithWait,
@@ -533,7 +531,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.custom_repositories).toHaveLength(1);
     expect(request.customizations.custom_repositories![0]).toEqual({
@@ -574,7 +572,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.payload_repositories).toHaveLength(1);
     expect(request.customizations.payload_repositories![0]).toEqual({
@@ -616,7 +614,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.custom_repositories![0].module_hotfixes).toBe(
       true,
@@ -636,7 +634,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.custom_repositories).toBeUndefined();
     expect(request.customizations.payload_repositories).toBeUndefined();
@@ -664,7 +662,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(
       request.customizations.custom_repositories![0].baseurl,
@@ -703,7 +701,7 @@ describe('Request Payload Generation', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.custom_repositories).toHaveLength(2);
     expect(request.customizations.payload_repositories).toHaveLength(2);

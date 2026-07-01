@@ -1,10 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { screen, waitFor } from '@testing-library/react';
 
-import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { serviceMiddleware, serviceReducer } from '@/store';
-import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
-import { initialState } from '@/store/slices/wizard';
+import { ImageRequest } from '@/store/api/backend';
+import { initialState, mapStateToRequest } from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,
@@ -231,7 +230,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
@@ -262,7 +261,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.image_requests[0].upload_request.type).toBe('aws');
     expect(request.image_requests[0].image_type).toBe('aws');
@@ -280,7 +279,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('share_with_accounts', ['111222333444']);
@@ -298,7 +297,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.image_requests[0].architecture).toBe('x86_64');
   });
@@ -315,7 +314,7 @@ describe('AWS CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.subscription).toBeUndefined();
   });

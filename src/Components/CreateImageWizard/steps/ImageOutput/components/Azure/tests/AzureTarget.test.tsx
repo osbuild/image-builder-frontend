@@ -1,10 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { screen } from '@testing-library/react';
 
-import { mapRequestFromState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { serviceMiddleware, serviceReducer } from '@/store';
-import { CreateBlueprintRequest, ImageRequest } from '@/store/api/backend';
-import { initialState } from '@/store/slices/wizard';
+import { ImageRequest } from '@/store/api/backend';
+import { initialState, mapStateToRequest } from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,
@@ -358,7 +357,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
@@ -393,7 +392,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.image_requests).toHaveLength(1);
     expect(request.image_requests[0].image_type).toBe('azure');
@@ -421,7 +420,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.image_requests[0].upload_request.type).toBe('azure');
     expect(request.image_requests[0].image_type).toBe('azure');
@@ -440,7 +439,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toHaveProperty('resource_group', '');
@@ -459,7 +458,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     const options = request.image_requests[0].upload_request.options;
     expect(options).toEqual({
@@ -483,7 +482,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.image_requests[0].architecture).toBe('x86_64');
   });
@@ -501,7 +500,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
       },
     });
 
-    const request = mapRequestFromState(store) as CreateBlueprintRequest;
+    const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.subscription).toBeUndefined();
   });

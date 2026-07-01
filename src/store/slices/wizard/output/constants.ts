@@ -23,3 +23,17 @@ export const EDGE_TYPES = [
   'rhel-edge-commit',
   'rhel-edge-installer',
 ] as const;
+
+export const S3_UPLOAD_OPTIONS = {
+  upload_request: {
+    type: 'aws.s3' as const,
+    options: {},
+  },
+};
+
+export const OCI_UPLOAD_OPTIONS = {
+  upload_request: {
+    type: 'oci.objectstorage' as const,
+    options: {},
+  },
+};

@@ -9,6 +9,10 @@ import {
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
+  selectSnapshotDate,
+  selectTemplate,
+  selectTemplateName,
+  selectUseLatest,
   selectVerifiedLocaleLangpacks,
 } from './selectors';
 import {
@@ -54,8 +58,8 @@ const mapCustomRepos = createSelector(
 
     const combined = [...cleaned];
 
-    for (const repo in recommendedRepositories) {
-      combined.push(convertSchemaToIBCustomRepo(recommendedRepositories[repo]));
+    for (const repo of recommendedRepositories) {
+      combined.push(convertSchemaToIBCustomRepo(repo));
     }
 
     if (combined.length === 0) {
@@ -71,10 +75,8 @@ const mapPayloadRepos = createSelector(
   (payloadRepositories, recommendedRepositories) => {
     const combined = [...payloadRepositories];
 
-    for (const repo in recommendedRepositories) {
-      combined.push(
-        convertSchemaToIBPayloadRepo(recommendedRepositories[repo]),
-      );
+    for (const repo of recommendedRepositories) {
+      combined.push(convertSchemaToIBPayloadRepo(repo));
     }
 
     if (combined.length === 0) {
@@ -92,5 +94,49 @@ export const mapContentCustomizations = createSelector(
     ...modules,
     ...customRepositories,
     ...payloadRepositories,
+  }),
+);
+
+const mapTemplate = createSelector([selectTemplate], (template) => {
+  if (!template) {
+    return undefined;
+  }
+
+  return {
+    content_template: template,
+  };
+});
+
+const mapTemplateName = createSelector([selectTemplateName], (name) => {
+  if (!name) {
+    return undefined;
+  }
+
+  return {
+    content_template_name: name,
+  };
+});
+
+const mapSnapshotDate = createSelector(
+  [selectUseLatest, selectTemplate, selectSnapshotDate],
+  (useLatest, template, snapshot) => {
+    // Only include snapshot_date when using snapshot mode (not latest or template)
+    // Convert empty strings to undefined
+    if (useLatest || template || !snapshot) {
+      return undefined;
+    }
+
+    return {
+      snapshot_date: snapshot,
+    };
+  },
+);
+
+export const mapContentImageRequest = createSelector(
+  [mapTemplate, mapTemplateName, mapSnapshotDate],
+  (template, name, snapshot) => ({
+    ...template,
+    ...name,
+    ...snapshot,
   }),
 );

@@ -8,13 +8,10 @@ import {
   Distributions,
   ImageRequest,
 } from '@/store/api/backend';
+import { mapStateToRequest } from '@/store/slices/wizard';
 import { createTestStore } from '@/test/testUtils';
 
-import {
-  mapBlueprintExportToState,
-  mapRequestFromState,
-  mapRequestToState,
-} from '../requestMapper';
+import { mapBlueprintExportToState, mapRequestToState } from '../requestMapper';
 
 const createMinimalBlueprintResponse = (
   overrides: Partial<BlueprintResponse> = {},
@@ -196,14 +193,14 @@ const toBlueprintResponse = (
 const stripUndefined = <T extends Record<string, unknown>>(obj: T): T =>
   JSON.parse(JSON.stringify(obj)) as T;
 
-describe('round-trip: mapRequestToState + mapRequestFromState', () => {
+describe('round-trip: mapRequestToState + mapStateToRequest', () => {
   it.each(Object.entries(editModeFixtures))(
     'round-trips correctly for %s blueprint',
     (_, expectedRequest) => {
       const response = toBlueprintResponse(expectedRequest);
       const wizardState = mapRequestToState(response);
       const store = createTestStore(wizardState);
-      const result = stripUndefined(mapRequestFromState(store));
+      const result = stripUndefined(mapStateToRequest(store.getState()));
       expect(result).toEqual(expectedRequest);
     },
   );
