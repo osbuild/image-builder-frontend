@@ -11,9 +11,16 @@ import { LocalStatus } from '../../Status';
 type LocalRowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
-const LocalRow = ({ compose, rowIndex }: LocalRowPropTypes) => {
+const LocalRow = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: LocalRowPropTypes) => {
   const details = <LocalDetails compose={compose} />;
   const instance = <LocalInstance compose={compose} />;
   const status = <LocalStatus compose={compose} />;
@@ -24,6 +31,8 @@ const LocalRow = ({ compose, rowIndex }: LocalRowPropTypes) => {
       details={details}
       instance={instance}
       status={status}
+      {...(onSelect && { onSelect })}
+      {...(isSelected !== undefined && { isSelected })}
     />
   );
 };

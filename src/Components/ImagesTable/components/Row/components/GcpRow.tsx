@@ -11,9 +11,16 @@ import { CloudStatus } from '../../Status';
 type GcpRowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
-const GcpRow = ({ compose, rowIndex }: GcpRowPropTypes) => {
+const GcpRow = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: GcpRowPropTypes) => {
   const details = <GcpDetails compose={compose} />;
   const instance = <GcpLaunchModal compose={compose} />;
   const status = <CloudStatus compose={compose} />;
@@ -25,6 +32,8 @@ const GcpRow = ({ compose, rowIndex }: GcpRowPropTypes) => {
       details={details}
       status={status}
       instance={instance}
+      {...(onSelect && { onSelect })}
+      {...(isSelected !== undefined && { isSelected })}
     />
   );
 };

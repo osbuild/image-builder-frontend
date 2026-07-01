@@ -44,6 +44,8 @@ type RowPropTypes = {
   actions?: JSX.Element;
   instance: JSX.Element;
   details: JSX.Element;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
 const Row = ({
@@ -54,6 +56,8 @@ const Row = ({
   actions,
   details,
   instance,
+  onSelect,
+  isSelected,
 }: RowPropTypes) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
@@ -88,6 +92,12 @@ const Row = ({
     }
   };
 
+  const handleSelect = () => {
+    if (onSelect) {
+      onSelect(compose.id);
+    }
+  };
+
   return (
     <Tbody key={compose.id} isExpanded={isExpanded}>
       <Tr className='no-bottom-border'>
@@ -98,8 +108,19 @@ const Row = ({
             onToggle: () => handleToggle(),
           }}
         />
+        {isImagesTableRevampEnabled && (
+          <Td
+            select={{
+              rowIndex: rowIndex,
+              onSelect: handleSelect,
+              isSelected: isSelected || false,
+            }}
+          />
+        )}
         <Td dataLabel='Image name'>
-          {compose.blueprint_id && !selectedBlueprintId ? (
+          {!isImagesTableRevampEnabled &&
+          compose.blueprint_id &&
+          !selectedBlueprintId ? (
             <Button
               component='a'
               variant='link'
@@ -171,7 +192,7 @@ const Row = ({
         </Td>
       </Tr>
       <Tr isExpanded={isExpanded}>
-        <Td colSpan={8}>
+        <Td colSpan={isImagesTableRevampEnabled ? 9 : 8}>
           <ExpandableRowContent>{details}</ExpandableRowContent>
         </Td>
       </Tr>

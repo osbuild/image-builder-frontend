@@ -12,9 +12,16 @@ import { AwsTarget } from '../../Target';
 type AwsRowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
-const AwsRow = ({ compose, rowIndex }: AwsRowPropTypes) => {
+const AwsRow = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: AwsRowPropTypes) => {
   const target = <AwsTarget />;
   const status = <CloudStatus compose={compose} />;
   const instance = <AWSLaunchModal compose={compose} />;
@@ -28,6 +35,8 @@ const AwsRow = ({ compose, rowIndex }: AwsRowPropTypes) => {
       target={target}
       instance={instance}
       details={details}
+      {...(onSelect && { onSelect })}
+      {...(isSelected !== undefined && { isSelected })}
     />
   );
 };
