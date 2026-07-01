@@ -38,6 +38,7 @@ import {
   clearTimezone,
   initializeWizard,
   loadWizardState,
+  parseStateFromRequest,
   selectDistribution,
   selectImageSource,
   selectImageTypes,
@@ -85,7 +86,6 @@ import RepeatableBuildStep from '../CreateImageWizard/steps/Snapshot';
 import TimezoneStep from '../CreateImageWizard/steps/Timezone';
 import UserGroupsStep from '../CreateImageWizard/steps/UserGroups';
 import UsersStep from '../CreateImageWizard/steps/Users';
-import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 import {
   useAwsValidation,
   useAzureValidation,
@@ -291,7 +291,7 @@ const CreateImageWizard = () => {
 
   useEffect(() => {
     if (mode === 'edit' && blueprintId && blueprintDetails) {
-      const editBlueprintState = mapRequestToState(blueprintDetails);
+      const editBlueprintState = parseStateFromRequest(blueprintDetails);
       dispatch(loadWizardState(editBlueprintState));
     }
   }, [mode, blueprintId, blueprintDetails, dispatch]);

@@ -1,5 +1,6 @@
 export * from './actions';
 export * from './mappers';
+export * from './parsers';
 export * from './slice';
 
 // submodules

@@ -8,10 +8,11 @@ import {
   Distributions,
   ImageRequest,
 } from '@/store/api/backend';
-import { mapStateToRequest } from '@/store/slices/wizard';
+import {
+  mapStateToRequest,
+  parseStateFromRequest,
+} from '@/store/slices/wizard';
 import { createTestStore } from '@/test/testUtils';
-
-import { mapBlueprintExportToState, mapRequestToState } from '../requestMapper';
 
 const createMinimalBlueprintResponse = (
   overrides: Partial<BlueprintResponse> = {},
@@ -51,7 +52,7 @@ describe('mapRequestToState', () => {
   it('sets blueprintMode to package when bootc is absent', () => {
     const response = createMinimalBlueprintResponse();
 
-    const state = mapRequestToState(response);
+    const state = parseStateFromRequest(response);
 
     expect(state.details.blueprint.mode).toBe('package');
   });
@@ -61,7 +62,7 @@ describe('mapRequestToState', () => {
       bootc: { reference: 'quay.io/org/image:latest' },
     });
 
-    const state = mapRequestToState(response);
+    const state = parseStateFromRequest(response);
 
     expect(state.details.blueprint.mode).toBe('image');
   });
@@ -71,7 +72,7 @@ describe('mapRequestToState', () => {
       bootc: { reference: 'quay.io/org/image:latest' },
     });
 
-    const state = mapRequestToState(response);
+    const state = parseStateFromRequest(response);
 
     expect(state.output.imageSource).toBe('quay.io/org/image:latest');
   });
@@ -79,7 +80,7 @@ describe('mapRequestToState', () => {
   it('sets imageSource to undefined for package-mode blueprints', () => {
     const response = createMinimalBlueprintResponse();
 
-    const state = mapRequestToState(response);
+    const state = parseStateFromRequest(response);
 
     expect(state.output.imageSource).toBeUndefined();
   });
@@ -89,7 +90,7 @@ describe('mapRequestToState', () => {
       distribution: 'rhel-9.2' as Distributions,
     });
 
-    const state = mapRequestToState(response);
+    const state = parseStateFromRequest(response);
 
     expect(state.output.distribution).toBe(RHEL_9);
   });
@@ -100,7 +101,7 @@ describe('mapRequestToState', () => {
       bootc: { reference: 'quay.io/org/image:latest' },
     });
 
-    const state = mapRequestToState(response);
+    const state = parseStateFromRequest(response);
 
     // Falls back to initialState.distribution, not a hardcoded default
     expect(state.output.distribution).toBe(RHEL_10);
@@ -111,7 +112,7 @@ describe('mapBlueprintExportToState', () => {
   it('sets blueprintMode to package when bootc is absent', () => {
     const blueprint = createMinimalBlueprintExportResponse();
 
-    const state = mapBlueprintExportToState(blueprint, []);
+    const state = parseStateFromRequest(blueprint);
 
     expect(state.details.blueprint.mode).toBe('package');
   });
@@ -121,7 +122,7 @@ describe('mapBlueprintExportToState', () => {
       bootc: { reference: 'quay.io/org/image:latest' },
     });
 
-    const state = mapBlueprintExportToState(blueprint, []);
+    const state = parseStateFromRequest(blueprint);
 
     expect(state.details.blueprint.mode).toBe('image');
   });
@@ -132,7 +133,7 @@ describe('mapBlueprintExportToState', () => {
       bootc: { reference: 'quay.io/org/image:latest' },
     });
 
-    const state = mapBlueprintExportToState(blueprint, []);
+    const state = parseStateFromRequest(blueprint);
 
     // Falls back to initialState.distribution, not a hardcoded default
     expect(state.output.distribution).toBe(RHEL_10);
@@ -198,7 +199,7 @@ describe('round-trip: mapRequestToState + mapStateToRequest', () => {
     'round-trips correctly for %s blueprint',
     (_, expectedRequest) => {
       const response = toBlueprintResponse(expectedRequest);
-      const wizardState = mapRequestToState(response);
+      const wizardState = parseStateFromRequest(response);
       const store = createTestStore(wizardState);
       const result = stripUndefined(mapStateToRequest(store.getState()));
       expect(result).toEqual(expectedRequest);
