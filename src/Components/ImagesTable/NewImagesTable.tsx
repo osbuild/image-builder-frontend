@@ -27,8 +27,6 @@ import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
   selectBlueprintVersionFilterAPI,
-  selectLimit,
-  selectOffset,
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
@@ -37,11 +35,7 @@ import NewImagesTableToolbar from './components/NewImagesTableToolbar';
 import { ImagesTableRow } from './components/Row';
 import BlueprintTableRow from './components/Row/components/BlueprintTableRow';
 
-import {
-  PAGINATION_LIMIT,
-  PAGINATION_OFFSET,
-  SEARCH_INPUT,
-} from '../../constants';
+import { SEARCH_INPUT } from '../../constants';
 import { useEffectiveBlueprintId, useGetUser } from '../../Hooks';
 import { useAppSelector } from '../../store/hooks';
 
@@ -56,16 +50,14 @@ const NewImagesTable = () => {
   const blueprintVersionFilterAPI = useAppSelector(
     selectBlueprintVersionFilterAPI,
   );
-  const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
-  const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
-    limit: blueprintsLimit,
-    offset: blueprintsOffset,
+    limit: 100,
+    offset: 0,
   };
 
   if (blueprintSearchInput) {
@@ -120,8 +112,8 @@ const NewImagesTable = () => {
     isLoading: isLoadingComposes,
   } = useGetComposesQuery(
     {
-      limit: perPage,
-      offset: perPage * (page - 1),
+      limit: 100,
+      offset: 0,
       ignoreImageTypes: [
         'rhel-edge-commit',
         'rhel-edge-installer',
@@ -210,7 +202,37 @@ const NewImagesTable = () => {
       return compose.blueprint_version === selectedBlueprintVersion;
     });
   }
-  const itemCount = data?.meta.count || 0;
+
+  const blueprintIdsWithComposes = new Set(
+    composes?.map((compose) => compose.blueprint_id).filter(Boolean) ?? [],
+  );
+  const blueprintsWithoutComposes = blueprints.filter(
+    (blueprint) => !blueprintIdsWithComposes.has(blueprint.id),
+  );
+
+  const combinedItems = [
+    ...blueprintsWithoutComposes.map((blueprint) => ({
+      type: 'blueprint' as const,
+      blueprint,
+      date: blueprint.last_modified_at,
+    })),
+    ...(composes?.map((compose) => ({
+      type: 'compose' as const,
+      compose,
+      date: compose.created_at,
+    })) ?? []),
+  ];
+
+  combinedItems.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  const totalItems = combinedItems.length;
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedItems = combinedItems.slice(startIndex, endIndex);
+
+  const itemCount = totalItems;
 
   return (
     <PageSection>
@@ -237,7 +259,7 @@ const NewImagesTable = () => {
             <Th aria-label='Actions menu' />
           </Tr>
         </Thead>
-        {itemCount === 0 && blueprints.length === 0 && (
+        {itemCount === 0 && (
           <Tbody>
             <Tr>
               <Td colSpan={12}>
@@ -249,23 +271,24 @@ const NewImagesTable = () => {
           </Tbody>
         )}
 
-        {blueprints.map((blueprint, rowIndex) => (
-          <BlueprintTableRow
-            blueprint={blueprint}
-            rowIndex={rowIndex}
-            key={blueprint.id}
-          />
-        ))}
-
-        {composes?.map((compose, rowIndex) => {
-          const adjustedRowIndex = rowIndex + blueprints.length;
-          return (
-            <ImagesTableRow
-              compose={compose}
-              rowIndex={adjustedRowIndex}
-              key={compose.id}
-            />
-          );
+        {paginatedItems.map((item, rowIndex) => {
+          if (item.type === 'blueprint') {
+            return (
+              <BlueprintTableRow
+                blueprint={item.blueprint}
+                rowIndex={rowIndex}
+                key={`blueprint-${item.blueprint.id}`}
+              />
+            );
+          } else {
+            return (
+              <ImagesTableRow
+                compose={item.compose}
+                rowIndex={rowIndex}
+                key={`compose-${item.compose.id}`}
+              />
+            );
+          }
         })}
       </Table>
       <Toolbar className='pf-v6-u-mb-xl'>
