@@ -1,6 +1,5 @@
 import {
   BlueprintExportResponse,
-  BlueprintMetadata,
   BlueprintResponse,
   ComposerCreateBlueprintRequest,
   CreateBlueprintRequest,
@@ -18,6 +17,7 @@ import {
   parseCloudProvidersFromRequest,
   parseComplianceFromRequest,
   parseContentFromRequest,
+  parseDetailsFromRequest,
   parseFilesystemFromRequest,
   parseOutputFromRequest,
   parseSystemFromRequest,
@@ -27,33 +27,6 @@ import {
 
 import { SATELLITE_PATH } from '../../../constants';
 
-function commonRequestToState(
-  request:
-    | BlueprintResponse
-    | CreateBlueprintRequest
-    | ComposerCreateBlueprintRequest,
-) {
-  // we need to check for the region for on-prem
-
-  const arch =
-    request.image_requests[0]?.architecture ?? initialState.output.architecture;
-  if (!['x86_64', 'aarch64'].includes(arch)) {
-    throw new Error(`image type: ${arch} has no implementation yet`);
-  }
-
-  return {
-    details: {
-      mode: 'create' as const,
-      blueprint: {
-        name: request.name || '',
-        isCustomName: true,
-        description: request.description || '',
-        mode: 'package' as const,
-      },
-    },
-  };
-}
-
 /**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
@@ -61,18 +34,8 @@ function commonRequestToState(
  * @returns WizardState
  */
 export const mapRequestToState = (request: BlueprintResponse): WizardState => {
-  const commonState = commonRequestToState(request);
   return {
-    ...commonState,
-    details: {
-      ...commonState.details,
-      blueprintId: request.id,
-      mode: 'edit',
-      blueprint: {
-        ...commonState.details.blueprint,
-        mode: request.bootc ? 'image' : 'package',
-      },
-    },
+    details: parseDetailsFromRequest(request),
     system: parseSystemFromRequest(request),
     filesystem: parseFilesystemFromRequest(request),
     compliance: parseComplianceFromRequest(request),
@@ -126,55 +89,15 @@ export function mapToCustomRepositories(
   ];
 }
 
-const getMetadata = (metadata: BlueprintMetadata) => {
-  // there is a mismatch between API type and real data
-  // this check allows removing optional chaining from the rest of the code
-  // and disabling ESLint rule only in one place
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!metadata) {
-    return {
-      parent_id: null,
-      exported_at: '',
-      is_on_prem: false,
-    };
-  }
-
-  return {
-    parent_id: metadata.parent_id || null,
-    exported_at: metadata.exported_at || '',
-    is_on_prem: metadata.is_on_prem || false,
-  };
-};
-
 /**
  * Maps a BlueprintExportResponse to the wizard state, used to populate the wizard when importing a blueprint.
  */
 export const mapBlueprintExportToState = (
   blueprint: BlueprintExportResponse,
-  image_requests: ImageRequest[],
+  _: ImageRequest[],
 ): WizardState => {
-  const blueprintResponse: CreateBlueprintRequest = {
-    name: blueprint.name,
-    description: blueprint.description,
-    distribution: blueprint.distribution,
-    customizations: blueprint.customizations,
-    image_requests: image_requests,
-    bootc: blueprint.bootc,
-  };
-
-  const commonState = commonRequestToState(blueprintResponse);
-
   return {
-    ...commonState,
-    details: {
-      ...commonState.details,
-      mode: 'create',
-      blueprint: {
-        ...commonState.details.blueprint,
-        mode: blueprint.bootc ? 'image' : 'package',
-      },
-      metadata: getMetadata(blueprint.metadata),
-    },
+    details: parseDetailsFromRequest(blueprint),
     system: parseSystemFromRequest(blueprint),
     filesystem: parseFilesystemFromRequest(blueprint),
     compliance: parseComplianceFromRequest(blueprint),
