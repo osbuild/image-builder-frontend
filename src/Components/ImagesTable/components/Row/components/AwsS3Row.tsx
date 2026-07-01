@@ -13,9 +13,16 @@ import { ExpiringStatus } from '../../Status';
 type AwsS3RowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
-const AwsS3Row = ({ compose, rowIndex }: AwsS3RowPropTypes) => {
+const AwsS3Row = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: AwsS3RowPropTypes) => {
   const hoursToExpiration = computeHoursToExpiration(compose.created_at);
   const awsS3ExpirationTime = AWS_S3_EXPIRATION_TIME_IN_HOURS;
   const isExpired = hoursToExpiration >= awsS3ExpirationTime;
@@ -37,6 +44,8 @@ const AwsS3Row = ({ compose, rowIndex }: AwsS3RowPropTypes) => {
       details={details}
       instance={instance}
       status={status}
+      {...(onSelect && { onSelect })}
+      {...(isSelected !== undefined && { isSelected })}
     />
   );
 };

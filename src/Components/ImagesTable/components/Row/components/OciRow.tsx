@@ -13,9 +13,16 @@ import { ExpiringStatus } from '../../Status';
 type OciRowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
-const OciRow = ({ compose, rowIndex }: OciRowPropTypes) => {
+const OciRow = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: OciRowPropTypes) => {
   const daysToExpiration = Math.floor(
     computeHoursToExpiration(compose.created_at) / 24,
   );
@@ -38,6 +45,8 @@ const OciRow = ({ compose, rowIndex }: OciRowPropTypes) => {
       details={details}
       instance={instance}
       status={status}
+      {...(onSelect && { onSelect })}
+      {...(isSelected !== undefined && { isSelected })}
     />
   );
 };
