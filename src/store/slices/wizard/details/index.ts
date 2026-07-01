@@ -1,3 +1,4 @@
+export * from './parsers';
 export * from './selectors';
 export * from './slice';
 export { initialState as detailsState } from './state';
