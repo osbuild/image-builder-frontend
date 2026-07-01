@@ -34,17 +34,19 @@ import {
   useLazyListRepositoriesQuery,
 } from '@/store/api/contentSources';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { loadWizardState, WizardState } from '@/store/slices/wizard';
+import {
+  isSupportedArchitecture,
+  loadWizardState,
+  parseStateFromRequest,
+  WizardState,
+} from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';
-import {
-  mapBlueprintExportToState,
-  mapToCustomRepositories,
-} from '../CreateImageWizard/utilities/requestMapper';
+import { mapToCustomRepositories } from '../CreateImageWizard/utilities/requestMapper';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -196,10 +198,8 @@ export const ImportBlueprintModal: React.FunctionComponent<
             const blueprintFromFile = await mapOnPremToHosted(
               tomlBlueprint as BlueprintItem,
             );
-            const importBlueprintState = mapBlueprintExportToState(
-              blueprintFromFile,
-              [],
-            );
+            const importBlueprintState =
+              parseStateFromRequest(blueprintFromFile);
             setIsOnPremBlueprint(true);
             setImportedBlueprint(importBlueprintState);
           } else if (isJson) {
@@ -212,6 +212,13 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 blueprintFromFile.customizations?.disk &&
                 blueprintFromFile.customizations?.filesystem
               ) {
+                setIsInvalidFormat(true);
+                return;
+              }
+
+              // reject architectures the wizard cannot handle
+              const arch = blueprintFromFile.image_requests?.[0]?.architecture;
+              if (arch && !isSupportedArchitecture(arch)) {
                 setIsInvalidFormat(true);
                 return;
               }
@@ -239,29 +246,17 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 customRepos;
               blueprintExportedResponse.customizations.payload_repositories =
                 undefined;
-              const importBlueprintState = mapBlueprintExportToState(
+              const importBlueprintState = parseStateFromRequest(
                 blueprintExportedResponse,
-                blueprintFromFile.image_requests || [],
               );
 
               setIsOnPremBlueprint(false);
               setImportedBlueprint(importBlueprintState);
-            } catch (error) {
-              // If the error is actually due to an invalid architecture or image type,
-              // propagate it to label the blueprint as an invalid format,
-              // as the wizard will just not be able to deal with it.
-              if (
-                error instanceof Error &&
-                (error as Error).message.startsWith('image type:') &&
-                (error as Error).message.endsWith('has no implementation yet')
-              ) {
-                throw error;
-              }
+            } catch (_error) {
               const blueprintFromFileMapped =
                 await mapOnPremToHosted(blueprintFromFile);
-              const importBlueprintState = mapBlueprintExportToState(
+              const importBlueprintState = parseStateFromRequest(
                 blueprintFromFileMapped,
-                [],
               );
               setIsOnPremBlueprint(true);
               setImportedBlueprint(importBlueprintState);

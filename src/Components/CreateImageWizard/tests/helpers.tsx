@@ -7,9 +7,9 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import TOML from 'smol-toml';
 
 import { mapOnPremToHosted } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
-import { mapBlueprintExportToState } from '@/Components/CreateImageWizard/utilities/requestMapper';
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 import { BlueprintItem } from '@/store/api/backend';
+import { parseStateFromRequest } from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,
@@ -128,7 +128,7 @@ export const renderImportMode = async (
   const blueprintFromFile = await mapOnPremToHosted(
     tomlBlueprint as BlueprintItem,
   );
-  const importBlueprintState = mapBlueprintExportToState(blueprintFromFile, []);
+  const importBlueprintState = parseStateFromRequest(blueprintFromFile);
 
   return renderWizard({
     preloadedState: {
