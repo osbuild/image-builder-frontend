@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
   Pagination,
-  TextInput,
+  SearchInput,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -14,9 +14,14 @@ import {
   RhUiRedoIcon,
 } from '@patternfly/react-icons';
 
+import { setBlueprintSearchInput } from '@/store/slices/blueprint';
+
 import ImagesFilter from './ImagesFilter';
 
+import { useAppDispatch } from '../../../store/hooks';
+import useDebounce from '../../../Utilities/useDebounce';
 import { DeleteBlueprintModal } from '../../Blueprints/DeleteBlueprintModal';
+import { filterOptions } from '../constants';
 
 type NewImagesTableToolbarProps = {
   itemCount: number;
@@ -39,7 +44,32 @@ const NewImagesTableToolbar: React.FC<NewImagesTableToolbarProps> = ({
   setPage,
   onPerPageSelect,
 }: NewImagesTableToolbarProps) => {
+  const dispatch = useAppDispatch();
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [filterCategory, setFilterCategory] = useState('name');
+  const [searchValue, setSearchValue] = useState('');
+
+  const debouncedSearchValue = useDebounce(searchValue);
+
+  const selectedFilter = filterOptions.find(
+    (option) => option.value === filterCategory,
+  );
+  const placeholder = selectedFilter
+    ? `Find by ${selectedFilter.label.toLowerCase()}`
+    : 'Find';
+
+  useEffect(() => {
+    // TODO - only name is implemented for now
+    if (filterCategory === 'name') {
+      dispatch(
+        setBlueprintSearchInput(
+          debouncedSearchValue.length > 0 ? debouncedSearchValue : undefined,
+        ),
+      );
+      setPage(1);
+    }
+  }, [debouncedSearchValue, filterCategory, dispatch, setPage]);
 
   return (
     <>
@@ -50,13 +80,18 @@ const NewImagesTableToolbar: React.FC<NewImagesTableToolbarProps> = ({
       <Toolbar>
         <ToolbarContent>
           <ToolbarItem>
-            <ImagesFilter />
+            <ImagesFilter
+              filterCategory={filterCategory}
+              setFilterCategory={setFilterCategory}
+            />
           </ToolbarItem>
           <ToolbarItem>
-            <TextInput
-              aria-label='Image filter input'
-              placeholder='Find by ...'
-              isDisabled
+            <SearchInput
+              placeholder={placeholder}
+              value={searchValue}
+              onChange={(_event, value) => setSearchValue(value)}
+              onClear={() => setSearchValue('')}
+              isDisabled={filterCategory !== 'name'}
             />
           </ToolbarItem>
           <ToolbarItem>

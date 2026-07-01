@@ -27,26 +27,24 @@ import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
   selectBlueprintVersionFilterAPI,
-  selectLimit,
-  selectOffset,
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 import ImagesEmptyState from './components/EmptyState';
 import NewImagesTableToolbar from './components/NewImagesTableToolbar';
 import { ImagesTableRow } from './components/Row';
+import BlueprintTableRow from './components/Row/components/BlueprintTableRow';
 
-import {
-  PAGINATION_LIMIT,
-  PAGINATION_OFFSET,
-  SEARCH_INPUT,
-} from '../../constants';
+import { SEARCH_INPUT } from '../../constants';
 import { useEffectiveBlueprintId, useGetUser } from '../../Hooks';
 import { useAppSelector } from '../../store/hooks';
 
 const NewImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [selectedBlueprintId, setSelectedBlueprintId] = useState<
+    string | undefined
+  >(undefined);
 
   const effectiveBlueprintId = useEffectiveBlueprintId();
   const blueprintSearchInput =
@@ -55,21 +53,26 @@ const NewImagesTable = () => {
   const blueprintVersionFilterAPI = useAppSelector(
     selectBlueprintVersionFilterAPI,
   );
-  const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
-  const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
+  const handleBlueprintSelect = (id: string) => {
+    setSelectedBlueprintId((prev) => (prev === id ? undefined : id));
+  };
+
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
-    limit: blueprintsLimit,
-    offset: blueprintsOffset,
+    limit: 100,
+    offset: 0,
   };
 
   if (blueprintSearchInput) {
     searchParamsGetBlueprints.search = blueprintSearchInput;
   }
+
+  const { data: blueprintsData, isLoading: isLoadingBlueprints } =
+    useGetBlueprintsQuery(searchParamsGetBlueprints);
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     searchParamsGetBlueprints,
@@ -116,8 +119,8 @@ const NewImagesTable = () => {
     isLoading: isLoadingComposes,
   } = useGetComposesQuery(
     {
-      limit: perPage,
-      offset: perPage * (page - 1),
+      limit: 100,
+      offset: 0,
       ignoreImageTypes: [
         'rhel-edge-commit',
         'rhel-edge-installer',
@@ -133,9 +136,12 @@ const NewImagesTable = () => {
     ? isBlueprintsSuccess
     : isComposesSuccess;
   const isError = effectiveBlueprintId ? isBlueprintsError : isComposesError;
-  const isLoading = effectiveBlueprintId
-    ? isLoadingBlueprintsCompose
-    : isLoadingComposes;
+  const isLoading =
+    isLoadingComposes ||
+    isLoadingBlueprints ||
+    (effectiveBlueprintId && isLoadingBlueprintsCompose);
+
+  const blueprints = blueprintsData?.data || [];
 
   useEffect(() => {
     if (!isOnPremise) {
@@ -203,7 +209,49 @@ const NewImagesTable = () => {
       return compose.blueprint_version === selectedBlueprintVersion;
     });
   }
-  const itemCount = data?.meta.count || 0;
+
+  // TODO: Add server-side search parameter to the composes API endpoint
+  // This filters composes on the client-side because the API doesn't
+  // support searching through composes by their name
+  // We're limited to filtering only within the fetched 100 composes
+  if (blueprintSearchInput && composes) {
+    const searchLower = blueprintSearchInput.toLowerCase();
+    composes = composes.filter((compose) => {
+      const imageName = compose.image_name || compose.id;
+      return imageName.toLowerCase().includes(searchLower);
+    });
+  }
+
+  const blueprintIdsWithComposes = new Set(
+    composes?.map((compose) => compose.blueprint_id).filter(Boolean) ?? [],
+  );
+  const blueprintsWithoutComposes = blueprints.filter(
+    (blueprint) => !blueprintIdsWithComposes.has(blueprint.id),
+  );
+
+  const combinedItems = [
+    ...blueprintsWithoutComposes.map((blueprint) => ({
+      type: 'blueprint' as const,
+      blueprint,
+      date: blueprint.last_modified_at,
+    })),
+    ...(composes?.map((compose) => ({
+      type: 'compose' as const,
+      compose,
+      date: compose.created_at,
+    })) ?? []),
+  ];
+
+  combinedItems.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  const totalItems = combinedItems.length;
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedItems = combinedItems.slice(startIndex, endIndex);
+
+  const itemCount = totalItems;
 
   return (
     <PageSection>
@@ -214,12 +262,18 @@ const NewImagesTable = () => {
         setPage={setPage}
         onPerPageSelect={onPerPageSelect}
       />
-      <Table variant='compact' data-testid='images-table'>
+      <Table data-testid='images-table'>
         <Thead>
           <Tr>
             <Th
               style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }}
               aria-label='Details expandable'
+            />
+            <Th
+              select={{
+                onSelect: () => {},
+                isSelected: false,
+              }}
             />
             <Th>Name</Th>
             <Th>Last updated</Th>
@@ -242,14 +296,28 @@ const NewImagesTable = () => {
           </Tbody>
         )}
 
-        {composes?.map((compose, rowIndex) => {
-          return (
-            <ImagesTableRow
-              compose={compose}
-              rowIndex={rowIndex}
-              key={compose.id}
-            />
-          );
+        {paginatedItems.map((item, rowIndex) => {
+          if (item.type === 'blueprint') {
+            return (
+              <BlueprintTableRow
+                blueprint={item.blueprint}
+                rowIndex={rowIndex}
+                key={`blueprint-${item.blueprint.id}`}
+                onSelect={handleBlueprintSelect}
+                isSelected={selectedBlueprintId === item.blueprint.id}
+              />
+            );
+          } else {
+            return (
+              <ImagesTableRow
+                compose={item.compose}
+                rowIndex={rowIndex}
+                key={`compose-${item.compose.id}`}
+                onSelect={handleBlueprintSelect}
+                isSelected={selectedBlueprintId === item.compose.id}
+              />
+            );
+          }
         })}
       </Table>
       <Toolbar className='pf-v6-u-mb-xl'>

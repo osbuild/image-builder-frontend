@@ -11,9 +11,16 @@ import { CloudStatus } from '../../Status';
 type AzureRowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (id: string) => void;
+  isSelected?: boolean;
 };
 
-const AzureRow = ({ compose, rowIndex }: AzureRowPropTypes) => {
+const AzureRow = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: AzureRowPropTypes) => {
   const details = <AzureDetails compose={compose} />;
   const instance = <AzureLaunchModal compose={compose} />;
   const status = <CloudStatus compose={compose} />;
@@ -25,6 +32,8 @@ const AzureRow = ({ compose, rowIndex }: AzureRowPropTypes) => {
       details={details}
       instance={instance}
       status={status}
+      {...(onSelect && { onSelect })}
+      {...(isSelected !== undefined && { isSelected })}
     />
   );
 };

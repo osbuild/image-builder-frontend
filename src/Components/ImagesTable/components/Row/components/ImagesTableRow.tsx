@@ -21,9 +21,16 @@ import OciRow from './OciRow';
 type ImagesTableRowPropTypes = {
   compose: ComposesResponseItem;
   rowIndex: number;
+  onSelect?: (blueprintId: string) => void;
+  isSelected?: boolean;
 };
 
-const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
+const ImagesTableRow = ({
+  compose,
+  rowIndex,
+  onSelect,
+  isSelected,
+}: ImagesTableRowPropTypes) => {
   const [pollingInterval, setPollingInterval] = useState(
     STATUS_POLLING_INTERVAL,
   );
@@ -95,19 +102,26 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
 
   const type = compose.request.image_requests[0]?.upload_request?.type;
 
+  const rowProps = {
+    compose,
+    rowIndex,
+    ...(onSelect && { onSelect }),
+    ...(isSelected !== undefined && { isSelected }),
+  };
+
   switch (type as string) {
     case 'aws':
-      return <AwsRow compose={compose} rowIndex={rowIndex} />;
+      return <AwsRow {...rowProps} />;
     case 'gcp':
-      return <GcpRow compose={compose} rowIndex={rowIndex} />;
+      return <GcpRow {...rowProps} />;
     case 'azure':
-      return <AzureRow compose={compose} rowIndex={rowIndex} />;
+      return <AzureRow {...rowProps} />;
     case 'oci.objectstorage':
-      return <OciRow compose={compose} rowIndex={rowIndex} />;
+      return <OciRow {...rowProps} />;
     case 'aws.s3':
-      return <AwsS3Row compose={compose} rowIndex={rowIndex} />;
+      return <AwsS3Row {...rowProps} />;
     case 'local':
-      return <LocalRow compose={compose} rowIndex={rowIndex} />;
+      return <LocalRow {...rowProps} />;
   }
 };
 
