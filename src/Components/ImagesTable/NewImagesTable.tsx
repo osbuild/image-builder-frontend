@@ -35,6 +35,7 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import ImagesEmptyState from './components/EmptyState';
 import NewImagesTableToolbar from './components/NewImagesTableToolbar';
 import { ImagesTableRow } from './components/Row';
+import BlueprintTableRow from './components/Row/components/BlueprintTableRow';
 
 import {
   PAGINATION_LIMIT,
@@ -70,6 +71,9 @@ const NewImagesTable = () => {
   if (blueprintSearchInput) {
     searchParamsGetBlueprints.search = blueprintSearchInput;
   }
+
+  const { data: blueprintsData, isLoading: isLoadingBlueprints } =
+    useGetBlueprintsQuery(searchParamsGetBlueprints);
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     searchParamsGetBlueprints,
@@ -133,9 +137,12 @@ const NewImagesTable = () => {
     ? isBlueprintsSuccess
     : isComposesSuccess;
   const isError = effectiveBlueprintId ? isBlueprintsError : isComposesError;
-  const isLoading = effectiveBlueprintId
-    ? isLoadingBlueprintsCompose
-    : isLoadingComposes;
+  const isLoading =
+    isLoadingComposes ||
+    isLoadingBlueprints ||
+    (effectiveBlueprintId && isLoadingBlueprintsCompose);
+
+  const blueprints = blueprintsData?.data || [];
 
   useEffect(() => {
     if (!isOnPremise) {
@@ -214,7 +221,7 @@ const NewImagesTable = () => {
         setPage={setPage}
         onPerPageSelect={onPerPageSelect}
       />
-      <Table variant='compact' data-testid='images-table'>
+      <Table data-testid='images-table'>
         <Thead>
           <Tr>
             <Th
@@ -230,7 +237,7 @@ const NewImagesTable = () => {
             <Th aria-label='Actions menu' />
           </Tr>
         </Thead>
-        {itemCount === 0 && (
+        {itemCount === 0 && blueprints.length === 0 && (
           <Tbody>
             <Tr>
               <Td colSpan={12}>
@@ -242,11 +249,20 @@ const NewImagesTable = () => {
           </Tbody>
         )}
 
+        {blueprints.map((blueprint, rowIndex) => (
+          <BlueprintTableRow
+            blueprint={blueprint}
+            rowIndex={rowIndex}
+            key={blueprint.id}
+          />
+        ))}
+
         {composes?.map((compose, rowIndex) => {
+          const adjustedRowIndex = rowIndex + blueprints.length;
           return (
             <ImagesTableRow
               compose={compose}
-              rowIndex={rowIndex}
+              rowIndex={adjustedRowIndex}
               key={compose.id}
             />
           );
