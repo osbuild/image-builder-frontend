@@ -2,11 +2,9 @@ import React, { useEffect, useMemo } from 'react';
 
 import {
   Alert,
-  Checkbox,
   Content,
   EmptyState,
   FormGroup,
-  Radio,
   Spinner,
   Tooltip,
 } from '@patternfly/react-core';
@@ -21,25 +19,20 @@ import {
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  addImageType,
   changeImageTypes,
   changeIsoPayloadReference,
   changeRegistrationType,
-  reinitializeAws,
-  reinitializeAzure,
-  reinitializeGcp,
-  removeImageType,
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
   selectIsImageMode,
   selectIsoPayloadReference,
-  SupportedImageTypes,
 } from '@/store/slices/wizard';
 
 import Aws from './Aws';
 import Azure from './Azure';
 import Gcp from './Gcp';
+import TargetEnvironmentOption from './TargetEnvironmentOption';
 
 const TEXT_WRAP_WIDTH = '54rem';
 const EMPTY_ENVIRONMENTS: string[] = [];
@@ -177,28 +170,6 @@ const TargetEnvironment = () => {
   const { privateClouds, publicClouds, miscFormats } =
     useTargetEnvironmentCategories(supportedEnvironments);
 
-  const handleToggleEnvironment = (environment: SupportedImageTypes) => {
-    if (environments.includes(environment)) {
-      switch (environment) {
-        case 'aws':
-          dispatch(reinitializeAws());
-          break;
-        case 'azure':
-          dispatch(reinitializeAzure());
-          break;
-        case 'gcp':
-          dispatch(reinitializeGcp());
-      }
-      dispatch(removeImageType(environment));
-    } else {
-      dispatch(addImageType(environment));
-    }
-  };
-
-  const handleSelectSingleEnvironment = (environment: SupportedImageTypes) => {
-    dispatch(changeImageTypes([environment]));
-  };
-
   if (isFetching) {
     return (
       <EmptyState
@@ -259,104 +230,41 @@ const TargetEnvironment = () => {
           aria-label='Public cloud'
           fieldId='public-cloud-group'
         >
-          {publicClouds.includes('aws') &&
-            (isImageMode ? (
-              <Radio
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='radio-aws'
-                name='target-environment'
-                label='Amazon Web Services'
-                aria-label='Amazon Web Services'
-                isChecked={environments.includes('aws')}
-                onChange={() => handleSelectSingleEnvironment('aws')}
-                body={environments.includes('aws') ? <Aws /> : undefined}
-              />
-            ) : (
-              <Checkbox
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='checkbox-aws'
-                name='Amazon Web Services'
-                label='Amazon Web Services'
-                aria-label='Amazon Web Services checkbox'
-                isChecked={environments.includes('aws')}
-                isDisabled={isOnlyNetworkInstallerSelected}
-                onChange={() => handleToggleEnvironment('aws')}
-                body={environments.includes('aws') ? <Aws /> : undefined}
-              />
-            ))}
-          {publicClouds.includes('gcp') &&
-            (isImageMode ? (
-              <Radio
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='radio-gcp'
-                name='target-environment'
-                label='Google Cloud'
-                aria-label='Google Cloud'
-                isChecked={environments.includes('gcp')}
-                onChange={() => handleSelectSingleEnvironment('gcp')}
-                body={environments.includes('gcp') ? <Gcp /> : undefined}
-              />
-            ) : (
-              <Checkbox
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='checkbox-gcp'
-                name='Google Cloud'
-                label='Google Cloud'
-                aria-label='Google Cloud checkbox'
-                isChecked={environments.includes('gcp')}
-                isDisabled={isOnlyNetworkInstallerSelected}
-                onChange={() => handleToggleEnvironment('gcp')}
-                body={environments.includes('gcp') ? <Gcp /> : undefined}
-              />
-            ))}
-          {publicClouds.includes('azure') &&
-            (isImageMode ? (
-              <Radio
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='radio-azure'
-                name='target-environment'
-                label='Microsoft Azure'
-                aria-label='Microsoft Azure'
-                isChecked={environments.includes('azure')}
-                onChange={() => handleSelectSingleEnvironment('azure')}
-                body={environments.includes('azure') ? <Azure /> : undefined}
-              />
-            ) : (
-              <Checkbox
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='checkbox-azure'
-                name='Microsoft Azure'
-                label='Microsoft Azure'
-                aria-label='Microsoft Azure checkbox'
-                isChecked={environments.includes('azure')}
-                isDisabled={isOnlyNetworkInstallerSelected}
-                onChange={() => handleToggleEnvironment('azure')}
-                body={environments.includes('azure') ? <Azure /> : undefined}
-              />
-            ))}
-          {publicClouds.includes('oci') &&
-            (isImageMode ? (
-              <Radio
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='radio-oci'
-                name='target-environment'
-                label='Oracle Cloud Infrastructure'
-                aria-label='Oracle Cloud Infrastructure'
-                isChecked={environments.includes('oci')}
-                onChange={() => handleSelectSingleEnvironment('oci')}
-              />
-            ) : (
-              <Checkbox
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='checkbox-oci'
-                name='Oracle Cloud Infrastructure'
-                label='Oracle Cloud Infrastructure'
-                aria-label='Oracle Cloud Infrastructure checkbox'
-                isChecked={environments.includes('oci')}
-                isDisabled={isOnlyNetworkInstallerSelected}
-                onChange={() => handleToggleEnvironment('oci')}
-              />
-            ))}
+          {publicClouds.includes('aws') && (
+            <TargetEnvironmentOption
+              environment='aws'
+              label='Amazon Web Services'
+              ariaLabel='Amazon Web Services'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              body={<Aws />}
+            />
+          )}
+          {publicClouds.includes('gcp') && (
+            <TargetEnvironmentOption
+              environment='gcp'
+              label='Google Cloud'
+              ariaLabel='Google Cloud'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              body={<Gcp />}
+            />
+          )}
+          {publicClouds.includes('azure') && (
+            <TargetEnvironmentOption
+              environment='azure'
+              label='Microsoft Azure'
+              ariaLabel='Microsoft Azure'
+              isDisabled={isOnlyNetworkInstallerSelected}
+              body={<Azure />}
+            />
+          )}
+          {publicClouds.includes('oci') && (
+            <TargetEnvironmentOption
+              environment='oci'
+              label='Oracle Cloud Infrastructure'
+              ariaLabel='Oracle Cloud Infrastructure'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
         </FormGroup>
       )}
 
@@ -368,74 +276,30 @@ const TargetEnvironment = () => {
           aria-label='Private cloud'
           fieldId='private-cloud-group'
         >
-          {privateClouds.includes('vsphere-ova') &&
-            (isImageMode ? (
-              <Radio
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='radio-vsphere-ova'
-                name='target-environment'
-                label={createLabelWithTooltip(
-                  'VMware vSphere',
-                  'Open virtualization format (.ova)',
-                  'An OVA file is a virtual appliance used by virtualization platforms such as VMware vSphere. It is a package that contains files used to describe a virtual machine, which includes a VMDK image, OVF descriptor file and a manifest file.',
-                )}
-                aria-label='VMware vSphere OVA'
-                isChecked={environments.includes('vsphere-ova')}
-                onChange={() => handleSelectSingleEnvironment('vsphere-ova')}
-              />
-            ) : (
-              <Checkbox
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='vsphere-checkbox-ova'
-                isLabelWrapped
-                name='vsphere-checkbox-ova'
-                label={createLabelWithTooltip(
-                  'VMware vSphere',
-                  'Open virtualization format (.ova)',
-                  'An OVA file is a virtual appliance used by virtualization platforms such as VMware vSphere. It is a package that contains files used to describe a virtual machine, which includes a VMDK image, OVF descriptor file and a manifest file.',
-                )}
-                aria-label='VMware vSphere checkbox OVA'
-                isChecked={environments.includes('vsphere-ova')}
-                isDisabled={isOnlyNetworkInstallerSelected}
-                onChange={() => {
-                  handleToggleEnvironment('vsphere-ova');
-                }}
-              />
-            ))}
-          {privateClouds.includes('vsphere') &&
-            (isImageMode ? (
-              <Radio
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='radio-vsphere-vmdk'
-                name='target-environment'
-                label={createLabelWithTooltip(
-                  'VMware vSphere',
-                  'Virtual disk (.vmdk)',
-                  'A VMDK file is a virtual disk that stores the contents of a virtual machine. This disk has to be imported into vSphere using govc import.vmdk, use the OVA version when using the vSphere UI.',
-                )}
-                aria-label='VMware vSphere VMDK'
-                isChecked={environments.includes('vsphere')}
-                onChange={() => handleSelectSingleEnvironment('vsphere')}
-              />
-            ) : (
-              <Checkbox
-                className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-                id='vsphere-checkbox-vmdk'
-                isLabelWrapped
-                name='vsphere-checkbox-vmdk'
-                label={createLabelWithTooltip(
-                  'VMware vSphere',
-                  'Virtual disk (.vmdk)',
-                  'A VMDK file is a virtual disk that stores the contents of a virtual machine. This disk has to be imported into vSphere using govc import.vmdk, use the OVA version when using the vSphere UI.',
-                )}
-                aria-label='VMware vSphere checkbox VMDK'
-                isChecked={environments.includes('vsphere')}
-                isDisabled={isOnlyNetworkInstallerSelected}
-                onChange={() => {
-                  handleToggleEnvironment('vsphere');
-                }}
-              />
-            ))}
+          {privateClouds.includes('vsphere-ova') && (
+            <TargetEnvironmentOption
+              environment='vsphere-ova'
+              label={createLabelWithTooltip(
+                'VMware vSphere',
+                'Open virtualization format (.ova)',
+                'An OVA file is a virtual appliance used by virtualization platforms such as VMware vSphere. It is a package that contains files used to describe a virtual machine, which includes a VMDK image, OVF descriptor file and a manifest file.',
+              )}
+              ariaLabel='VMware vSphere OVA'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
+          {privateClouds.includes('vsphere') && (
+            <TargetEnvironmentOption
+              environment='vsphere'
+              label={createLabelWithTooltip(
+                'VMware vSphere',
+                'Virtual disk (.vmdk)',
+                'A VMDK file is a virtual disk that stores the contents of a virtual machine. This disk has to be imported into vSphere using govc import.vmdk, use the OVA version when using the vSphere UI.',
+              )}
+              ariaLabel='VMware vSphere VMDK'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
         </FormGroup>
       )}
 
@@ -450,193 +314,75 @@ const TargetEnvironment = () => {
         aria-label='Miscellaneous formats'
         fieldId='misc-formats-group'
       >
-        {miscFormats.includes('guest-image') &&
-          (isImageMode ? (
-            <Radio
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='radio-guest-image'
-              name='target-environment'
-              label={createLabelWithTooltip(
-                'Virtualization',
-                'Guest image (.qcow2)',
-                'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
-              )}
-              aria-label='Virtualization guest image'
-              isChecked={environments.includes('guest-image')}
-              onChange={() => handleSelectSingleEnvironment('guest-image')}
-            />
-          ) : (
-            <Checkbox
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='checkbox-guest-image'
-              isLabelWrapped
-              name='Virtualization guest image'
-              label={createLabelWithTooltip(
-                'Virtualization',
-                'Guest image (.qcow2)',
-                'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
-              )}
-              aria-label='Virtualization guest image checkbox'
-              isChecked={environments.includes('guest-image')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => {
-                handleToggleEnvironment('guest-image');
-              }}
-            />
-          ))}
-        {miscFormats.includes('image-installer') &&
-          (isImageMode ? (
-            <Radio
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='radio-image-installer'
-              name='target-environment'
-              label={createLabelWithTooltip(
-                'Bare metal',
-                'Installer (.iso)',
-                'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
-              )}
-              aria-label='Bare metal installer'
-              isChecked={environments.includes('image-installer')}
-              onChange={() => handleSelectSingleEnvironment('image-installer')}
-            />
-          ) : (
-            <Checkbox
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='checkbox-image-installer'
-              isLabelWrapped
-              name='Bare metal installer'
-              label={createLabelWithTooltip(
-                'Bare metal',
-                'Installer (.iso)',
-                'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
-              )}
-              aria-label='Bare metal installer checkbox'
-              isChecked={environments.includes('image-installer')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => {
-                handleToggleEnvironment('image-installer');
-              }}
-            />
-          ))}
-        {miscFormats.includes('bootable-container-iso') && isImageMode && (
-          <Radio
-            className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-            id='radio-bootable-container-iso'
-            name='target-environment'
-            label='Container installer (.iso)'
-            aria-label='Container installer'
-            isChecked={environments.includes('bootable-container-iso')}
-            onChange={() =>
-              handleSelectSingleEnvironment('bootable-container-iso')
-            }
+        {miscFormats.includes('guest-image') && (
+          <TargetEnvironmentOption
+            environment='guest-image'
+            label={createLabelWithTooltip(
+              'Virtualization',
+              'Guest image (.qcow2)',
+              'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
+            )}
+            ariaLabel='Virtualization guest image'
+            isDisabled={isOnlyNetworkInstallerSelected}
           />
         )}
-        {miscFormats.includes('network-installer') &&
-          (isImageMode ? (
-            <Radio
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='radio-network-installer'
-              name='target-environment'
-              label={createLabelWithTooltip(
-                'Network',
-                'Installer (.iso)',
-                'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
-              )}
-              aria-label='Network installer'
-              isChecked={environments.includes('network-installer')}
-              onChange={() =>
-                handleSelectSingleEnvironment('network-installer')
-              }
-            />
-          ) : (
-            <Checkbox
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='checkbox-network-installer'
-              isLabelWrapped
-              name='Network - Installer'
-              label={createLabelWithTooltip(
-                'Network',
-                'Installer (.iso)',
-                isOtherEnvironmentSelected
-                  ? 'Network installer cannot be combined with other image types'
-                  : 'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
-              )}
-              aria-label='Network installer checkbox'
-              isChecked={environments.includes('network-installer')}
-              isDisabled={isOtherEnvironmentSelected}
-              onChange={() => {
-                handleToggleEnvironment('network-installer');
-              }}
-            />
-          ))}
-        {miscFormats.includes('pxe-tar-xz') &&
-          (isImageMode ? (
-            <Radio
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='radio-pxe-boot'
-              name='target-environment'
-              label={createLabelWithTooltip(
-                'Network',
-                'PXE boot (.tar.xz)',
-                'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
-              )}
-              aria-label='PXE boot image'
-              isChecked={environments.includes('pxe-tar-xz')}
-              onChange={() => handleSelectSingleEnvironment('pxe-tar-xz')}
-            />
-          ) : (
-            <Checkbox
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='checkbox-pxe-boot'
-              isLabelWrapped
-              name='PXE boot image'
-              label={createLabelWithTooltip(
-                'Network',
-                'PXE boot (.tar.xz)',
-                'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
-              )}
-              aria-label='PXE boot image checkbox'
-              isChecked={environments.includes('pxe-tar-xz')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => {
-                handleToggleEnvironment('pxe-tar-xz');
-              }}
-            />
-          ))}
-        {miscFormats.includes('wsl') &&
-          (isImageMode ? (
-            <Radio
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='radio-wsl'
-              name='target-environment'
-              label={createLabelWithTooltip(
-                'WSL',
-                'Windows Subsystem for Linux (.wsl)',
-                "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
-              )}
-              aria-label='Windows Subsystem for Linux'
-              isChecked={environments.includes('wsl')}
-              onChange={() => handleSelectSingleEnvironment('wsl')}
-            />
-          ) : (
-            <Checkbox
-              className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-              id='checkbox-wsl'
-              isLabelWrapped
-              name='WSL'
-              label={createLabelWithTooltip(
-                'WSL',
-                'Windows Subsystem for Linux (.wsl)',
-                "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
-              )}
-              aria-label='Windows Subsystem for Linux checkbox'
-              isChecked={environments.includes('wsl')}
-              isDisabled={isOnlyNetworkInstallerSelected}
-              onChange={() => {
-                handleToggleEnvironment('wsl');
-              }}
-            />
-          ))}
+        {miscFormats.includes('image-installer') && (
+          <TargetEnvironmentOption
+            environment='image-installer'
+            label={createLabelWithTooltip(
+              'Bare metal',
+              'Installer (.iso)',
+              'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
+            )}
+            ariaLabel='Bare metal installer'
+            isDisabled={isOnlyNetworkInstallerSelected}
+          />
+        )}
+        {miscFormats.includes('bootable-container-iso') && isImageMode && (
+          <TargetEnvironmentOption
+            environment='bootable-container-iso'
+            label='Container installer (.iso)'
+            ariaLabel='Container installer'
+          />
+        )}
+        {miscFormats.includes('network-installer') && (
+          <TargetEnvironmentOption
+            environment='network-installer'
+            label={createLabelWithTooltip(
+              'Network',
+              'Installer (.iso)',
+              isOtherEnvironmentSelected
+                ? 'Network installer cannot be combined with other image types'
+                : 'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
+            )}
+            ariaLabel='Network installer'
+            isDisabled={isOtherEnvironmentSelected}
+          />
+        )}
+        {miscFormats.includes('pxe-tar-xz') && (
+          <TargetEnvironmentOption
+            environment='pxe-tar-xz'
+            label={createLabelWithTooltip(
+              'Network',
+              'PXE boot (.tar.xz)',
+              'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
+            )}
+            ariaLabel='PXE boot image'
+            isDisabled={isOnlyNetworkInstallerSelected}
+          />
+        )}
+        {miscFormats.includes('wsl') && (
+          <TargetEnvironmentOption
+            environment='wsl'
+            label={createLabelWithTooltip(
+              'WSL',
+              'Windows Subsystem for Linux (.wsl)',
+              "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
+            )}
+            ariaLabel='Windows Subsystem for Linux'
+            isDisabled={isOnlyNetworkInstallerSelected}
+          />
+        )}
       </FormGroup>
 
       {isOnlyNetworkInstallerSelected && (
