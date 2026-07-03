@@ -25,7 +25,9 @@ import {
   selectDistribution,
   selectImageTypes,
   selectIsImageMode,
+  selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
+  selectIsOtherEnvironmentSelected,
 } from '@/store/slices/wizard';
 
 import Aws from './Aws';
@@ -62,6 +64,12 @@ const TargetEnvironment = () => {
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
   const isImageMode = useAppSelector(selectIsImageMode);
+  const isOnlyNetworkInstallerSelected = useAppSelector(
+    selectIsOnlyNetworkInstallerSelected,
+  );
+  const isOtherEnvironmentSelected = useAppSelector(
+    selectIsOtherEnvironmentSelected,
+  );
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -132,12 +140,6 @@ const TargetEnvironment = () => {
     isoPayloadReference,
     dispatch,
   ]);
-
-  const isOnlyNetworkInstallerSelected =
-    environments.length === 1 && environments.includes('network-installer');
-
-  const isOtherEnvironmentSelected =
-    environments.length >= 1 && !environments.includes('network-installer');
 
   if (isFetching) {
     return (

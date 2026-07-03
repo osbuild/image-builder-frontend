@@ -1,3 +1,5 @@
+import { createSelector } from '@reduxjs/toolkit';
+
 import { RootState } from '@/store';
 
 export const selectImageSource = (state: RootState) => {
@@ -23,3 +25,15 @@ export const selectDistribution = (state: RootState) => {
 export const selectImageTypes = (state: RootState) => {
   return state.wizard.output.imageTypes;
 };
+
+export const selectIsOnlyNetworkInstallerSelected = createSelector(
+  selectImageTypes,
+  (imageTypes) =>
+    imageTypes.length === 1 && imageTypes.includes('network-installer'),
+);
+
+export const selectIsOtherEnvironmentSelected = createSelector(
+  selectImageTypes,
+  (imageTypes) =>
+    imageTypes.length >= 1 && !imageTypes.includes('network-installer'),
+);

@@ -16,7 +16,9 @@ import {
   selectDistribution,
   selectImageSource,
   selectImageTypes,
+  selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
+  selectIsOtherEnvironmentSelected,
   wizardReducer,
   type WizardState,
 } from '@/store/slices/wizard';
@@ -302,6 +304,109 @@ describe('output selectors', () => {
       });
 
       expect(selectImageTypes(state)).toEqual(['aws', 'gcp']);
+    });
+  });
+
+  describe('selectIsOnlyNetworkInstallerSelected', () => {
+    it('should return true when only network-installer is selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['network-installer'],
+        },
+      });
+
+      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(true);
+    });
+
+    it('should return false when network-installer is combined with other types', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['network-installer', 'aws'],
+        },
+      });
+
+      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(false);
+    });
+
+    it('should return false when no image types are selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: [],
+        },
+      });
+
+      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(false);
+    });
+
+    it('should return false when a non-network-installer type is selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['aws'],
+        },
+      });
+
+      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(false);
+    });
+  });
+
+  describe('selectIsOtherEnvironmentSelected', () => {
+    it('should return true when a non-network-installer type is selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['aws'],
+        },
+      });
+
+      expect(selectIsOtherEnvironmentSelected(state)).toBe(true);
+    });
+
+    it('should return true when multiple non-network-installer types are selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['aws', 'gcp'],
+        },
+      });
+
+      expect(selectIsOtherEnvironmentSelected(state)).toBe(true);
+    });
+
+    it('should return false when only network-installer is selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['network-installer'],
+        },
+      });
+
+      expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
+    });
+
+    it('should return false when network-installer is combined with other types', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: ['network-installer', 'aws'],
+        },
+      });
+
+      expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
+    });
+
+    it('should return false when no image types are selected', () => {
+      const state = createMockState({
+        output: {
+          ...initialState.output,
+          imageTypes: [],
+        },
+      });
+
+      expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
     });
   });
 });
