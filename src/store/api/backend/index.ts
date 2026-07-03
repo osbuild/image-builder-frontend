@@ -147,3 +147,12 @@ export type {
 } from './onprem';
 
 export { useSecuritySummary } from './hooks';
+
+export {
+  categorizeEnvironments,
+  useGetArchitectureEnvironmentsQuery,
+  useGetDistributionEnvironmentsQuery,
+  type ArchitectureEnvironmentsResult,
+  type CategorizedEnvironments,
+  type DistributionEnvironmentsResult,
+} from './derived';

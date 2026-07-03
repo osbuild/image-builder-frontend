@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Alert,
@@ -9,12 +9,11 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 
-import { useTargetEnvironmentCategories } from '@/Hooks';
 import { rhsmApi } from '@/store/api';
 import {
-  BootcDistributionItem,
-  useGetArchitecturesQuery,
-  useGetDistributionsQuery,
+  type Distributions,
+  useGetArchitectureEnvironmentsQuery,
+  useGetDistributionEnvironmentsQuery,
 } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -35,7 +34,6 @@ import Gcp from './Gcp';
 import TargetEnvironmentOption from './TargetEnvironmentOption';
 
 const TEXT_WRAP_WIDTH = '54rem';
-const EMPTY_ENVIRONMENTS: string[] = [];
 
 const createLabelWithTooltip = (
   prefix: string,
@@ -69,50 +67,24 @@ const TargetEnvironment = () => {
     selectedImageTypes: environments,
   });
 
-  const {
-    isError: isArchError,
-    isFetching: isArchFetching,
-    environments: archEnvironments,
-  } = useGetArchitecturesQuery(
-    {
-      distribution,
-    },
-    {
-      skip: isImageMode,
-      selectFromResult: ({ data, isFetching, isError }) => ({
-        isError,
-        isFetching,
-        environments:
-          data?.find((elem) => elem.arch === arch)?.image_types ??
-          // this is defined as a const for referential stability
-          EMPTY_ENVIRONMENTS,
-      }),
-    },
+  const archResult = useGetArchitectureEnvironmentsQuery(
+    { distribution: distribution as Distributions, arch },
+    { skip: isImageMode },
   );
 
-  const {
-    data: bootcDistributionsRaw,
-    isError: isBootcError,
-    isFetching: isBootcFetching,
-  } = useGetDistributionsQuery(
-    { kind: 'bootc', arch, distro: distribution },
+  const distroResult = useGetDistributionEnvironmentsQuery(
+    { arch, distro: distribution },
     { skip: !isImageMode },
   );
 
-  const bootcDistributions = bootcDistributionsRaw as
-    | BootcDistributionItem[]
-    | undefined;
+  const { data, isFetching, isError } = isImageMode ? distroResult : archResult;
 
-  const isFetching = isArchFetching || isBootcFetching;
-  const isError = isArchError || isBootcError;
-
-  const supportedEnvironments = useMemo(() => {
-    if (!isImageMode) return archEnvironments;
-
-    return [
-      ...new Set(bootcDistributions?.map((d) => d.type) ?? EMPTY_ENVIRONMENTS),
-    ];
-  }, [isImageMode, bootcDistributions, archEnvironments]);
+  const {
+    publicClouds = [],
+    privateClouds = [],
+    miscFormats = [],
+    hasEnvironments = false,
+  } = data ?? {};
 
   const dispatch = useAppDispatch();
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
@@ -141,7 +113,7 @@ const TargetEnvironment = () => {
     if (!isImageMode || !environments.includes('bootable-container-iso')) {
       return;
     }
-    const entry = bootcDistributions?.find(
+    const entry = distroResult.data?.distributions.find(
       (d) => d.type === 'bootable-container-iso' && d.distro === distribution,
     );
     const refs = entry?.iso_payload_references;
@@ -155,7 +127,7 @@ const TargetEnvironment = () => {
   }, [
     isImageMode,
     environments,
-    bootcDistributions,
+    distroResult.data,
     distribution,
     isoPayloadReference,
     dispatch,
@@ -166,9 +138,6 @@ const TargetEnvironment = () => {
 
   const isOtherEnvironmentSelected =
     environments.length >= 1 && !environments.includes('network-installer');
-
-  const { privateClouds, publicClouds, miscFormats } =
-    useTargetEnvironmentCategories(supportedEnvironments);
 
   if (isFetching) {
     return (
@@ -193,7 +162,7 @@ const TargetEnvironment = () => {
     );
   }
 
-  if (supportedEnvironments.length === 0) {
+  if (!hasEnvironments) {
     return (
       <FormGroup
         isRequired={true}
