@@ -6,6 +6,7 @@ import { fsinfo } from 'cockpit/fsinfo';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import {
+  byCreatedAtDesc,
   getBlueprintsPath,
   readComposes,
   safeReadJsonFile,
@@ -103,6 +104,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
       for (const entry of entries) {
         composes = composes.concat(await readComposes(entry[0]));
       }
+      composes.sort(byCreatedAtDesc);
       return {
         meta: {
           count: composes.length,

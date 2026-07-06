@@ -7,6 +7,7 @@ import type {
   ComposesResponseItem,
 } from '@/store/api/backend/hosted';
 
+import { byCreatedAtDesc } from './byCreatedAtDesc';
 import { getBlueprintsPath } from './getBlueprintsPath';
 import { safeReadJsonFile } from './safeReadJsonFile';
 
@@ -44,5 +45,7 @@ export const readComposes = async (
       },
     ];
   }
+  composes.sort(byCreatedAtDesc);
+
   return composes;
 };

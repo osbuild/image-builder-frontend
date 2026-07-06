@@ -32,7 +32,7 @@ describe('readComposes', () => {
     vi.mocked(getBlueprintsPath).mockResolvedValue(blueprintsDir);
   });
 
-  it('returns all composes when all files are readable', async () => {
+  it('returns all composes sorted by most recent first', async () => {
     vi.mocked(fsinfo).mockResolvedValue({
       entries: {
         [`${bpID}.json`]: { mtime: 1000 },
@@ -49,20 +49,20 @@ describe('readComposes', () => {
 
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
-      id: 'compose-1',
-      request: mockRequest('rhel-9'),
-      created_at: new Date(2000 * 1000).toString(),
-      blueprint_id: bpID,
-    });
-    expect(result[1]).toEqual({
       id: 'compose-2',
       request: mockRequest('centos-9'),
       created_at: new Date(3000 * 1000).toString(),
       blueprint_id: bpID,
     });
+    expect(result[1]).toEqual({
+      id: 'compose-1',
+      request: mockRequest('rhel-9'),
+      created_at: new Date(2000 * 1000).toString(),
+      blueprint_id: bpID,
+    });
   });
 
-  it('skips unreadable files and returns the rest', async () => {
+  it('skips unreadable files and returns the rest sorted', async () => {
     vi.mocked(fsinfo).mockResolvedValue({
       entries: {
         [`${bpID}.json`]: { mtime: 1000 },
@@ -81,15 +81,15 @@ describe('readComposes', () => {
 
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
-      id: 'compose-1',
-      request: mockRequest('rhel-9'),
-      created_at: new Date(2000 * 1000).toString(),
-      blueprint_id: bpID,
-    });
-    expect(result[1]).toEqual({
       id: 'compose-3',
       request: mockRequest('centos-9'),
       created_at: new Date(4000 * 1000).toString(),
+      blueprint_id: bpID,
+    });
+    expect(result[1]).toEqual({
+      id: 'compose-1',
+      request: mockRequest('rhel-9'),
+      created_at: new Date(2000 * 1000).toString(),
       blueprint_id: bpID,
     });
   });
