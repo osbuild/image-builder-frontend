@@ -153,6 +153,7 @@ const ImageSourceSelect = () => {
           isDisabled
           style={
             {
+              minWidth: '20rem',
               maxWidth: '100%',
             } as React.CSSProperties
           }
@@ -169,6 +170,7 @@ const ImageSourceSelect = () => {
         isExpanded={isOpen}
         style={
           {
+            minWidth: '20rem',
             maxWidth: '100%',
           } as React.CSSProperties
         }
