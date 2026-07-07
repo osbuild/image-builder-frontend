@@ -218,7 +218,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await fillInImageOutput(frame);
     await frame.getByRole('textbox', { name: 'Blueprint name' }).fill('tmp');
     await frame.getByRole('button', { name: 'Base settings' }).click();
-    await frame.getByRole('button', { name: 'View details' }).nth(2).click();
+    await frame.getByRole('button', { name: 'View details' }).nth(1).click();
     await expect(
       frame.getByText('Red Hat Enterprise Linux 9 CIS'),
     ).toBeVisible();
