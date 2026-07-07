@@ -131,14 +131,14 @@ export const mockBootcDistributionsMultipleTypes: BootcDistributionItem[] = [
     name: 'Red Hat Enterprise Linux (RHEL) 10',
     type: 'guest-image',
     arch: 'x86_64',
-    reference: 'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+    reference: 'registry.redhat.io/rhel10/rhel-bootc-kvm:10.3',
   },
   {
     distro: 'rhel-10',
     name: 'Red Hat Enterprise Linux (RHEL) 10',
     type: 'aws',
     arch: 'x86_64',
-    reference: 'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+    reference: 'registry.redhat.io/rhel10/rhel-bootc-aws:10.3',
   },
 ];
 
