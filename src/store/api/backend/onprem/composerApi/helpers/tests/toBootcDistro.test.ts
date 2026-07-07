@@ -55,10 +55,34 @@ describe('toBootcDistro', () => {
     expect(result.arch).toBe('arm64');
   });
 
-  it('always sets type to guest-image', () => {
+  it('defaults to guest-image when no image-builder.image.type label', () => {
     const result = toBootcDistro(makeImage());
 
     expect(result.type).toBe('guest-image');
+  });
+
+  it('normalizes qcow2 to guest-image', () => {
+    const result = toBootcDistro(
+      makeImage({ 'image-builder.image.type': 'qcow2' }),
+    );
+
+    expect(result.type).toBe('guest-image');
+  });
+
+  it('normalizes ami to aws', () => {
+    const result = toBootcDistro(
+      makeImage({ 'image-builder.image.type': 'ami' }),
+    );
+
+    expect(result.type).toBe('aws');
+  });
+
+  it('passes through unrecognized image types as-is', () => {
+    const result = toBootcDistro(
+      makeImage({ 'image-builder.image.type': 'vsphere' }),
+    );
+
+    expect(result.type).toBe('vsphere');
   });
 
   it('produces fedora distro for a Fedora image', () => {
