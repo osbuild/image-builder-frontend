@@ -289,7 +289,7 @@ const NewImagesTable = () => {
         {itemCount === 0 && (
           <Tbody>
             <Tr>
-              <Td colSpan={12}>
+              <Td colSpan={9}>
                 <ImagesEmptyState
                   selectedBlueprint={effectiveBlueprintId || ''}
                 />
