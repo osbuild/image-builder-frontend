@@ -11,7 +11,10 @@ import {
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { VolumeGroup } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addDiskPartition,
   addLogicalVolumeToVolumeGroup,
@@ -28,10 +31,6 @@ import {
 import FileSystemTable from './FileSystemTable';
 import MinimumSize from './MinimumSize';
 import SizeUnit from './SizeUnit';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 type VolumeGroupType =
   | Extract<DiskPartition, VolumeGroup & DiskPartitionBase>

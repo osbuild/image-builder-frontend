@@ -4,13 +4,12 @@ import { Button, TextInput } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
+import { useAppDispatch } from '@/store/hooks';
 import { FilesystemPartition, removePartition } from '@/store/slices/wizard';
 
 import MinimumSize from './MinimumSize';
 import Mountpoint from './Mountpoint';
 import SizeUnit from './SizeUnit';
-
-import { useAppDispatch } from '../../../../../store/hooks';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 

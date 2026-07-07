@@ -4,6 +4,7 @@ import { Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addPartition,
   getNextAvailableMountpoint,
@@ -14,8 +15,6 @@ import {
 
 import FileSystemTable from './FileSystemTable';
 import PartitioningMode from './PartitioningMode';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const FileSystemConfiguration = () => {
   const blueprintMode = useAppSelector(selectBlueprintMode);

@@ -8,6 +8,7 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changePartitionMountpoint,
   changePartitionType,
@@ -20,8 +21,6 @@ import {
   selectFilesystemPartitions,
   selectIsImageMode,
 } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
