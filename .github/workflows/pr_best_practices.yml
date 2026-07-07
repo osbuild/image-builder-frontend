@@ -20,4 +20,4 @@ jobs:
           token: ${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}
           jira_token: ${{ secrets.IMAGE_BUILDER_BOT_JIRA_API_TOKEN }}
           jira_email: ${{ secrets.IMAGE_BUILDER_BOT_JIRA_EMAIL }}
-          new_issues_jira_epic: HMS-10501
+          new_issues_jira_epic: HMS-10978
