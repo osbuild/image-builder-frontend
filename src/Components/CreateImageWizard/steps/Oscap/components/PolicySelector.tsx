@@ -205,6 +205,14 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
       ];
     }
 
+    if (policies.data.length === 0) {
+      return [
+        <SelectOption key='no-policies' value='no-policies' isDisabled>
+          No compliance policies found
+        </SelectOption>,
+      ];
+    }
+
     const res = [];
     for (const p of policies.data) {
       // there is a mismatch between API type and real data
