@@ -47,6 +47,7 @@ const injectedRtkApi = api.injectEndpoints({
           content_type: queryArg.contentType,
           extended_release: queryArg.extendedRelease,
           extended_release_version: queryArg.extendedReleaseVersion,
+          feature_name: queryArg.featureName,
         },
       }),
     }),
@@ -182,6 +183,8 @@ export type ListRepositoriesApiArg = {
   extendedRelease?: string;
   /** A comma separated list of extended release versions to filter on (e.g. 9.4,9.6). Use 'none' to filter repositories without extended release versions. */
   extendedReleaseVersion?: string;
+  /** A comma separated list of feature names to filter on (e.g. feature1,feature2) */
+  featureName?: string;
 };
 export type CreateRepositoryApiResponse =
   /** status 201 Created */ ApiRepositoryResponseRead;
@@ -360,6 +363,8 @@ export type ApiSnapshotResponse = {
   created_at?: string | undefined;
   /** Release version of the repository (BaseOS) */
   detected_os_version?: string | undefined;
+  /** Whether this snapshot is published for cross-org partner visibility */
+  published?: boolean | undefined;
   /** Count of each content type */
   removed_counts?:
     | {
@@ -403,6 +408,8 @@ export type ApiTaskInfoResponse = {
   uuid?: string | undefined;
 };
 export type ApiRepositoryResponse = {
+  /** Number of builds last read in the repository, not applicable to all repositories */
+  build_count?: number | undefined;
   /** Content Type (rpm) of the repository */
   content_type?: string | undefined;
   /** Architecture to restrict client usage to */
@@ -463,6 +470,8 @@ export type ApiRepositoryResponse = {
 export type ApiRepositoryResponseRead = {
   /** Account ID of the owner */
   account_id?: string | undefined;
+  /** Number of builds last read in the repository, not applicable to all repositories */
+  build_count?: number | undefined;
   /** Content Type (rpm) of the repository */
   content_type?: string | undefined;
   /** Architecture to restrict client usage to */
@@ -515,6 +524,12 @@ export type ApiRepositoryResponseRead = {
   origin?: string | undefined;
   /** Number of packages last read in the repository */
   package_count?: number | undefined;
+  /** Whether this upload repository is marked as a partner repository */
+  partner?: boolean | undefined;
+  /** Published distribution URL from Pulp */
+  published_distribution_url?: string | undefined;
+  /** Security level of the repository (e.g. validated, remediated) */
+  security_level?: string | undefined;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean | undefined;
   /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
@@ -597,6 +612,8 @@ export type ApiRepositoryRequestRead = {
   url?: string | undefined;
 };
 export type ApiRepositoryImportResponse = {
+  /** Number of builds last read in the repository, not applicable to all repositories */
+  build_count?: number | undefined;
   /** Content Type (rpm) of the repository */
   content_type?: string | undefined;
   /** Architecture to restrict client usage to */
@@ -663,6 +680,8 @@ export type ApiRepositoryImportResponse = {
 export type ApiRepositoryImportResponseRead = {
   /** Account ID of the owner */
   account_id?: string | undefined;
+  /** Number of builds last read in the repository, not applicable to all repositories */
+  build_count?: number | undefined;
   /** Content Type (rpm) of the repository */
   content_type?: string | undefined;
   /** Architecture to restrict client usage to */
@@ -715,6 +734,12 @@ export type ApiRepositoryImportResponseRead = {
   origin?: string | undefined;
   /** Number of packages last read in the repository */
   package_count?: number | undefined;
+  /** Whether this upload repository is marked as a partner repository */
+  partner?: boolean | undefined;
+  /** Published distribution URL from Pulp */
+  published_distribution_url?: string | undefined;
+  /** Security level of the repository (e.g. validated, remediated) */
+  security_level?: string | undefined;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean | undefined;
   /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
