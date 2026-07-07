@@ -227,7 +227,11 @@ const ImageSourceSelect = () => {
             <SelectList>
               {uniqueDistributions && uniqueDistributions.length > 0 ? (
                 uniqueDistributions.map((item) => (
-                  <SelectOption key={item.reference} value={item.reference}>
+                  <SelectOption
+                    key={item.reference}
+                    value={item.reference}
+                    description={isOnPremise ? item.reference : undefined}
+                  >
                     {item.name}
                   </SelectOption>
                 ))
