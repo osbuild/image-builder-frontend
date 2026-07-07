@@ -196,14 +196,15 @@ const OscapContent = () => {
             </Content>
           )}
         </Content>
-        {registrationType.startsWith('register-now') && (
-          <Alert
-            title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
+        {registrationType.startsWith('register-now') &&
+          complianceType !== 'none' && (
+            <Alert
+              title='Systems with a compliance policy or an OpenSCAP profile added will not be registered to Red Hat
               Lightspeed by default.'
-            variant='info'
-            isInline
-          />
-        )}
+              variant='info'
+              isInline
+            />
+          )}
         {!restrictions.openscap.shouldHide &&
           (isOnPremise && isLoadingOnPrem ? (
             <OscapOnPremSpinner />
