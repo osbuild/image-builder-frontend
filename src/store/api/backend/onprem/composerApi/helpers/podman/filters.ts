@@ -6,6 +6,17 @@ import {
 
 import { inferDistro } from './inferDistro';
 
+// The backend (osbuild-composer) uses different names for some image
+// types than the frontend. Normalize at the boundary so downstream
+// code only deals with frontend types.
+const backendToFrontendType: Record<string, string> = {
+  qcow2: 'guest-image',
+  ami: 'aws',
+};
+
+const normalizeImageType = (type: string): string =>
+  backendToFrontendType[type] ?? type;
+
 export const filterBootcImages = (
   image: PodmanImageInfo,
 ): image is ValidatedPodmanImage => {
@@ -36,11 +47,14 @@ export const toBootcDistro = (
 ): BootcDistributionItem => {
   const { distro, name } = inferDistro(image);
 
+  const rawType = image.Labels['image-builder.image.type'];
+  const imageType = rawType ? normalizeImageType(rawType) : 'guest-image';
+
   return {
     arch: image.Architecture,
     distro,
     reference: image.RepoTags[0],
-    name,
-    type: 'guest-image',
+    name: name,
+    type: imageType,
   };
 };
