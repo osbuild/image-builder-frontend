@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { useAppDispatch } from '@/store/hooks';
 import {
   changePartitionMinSize,
   changePartitionUnit,
@@ -8,10 +11,6 @@ import {
   PartitioningCustomization,
   VolumeGroupWithExtendedLV,
 } from '@/store/slices/wizard';
-
-import { useAppDispatch } from '../../../../../store/hooks';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 type MinimumSizePropTypes = {
   partition:

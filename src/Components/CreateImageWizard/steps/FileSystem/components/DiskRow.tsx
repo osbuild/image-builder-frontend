@@ -4,6 +4,7 @@ import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   DiskPartition,
   removeDiskPartition,
@@ -15,8 +16,6 @@ import Mountpoint from './Mountpoint';
 import PartitionName from './PartitionName';
 import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 type DiskRowPropTypes = {
   partition: DiskPartition;

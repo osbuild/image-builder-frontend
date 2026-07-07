@@ -13,14 +13,13 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeFscMode,
   FilesystemMode,
   selectComplianceProfileID,
   selectFscMode,
 } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 
 const fscModeOptions = [
   {

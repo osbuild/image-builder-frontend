@@ -2,6 +2,9 @@ import React from 'react';
 
 import { Tooltip } from '@patternfly/react-core';
 
+import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changePartitionMountpoint,
   FilesystemPartition,
@@ -10,10 +13,6 @@ import {
   PlainPartitionWithBase,
   selectFilesystemPartitions,
 } from '@/store/slices/wizard';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 type MountpointProps = {
   partition:

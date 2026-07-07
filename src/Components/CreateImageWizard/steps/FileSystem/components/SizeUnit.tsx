@@ -8,6 +8,7 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
+import { useAppDispatch } from '@/store/hooks';
 import {
   changePartitionMinSize,
   changePartitionUnit,
@@ -17,8 +18,6 @@ import {
   Units,
   VolumeGroupWithExtendedLV,
 } from '@/store/slices/wizard';
-
-import { useAppDispatch } from '../../../../../store/hooks';
 
 const units = ['GiB', 'MiB'];
 

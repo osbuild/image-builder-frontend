@@ -15,6 +15,9 @@ import {
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addDiskPartition,
   changeDiskMinsize,
@@ -30,10 +33,6 @@ import {
 
 import FileSystemTable from './FileSystemTable';
 import VolumeGroups from './VolumeGroups';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 const units = ['GiB', 'MiB'];
 

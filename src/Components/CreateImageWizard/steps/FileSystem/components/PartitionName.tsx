@@ -1,16 +1,15 @@
 import React from 'react';
 
+import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { VolumeGroup } from '@/store/api/backend';
+import { useAppDispatch } from '@/store/hooks';
 import {
   changePartitionName,
   DiskPartitionBase,
   LogicalVolumeWithBase,
   PartitioningCustomization,
 } from '@/store/slices/wizard';
-
-import { useAppDispatch } from '../../../../../store/hooks';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 type PartitionNamePropTypes = {
   partition: (VolumeGroup & DiskPartitionBase) | LogicalVolumeWithBase;
