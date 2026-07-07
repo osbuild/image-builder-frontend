@@ -86,7 +86,7 @@ export const blueprintEndpoints = (builder: OnPremBuilder) => ({
             ...parsed,
             id: filename as string,
             version: 1,
-            last_modified_at: Date.now().toString(),
+            last_modified_at: new Date().toISOString(),
           };
         }),
       );
