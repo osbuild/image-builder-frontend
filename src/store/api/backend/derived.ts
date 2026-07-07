@@ -91,9 +91,9 @@ const derivedApi = backendApi.injectEndpoints({
 
     getDistributionEnvironments: builder.query<
       DistributionEnvironmentsResult,
-      { arch: string; distro?: string }
+      { arch: string; distro?: string; imageSource?: string }
     >({
-      queryFn: async (queryArgs, api) => {
+      queryFn: async ({ imageSource, ...queryArgs }, api) => {
         const result = await api.dispatch(
           backendApi.endpoints.getDistributions.initiate(
             { kind: 'bootc', ...queryArgs },
@@ -114,7 +114,18 @@ const derivedApi = backendApi.injectEndpoints({
         }
 
         const distributions = result.data.filter(isBootcDistribution);
-        const imageTypes = [...new Set(distributions.map((d) => d.type))];
+
+        // When an exact image reference is provided, narrow the
+        // available target types to only those matching that image.
+        // This is used on-prem where each container image supports
+        // a single output type via its image-builder.image.type label.
+        const selectedType = imageSource
+          ? distributions.find((d) => d.reference === imageSource)?.type
+          : undefined;
+
+        const imageTypes = selectedType
+          ? [selectedType]
+          : [...new Set(distributions.map((d) => d.type))];
 
         return {
           data: {

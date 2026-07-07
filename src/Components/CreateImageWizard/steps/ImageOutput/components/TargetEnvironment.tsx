@@ -27,6 +27,7 @@ import {
   selectArchitecture,
   selectDistribution,
   selectForceShowErrors,
+  selectImageSourceFilter,
   selectImageTypes,
   selectIsImageMode,
   selectIsOnlyNetworkInstallerSelected,
@@ -85,8 +86,10 @@ const TargetEnvironment = () => {
     { skip: isImageMode },
   );
 
+  const imageSourceFilter = useAppSelector(selectImageSourceFilter);
+
   const distroResult = useGetDistributionEnvironmentsQuery(
-    { arch, distro: distribution },
+    { arch, distro: distribution, ...imageSourceFilter },
     { skip: !isImageMode },
   );
 
@@ -288,87 +291,89 @@ const TargetEnvironment = () => {
         </FormGroup>
       )}
 
-      <FormGroup
-        label={
-          privateClouds.length > 0 || publicClouds.length > 0
-            ? 'Miscellaneous formats'
-            : undefined
-        }
-        className='pf-v6-u-mt-md'
-        role='group'
-        aria-label='Miscellaneous formats'
-        fieldId='misc-formats-group'
-      >
-        {miscFormats.includes('guest-image') && (
-          <TargetEnvironmentOption
-            environment='guest-image'
-            label={createLabelWithTooltip(
-              'Virtualization',
-              'Guest image (.qcow2)',
-              'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
-            )}
-            ariaLabel='Virtualization guest image'
-            isDisabled={isOnlyNetworkInstallerSelected}
-          />
-        )}
-        {miscFormats.includes('image-installer') && (
-          <TargetEnvironmentOption
-            environment='image-installer'
-            label={createLabelWithTooltip(
-              'Bare metal',
-              'Installer (.iso)',
-              'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
-            )}
-            ariaLabel='Bare metal installer'
-            isDisabled={isOnlyNetworkInstallerSelected}
-          />
-        )}
-        {miscFormats.includes('bootable-container-iso') && isImageMode && (
-          <TargetEnvironmentOption
-            environment='bootable-container-iso'
-            label='Container installer (.iso)'
-            ariaLabel='Container installer'
-          />
-        )}
-        {miscFormats.includes('network-installer') && (
-          <TargetEnvironmentOption
-            environment='network-installer'
-            label={createLabelWithTooltip(
-              'Network',
-              'Installer (.iso)',
-              isOtherEnvironmentSelected
-                ? 'Network installer cannot be combined with other image types'
-                : 'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
-            )}
-            ariaLabel='Network installer'
-            isDisabled={isOtherEnvironmentSelected}
-          />
-        )}
-        {miscFormats.includes('pxe-tar-xz') && (
-          <TargetEnvironmentOption
-            environment='pxe-tar-xz'
-            label={createLabelWithTooltip(
-              'Network',
-              'PXE boot (.tar.xz)',
-              'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
-            )}
-            ariaLabel='PXE boot image'
-            isDisabled={isOnlyNetworkInstallerSelected}
-          />
-        )}
-        {miscFormats.includes('wsl') && (
-          <TargetEnvironmentOption
-            environment='wsl'
-            label={createLabelWithTooltip(
-              'WSL',
-              'Windows Subsystem for Linux (.wsl)',
-              "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
-            )}
-            ariaLabel='Windows Subsystem for Linux'
-            isDisabled={isOnlyNetworkInstallerSelected}
-          />
-        )}
-      </FormGroup>
+      {miscFormats.length > 0 && (
+        <FormGroup
+          label={
+            privateClouds.length > 0 || publicClouds.length > 0
+              ? 'Miscellaneous formats'
+              : undefined
+          }
+          className='pf-v6-u-mt-md'
+          role='group'
+          aria-label='Miscellaneous formats'
+          fieldId='misc-formats-group'
+        >
+          {miscFormats.includes('guest-image') && (
+            <TargetEnvironmentOption
+              environment='guest-image'
+              label={createLabelWithTooltip(
+                'Virtualization',
+                'Guest image (.qcow2)',
+                'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
+              )}
+              ariaLabel='Virtualization guest image'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
+          {miscFormats.includes('image-installer') && (
+            <TargetEnvironmentOption
+              environment='image-installer'
+              label={createLabelWithTooltip(
+                'Bare metal',
+                'Installer (.iso)',
+                'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
+              )}
+              ariaLabel='Bare metal installer'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
+          {miscFormats.includes('bootable-container-iso') && isImageMode && (
+            <TargetEnvironmentOption
+              environment='bootable-container-iso'
+              label='Container installer (.iso)'
+              ariaLabel='Container installer'
+            />
+          )}
+          {miscFormats.includes('network-installer') && (
+            <TargetEnvironmentOption
+              environment='network-installer'
+              label={createLabelWithTooltip(
+                'Network',
+                'Installer (.iso)',
+                isOtherEnvironmentSelected
+                  ? 'Network installer cannot be combined with other image types'
+                  : 'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
+              )}
+              ariaLabel='Network installer'
+              isDisabled={isOtherEnvironmentSelected}
+            />
+          )}
+          {miscFormats.includes('pxe-tar-xz') && (
+            <TargetEnvironmentOption
+              environment='pxe-tar-xz'
+              label={createLabelWithTooltip(
+                'Network',
+                'PXE boot (.tar.xz)',
+                'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
+              )}
+              ariaLabel='PXE boot image'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
+          {miscFormats.includes('wsl') && (
+            <TargetEnvironmentOption
+              environment='wsl'
+              label={createLabelWithTooltip(
+                'WSL',
+                'Windows Subsystem for Linux (.wsl)',
+                "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
+              )}
+              ariaLabel='Windows Subsystem for Linux'
+              isDisabled={isOnlyNetworkInstallerSelected}
+            />
+          )}
+        </FormGroup>
+      )}
 
       {isOnlyNetworkInstallerSelected && (
         <Alert
