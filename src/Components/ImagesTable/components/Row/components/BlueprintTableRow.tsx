@@ -7,7 +7,6 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   Label,
-  Spinner,
 } from '@patternfly/react-core';
 import { RhUiResourcesEmptyIcon } from '@patternfly/react-icons';
 import {
@@ -19,14 +18,11 @@ import {
 } from '@patternfly/react-table';
 
 import { BlueprintItem } from '@/store/api/backend';
-import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '@/Utilities/time';
 
-import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../../../../Hooks';
-import { useAppSelector } from '../../../../../store/hooks';
 import Status from '../../Status/components/Status';
 
 type BlueprintTableRowProps = {
@@ -42,23 +38,14 @@ const BlueprintTableRow = ({
   onSelect,
   isSelected,
 }: BlueprintTableRowProps) => {
-  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const { isLoading } = useDeleteBlueprintMutation({
-    fixedCacheKey: 'delete-blueprint',
-  });
 
   const handleToggle = () => setIsExpanded(!isExpanded);
   const handleSelect = () => onSelect(blueprint.id);
 
   return (
     <Tbody key={blueprint.id} isExpanded={isExpanded}>
-      <Tr
-        className='no-bottom-border'
-        isClickable
-        isRowSelected={blueprint.id === selectedBlueprintId}
-      >
+      <Tr className='no-bottom-border' isClickable isRowSelected={isSelected}>
         <Td
           expand={{
             rowIndex: rowIndex,
@@ -74,9 +61,6 @@ const BlueprintTableRow = ({
           }}
         />
         <Td dataLabel='Name'>
-          {isLoading && blueprint.id === selectedBlueprintId && (
-            <Spinner size='md' />
-          )}
           {blueprint.name}{' '}
           <Label isCompact color='blue'>
             Blueprint
