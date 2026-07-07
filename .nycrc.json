@@ -5,6 +5,12 @@
     "src/**/tests/**",
     "src/**/mocks/**",
     "**/*.scss",
-    "**/*.test.*"
+    "**/*.test.*",
+    "**/*.d.ts",
+    "**/imageBuilderApi.ts",
+    "**/complianceApi.ts",
+    "**/rhsmApi.ts",
+    "**/contentSourcesApi.ts",
+    "**/distributionDetailsApi.ts"
   ]
 }
