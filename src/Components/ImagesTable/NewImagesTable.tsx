@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Alert,
@@ -143,6 +143,58 @@ const NewImagesTable = () => {
 
   const blueprints = blueprintsData?.data || [];
 
+  let composes = data?.data;
+  if (effectiveBlueprintId && blueprintVersionFilter === 'latest') {
+    composes = composes?.filter((compose) => {
+      return compose.blueprint_version === selectedBlueprintVersion;
+    });
+  }
+
+  // TODO: Add server-side search parameter to the composes API endpoint
+  // This filters composes on the client-side because the API doesn't
+  // support searching through composes by their name
+  // We're limited to filtering only within the fetched 100 composes
+  if (blueprintSearchInput && composes) {
+    const searchLower = blueprintSearchInput.toLowerCase();
+    composes = composes.filter((compose) => {
+      const imageName = compose.image_name || compose.id;
+      return imageName.toLowerCase().includes(searchLower);
+    });
+  }
+
+  const { paginatedItems, itemCount } = useMemo(() => {
+    const blueprintIdsWithComposes = new Set(
+      composes?.map((compose) => compose.blueprint_id).filter(Boolean) ?? [],
+    );
+    const blueprintsWithoutComposes = blueprints.filter(
+      (blueprint) => !blueprintIdsWithComposes.has(blueprint.id),
+    );
+
+    const combinedItems = [
+      ...blueprintsWithoutComposes.map((blueprint) => ({
+        type: 'blueprint' as const,
+        blueprint,
+        date: blueprint.last_modified_at,
+      })),
+      ...(composes?.map((compose) => ({
+        type: 'compose' as const,
+        compose,
+        date: compose.created_at,
+      })) ?? []),
+    ];
+
+    combinedItems.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+
+    const totalItems = combinedItems.length;
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedItems = combinedItems.slice(startIndex, endIndex);
+
+    return { paginatedItems, itemCount: totalItems };
+  }, [blueprints, composes, page, perPage]);
+
   useEffect(() => {
     if (!isOnPremise) {
       const orgId = userData?.identity.internal?.org_id;
@@ -202,56 +254,6 @@ const NewImagesTable = () => {
       </Bullseye>
     );
   }
-
-  let composes = data?.data;
-  if (effectiveBlueprintId && blueprintVersionFilter === 'latest') {
-    composes = composes?.filter((compose) => {
-      return compose.blueprint_version === selectedBlueprintVersion;
-    });
-  }
-
-  // TODO: Add server-side search parameter to the composes API endpoint
-  // This filters composes on the client-side because the API doesn't
-  // support searching through composes by their name
-  // We're limited to filtering only within the fetched 100 composes
-  if (blueprintSearchInput && composes) {
-    const searchLower = blueprintSearchInput.toLowerCase();
-    composes = composes.filter((compose) => {
-      const imageName = compose.image_name || compose.id;
-      return imageName.toLowerCase().includes(searchLower);
-    });
-  }
-
-  const blueprintIdsWithComposes = new Set(
-    composes?.map((compose) => compose.blueprint_id).filter(Boolean) ?? [],
-  );
-  const blueprintsWithoutComposes = blueprints.filter(
-    (blueprint) => !blueprintIdsWithComposes.has(blueprint.id),
-  );
-
-  const combinedItems = [
-    ...blueprintsWithoutComposes.map((blueprint) => ({
-      type: 'blueprint' as const,
-      blueprint,
-      date: blueprint.last_modified_at,
-    })),
-    ...(composes?.map((compose) => ({
-      type: 'compose' as const,
-      compose,
-      date: compose.created_at,
-    })) ?? []),
-  ];
-
-  combinedItems.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
-
-  const totalItems = combinedItems.length;
-  const startIndex = (page - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const paginatedItems = combinedItems.slice(startIndex, endIndex);
-
-  const itemCount = totalItems;
 
   return (
     <PageSection>
