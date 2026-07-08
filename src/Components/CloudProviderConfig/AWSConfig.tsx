@@ -13,6 +13,7 @@ import {
 import { HelpIcon } from '@patternfly/react-icons';
 
 import { AWSWorkerConfig, WorkerConfigResponse } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAWSBucketName,
   changeAWSCredsPath,
@@ -23,7 +24,6 @@ import {
 
 import { isAwsBucketValid, isAwsCredsPathValid } from './validators';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 
 type FormGroupProps<T> = {
