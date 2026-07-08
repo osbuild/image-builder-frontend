@@ -4,11 +4,10 @@ import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { AMPLITUDE_MODULE_NAME } from '@/constants';
+import { useGetDocumentationUrl, useGetUser } from '@/Hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { AMPLITUDE_MODULE_NAME } from '../../constants';
-import { useGetDocumentationUrl, useGetUser } from '../../Hooks';
-import { useAppSelector } from '../../store/hooks';
 
 const DocumentationButton = () => {
   const { analytics, auth } = useChrome();
