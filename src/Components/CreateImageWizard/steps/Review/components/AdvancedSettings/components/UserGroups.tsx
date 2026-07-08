@@ -8,7 +8,7 @@ import { selectNonEmptyUserGroups } from '@/store/slices/wizard';
 import { FlexColumn, ReviewGroup } from '../../shared';
 import { Hideable } from '../../types';
 
-export const UserGroups = ({ shouldHide }: Hideable) => {
+export const UserGroups = ({ shouldHide }: Partial<Hideable>) => {
   const userGroups = useAppSelector(selectNonEmptyUserGroups);
 
   if (shouldHide || userGroups.length === 0) {
@@ -16,20 +16,22 @@ export const UserGroups = ({ shouldHide }: Hideable) => {
   }
 
   return (
-    <>
-      <ReviewGroup heading='User groups' />
-      <Flex flexWrap={{ default: 'nowrap' }}>
-        <FlexColumn
-          heading='Name'
-          labelKey='user-group-name-review'
-          items={userGroups.map(({ name }) => name)}
-        />
-        <FlexColumn
-          heading='Group ID'
-          labelKey='user-group-gid-review'
-          items={userGroups.map(({ gid }) => gid ?? 'None')}
-        />
-      </Flex>
-    </>
+    <ReviewGroup
+      heading='User groups'
+      description={
+        <Flex>
+          <FlexColumn
+            heading='Name'
+            labelKey='user-group-name-review'
+            items={userGroups.map(({ name }) => name)}
+          />
+          <FlexColumn
+            heading='ID'
+            labelKey='user-group-gid-review'
+            items={userGroups.map(({ gid }) => gid ?? 'None')}
+          />
+        </Flex>
+      }
+    />
   );
 };

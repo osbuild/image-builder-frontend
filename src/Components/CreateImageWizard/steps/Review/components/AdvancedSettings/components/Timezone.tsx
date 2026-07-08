@@ -3,7 +3,7 @@ import React from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { selectNtpServers, selectTimezone } from '@/store/slices';
 
-import { LabelMapper, ReviewGroup } from '../../shared';
+import { LabelMapper, ReviewGroup, ReviewSection } from '../../shared';
 import { Hideable } from '../../types';
 
 export const Timezone = ({ shouldHide }: Hideable) => {
@@ -15,12 +15,8 @@ export const Timezone = ({ shouldHide }: Hideable) => {
   }
 
   return (
-    <>
-      <ReviewGroup
-        heading='Timezone'
-        description={timezone}
-        className={ntpServers && ntpServers.length > 0 ? '' : 'pf-v6-u-mb-md'}
-      />
+    <ReviewSection title='Timezone'>
+      <ReviewGroup heading='Timezone' description={timezone} />
       {ntpServers && ntpServers.length > 0 && (
         <ReviewGroup
           heading='NTP servers'
@@ -31,9 +27,8 @@ export const Timezone = ({ shouldHide }: Hideable) => {
               items={ntpServers}
             />
           }
-          className='pf-v6-u-mb-md'
         />
       )}
-    </>
+    </ReviewSection>
   );
 };

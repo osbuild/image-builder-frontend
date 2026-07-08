@@ -3,7 +3,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { UNIT_GIB } from '@/constants';
 import { RootState } from '@/store';
 
-import { Units } from './types';
+import { Units, VolumeGroupWithExtendedLV } from './types';
 import { getConversionFactor } from './utilities';
 
 export const selectFscMode = (state: RootState) => {
@@ -33,6 +33,17 @@ export const selectFilesystemPartitions = (state: RootState) => {
 export const selectPartitioningMode = (state: RootState) => {
   return state.wizard.filesystem.partitioningMode;
 };
+
+export const selectPlainPartitions = createSelector(
+  [selectDiskPartitions],
+  (partitions) => partitions.filter((p) => p.type !== 'lvm'),
+);
+
+export const selectVolumeGroups = createSelector(
+  [selectDiskPartitions],
+  (partitions) =>
+    partitions.filter((p) => p.type === 'lvm') as VolumeGroupWithExtendedLV[],
+);
 
 export const selectBasicPartitionCount = createSelector(
   [selectFilesystemPartitions],

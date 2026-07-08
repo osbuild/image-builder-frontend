@@ -3,7 +3,7 @@ import React from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { selectHostname } from '@/store/slices';
 
-import { ReviewGroup } from '../../shared';
+import { ReviewGroup, ReviewSection } from '../../shared';
 import { Hideable } from '../../types';
 
 export const Hostname = ({ shouldHide }: Hideable) => {
@@ -14,10 +14,8 @@ export const Hostname = ({ shouldHide }: Hideable) => {
   }
 
   return (
-    <ReviewGroup
-      heading='Hostname'
-      description={hostname}
-      className='pf-v6-u-mb-md'
-    />
+    <ReviewSection title='Hostname'>
+      <ReviewGroup heading='Name' description={hostname} />
+    </ReviewSection>
   );
 };

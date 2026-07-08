@@ -77,6 +77,16 @@ export const selectLocaleLangpackCandidates = createSelector(
   },
 );
 
+export const selectHasUsers = createSelector(
+  [selectNonEmptyUsers],
+  (users) => users.length > 0,
+);
+
+export const selectHasUserGroups = createSelector(
+  [selectNonEmptyUserGroups],
+  (groups) => groups.length > 0,
+);
+
 export const selectFirewallEnabled = createSelector(
   [selectFirewall],
   (firewall) => {

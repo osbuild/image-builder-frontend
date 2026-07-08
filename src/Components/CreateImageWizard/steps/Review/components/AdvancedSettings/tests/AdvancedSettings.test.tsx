@@ -34,7 +34,7 @@ describe('AdvancedSettingsOverview', () => {
 
   describe('Filesystem', () => {
     describe('Automatic mode', () => {
-      test('displays "Automatic" label', () => {
+      test('displays automatic partitioning label', () => {
         renderWithRedux(
           <AdvancedSettingsOverview
             restrictions={createDefaultRestrictions()}
@@ -58,10 +58,10 @@ describe('AdvancedSettingsOverview', () => {
           },
         );
 
-        expect(screen.getByText('Automatic')).toBeInTheDocument();
+        expect(screen.getByText('Automatic partitioning')).toBeInTheDocument();
       });
 
-      test('does not show partition count or min size', () => {
+      test('does not show partitions or min size', () => {
         renderWithRedux(
           <AdvancedSettingsOverview
             restrictions={createDefaultRestrictions()}
@@ -88,11 +88,12 @@ describe('AdvancedSettingsOverview', () => {
         expect(
           screen.queryByText('Image size (minimum)'),
         ).not.toBeInTheDocument();
+        expect(screen.queryByText('Partitions')).not.toBeInTheDocument();
       });
     });
 
     describe('Basic mode', () => {
-      test('displays "Manual" label', () => {
+      test('displays manual partitioning label', () => {
         renderWithRedux(
           <AdvancedSettingsOverview
             restrictions={createDefaultRestrictions()}
@@ -118,10 +119,10 @@ describe('AdvancedSettingsOverview', () => {
           },
         );
 
-        expect(screen.getByText('Manual')).toBeInTheDocument();
+        expect(screen.getByText('Manual partitioning')).toBeInTheDocument();
       });
 
-      test('shows partition count', () => {
+      test('shows partition mount points', () => {
         renderWithRedux(
           <AdvancedSettingsOverview
             restrictions={createDefaultRestrictions()}
@@ -147,7 +148,9 @@ describe('AdvancedSettingsOverview', () => {
           },
         );
 
-        expect(screen.getByText('2')).toBeInTheDocument();
+        expect(screen.getByText('Partitions')).toBeInTheDocument();
+        expect(screen.getByText('/')).toBeInTheDocument();
+        expect(screen.getByText('/home')).toBeInTheDocument();
       });
 
       test('shows min size in GiB', () => {
@@ -182,7 +185,7 @@ describe('AdvancedSettingsOverview', () => {
     });
 
     describe('Advanced mode', () => {
-      test('displays "Manual" label', () => {
+      test('displays advanced disk partitioning label', () => {
         renderWithRedux(
           <AdvancedSettingsOverview
             restrictions={createDefaultRestrictions()}
@@ -206,10 +209,41 @@ describe('AdvancedSettingsOverview', () => {
           },
         );
 
-        expect(screen.getByText('Manual')).toBeInTheDocument();
+        expect(
+          screen.getByText('Advanced disk partitioning'),
+        ).toBeInTheDocument();
       });
 
-      test('shows combined partition and logical volume count', () => {
+      test('shows plain partition details', () => {
+        renderWithRedux(
+          <AdvancedSettingsOverview
+            restrictions={createDefaultRestrictions()}
+          />,
+          {
+            output: {
+              ...initialState.output,
+              imageTypes: ['guest-image'],
+            },
+            filesystem: {
+              mode: 'advanced',
+              disk: {
+                minsize: '',
+                unit: 'GiB',
+                type: 'gpt',
+                partitions: advancedPartitions.singlePlain,
+              },
+              fileSystem: { partitions: [] },
+              partitioningMode: undefined,
+            },
+          },
+        );
+
+        expect(screen.getByText('Partitions')).toBeInTheDocument();
+        expect(screen.getByText('/boot')).toBeInTheDocument();
+        expect(screen.getByText('ext4')).toBeInTheDocument();
+      });
+
+      test('shows volume group and logical volumes', () => {
         renderWithRedux(
           <AdvancedSettingsOverview
             restrictions={createDefaultRestrictions()}
@@ -233,37 +267,11 @@ describe('AdvancedSettingsOverview', () => {
           },
         );
 
-        // 1 partition + 2 logical volumes = 3
-        expect(screen.getByText('3')).toBeInTheDocument();
-      });
-
-      test('shows min size in GiB', () => {
-        renderWithRedux(
-          <AdvancedSettingsOverview
-            restrictions={createDefaultRestrictions()}
-          />,
-          {
-            output: {
-              ...initialState.output,
-              imageTypes: ['guest-image'],
-            },
-            filesystem: {
-              mode: 'advanced',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                type: 'gpt',
-                partitions: advancedPartitions.withLvm,
-              },
-              fileSystem: { partitions: [] },
-              partitioningMode: undefined,
-            },
-          },
-        );
-
-        expect(screen.getByText('Image size (minimum)')).toBeInTheDocument();
-        // 1 (boot) + 10 (root lv) + 5 (home lv) = 16 GiB
-        expect(screen.getByText('16 GiB')).toBeInTheDocument();
+        expect(screen.getByText('Volume group manager')).toBeInTheDocument();
+        expect(screen.getByText('vg0')).toBeInTheDocument();
+        expect(screen.getByText('Logical volumes')).toBeInTheDocument();
+        expect(screen.getByText('root')).toBeInTheDocument();
+        expect(screen.getByText('home')).toBeInTheDocument();
       });
     });
 
@@ -318,7 +326,7 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
-      expect(screen.getByText('Timezone')).toBeInTheDocument();
+      expect(screen.getAllByText('Timezone')).toHaveLength(2);
       expect(screen.getByText('America/New_York')).toBeInTheDocument();
     });
 
@@ -340,7 +348,7 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
-      expect(screen.getByText('Timezone')).toBeInTheDocument();
+      expect(screen.getAllByText('Timezone')).toHaveLength(2);
     });
 
     test('displays NTP servers when configured', () => {
@@ -413,6 +421,28 @@ describe('AdvancedSettingsOverview', () => {
       expect(screen.getByText('us')).toBeInTheDocument();
     });
 
+    test('displays singular Language heading for one language', () => {
+      renderWithRedux(
+        <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
+        {
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
+          system: {
+            ...initialState.system,
+            locale: {
+              languages: ['en_US.UTF-8'],
+              keyboard: '',
+            },
+          },
+        },
+      );
+
+      expect(screen.getByText('Language')).toBeInTheDocument();
+      expect(screen.queryByText('Languages')).not.toBeInTheDocument();
+    });
+
     test('displays multiple languages', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
@@ -431,6 +461,7 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
+      expect(screen.getByText('Languages')).toBeInTheDocument();
       expect(screen.getByText('en_US.UTF-8')).toBeInTheDocument();
       expect(screen.getByText('es_ES.UTF-8')).toBeInTheDocument();
       expect(screen.getByText('fr_FR.UTF-8')).toBeInTheDocument();
@@ -455,6 +486,7 @@ describe('AdvancedSettingsOverview', () => {
       );
 
       expect(screen.queryByText('Language')).not.toBeInTheDocument();
+      expect(screen.queryByText('Languages')).not.toBeInTheDocument();
       expect(screen.getByText('Keyboard')).toBeInTheDocument();
       expect(screen.getByText('us')).toBeInTheDocument();
     });
@@ -501,6 +533,7 @@ describe('AdvancedSettingsOverview', () => {
       );
 
       expect(screen.queryByText('Language')).not.toBeInTheDocument();
+      expect(screen.queryByText('Languages')).not.toBeInTheDocument();
       expect(screen.queryByText('Keyboard')).not.toBeInTheDocument();
     });
   });
@@ -519,6 +552,7 @@ describe('AdvancedSettingsOverview', () => {
       );
 
       expect(screen.getByText('Hostname')).toBeInTheDocument();
+      expect(screen.getByText('Name')).toBeInTheDocument();
       expect(screen.getByText('my-server.example.com')).toBeInTheDocument();
     });
 
@@ -579,7 +613,7 @@ describe('AdvancedSettingsOverview', () => {
         },
       );
 
-      expect(screen.getByText('Args')).toBeInTheDocument();
+      expect(screen.getByText('Arguments')).toBeInTheDocument();
       expect(
         screen.getByRole('list', { name: 'Kernel arguments' }),
       ).toBeInTheDocument();
@@ -608,7 +642,7 @@ describe('AdvancedSettingsOverview', () => {
 
       expect(screen.getByText('Kernel package')).toBeInTheDocument();
       expect(screen.getByText('kernel-debug')).toBeInTheDocument();
-      expect(screen.getByText('Args')).toBeInTheDocument();
+      expect(screen.getByText('Arguments')).toBeInTheDocument();
       expect(screen.getByText('debug')).toBeInTheDocument();
       expect(screen.getByText('console=ttyS0')).toBeInTheDocument();
     });
@@ -632,7 +666,7 @@ describe('AdvancedSettingsOverview', () => {
       );
 
       expect(screen.queryByText('Kernel package')).not.toBeInTheDocument();
-      expect(screen.queryByText('Args')).not.toBeInTheDocument();
+      expect(screen.queryByText('Arguments')).not.toBeInTheDocument();
     });
 
     test('displays user-selected kernel args with blue labels', () => {
@@ -975,7 +1009,10 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Configured')).toBeInTheDocument();
+      expect(screen.getByText('Custom script')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Hello there, General Kenobi/),
+      ).toBeInTheDocument();
     });
   });
 
@@ -1047,7 +1084,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getAllByText('Users').length).toBeGreaterThan(0);
       expect(screen.getByText('admin')).toBeInTheDocument();
       expect(screen.getAllByText('*****')).toHaveLength(1);
     });
@@ -1064,7 +1101,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getAllByText('Users').length).toBeGreaterThan(0);
     });
 
     test('does not display user columns when no users configured', () => {
@@ -1081,7 +1118,7 @@ echo 'Hello there, General Kenobi!'`;
 
       expect(screen.queryByText('Username')).not.toBeInTheDocument();
       expect(screen.queryByText('Password')).not.toBeInTheDocument();
-      expect(screen.queryByText('SSH key')).not.toBeInTheDocument();
+      expect(screen.queryByText('SSH Key')).not.toBeInTheDocument();
       expect(screen.queryByText('Groups')).not.toBeInTheDocument();
       expect(screen.queryByText('Administrator')).not.toBeInTheDocument();
     });
@@ -1100,7 +1137,7 @@ echo 'Hello there, General Kenobi!'`;
 
       expect(screen.getByText('Username')).toBeInTheDocument();
       expect(screen.getByText('Password')).toBeInTheDocument();
-      expect(screen.getByText('SSH key')).toBeInTheDocument();
+      expect(screen.getByText('SSH Key')).toBeInTheDocument();
       expect(screen.getByText('Groups')).toBeInTheDocument();
       expect(screen.getByText('Administrator')).toBeInTheDocument();
     });
@@ -1171,7 +1208,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('SSH key')).toBeInTheDocument();
+      expect(screen.getByText('SSH Key')).toBeInTheDocument();
       expect(screen.getByText('ssh-rsa AAAA')).toBeInTheDocument();
     });
 
@@ -1239,7 +1276,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getAllByText('Users').length).toBeGreaterThan(0);
       expect(screen.getByText('User groups')).toBeInTheDocument();
     });
 
@@ -1315,10 +1352,10 @@ echo 'Hello there, General Kenobi!'`;
       );
 
       expect(screen.getByText('Firewall')).toBeInTheDocument();
-      expect(screen.getByText('Enabled')).toBeInTheDocument();
+      expect(screen.getByText('Firewall designations')).toBeInTheDocument();
     });
 
-    test('displays firewall as enabled when services are configured', () => {
+    test('displays firewall section when services are configured', () => {
       renderWithRedux(
         <AdvancedSettingsOverview restrictions={createDefaultRestrictions()} />,
         {
@@ -1339,7 +1376,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Enabled')).toBeInTheDocument();
+      expect(screen.getByText('Firewall designations')).toBeInTheDocument();
     });
 
     test('displays ports column', () => {
@@ -1363,7 +1400,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Ports')).toBeInTheDocument();
+      expect(screen.getByText('Port')).toBeInTheDocument();
       expect(screen.getByText('22/tcp')).toBeInTheDocument();
       expect(screen.getByText('443/tcp')).toBeInTheDocument();
       expect(screen.getByText('8080/tcp')).toBeInTheDocument();
@@ -1469,7 +1506,7 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getByText('Ports')).toBeInTheDocument();
+      expect(screen.getByText('Port')).toBeInTheDocument();
       expect(screen.getByText('Enabled services')).toBeInTheDocument();
       expect(screen.getByText('Disabled services')).toBeInTheDocument();
 
@@ -1501,7 +1538,7 @@ echo 'Hello there, General Kenobi!'`;
       );
 
       expect(screen.queryByText('Firewall')).not.toBeInTheDocument();
-      expect(screen.queryByText('Ports')).not.toBeInTheDocument();
+      expect(screen.queryByText('Port')).not.toBeInTheDocument();
       expect(screen.queryByText('Enabled services')).not.toBeInTheDocument();
       expect(screen.queryByText('Disabled services')).not.toBeInTheDocument();
     });
