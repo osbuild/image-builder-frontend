@@ -19,8 +19,7 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
-import { isAwsUploadRequestOptions } from '../../store/typeGuards';
+import { isAwsUploadRequestOptions } from '@/store/typeGuards';
 
 type LaunchProps = {
   compose: ComposesResponseItem;
