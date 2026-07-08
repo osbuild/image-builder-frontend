@@ -4,10 +4,16 @@ import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode } from 'jwt-decode';
 
 import {
+  SYSTEM_GROUPS,
+  UNDEFINED_GROUPS_WARNING_KEY,
+  UNIQUE_VALIDATION_DELAY,
+} from '@/constants';
+import {
   BlueprintsResponse,
   useLazyGetBlueprintsQuery,
 } from '@/store/api/backend';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   DiskPartition,
@@ -57,12 +63,6 @@ import {
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
-import {
-  SYSTEM_GROUPS,
-  UNDEFINED_GROUPS_WARNING_KEY,
-  UNIQUE_VALIDATION_DELAY,
-} from '../../../constants';
-import { useAppSelector } from '../../../store/hooks';
 import { keyboardsList } from '../steps/Locale/data/keyboardsList';
 import { languagesList } from '../steps/Locale/data/languagesList';
 import { timezones } from '../steps/Timezone/timezonesList';

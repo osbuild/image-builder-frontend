@@ -10,11 +10,10 @@ import {
   TextInputProps,
 } from '@patternfly/react-core';
 
+import { useAppSelector } from '@/store/hooks';
 import { selectImageTypes } from '@/store/slices/wizard';
 
 import { checkPasswordValidity } from './useValidation';
-
-import { useAppSelector } from '../../../store/hooks';
 
 type ValidatedPasswordInput = TextInputProps & {
   value: string;

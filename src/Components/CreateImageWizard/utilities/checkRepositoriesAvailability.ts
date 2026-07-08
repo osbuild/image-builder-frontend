@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
 
+import { ContentOrigin, PAGINATION_LIMIT } from '@/constants';
 import { useListRepositoriesQuery } from '@/store/api/contentSources';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
 } from '@/store/slices/wizard';
-
-import { ContentOrigin, PAGINATION_LIMIT } from '../../../constants';
-import { useAppSelector } from '../../../store/hooks';
-import { releaseToVersion } from '../../../Utilities/releaseToVersion';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
 
 /**
  * This checks the list of the custom repositories against a list of repos freshly
