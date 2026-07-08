@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Content, FormGroup, Title } from '@patternfly/react-core';
 
+import { useDetailsValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeBlueprintDescription,
@@ -10,9 +12,6 @@ import {
   selectBlueprintName,
   setIsCustomName,
 } from '@/store/slices/wizard';
-
-import { useDetailsValidation } from '../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../ValidatedInput';
 
 const DetailsStep = () => {
   const dispatch = useAppDispatch();
