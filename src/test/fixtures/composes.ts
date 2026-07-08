@@ -1,10 +1,9 @@
+import { RHEL_8, RHEL_9 } from '@/constants';
 import {
   ComposesResponse,
   ComposesResponseItem,
   ComposeStatus,
 } from '@/store/api/backend';
-
-import { RHEL_8, RHEL_9 } from '../../constants';
 
 // CreateImageWizard mocks
 export const mockComposesEmpty: ComposesResponse = {

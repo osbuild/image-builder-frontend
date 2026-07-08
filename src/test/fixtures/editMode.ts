@@ -1,4 +1,17 @@
 import {
+  AARCH64,
+  CENTOS_9,
+  FIRST_BOOT_SERVICE,
+  FIRST_BOOT_SERVICE_DATA,
+  FIRSTBOOT_PATH,
+  FIRSTBOOT_SERVICE_PATH,
+  RHEL_8,
+  RHEL_9,
+  UNIT_GIB,
+  UNIT_MIB,
+  X86_64,
+} from '@/constants';
+import {
   BlueprintResponse,
   CreateBlueprintRequest,
   CustomRepository,
@@ -16,20 +29,6 @@ import {
   mockBlueprintNames,
   multipleTargetsBlueprintResponse,
 } from './blueprints';
-
-import {
-  AARCH64,
-  CENTOS_9,
-  FIRST_BOOT_SERVICE,
-  FIRST_BOOT_SERVICE_DATA,
-  FIRSTBOOT_PATH,
-  FIRSTBOOT_SERVICE_PATH,
-  RHEL_8,
-  RHEL_9,
-  UNIT_GIB,
-  UNIT_MIB,
-  X86_64,
-} from '../../constants';
 
 // Registration
 export const expectedSubscription = {

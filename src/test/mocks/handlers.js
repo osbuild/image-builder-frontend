@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
-import { CREATE_BLUEPRINT, IMAGE_BUILDER_API } from '../../constants';
+import { CREATE_BLUEPRINT, IMAGE_BUILDER_API } from '@/constants';
+
 import {
   mockBlueprintComposes,
   mockBlueprintComposesOutOfSync,

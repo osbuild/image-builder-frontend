@@ -2,8 +2,8 @@
 
 import path from 'path';
 
-import { mockBlueprintIds } from '../../fixtures/blueprints';
-import { mockComposes } from '../../fixtures/composes';
+import { mockBlueprintIds } from '@/test/fixtures/blueprints';
+import { mockComposes } from '@/test/fixtures/composes';
 
 const bpDir = '/default/.local/state/cockpit-image-builder';
 

@@ -1,7 +1,7 @@
 import path from 'path';
 
-import { mockComposes } from '../../fixtures/composes';
-import { getMockBlueprintResponse } from '../../fixtures/editMode';
+import { mockComposes } from '@/test/fixtures/composes';
+import { getMockBlueprintResponse } from '@/test/fixtures/editMode';
 
 const readBlueprint = (id: string): Promise<string> => {
   return new Promise((resolve) => {
