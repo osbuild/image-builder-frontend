@@ -22,13 +22,13 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
-import { generateDefaultName } from './useGenerateDefaultName';
-
 import {
   isGcpUploadRequestOptions,
   isGcpUploadStatus,
-} from '../../store/typeGuards';
+} from '@/store/typeGuards';
+
+import { generateDefaultName } from './useGenerateDefaultName';
+
 import { parseGcpSharedWith } from '../ImagesTable/components/ImageDetails/components/GcpDetails';
 
 type LaunchProps = { compose: ComposesResponseItem };

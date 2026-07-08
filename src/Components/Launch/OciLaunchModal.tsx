@@ -22,10 +22,9 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectPathResolver } from '@/store/slices/env';
-
-import { useAppSelector } from '../../store/hooks';
-import { isOciUploadStatus } from '../../store/typeGuards';
+import { isOciUploadStatus } from '@/store/typeGuards';
 
 type LaunchProps = {
   isExpired: boolean;

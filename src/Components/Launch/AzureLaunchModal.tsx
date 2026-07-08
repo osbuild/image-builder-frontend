@@ -19,8 +19,7 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
-import { isAzureUploadStatus } from '../../store/typeGuards';
+import { isAzureUploadStatus } from '@/store/typeGuards';
 
 type LaunchProps = {
   compose: ComposesResponseItem;
