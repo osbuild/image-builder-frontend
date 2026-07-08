@@ -8,6 +8,9 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
+import { useLocaleValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addLanguage,
   removeLanguage,
@@ -15,9 +18,6 @@ import {
   selectLanguages,
 } from '@/store/slices/wizard';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import SearchableSelect from '../../../../sharedComponents/SearchableSelect';
-import { useLocaleValidation } from '../../../utilities/useValidation';
 import { languagesList } from '../data/languagesList';
 
 const parseLanguageOption = (language: string) => {
