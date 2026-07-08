@@ -10,15 +10,15 @@ import {
 
 import './ImageBuilderHeader.scss';
 
+import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '@/constants';
+import { useGetDocumentationUrl } from '@/Hooks';
 import { useBackendPrefetch } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { selectDistribution } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import { OSBUILD_SERVICE_ARCHITECTURE_URL } from '../../constants';
-import { useGetDocumentationUrl } from '../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
 
