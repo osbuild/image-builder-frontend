@@ -4,14 +4,14 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
-import LandingPage from '../../../Components/LandingPage/LandingPage';
-import { IMAGE_BUILDER_API } from '../../../constants';
+import LandingPage from '@/Components/LandingPage/LandingPage';
+import { IMAGE_BUILDER_API } from '@/constants';
 import {
   emptyGetBlueprints,
   mockBlueprintIds,
-} from '../../fixtures/blueprints';
-import { server } from '../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../renderUtils';
+} from '@/test/fixtures/blueprints';
+import { server } from '@/test/mocks/server';
+import { renderCustomRoutesWithReduxRouter } from '@/test/renderUtils';
 
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();

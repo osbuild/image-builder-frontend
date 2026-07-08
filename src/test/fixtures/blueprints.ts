@@ -1,3 +1,4 @@
+import { RHEL_8, RHEL_9 } from '@/constants';
 import {
   CreateBlueprintResponse,
   Distributions,
@@ -5,8 +6,6 @@ import {
   GetBlueprintComposesApiResponse,
   GetBlueprintsApiResponse,
 } from '@/store/api/backend';
-
-import { RHEL_8, RHEL_9 } from '../../constants';
 
 export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
   {

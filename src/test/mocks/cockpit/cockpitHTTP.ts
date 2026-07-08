@@ -2,8 +2,7 @@
 import path from 'path';
 
 import type { Headers, Method, Params } from '@/store/api/shared';
-
-import { mockStatus } from '../../fixtures/composes';
+import { mockStatus } from '@/test/fixtures/composes';
 
 type requestOptions = {
   path: string;
