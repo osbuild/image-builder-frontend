@@ -5,7 +5,7 @@ import { Flex } from '@patternfly/react-core';
 import { useAppSelector } from '@/store/hooks';
 import { selectFirewall, selectFirewallEnabled } from '@/store/slices';
 
-import { FlexColumn, ReviewGroup, StatusItem } from '../../shared';
+import { FlexColumn, ReviewGroup, ReviewSection } from '../../shared';
 import { Hideable } from '../../types';
 
 const padArray = (arr: string[], length: number): string[] => {
@@ -35,28 +35,29 @@ export const Firewall = ({ shouldHide }: Hideable) => {
   }
 
   return (
-    <>
+    <ReviewSection title='Firewall'>
       <ReviewGroup
-        heading='Firewall'
-        description={<StatusItem>Enabled</StatusItem>}
+        heading='Firewall designations'
+        description={
+          <Flex>
+            <FlexColumn
+              heading='Port'
+              items={ports}
+              labelKey='firewall-review-port'
+            />
+            <FlexColumn
+              heading='Enabled services'
+              items={enabled}
+              labelKey='firewall-review-enabled'
+            />
+            <FlexColumn
+              heading='Disabled services'
+              items={disabled}
+              labelKey='firewall-review-disabled'
+            />
+          </Flex>
+        }
       />
-      <Flex>
-        <FlexColumn
-          heading='Ports'
-          items={ports}
-          labelKey='firewall-review-port'
-        />
-        <FlexColumn
-          heading='Enabled services'
-          items={enabled}
-          labelKey='firewall-review-enabled'
-        />
-        <FlexColumn
-          heading='Disabled services'
-          items={disabled}
-          labelKey='firewall-review-disabled'
-        />
-      </Flex>
-    </>
+    </ReviewSection>
   );
 };

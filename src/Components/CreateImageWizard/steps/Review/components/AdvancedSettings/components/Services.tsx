@@ -4,7 +4,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectServices } from '@/store/slices';
 
 import { sortOpenscapItems } from '../../helpers';
-import { LabelMapper, ReviewGroup } from '../../shared';
+import { LabelMapper, ReviewGroup, ReviewSection } from '../../shared';
 import { Hideable } from '../../types';
 
 type OscapServices = {
@@ -46,7 +46,7 @@ export const Services = ({
   }
 
   return (
-    <>
+    <ReviewSection title='Systemd services'>
       <ReviewGroup
         heading='Enabled systemd services'
         description={
@@ -82,8 +82,7 @@ export const Services = ({
             oscapItems={oscapServices.masked}
           />
         }
-        className='pf-v6-u-mb-md'
       />
-    </>
+    </ReviewSection>
   );
 };

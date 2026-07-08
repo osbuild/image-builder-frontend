@@ -5,7 +5,7 @@ import { Content } from '@patternfly/react-core';
 import { useAppSelector } from '@/store/hooks';
 import { selectKeyboard, selectLanguages } from '@/store/slices';
 
-import { ReviewGroup } from '../../shared';
+import { ReviewGroup, ReviewSection } from '../../shared';
 import { Hideable } from '../../types';
 
 export const Locale = ({ shouldHide }: Hideable) => {
@@ -17,25 +17,18 @@ export const Locale = ({ shouldHide }: Hideable) => {
   }
 
   return (
-    <>
+    <ReviewSection title='Locale'>
       {languages && languages.length > 0 && (
         <ReviewGroup
-          heading='Language'
+          heading={languages.length > 1 ? 'Languages' : 'Language'}
           description={languages.map((language, index) => (
             <Content component='p' key={`language-review-${index}`}>
               {language}
             </Content>
           ))}
-          className={keyboard ? '' : 'pf-v6-u-mb-md'}
         />
       )}
-      {keyboard && (
-        <ReviewGroup
-          heading='Keyboard'
-          description={keyboard}
-          className='pf-v6-u-mb-md'
-        />
-      )}
-    </>
+      {keyboard && <ReviewGroup heading='Keyboard' description={keyboard} />}
+    </ReviewSection>
   );
 };

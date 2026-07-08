@@ -71,8 +71,8 @@ const ImageOverview = ({ restrictions }: ReviewCardProps) => {
             description={arch}
           />
           <ReviewGroup heading='Target environments' />
-          <PrivateClouds environments={privateClouds} />
           <PublicClouds environments={publicClouds} />
+          <PrivateClouds environments={privateClouds} />
           <MiscFormats environments={miscFormats} />
           <Users
             shouldHide={

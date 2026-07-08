@@ -348,7 +348,7 @@ describe('ImageOverview', () => {
         },
       );
 
-      expect(screen.getByText('Users')).toBeInTheDocument();
+      expect(screen.getByText('Custom users')).toBeInTheDocument();
       expect(screen.getByText('admin')).toBeInTheDocument();
       expect(screen.getByText('User groups')).toBeInTheDocument();
       expect(screen.getByText('developers')).toBeInTheDocument();
@@ -370,7 +370,7 @@ describe('ImageOverview', () => {
         },
       );
 
-      expect(screen.queryByText('Users')).not.toBeInTheDocument();
+      expect(screen.queryByText('Custom users')).not.toBeInTheDocument();
       expect(screen.queryByText('User groups')).not.toBeInTheDocument();
     });
   });

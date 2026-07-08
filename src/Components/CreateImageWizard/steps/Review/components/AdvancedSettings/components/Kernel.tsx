@@ -4,7 +4,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectKernel } from '@/store/slices';
 
 import { sortOpenscapItems } from '../../helpers';
-import { LabelMapper, ReviewGroup } from '../../shared';
+import { LabelMapper, ReviewGroup, ReviewSection } from '../../shared';
 import { Hideable } from '../../types';
 
 type KernelProps = Hideable & {
@@ -24,17 +24,13 @@ export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
   }
 
   return (
-    <>
+    <ReviewSection title='Kernel'>
       {name !== '' && (
-        <ReviewGroup
-          heading='Kernel package'
-          description={name}
-          className={append.length > 0 ? '' : 'pf-v6-u-mb-md'}
-        />
+        <ReviewGroup heading='Kernel package' description={name} />
       )}
       {args.length > 0 && (
         <ReviewGroup
-          heading='Args'
+          heading='Arguments'
           description={
             <LabelMapper
               id='kernel-append-review'
@@ -44,9 +40,8 @@ export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
               oscapItems={oscapKernelArgs}
             />
           }
-          className='pf-v6-u-mb-md'
         />
       )}
-    </>
+    </ReviewSection>
   );
 };
