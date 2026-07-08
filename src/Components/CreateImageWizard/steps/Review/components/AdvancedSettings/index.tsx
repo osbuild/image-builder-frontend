@@ -38,9 +38,9 @@ const AdvancedSettingsOverview = ({
   oscapServices,
 }: AdvancedSettingsOverviewProps) => {
   const usersHidden =
-    restrictions.users.shouldHide || restrictions.users.required;
-  const hasUsers = !usersHidden && useAppSelector(selectHasUsers);
-  const hasUserGroups = !usersHidden && useAppSelector(selectHasUserGroups);
+    restrictions.users.shouldHide || restrictions.users.isStandalone;
+  const hasUsers = useAppSelector(selectHasUsers);
+  const hasUserGroups = useAppSelector(selectHasUserGroups);
 
   return (
     <Card>
@@ -62,12 +62,12 @@ const AdvancedSettingsOverview = ({
           oscapServices={oscapServices}
         />
         <Firewall shouldHide={restrictions.firewall.shouldHide} />
-        {hasUserGroups && (
+        {!usersHidden && hasUserGroups && (
           <ReviewSection title='Groups'>
             <UserGroups />
           </ReviewSection>
         )}
-        {hasUsers && (
+        {!usersHidden && hasUsers && (
           <ReviewSection title='Users'>
             <Users />
           </ReviewSection>
