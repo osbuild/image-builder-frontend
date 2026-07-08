@@ -1280,11 +1280,11 @@ echo 'Hello there, General Kenobi!'`;
       expect(screen.getByText('User groups')).toBeInTheDocument();
     });
 
-    test('does not render users section when users are required', () => {
+    test('does not render users section when users are standalone', () => {
       renderWithRedux(
         <AdvancedSettingsOverview
           restrictions={createDefaultRestrictions({
-            users: { required: true },
+            users: { isStandalone: true },
           })}
         />,
         {

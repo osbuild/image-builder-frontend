@@ -31,7 +31,7 @@ describe('useCustomizationRestrictions hook logic', () => {
 
       for (const customization of getAllCustomizationTypes()) {
         expect(result[customization].shouldHide).toBe(false);
-        expect(result[customization].required).toBe(false);
+        expect(result[customization].isStandalone).toBe(false);
       }
     });
   });
@@ -57,30 +57,30 @@ describe('useCustomizationRestrictions hook logic', () => {
       }
     });
 
-    it('should not mark users as required in hosted image mode', () => {
+    it('should not mark users as standalone in hosted image mode', () => {
       const result = computeRestrictionStrategy({
         isImageMode: true,
         isOnPremise: false,
       });
 
       for (const customization of getAllCustomizationTypes()) {
-        expect(result[customization].required).toBe(false);
+        expect(result[customization].isStandalone).toBe(false);
       }
     });
 
-    it('should mark users as required in on-premise image mode', () => {
+    it('should mark users as standalone in on-premise image mode', () => {
       const result = computeRestrictionStrategy({
         isImageMode: true,
         isOnPremise: true,
       });
 
-      expect(result.users.required).toBe(true);
+      expect(result.users.isStandalone).toBe(true);
 
       const nonUserTypes = getAllCustomizationTypes().filter(
         (c) => c !== 'users',
       );
       for (const customization of nonUserTypes) {
-        expect(result[customization].required).toBe(false);
+        expect(result[customization].isStandalone).toBe(false);
       }
     });
   });
@@ -120,7 +120,7 @@ describe('useCustomizationRestrictions hook logic', () => {
       });
 
       expect(result.registration.shouldHide).toBe(true);
-      expect(result.registration.required).toBe(false);
+      expect(result.registration.isStandalone).toBe(false);
     });
 
     it('should not hide registration for RHEL distributions', () => {
@@ -162,8 +162,8 @@ describe('useCustomizationRestrictions hook logic', () => {
       expect(result.repositories.shouldHide).toBe(true);
       expect(result.firstBoot.shouldHide).toBe(true);
 
-      // Users should be required on-premise
-      expect(result.users.required).toBe(true);
+      // Users should be standalone on-premise
+      expect(result.users.isStandalone).toBe(true);
     });
   });
 
@@ -178,7 +178,7 @@ describe('useCustomizationRestrictions hook logic', () => {
       for (const customization of getAllCustomizationTypes()) {
         expect(result[customization]).toBeDefined();
         expect(result[customization]).toHaveProperty('shouldHide');
-        expect(result[customization]).toHaveProperty('required');
+        expect(result[customization]).toHaveProperty('isStandalone');
       }
     });
   });
@@ -277,7 +277,7 @@ describe('useCustomizationRestrictions hook logic', () => {
 
       for (const customization of getAllCustomizationTypes()) {
         expect(result[customization].shouldHide).toBe(false);
-        expect(result[customization].required).toBe(false);
+        expect(result[customization].isStandalone).toBe(false);
       }
     });
   });
@@ -287,11 +287,11 @@ describe('RestrictionStrategy type', () => {
   it('should have correct structure', () => {
     const strategy: RestrictionStrategy = {
       shouldHide: false,
-      required: false,
+      isStandalone: false,
     };
 
     expect(strategy).toHaveProperty('shouldHide');
-    expect(strategy).toHaveProperty('required');
+    expect(strategy).toHaveProperty('isStandalone');
   });
 });
 

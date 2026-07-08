@@ -13,7 +13,7 @@ export const createDefaultRestrictions = (
   for (const key of ALL_CUSTOMIZATIONS) {
     restrictions[key] = {
       shouldHide: false,
-      required: false,
+      isStandalone: false,
       ...overrides[key],
     };
   }

@@ -172,7 +172,7 @@ const CreateImageWizard = () => {
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     snapshotValidation.disabledNext ||
-    (restrictions.users.required && usersHaveErrors);
+    (restrictions.users.isStandalone && usersHaveErrors);
 
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
@@ -183,7 +183,7 @@ const CreateImageWizard = () => {
     servicesValidation.disabledNext ||
     firewallValidation.disabledNext ||
     firstBootValidation.disabledNext ||
-    (!(restrictions.users.shouldHide || restrictions.users.required) &&
+    (!(restrictions.users.shouldHide || restrictions.users.isStandalone) &&
       usersHaveErrors);
 
   useEffect(() => {
@@ -506,8 +506,10 @@ const CreateImageWizard = () => {
               !(
                 restrictions.openscap.shouldHide && restrictions.fips.shouldHide
               ) && <OscapStep key='oscap' />,
-              restrictions.users.required && <UserGroupsStep key='groups' />,
-              restrictions.users.required && <UsersStep key='users' />,
+              restrictions.users.isStandalone && (
+                <UserGroupsStep key='groups' />
+              ),
+              restrictions.users.isStandalone && <UsersStep key='users' />,
             ]
               .filter(Boolean)
               .flatMap((component, index, array) =>
@@ -567,7 +569,8 @@ const CreateImageWizard = () => {
             restrictions.kernel.shouldHide &&
             restrictions.services.shouldHide &&
             restrictions.firewall.shouldHide &&
-            (restrictions.users.shouldHide || restrictions.users.required) &&
+            (restrictions.users.shouldHide ||
+              restrictions.users.isStandalone) &&
             restrictions.firstBoot.shouldHide
           }
           footer={
@@ -609,10 +612,10 @@ const CreateImageWizard = () => {
                 <FirewallStep key='firewall' />
               ),
               !(
-                restrictions.users.shouldHide || restrictions.users.required
+                restrictions.users.shouldHide || restrictions.users.isStandalone
               ) && <UserGroupsStep key='groups' />,
               !(
-                restrictions.users.shouldHide || restrictions.users.required
+                restrictions.users.shouldHide || restrictions.users.isStandalone
               ) && <UsersStep key='users' />,
               !restrictions.firstBoot.shouldHide && (
                 <FirstBootStep key='firstboot' />

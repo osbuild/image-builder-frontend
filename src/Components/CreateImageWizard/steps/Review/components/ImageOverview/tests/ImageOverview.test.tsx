@@ -328,11 +328,11 @@ describe('ImageOverview', () => {
   });
 
   describe('Users', () => {
-    test('renders users + groups section when users are required', () => {
+    test('renders users + groups section when users are standalone', () => {
       renderWithRedux(
         <ImageOverview
           restrictions={createDefaultRestrictions({
-            users: { required: true },
+            users: { isStandalone: true },
           })}
         />,
         {

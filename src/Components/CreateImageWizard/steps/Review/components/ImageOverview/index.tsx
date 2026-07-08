@@ -76,12 +76,12 @@ const ImageOverview = ({ restrictions }: ReviewCardProps) => {
           <MiscFormats environments={miscFormats} />
           <Users
             shouldHide={
-              restrictions.users.shouldHide || !restrictions.users.required
+              restrictions.users.shouldHide || !restrictions.users.isStandalone
             }
           />
           <UserGroups
             shouldHide={
-              restrictions.users.shouldHide || !restrictions.users.required
+              restrictions.users.shouldHide || !restrictions.users.isStandalone
             }
           />
         </ReviewList>
