@@ -28,6 +28,7 @@ import {
   useGetWorkerConfigQuery,
   useUpdateWorkerConfigMutation,
 } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAWSBucketName,
   changeAWSCredsPath,
@@ -37,8 +38,6 @@ import {
 
 import { AWSConfig } from './AWSConfig';
 import { isAwsStepValid } from './validators';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const ConfigError = ({
   onClose,
