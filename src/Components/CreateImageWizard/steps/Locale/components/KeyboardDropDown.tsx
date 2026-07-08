@@ -2,11 +2,11 @@ import React, { useMemo, useState } from 'react';
 
 import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 
+import { useLocaleValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeKeyboard, selectKeyboard } from '@/store/slices/wizard';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import SearchableSelect from '../../../../sharedComponents/SearchableSelect';
-import { useLocaleValidation } from '../../../utilities/useValidation';
 import { keyboardsList } from '../data/keyboardsList';
 
 const KeyboardDropDown = () => {
