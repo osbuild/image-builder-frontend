@@ -19,6 +19,7 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import {
   AMPLITUDE_MODULE_NAME,
@@ -67,8 +68,6 @@ import PolicyDetails from './components/PolicyDetails';
 import PolicySelector from './components/PolicySelector';
 import OpenScapProfileDetails from './components/ProfileDetails';
 import ProfileSelector from './components/ProfileSelector';
-
-import ExternalLinkButton from '../../utilities/ExternalLinkButton';
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
