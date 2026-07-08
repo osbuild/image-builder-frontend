@@ -5,9 +5,8 @@ import {
 } from '@reduxjs/toolkit/dist/query/react';
 
 import { errorMessage } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { useAppSelector } from '../../store/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getErrorDescription = (err: any, isOnPremise: boolean) => {

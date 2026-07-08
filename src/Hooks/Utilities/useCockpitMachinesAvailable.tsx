@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 
 import cockpit from 'cockpit';
 
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { useAppSelector } from '../../store/hooks';
 
 /**
  * Hook to check if cockpit-machines is installed and available.
