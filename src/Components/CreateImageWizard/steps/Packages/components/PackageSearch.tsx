@@ -24,6 +24,7 @@ import {
 import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import ManageRepositoriesButton from '@/Components/CreateImageWizard/steps/Repositories/components/ManageRepositoriesButton';
 import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/repositoriesUtilities';
 import {
   AMPLITUDE_MODULE_NAME,
@@ -72,8 +73,6 @@ import { getEpelUrlForDistribution } from '@/Utilities/epel';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
-
-import ManageRepositoriesButton from '../../Repositories/components/ManageRepositoriesButton';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';
