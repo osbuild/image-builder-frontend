@@ -16,7 +16,7 @@ export const ReviewSection = ({
       <div className='pf-v6-u-pl-lg'>
         <ReviewList>{children}</ReviewList>
       </div>
-      <Divider className='pf-v6-u-my-md' />
+      <Divider className='pf-v6-u-mt-lg pf-v6-u-mb-md' />
     </>
   );
 };
