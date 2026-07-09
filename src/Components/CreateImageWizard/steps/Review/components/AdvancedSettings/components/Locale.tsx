@@ -12,12 +12,13 @@ export const Locale = ({ shouldHide }: Hideable) => {
   const languages = useAppSelector(selectLanguages);
   const keyboard = useAppSelector(selectKeyboard);
 
-  if (shouldHide || (!keyboard && (!languages || languages.length === 0))) {
-    return null;
-  }
-
   return (
-    <ReviewSection title='Locale'>
+    <ReviewSection
+      title='Locale'
+      shouldHide={
+        shouldHide || (!keyboard && (!languages || languages.length === 0))
+      }
+    >
       {languages && languages.length > 0 && (
         <ReviewGroup
           heading={languages.length > 1 ? 'Languages' : 'Language'}

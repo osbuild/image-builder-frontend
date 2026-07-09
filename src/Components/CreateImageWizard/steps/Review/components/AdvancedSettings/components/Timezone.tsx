@@ -10,12 +10,8 @@ export const Timezone = ({ shouldHide }: Hideable) => {
   const timezone = useAppSelector(selectTimezone);
   const ntpServers = useAppSelector(selectNtpServers);
 
-  if (shouldHide) {
-    return null;
-  }
-
   return (
-    <ReviewSection title='Timezone'>
+    <ReviewSection title='Timezone' shouldHide={shouldHide}>
       <ReviewGroup heading='Timezone' description={timezone} />
       {ntpServers && ntpServers.length > 0 && (
         <ReviewGroup

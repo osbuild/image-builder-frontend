@@ -41,12 +41,11 @@ export const Services = ({
   const isCustomized =
     enabled.length > 0 || disabled.length > 0 || masked.length > 0;
 
-  if (shouldHide || !isCustomized) {
-    return null;
-  }
-
   return (
-    <ReviewSection title='Systemd services'>
+    <ReviewSection
+      title='Systemd services'
+      shouldHide={shouldHide || !isCustomized}
+    >
       <ReviewGroup
         heading='Enabled systemd services'
         description={

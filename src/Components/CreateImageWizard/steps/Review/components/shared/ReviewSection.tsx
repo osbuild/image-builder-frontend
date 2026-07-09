@@ -4,10 +4,20 @@ import { Divider, Title } from '@patternfly/react-core';
 
 import { ReviewList } from './ReviewList';
 
+type ReviewSectionProps = {
+  title: string;
+  shouldHide?: boolean;
+};
+
 export const ReviewSection = ({
   title,
+  shouldHide,
   children,
-}: PropsWithChildren<{ title: string }>) => {
+}: PropsWithChildren<ReviewSectionProps>) => {
+  if (shouldHide) {
+    return null;
+  }
+
   return (
     <>
       <Title headingLevel='h3' size='md' className='pf-v6-u-mb-sm'>
