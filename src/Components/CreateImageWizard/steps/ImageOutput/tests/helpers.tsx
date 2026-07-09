@@ -156,8 +156,9 @@ export const renderImageSourceSelect = (
 
 // ImageSourceSelect interaction helpers
 export const openImageSourceSelect = async (user: UserEventInstance) => {
+  // On-prem uses "Select a distribution"; hosted uses "Select a bootc image"
   const toggle = await screen.findByRole('button', {
-    name: /select a bootc image/i,
+    name: /select a (bootc image|distribution)/i,
   });
   await clickWithWait(user, toggle);
 };

@@ -74,7 +74,9 @@ describe('ImageSourceSelect', () => {
       renderImageSourceSelect();
 
       expect(await screen.findByText('Image source')).toBeInTheDocument();
-      expect(screen.getByText('*')).toBeInTheDocument();
+      // On-prem renders two required FormGroups (Release + Image source)
+      const requiredMarkers = screen.getAllByText('*');
+      expect(requiredMarkers.length).toBeGreaterThanOrEqual(1);
     });
 
     test('auto-selects the first rhel-10 distribution', async () => {

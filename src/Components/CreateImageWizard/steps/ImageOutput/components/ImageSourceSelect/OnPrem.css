@@ -1,0 +1,15 @@
+.on-prem-image-item.pf-v6-c-menu__item {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.on-prem-image-item .pf-v6-c-menu__item-main {
+  width: auto;
+  flex: 1;
+  min-width: 0;
+}
+
+.on-prem-image-item .pf-v6-c-menu__item-description {
+  flex-shrink: 0;
+}
