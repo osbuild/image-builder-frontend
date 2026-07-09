@@ -18,10 +18,6 @@ export const Firstboot = ({ shouldHide }: Hideable) => {
   const script = useAppSelector(selectFirstBootScript);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  if (shouldHide || !script) {
-    return null;
-  }
-
   const lines = script.split('\n');
   const needsTruncation = lines.length > MAX_LINES;
   const displayedScript = needsTruncation
@@ -29,7 +25,10 @@ export const Firstboot = ({ shouldHide }: Hideable) => {
     : script;
 
   return (
-    <ReviewSection title='First boot configuration'>
+    <ReviewSection
+      title='First boot configuration'
+      shouldHide={shouldHide || !script}
+    >
       <ReviewGroup
         heading='Custom script'
         description={

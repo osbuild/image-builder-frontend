@@ -30,12 +30,8 @@ export const Firewall = ({ shouldHide }: Hideable) => {
     };
   }, [firewall]);
 
-  if (shouldHide || !isEnabled) {
-    return null;
-  }
-
   return (
-    <ReviewSection title='Firewall'>
+    <ReviewSection title='Firewall' shouldHide={shouldHide || !isEnabled}>
       <ReviewGroup
         heading='Firewall designations'
         description={

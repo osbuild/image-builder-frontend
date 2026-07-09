@@ -62,16 +62,15 @@ const AdvancedSettingsOverview = ({
           oscapServices={oscapServices}
         />
         <Firewall shouldHide={restrictions.firewall.shouldHide} />
-        {!usersHidden && hasUserGroups && (
-          <ReviewSection title='Groups'>
-            <UserGroups />
-          </ReviewSection>
-        )}
-        {!usersHidden && hasUsers && (
-          <ReviewSection title='Users'>
-            <Users />
-          </ReviewSection>
-        )}
+        <ReviewSection
+          title='Groups'
+          shouldHide={usersHidden || !hasUserGroups}
+        >
+          <UserGroups />
+        </ReviewSection>
+        <ReviewSection title='Users' shouldHide={usersHidden || !hasUsers}>
+          <Users />
+        </ReviewSection>
         <Firstboot shouldHide={restrictions.firstBoot.shouldHide} />
       </CardBody>
     </Card>

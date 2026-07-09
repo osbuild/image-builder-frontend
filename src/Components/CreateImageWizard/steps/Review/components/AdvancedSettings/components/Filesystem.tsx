@@ -25,10 +25,6 @@ export const Filesystem = ({ shouldHide }: Hideable) => {
   const volumeGroups = useAppSelector(selectVolumeGroups);
   const basicPartitions = useAppSelector(selectFilesystemPartitions);
 
-  if (shouldHide) {
-    return null;
-  }
-
   const partitioningLabel =
     mode === 'automatic'
       ? 'Automatic partitioning'
@@ -37,7 +33,7 @@ export const Filesystem = ({ shouldHide }: Hideable) => {
         : 'Manual partitioning';
 
   return (
-    <ReviewSection title='File system configurations'>
+    <ReviewSection title='File system configurations' shouldHide={shouldHide}>
       <ReviewGroup
         heading='Partitioning type'
         description={partitioningLabel}

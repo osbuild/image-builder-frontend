@@ -19,12 +19,11 @@ export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
     [append, oscapKernelArgs],
   );
 
-  if (shouldHide || !(name || args.length > 0)) {
-    return null;
-  }
-
   return (
-    <ReviewSection title='Kernel'>
+    <ReviewSection
+      title='Kernel'
+      shouldHide={shouldHide || !(name || args.length > 0)}
+    >
       {name !== '' && (
         <ReviewGroup heading='Kernel package' description={name} />
       )}
