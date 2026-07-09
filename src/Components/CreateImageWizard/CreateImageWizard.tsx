@@ -506,10 +506,10 @@ const CreateImageWizard = () => {
               !(
                 restrictions.openscap.shouldHide && restrictions.fips.shouldHide
               ) && <OscapStep key='oscap' />,
+              restrictions.users.isStandalone && <UsersStep key='users' />,
               restrictions.users.isStandalone && (
                 <UserGroupsStep key='groups' />
               ),
-              restrictions.users.isStandalone && <UsersStep key='users' />,
             ]
               .filter(Boolean)
               .flatMap((component, index, array) =>
@@ -613,10 +613,10 @@ const CreateImageWizard = () => {
               ),
               !(
                 restrictions.users.shouldHide || restrictions.users.isStandalone
-              ) && <UserGroupsStep key='groups' />,
+              ) && <UsersStep key='users' />,
               !(
                 restrictions.users.shouldHide || restrictions.users.isStandalone
-              ) && <UsersStep key='users' />,
+              ) && <UserGroupsStep key='groups' />,
               !restrictions.firstBoot.shouldHide && (
                 <FirstBootStep key='firstboot' />
               ),
