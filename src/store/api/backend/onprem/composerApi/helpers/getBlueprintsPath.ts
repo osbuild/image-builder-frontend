@@ -13,6 +13,14 @@ export const getBlueprintsPath = async (): Promise<string> => {
   }
   const blueprintsDir = path.join(stateDir, BLUEPRINTS_DIR);
 
+  // Backwards compatibility, drop after 10.4?
+  await cockpit.script(`
+if [ ! -e "${blueprintsDir}" ] && [ -d "${user.home}/.cache/cockpit-image-builder" ] ; then
+  mkdir -p "${stateDir}"
+  cp -a "${user.home}/.cache/cockpit-image-builder" "${stateDir}/"
+fi
+`);
+
   // make sure the directory exists
   await cockpit.spawn(['mkdir', '-p', blueprintsDir], {});
   return blueprintsDir;
