@@ -466,6 +466,8 @@ export type ApiRepositoryResponse = {
   status?: string | undefined;
   /** URL of the remote yum repository */
   url?: string | undefined;
+  /** Number of versions last read in the repository, not applicable to all repositories */
+  version_count?: number | undefined;
 };
 export type ApiRepositoryResponseRead = {
   /** Account ID of the owner */
@@ -538,6 +540,8 @@ export type ApiRepositoryResponseRead = {
   url?: string | undefined;
   /** UUID of the object */
   uuid?: string | undefined;
+  /** Number of versions last read in the repository, not applicable to all repositories */
+  version_count?: number | undefined;
 };
 export type ApiLinks = {
   /** Path to first page of results */
@@ -670,6 +674,8 @@ export type ApiRepositoryImportResponse = {
   status?: string | undefined;
   /** URL of the remote yum repository */
   url?: string | undefined;
+  /** Number of versions last read in the repository, not applicable to all repositories */
+  version_count?: number | undefined;
   /** Warnings to alert user of mismatched fields if there is an existing repo with the same URL */
   warnings?:
     | {
@@ -748,6 +754,8 @@ export type ApiRepositoryImportResponseRead = {
   url?: string | undefined;
   /** UUID of the object */
   uuid?: string | undefined;
+  /** Number of versions last read in the repository, not applicable to all repositories */
+  version_count?: number | undefined;
   /** Warnings to alert user of mismatched fields if there is an existing repo with the same URL */
   warnings?:
     | {
