@@ -446,6 +446,7 @@ export type Distributions =
   | 'fedora-42'
   | 'fedora-43'
   | 'fedora-44'
+  | 'fedora-45'
   | 'hummingbird';
 export type ListResponseMeta = {
   count: number;
