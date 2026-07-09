@@ -1,6 +1,7 @@
 import { type OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import {
+  byDistroDescending,
   filterBootcImages,
   getCloudConfigs,
   listPodmanImages,
@@ -48,7 +49,8 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
           Architecture: normalizeArch(img.Architecture ?? arch),
         }))
         .filter(filterBootcImages)
-        .map(toBootcDistro);
+        .map(toBootcDistro)
+        .sort(byDistroDescending);
     }),
   }),
   getArchitectures: builder.query<

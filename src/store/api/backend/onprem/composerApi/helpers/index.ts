@@ -4,6 +4,7 @@ export { lookupDatastreamDistro } from './dataStreamLookup';
 export { getBlueprintsPath } from './getBlueprintsPath';
 export { getCloudConfigs } from './getCloudConfigs';
 export {
+  byDistroDescending,
   inferDistro,
   filterBootcImages,
   listPodmanImages,
