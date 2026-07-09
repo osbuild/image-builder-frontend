@@ -34,7 +34,7 @@ import {
   selectImageSource,
 } from '@/store/slices/wizard';
 
-import RegistryAuthSection from './RegistryAuthSection';
+import RegistryAuthSection from '../RegistryAuthSection';
 
 const CopyInlineCompact = ({ text }: { text: string }) => (
   <ClipboardCopy
