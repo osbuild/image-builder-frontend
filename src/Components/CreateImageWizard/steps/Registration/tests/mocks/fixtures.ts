@@ -1,3 +1,32 @@
+import type { ListActivationKeysApiResponse } from '@/store/api/rhsm';
+
+export const mockActivationKeys: ListActivationKeysApiResponse = {
+  body: [
+    {
+      name: 'activation-key-1',
+      role: undefined,
+      serviceLevel: 'Self-Support',
+      usage: 'Production',
+    },
+    {
+      name: 'activation-key-2',
+      role: undefined,
+      serviceLevel: undefined,
+      usage: 'Development',
+    },
+    {
+      name: 'test-key-alpha',
+      role: undefined,
+      serviceLevel: 'Self-Support',
+      usage: 'Production',
+    },
+  ],
+};
+
+export const mockEmptyActivationKeys: ListActivationKeysApiResponse = {
+  body: [],
+};
+
 export const VALID_SATELLITE_COMMAND = `
 set -o pipefail && curl -sS 'https://ec2-107-23-89.compute-1.amazonaws.com/register?activation_keys=ak&location_id=2&organization_id=1&update_packages=false'
 // -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjQxMDI0NDQ4MDB9.CQ6hOQJLJDfD_P5gaEIEseY5iMRLhnk7iC5ZJ4Rzno0 | bash`;
