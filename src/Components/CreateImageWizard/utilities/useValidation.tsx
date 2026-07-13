@@ -181,13 +181,12 @@ export function useRegistrationValidation(): StepValidation {
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
   const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
-  const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
-    useShowActivationKeyQuery(
-      { name: activationKey! },
-      {
-        skip: !activationKey || isOnPremise,
-      },
-    );
+  const { isError: isErrorKeyInfo } = useShowActivationKeyQuery(
+    { name: activationKey! },
+    {
+      skip: !activationKey || isOnPremise,
+    },
+  );
 
   if (registrationType === 'register-later') {
     return { errors: {}, disabledNext: false };
@@ -217,7 +216,7 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType !== 'register-satellite' && !activationKey) {
     return {
-      errors: { activationKey: 'No activation key selected' },
+      errors: { activationKey: 'Missing activation key' },
       disabledNext: true,
     };
   }
@@ -225,7 +224,7 @@ export function useRegistrationValidation(): StepValidation {
   if (
     registrationType !== 'register-satellite' &&
     activationKey &&
-    (isFetchingKeyInfo || isErrorKeyInfo) &&
+    isErrorKeyInfo &&
     !isOnPremise
   ) {
     return {
