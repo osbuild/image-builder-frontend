@@ -72,6 +72,11 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return false;
     }
   }),
+  useVariant: vi.fn(() => ({
+    name: '',
+    enabled: false,
+    payload: undefined,
+  })),
 }));
 
 // remove DOM dump from the testing-library output
