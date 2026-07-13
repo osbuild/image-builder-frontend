@@ -23,6 +23,7 @@ import { setBlueprintId } from '@/store/slices/blueprint';
 import { openWizardModal } from '@/store/slices/wizardModal';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
+import { NewAlert } from './NewAlert';
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
@@ -32,14 +33,12 @@ import NewImagesTable from '../ImagesTable/NewImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
-  // New feature alert
-  // const [showAlert, setShowAlert] = useState(true);
-  // const isOnPremise = useAppSelector(selectIsOnPremise);
-
   const dispatch = useAppDispatch();
+
   const location = useLocation();
   const { composeId } = useParams();
   const [searchParams] = useSearchParams();
+
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
   const isImagesTableRevampEnabled = useFlag(
     'image-builder.images-table-revamp.enabled',
@@ -63,8 +62,7 @@ export const LandingPage = () => {
     <>
       <PageSection hasBodyWrapper={false}>
         {serviceUnavailable && <ServiceUnavailableAlert />}
-        {/* New feature alert */}
-        {/*!isOnPremise && showAlert && <NewAlert setShowAlert={setShowAlert} />*/}
+        <NewAlert />
         {!isImagesTableRevampEnabled ? (
           <Sidebar hasBorder className='pf-v6-u-background-color-100'>
             <SidebarPanel

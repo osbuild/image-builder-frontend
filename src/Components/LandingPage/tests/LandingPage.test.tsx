@@ -41,10 +41,8 @@ describe('Landing Page', () => {
     );
   });
 
-  test('does not show New in image builder banner when on-premises', async () => {
-    renderLandingPage({
-      preloadedState: { env: { isOnPremise: true } },
-    });
+  test('does not show New in image builder banner when flag is disabled', async () => {
+    renderLandingPage();
 
     await screen.findByRole('heading', { name: 'Image builder' });
     expect(
