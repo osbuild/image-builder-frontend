@@ -23,6 +23,7 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { v4 as uuidv4 } from 'uuid';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
+import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ACTIVATION_KEYS_URL, CDN_PROD_URL, CDN_STAGE_URL } from '@/constants';
 import {
   useCreateActivationKeysMutation,
@@ -37,6 +38,7 @@ import {
   selectActivationKey,
   selectRegistrationType,
 } from '@/store/slices/wizard';
+import { selectForceShowErrors } from '@/store/slices/wizard/validation/selectors';
 import { getErrorMessage } from '@/Utilities/getErrorMessage';
 import sortfn from '@/Utilities/sortfn';
 import { useGetEnvironment } from '@/Utilities/useGetEnvironment';
@@ -51,6 +53,8 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
 
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
+  const stepValidation = useRegistrationValidation();
 
   const defaultActivationKeyName = uuidv4();
 
@@ -312,16 +316,22 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
         </Flex>
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>
-              Image Builder provides and defaults to a no-cost activation key if
-              none exist.{' '}
-              <ExternalLinkButton
-                url={ACTIVATION_KEYS_URL}
-                analyticsStepId='step-registration'
-              >
-                Manage activation keys
-              </ExternalLinkButton>
-            </HelperTextItem>
+            {forceShowErrors && stepValidation.errors.activationKey ? (
+              <HelperTextItem variant='error'>
+                {stepValidation.errors.activationKey}
+              </HelperTextItem>
+            ) : (
+              <HelperTextItem>
+                Image Builder provides and defaults to a no-cost activation key
+                if none exist.{' '}
+                <ExternalLinkButton
+                  url={ACTIVATION_KEYS_URL}
+                  analyticsStepId='step-registration'
+                >
+                  Manage activation keys
+                </ExternalLinkButton>
+              </HelperTextItem>
+            )}
           </HelperText>
         </FormHelperText>
       </FormGroup>
