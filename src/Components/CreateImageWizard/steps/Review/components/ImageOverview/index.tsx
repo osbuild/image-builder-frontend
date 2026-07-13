@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Card, CardBody } from '@patternfly/react-core';
+import { Card, CardBody, Title } from '@patternfly/react-core';
 
 import { ON_PREM_RELEASES, RELEASES } from '@/constants';
 import { useTargetEnvironmentCategories } from '@/Hooks';
@@ -70,7 +70,9 @@ const ImageOverview = ({ restrictions }: ReviewCardProps) => {
             heading='Architecture'
             description={arch}
           />
-          <ReviewGroup heading='Target environments' />
+          <Title headingLevel='h3' size='md'>
+            Target environments
+          </Title>
           <PublicClouds environments={publicClouds} />
           <PrivateClouds environments={privateClouds} />
           <MiscFormats environments={miscFormats} />
