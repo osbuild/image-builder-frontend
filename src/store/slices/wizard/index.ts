@@ -12,3 +12,4 @@ export * from './filesystem';
 export * from './output';
 export * from './registration';
 export * from './system';
+export * from './validation';
