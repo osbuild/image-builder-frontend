@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Tooltip } from '@patternfly/react-core';
+
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { useAppDispatch } from '@/store/hooks';
@@ -18,13 +20,20 @@ type MinimumSizePropTypes = {
     | LogicalVolumeWithBase
     | VolumeGroupWithExtendedLV;
   customization: PartitioningCustomization;
+  isOscapRequired?: boolean;
+  oscapMinSizeLabel?: string;
 };
 
-const MinimumSize = ({ partition, customization }: MinimumSizePropTypes) => {
+const MinimumSize = ({
+  partition,
+  customization,
+  isOscapRequired,
+  oscapMinSizeLabel,
+}: MinimumSizePropTypes) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
 
-  return (
+  const sizeInput = (
     <ValidatedInputAndTextArea
       ariaLabel='minimum partition size'
       value={partition.min_size || ''}
@@ -58,6 +67,18 @@ const MinimumSize = ({ partition, customization }: MinimumSizePropTypes) => {
       }}
     />
   );
+
+  if (isOscapRequired && oscapMinSizeLabel) {
+    return (
+      <Tooltip
+        content={`Minimum ${oscapMinSizeLabel} required by the selected OpenSCAP profile`}
+      >
+        <div>{sizeInput}</div>
+      </Tooltip>
+    );
+  }
+
+  return sizeInput;
 };
 
 export default MinimumSize;

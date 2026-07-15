@@ -27,9 +27,14 @@ type SizeUnitPropTypes = {
     | LogicalVolumeWithBase
     | VolumeGroupWithExtendedLV;
   customization: PartitioningCustomization;
+  isOscapRequired?: boolean;
 };
 
-const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
+const SizeUnit = ({
+  partition,
+  customization,
+  isOscapRequired,
+}: SizeUnitPropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -66,6 +71,7 @@ const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
       onClick={onToggleClick}
       isExpanded={isOpen}
       isFullWidth
+      isDisabled={!!isOscapRequired}
     >
       {partition.unit}
     </MenuToggle>

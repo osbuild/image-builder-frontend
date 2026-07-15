@@ -20,9 +20,14 @@ type MountpointProps = {
     | PlainPartitionWithBase
     | LogicalVolumeWithBase;
   customization: PartitioningCustomization;
+  isOscapRequired?: boolean;
 };
 
-const Mountpoint = ({ partition, customization }: MountpointProps) => {
+const Mountpoint = ({
+  partition,
+  customization,
+  isOscapRequired,
+}: MountpointProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
@@ -32,14 +37,21 @@ const Mountpoint = ({ partition, customization }: MountpointProps) => {
     partition.mountpoint === '/' &&
     filesystemPartitions.filter((p) => p.mountpoint === '/').length === 1;
 
+  const isDisabled =
+    isOscapRequired ||
+    ('fs_type' in partition && partition.fs_type === 'swap') ||
+    hasOneRoot;
+
+  const tooltipContent = isOscapRequired
+    ? 'Required by the selected OpenSCAP profile'
+    : 'Root partition is required';
+
   const mountpointInput = (
     <ValidatedInputAndTextArea
       ariaLabel='Mount point input'
       placeholder='Define mount point'
       value={partition.mountpoint || ''}
-      isDisabled={
-        ('fs_type' in partition && partition.fs_type === 'swap') || hasOneRoot
-      }
+      isDisabled={isDisabled}
       onChange={(event, mountpoint) => {
         dispatch(
           changePartitionMountpoint({
@@ -54,8 +66,8 @@ const Mountpoint = ({ partition, customization }: MountpointProps) => {
     />
   );
 
-  return hasOneRoot ? (
-    <Tooltip content='Root partition is required'>
+  return isOscapRequired || hasOneRoot ? (
+    <Tooltip content={tooltipContent}>
       <div>{mountpointInput}</div>
     </Tooltip>
   ) : (

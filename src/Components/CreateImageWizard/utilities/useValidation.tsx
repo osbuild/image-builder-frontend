@@ -10,16 +10,19 @@ import {
 } from '@/constants';
 import {
   BlueprintsResponse,
+  useGetOscapCustomizationsQuery,
   useLazyGetBlueprintsQuery,
 } from '@/store/api/backend';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  convertToBytes,
   DiskPartition,
   FilesystemPartition,
   MAX_REGULAR_GID,
   MIN_REGULAR_GID,
+  parseSizeUnit,
   selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
@@ -33,8 +36,10 @@ import {
   selectBlueprintId,
   selectBlueprintMode,
   selectBlueprintName,
+  selectComplianceProfileID,
   selectDiskMinsize,
   selectDiskPartitions,
+  selectDistribution,
   selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
@@ -418,7 +423,20 @@ export function useFilesystemValidation(): StepValidation {
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const diskMinsize = useAppSelector(selectDiskMinsize);
   const blueprintMode = useAppSelector(selectBlueprintMode);
+  const release = useAppSelector(selectDistribution);
+  const complianceProfileID = useAppSelector(selectComplianceProfileID);
   let disabledNext = false;
+
+  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
+    {
+      distribution: release,
+      // @ts-expect-error skipped when undefined
+      profile: complianceProfileID,
+    },
+    {
+      skip: !complianceProfileID,
+    },
+  );
 
   const errors: { [key: string]: string } = {};
   if (fscMode === 'automatic') {
@@ -455,6 +473,26 @@ export function useFilesystemValidation(): StepValidation {
     ) {
       disabledNext = true;
     }
+
+    if ('mountpoint' in partition && partition.mountpoint) {
+      const oscapPartition = oscapProfileInfo?.filesystem?.find(
+        (fs) => fs.mountpoint === partition.mountpoint,
+      );
+      if (oscapPartition) {
+        const currentBytes = convertToBytes(
+          partition.min_size || '0',
+          partition.unit || 'GiB',
+        );
+        const requiredBytes = oscapPartition.min_size;
+        if (currentBytes < requiredBytes) {
+          const [size, unit] = parseSizeUnit(String(requiredBytes));
+          errors[`min-size-${partition.id}`] =
+            `Minimum size of ${size} ${unit} required by OpenSCAP profile`;
+          disabledNext = true;
+        }
+      }
+    }
+
     if (fscMode === 'advanced') {
       if (validatePartitionName(partition, errors, nameDuplicates)) {
         disabledNext = true;
