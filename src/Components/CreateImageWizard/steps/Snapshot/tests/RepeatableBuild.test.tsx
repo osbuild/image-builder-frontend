@@ -24,7 +24,7 @@ import {
   selectTemplate,
   selectUseAContentTemplate,
 } from './helpers';
-import { createDefaultFetchHandler, fetchMock } from './mocks/handlers';
+import { createDefaultFetchHandler, fetchMock } from './mocks';
 
 fetchMock.enableMocks();
 
