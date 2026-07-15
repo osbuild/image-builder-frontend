@@ -14,12 +14,17 @@ import './AppCockpit.scss';
 import { NotReady, RequireAdmin } from './Components/Cockpit';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
+import { useGetHostInfoQuery } from './store/api/backend';
 import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
 import { useIsCockpitAdmin } from './Utilities/useIsCockpitAdmin';
 
 const Application = () => {
   const { enabled, started } = useGetComposerSocketStatus();
   const isAdmin = useIsCockpitAdmin();
+
+  // this runs the initial call for getting the host
+  // arch and distro on app init
+  useGetHostInfoQuery();
 
   if (!started || !enabled) {
     return <NotReady enabled={enabled} />;
