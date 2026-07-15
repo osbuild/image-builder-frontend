@@ -8,6 +8,7 @@ import { filesystemSlice, filesystemState } from './filesystem';
 import { outputSlice, outputState } from './output';
 import { registrationSlice, registrationState } from './registration';
 import { systemSlice, systemState } from './system';
+import { validationSlice, validationState } from './validation';
 
 export const wizardReducer = combineSlices({
   cloudProviders: cloudProvidersSlice.reducer,
@@ -18,6 +19,7 @@ export const wizardReducer = combineSlices({
   output: outputSlice.reducer,
   registration: registrationSlice.reducer,
   system: systemSlice.reducer,
+  validation: validationSlice.reducer,
 });
 
 export type WizardState = ReturnType<typeof wizardReducer>;
@@ -31,4 +33,5 @@ export const initialState: WizardState = {
   output: outputState,
   registration: registrationState,
   system: systemState,
+  validation: validationState,
 };

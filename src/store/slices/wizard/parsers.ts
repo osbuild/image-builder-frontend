@@ -12,6 +12,7 @@ import { parseOutputFromRequest } from './output';
 import { parseRegistrationFromRequest } from './registration';
 import type { WizardState } from './slice';
 import { parseSystemFromRequest } from './system';
+import { validationState } from './validation';
 
 export const parseStateFromRequest = (
   request: Request | Blueprint,
@@ -24,4 +25,5 @@ export const parseStateFromRequest = (
   output: parseOutputFromRequest(request),
   cloudProviders: parseCloudProvidersFromRequest(request),
   registration: parseRegistrationFromRequest(request),
+  validation: validationState,
 });
