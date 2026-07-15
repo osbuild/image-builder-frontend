@@ -6,9 +6,9 @@ import {
   IB_ON_PREMISE_RHEL10_DOCUMENTATION_URL,
   IB_ON_PREMISE_RHEL9_DOCUMENTATION_URL,
 } from '@/constants';
+import { getHostDistro } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { getHostDistro } from '@/Utilities/getHostInfo';
 
 export const useGetDocumentationUrl = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);

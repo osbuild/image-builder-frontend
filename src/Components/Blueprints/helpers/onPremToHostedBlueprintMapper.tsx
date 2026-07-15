@@ -9,6 +9,7 @@ import {
   Fdo,
   File,
   FirewallCustomization,
+  getHostDistro,
   Ignition,
   Installer,
   Kernel,
@@ -19,7 +20,6 @@ import {
 } from '@/store/api/backend';
 
 import { RHEL_10 } from '../../../constants';
-import { getHostDistro } from '../../../Utilities/getHostInfo';
 
 export type BlueprintOnPrem = {
   name: string;

@@ -1,5 +1,7 @@
 export { composerApi } from './enhancedComposerApi';
 export {
+  getHostArch,
+  getHostDistro,
   toComposerComposeRequest,
   useComposeBlueprintMutation,
   useCreateBlueprintMutation,
