@@ -5,6 +5,9 @@ import {
   Content,
   EmptyState,
   FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
   Spinner,
   Tooltip,
 } from '@patternfly/react-core';
@@ -23,6 +26,7 @@ import {
   changeRegistrationType,
   selectArchitecture,
   selectDistribution,
+  selectForceShowErrors,
   selectImageTypes,
   selectIsImageMode,
   selectIsOnlyNetworkInstallerSelected,
@@ -70,6 +74,7 @@ const TargetEnvironment = () => {
   const isOtherEnvironmentSelected = useAppSelector(
     selectIsOtherEnvironmentSelected,
   );
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: environments,
@@ -192,6 +197,15 @@ const TargetEnvironment = () => {
           ? 'Select a target environment for this image.'
           : 'Select one or more target environments for this image.'}
       </Content>
+      {forceShowErrors && environments.length === 0 && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant='error'>
+              Select at least one target environment.
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
 
       {publicClouds.length > 0 && (
         <FormGroup
