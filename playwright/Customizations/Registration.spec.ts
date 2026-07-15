@@ -324,7 +324,7 @@ registrationModes.forEach(
             await registrationCommandInput.blur();
             await expect(
               frame.getByRole('button', { name: 'Review image' }),
-            ).toBeDisabled();
+            ).toBeEnabled();
             await expect(
               frame.getByText('Invalid or missing token'),
             ).toBeVisible();

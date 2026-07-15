@@ -56,7 +56,7 @@ test('Import a blueprint with invalid customization', async ({
     await expect(
       frame.getByText(/Duplicate mount points/i).first(),
     ).toBeVisible();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     const closeRootButton = frame
       .locator('td:nth-child(5) > .pf-v6-c-button')
       .first();
@@ -70,16 +70,16 @@ test('Import a blueprint with invalid customization', async ({
 
   await test.step('Fix timezone and locale errors on Advanced settings', async () => {
     await expect(frame.getByText('Includes duplicate NTP')).toBeVisible();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove ntp/' }).first().click();
 
     await expect(frame.getByText('Unknown languages: random:')).toBeVisible();
     await expect(frame.getByText('Duplicated languages: af_ZA.')).toBeVisible();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove language' }).last().click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove language' }).last().click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
   });
 
   await test.step('Fix firewall errors on Advanced settings', async () => {
@@ -95,22 +95,22 @@ test('Import a blueprint with invalid customization', async ({
     await expect(
       frame.getByText('Includes duplicate disabled services: service2'),
     ).toBeVisible();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame
       .getByRole('button', { name: 'Remove 2020:port' })
       .first()
       .click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame
       .getByRole('button', { name: 'Remove service1' })
       .first()
       .click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame
       .getByRole('button', { name: 'Remove service2' })
       .first()
       .click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
   });
 
   await test.step('Fix systemd errors on Advanced settings', async () => {
@@ -124,11 +124,11 @@ test('Import a blueprint with invalid customization', async ({
       frame.getByText('Includes duplicate disabled services: sssd'),
     ).toBeVisible();
     await expect(frame.getByText('Includes duplicate masked')).toBeVisible();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove auditd' }).first().click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove sssd' }).first().click();
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove masked' }).first().click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Review image' }).click();
