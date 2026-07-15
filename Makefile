@@ -85,12 +85,11 @@ $(RPM_SPEC): $(RPM_SPEC) $(NODE_MODULES_TEST)
 	awk -v p="$$provides" '{gsub(/%{VERSION}/, "$(VERSION)"); $(SUB_NODE_ENV) gsub(/%{NPM_PROVIDES}/, p)}1' $< > $@
 
 $(TARFILE): export NODE_ENV ?= production
-$(TARFILE): cockpit/build
+$(TARFILE):
 	touch -r package.json package-lock.json
 	touch cockpit/public/*
 	tar czf $(TARFILE) --transform 's,^,$(PACKAGE_NAME)/,' \
-		--exclude node_modules \
-		$$(git ls-files) $(RPM_SPEC) $(NODE_MODULES_TEST) cockpit/public/ cockpit/README.md
+		$$(git ls-files) $(RPM_SPEC) $(NODE_MODULES_TEST) cockpit/public/ cockpit/README.md node_modules pkg
 	realpath $(TARFILE)
 
 dist: $(TARFILE)

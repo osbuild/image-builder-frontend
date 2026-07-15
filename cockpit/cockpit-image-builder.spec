@@ -32,6 +32,7 @@ as a frontend for osbuild.
 
 %build
 # Nothing to build
+NODE_ENV=production NODE_PATH=/usr/lib/node_modules:$(echo /usr/lib/node_modules_*) ./cockpit/build.js
 
 %install
 %make_install PREFIX=/usr
