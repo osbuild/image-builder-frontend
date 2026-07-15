@@ -392,6 +392,11 @@ registrationModes.forEach(
                 name: 'Automatically register to Red Hat',
               }),
             ).toBeChecked();
+            if (isHosted()) {
+              await expect(
+                frame.getByPlaceholder('Select activation key'),
+              ).not.toHaveValue('');
+            }
           } else if (name === 'register-later') {
             await expect(
               frame.getByRole('radio', { name: 'Register later' }),

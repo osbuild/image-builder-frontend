@@ -90,18 +90,6 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
       </Content>
       <Content className='pf-v6-u-pb-sm'>
         <Radio
-          label='Register later'
-          isChecked={registrationType === 'register-later'}
-          onChange={() => {
-            dispatch(changeRegistrationType('register-later'));
-            onErrorChange(false);
-          }}
-          id='register-later'
-          name='registration-type'
-        />
-      </Content>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
           label='Register for a Satellite or Capsule server'
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
@@ -115,6 +103,18 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
               <SatelliteRegistration />
             )
           }
+        />
+      </Content>
+      <Content className='pf-v6-u-pb-sm'>
+        <Radio
+          label='Register later'
+          isChecked={registrationType === 'register-later'}
+          onChange={() => {
+            dispatch(changeRegistrationType('register-later'));
+            onErrorChange(false);
+          }}
+          id='register-later'
+          name='registration-type'
         />
       </Content>
     </FormGroup>
