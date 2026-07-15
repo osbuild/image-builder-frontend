@@ -69,11 +69,15 @@ objects:
           bundleId: insights
           position: 300
           navItems:
-            - id: imageBuilder
-              title: Image builder
-              href: /insights/image-builder
-              icon: InsightsIcon
-              product: Red Hat Insights
+            - id: inventory
+              title: Inventory
+              expandable: true
+              routes:
+                - id: imageBuilder
+                  title: Images
+                  href: /insights/image-builder
+                  icon: InsightsIcon
+                  product: Red Hat Insights
       widgetRegistry:
         - scope: landing
           module: ./ImageBuilderWidget
