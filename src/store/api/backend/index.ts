@@ -106,6 +106,7 @@ export {
   getHostDistro,
   toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
+  useGetHostInfoQuery,
   useGetRegistryAuthStatusQuery,
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,

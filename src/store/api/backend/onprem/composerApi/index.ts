@@ -1,6 +1,7 @@
 import { architectureEndpoints } from './architecture';
 import { blueprintEndpoints } from './blueprints';
 import { composeEndpoints } from './composes';
+import { hostEndpoints } from './host';
 import { oscapEndpoints } from './oscap';
 import { registryEndpoints } from './registry';
 import { workerEndpoints } from './worker';
@@ -13,6 +14,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
       ...architectureEndpoints(builder),
       ...blueprintEndpoints(builder),
       ...composeEndpoints(builder),
+      ...hostEndpoints(builder),
       ...oscapEndpoints(builder),
       ...registryEndpoints(builder),
       ...workerEndpoints(builder),
@@ -46,6 +48,7 @@ export const {
   useGetWorkerConfigQuery,
   useRegistryLoginMutation,
   useUpdateWorkerConfigMutation,
+  useGetHostInfoQuery,
 } = composerApi;
 
 // re-export this for testing

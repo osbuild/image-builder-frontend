@@ -9,7 +9,6 @@ import {
   Fdo,
   File,
   FirewallCustomization,
-  getHostDistro,
   Ignition,
   Installer,
   Kernel,
@@ -18,6 +17,7 @@ import {
   Services,
   Timezone,
 } from '@/store/api/backend';
+import { getHostDistro } from '@/store/api/backend/onprem/composerApi/helpers';
 
 import { RHEL_10 } from '../../../constants';
 

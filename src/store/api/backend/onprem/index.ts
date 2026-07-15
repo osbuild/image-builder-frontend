@@ -24,6 +24,7 @@ export {
   useRegistryLoginMutation,
   useUpdateBlueprintMutation,
   useUpdateWorkerConfigMutation,
+  useGetHostInfoQuery,
 } from './composerApi';
 
 export type * from './types';
