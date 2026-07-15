@@ -478,7 +478,7 @@ const CreateImageWizard = () => {
           footer={
             <CustomWizardFooter
               disableBack={true}
-              disableNext={baseSettingsHasErrors}
+              hasErrors={baseSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
           }
@@ -535,7 +535,7 @@ const CreateImageWizard = () => {
             restrictions.packages.shouldHide
           }
           footer={
-            <CustomWizardFooter disableNext={false} isOnPremise={isOnPremise} />
+            <CustomWizardFooter hasErrors={false} isOnPremise={isOnPremise} />
           }
         >
           <Form onSubmit={handleFormSubmit}>
@@ -575,7 +575,7 @@ const CreateImageWizard = () => {
           }
           footer={
             <CustomWizardFooter
-              disableNext={advancedSettingsHasErrors}
+              hasErrors={advancedSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
           }
