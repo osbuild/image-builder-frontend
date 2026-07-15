@@ -38,7 +38,7 @@ test('Create a blueprint with Azure target', async ({ page, cleanup }) => {
     const reviewImageButton = frame.getByRole('button', {
       name: 'Review image',
     });
-    await expect(reviewImageButton).toBeDisabled();
+    await expect(reviewImageButton).toBeEnabled();
 
     const tenantInput = frame.getByRole('textbox', {
       name: /azure tenant guid/i,

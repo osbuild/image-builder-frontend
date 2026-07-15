@@ -234,11 +234,11 @@ test('Create a blueprint with Users customization', async ({
     // Test 4: Empty username with password filled
     await usernameInputs.nth(4).fill('');
     await passwordInputs.nth(4).fill('password123');
-    // Next and Review image buttons should be disabled due to validation errors
-    await expect(frame.getByRole('button', { name: 'Next' })).toBeDisabled();
+    // Next and Review image buttons should be enabled (validation happens on click)
+    await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await expect(
       frame.getByRole('button', { name: 'Review image' }),
-    ).toBeDisabled();
+    ).toBeEnabled();
 
     // Test 5: Invalid group name with spaces
     await expect(
