@@ -6,9 +6,9 @@ import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import TOML from 'smol-toml';
 
-import { mapOnPremToHosted } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 import { BlueprintItem } from '@/store/api/backend';
+import { mapOnPremToHosted } from '@/store/api/backend/onprem/composerApi/helpers/blueprintMapper';
 import { parseStateFromRequest } from '@/store/slices/wizard';
 import {
   clickWithWait,

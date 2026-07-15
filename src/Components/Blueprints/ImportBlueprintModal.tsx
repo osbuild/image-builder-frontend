@@ -27,6 +27,7 @@ import {
   BlueprintItem,
   CustomRepository,
 } from '@/store/api/backend';
+import { mapOnPremToHosted } from '@/store/api/backend/onprem/composerApi/helpers/blueprintMapper';
 import {
   ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
@@ -42,8 +43,6 @@ import {
   WizardState,
 } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
-
-import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getErrorMessage } from '../../Utilities/getErrorMessage';

@@ -9,7 +9,7 @@ import {
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
 import { RHEL_10, RHEL_10_IMAGE_MODE_IMAGE, X86_64 } from '@/constants';
-import { Distributions } from '@/store/api/backend';
+import { Distributions, getHostDistro } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -22,7 +22,6 @@ import {
   selectDistribution,
   selectIsImageMode,
 } from '@/store/slices/wizard';
-import { getHostDistro } from '@/Utilities/getHostInfo';
 
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();

@@ -1,10 +1,10 @@
 import cockpit from 'cockpit';
 import TOML from 'smol-toml';
 
-import { mapOnPremToHosted } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import { lookupDatastreamDistro } from './helpers';
+import { mapOnPremToHosted } from './helpers/blueprintMapper';
 
 import {
   BlueprintItem,
