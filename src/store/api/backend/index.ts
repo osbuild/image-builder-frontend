@@ -102,6 +102,8 @@ export {
   useRecommendPackageMutation,
 } from './hosted';
 export {
+  getHostArch,
+  getHostDistro,
   toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
   useGetRegistryAuthStatusQuery,

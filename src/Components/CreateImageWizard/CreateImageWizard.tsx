@@ -19,7 +19,11 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useGetUser } from '@/Hooks';
-import { useGetBlueprintQuery } from '@/store/api/backend';
+import {
+  getHostArch,
+  getHostDistro,
+  useGetBlueprintQuery,
+} from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import {
   selectSelectedBlueprintId,
@@ -66,7 +70,6 @@ import {
   RHEL_9,
 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getHostArch, getHostDistro } from '../../Utilities/getHostInfo';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import DetailsStep from '../CreateImageWizard/steps/Details';
 import FileSystemStep from '../CreateImageWizard/steps/FileSystem';

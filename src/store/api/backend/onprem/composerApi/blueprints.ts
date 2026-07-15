@@ -4,10 +4,10 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
-import { mapHostedToOnPrem } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import { getBlueprintsPath } from './helpers';
+import { mapHostedToOnPrem } from './helpers/blueprintMapper';
 
 import {
   BlueprintItem,

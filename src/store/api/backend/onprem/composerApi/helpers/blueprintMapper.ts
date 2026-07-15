@@ -1,6 +1,6 @@
-import {
+import { RHEL_10 } from '@/constants';
+import type {
   BlueprintExportResponse,
-  ComposerBlueprint,
   Container,
   CreateBlueprintRequest,
   Directory,
@@ -16,10 +16,10 @@ import {
   OpenScap,
   Services,
   Timezone,
-} from '@/store/api/backend';
+} from '@/store/api/backend/hosted/imageBuilderApi';
+import type { ComposerBlueprint } from '@/store/api/backend/onprem/types';
 
-import { RHEL_10 } from '../../../constants';
-import { getHostDistro } from '../../../Utilities/getHostInfo';
+import { getHostDistro } from './hostInfo';
 
 export type BlueprintOnPrem = {
   name: string;

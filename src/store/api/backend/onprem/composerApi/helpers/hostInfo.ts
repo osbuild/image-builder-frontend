@@ -1,10 +1,12 @@
 import cockpit from 'cockpit';
 import { read_os_release } from 'os-release';
 
-import { AARCH64, FEDORA_ELN, X86_64 } from '../constants';
-import { Distributions } from '../store/api/backend/hosted';
+import { AARCH64, FEDORA_ELN, X86_64 } from '@/constants';
+import type { Distributions } from '@/store/api/backend/hosted';
 
-type Architecture = 'x86_64' | 'aarch64';
+type Architecture = typeof X86_64 | typeof AARCH64;
+
+const SUPPORTED_ARCHITECTURES: Architecture[] = [X86_64, AARCH64];
 
 // Module-level cache for promises - ensures only one request is made
 // even if multiple callers invoke concurrently
@@ -44,7 +46,7 @@ export const getHostArch = async (): Promise<Architecture> => {
           superuser: 'try',
         });
         const arch = (hostArch as string).trim() as Architecture;
-        if (![X86_64, AARCH64].includes(arch)) {
+        if (!SUPPORTED_ARCHITECTURES.includes(arch)) {
           throw new Error(`Unsupported architecture: ${arch}`);
         }
         return arch;
