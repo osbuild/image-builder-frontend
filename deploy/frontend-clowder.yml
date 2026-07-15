@@ -64,16 +64,15 @@ objects:
             - build
             - assemble
             - image-builder
-      bundleSegments:
-        - segmentId: imageBuilder
-          bundleId: insights
-          position: 300
+      navigationSegments:
+        - segmentId: image-builder-nav
           navItems:
             - id: imageBuilder
               title: Image builder
               href: /insights/image-builder
               icon: InsightsIcon
               product: Red Hat Insights
+
       widgetRegistry:
         - scope: landing
           module: ./ImageBuilderWidget
