@@ -1,11 +1,18 @@
 import React from 'react';
 
-import { Button, TextInput } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+import { Button, TextInput, Tooltip } from '@patternfly/react-core';
+import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import { useAppDispatch } from '@/store/hooks';
-import { FilesystemPartition, removePartition } from '@/store/slices/wizard';
+import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  FilesystemPartition,
+  parseSizeUnit,
+  removePartition,
+  selectComplianceProfileID,
+  selectDistribution,
+} from '@/store/slices/wizard';
 
 import MinimumSize from './MinimumSize';
 import Mountpoint from './Mountpoint';
@@ -20,16 +27,53 @@ type RowPropTypes = {
 
 const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
   const dispatch = useAppDispatch();
+  const release = useAppSelector(selectDistribution);
+  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+
+  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
+    {
+      distribution: release,
+      // @ts-expect-error skipped when undefined
+      profile: complianceProfileID,
+    },
+    {
+      skip: !complianceProfileID,
+    },
+  );
+
+  const oscapPartition = oscapProfileInfo?.filesystem?.find(
+    (fs) => fs.mountpoint === partition.mountpoint,
+  );
+  const isOscapRequired = !!oscapPartition;
+
+  const oscapMinSizeLabel = oscapPartition
+    ? parseSizeUnit(String(oscapPartition.min_size)).join(' ')
+    : '';
+
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
   };
 
   const customization = 'fileSystem';
 
+  const removeButton = (
+    <Button
+      isDisabled={isOscapRequired || isRemovingDisabled}
+      variant='plain'
+      icon={isOscapRequired ? <LockIcon /> : <MinusCircleIcon />}
+      onClick={() => handleRemovePartition(partition.id)}
+      aria-label='Remove partition'
+    />
+  );
+
   return (
     <Tr id={partition.id}>
       <Td width={40}>
-        <Mountpoint partition={partition} customization={customization} />
+        <Mountpoint
+          partition={partition}
+          customization={customization}
+          isOscapRequired={isOscapRequired}
+        />
       </Td>
       <Td width={20}>
         <TextInput
@@ -40,19 +84,28 @@ const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
         />
       </Td>
       <Td width={20}>
-        <MinimumSize partition={partition} customization={customization} />
+        <MinimumSize
+          partition={partition}
+          customization={customization}
+          isOscapRequired={isOscapRequired}
+          oscapMinSizeLabel={oscapMinSizeLabel}
+        />
       </Td>
       <Td width={20}>
-        <SizeUnit partition={partition} customization={customization} />
+        <SizeUnit
+          partition={partition}
+          customization={customization}
+          isOscapRequired={isOscapRequired}
+        />
       </Td>
       <Td isActionCell>
-        <Button
-          variant='plain'
-          icon={<MinusCircleIcon />}
-          onClick={() => handleRemovePartition(partition.id)}
-          isDisabled={isRemovingDisabled}
-          aria-label='Remove partition'
-        />
+        {isOscapRequired ? (
+          <Tooltip content='Required by the selected OpenSCAP profile'>
+            <span>{removeButton}</span>
+          </Tooltip>
+        ) : (
+          removeButton
+        )}
       </Td>
     </Tr>
   );
