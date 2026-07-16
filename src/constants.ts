@@ -63,6 +63,7 @@ export const FEDORA_42 = 'fedora-42';
 export const FEDORA_43 = 'fedora-43';
 export const FEDORA_44 = 'fedora-44';
 export const FEDORA_45 = 'fedora-45';
+export const FEDORA_ELN = 'fedora-eln';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
 
@@ -127,6 +128,7 @@ export const ON_PREM_RELEASES = new Map([
   [FEDORA_43, 'Fedora Linux 43'],
   [FEDORA_44, 'Fedora Linux 44'],
   [FEDORA_45, 'Fedora Linux 45'],
+  [FEDORA_ELN, 'Fedora Linux ELN'],
   [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
