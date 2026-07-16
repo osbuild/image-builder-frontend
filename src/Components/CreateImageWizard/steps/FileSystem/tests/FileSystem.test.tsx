@@ -1,6 +1,8 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 
+import { RHEL_9 } from '@/constants';
 import { initialState } from '@/store/slices/wizard';
+import { server } from '@/test/mocks/server';
 import {
   clearWithWait,
   clickWithWait,
@@ -9,6 +11,31 @@ import {
 } from '@/test/testUtils';
 
 import { renderFileSystemStep } from './helpers';
+import {
+  createDefaultFetchHandler,
+  fetchMock,
+  mockOscapProfile,
+} from './mocks';
+
+fetchMock.enableMocks();
+
+// Disable global MSW server for this file - we use fetch mocks instead
+beforeAll(() => {
+  server.close();
+});
+
+// Restore global MSW server so other tests don't break
+afterAll(() => {
+  server.listen();
+});
+
+beforeEach(() => {
+  fetchMock.mockResponse(createDefaultFetchHandler);
+});
+
+afterEach(() => {
+  fetchMock.resetMocks();
+});
 
 describe('FileSystem Component', () => {
   describe('Rendering', () => {
@@ -687,6 +714,190 @@ describe('FileSystem Component', () => {
       expect(
         await screen.findByRole('button', { name: /add partition/i }),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('OpenSCAP required partitions', () => {
+    const renderWithOscapPartitions = () => {
+      return renderFileSystemStep({
+        output: {
+          ...initialState.output,
+          distribution: RHEL_9,
+        },
+        compliance: {
+          type: 'openscap',
+          profileID: mockOscapProfile,
+          policyID: undefined,
+          policyTitle: undefined,
+          fips: { enabled: false },
+        },
+        filesystem: {
+          mode: 'basic',
+          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
+          fileSystem: {
+            partitions: [
+              {
+                id: '1',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+              },
+              {
+                id: '2',
+                mountpoint: '/home',
+                min_size: '1',
+                unit: 'GiB',
+              },
+              {
+                id: '3',
+                mountpoint: '/var',
+                min_size: '5',
+                unit: 'GiB',
+              },
+              {
+                id: '4',
+                mountpoint: '/tmp',
+                min_size: '2',
+                unit: 'GiB',
+              },
+            ],
+          },
+          partitioningMode: undefined,
+        },
+      });
+    };
+
+    test('OSCAP-required partition has disabled mountpoint input', async () => {
+      renderWithOscapPartitions();
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const rows = within(table).getAllByRole('row');
+      const requiredRow = rows[2]; // /home
+      await waitFor(() =>
+        expect(
+          within(requiredRow).getByRole('textbox', {
+            name: /mount point input/i,
+          }),
+        ).toBeDisabled(),
+      );
+    });
+
+    test('OSCAP-required partition has disabled remove button', async () => {
+      renderWithOscapPartitions();
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const rows = within(table).getAllByRole('row');
+      const requiredRow = rows[3]; // /var
+      await waitFor(() =>
+        expect(
+          within(requiredRow).getByRole('button', {
+            name: /remove partition/i,
+          }),
+        ).toBeDisabled(),
+      );
+    });
+
+    test('OSCAP-required partition has disabled size unit dropdown', async () => {
+      renderWithOscapPartitions();
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const rows = within(table).getAllByRole('row');
+      const requiredRow = rows[2]; // /home
+      await waitFor(() =>
+        expect(
+          within(requiredRow).getByRole('button', { name: 'GiB' }),
+        ).toBeDisabled(),
+      );
+    });
+
+    test('non-required partition controls remain enabled', async () => {
+      renderWithOscapPartitions();
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const rows = within(table).getAllByRole('row');
+
+      // Check that a required row is locked
+      const requiredRow = rows[2]; // /home — OSCAP-required
+      await waitFor(() =>
+        expect(
+          within(requiredRow).getByRole('textbox', {
+            name: /mount point input/i,
+          }),
+        ).toBeDisabled(),
+      );
+
+      // Verify the non-required row remains enabled
+      const userRow = rows[4]; // /tmp — not in OSCAP profile
+      expect(
+        within(userRow).getByRole('textbox', { name: /mount point input/i }),
+      ).toBeEnabled();
+      expect(
+        within(userRow).getByRole('button', { name: /remove partition/i }),
+      ).toBeEnabled();
+      expect(
+        within(userRow).getByRole('button', { name: 'GiB' }),
+      ).toBeEnabled();
+    });
+
+    test('shows validation error when size is below OSCAP minimum', async () => {
+      const user = createUser();
+      renderWithOscapPartitions();
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const rows = within(table).getAllByRole('row');
+      const varRow = rows[3]; // /var
+
+      await waitFor(() =>
+        expect(
+          within(varRow).getByRole('textbox', {
+            name: /mount point input/i,
+          }),
+        ).toBeDisabled(),
+      );
+
+      const sizeInput = within(varRow).getByRole('textbox', {
+        name: /minimum partition size/i,
+      });
+
+      await clickWithWait(user, sizeInput);
+      await clearWithWait(user, sizeInput);
+      await typeWithWait(user, sizeInput, '1');
+
+      expect(
+        await screen.findByText(/required by OpenSCAP profile/i),
+      ).toBeInTheDocument();
+    });
+
+    test('no validation error when size meets OSCAP minimum', async () => {
+      renderWithOscapPartitions();
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const rows = within(table).getAllByRole('row');
+      const varRow = rows[3]; // /var
+
+      await waitFor(() =>
+        expect(
+          within(varRow).getByRole('textbox', {
+            name: /mount point input/i,
+          }),
+        ).toBeDisabled(),
+      );
+
+      expect(
+        screen.queryByText(/required by OpenSCAP profile/i),
+      ).not.toBeInTheDocument();
     });
   });
 
