@@ -9,6 +9,8 @@ import {
   type Page,
 } from '@playwright/test';
 
+import { FEDORA_ELN, ON_PREM_RELEASES } from '@/constants';
+
 export const disablePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
 
@@ -50,17 +52,6 @@ export const closePopupsIfExist = async (page: Page) => {
   }
 };
 
-// copied over from constants
-const ON_PREM_RELEASES = new Map([
-  ['centos-10', 'CentOS Stream 10'],
-  ['fedora-41', 'Fedora Linux 41'],
-  ['fedora-42', 'Fedora Linux 42'],
-  ['fedora-43', 'Fedora Linux 43'],
-  ['fedora-44', 'Fedora Linux 44'],
-  ['fedora-45', 'Fedora Linux 45'],
-  ['rhel-10', 'Red Hat Enterprise Linux (RHEL) 10'],
-]);
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getHostDistroKey = (): string => {
   const osRelData = readFileSync('/etc/os-release');
@@ -75,7 +66,9 @@ export const getHostDistroKey = (): string => {
     (osRel as any)[lineData[0]] = lineData[1].replace(/"/g, '');
   }
 
-  const key = `${(osRel as any)['ID']}-${(osRel as any)['VERSION_ID'].split('.')[0]}`;
+  const id = (osRel as any)['ID'];
+  const versionId = (osRel as any)['VERSION_ID'];
+  const key = id === 'eln' ? FEDORA_ELN : `${id}-${versionId.split('.')[0]}`;
   if (!ON_PREM_RELEASES.has(key)) {
     /* eslint-disable no-console */
     console.error('getHostDistroKey failed, os-release config:', osRel);

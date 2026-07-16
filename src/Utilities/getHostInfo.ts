@@ -1,7 +1,7 @@
 import cockpit from 'cockpit';
 import { read_os_release } from 'os-release';
 
-import { AARCH64, X86_64 } from '../constants';
+import { AARCH64, FEDORA_ELN, X86_64 } from '../constants';
 import { Distributions } from '../store/api/backend/hosted';
 
 type Architecture = 'x86_64' | 'aarch64';
@@ -16,11 +16,16 @@ export const getHostDistro = async (): Promise<Distributions> => {
     cachedHostDistro = (async () => {
       try {
         const osRel = await read_os_release();
-        let distro = `${osRel.ID}-${osRel.VERSION_ID}`;
+        // ELN is a rolling release with no meaningful version;
+        // its os-release has ID=eln, so map it to 'fedora-eln'
+        let distro =
+          osRel.ID === 'eln' ? FEDORA_ELN : `${osRel.ID}-${osRel.VERSION_ID}`;
+
         // use major releases, and rely on composer's distro aliasing (rhel)
         if (distro.indexOf('.') !== -1) {
           distro = distro.split('.')[0];
         }
+
         return distro as Distributions;
       } catch (err) {
         cachedHostDistro = null;
