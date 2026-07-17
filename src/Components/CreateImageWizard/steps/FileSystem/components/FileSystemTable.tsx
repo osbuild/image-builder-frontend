@@ -2,7 +2,15 @@ import React, { useMemo } from 'react';
 
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { DiskPartition, FilesystemPartition } from '@/store/slices/wizard';
+import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
+import {
+  DiskPartition,
+  FilesystemPartition,
+  parseSizeUnit,
+  selectComplianceProfileID,
+  selectDistribution,
+} from '@/store/slices/wizard';
 
 import DiskRow from './DiskRow';
 import Row from './Row';
@@ -18,6 +26,32 @@ type FileSystemTableTypes =
     };
 
 const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
+  const release = useAppSelector(selectDistribution);
+  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+
+  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
+    {
+      distribution: release,
+      // @ts-expect-error skipped when undefined
+      profile: complianceProfileID,
+    },
+    {
+      skip: !complianceProfileID,
+    },
+  );
+
+  const getOscapPartitionInfo = (mountpoint: string) => {
+    const oscapPartition = oscapProfileInfo?.filesystem?.find(
+      (fs) => fs.mountpoint === mountpoint,
+    );
+    return {
+      isOscapRequired: !!oscapPartition,
+      oscapMinSizeLabel: oscapPartition
+        ? parseSizeUnit(String(oscapPartition.min_size)).join(' ')
+        : '',
+    };
+  };
+
   const isFilesystemPartition = (
     p: FilesystemPartition | DiskPartition,
   ): p is FilesystemPartition => !('type' in p);
@@ -57,6 +91,7 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
                 isRemovingDisabled={
                   rootPartitionsCount === 1 && partition.mountpoint === '/'
                 }
+                {...getOscapPartitionInfo(partition.mountpoint)}
               />
             ))
           : partitions.map((partition) => (

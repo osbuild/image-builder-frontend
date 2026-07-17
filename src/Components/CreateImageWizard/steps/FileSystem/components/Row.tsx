@@ -4,15 +4,8 @@ import { Button, TextInput, Tooltip } from '@patternfly/react-core';
 import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  FilesystemPartition,
-  parseSizeUnit,
-  removePartition,
-  selectComplianceProfileID,
-  selectDistribution,
-} from '@/store/slices/wizard';
+import { useAppDispatch } from '@/store/hooks';
+import { FilesystemPartition, removePartition } from '@/store/slices/wizard';
 
 import MinimumSize from './MinimumSize';
 import Mountpoint from './Mountpoint';
@@ -23,32 +16,17 @@ export const FileSystemContext = React.createContext<boolean>(true);
 type RowPropTypes = {
   partition: FilesystemPartition;
   isRemovingDisabled: boolean;
+  isOscapRequired: boolean;
+  oscapMinSizeLabel: string;
 };
 
-const Row = ({ partition, isRemovingDisabled }: RowPropTypes) => {
+const Row = ({
+  partition,
+  isRemovingDisabled,
+  isOscapRequired,
+  oscapMinSizeLabel,
+}: RowPropTypes) => {
   const dispatch = useAppDispatch();
-  const release = useAppSelector(selectDistribution);
-  const complianceProfileID = useAppSelector(selectComplianceProfileID);
-
-  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-expect-error skipped when undefined
-      profile: complianceProfileID,
-    },
-    {
-      skip: !complianceProfileID,
-    },
-  );
-
-  const oscapPartition = oscapProfileInfo?.filesystem?.find(
-    (fs) => fs.mountpoint === partition.mountpoint,
-  );
-  const isOscapRequired = !!oscapPartition;
-
-  const oscapMinSizeLabel = oscapPartition
-    ? parseSizeUnit(String(oscapPartition.min_size)).join(' ')
-    : '';
 
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
