@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '@patternfly/react-core';
+import { Button, Split, SplitItem } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
@@ -48,11 +48,15 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
       <Td width={10}>
         <PartitionType partition={partition} customization={customization} />
       </Td>
-      <Td width={15}>
-        <MinimumSize partition={partition} customization={customization} />
-      </Td>
-      <Td width={15}>
-        <SizeUnit partition={partition} customization={customization} />
+      <Td width={30}>
+        <Split hasGutter>
+          <SplitItem isFilled>
+            <MinimumSize partition={partition} customization={customization} />
+          </SplitItem>
+          <SplitItem>
+            <SizeUnit partition={partition} customization={customization} />
+          </SplitItem>
+        </Split>
       </Td>
       <Td isActionCell>
         <Button

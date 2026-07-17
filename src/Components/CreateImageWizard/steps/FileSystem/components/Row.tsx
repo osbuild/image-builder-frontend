@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { Button, TextInput, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  Split,
+  SplitItem,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
@@ -38,7 +44,7 @@ const Row = ({
     <Button
       isDisabled={isOscapRequired || isRemovingDisabled}
       variant='plain'
-      icon={isOscapRequired ? <LockIcon /> : <MinusCircleIcon />}
+      icon={isRemovingDisabled ? <LockIcon /> : <MinusCircleIcon />}
       onClick={() => handleRemovePartition(partition.id)}
       aria-label='Remove partition'
     />
@@ -61,20 +67,24 @@ const Row = ({
           isDisabled
         />
       </Td>
-      <Td width={20}>
-        <MinimumSize
-          partition={partition}
-          customization={customization}
-          isOscapRequired={isOscapRequired}
-          oscapMinSizeLabel={oscapMinSizeLabel}
-        />
-      </Td>
-      <Td width={20}>
-        <SizeUnit
-          partition={partition}
-          customization={customization}
-          isOscapRequired={isOscapRequired}
-        />
+      <Td width={40}>
+        <Split hasGutter>
+          <SplitItem isFilled>
+            <MinimumSize
+              partition={partition}
+              customization={customization}
+              isOscapRequired={isOscapRequired}
+              oscapMinSizeLabel={oscapMinSizeLabel}
+            />
+          </SplitItem>
+          <SplitItem>
+            <SizeUnit
+              partition={partition}
+              customization={customization}
+              isOscapRequired={isOscapRequired}
+            />
+          </SplitItem>
+        </Split>
       </Td>
       <Td isActionCell>
         {isOscapRequired ? (

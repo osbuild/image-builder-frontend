@@ -77,7 +77,6 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
           <Th>Mount point</Th>
           <Th>Type</Th>
           <Th>Minimum size</Th>
-          <Th aria-label='Unit'>Unit</Th>
           <Th aria-label='Remove mount point' />
         </Tr>
       </Thead>
