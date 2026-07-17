@@ -66,7 +66,10 @@ export const oscapEndpoints = (builder: OnPremBuilder) => ({
         )) as string;
 
         const parsed = TOML.parse(result);
-        const blueprint = await mapOnPremToHosted(parsed as BlueprintItem);
+        const blueprint = mapOnPremToHosted(
+          parsed as BlueprintItem,
+          distribution,
+        );
 
         result = (await cockpit.spawn(
           [

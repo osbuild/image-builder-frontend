@@ -39,6 +39,7 @@ import {
   loadWizardState,
   mapToCustomRepositories,
   parseStateFromRequest,
+  selectDistribution,
   WizardState,
 } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
@@ -66,6 +67,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   };
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const distribution = useAppSelector(selectDistribution);
   const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
     React.useState<WizardState>();
@@ -195,8 +197,9 @@ export const ImportBlueprintModal: React.FunctionComponent<
           const isJson = filename.endsWith('.json');
           if (isToml) {
             const tomlBlueprint = TOML.parse(fileContent);
-            const blueprintFromFile = await mapOnPremToHosted(
+            const blueprintFromFile = mapOnPremToHosted(
               tomlBlueprint as BlueprintItem,
+              distribution,
             );
             const importBlueprintState =
               parseStateFromRequest(blueprintFromFile);
@@ -253,8 +256,10 @@ export const ImportBlueprintModal: React.FunctionComponent<
               setIsOnPremBlueprint(false);
               setImportedBlueprint(importBlueprintState);
             } catch (_error) {
-              const blueprintFromFileMapped =
-                await mapOnPremToHosted(blueprintFromFile);
+              const blueprintFromFileMapped = mapOnPremToHosted(
+                blueprintFromFile,
+                distribution,
+              );
               const importBlueprintState = parseStateFromRequest(
                 blueprintFromFileMapped,
               );

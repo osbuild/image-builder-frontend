@@ -17,9 +17,6 @@ import {
   Services,
   Timezone,
 } from '@/store/api/backend';
-import { getHostDistro } from '@/store/api/backend/onprem/composerApi/helpers';
-
-import { RHEL_10 } from '../../../constants';
 
 export type BlueprintOnPrem = {
   name: string;
@@ -105,9 +102,10 @@ export type SshKeyOnPrem = {
   key: string;
 };
 
-export const mapOnPremToHosted = async (
+export const mapOnPremToHosted = (
   blueprint: BlueprintOnPrem,
-): Promise<BlueprintExportResponse> => {
+  distro: Distributions,
+): BlueprintExportResponse => {
   const users = blueprint.customizations?.user?.map((u) => ({
     name: u.name,
     ssh_key: u.key,
@@ -126,9 +124,6 @@ export const mapOnPremToHosted = async (
     blueprint.customizations?.groups !== undefined
       ? blueprint.customizations.groups.map((p) => `@${p.name}`)
       : undefined;
-  const distro = process.env.IS_ON_PREMISE
-    ? await getHostDistro()
-    : blueprint.distro || RHEL_10;
   return {
     name: blueprint.name,
     description: blueprint.description || '',

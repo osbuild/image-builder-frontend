@@ -7,6 +7,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import TOML from 'smol-toml';
 
 import { mapOnPremToHosted } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
+import { RHEL_10 } from '@/constants';
 import { RootState, serviceMiddleware, serviceReducer } from '@/store';
 import { BlueprintItem } from '@/store/api/backend';
 import { parseStateFromRequest } from '@/store/slices/wizard';
@@ -125,8 +126,9 @@ export const renderImportMode = async (
   blueprintToml: string,
 ): Promise<{ store: EnhancedStore<RootState> }> => {
   const tomlBlueprint = TOML.parse(blueprintToml);
-  const blueprintFromFile = await mapOnPremToHosted(
+  const blueprintFromFile = mapOnPremToHosted(
     tomlBlueprint as BlueprintItem,
+    RHEL_10,
   );
   const importBlueprintState = parseStateFromRequest(blueprintFromFile);
 
