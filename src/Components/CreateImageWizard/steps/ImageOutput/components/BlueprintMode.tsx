@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 import {
   Content,
@@ -8,8 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
-import { RHEL_10, RHEL_10_IMAGE_MODE_IMAGE, X86_64 } from '@/constants';
-import { Distributions, getHostDistro } from '@/store/api/backend';
+import { RHEL_10_IMAGE_MODE_IMAGE, X86_64 } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -29,23 +28,8 @@ const BlueprintMode = () => {
   const isImageMode = useAppSelector(selectIsImageMode);
   const distribution = useAppSelector(selectDistribution);
   const architecture = useAppSelector(selectArchitecture);
-  const [defaultDistro, setDefaultDistro] = useState<Distributions>(RHEL_10);
-  const previousDistro = useRef<Distributions>(RHEL_10);
+  const previousDistro = useRef(distribution);
   const previousArch = useRef(architecture);
-
-  useEffect(() => {
-    if (!isOnPremise) return;
-    const fetchDefaultDistro = async () => {
-      try {
-        const distro = await getHostDistro();
-        setDefaultDistro(distro as Distributions);
-      } catch {
-        // defaultDistro remains RHEL_10
-      }
-    };
-
-    fetchDefaultDistro();
-  }, [isOnPremise]);
 
   return (
     <FormGroup label='Image type' isRequired>
@@ -57,11 +41,7 @@ const BlueprintMode = () => {
           isSelected={!isImageMode}
           onChange={() => {
             dispatch(changeBlueprintMode('package'));
-            dispatch(
-              changeDistribution(
-                isOnPremise ? defaultDistro : previousDistro.current,
-              ),
-            );
+            dispatch(changeDistribution(previousDistro.current));
             // Image source is only relevant in image mode
             dispatch(changeImageSource(undefined));
             if (!isOnPremise) {

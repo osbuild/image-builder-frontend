@@ -19,11 +19,7 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useGetUser } from '@/Hooks';
-import {
-  getHostArch,
-  getHostDistro,
-  useGetBlueprintQuery,
-} from '@/store/api/backend';
+import { useGetBlueprintQuery } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import {
   selectSelectedBlueprintId,
@@ -126,7 +122,6 @@ const CreateImageWizard = () => {
   const { userData } = useGetUser(auth);
   const hasTrackedInitialStepRef = useRef(false);
   const hasTrackedWizardOpenedRef = useRef(false);
-  const isHostDistroDetected = useRef(!isOnPremise);
 
   const {
     data: blueprintDetails,
@@ -242,36 +237,6 @@ const CreateImageWizard = () => {
   }, [mode, showWizardModal]);
 
   useEffect(() => {
-    if (
-      (mode !== 'create' && mode !== 'import') ||
-      !isOnPremise ||
-      !showWizardModal
-    ) {
-      return;
-    }
-
-    const initializeHostDistro = async () => {
-      const distro = await getHostDistro();
-      dispatch(changeDistribution(distro));
-      isHostDistroDetected.current = true;
-    };
-
-    const initializeHostArch = async () => {
-      const arch = await getHostArch();
-      dispatch(changeArchitecture(arch));
-    };
-
-    if (!searchParams.get('release')) {
-      initializeHostDistro();
-    }
-    if (!searchParams.get('arch')) {
-      initializeHostArch();
-    }
-    // This useEffect hook should run *only* when the modal opens in import/create mode
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, showWizardModal]);
-
-  useEffect(() => {
     if (mode === 'edit' && isError) {
       dispatch(closeWizardModal());
       dispatch(setBlueprintId(undefined));
@@ -320,7 +285,7 @@ const CreateImageWizard = () => {
         ? DEFAULT_TIMEZONE
         : 'America/New_York';
 
-    if (!timezone && isHostDistroDetected.current) {
+    if (!timezone) {
       dispatch(changeTimezone(defaultTimezone));
     }
   }, [
