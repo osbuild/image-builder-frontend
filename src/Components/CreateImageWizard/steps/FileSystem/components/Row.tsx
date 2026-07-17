@@ -44,7 +44,13 @@ const Row = ({
     <Button
       isDisabled={isOscapRequired || isRemovingDisabled}
       variant='plain'
-      icon={isRemovingDisabled ? <LockIcon /> : <MinusCircleIcon />}
+      icon={
+        isOscapRequired || isRemovingDisabled ? (
+          <LockIcon />
+        ) : (
+          <MinusCircleIcon />
+        )
+      }
       onClick={() => handleRemovePartition(partition.id)}
       aria-label='Remove partition'
     />
@@ -87,8 +93,14 @@ const Row = ({
         </Split>
       </Td>
       <Td isActionCell>
-        {isOscapRequired ? (
-          <Tooltip content='Required by the selected OpenSCAP profile'>
+        {isOscapRequired || isRemovingDisabled ? (
+          <Tooltip
+            content={
+              isOscapRequired
+                ? 'Required by the selected OpenSCAP profile'
+                : 'Root partition is required'
+            }
+          >
             <span>{removeButton}</span>
           </Tooltip>
         ) : (
