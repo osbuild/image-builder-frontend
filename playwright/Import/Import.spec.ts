@@ -58,7 +58,7 @@ test('Import a blueprint with invalid customization', async ({
     ).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     const closeRootButton = frame
-      .locator('td:nth-child(5) > .pf-v6-c-button')
+      .getByRole('button', { name: 'Remove partition' })
       .first();
     await expect(closeRootButton).toBeEnabled();
     await closeRootButton.click();
