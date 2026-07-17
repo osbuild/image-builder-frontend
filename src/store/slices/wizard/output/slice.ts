@@ -5,6 +5,8 @@ import {
   Distributions,
   ImageRequest,
 } from '@/store/api/backend';
+// import from the specific module to avoid a circular dependency
+import { matchGetHostInfoFulfilled } from '@/store/api/backend/onprem/matchers';
 
 import { initialState } from './state';
 import { ImageSource, SupportedImageTypes } from './types';
@@ -75,7 +77,15 @@ export const outputSlice = createSlice({
         (_state, action) =>
           (action.payload as Partial<typeof action.payload>).output ??
           initialState,
-      );
+      )
+      .addMatcher(matchGetHostInfoFulfilled, (state, action) => {
+        // On-premise the UI locks arch and distro selectors to the host
+        // values (ArchSelect filters options, ReleaseSelect uses
+        // ON_PREM_RELEASES), so there is no risk of overwriting a
+        // user-chosen value here.
+        state.architecture = action.payload.arch;
+        state.distribution = action.payload.distro;
+      });
   },
 });
 

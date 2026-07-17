@@ -249,6 +249,7 @@ module.exports = defineConfig([
       ],
       '@typescript-eslint/await-thenable': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
+      'no-restricted-imports': 'off',
     },
   },
 

@@ -2,10 +2,18 @@ import { createListenerMiddleware } from '@reduxjs/toolkit';
 
 import { WizardStartListening } from './types';
 
-import { changeArchitecture, changeDistribution } from '../slices/wizard';
+import {
+  changeArchitecture,
+  changeDistribution,
+  initializeWizard,
+} from '../slices/wizard';
 // export from slices/wizard/listeners rather than slices/wizard
 // this is needed to avoid circular dependencies
-import { filterImageTypes, registerLater } from '../slices/wizard/listeners';
+import {
+  applyHostInfo,
+  filterImageTypes,
+  registerLater,
+} from '../slices/wizard/listeners';
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -25,4 +33,9 @@ startListening({
 startListening({
   actionCreator: changeDistribution,
   effect: registerLater,
+});
+
+startListening({
+  actionCreator: initializeWizard,
+  effect: applyHostInfo,
 });

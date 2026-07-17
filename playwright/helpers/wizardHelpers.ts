@@ -5,7 +5,7 @@ import * as path from 'path';
 
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { isRhel } from '@/store/slices/wizard';
+import { isRhel } from '@/store/slices/wizard/output/typeguards';
 
 import { callApi } from './apiHelpers';
 import { closePopupsIfExist, getHostDistroKey, isHosted } from './helpers';

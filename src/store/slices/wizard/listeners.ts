@@ -1,8 +1,14 @@
-import { backendApi } from '@/store/api/backend';
+import { backendApi, composerApi } from '@/store/api/backend';
+import type { OnPremState, RootState } from '@/store/index';
 import type { WizardListenerEffect } from '@/store/middleware/types';
+
+const isOnPremState = (state: RootState): state is OnPremState =>
+  'onPremApi' in state;
 
 import { selectIsImageMode } from './details';
 import {
+  changeArchitecture,
+  changeDistribution,
   changeImageTypes,
   isRhel,
   selectArchitecture,
@@ -41,6 +47,24 @@ export const filterImageTypes: WizardListenerEffect = (
   listenerApi.dispatch(
     changeImageTypes(imageTypes.filter((t) => allowed?.includes(t))),
   );
+};
+
+// On-premise, re-apply the host's arch and distro after the wizard
+// resets to defaults. The reducer sets initialState first, then this
+// listener reads the cached getHostInfo result and dispatches the
+// correct values.
+export const applyHostInfo: WizardListenerEffect = (_action, listenerApi) => {
+  if (!process.env.IS_ON_PREMISE) return;
+
+  const state = listenerApi.getState();
+  if (!isOnPremState(state)) return;
+
+  const hostInfo = composerApi.endpoints.getHostInfo.select()(state);
+
+  if (hostInfo.data) {
+    listenerApi.dispatch(changeArchitecture(hostInfo.data.arch));
+    listenerApi.dispatch(changeDistribution(hostInfo.data.distro));
+  }
 };
 
 // This was previously a mutation inside the changeDistribution reducer.

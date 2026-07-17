@@ -4,7 +4,8 @@ import * as path from 'path';
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { isRhel } from '../../src/store/slices/wizard';
+import { isRhel } from '@/store/slices/wizard/output/typeguards';
+
 import { test } from '../fixtures/customizations';
 import {
   getHostDistroKey,
