@@ -83,15 +83,13 @@ export const serviceStore = configureStore({
   middleware: serviceMiddleware,
 });
 
-// we don't need to export these for now, they are just helpers
-// for some of the functions in this file
-type onPremState = ReturnType<typeof onPremStore.getState>;
+export type OnPremState = ReturnType<typeof onPremStore.getState>;
 type serviceState = ReturnType<typeof serviceStore.getState>;
 
 export const store = process.env.IS_ON_PREMISE ? onPremStore : serviceStore;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = onPremState | serviceState;
+export type RootState = OnPremState | serviceState;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch =
   | typeof onPremStore.dispatch
