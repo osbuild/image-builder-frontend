@@ -278,7 +278,7 @@ const PackagesTable = ({
   ]);
 
   return (
-    <Table data-testid='packages-table'>
+    <Table data-testid='packages-table' style={{ tableLayout: 'fixed' }}>
       <Thead>
         <Tr>
           <Th width={10} aria-label='Expanded' />
