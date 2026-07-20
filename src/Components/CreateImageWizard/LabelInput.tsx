@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
 import {
+  Button,
+  Flex,
+  FlexItem,
   HelperText,
   HelperTextItem,
   Label,
@@ -9,6 +12,7 @@ import {
   TextInputGroupMain,
   Truncate,
 } from '@patternfly/react-core/dist/esm';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { UnknownAction } from 'redux';
 
 import { StepValidation } from './utilities/useValidation';
@@ -33,6 +37,7 @@ type LabelInputProps = {
   truncateLength?: number;
   isCompact?: boolean;
   chipCollapseThreshold?: number;
+  hideAddLabel?: boolean;
 };
 
 const LabelInput = ({
@@ -49,6 +54,7 @@ const LabelInput = ({
   truncateLength = DEFAULT_TRUNCATE_LENGTH,
   isCompact = false,
   chipCollapseThreshold = DEFAULT_CHIP_COLLAPSE_THRESHOLD,
+  hideAddLabel = false,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -70,6 +76,10 @@ const LabelInput = ({
   };
 
   const addItem = (value: string) => {
+    if (!value.trim()) {
+      return;
+    }
+
     if (list?.includes(value) || requiredList?.includes(value)) {
       setOnStepInputErrorText(`${item} already exists.`);
       return;
@@ -147,62 +157,78 @@ const LabelInput = ({
 
   return (
     <>
-      <TextInputGroup>
-        <TextInputGroupMain
-          aria-label={ariaLabel}
-          placeholder={placeholder}
-          onChange={onTextInputChange}
-          value={inputValue}
-          onKeyDown={(e) => handleKeyDown(e, inputValue)}
-        >
-          {totalItems > 0 && (
-            <LabelGroup
-              isCompact={isCompact}
-              numLabels={chipCollapseThreshold}
-              expandedText='Show less'
-              collapsedText={
-                totalItems > chipCollapseThreshold
-                  ? `${totalItems - chipCollapseThreshold} more`
-                  : undefined
-              }
-              className='pf-v6-u-mr-sm'
+      <Flex flexWrap={{ default: 'nowrap' }}>
+        <FlexItem grow={{ default: 'grow' }}>
+          <TextInputGroup>
+            <TextInputGroupMain
+              aria-label={ariaLabel}
+              placeholder={placeholder}
+              onChange={onTextInputChange}
+              value={inputValue}
+              onKeyDown={(e) => handleKeyDown(e, inputValue)}
             >
-              {requiredList?.map((labelItem) => (
-                <Label key={labelItem}>{labelItem}</Label>
-              ))}
-              {list?.map((labelItem) => (
-                <Label
-                  key={labelItem}
-                  color='blue'
+              {totalItems > 0 && (
+                <LabelGroup
                   isCompact={isCompact}
-                  onClose={(e) => handleRemoveItem(e, labelItem)}
-                  closeBtnAriaLabel={`Remove ${labelItem}`}
+                  numLabels={chipCollapseThreshold}
+                  expandedText='Show less'
+                  collapsedText={
+                    totalItems > chipCollapseThreshold
+                      ? `${totalItems - chipCollapseThreshold} more`
+                      : undefined
+                  }
+                  className='pf-v6-u-mr-sm'
                 >
-                  <Truncate
-                    content={labelItem}
-                    maxCharsDisplayed={truncateLength}
-                  />
-                </Label>
-              ))}
-            </LabelGroup>
-          )}
-        </TextInputGroupMain>
-      </TextInputGroup>
+                  {requiredList?.map((labelItem) => (
+                    <Label key={labelItem}>{labelItem}</Label>
+                  ))}
+                  {list?.map((labelItem) => (
+                    <Label
+                      key={labelItem}
+                      color='blue'
+                      isCompact={isCompact}
+                      onClose={(e) => handleRemoveItem(e, labelItem)}
+                      closeBtnAriaLabel={`Remove ${labelItem}`}
+                    >
+                      <Truncate
+                        content={labelItem}
+                        maxCharsDisplayed={truncateLength}
+                      />
+                    </Label>
+                  ))}
+                </LabelGroup>
+              )}
+            </TextInputGroupMain>
+          </TextInputGroup>
+        </FlexItem>
+        <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
+          <Button
+            variant='control'
+            aria-label='Add'
+            icon={<PlusCircleIcon />}
+            onClick={() => addItem(inputValue)}
+          >
+            {!hideAddLabel && 'Add'}
+          </Button>
+        </FlexItem>
+      </Flex>
 
-      {errors.length > 0 && (
-        <HelperText>
-          {errors.map((error, index) => (
-            <HelperTextItem key={index} variant={'error'}>
-              {error}
-            </HelperTextItem>
-          ))}
-        </HelperText>
-      )}
-      {warning && (
-        <HelperText>
+      <HelperText>
+        {errors.length > 0
+          ? errors.map((error, index) => (
+              <HelperTextItem key={index} variant={'error'}>
+                {error}
+              </HelperTextItem>
+            ))
+          : !warning && (
+              <HelperTextItem>
+                Press Enter or click {hideAddLabel ? 'the add icon' : 'Add'}
+              </HelperTextItem>
+            )}
+        {warning && (
           <HelperTextItem variant={'warning'}>{warning}</HelperTextItem>
-        </HelperText>
-      )}
+        )}
+      </HelperText>
     </>
   );
 };
