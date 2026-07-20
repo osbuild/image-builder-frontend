@@ -34,6 +34,37 @@ export const deduplicatePackages = (
   });
 };
 
+// Simple version segment comparison. Not a full rpmvercmp implementation —
+// it covers the common case of dotted numeric versions but won't handle
+// all edge cases (e.g. tilde/caret prefixes, mixed alpha-numeric segments).
+export const compareVersionSegments = (a: string, b: string): number => {
+  const aParts = a.split('.');
+  const bParts = b.split('.');
+  const len = Math.max(aParts.length, bParts.length);
+
+  for (let i = 0; i < len; i++) {
+    const aNum = parseInt(aParts[i] ?? '0', 10);
+    const bNum = parseInt(bParts[i] ?? '0', 10);
+
+    if (!isNaN(aNum) && !isNaN(bNum)) {
+      if (aNum !== bNum) return aNum - bNum;
+    } else {
+      const cmp = (aParts[i] ?? '').localeCompare(bParts[i] ?? '');
+      if (cmp !== 0) return cmp;
+    }
+  }
+  return 0;
+};
+
+export const sortByVersionDescending = (
+  packages: readonly Package[],
+): Package[] =>
+  [...packages].sort((a, b) => {
+    const versionCmp = compareVersionSegments(b.version, a.version);
+    if (versionCmp !== 0) return versionCmp;
+    return compareVersionSegments(b.release, a.release);
+  });
+
 export const transformPackageResponse = (
   packages: readonly Package[] | undefined,
 ): SearchRpmApiResponse => {
@@ -41,7 +72,8 @@ export const transformPackageResponse = (
     return [];
   }
 
-  const mapped = packages.map(mapPackageToSearchResult);
+  const sorted = sortByVersionDescending(packages);
+  const mapped = sorted.map(mapPackageToSearchResult);
   return deduplicatePackages(mapped);
 };
 
