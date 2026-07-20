@@ -100,7 +100,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
 
   return (
     <>
-      <Tr>
+      <Tr resetOffset>
         <Td>
           <ValidatedInputAndTextArea
             ariaLabel='blueprint user name'

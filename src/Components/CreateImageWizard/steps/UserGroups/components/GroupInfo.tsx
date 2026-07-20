@@ -4,6 +4,7 @@ import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { compactTableStyle } from '@/Components/CreateImageWizard/utilities/compactTableStyle';
 import { useUserGroupsValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addUserGroup, selectUserGroups } from '@/store/slices/wizard';
@@ -35,9 +36,9 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
-      <Table variant='compact' borders={false}>
+      <Table variant='compact' borders={false} style={compactTableStyle}>
         <Thead>
-          <Tr>
+          <Tr resetOffset>
             <Th width={30}>Name</Th>
             <Th width={30}>Group ID</Th>
             <Th width={10} aria-label='Remove group' />

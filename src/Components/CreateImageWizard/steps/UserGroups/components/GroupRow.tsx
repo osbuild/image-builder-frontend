@@ -76,7 +76,7 @@ const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
   };
 
   return (
-    <Tr>
+    <Tr resetOffset>
       <Td>
         <ValidatedInputAndTextArea
           ariaLabel='Group name'
