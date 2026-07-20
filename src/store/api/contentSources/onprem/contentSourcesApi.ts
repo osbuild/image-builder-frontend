@@ -1,10 +1,10 @@
-import { isDefined, onPremQueryHandler } from '@/store/api/shared';
+import { onPremQueryHandler } from '@/store/api/shared';
 
 import { emptyContentSourcesApi } from './emptyContentSourcesApi';
-import { transformPackageResponse } from './helpers';
-import { assertPackagesResponse } from './typeguards';
-import type { SearchRpmApiArg } from './types';
+import { listPackages, transformPackageResponse } from './helpers';
+import type { Package, SearchRpmApiArg } from './types';
 
+import { parseJsonUnsafe } from '../../backend/onprem/composerApi/helpers';
 import type {
   ListSnapshotsByDateApiArg,
   ListSnapshotsByDateApiResponse,
@@ -14,40 +14,26 @@ import type {
 export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
   endpoints: (builder) => ({
     searchRpm: builder.mutation<SearchRpmApiResponse, SearchRpmApiArg>({
-      queryFn: onPremQueryHandler(async ({ queryArgs, baseQuery }) => {
+      queryFn: onPremQueryHandler(async ({ queryArgs }) => {
         const { apiContentUnitSearchRequest: searchRequest } = queryArgs;
+        const { architecture, distribution, packages } = searchRequest;
 
-        if (
-          !searchRequest.architecture ||
-          !searchRequest.distribution ||
-          !searchRequest.packages
-        ) {
+        if (!architecture || !distribution || !packages) {
           return [];
         }
 
-        const result = await baseQuery({
-          url: '/search/packages',
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            packages: searchRequest.packages,
-            distribution: searchRequest.distribution,
-            architecture: searchRequest.architecture,
-          }),
+        const result = await listPackages({
+          distribution,
+          architecture,
+          packages,
         });
+        const parsed = parseJsonUnsafe<{ packages: Package[] }>(result);
 
-        if (result.error) {
-          throw result.error;
+        if (!Array.isArray(parsed.packages)) {
+          throw new Error('Unexpected image builder search output');
         }
 
-        if (!isDefined(result.data)) {
-          return [];
-        }
-
-        const { packages } = assertPackagesResponse(result.data);
-        return transformPackageResponse(packages);
+        return transformPackageResponse(parsed.packages);
       }),
     }),
     // add an empty response for now

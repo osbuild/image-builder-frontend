@@ -1,3 +1,7 @@
+import path from 'path';
+
+import cockpit from 'cockpit';
+
 import type { Package } from './types';
 
 import type { SearchRpmApiResponse } from '../hosted/contentSourcesApi';
@@ -39,4 +43,48 @@ export const transformPackageResponse = (
 
   const mapped = packages.map(mapPackageToSearchResult);
   return deduplicatePackages(mapped);
+};
+
+const cacheDir = async () => {
+  let cacheDir = (await cockpit.script('echo -n $XDG_CACHE_HOME')) as string;
+  const user = await cockpit.user();
+  if (cacheDir === '') {
+    cacheDir = `${user.home}/.cache`;
+  }
+  return path.join(cacheDir, 'image-builder');
+};
+
+export const listPackages = async ({
+  distribution,
+  architecture,
+  packages,
+}: {
+  distribution: string;
+  architecture: string;
+  packages: string[];
+}) => {
+  try {
+    const rpmmdCache = await cacheDir();
+    const result = (await cockpit.spawn([
+      'image-builder',
+      'pkgsearch',
+      '--rpmmd-cache',
+      rpmmdCache,
+      '--distro',
+      distribution,
+      '--arch',
+      architecture,
+      ...packages,
+    ])) as string;
+
+    if (!result.trim()) {
+      return '[]';
+    }
+
+    return result;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Unable to search for packages', error);
+    throw new Error('Unable to search for packages');
+  }
 };
