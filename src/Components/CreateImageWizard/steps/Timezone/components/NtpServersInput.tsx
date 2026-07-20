@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useTimezoneValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
@@ -29,13 +29,8 @@ const NtpServersInput = () => {
         removeAction={removeNtpServer}
         stepValidation={stepValidation}
         fieldName='ntpServers'
+        helperText='Specify NTP servers by hostname or IP address. Examples: server.example.com, 172.16.254.1.'
       />
-      <HelperText className='pf-v6-u-pt-sm'>
-        <HelperTextItem>
-          Specify NTP servers by hostname or IP address. Examples:
-          server.example.com, 172.16.254.1
-        </HelperTextItem>
-      </HelperText>
     </FormGroup>
   );
 };

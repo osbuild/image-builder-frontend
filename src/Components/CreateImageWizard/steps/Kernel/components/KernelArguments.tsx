@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useKernelValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
@@ -51,13 +51,8 @@ const KernelArguments = () => {
         removeAction={removeKernelArg}
         stepValidation={stepValidation}
         fieldName='kernelAppend'
+        helperText='Enter additional kernel boot parameters. Examples: nomodeset or console=ttyS0.'
       />
-      <HelperText className='pf-v6-u-pt-sm'>
-        <HelperTextItem>
-          Enter additional kernel boot parameters. Examples: nomodeset or
-          console=ttyS0.
-        </HelperTextItem>
-      </HelperText>
     </FormGroup>
   );
 };
