@@ -11,13 +11,17 @@ import {
   Radio,
 } from '@patternfly/react-core';
 
-import { isSnapshotDateValid } from '@/Components/CreateImageWizard/validators';
+import {
+  isSnapshotDateValid,
+  isSnapshotValid,
+} from '@/Components/CreateImageWizard/validators';
 import { TEMPLATES_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeSnapshotDate,
   changeTemplate,
   changeUseLatest,
+  selectForceShowErrors,
   selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
@@ -29,6 +33,10 @@ import Templates from './Templates';
 const Snapshot = () => {
   const dispatch = useAppDispatch();
   const snapshotDate = useAppSelector(selectSnapshotDate);
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
+
+  const showDateError =
+    (forceShowErrors || !!snapshotDate) && !isSnapshotValid(snapshotDate);
 
   const useLatest = useAppSelector(selectUseLatest);
   const templateUuid = useAppSelector(selectTemplate);
@@ -88,8 +96,9 @@ const Snapshot = () => {
                     id='snapshot-date-picker'
                     name='pick-snapshot-date'
                     value={snapshotDate ? snapshotDate.split('T')[0] : ''}
-                    required
-                    requiredDateOptions={{ isRequired: true }}
+                    inputProps={{
+                      validated: showDateError ? 'error' : 'default',
+                    }}
                     placeholder='YYYY-MM-DD'
                     validators={[
                       (date: Date) => {
@@ -122,6 +131,15 @@ const Snapshot = () => {
                     Clear date
                   </Button>
                 </Flex>
+                {forceShowErrors && !snapshotDate && (
+                  <FormHelperText>
+                    <HelperText>
+                      <HelperTextItem variant='error'>
+                        Date cannot be blank
+                      </HelperTextItem>
+                    </HelperText>
+                  </FormHelperText>
+                )}
               </FormGroup>
               <FormHelperText>
                 <HelperText>

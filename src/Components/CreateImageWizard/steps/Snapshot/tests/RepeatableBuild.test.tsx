@@ -134,8 +134,8 @@ describe('Repeatable Build Component', () => {
 
       await clickClearDate(user);
       expect(
-        await screen.findByText('Date cannot be blank'),
-      ).toBeInTheDocument();
+        screen.queryByText('Date cannot be blank'),
+      ).not.toBeInTheDocument();
       await checkDatePickerValue('');
 
       await clickTodaysDate(user);
