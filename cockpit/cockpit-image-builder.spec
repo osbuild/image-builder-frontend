@@ -19,6 +19,7 @@ BuildRequires:  /usr/bin/node
 Requires:       cockpit
 Requires:       cockpit-files
 Requires:       osbuild-composer >= 131
+Requires:       image-builder >= 75.0.0
 
 Recommends:     cockpit-machines
 
