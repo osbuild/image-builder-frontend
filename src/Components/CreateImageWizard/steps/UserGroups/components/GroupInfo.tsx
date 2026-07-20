@@ -35,9 +35,20 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
-      <Table variant='compact' borders={false}>
+      <Table
+        variant='compact'
+        borders={false}
+        style={
+          {
+            '--pf-v6-c-table--m-compact--cell--PaddingBlockStart':
+              'var(--pf-t--global--spacer--xs)',
+            '--pf-v6-c-table--m-compact--cell--PaddingBlockEnd':
+              'var(--pf-t--global--spacer--xs)',
+          } as React.CSSProperties
+        }
+      >
         <Thead>
-          <Tr>
+          <Tr resetOffset>
             <Th width={30}>Name</Th>
             <Th width={30}>Group ID</Th>
             <Th width={10} aria-label='Remove group' />
