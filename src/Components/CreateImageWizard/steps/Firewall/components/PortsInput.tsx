@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useFirewallValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
@@ -25,10 +25,8 @@ const PortsInput = () => {
         removeAction={removePort}
         stepValidation={stepValidation}
         fieldName='ports'
+        helperText='Examples: 8080:tcp, 443:udp.'
       />
-      <HelperText className='pf-v6-u-pt-sm'>
-        <HelperTextItem>Examples: 8080:tcp, 443:udp</HelperTextItem>
-      </HelperText>
     </FormGroup>
   );
 };

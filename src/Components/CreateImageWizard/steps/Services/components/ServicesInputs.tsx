@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useServicesValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
@@ -56,7 +56,7 @@ const ServicesInput = () => {
     <>
       <FormGroup isRequired={false} label='Enabled services'>
         <LabelInput
-          ariaLabel='Add enabled service'
+          ariaLabel='Add enabled systemd service'
           placeholder='Add enabled service'
           validator={isServiceValid}
           list={enabledServices.filter(
@@ -69,17 +69,12 @@ const ServicesInput = () => {
           stepValidation={stepValidation}
           fieldName='enabledSystemdServices'
           chipCollapseThreshold={8}
+          helperText='These services are currently active and set to start automatically at boot.'
         />
-        <HelperText className='pf-v6-u-pt-sm'>
-          <HelperTextItem>
-            These services are currently active and set to start automatically
-            at boot.
-          </HelperTextItem>
-        </HelperText>
       </FormGroup>
       <FormGroup isRequired={false} label='Disabled services'>
         <LabelInput
-          ariaLabel='Add disabled service'
+          ariaLabel='Add disabled systemd service'
           placeholder='Add disabled service'
           validator={isServiceValid}
           list={disabledServices.filter(
@@ -93,17 +88,12 @@ const ServicesInput = () => {
           stepValidation={stepValidation}
           fieldName='disabledSystemdServices'
           chipCollapseThreshold={8}
+          helperText='These services are installed but will not start automatically at boot.'
         />
-        <HelperText className='pf-v6-u-pt-sm'>
-          <HelperTextItem>
-            These services are installed but will not start automatically at
-            boot.
-          </HelperTextItem>
-        </HelperText>
       </FormGroup>
       <FormGroup isRequired={false} label='Masked services'>
         <LabelInput
-          ariaLabel='Add masked service'
+          ariaLabel='Add masked systemd service'
           placeholder='Add masked service'
           validator={isServiceValid}
           list={maskedServices.filter(
@@ -116,13 +106,8 @@ const ServicesInput = () => {
           stepValidation={stepValidation}
           fieldName='maskedSystemdServices'
           chipCollapseThreshold={8}
+          helperText='These services are completely blocked from being started manually or automatically.'
         />
-        <HelperText className='pf-v6-u-pt-sm'>
-          <HelperTextItem>
-            These services are completely blocked from being started manually or
-            automatically.
-          </HelperTextItem>
-        </HelperText>
       </FormGroup>
     </>
   );

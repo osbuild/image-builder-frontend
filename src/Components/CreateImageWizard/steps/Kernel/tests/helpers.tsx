@@ -27,7 +27,7 @@ export const openKernelNameDropdown = async (user: UserEventInstance) => {
 
 export const clearKernelName = async (user: UserEventInstance) => {
   const toggle = await screen.findByRole('button', {
-    name: /kernel/i,
+    name: 'kernel',
   });
   await clickWithWait(user, toggle);
   await selectKernelOption(user, 'Default');

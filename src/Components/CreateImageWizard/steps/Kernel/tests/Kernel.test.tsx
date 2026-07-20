@@ -107,7 +107,7 @@ describe('Kernel Component', () => {
       await selectKernelOption(user, 'kernel');
 
       expect(
-        await screen.findByRole('button', { name: /kernel/i }),
+        await screen.findByRole('button', { name: 'kernel' }),
       ).toBeInTheDocument();
 
       await clearKernelName(user);
