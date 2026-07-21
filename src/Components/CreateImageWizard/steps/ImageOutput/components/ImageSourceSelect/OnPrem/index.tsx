@@ -1,8 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { FormGroup, Radio } from '@patternfly/react-core';
 
-import type { BootcDistributionItem } from '@/store/api/backend';
+import {
+  type BootcDistributionItem,
+  useBackendPrefetch,
+} from '@/store/api/backend';
 import { isKnownImageRef } from '@/store/api/backend/onprem/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -34,6 +37,13 @@ const OnPremImageSourceSelect = ({
 }: OnPremImageSourceSelectProps) => {
   const dispatch = useAppDispatch();
   const imageSourceType = useAppSelector(selectImageSourceType);
+
+  // Prefetch registry auth status so it's ready when the user
+  // opens the official radio — avoids a "checking" spinner.
+  const prefetchAuthStatus = useBackendPrefetch('getRegistryAuthStatus');
+  useEffect(() => {
+    prefetchAuthStatus(undefined);
+  }, [prefetchAuthStatus]);
 
   const officialImages = useMemo(
     () => (distributions ?? []).filter((img) => isKnownImageRef(img.reference)),
