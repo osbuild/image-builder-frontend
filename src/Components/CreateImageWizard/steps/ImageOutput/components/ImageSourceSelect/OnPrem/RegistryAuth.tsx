@@ -54,7 +54,11 @@ const deriveAuthState = (
   return data ?? { status: 'checking' };
 };
 
-const RegistryAuth = () => {
+type RegistryAuthProps = {
+  onLoginSuccess: () => void;
+};
+
+const RegistryAuth = ({ onLoginSuccess }: RegistryAuthProps) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -112,6 +116,7 @@ const RegistryAuth = () => {
     try {
       await registryLogin({ username, password }).unwrap();
       resetForm();
+      onLoginSuccess();
     } catch {
       // Form stays open on error
     }
