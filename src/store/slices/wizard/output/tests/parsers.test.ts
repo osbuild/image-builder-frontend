@@ -60,6 +60,7 @@ describe('parseOutputFromRequest', () => {
         architecture: X86_64,
         distribution: RHEL_9,
         imageSource: undefined,
+        imageSourceType: 'official',
         isoPayloadReference: undefined,
         imageTypes: ['guest-image'],
         bootcDistributions: [],

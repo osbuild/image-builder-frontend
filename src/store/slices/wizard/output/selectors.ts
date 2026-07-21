@@ -7,6 +7,10 @@ export const selectImageSource = (state: RootState) => {
   return state.wizard.output.imageSource;
 };
 
+export const selectImageSourceType = (state: RootState) => {
+  return state.wizard.output.imageSourceType;
+};
+
 export const selectIsoPayloadReference = (state: RootState) => {
   return state.wizard.output.isoPayloadReference;
 };

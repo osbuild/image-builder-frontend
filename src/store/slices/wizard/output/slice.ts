@@ -7,7 +7,7 @@ import {
 } from '@/store/api/backend';
 
 import { initialState } from './state';
-import { ImageSource, SupportedImageTypes } from './types';
+import { ImageSource, ImageSourceType, SupportedImageTypes } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
 
@@ -20,6 +20,11 @@ export const outputSlice = createSlice({
       action: PayloadAction<ImageSource | undefined>,
     ) => {
       state.imageSource = action.payload;
+    },
+    changeImageSourceType: (state, action: PayloadAction<ImageSourceType>) => {
+      state.imageSourceType = action.payload;
+      // Clear the selected image when switching source types
+      state.imageSource = undefined;
     },
     changeIsoPayloadReference: (
       state,
@@ -81,6 +86,7 @@ export const outputSlice = createSlice({
 
 export const {
   changeImageSource,
+  changeImageSourceType,
   changeIsoPayloadReference,
   changeBootcDistributions,
   changeArchitecture,
