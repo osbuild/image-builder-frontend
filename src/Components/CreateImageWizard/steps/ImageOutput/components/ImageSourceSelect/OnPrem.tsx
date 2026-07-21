@@ -1,11 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
-  Alert,
   Button,
-  ClipboardCopy,
-  Content,
-  ExpandableSection,
   Flex,
   FlexItem,
   FormGroup,
@@ -19,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 
-import { RHEL_10_IMAGE_MODE_IMAGE, simpleTargetNames } from '@/constants';
+import { simpleTargetNames } from '@/constants';
 import type { BootcDistributionItem } from '@/store/api/backend';
 import { isImageType } from '@/store/slices/wizard';
 
@@ -37,32 +33,6 @@ type OnPremImageSourceSelectProps = {
   onSelect: (event?: React.MouseEvent, selection?: string | number) => void;
   onRefresh: () => void;
 };
-
-const CopyInlineCompact = ({ text }: { text: string }) => (
-  <ClipboardCopy
-    copyAriaLabel='Copy podman pull command'
-    hoverTip='Copy'
-    clickTip='Copied'
-    variant='inline-compact'
-    isCode
-  >
-    {text}
-  </ClipboardCopy>
-);
-
-const InfoMessageContent = ({ source }: { source: string }) => (
-  <>
-    <Content component='p'>
-      Container images must be pulled using Podman with root privileges, as
-      rootless images are not accessible to image builder at build time.
-    </Content>
-    <Content component='p'>
-      To pull an image locally, ensure you are logged in to the registry and use
-      the following command to use the recommended image mode image:
-    </Content>
-    <CopyInlineCompact text={`sudo podman pull ${source}`} />
-  </>
-);
 
 const OnPremImageSourceSelect = ({
   distributions,
@@ -83,18 +53,6 @@ const OnPremImageSourceSelect = ({
   const [localGroupName, setLocalGroupName] = useState<string>();
   const [isDistroOpen, setIsDistroOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
-
-  const hasDistributions = (distributions?.length ?? 0) > 0;
-  const [isPullInfoExpanded, setIsPullInfoExpanded] = useState(false);
-  const hasAutoExpanded = useRef(false);
-
-  useEffect(() => {
-    if (hasAutoExpanded.current) return;
-    if (!isLoading && !isError) {
-      hasAutoExpanded.current = true;
-      setIsPullInfoExpanded(!hasDistributions);
-    }
-  }, [isLoading, isError, hasDistributions]);
 
   const activeGroupName = localGroupName ?? selectedItem?.name;
   const selectedGroup = grouped.find((g) => g.name === activeGroupName);
@@ -187,28 +145,6 @@ const OnPremImageSourceSelect = ({
       <FormGroup label='Image source' isRequired>
         <RegistryAuthSection />
         {isError && <ImageSourceError isOnPremise />}
-        {!isLoading && !isError && (
-          <ExpandableSection
-            toggleText={
-              isPullInfoExpanded
-                ? 'Hide information about pulling images'
-                : 'Show information about pulling images'
-            }
-            onToggle={(_event, expanded) => setIsPullInfoExpanded(expanded)}
-            isExpanded={isPullInfoExpanded}
-            className='pf-v6-u-pb-sm'
-          >
-            <Alert
-              title={
-                hasDistributions ? 'Note on pulling images' : 'No images found'
-              }
-              variant={hasDistributions ? 'info' : 'warning'}
-              className='pf-v6-u-mb-md'
-            >
-              <InfoMessageContent source={RHEL_10_IMAGE_MODE_IMAGE} />
-            </Alert>
-          </ExpandableSection>
-        )}
         <Flex>
           <FlexItem>
             <Select
