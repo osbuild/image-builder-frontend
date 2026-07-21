@@ -5,11 +5,16 @@ import { FormGroup, Radio } from '@patternfly/react-core';
 import {
   type BootcDistributionItem,
   useBackendPrefetch,
+  useGetRegistryAuthStatusQuery,
 } from '@/store/api/backend';
-import { isKnownImageRef } from '@/store/api/backend/onprem/constants';
+import {
+  isKnownImageRef,
+  KNOWN_IMAGES,
+} from '@/store/api/backend/onprem/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeImageSourceType,
+  selectArchitecture,
   selectImageSourceType,
 } from '@/store/slices/wizard';
 
@@ -37,6 +42,7 @@ const OnPremImageSourceSelect = ({
 }: OnPremImageSourceSelectProps) => {
   const dispatch = useAppDispatch();
   const imageSourceType = useAppSelector(selectImageSourceType);
+  const arch = useAppSelector(selectArchitecture);
 
   // Prefetch registry auth status so it's ready when the user
   // opens the official radio — avoids a "checking" spinner.
@@ -45,16 +51,22 @@ const OnPremImageSourceSelect = ({
     prefetchAuthStatus(undefined);
   }, [prefetchAuthStatus]);
 
-  const officialImages = useMemo(
-    () => (distributions ?? []).filter((img) => isKnownImageRef(img.reference)),
-    [distributions],
-  );
+  const { data: authStatus } = useGetRegistryAuthStatusQuery();
+  const isAuthenticated = authStatus?.status === 'authenticated';
 
-  const customImages = useMemo(
-    () =>
-      (distributions ?? []).filter((img) => !isKnownImageRef(img.reference)),
-    [distributions],
-  );
+  const { officialImages, customImages } = useMemo(() => {
+    const local = distributions ?? [];
+    if (!isAuthenticated) {
+      return {
+        officialImages: [] as BootcDistributionItem[],
+        customImages: local,
+      };
+    }
+    return {
+      officialImages: KNOWN_IMAGES.map((known) => ({ ...known, arch })),
+      customImages: local.filter((img) => !isKnownImageRef(img.reference)),
+    };
+  }, [isAuthenticated, distributions, arch]);
 
   return (
     <FormGroup label='Image source' isRequired>

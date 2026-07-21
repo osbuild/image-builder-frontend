@@ -35,7 +35,11 @@ const OfficialImageSource = ({
         selectedRef={selectedRef}
         onSelect={onSelect}
         getLabel={(item) => item.name}
-        placeholder='Select an official image'
+        placeholder={
+          images.length === 0
+            ? 'Log in to view official images'
+            : 'Select an official image'
+        }
         isLoading={isLoading}
         isDisabled={images.length === 0}
       />
