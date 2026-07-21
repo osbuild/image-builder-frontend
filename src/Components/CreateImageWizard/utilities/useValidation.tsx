@@ -99,11 +99,7 @@ import {
 } from '../validators';
 
 type HelperTextVariant =
-  | 'default'
-  | 'indeterminate'
-  | 'warning'
-  | 'success'
-  | 'error';
+  'default' | 'indeterminate' | 'warning' | 'success' | 'error';
 
 export type StepValidation = {
   errors: {

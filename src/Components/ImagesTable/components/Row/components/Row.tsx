@@ -79,8 +79,7 @@ const Row = ({
   });
 
   const options = data?.image_status.upload_status?.options as unknown as
-    | LocalUploadStatus
-    | undefined;
+    LocalUploadStatus | undefined;
 
   const handleClick = ({
     blueprintId,
