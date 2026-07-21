@@ -14,12 +14,17 @@ import './AppCockpit.scss';
 import { NotReady, RequireAdmin } from './Components/Cockpit';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
+import { useGetRegistryAuthStatusQuery } from './store/api/backend';
 import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
 import { useIsCockpitAdmin } from './Utilities/useIsCockpitAdmin';
 
 const Application = () => {
   const { enabled, started } = useGetComposerSocketStatus();
   const isAdmin = useIsCockpitAdmin();
+
+  // Populate the registry auth cache early so the image source step
+  // doesn't show a "checking" spinner when the user reaches it.
+  useGetRegistryAuthStatusQuery();
 
   if (!started || !enabled) {
     return <NotReady enabled={enabled} />;
