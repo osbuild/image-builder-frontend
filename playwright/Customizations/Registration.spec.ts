@@ -409,10 +409,15 @@ registrationModes.forEach(
             ).toBeChecked();
           }
 
+          // security needs to finish loading, before trying to progress
+          await expect(frame.getByRole('progressbar')).toBeHidden();
+
           await frame.getByRole('button', { name: 'Review image' }).click();
-          await frame
-            .getByRole('button', { name: 'Save changes to blueprint' })
-            .click();
+          const saveButton = frame.getByRole('button', {
+            name: 'Save changes to blueprint',
+          });
+          await expect(saveButton).toBeEnabled();
+          await saveButton.click();
         });
 
         let exportedBP = '';
