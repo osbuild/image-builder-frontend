@@ -94,5 +94,4 @@ export const store = process.env.IS_ON_PREMISE ? onPremStore : serviceStore;
 export type RootState = onPremState | serviceState;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch =
-  | typeof onPremStore.dispatch
-  | typeof serviceStore.dispatch;
+  typeof onPremStore.dispatch | typeof serviceStore.dispatch;

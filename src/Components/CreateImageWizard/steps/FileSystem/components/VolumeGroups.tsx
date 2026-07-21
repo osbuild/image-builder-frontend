@@ -33,8 +33,7 @@ import MinimumSize from './MinimumSize';
 import SizeUnit from './SizeUnit';
 
 type VolumeGroupType =
-  | Extract<DiskPartition, VolumeGroup & DiskPartitionBase>
-  | undefined;
+  Extract<DiskPartition, VolumeGroup & DiskPartitionBase> | undefined;
 
 type VolumeGroupsType = {
   volumeGroups: VolumeGroupType[];

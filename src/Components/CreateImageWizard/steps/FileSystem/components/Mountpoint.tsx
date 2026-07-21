@@ -16,9 +16,7 @@ import {
 
 type MountpointProps = {
   partition:
-    | FilesystemPartition
-    | PlainPartitionWithBase
-    | LogicalVolumeWithBase;
+    FilesystemPartition | PlainPartitionWithBase | LogicalVolumeWithBase;
   customization: PartitioningCustomization;
   isOscapRequired?: boolean;
 };
