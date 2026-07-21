@@ -20,8 +20,9 @@ import type { BootcDistributionItem } from '@/store/api/backend';
 import { isImageType } from '@/store/slices/wizard';
 
 import { groupByName } from './groupByName';
-import ImageSourceError from './ImageSourceError';
 import RegistryAuth from './RegistryAuth';
+
+import ImageSourceError from '../ImageSourceError';
 import './OnPrem.css';
 
 type OnPremImageSourceSelectProps = {
