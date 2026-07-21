@@ -24,11 +24,13 @@ export type MiscFormatType = Exclude<
 >;
 
 export type ImageSource = string;
+export type ImageSourceType = 'official' | 'custom';
 
 export type RhelDistribution = (typeof RHEL_DISTRIBUTIONS)[number];
 
 export type OutputSlice = {
   imageSource?: ImageSource | undefined;
+  imageSourceType: ImageSourceType;
   isoPayloadReference?: string | undefined;
   bootcDistributions: BootcDistributionItem[];
   architecture: ImageRequest['architecture'];
