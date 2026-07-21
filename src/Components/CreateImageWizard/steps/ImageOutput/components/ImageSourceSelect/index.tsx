@@ -5,6 +5,10 @@ import {
   useGetDistributionsQuery,
 } from '@/store/api/backend';
 import { Distributions } from '@/store/api/backend/hosted';
+import {
+  isKnownImageRef,
+  KNOWN_IMAGES,
+} from '@/store/api/backend/onprem/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -45,8 +49,10 @@ const ImageSourceSelect = () => {
   useEffect(() => {
     if (!bootcDistributions || bootcDistributions.length === 0) return;
 
+    // Don't override a valid selection — check both local and known images
     const hasSelected = imageSource
-      ? bootcDistributions.some((d) => d.reference === imageSource)
+      ? bootcDistributions.some((d) => d.reference === imageSource) ||
+        isKnownImageRef(imageSource)
       : false;
     if (hasSelected) return;
 
@@ -58,13 +64,21 @@ const ImageSourceSelect = () => {
     dispatch(changeDistribution(defaultItem.distro as Distributions));
   }, [bootcDistributions, dispatch, imageSource]);
 
-  const selectedItem = bootcDistributions?.find(
-    (d) => d.reference === imageSource,
-  );
+  const findKnownImage = (ref: string): BootcDistributionItem | undefined => {
+    const known = KNOWN_IMAGES.find((k) => k.reference === ref);
+    return known ? { ...known, arch } : undefined;
+  };
+
+  // Resolve selectedItem from local images or known images
+  const selectedItem =
+    bootcDistributions?.find((d) => d.reference === imageSource) ??
+    (imageSource ? findKnownImage(imageSource) : undefined);
 
   const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
     dispatch(changeImageSource(selection as string));
-    const selected = bootcDistributions?.find((d) => d.reference === selection);
+    const selected =
+      bootcDistributions?.find((d) => d.reference === selection) ??
+      findKnownImage(selection as string);
     if (selected) {
       dispatch(changeDistribution(selected.distro as Distributions));
       if (isOnPremise) {
