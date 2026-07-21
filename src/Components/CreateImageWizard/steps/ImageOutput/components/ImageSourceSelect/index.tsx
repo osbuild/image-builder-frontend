@@ -5,6 +5,7 @@ import {
   useGetDistributionsQuery,
 } from '@/store/api/backend';
 import { Distributions } from '@/store/api/backend/hosted';
+import { isKnownImageRef } from '@/store/api/backend/onprem/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -30,7 +31,6 @@ const ImageSourceSelect = () => {
     data: distributions,
     isLoading,
     isError,
-    refetch,
   } = useGetDistributionsQuery({ kind: 'bootc', arch });
 
   const bootcDistributions = distributions as
@@ -46,7 +46,8 @@ const ImageSourceSelect = () => {
     if (!bootcDistributions || bootcDistributions.length === 0) return;
 
     const hasSelected = imageSource
-      ? bootcDistributions.some((d) => d.reference === imageSource)
+      ? bootcDistributions.some((d) => d.reference === imageSource) ||
+        isKnownImageRef(imageSource)
       : false;
     if (hasSelected) return;
 
@@ -84,7 +85,6 @@ const ImageSourceSelect = () => {
       onToggle={() => setIsOpen(!isOpen)}
       onOpenChange={(open) => setIsOpen(open)}
       onSelect={onSelect}
-      onRefresh={() => refetch()}
     />
   );
 };

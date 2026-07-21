@@ -17,7 +17,6 @@ export type ImageSourceDropdownProps = {
   onToggle: () => void;
   onOpenChange: (open: boolean) => void;
   onSelect: (event?: React.MouseEvent, selection?: string | number) => void;
-  onRefresh: () => void;
 };
 
 const ImageSourceDropdown = (props: ImageSourceDropdownProps) => {
@@ -26,24 +25,7 @@ const ImageSourceDropdown = (props: ImageSourceDropdownProps) => {
   const arch = useAppSelector(selectArchitecture);
 
   if (isOnPremise) {
-    const {
-      distributions,
-      selectedItem,
-      isLoading,
-      isError,
-      onSelect,
-      onRefresh,
-    } = props;
-    return (
-      <OnPremImageSourceSelect
-        distributions={distributions}
-        selectedItem={selectedItem}
-        isLoading={isLoading}
-        isError={isError}
-        onSelect={onSelect}
-        onRefresh={onRefresh}
-      />
-    );
+    return <OnPremImageSourceSelect />;
   }
 
   return (

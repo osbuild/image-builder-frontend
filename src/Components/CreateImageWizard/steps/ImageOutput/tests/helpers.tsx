@@ -144,6 +144,10 @@ export const renderImageSourceSelect = (
         ...initialState.details,
         blueprint: { ...initialState.details.blueprint, mode: 'image' },
       },
+      output: {
+        ...initialState.output,
+        imageSourceType: 'custom',
+      },
       ...wizardStateOverrides,
     },
     {
@@ -156,9 +160,16 @@ export const renderImageSourceSelect = (
 
 // ImageSourceSelect interaction helpers
 export const openImageSourceSelect = async (user: UserEventInstance) => {
-  // On-prem uses "Select a distribution"; hosted uses "Select a bootc image"
+  // Custom on-prem uses a typeahead input; hosted uses a button toggle
+  const input = screen.queryByRole('textbox', {
+    name: /type to filter/i,
+  });
+  if (input) {
+    await clickWithWait(user, input);
+    return;
+  }
   const toggle = await screen.findByRole('button', {
-    name: /select a (bootc image|distribution)/i,
+    name: /select a bootc image/i,
   });
   await clickWithWait(user, toggle);
 };
