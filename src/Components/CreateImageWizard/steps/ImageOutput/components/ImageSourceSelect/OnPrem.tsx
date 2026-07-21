@@ -21,9 +21,8 @@ import { isImageType } from '@/store/slices/wizard';
 
 import { groupByName } from './groupByName';
 import ImageSourceError from './ImageSourceError';
+import RegistryAuthSection from './RegistryAuthSection';
 import './OnPrem.css';
-
-import RegistryAuthSection from '../RegistryAuthSection';
 
 type OnPremImageSourceSelectProps = {
   distributions: BootcDistributionItem[] | undefined;
@@ -143,7 +142,6 @@ const OnPremImageSourceSelect = ({
         </Select>
       </FormGroup>
       <FormGroup label='Image source' isRequired>
-        <RegistryAuthSection />
         {isError && <ImageSourceError isOnPremise />}
         <Flex>
           <FlexItem>
@@ -186,6 +184,9 @@ const OnPremImageSourceSelect = ({
             />
           </FlexItem>
         </Flex>
+        <div className='pf-v6-u-mt-md'>
+          <RegistryAuthSection />
+        </div>
       </FormGroup>
     </>
   );
