@@ -174,13 +174,6 @@ export const selectImageSource = async (
   await clickWithWait(user, option);
 };
 
-export const togglePullInfoSection = async (user: UserEventInstance) => {
-  const button = await screen.findByRole('button', {
-    name: /information about pulling images/i,
-  });
-  await clickWithWait(user, button);
-};
-
 export const clickRefreshImageSources = async (user: UserEventInstance) => {
   const button = await screen.findByRole('button', {
     name: /refresh image sources/i,

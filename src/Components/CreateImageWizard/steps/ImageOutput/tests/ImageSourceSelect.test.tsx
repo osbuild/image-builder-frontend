@@ -14,7 +14,6 @@ import {
   clickRefreshImageSources,
   openImageSourceSelect,
   renderImageSourceSelect,
-  togglePullInfoSection,
 } from './helpers';
 import {
   mockBootcDistributions,
@@ -184,20 +183,6 @@ describe('ImageSourceSelect', () => {
         await screen.findByText(/please try again later/i),
       ).toBeInTheDocument();
     });
-
-    test('does not display pull info section when error', async () => {
-      renderImageSourceSelect();
-
-      await screen.findByRole('heading', {
-        name: /error loading bootc images/i,
-      });
-
-      expect(
-        screen.queryByRole('button', {
-          name: /information about pulling images/i,
-        }),
-      ).not.toBeInTheDocument();
-    });
   });
 
   describe('Empty State', () => {
@@ -220,24 +205,6 @@ describe('ImageSourceSelect', () => {
         await screen.findByRole('option', {
           name: /no bootc images available/i,
         }),
-      ).toBeInTheDocument();
-    });
-
-    test('auto-expands pull info section when no images', async () => {
-      renderImageSourceSelect();
-
-      expect(
-        await screen.findByRole('button', {
-          name: /hide information about pulling images/i,
-        }),
-      ).toBeInTheDocument();
-    });
-
-    test('displays warning alert when no images found', async () => {
-      renderImageSourceSelect();
-
-      expect(
-        await screen.findByRole('heading', { name: /no images found/i }),
       ).toBeInTheDocument();
     });
   });
@@ -316,67 +283,6 @@ describe('ImageSourceSelect', () => {
     });
   });
 
-  describe('On-premise pull info', () => {
-    test('displays expandable pull info section', async () => {
-      renderImageSourceSelect();
-
-      expect(
-        await screen.findByRole('button', {
-          name: /show information about pulling images/i,
-        }),
-      ).toBeInTheDocument();
-    });
-
-    test('expands pull info section when clicked', async () => {
-      renderImageSourceSelect();
-      const user = createUser();
-
-      await togglePullInfoSection(user);
-
-      expect(
-        await screen.findByRole('button', {
-          name: /hide information about pulling images/i,
-        }),
-      ).toBeInTheDocument();
-    });
-
-    test('displays pull command in expanded section', async () => {
-      renderImageSourceSelect();
-      const user = createUser();
-
-      await togglePullInfoSection(user);
-
-      expect(await screen.findByText(/sudo podman pull/i)).toBeInTheDocument();
-    });
-
-    test('displays info alert when images are available', async () => {
-      renderImageSourceSelect();
-      const user = createUser();
-
-      await togglePullInfoSection(user);
-
-      expect(
-        await screen.findByRole('heading', {
-          name: /note on pulling images/i,
-        }),
-      ).toBeInTheDocument();
-    });
-
-    test('collapses section when clicked again', async () => {
-      renderImageSourceSelect();
-      const user = createUser();
-
-      await togglePullInfoSection(user);
-      await togglePullInfoSection(user);
-
-      expect(
-        await screen.findByRole('button', {
-          name: /show information about pulling images/i,
-        }),
-      ).toBeInTheDocument();
-    });
-  });
-
   describe('On-premise refresh', () => {
     test('displays refresh button', async () => {
       renderImageSourceSelect();
@@ -397,19 +303,6 @@ describe('ImageSourceSelect', () => {
   });
 
   describe('Hosted (non on-premise)', () => {
-    test('does not display pull info section', async () => {
-      renderHostedImageSourceSelect();
-
-      // Wait for the component to render
-      await screen.findByText('Image source');
-
-      expect(
-        screen.queryByRole('button', {
-          name: /information about pulling images/i,
-        }),
-      ).not.toBeInTheDocument();
-    });
-
     test('does not display refresh button', async () => {
       renderHostedImageSourceSelect();
 
