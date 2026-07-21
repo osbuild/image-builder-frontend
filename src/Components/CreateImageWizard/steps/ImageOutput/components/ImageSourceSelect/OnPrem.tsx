@@ -21,7 +21,7 @@ import { isImageType } from '@/store/slices/wizard';
 
 import { groupByName } from './groupByName';
 import ImageSourceError from './ImageSourceError';
-import RegistryAuthSection from './RegistryAuthSection';
+import RegistryAuth from './RegistryAuth';
 import './OnPrem.css';
 
 type OnPremImageSourceSelectProps = {
@@ -184,9 +184,7 @@ const OnPremImageSourceSelect = ({
             />
           </FlexItem>
         </Flex>
-        <div className='pf-v6-u-mt-md'>
-          <RegistryAuthSection />
-        </div>
+        <RegistryAuth />
       </FormGroup>
     </>
   );
