@@ -104,7 +104,6 @@ export {
 export {
   getHostArch,
   getHostDistro,
-  toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
   useGetRegistryAuthStatusQuery,
   useLazyGetImageExistsQuery,
