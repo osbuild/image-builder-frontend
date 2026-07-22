@@ -38,6 +38,10 @@ export const PasswordValidatedInput = ({
     environments.includes('azure'),
   );
   const { ruleLength, ruleCharacters } = validationState;
+  const hasError =
+    ruleLength === 'error' ||
+    ruleCharacters === 'error' ||
+    ruleLength === 'indeterminate';
 
   return (
     <>
@@ -55,19 +59,21 @@ export const PasswordValidatedInput = ({
           />
         </InputGroupItem>
       </InputGroup>
-      <FormHelperText>
-        <HelperText component='ul'>
-          <HelperTextItem variant={ruleLength} component='li'>
-            Password must be at least 6 characters long
-          </HelperTextItem>
-          {environments.includes('azure') && (
-            <HelperTextItem variant={ruleCharacters} component='li'>
-              Must include at least 3 of the following: lowercase letters,
-              uppercase letters, numbers, symbols
+      {(isPasswordVisible || hasError) && (
+        <FormHelperText>
+          <HelperText component='ul'>
+            <HelperTextItem variant={ruleLength} component='li'>
+              Password must be at least 6 characters long
             </HelperTextItem>
-          )}
-        </HelperText>
-      </FormHelperText>
+            {environments.includes('azure') && (
+              <HelperTextItem variant={ruleCharacters} component='li'>
+                Must include at least 3 of the following: lowercase letters,
+                uppercase letters, numbers, symbols
+              </HelperTextItem>
+            )}
+          </HelperText>
+        </FormHelperText>
+      )}
     </>
   );
 };

@@ -48,9 +48,20 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
-      <Table variant='compact' borders={false}>
+      <Table
+        variant='compact'
+        borders={false}
+        style={
+          {
+            '--pf-v6-c-table--m-compact--cell--PaddingBlockStart':
+              'var(--pf-t--global--spacer--xs)',
+            '--pf-v6-c-table--m-compact--cell--PaddingBlockEnd':
+              'var(--pf-t--global--spacer--xs)',
+          } as React.CSSProperties
+        }
+      >
         <Thead>
-          <Tr>
+          <Tr resetOffset>
             <Th width={20}>Username</Th>
             <Th width={20}>Password</Th>
             <Th width={20}>SSH key</Th>
