@@ -48,6 +48,7 @@ import {
   selectGcpEmail,
   selectHostname,
   selectImageTypes,
+  selectIsImageMode,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -118,7 +119,22 @@ export type UsersStepValidation = {
   disabledNext: boolean;
 };
 
-export function useIsBlueprintValid(): boolean {
+export const WIZARD_STEP_IDS = {
+  BASE_SETTINGS: 'base-settings-step',
+  CONTENT: 'content-step',
+  ADVANCED_SETTINGS: 'advanced-settings-step',
+  REVIEW: 'review-step',
+} as const;
+
+export type WizardStepId =
+  (typeof WIZARD_STEP_IDS)[keyof typeof WIZARD_STEP_IDS];
+
+type BlueprintValidation = {
+  isValid: boolean;
+  firstErrorStepId: WizardStepId | null;
+};
+
+export function useBlueprintValidation(): BlueprintValidation {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
@@ -135,24 +151,46 @@ export function useIsBlueprintValid(): boolean {
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
-  return (
-    !registration.disabledNext &&
-    !filesystem.disabledNext &&
-    !snapshot.disabledNext &&
-    !timezone.disabledNext &&
-    !locale.disabledNext &&
-    !hostname.disabledNext &&
-    !kernel.disabledNext &&
-    !firewall.disabledNext &&
-    !services.disabledNext &&
-    !firstBoot.disabledNext &&
-    !details.disabledNext &&
-    !users.disabledNext &&
-    !userGroups.disabledNext &&
-    !azureTarget.disabledNext &&
-    !gcpTarget.disabledNext &&
-    !awsTarget.disabledNext
-  );
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageMode = useAppSelector(selectIsImageMode);
+
+  const usersAreStandalone = isImageMode && isOnPremise;
+  const usersHaveErrors = users.disabledNext || userGroups.disabledNext;
+
+  const baseSettingsInvalid =
+    details.disabledNext ||
+    registration.disabledNext ||
+    snapshot.disabledNext ||
+    awsTarget.disabledNext ||
+    gcpTarget.disabledNext ||
+    azureTarget.disabledNext ||
+    (usersAreStandalone && usersHaveErrors);
+
+  const advancedSettingsInvalid =
+    filesystem.disabledNext ||
+    timezone.disabledNext ||
+    locale.disabledNext ||
+    hostname.disabledNext ||
+    kernel.disabledNext ||
+    firewall.disabledNext ||
+    services.disabledNext ||
+    firstBoot.disabledNext ||
+    (!usersAreStandalone && usersHaveErrors);
+
+  const isValid = !baseSettingsInvalid && !advancedSettingsInvalid;
+
+  return {
+    isValid,
+    firstErrorStepId: !isValid
+      ? baseSettingsInvalid
+        ? WIZARD_STEP_IDS.BASE_SETTINGS
+        : WIZARD_STEP_IDS.ADVANCED_SETTINGS
+      : null,
+  };
+}
+
+export function useIsBlueprintValid(): boolean {
+  return useBlueprintValidation().isValid;
 }
 
 type PasswordValidationResult = {
@@ -1178,8 +1216,11 @@ export function useDetailsValidation(): StepValidation {
     nameError = 'Invalid blueprint name';
   } else if (uniqueName === false) {
     nameError = 'Blueprint with this name already exists';
-  } else if (!blueprintId && uniqueName === null) {
-    // Hack to keep the error message from flickering in create mode
+  } else if (uniqueName === null) {
+    // Don't block while the async uniqueness check is still in flight.
+    // In create mode this prevents error-message flicker; in edit mode
+    // it prevents the save from being silently blocked before the
+    // debounced check has resolved.
     return { errors: { name: '' }, disabledNext: false };
   }
 

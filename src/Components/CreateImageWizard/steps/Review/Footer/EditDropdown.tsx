@@ -32,12 +32,14 @@ type EditDropdownProps = {
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
   isDisabled: boolean;
+  validateBeforeAction?: () => boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
   setIsOpen,
   blueprintId,
   isDisabled,
+  validateBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -51,7 +53,10 @@ export const EditSaveAndBuildBtn = ({
     fixedCacheKey: 'updateBlueprintKey',
   });
 
+  const shouldDisable = !validateBeforeAction && isDisabled;
+
   const onSaveAndBuild = async () => {
+    if (validateBeforeAction && !validateBeforeAction()) return;
     const requestBody = mapStateToRequest(store.getState());
 
     if (!isOnPremise) {
@@ -83,7 +88,7 @@ export const EditSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} isDisabled={isDisabled}>
+      <DropdownItem onClick={onSaveAndBuild} isDisabled={shouldDisable}>
         Save changes and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -94,6 +99,7 @@ export const EditSaveButton = ({
   setIsOpen,
   blueprintId,
   isDisabled,
+  validateBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -105,7 +111,10 @@ export const EditSaveButton = ({
   const { trigger: updateBlueprint, isLoading } = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
+  const shouldDisable = !validateBeforeAction && isDisabled;
+
   const onSave = async () => {
+    if (validateBeforeAction && !validateBeforeAction()) return;
     const requestBody = mapStateToRequest(store.getState());
 
     if (!isOnPremise) {
@@ -130,7 +139,7 @@ export const EditSaveButton = ({
     <MenuToggleAction
       onClick={onSave}
       id='wizard-edit-save-btn'
-      isDisabled={isDisabled}
+      isDisabled={shouldDisable}
     >
       <Flex display={{ default: 'inlineFlex' }}>
         {isLoading && (
