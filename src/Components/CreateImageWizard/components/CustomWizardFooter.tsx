@@ -17,6 +17,7 @@ import {
 } from '@/store/slices/wizard';
 
 import { scrollToFirstError } from '../utilities/scrollToFirstError';
+import { WIZARD_STEP_IDS } from '../utilities/useValidation';
 
 type CustomWizardFooterPropType = {
   disableBack?: boolean;
@@ -78,7 +79,7 @@ export const CustomWizardFooter = ({
         });
       }
       dispatch(resetForceShowErrors());
-      goToStepById('review-step');
+      goToStepById(WIZARD_STEP_IDS.REVIEW);
     }
   };
 
