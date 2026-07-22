@@ -6,6 +6,7 @@ const enhancedApi = composerApi.enhanceEndpoints({
     'Blueprints',
     'Compose',
     'BlueprintComposes',
+    'Distributions',
     'RegistryAuth',
     'WorkerConfig',
   ],
@@ -42,6 +43,9 @@ const enhancedApi = composerApi.enhanceEndpoints({
     getBlueprintComposes: {
       providesTags: [{ type: 'BlueprintComposes' }],
     },
+    getDistributions: {
+      providesTags: [{ type: 'Distributions' }],
+    },
     getRegistryAuthStatus: {
       providesTags: [{ type: 'RegistryAuth' }],
     },
@@ -67,6 +71,7 @@ const enhancedApi = composerApi.enhanceEndpoints({
           // mutation failed — no cache update needed
         }
       },
+      invalidatesTags: [{ type: 'Distributions' }],
     },
     registryLogout: {
       invalidatesTags: [{ type: 'RegistryAuth' }],
