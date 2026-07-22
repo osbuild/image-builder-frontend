@@ -34,7 +34,7 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Review' });
   });
 
-  test('should only enable first navigation item in create mode', async () => {
+  test('should enable all navigation items in create mode', async () => {
     await renderCreateMode();
 
     const navigation = await screen.findByRole('navigation', {
@@ -54,9 +54,9 @@ describe('Create Image Wizard', () => {
     });
 
     expect(baseNavItem).toBeEnabled();
-    expect(contentNavItem).toBeDisabled();
-    expect(advancedNavItem).toBeDisabled();
-    expect(reviewNavItem).toBeDisabled();
+    expect(contentNavItem).toBeEnabled();
+    expect(advancedNavItem).toBeEnabled();
+    expect(reviewNavItem).toBeEnabled();
   });
 });
 

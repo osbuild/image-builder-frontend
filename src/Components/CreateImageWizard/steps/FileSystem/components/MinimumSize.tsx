@@ -16,7 +16,9 @@ import {
 
 type MinimumSizePropTypes = {
   partition:
-    FilesystemPartition | LogicalVolumeWithBase | VolumeGroupWithExtendedLV;
+    | FilesystemPartition
+    | LogicalVolumeWithBase
+    | VolumeGroupWithExtendedLV;
   customization: PartitioningCustomization;
   isOscapRequired?: boolean;
   oscapMinSizeLabel?: string;

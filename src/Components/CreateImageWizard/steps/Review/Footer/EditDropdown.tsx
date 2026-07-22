@@ -20,6 +20,8 @@ import {
 import { selectIsOnPremise } from '@/store/slices/env';
 import { mapStateToRequest, selectPackages } from '@/store/slices/wizard';
 
+import { shouldDisableAction } from './shouldDisableAction';
+
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
@@ -32,12 +34,14 @@ type EditDropdownProps = {
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
   isDisabled: boolean;
+  validateBeforeAction?: () => boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
   setIsOpen,
   blueprintId,
   isDisabled,
+  validateBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -51,7 +55,10 @@ export const EditSaveAndBuildBtn = ({
     fixedCacheKey: 'updateBlueprintKey',
   });
 
+  const shouldDisable = shouldDisableAction(isDisabled, validateBeforeAction);
+
   const onSaveAndBuild = async () => {
+    if (validateBeforeAction && !validateBeforeAction()) return;
     const requestBody = mapStateToRequest(store.getState());
 
     if (!isOnPremise) {
@@ -83,7 +90,7 @@ export const EditSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} isDisabled={isDisabled}>
+      <DropdownItem onClick={onSaveAndBuild} isDisabled={shouldDisable}>
         Save changes and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -94,6 +101,7 @@ export const EditSaveButton = ({
   setIsOpen,
   blueprintId,
   isDisabled,
+  validateBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -105,7 +113,10 @@ export const EditSaveButton = ({
   const { trigger: updateBlueprint, isLoading } = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
+  const shouldDisable = shouldDisableAction(isDisabled, validateBeforeAction);
+
   const onSave = async () => {
+    if (validateBeforeAction && !validateBeforeAction()) return;
     const requestBody = mapStateToRequest(store.getState());
 
     if (!isOnPremise) {
@@ -130,7 +141,7 @@ export const EditSaveButton = ({
     <MenuToggleAction
       onClick={onSave}
       id='wizard-edit-save-btn'
-      isDisabled={isDisabled}
+      isDisabled={shouldDisable}
     >
       <Flex display={{ default: 'inlineFlex' }}>
         {isLoading && (
