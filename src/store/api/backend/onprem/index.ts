@@ -1,6 +1,5 @@
 export { composerApi } from './enhancedComposerApi';
 export {
-  toComposerComposeRequest,
   useComposeBlueprintMutation,
   useCreateBlueprintMutation,
   useDeleteBlueprintMutation,

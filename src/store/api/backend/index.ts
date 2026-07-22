@@ -102,7 +102,6 @@ export {
   useRecommendPackageMutation,
 } from './hosted';
 export {
-  toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
   useGetRegistryAuthStatusQuery,
   useGetWorkerConfigQuery,
