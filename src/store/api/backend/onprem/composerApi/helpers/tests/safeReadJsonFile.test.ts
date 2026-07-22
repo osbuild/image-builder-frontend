@@ -28,7 +28,7 @@ describe('safeReadJsonFile', () => {
     const result = await safeReadJsonFile<TestData>('/path/to/file.json');
 
     expect(result).toEqual(mockData);
-    expect(cockpit.file).toHaveBeenCalledWith('/path/to/file.json');
+    expect(cockpit.file).toHaveBeenCalledWith('/path/to/file.json', { superuser: "try" });
   });
 
   it('returns null when cockpit.file().read() throws', async () => {
