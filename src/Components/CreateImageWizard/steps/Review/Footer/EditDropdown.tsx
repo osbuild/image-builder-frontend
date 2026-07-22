@@ -30,13 +30,13 @@ import { createAnalytics } from '@/Utilities/analytics';
 type EditDropdownProps = {
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
-  isDisabled: boolean;
+  validateBeforeAction: () => boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
   setIsOpen,
   blueprintId,
-  isDisabled,
+  validateBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -51,6 +51,7 @@ export const EditSaveAndBuildBtn = ({
   });
 
   const onSaveAndBuild = async () => {
+    if (!validateBeforeAction()) return;
     const requestBody = mapStateToRequest(store.getState());
 
     if (!isOnPremise) {
@@ -82,7 +83,7 @@ export const EditSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} isDisabled={isDisabled}>
+      <DropdownItem onClick={onSaveAndBuild}>
         Save changes and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -92,7 +93,7 @@ export const EditSaveAndBuildBtn = ({
 export const EditSaveButton = ({
   setIsOpen,
   blueprintId,
-  isDisabled,
+  validateBeforeAction,
 }: EditDropdownProps) => {
   const { analytics, auth, isBeta } = useChrome();
   const { userData } = useGetUser(auth);
@@ -105,6 +106,7 @@ export const EditSaveButton = ({
     fixedCacheKey: 'updateBlueprintKey',
   });
   const onSave = async () => {
+    if (!validateBeforeAction()) return;
     const requestBody = mapStateToRequest(store.getState());
 
     if (!isOnPremise) {
@@ -126,11 +128,7 @@ export const EditSaveButton = ({
     });
   };
   return (
-    <MenuToggleAction
-      onClick={onSave}
-      id='wizard-edit-save-btn'
-      isDisabled={isDisabled}
-    >
+    <MenuToggleAction onClick={onSave} id='wizard-edit-save-btn'>
       <Flex display={{ default: 'inlineFlex' }}>
         {isLoading && (
           <FlexItem>

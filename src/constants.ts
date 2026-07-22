@@ -244,6 +244,16 @@ export enum ContentOrigin {
   ALL = 'red_hat,external,upload',
 }
 
+export const WIZARD_STEP_IDS = {
+  BASE_SETTINGS: 'base-settings-step',
+  CONTENT: 'content-step',
+  ADVANCED_SETTINGS: 'advanced-settings-step',
+  REVIEW: 'review-step',
+} as const;
+
+export type WizardStepId =
+  (typeof WIZARD_STEP_IDS)[keyof typeof WIZARD_STEP_IDS];
+
 export const AMPLITUDE_MODULE_NAME = 'imageBuilder';
 
 export const PAGINATION_OFFSET = 0;

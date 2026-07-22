@@ -2,7 +2,11 @@ import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
 
-import { UNIQUE_VALIDATION_DELAY } from '@/constants';
+import {
+  UNIQUE_VALIDATION_DELAY,
+  WIZARD_STEP_IDS,
+  WizardStepId,
+} from '@/constants';
 import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
@@ -32,8 +36,10 @@ import {
   selectFilesystemSlice,
   selectGcpAccountType,
   selectGcpEmail,
+  selectHasPendingInputs,
   selectImageSource,
   selectImageTypes,
+  selectIsImageMode,
   selectIsOfficialImage,
   selectIsoPayloadReference,
   selectOrgId,
@@ -74,7 +80,12 @@ export type StepValidation = {
   isPending?: boolean;
 };
 
-export function useIsBlueprintValid(): boolean {
+type BlueprintValidation = {
+  isValid: boolean;
+  firstErrorStepId: WizardStepId | null;
+};
+
+export function useBlueprintValidation(): BlueprintValidation {
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const aap = useAAPValidation();
   const registration = useRegistrationValidation();
@@ -83,7 +94,10 @@ export function useIsBlueprintValid(): boolean {
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
+  const imagePull = useImagePullValidation();
   const targetEnvironments = useAppSelector(selectImageTypes);
+  const isImageMode = useAppSelector(selectIsImageMode);
+  const imageSource = useAppSelector(selectImageSource);
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
@@ -106,19 +120,41 @@ export function useIsBlueprintValid(): boolean {
     restrictions.users.shouldHide,
   );
 
-  return (
-    !aap.disabledNext &&
-    !registration.disabledNext &&
-    filesystemErrors.length === 0 &&
-    !snapshot.disabledNext &&
-    systemErrors.length === 0 &&
-    !details.disabledNext &&
-    !details.isPending &&
-    usersErrors.length === 0 &&
-    !azureTarget.disabledNext &&
-    !gcpTarget.disabledNext &&
-    !awsTarget.disabledNext
-  );
+  const hasPendingInputs = useAppSelector(selectHasPendingInputs);
+
+  const baseSettingsInvalid =
+    targetEnvironments.length === 0 ||
+    (isImageMode && !imageSource) ||
+    aap.disabledNext ||
+    details.disabledNext ||
+    details.isPending ||
+    registration.disabledNext ||
+    snapshot.disabledNext ||
+    awsTarget.disabledNext ||
+    gcpTarget.disabledNext ||
+    azureTarget.disabledNext ||
+    imagePull.disabledNext;
+
+  const advancedSettingsInvalid =
+    filesystemErrors.length > 0 ||
+    systemErrors.length > 0 ||
+    usersErrors.length > 0 ||
+    hasPendingInputs;
+
+  const isValid = !baseSettingsInvalid && !advancedSettingsInvalid;
+
+  return {
+    isValid,
+    firstErrorStepId: !isValid
+      ? baseSettingsInvalid
+        ? WIZARD_STEP_IDS.BASE_SETTINGS
+        : WIZARD_STEP_IDS.ADVANCED_SETTINGS
+      : null,
+  };
+}
+
+export function useIsBlueprintValid(): boolean {
+  return useBlueprintValidation().isValid;
 }
 
 export function useRegistrationValidation(): StepValidation {

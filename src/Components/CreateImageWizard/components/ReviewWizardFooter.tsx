@@ -16,7 +16,11 @@ import {
 } from '@/Hooks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
-import { clearPendingInputs } from '@/store/slices/wizard';
+import {
+  clearPendingInputs,
+  resetForceShowErrors,
+  setForceShowErrors,
+} from '@/store/slices/wizard';
 import { selectWizardModalMode } from '@/store/slices/wizardModal';
 
 import {
@@ -27,10 +31,11 @@ import {
   EditSaveAndBuildBtn,
   EditSaveButton,
 } from '../steps/Review/Footer/EditDropdown';
-import { useIsBlueprintValid } from '../utilities/useValidation';
+import { scrollToFirstError } from '../utilities/scrollToFirstError';
+import { useBlueprintValidation } from '../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
-  const { goToPrevStep, close } = useWizardContext();
+  const { goToPrevStep, goToStepById, close } = useWizardContext();
   const dispatch = useAppDispatch();
   const { isSuccess: isCreateSuccess, reset: resetCreate } =
     useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
@@ -40,10 +45,7 @@ const ReviewWizardFooter = () => {
   const mode = useAppSelector(selectWizardModalMode);
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
   const [isOpen, setIsOpen] = useState(false);
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
-  const isValid = useIsBlueprintValid();
+  const { isValid, firstErrorStepId } = useBlueprintValidation();
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -52,6 +54,25 @@ const ReviewWizardFooter = () => {
       close();
     }
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, close]);
+
+  const validateBeforeAction = (): boolean => {
+    if (!isValid) {
+      if (!firstErrorStepId) return false;
+      dispatch(setForceShowErrors());
+      goToStepById(firstErrorStepId);
+      requestAnimationFrame(() => {
+        scrollToFirstError();
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const onToggleClick = () => {
+    if (validateBeforeAction()) {
+      setIsOpen(!isOpen);
+    }
+  };
 
   const isEditMode = mode === 'edit';
 
@@ -64,6 +85,7 @@ const ReviewWizardFooter = () => {
         <Button
           variant='secondary'
           onClick={() => {
+            dispatch(resetForceShowErrors());
             dispatch(clearPendingInputs());
             goToPrevStep();
           }}
@@ -79,7 +101,6 @@ const ReviewWizardFooter = () => {
               ref={toggleRef}
               onClick={onToggleClick}
               isExpanded={isOpen}
-              isDisabled={!isValid}
               splitButtonItems={
                 isEditMode
                   ? [
@@ -87,14 +108,14 @@ const ReviewWizardFooter = () => {
                         key='wizard-edit-save-btn'
                         setIsOpen={setIsOpen}
                         blueprintId={blueprintId || ''}
-                        isDisabled={!isValid}
+                        validateBeforeAction={validateBeforeAction}
                       />,
                     ]
                   : [
                       <CreateSaveButton
                         key='wizard-create-save-btn'
                         setIsOpen={setIsOpen}
-                        isDisabled={!isValid}
+                        validateBeforeAction={validateBeforeAction}
                       />,
                     ]
               }
@@ -106,12 +127,12 @@ const ReviewWizardFooter = () => {
             <EditSaveAndBuildBtn
               blueprintId={blueprintId || ''}
               setIsOpen={setIsOpen}
-              isDisabled={!isValid}
+              validateBeforeAction={validateBeforeAction}
             />
           ) : (
             <CreateSaveAndBuildBtn
               setIsOpen={setIsOpen}
-              isDisabled={!isValid}
+              validateBeforeAction={validateBeforeAction}
             />
           )}
         </Dropdown>

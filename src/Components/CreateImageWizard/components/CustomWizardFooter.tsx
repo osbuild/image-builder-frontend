@@ -9,7 +9,7 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { flushSync } from 'react-dom';
 
-import { AMPLITUDE_MODULE_NAME } from '@/constants';
+import { AMPLITUDE_MODULE_NAME, WIZARD_STEP_IDS } from '@/constants';
 import { useAppDispatch } from '@/store/hooks';
 import {
   clearPendingInputs,
@@ -81,7 +81,7 @@ export const CustomWizardFooter = ({
         });
       }
       dispatch(resetForceShowErrors());
-      goToStepById('review-step');
+      goToStepById(WIZARD_STEP_IDS.REVIEW);
     }
   };
 
