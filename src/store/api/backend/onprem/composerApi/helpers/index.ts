@@ -13,7 +13,6 @@ export {
 } from './podman';
 export { readComposes } from './readComposes';
 export { safeReadJsonFile } from './safeReadJsonFile';
-export { toComposerComposeRequest } from './toComposerComposeRequest';
 export { imageStatusFromBuildlog } from './imageStatusFromBuildlog';
 export { progressFromFile } from './progressFromFile';
 export { uploadStatusFromFile } from './uploadStatusFromFile';

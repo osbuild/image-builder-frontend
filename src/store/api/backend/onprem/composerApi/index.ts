@@ -47,6 +47,3 @@ export const {
   useRegistryLoginMutation,
   useUpdateWorkerConfigMutation,
 } = composerApi;
-
-// re-export this for testing
-export { toComposerComposeRequest } from './helpers';
