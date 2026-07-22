@@ -49,7 +49,24 @@ const enhancedApi = composerApi.enhanceEndpoints({
       providesTags: [{ type: 'WorkerConfig' }],
     },
     registryLogin: {
-      invalidatesTags: [{ type: 'RegistryAuth' }],
+      // Write the login result directly into the auth status cache.
+      // The mutation already returns RegistryAuthStatus so there is
+      // no need to invalidate and re-run checkRegistryAuth (which
+      // spawns two podman commands).
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            composerApi.util.updateQueryData(
+              'getRegistryAuthStatus',
+              undefined,
+              () => data,
+            ),
+          );
+        } catch {
+          // mutation failed — no cache update needed
+        }
+      },
     },
     updateWorkerConfig: {
       invalidatesTags: [{ type: 'WorkerConfig' }],
