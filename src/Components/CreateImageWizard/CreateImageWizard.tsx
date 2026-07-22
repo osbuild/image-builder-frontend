@@ -45,6 +45,7 @@ import {
   parseStateFromRequest,
   selectDistribution,
   selectImageSource,
+  selectImageSourceType,
   selectImageTypes,
   selectIsImageMode,
   selectTimezone,
@@ -98,6 +99,7 @@ import {
   useFirstBootValidation,
   useGcpValidation,
   useHostnameValidation,
+  useImagePullValidation,
   useKernelValidation,
   useLocaleValidation,
   useRegistrationValidation,
@@ -119,6 +121,7 @@ const CreateImageWizard = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
   const imageSource = useAppSelector(selectImageSource);
+  const imageSourceType = useAppSelector(selectImageSourceType);
   const [searchParams, setSearchParams] = useSearchParams();
   const resolvePath = useAppSelector(selectPathResolver);
   const hasInitialized = useRef(false);
@@ -158,6 +161,10 @@ const CreateImageWizard = () => {
   const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
+  const imagePullValidation = useImagePullValidation(
+    imageSourceType,
+    imageSource,
+  );
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
@@ -175,6 +182,7 @@ const CreateImageWizard = () => {
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     snapshotValidation.disabledNext ||
+    imagePullValidation.disabledNext ||
     (restrictions.users.isStandalone && usersHaveErrors);
 
   const advancedSettingsHasErrors =

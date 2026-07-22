@@ -1,6 +1,6 @@
 import type { BootcDistributionItem } from '@/store/api/backend';
 
-import { groupByName } from '../components/ImageSourceSelect/groupByName';
+import { groupByName } from '../components/ImageSourceSelect/OnPrem/groupByName';
 
 const makeItem = (
   name: string,

@@ -1,5 +1,16 @@
 import cockpit from 'cockpit';
 
+export const checkImageExists = async (reference: string) => {
+  try {
+    await cockpit.spawn(['podman', 'image', 'exists', reference], {
+      superuser: 'require',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const listPodmanImages = async () => {
   try {
     const result = (await cockpit.spawn(

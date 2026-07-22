@@ -106,9 +106,12 @@ export {
   getHostDistro,
   toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
+  useGetImageExistsQuery,
   useGetRegistryAuthStatusQuery,
+  useLazyGetImageExistsQuery,
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
+  usePullImageMutation,
   useRegistryLoginMutation,
   useUpdateWorkerConfigMutation,
 } from './onprem';

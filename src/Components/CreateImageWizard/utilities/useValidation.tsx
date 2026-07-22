@@ -12,6 +12,7 @@ import {
   BlueprintsResponse,
   useGetOscapCustomizationsQuery,
   useLazyGetBlueprintsQuery,
+  useLazyGetImageExistsQuery,
 } from '@/store/api/backend';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
@@ -1266,4 +1267,34 @@ export function useAwsValidation(): StepValidation {
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
+}
+
+export function useImagePullValidation(
+  imageSourceType: string | undefined,
+  imageSource: string | undefined,
+): StepValidation {
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const [trigger, { data: imageExists }] = useLazyGetImageExistsQuery();
+
+  const shouldValidate =
+    isOnPremise && imageSourceType === 'official' && !!imageSource;
+
+  useEffect(() => {
+    if (shouldValidate) {
+      trigger({ reference: imageSource });
+    }
+  }, [shouldValidate, imageSource, trigger]);
+
+  if (!shouldValidate) {
+    return { errors: {}, disabledNext: false };
+  }
+
+  if (imageExists !== true) {
+    return {
+      errors: { imagePull: 'Image must be pulled before proceeding' },
+      disabledNext: true,
+    };
+  }
+
+  return { errors: {}, disabledNext: false };
 }
