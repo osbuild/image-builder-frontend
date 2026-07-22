@@ -681,6 +681,12 @@ test('Create a blueprint with Groups customization', async ({
     await expect(frame.getByText('ops')).toBeVisible();
   });
 
+  await test.step('Verify Create button is enabled', async () => {
+    await expect(
+      frame.getByRole('button', { name: 'Create blueprint' }),
+    ).toBeEnabled();
+  });
+
   await test.step('Create and save blueprint', async () => {
     await createBlueprint(frame, blueprintName);
   });
