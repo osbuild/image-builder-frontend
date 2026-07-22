@@ -13,7 +13,7 @@ vi.mock('@/Hooks', () => ({
 }));
 
 vi.mock('@/Components/CreateImageWizard/utilities/useValidation', () => ({
-  useIsBlueprintValid: () => false,
+  useBlueprintValidation: () => ({ isValid: false, firstErrorStepId: null }),
 }));
 
 vi.mock(
