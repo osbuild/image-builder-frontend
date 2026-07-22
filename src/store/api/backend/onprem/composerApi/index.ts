@@ -53,8 +53,4 @@ export const {
 } = composerApi;
 
 // re-export this for testing
-export {
-  getHostArch,
-  getHostDistro,
-  toComposerComposeRequest,
-} from './helpers';
+export { getHostArch, getHostDistro } from './helpers';
