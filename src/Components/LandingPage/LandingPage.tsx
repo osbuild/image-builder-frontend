@@ -25,6 +25,7 @@ import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { NewAlert } from './NewAlert';
 import ServiceUnavailableAlert from './ServiceUnavailableAlert';
+import SingleTargetAlert from './SingleTargetAlert';
 
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import CreateImageWizard from '../CreateImageWizard/CreateImageWizard';
@@ -40,6 +41,9 @@ export const LandingPage = () => {
   const [searchParams] = useSearchParams();
 
   const serviceUnavailable = useFlag('image-builder.service-unavailable');
+  const singleTargetMigration = useFlag(
+    'image-builder.single-target-migration',
+  );
   const isImagesTableRevampEnabled = useFlag(
     'image-builder.images-table-revamp.enabled',
   );
@@ -62,6 +66,7 @@ export const LandingPage = () => {
     <>
       <PageSection hasBodyWrapper={false}>
         {serviceUnavailable && <ServiceUnavailableAlert />}
+        {singleTargetMigration && <SingleTargetAlert />}
         <NewAlert />
         {!isImagesTableRevampEnabled ? (
           <Sidebar hasBorder className='pf-v6-u-background-color-100'>
