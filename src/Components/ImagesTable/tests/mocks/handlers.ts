@@ -18,12 +18,13 @@ export { fetchMock };
 
 type ComposesHandlerOptions = {
   composesEndpointFn?: (url: URL) => unknown;
+  shouldFail?: boolean;
 };
 
 const createComposesHandler = (
   options: ComposesHandlerOptions = {},
 ): FetchHandler => {
-  const { composesEndpointFn = composesEndpoint } = options;
+  const { composesEndpointFn = composesEndpoint, shouldFail = false } = options;
 
   return ({ url, method }: FetchRequest) => {
     if (
@@ -31,6 +32,9 @@ const createComposesHandler = (
       !url.includes('/composes/') &&
       method === 'GET'
     ) {
+      if (shouldFail) {
+        throw new Error('Composes request failed');
+      }
       return JSON.stringify(composesEndpointFn(new URL(url)));
     }
     return null;
@@ -103,13 +107,14 @@ const createBlueprintDetailsHandler = (): FetchHandler => {
 
 type FetchHandlerOverrides = {
   blueprints?: Parameters<typeof createBlueprintsHandler>[0];
+  composes?: ComposesHandlerOptions;
 };
 
 export const createFetchHandler = (
   overrides: FetchHandlerOverrides = {},
 ): FetchHandler => {
   return composeHandlers(
-    createComposesHandler(),
+    createComposesHandler(overrides.composes),
     createComposeStatusHandler(),
     createBlueprintComposesHandler(),
     createBlueprintDetailsHandler(),
