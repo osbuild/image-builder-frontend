@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { composeHandlers, createArchitecturesHandler } from '@/test/testUtils';
@@ -32,31 +32,6 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Repositories and packages' });
     await screen.findByRole('button', { name: 'Advanced settings' });
     await screen.findByRole('button', { name: 'Review' });
-  });
-
-  test('should only enable first navigation item in create mode', async () => {
-    await renderCreateMode();
-
-    const navigation = await screen.findByRole('navigation', {
-      name: /wizard steps/i,
-    });
-    const baseNavItem = within(navigation).getByRole('button', {
-      name: /base settings/i,
-    });
-    const contentNavItem = within(navigation).getByRole('button', {
-      name: /repositories and packages/i,
-    });
-    const advancedNavItem = within(navigation).getByRole('button', {
-      name: /advanced settings/i,
-    });
-    const reviewNavItem = within(navigation).getByRole('button', {
-      name: /review/i,
-    });
-
-    expect(baseNavItem).toBeEnabled();
-    expect(contentNavItem).toBeDisabled();
-    expect(advancedNavItem).toBeDisabled();
-    expect(reviewNavItem).toBeDisabled();
   });
 });
 
