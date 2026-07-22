@@ -324,6 +324,66 @@ describe('Images Table', () => {
       expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible(),
     );
   });
+
+  test('renders on-premise table without Version column', async () => {
+    await renderImagesTable({
+      preloadedState: { env: { isOnPremise: true } },
+    });
+
+    const table = await screen.findByTestId('images-table');
+    const { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+    const header: HTMLElement = rows.shift()!;
+    const headerCells = await within(header).findAllByRole('columnheader');
+
+    expect(headerCells[1]).toHaveTextContent('Name');
+    expect(headerCells[2]).toHaveTextContent('Updated');
+    expect(headerCells[3]).toHaveTextContent('OS');
+    expect(headerCells[4]).toHaveTextContent('Target');
+    expect(headerCells[5]).toHaveTextContent('Status');
+    expect(headerCells[6]).toHaveTextContent('Instance');
+
+    const versionHeader = within(header).queryByText('Version');
+    expect(versionHeader).not.toBeInTheDocument();
+
+    expect(rows).toHaveLength(10);
+  });
+
+  test('renders empty state when no composes exist', async () => {
+    const emptyComposesEndpoint = () => ({
+      meta: { count: 0 },
+      links: { first: '', last: '' },
+      data: [],
+    });
+
+    fetchMock.mockResponse(
+      createFetchHandler({
+        composes: { composesEndpointFn: emptyComposesEndpoint },
+      }),
+    );
+
+    await renderImagesTable();
+
+    await screen.findByText(
+      /Image builder is a tool for creating deployment-ready customized system images/i,
+    );
+    expect(
+      screen.getByText(/Learn more about managing images with DNF/i),
+    ).toBeInTheDocument();
+  });
+
+  test('renders error state when composes request fails', async () => {
+    fetchMock.mockResponse(
+      createFetchHandler({ composes: { shouldFail: true } }),
+    );
+
+    await renderImagesTable();
+
+    await screen.findByText('Service unavailable');
+    expect(
+      screen.getByText(/The Images service is unavailable right now/i),
+    ).toBeInTheDocument();
+  });
 });
 
 describe('Images Table Toolbar', () => {
