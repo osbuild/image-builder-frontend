@@ -10,6 +10,7 @@ import {
 } from '@/constants';
 import {
   BlueprintsResponse,
+  useGetImageExistsQuery,
   useGetOscapCustomizationsQuery,
   useLazyGetBlueprintsQuery,
 } from '@/store/api/backend';
@@ -47,7 +48,9 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
   selectHostname,
+  selectImageSource,
   selectImageTypes,
+  selectIsOfficialImage,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -1267,3 +1270,30 @@ export function useAwsValidation(): StepValidation {
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
 }
+
+export const useImagePullValidation = (): StepValidation => {
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isOfficialImage = useAppSelector(selectIsOfficialImage);
+  const imageSource = useAppSelector(selectImageSource);
+  const { data: imageExists, isLoading } = useGetImageExistsQuery(
+    { reference: imageSource! },
+    { skip: !isOnPremise || !isOfficialImage },
+  );
+
+  if (!isOnPremise || !isOfficialImage) {
+    return { errors: {}, disabledNext: false };
+  }
+
+  if (isLoading) {
+    return { errors: {}, disabledNext: true };
+  }
+
+  if (imageExists !== true) {
+    return {
+      errors: { imagePull: 'Image must be pulled before proceeding' },
+      disabledNext: true,
+    };
+  }
+
+  return { errors: {}, disabledNext: false };
+};

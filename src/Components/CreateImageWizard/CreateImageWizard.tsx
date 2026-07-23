@@ -98,6 +98,7 @@ import {
   useFirstBootValidation,
   useGcpValidation,
   useHostnameValidation,
+  useImagePullValidation,
   useKernelValidation,
   useLocaleValidation,
   useRegistrationValidation,
@@ -158,6 +159,7 @@ const CreateImageWizard = () => {
   const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
+  const imagePullValidation = useImagePullValidation();
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
@@ -175,6 +177,7 @@ const CreateImageWizard = () => {
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     snapshotValidation.disabledNext ||
+    imagePullValidation.disabledNext ||
     (restrictions.users.isStandalone && usersHaveErrors);
 
   const advancedSettingsHasErrors =
