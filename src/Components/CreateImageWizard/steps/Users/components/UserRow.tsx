@@ -149,6 +149,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             fieldName='groups'
             truncateLength={12}
             isCompact
+            hideAddLabel
           />
         </Td>
         <Td>
