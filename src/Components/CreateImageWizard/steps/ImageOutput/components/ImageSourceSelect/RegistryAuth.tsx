@@ -19,10 +19,15 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
+  Spinner,
   TextInput,
 } from '@patternfly/react-core';
 
-import { useRegistryLoginMutation } from '@/store/api/backend';
+import {
+  useGetRegistryAuthStatusQuery,
+  useRegistryLoginMutation,
+  useRegistryLogoutMutation,
+} from '@/store/api/backend';
 import { OnPremError } from '@/store/api/shared';
 
 const EmptyCard = ({ openForm }: { openForm: (arg0: boolean) => void }) => {
@@ -182,8 +187,42 @@ const LoginCard = ({ closeForm }: { closeForm: (arg0: boolean) => void }) => {
   );
 };
 
+const RegistryStatus = ({ username }: { username: string }) => {
+  const [logout] = useRegistryLogoutMutation();
+
+  return (
+    <Flex gap={{ default: 'gapSm' }}>
+      <FlexItem>
+        <Content className='pf-v6-u-mt-md pf-v6-u-text-color-subtle'>
+          Connected to registry.redhat.io &middot; {username}
+        </Content>
+      </FlexItem>
+      <FlexItem>
+        <Button variant='link' onClick={() => logout()}>
+          Log out
+        </Button>
+      </FlexItem>
+    </Flex>
+  );
+};
+
 const RegistryAuth = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
+
+  const { data, isLoading } = useGetRegistryAuthStatusQuery();
+
+  if (isLoading) {
+    return (
+      <div className='pf-v6-u-mt-md'>
+        <Spinner size='sm' aria-label='Checking registry authentication' />
+        <Content>Checking registry authentication...</Content>
+      </div>
+    );
+  }
+
+  if (data && data.status === 'authenticated') {
+    return <RegistryStatus username={data.username} />;
+  }
 
   if (!isFormVisible) {
     return <EmptyCard openForm={setIsFormVisible} />;
