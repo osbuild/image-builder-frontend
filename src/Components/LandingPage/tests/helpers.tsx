@@ -8,18 +8,23 @@ import { createTestStore, type RenderWithReduxOptions } from '@/test/testUtils';
 
 import LandingPage from '../LandingPage';
 
-export const renderLandingPage = (options: RenderWithReduxOptions = {}) => {
-  const store = createTestStore({}, options);
+type RenderLandingPageOptions = RenderWithReduxOptions & {
+  route?: string;
+};
+
+export const renderLandingPage = (options: RenderLandingPageOptions = {}) => {
+  const { route = '/', ...reduxOptions } = options;
+  const store = createTestStore({}, reduxOptions);
 
   const routes = [
     {
-      path: '/',
+      path: '/*',
       element: <LandingPage />,
     },
   ];
 
   const router = createMemoryRouter(routes, {
-    initialEntries: ['/'],
+    initialEntries: [route],
   });
 
   const view = render(
