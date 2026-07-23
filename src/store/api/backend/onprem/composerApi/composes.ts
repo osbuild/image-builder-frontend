@@ -2,15 +2,22 @@ import path from 'path';
 
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
+import { v4 as uuidv4 } from 'uuid';
 
+import { mapHostedToOnPrem } from '@/Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
+import { getHostDistro } from '@/Utilities/getHostInfo';
+
 
 import {
   byCreatedAtDesc,
   getBlueprintsPath,
+  imageStatusFallback,
+  imageStatusFromBuildlog,
+  progressFromFile,
   readComposes,
   safeReadJsonFile,
-  toComposerComposeRequest,
+  uploadStatusFromFile,
 } from './helpers';
 
 import {
@@ -19,6 +26,7 @@ import {
   ComposeRequest,
   ComposeResponse,
   ComposesResponseItem,
+  CreateBlueprintRequest,
   GetBlueprintComposesApiArg,
   GetBlueprintComposesApiResponse,
   GetComposesApiArg,
@@ -26,7 +34,6 @@ import {
   GetComposeStatusApiArg,
   GetComposeStatusApiResponse,
 } from '../../hosted';
-import { assertComposeResponse, assertComposeStatus } from '../typeguards';
 import { type ComposerCreateBlueprintRequest } from '../types';
 
 export const composeEndpoints = (builder: OnPremBuilder) => ({
@@ -35,7 +42,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
     ComposeBlueprintApiArg
   >({
     queryFn: onPremQueryHandler(
-      async ({ queryArgs: { id: filename }, baseQuery }) => {
+      async ({ queryArgs: { id: filename } }) => {
         const blueprintsDir = await getBlueprintsPath();
         const file = cockpit.file(
           path.join(blueprintsDir, filename, `${filename}.json`),
@@ -45,6 +52,11 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
 
         const blueprint = parsed as ComposerCreateBlueprintRequest;
         const composes: ComposeResponse[] = [];
+        const dataDir = path.join("/var/lib/cockpit-image-builder");
+        await cockpit.spawn(['mkdir', '-p', dataDir], {
+          superuser: "require",
+        });
+
         for (const ir of blueprint.image_requests) {
           if (ir.upload_request.type === 'aws.s3') {
             // this differs to crc because the on-prem backend
@@ -54,35 +66,44 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             ir.upload_request.type = 'local';
           }
 
-          // this request gets saved to the local storage and needs to
-          // match the hosted format
+          const bpOnPrem = mapHostedToOnPrem(parsed as CreateBlueprintRequest)
+          const hostDistro = await getHostDistro();
+          const user = await cockpit.user();
+          const id = uuidv4();
+          const bpPath = path.join("/tmp", `cockpit-image-builder-${id}.json`);
+          await cockpit.file(bpPath).replace(JSON.stringify(bpOnPrem));
+          await cockpit.spawn([
+            "systemd-run",
+            "--setenv",
+            "HOME=" + user.home,
+            "--unit",
+            "cockpit-image-builder-" + id,
+            "--service-type=oneshot",
+            "--no-block",
+            "--collect",
+            "--",
+            "image-builder",
+            "build",
+            ir.image_type,
+            "--distro",
+            bpOnPrem.distro || hostDistro,
+            "--blueprint",
+            bpPath,
+            "--with-buildlog",
+            "--with-manifest",
+            "--with-upload-result",
+            "--progress", "file",
+            "--format", "json",
+            "--output-dir",
+            path.join(dataDir, id),
+          ], {
+            superuser: "require",
+          });
+
           const crcComposeRequest = {
             ...blueprint,
             image_requests: [ir],
           };
-
-          const result = await baseQuery({
-            url: '/compose',
-            method: 'POST',
-            body: JSON.stringify(
-              // since this is the request that gets sent to the cloudapi
-              // backend, we need to modify it slightly
-              toComposerComposeRequest(
-                blueprint,
-                crcComposeRequest.distribution,
-                [ir],
-              ),
-            ),
-            headers: {
-              'content-type': 'application/json',
-            },
-          });
-
-          if (result.error) {
-            throw result.error;
-          }
-
-          const { id } = assertComposeResponse(result.data);
           await cockpit
             .file(path.join(blueprintsDir, filename, id))
             .replace(JSON.stringify(crcComposeRequest));
@@ -139,23 +160,14 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
     GetComposeStatusApiResponse,
     GetComposeStatusApiArg
   >({
-    queryFn: onPremQueryHandler(async ({ queryArgs, baseQuery }) => {
-      const result = await baseQuery({
-        url: `/composes/${queryArgs.composeId}`,
-        method: 'GET',
-      });
-
-      if (result.error) {
-        throw result.error;
-      }
-
-      const data = assertComposeStatus(result.data);
+    queryFn: onPremQueryHandler(async ({ queryArgs }) => {
       const blueprintsDir = await getBlueprintsPath();
-      const info = await fsinfo(blueprintsDir, ['entries'], {
+      const bpinfo = await fsinfo(blueprintsDir, ['entries'], {
         superuser: 'try',
       });
+      const entries = Object.entries(bpinfo.entries || {});
+      const dataDir = path.join("/var/lib/cockpit-image-builder");
 
-      const entries = Object.entries(info.entries || {});
       for (const bpEntry of entries) {
         const request = await safeReadJsonFile<ComposeRequest>(
           path.join(blueprintsDir, bpEntry[0], queryArgs.composeId),
@@ -163,12 +175,81 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         if (!request) {
           continue;
         }
-        return {
-          image_status: data.image_status,
+        const status: GetComposeStatusApiResponse = {
+          image_status: {
+            status: "pending",
+          },
           request,
         };
-      }
 
+        const units = await cockpit.spawn(["systemctl", "list-units", "--output", "json", `cockpit-image-builder-${queryArgs.composeId}.service`], {
+          superuser: "require",
+        })
+        // cockpit-image-builder units are started with `--collect`, so if it exists, it is active.
+        const unitActive = JSON.parse(units as string).length > 0;
+        if (unitActive) {
+          status.image_status.status = "building";
+        }
+
+        const composeDir = path.join(dataDir, queryArgs.composeId);
+        let info;
+        try {
+          info = await fsinfo(composeDir, ['entries'], {
+            superuser: 'try',
+          });
+        } catch {
+          // Checks if the compose was created using osbuild-composer if the unit does not exist,
+          // otherwise the unit is active but hasn't created the output directory yet.
+          if (!unitActive) {
+            status.image_status = await imageStatusFallback(queryArgs.composeId);
+          }
+          return status;
+        }
+
+        const entries = info.entries || {};
+        const buildlogEntry = Object.keys(entries).find(entry => entry.endsWith('buildlog'));
+        const progressEntry = Object.keys(entries).find(entry => entry.endsWith('progress'));
+        const upresEntry = Object.keys(entries).find(entry => entry.endsWith('upload-result'));
+
+        // imageStatusFromBuildlog will return a failure status if the
+        // buildlog is empty, so only call it if the unit is no longer
+        // active.
+        if (!unitActive) {
+          if (buildlogEntry !== undefined) {
+            status.image_status = await imageStatusFromBuildlog(path.join(composeDir, buildlogEntry));
+            if (status.image_status.status === "failure") {
+              return status;
+            }
+          } else {
+            status.image_status.status = "failure";
+            status.image_status.error = {
+              id: 10,
+              reason: "image-builder process is not running and no result was found",
+            };
+          }
+        }
+
+        if (progressEntry !== undefined) {
+          const progress = await progressFromFile(path.join(composeDir, progressEntry));
+          if (progress !== undefined) {
+            status.image_status.progress = {
+              done: progress.done,
+              total: progress.total,
+            };
+            if (progress.subprogress) {
+              status.image_status.progress.subprogress = {
+                done: progress.done,
+                total: progress.total,
+              };
+            }
+          }
+        }
+
+        if (upresEntry !== undefined) {
+          status.image_status.upload_status = await uploadStatusFromFile(path.join(composeDir, upresEntry));
+        }
+        return status;
+      }
       throw new Error('Compose not found');
     }),
   }),

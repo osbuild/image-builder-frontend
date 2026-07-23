@@ -20,6 +20,19 @@ export const cockpitHTTP = (address: string, attr: object) => {
           resolve(JSON.stringify(mockStatus(path.parse(request.path).name)));
         });
       }
+      if (
+        request.path.startsWith('/api/image-builder-composer/v2/distributions/')
+      ) {
+        const distro = path.parse(request.path).base;
+        return new Promise((resolve) => {
+          resolve(
+            JSON.stringify({
+              name: distro,
+              architectures: {},
+            }),
+          );
+        });
+      }
       return new Promise((resolve) => {
         resolve('');
       });

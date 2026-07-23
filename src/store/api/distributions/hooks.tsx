@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 
 import { simpleTargetNames } from '@/constants';
-import { ImageTypes } from '@/store/api/backend';
+import {
+  ArchitectureInfo,
+  ImageTypeInfo,
+  ImageTypes,
+} from '@/store/api/backend';
+import { useGetDistributionQuery } from '@/store/api/backend/hosted';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -13,16 +18,45 @@ import {
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
-import { ALL_CUSTOMIZATIONS } from './constants';
-import { distroDetailsApi as api } from './distributionDetailsApi';
 import {
-  ArchitectureInfo,
-  CustomizationType,
-  ImageTypeInfo,
-  RestrictionStrategy,
-} from './types';
+  ALL_CUSTOMIZATIONS,
+  BACKEND_TO_FRONTEND_OPTIONS,
+  DISTRO_DETAILS,
+} from './constants';
+import { CustomizationType, RestrictionStrategy } from './types';
 
-const extractImageTypes = ({
+export const normalizeOptions = (
+  options: string[] | undefined,
+): string[] | undefined => {
+  if (!options) return undefined;
+  return [
+    ...new Set(
+      options
+        .flatMap((opt) => BACKEND_TO_FRONTEND_OPTIONS[opt] ?? [])
+        .filter(Boolean),
+    ),
+  ];
+};
+
+export const resolveImageTypeKeys = (
+  key: string,
+  aliases: string[] | undefined,
+): string[] => {
+  const keys: string[] = [];
+  if (isImageType(key)) {
+    keys.push(key);
+  }
+  if (aliases) {
+    for (const alias of aliases) {
+      if (isImageType(alias)) {
+        keys.push(alias);
+      }
+    }
+  }
+  return keys.length > 0 ? keys : [key];
+};
+
+export const extractImageTypes = ({
   architectures,
   arch,
 }: {
@@ -31,8 +65,6 @@ const extractImageTypes = ({
 }): Record<string, ImageTypeInfo> => {
   if (
     !architectures ||
-    // eslint complains about this always being falsy, but there are cases
-    // where this does actually happen and can cause some rendering issues.
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     !architectures[arch] ||
     !architectures[arch].image_types
@@ -40,7 +72,21 @@ const extractImageTypes = ({
     return {};
   }
 
-  return architectures[arch].image_types;
+  const raw = architectures[arch].image_types;
+  const normalized: Record<string, ImageTypeInfo> = {};
+  const normalizedOptions = (value: ImageTypeInfo) => ({
+    ...value,
+    supported_blueprint_options: normalizeOptions(
+      value.supported_blueprint_options,
+    ),
+  });
+
+  for (const [key, value] of Object.entries(raw)) {
+    for (const frontendKey of resolveImageTypeKeys(key, value.aliases)) {
+      normalized[frontendKey] = normalizedOptions(value);
+    }
+  }
+  return normalized;
 };
 
 export type SupportContext = {
@@ -123,7 +169,7 @@ export const computeRestrictions = ({
   return result;
 };
 
-// Instead of exporting the hook directly from the `distributionDetailsApi`
+// Instead of exporting the hook directly from the backend API,
 // let's create a wrapper around this to transform the data so that it is easier
 // to work with where we need it. This way it will be easy to decide whether we
 // need to hide the customizations or display an alert, without complex conditionals
@@ -138,17 +184,26 @@ export const useCustomizationRestrictions = ({
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
 
-  const { data } = api.useGetDistributionDetailsQuery({
-    distro: distro,
-    architecture: [arch],
-    imageType: selectedImageTypes,
-  });
+  const { data } = useGetDistributionQuery(
+    {
+      distro: distro,
+      architecture: [arch],
+      imageType: selectedImageTypes,
+    },
+    { skip: isOnPremise },
+  );
 
   const restrictions = useMemo(() => {
-    const imageTypes = extractImageTypes({
-      architectures: data?.architectures,
-      arch,
-    });
+    const imageTypes = isOnPremise
+      ? Object.fromEntries(
+          selectedImageTypes
+            .filter((it) => it in DISTRO_DETAILS)
+            .map((it) => [it, DISTRO_DETAILS[it]]),
+        )
+      : extractImageTypes({
+          architectures: data?.architectures,
+          arch,
+        });
 
     return computeRestrictions({
       imageTypes,
@@ -158,7 +213,7 @@ export const useCustomizationRestrictions = ({
         isRhel: isRhel(distro),
       },
     });
-  }, [data, distro, arch, isImageMode, isOnPremise]);
+  }, [data, distro, arch, isImageMode, isOnPremise, selectedImageTypes]);
 
   return {
     restrictions,
@@ -214,28 +269,34 @@ export const useImageTypeCustomizationSupport = (
   const isImageMode = useAppSelector(selectIsImageMode);
   const selectedImageTypes = useAppSelector(selectImageTypes);
 
-  const { data } = api.useGetDistributionDetailsQuery(
+  const { data } = useGetDistributionQuery(
     {
       distro: distro,
       architecture: [arch],
       imageType: selectedImageTypes,
     },
     {
-      skip: isImageMode,
+      skip: isImageMode || isOnPremise,
     },
   );
 
-  if (selectedImageTypes.length === 1) {
-    // if there is only one image type selected the wizard will
-    // hide the unsupported steps, so we can just return an empty
-    // array and labels won't be generated.
+  if (selectedImageTypes.length <= 1) {
+    // Labels are only meaningful when multiple image types are selected,
+    // showing per-target support. With 0 or 1 targets the wizard hides
+    // unsupported steps entirely, so no labels are needed.
     return [];
   }
 
-  const imageTypes = extractImageTypes({
-    architectures: data?.architectures,
-    arch,
-  });
+  const imageTypes = isOnPremise
+    ? Object.fromEntries(
+        selectedImageTypes
+          .filter((it) => it in DISTRO_DETAILS)
+          .map((it) => [it, DISTRO_DETAILS[it]]),
+      )
+    : extractImageTypes({
+        architectures: data?.architectures,
+        arch,
+      });
 
   return computeImageTypeCustomizationSupport(imageTypes, customization, {
     isImageMode,
