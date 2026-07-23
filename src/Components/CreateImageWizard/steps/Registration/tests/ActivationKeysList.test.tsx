@@ -1,7 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
-import { server } from '@/test/mocks/server';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import { renderRegistrationStep } from './helpers';
@@ -13,16 +12,6 @@ import {
 } from './mocks';
 
 fetchMock.enableMocks();
-
-// Disable global MSW server for this file - we use fetch mocks instead
-beforeAll(() => {
-  server.close();
-});
-
-// Restore global MSW server so other tests don't break
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse(createDefaultFetchHandler);

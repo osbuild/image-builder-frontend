@@ -1,7 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
-import { server } from '@/test/mocks/server';
 import {
   clearWithWait,
   clickWithWait,
@@ -37,16 +36,6 @@ fetchMock.enableMocks();
 vi.mock('@/Utilities/useDebounce', () => ({
   default: <T,>(value: T): T => value,
 }));
-
-// Disable global MSW server for this file - we use fetch mocks instead
-beforeAll(() => {
-  server.close();
-});
-
-// Restore global MSW server so other tests don't break
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse(createDefaultFetchHandler);

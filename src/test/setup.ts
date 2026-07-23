@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
 
-import { server } from './mocks/server';
 import 'vitest-canvas-mock';
 
 // scrollTo and scrollIntoView are not defined in jsdom
@@ -91,8 +90,6 @@ configure({
 
 // Fail tests on console warnings and errors
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' });
-
   vi.spyOn(console, 'error').mockImplementation((...args) => {
     const message = args.join(' ');
     if (message.includes('Maximum update depth exceeded')) {
@@ -114,8 +111,5 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  server.close();
   vi.restoreAllMocks();
 });
-
-afterEach(() => server.resetHandlers());

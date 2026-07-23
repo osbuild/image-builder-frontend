@@ -1,7 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react';
 
 import { renderLandingPage } from '@/Components/LandingPage/tests/helpers';
-import { server } from '@/test/mocks/server';
 import {
   clearWithWait,
   clickWithWait,
@@ -25,14 +24,6 @@ import {
 } from './mocks';
 
 fetchMock.enableMocks();
-
-beforeAll(() => {
-  server.close();
-});
-
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse(createDefaultLandingPageHandler);

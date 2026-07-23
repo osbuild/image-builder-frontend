@@ -1,6 +1,5 @@
 import { screen, waitFor, within } from '@testing-library/react';
 
-import { server } from '@/test/mocks/server';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
 import { renderImagesTable } from './helpers';
@@ -13,14 +12,6 @@ import {
 } from './mocks';
 
 fetchMock.enableMocks();
-
-beforeAll(() => {
-  server.close();
-});
-
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse(createDefaultFetchHandler);
