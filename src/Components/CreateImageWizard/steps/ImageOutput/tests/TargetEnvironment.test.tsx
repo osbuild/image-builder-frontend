@@ -3,7 +3,6 @@ import { screen } from '@testing-library/react';
 import { RHEL_10 } from '@/constants';
 import { Distributions } from '@/store/api/backend';
 import { initialState, selectImageTypes } from '@/store/slices/wizard';
-import { server } from '@/test/mocks/server';
 import {
   clickWithWait,
   composeHandlers,
@@ -26,14 +25,6 @@ import {
 } from './mocks';
 
 fetchMock.enableMocks();
-
-beforeAll(() => {
-  server.close();
-});
-
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse(createDefaultFetchHandler());

@@ -1,7 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { server } from '@/test/mocks/server';
 import { clickWithWait } from '@/test/testUtils';
 
 import {
@@ -39,14 +38,6 @@ vi.mock(
     useAddNotification: () => mockAddNotification,
   }),
 );
-
-beforeAll(() => {
-  server.close();
-});
-
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse(createFetchHandler());

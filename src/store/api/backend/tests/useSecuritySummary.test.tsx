@@ -2,7 +2,6 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
-import { server } from '@/test/mocks/server';
 import { fetchMock, renderWithRedux } from '@/test/testUtils';
 
 import { useSecuritySummary } from '../hooks';
@@ -34,14 +33,6 @@ const TestComponent = () => {
     </div>
   );
 };
-
-beforeAll(() => {
-  server.close();
-});
-
-afterAll(() => {
-  server.listen();
-});
 
 beforeEach(() => {
   fetchMock.mockResponse((req) => {
