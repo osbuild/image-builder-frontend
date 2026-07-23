@@ -30,4 +30,11 @@ export const registryEndpoints = (builder: OnPremBuilder) => ({
       },
     ),
   }),
+  registryLogout: builder.mutation<void, void>({
+    queryFn: onPremQueryHandler(async () => {
+      await cockpit.spawn(['podman', 'logout', 'registry.redhat.io'], {
+        superuser: 'require',
+      });
+    }),
+  }),
 });

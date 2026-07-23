@@ -68,6 +68,9 @@ const enhancedApi = composerApi.enhanceEndpoints({
         }
       },
     },
+    registryLogout: {
+      invalidatesTags: [{ type: 'RegistryAuth' }],
+    },
     updateWorkerConfig: {
       invalidatesTags: [{ type: 'WorkerConfig' }],
     },
