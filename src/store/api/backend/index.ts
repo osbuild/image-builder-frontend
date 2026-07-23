@@ -110,6 +110,7 @@ export {
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
   useRegistryLoginMutation,
+  useRegistryLogoutMutation,
   useUpdateWorkerConfigMutation,
 } from './onprem';
 

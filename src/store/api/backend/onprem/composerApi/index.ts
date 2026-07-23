@@ -45,6 +45,7 @@ export const {
   useGetRegistryAuthStatusQuery,
   useGetWorkerConfigQuery,
   useRegistryLoginMutation,
+  useRegistryLogoutMutation,
   useUpdateWorkerConfigMutation,
 } = composerApi;
 

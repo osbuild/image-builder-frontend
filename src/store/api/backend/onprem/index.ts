@@ -22,6 +22,7 @@ export {
   useLazyGetBlueprintsQuery,
   useLazyGetOscapCustomizationsQuery,
   useRegistryLoginMutation,
+  useRegistryLogoutMutation,
   useUpdateBlueprintMutation,
   useUpdateWorkerConfigMutation,
 } from './composerApi';
