@@ -107,12 +107,28 @@ export {
   toComposerComposeRequest,
   useExportBlueprintCockpitQuery,
   useGetRegistryAuthStatusQuery,
+  useLazyGetImageExistsQuery,
   useGetWorkerConfigQuery,
   useLazyExportBlueprintCockpitQuery,
+  usePullImageMutation,
   useRegistryLoginMutation,
   useRegistryLogoutMutation,
   useUpdateWorkerConfigMutation,
 } from './onprem';
+
+// On-prem only — no hosted equivalent. Needs a conditional export because
+// useImagePullValidation calls it unconditionally (hooks can't be conditional)
+// and the hosted store doesn't include composerApi middleware.
+export const useGetImageExistsQuery = (
+  process.env.IS_ON_PREMISE
+    ? composerQueries.useGetImageExistsQuery
+    : () => ({
+        data: undefined,
+        isLoading: false,
+        isError: false,
+        isFetching: false,
+      })
+) as typeof composerQueries.useGetImageExistsQuery;
 
 export { composerApi, errorMessage, imageBuilderApi };
 

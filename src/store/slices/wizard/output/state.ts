@@ -6,5 +6,6 @@ export const initialState: OutputSlice = {
   bootcDistributions: [],
   architecture: X86_64,
   distribution: RHEL_10,
+  imageSourceType: 'official',
   imageTypes: [],
 };

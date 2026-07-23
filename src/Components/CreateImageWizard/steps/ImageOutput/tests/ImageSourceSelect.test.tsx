@@ -78,41 +78,13 @@ describe('ImageSourceSelect', () => {
       expect(requiredMarkers.length).toBeGreaterThanOrEqual(1);
     });
 
-    test('auto-selects the first rhel-10 distribution', async () => {
+    test('does not auto-select an image in custom on-prem mode', async () => {
       const { store } = renderImageSourceSelect();
 
-      await waitFor(() => {
-        expect(selectImageSourceState(store.getState())).toBe(
-          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
-        );
-      });
-    });
+      // Wait for component to settle
+      await screen.findByText('Image source');
 
-    test('falls back to first distribution when no rhel-10 is available', async () => {
-      mockUseGetDistributionsQuery.mockReturnValue({
-        data: mockBootcDistributionsNoRhel10,
-        isLoading: false,
-        isError: false,
-        refetch: mockRefetch,
-      });
-
-      const { store } = renderImageSourceSelect();
-
-      await waitFor(() => {
-        expect(selectImageSourceState(store.getState())).toBe(
-          'registry.redhat.io/rhel9/rhel-bootc:rhel-9',
-        );
-      });
-    });
-
-    test('displays the selected distribution name in the toggle', async () => {
-      renderImageSourceSelect();
-
-      expect(
-        await screen.findByRole('button', {
-          name: /red hat enterprise linux \(rhel\) 10/i,
-        }),
-      ).toBeInTheDocument();
+      expect(selectImageSourceState(store.getState())).toBeUndefined();
     });
   });
 
@@ -126,13 +98,10 @@ describe('ImageSourceSelect', () => {
       });
     });
 
-    test('displays loading text and disabled toggle', async () => {
+    test('displays loading text in toggle', async () => {
       renderImageSourceSelect();
 
-      const toggle = await screen.findByRole('button', {
-        name: /loading bootc images/i,
-      });
-      expect(toggle).toBeDisabled();
+      expect(await screen.findByText(/loading images/i)).toBeInTheDocument();
     });
 
     test('disables refresh button when loading', async () => {
@@ -195,7 +164,7 @@ describe('ImageSourceSelect', () => {
       });
     });
 
-    test('displays "No bootc images available" in dropdown', async () => {
+    test('displays "No images available" in dropdown', async () => {
       renderImageSourceSelect();
       const user = createUser();
 
@@ -203,54 +172,38 @@ describe('ImageSourceSelect', () => {
 
       expect(
         await screen.findByRole('option', {
-          name: /no bootc images available/i,
+          name: /no images available/i,
         }),
       ).toBeInTheDocument();
     });
   });
 
   describe('Image Selection', () => {
-    test('displays available distributions in dropdown', async () => {
+    test('displays available images in dropdown', async () => {
       renderImageSourceSelect();
       const user = createUser();
 
-      // The component auto-selects rhel-10, so the toggle shows the name
-      // rather than the placeholder. Click the toggle to open the list.
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
 
       expect(
         await screen.findByRole('option', {
-          name: /red hat enterprise linux \(rhel\) 10/i,
+          name: /registry.redhat.io\/rhel10\/rhel-bootc:rhel-10/i,
         }),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('option', {
-          name: /red hat enterprise linux \(rhel\) 9/i,
+          name: /registry.redhat.io\/rhel9\/rhel-bootc:rhel-9/i,
         }),
       ).toBeInTheDocument();
     });
 
-    test('updates redux state when selecting a distribution', async () => {
+    test('updates redux state when selecting an image', async () => {
       const { store } = renderImageSourceSelect();
       const user = createUser();
 
-      // Wait for auto-select to finish
-      await waitFor(() => {
-        expect(selectImageSourceState(store.getState())).toBe(
-          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
-        );
-      });
-
-      // Open and select rhel-9
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
       const option = await screen.findByRole('option', {
-        name: /red hat enterprise linux \(rhel\) 9/i,
+        name: /registry.redhat.io\/rhel9\/rhel-bootc:rhel-9/i,
       });
       await clickWithWait(user, option);
 
@@ -266,14 +219,11 @@ describe('ImageSourceSelect', () => {
       renderImageSourceSelect();
       const user = createUser();
 
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
       expect(screen.getByRole('listbox')).toBeInTheDocument();
 
       const option = await screen.findByRole('option', {
-        name: /red hat enterprise linux \(rhel\) 9/i,
+        name: /registry.redhat.io\/rhel9\/rhel-bootc:rhel-9/i,
       });
       await clickWithWait(user, option);
 
@@ -312,6 +262,33 @@ describe('ImageSourceSelect', () => {
         screen.queryByRole('button', { name: /refresh image sources/i }),
       ).not.toBeInTheDocument();
     });
+
+    test('auto-selects the first rhel-10 distribution', async () => {
+      const { store } = renderHostedImageSourceSelect();
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
+        );
+      });
+    });
+
+    test('falls back to first distribution when no rhel-10 is available', async () => {
+      mockUseGetDistributionsQuery.mockReturnValue({
+        data: mockBootcDistributionsNoRhel10,
+        isLoading: false,
+        isError: false,
+        refetch: mockRefetch,
+      });
+
+      const { store } = renderHostedImageSourceSelect();
+
+      await waitFor(() => {
+        expect(selectImageSourceState(store.getState())).toBe(
+          'registry.redhat.io/rhel9/rhel-bootc:rhel-9',
+        );
+      });
+    });
   });
 
   describe('Non-RHEL distributions', () => {
@@ -324,25 +301,26 @@ describe('ImageSourceSelect', () => {
       });
     });
 
-    test('displays all distro names including non-RHEL in dropdown', async () => {
+    test('displays all image references including non-RHEL in dropdown', async () => {
       renderImageSourceSelect();
       const user = createUser();
 
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
 
       expect(
         screen.getByRole('option', {
-          name: /red hat enterprise linux \(rhel\) 10/i,
+          name: /registry.redhat.io\/rhel10\/rhel-bootc:rhel-10/i,
         }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('option', { name: /fedora 44/i }),
+        screen.getByRole('option', {
+          name: /quay.io\/fedora\/fedora-bootc:44/i,
+        }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('option', { name: /centos stream 10/i }),
+        screen.getByRole('option', {
+          name: /quay.io\/centos-bootc\/centos-bootc:stream10/i,
+        }),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('option', {
@@ -355,19 +333,9 @@ describe('ImageSourceSelect', () => {
       const { store } = renderImageSourceSelect();
       const user = createUser();
 
-      // Wait for auto-select
-      await waitFor(() => {
-        expect(selectImageSourceState(store.getState())).toBe(
-          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
-        );
-      });
-
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
       const fedoraOption = await screen.findByRole('option', {
-        name: /fedora 44/i,
+        name: /quay.io\/fedora\/fedora-bootc:44/i,
       });
       await clickWithWait(user, fedoraOption);
 
@@ -383,18 +351,9 @@ describe('ImageSourceSelect', () => {
       const { store } = renderImageSourceSelect();
       const user = createUser();
 
-      await waitFor(() => {
-        expect(selectImageSourceState(store.getState())).toBe(
-          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
-        );
-      });
-
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
       const centosOption = await screen.findByRole('option', {
-        name: /centos stream 10/i,
+        name: /quay.io\/centos-bootc\/centos-bootc:stream10/i,
       });
       await clickWithWait(user, centosOption);
 
@@ -410,16 +369,7 @@ describe('ImageSourceSelect', () => {
       const { store } = renderImageSourceSelect();
       const user = createUser();
 
-      await waitFor(() => {
-        expect(selectImageSourceState(store.getState())).toBe(
-          'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
-        );
-      });
-
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
       const customOption = await screen.findByRole('option', {
         name: /localhost\/my-custom-image:latest/i,
       });
@@ -435,7 +385,7 @@ describe('ImageSourceSelect', () => {
   });
 
   describe('Distribution filtering and deduplication', () => {
-    test('on-prem shows all distributions including minor versions', async () => {
+    test('on-prem shows all images including minor versions', async () => {
       mockUseGetDistributionsQuery.mockReturnValue({
         data: mockBootcDistributionsWithMinorVersions,
         isLoading: false,
@@ -446,20 +396,19 @@ describe('ImageSourceSelect', () => {
       renderImageSourceSelect();
       const user = createUser();
 
-      const toggle = await screen.findByRole('button', {
-        name: /red hat enterprise linux \(rhel\) 10/i,
-      });
-      await clickWithWait(user, toggle);
+      await openImageSourceSelect(user);
 
       const options = screen.getAllByRole('option');
       expect(options).toHaveLength(3);
       expect(options[0]).toHaveTextContent(
-        'Red Hat Enterprise Linux (RHEL) 10',
+        'registry.redhat.io/rhel10/rhel-bootc:rhel-10',
       );
       expect(options[1]).toHaveTextContent(
-        'Red Hat Enterprise Linux (RHEL) 10.1',
+        'registry.redhat.io/rhel10/rhel-bootc:rhel-10.1',
       );
-      expect(options[2]).toHaveTextContent('Red Hat Enterprise Linux (RHEL) 9');
+      expect(options[2]).toHaveTextContent(
+        'registry.redhat.io/rhel9/rhel-bootc:rhel-9',
+      );
     });
 
     test('hosted filters out minor versions', async () => {

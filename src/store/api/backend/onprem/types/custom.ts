@@ -108,6 +108,10 @@ export type RegistryLoginApiArg = {
   password: string;
 };
 
+export type PullImageApiArg = {
+  reference: string;
+};
+
 export type PodmanImageInfo = {
   Id: string;
   Architecture?: string | undefined;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   FormGroup,
@@ -10,39 +10,76 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import type { BootcDistributionItem } from '@/store/api/backend';
+import {
+  type BootcDistributionItem,
+  useGetDistributionsQuery,
+} from '@/store/api/backend';
+import { Distributions } from '@/store/api/backend/hosted';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  changeBootcDistributions,
+  changeDistribution,
+  changeImageSource,
+  selectArchitecture,
+  selectImageSource,
+} from '@/store/slices/wizard';
 
 import ImageSourceError from './ImageSourceError';
 
-type HostedImageSourceSelectProps = {
-  distributions: BootcDistributionItem[] | undefined;
-  selectedItem: BootcDistributionItem | undefined;
-  imageSource: string | undefined;
-  arch: string;
-  isLoading: boolean;
-  isError: boolean;
-  isOpen: boolean;
-  onToggle: () => void;
-  onOpenChange: (open: boolean) => void;
-  onSelect: (event?: React.MouseEvent, selection?: string | number) => void;
-};
+const HostedImageSourceSelect = () => {
+  const dispatch = useAppDispatch();
+  const arch = useAppSelector(selectArchitecture);
+  const imageSource = useAppSelector(selectImageSource);
+  const [isOpen, setIsOpen] = useState(false);
 
-const HostedImageSourceSelect = ({
-  distributions,
-  selectedItem,
-  imageSource,
-  arch,
-  isLoading,
-  isError,
-  isOpen,
-  onToggle,
-  onOpenChange,
-  onSelect,
-}: HostedImageSourceSelectProps) => {
+  const {
+    data: distributions,
+    isLoading,
+    isError,
+  } = useGetDistributionsQuery({ kind: 'bootc', arch });
+
+  const bootcDistributions = distributions as
+    BootcDistributionItem[] | undefined;
+
+  useEffect(() => {
+    if (bootcDistributions) {
+      dispatch(changeBootcDistributions(bootcDistributions));
+    }
+  }, [bootcDistributions, dispatch]);
+
+  useEffect(() => {
+    if (!bootcDistributions || bootcDistributions.length === 0) return;
+
+    const hasSelected = imageSource
+      ? bootcDistributions.some((d) => d.reference === imageSource)
+      : false;
+    if (hasSelected) return;
+
+    const defaultItem =
+      bootcDistributions.find((d) => d.distro.startsWith('rhel-10')) ??
+      bootcDistributions[0];
+
+    dispatch(changeImageSource(defaultItem.reference));
+    dispatch(changeDistribution(defaultItem.distro as Distributions));
+  }, [bootcDistributions, dispatch, imageSource]);
+
+  const selectedItem = bootcDistributions?.find(
+    (d) => d.reference === imageSource,
+  );
+
+  const onSelect = (_event?: React.MouseEvent, selection?: string | number) => {
+    dispatch(changeImageSource(selection as string));
+    const selected = bootcDistributions?.find((d) => d.reference === selection);
+    if (selected) {
+      dispatch(changeDistribution(selected.distro as Distributions));
+    }
+    setIsOpen(false);
+  };
+
   // Filter out minor versions and deduplicate by name since the API
   // returns one entry per target type but the dropdown should show one
   // entry per base image.
-  const uniqueDistributions = distributions
+  const uniqueDistributions = bootcDistributions
     ?.filter((d) => !d.name.includes('.'))
     .reduce<BootcDistributionItem[]>((acc, item) => {
       if (!acc.some((d) => d.name === item.name)) {
@@ -72,7 +109,7 @@ const HostedImageSourceSelect = ({
     return (
       <MenuToggle
         ref={toggleRef}
-        onClick={onToggle}
+        onClick={() => setIsOpen((prev) => !prev)}
         isExpanded={isOpen}
         style={
           {
@@ -93,7 +130,7 @@ const HostedImageSourceSelect = ({
         isOpen={isOpen}
         selected={imageSource}
         onSelect={onSelect}
-        onOpenChange={onOpenChange}
+        onOpenChange={(open) => setIsOpen(open)}
         toggle={toggle}
         shouldFocusToggleOnSelect
       >

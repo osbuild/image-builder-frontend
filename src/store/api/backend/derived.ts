@@ -14,6 +14,7 @@ import type {
   Distributions,
 } from './hosted';
 import { imageBuilderApi } from './hosted/enhancedImageBuilderApi';
+import { KNOWN_IMAGES } from './onprem/constants';
 import { composerApi } from './onprem/enhancedComposerApi';
 
 export type CategorizedEnvironments = {
@@ -120,7 +121,8 @@ const derivedApi = backendApi.injectEndpoints({
         // This is used on-prem where each container image supports
         // a single output type via its image-builder.image.type label.
         const selectedType = imageSource
-          ? distributions.find((d) => d.reference === imageSource)?.type
+          ? (distributions.find((d) => d.reference === imageSource)?.type ??
+            KNOWN_IMAGES.find((k) => k.reference === imageSource)?.type)
           : undefined;
 
         const imageTypes = selectedType

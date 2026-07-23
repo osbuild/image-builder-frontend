@@ -1,10 +1,15 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from '@/store';
+import { isKnownImageRef } from '@/store/api/backend/onprem/constants';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 export const selectImageSource = (state: RootState) => {
   return state.wizard.output.imageSource;
+};
+
+export const selectImageSourceType = (state: RootState) => {
+  return state.wizard.output.imageSourceType;
 };
 
 export const selectIsoPayloadReference = (state: RootState) => {
@@ -37,6 +42,11 @@ export const selectIsOtherEnvironmentSelected = createSelector(
   selectImageTypes,
   (imageTypes) =>
     imageTypes.length >= 1 && !imageTypes.includes('network-installer'),
+);
+
+export const selectIsOfficialImage = createSelector(
+  selectImageSource,
+  (imageSource) => !!imageSource && isKnownImageRef(imageSource),
 );
 
 export const selectImageSourceFilter = createSelector(

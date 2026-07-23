@@ -1,6 +1,8 @@
+import { isKnownImageRef } from '@/store/api/backend/onprem/constants';
+
 import { initialState } from './state';
 import { isSupportedImageType } from './typeguards';
-import { OutputSlice } from './types';
+import { ImageSourceType, OutputSlice } from './types';
 import { getLatestRelease } from './utilities';
 
 import { RequestLike } from '../types';
@@ -55,11 +57,24 @@ const parseIsoPayloadRef = ({
   return bootc.iso_payload_reference;
 };
 
+const parseImageSourceType = ({ bootc }: RequestLike): ImageSourceType => {
+  if (!bootc?.reference) {
+    return initialState.imageSourceType;
+  }
+
+  if (!isKnownImageRef(bootc.reference)) {
+    return 'custom';
+  }
+
+  return 'official';
+};
+
 export const parseOutputFromRequest = (request: RequestLike): OutputSlice => ({
   architecture: parseArchitecture(request),
   distribution: parseDistribution(request),
   imageTypes: parseImageTypes(request),
   imageSource: parseImageSource(request),
+  imageSourceType: parseImageSourceType(request),
   isoPayloadReference: parseIsoPayloadRef(request),
   bootcDistributions: [],
 });

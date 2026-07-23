@@ -6,6 +6,8 @@ const enhancedApi = composerApi.enhanceEndpoints({
     'Blueprints',
     'Compose',
     'BlueprintComposes',
+    'Distributions',
+    'ImageExists',
     'RegistryAuth',
     'WorkerConfig',
   ],
@@ -42,6 +44,14 @@ const enhancedApi = composerApi.enhanceEndpoints({
     getBlueprintComposes: {
       providesTags: [{ type: 'BlueprintComposes' }],
     },
+    getDistributions: {
+      providesTags: [{ type: 'Distributions' }],
+    },
+    getImageExists: {
+      providesTags: (_result, _error, { reference }) => [
+        { type: 'ImageExists', id: reference },
+      ],
+    },
     getRegistryAuthStatus: {
       providesTags: [{ type: 'RegistryAuth' }],
     },
@@ -67,9 +77,15 @@ const enhancedApi = composerApi.enhanceEndpoints({
           // mutation failed — no cache update needed
         }
       },
+      invalidatesTags: [{ type: 'Distributions' }],
     },
     registryLogout: {
       invalidatesTags: [{ type: 'RegistryAuth' }],
+    },
+    pullImage: {
+      invalidatesTags: (_result, _error, { reference }) => [
+        { type: 'ImageExists', id: reference },
+      ],
     },
     updateWorkerConfig: {
       invalidatesTags: [{ type: 'WorkerConfig' }],

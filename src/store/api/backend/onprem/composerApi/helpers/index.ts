@@ -6,6 +6,7 @@ export { getCloudConfigs } from './getCloudConfigs';
 export { getHostArch, getHostDistro } from './hostInfo';
 export {
   byDistroDescending,
+  checkImageExists,
   checkRegistryAuth,
   inferDistro,
   filterBootcImages,
