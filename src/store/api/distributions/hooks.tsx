@@ -17,6 +17,7 @@ import {
   selectImageTypes,
   selectIsImageMode,
 } from '@/store/slices/wizard';
+import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import {
   ALL_CUSTOMIZATIONS,
@@ -93,6 +94,7 @@ export type SupportContext = {
   isImageMode: boolean;
   isOnPremise: boolean;
   isRhel: boolean;
+  isImageModeRegistrationEnabled?: boolean;
 };
 
 export const isCustomizationSupported = (
@@ -111,10 +113,15 @@ export const isCustomizationSupported = (
 
   let supportedOptions = imageType?.supported_blueprint_options;
   if (ctx.isImageMode) {
-    // Image mode at most supports filesystem and users, and might not support any customization.
-    supportedOptions = supportedOptions?.filter((c) =>
-      ['filesystem', 'users'].includes(c),
-    ) ?? ['filesystem', 'users'];
+    // Image mode at most supports filesystem, users and (once enabled)
+    // registration, and might not support any customization.
+    const imageModeOptions = ['filesystem', 'users'];
+    if (ctx.isImageModeRegistrationEnabled) {
+      imageModeOptions.push('registration');
+    }
+    supportedOptions =
+      supportedOptions?.filter((c) => imageModeOptions.includes(c)) ??
+      imageModeOptions;
   }
 
   // only rhel distros support registration
@@ -183,6 +190,9 @@ export const useCustomizationRestrictions = ({
   const arch = useAppSelector(selectArchitecture);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
+  const isImageModeRegistrationEnabled = useFlag(
+    'image-builder.image-mode-registration.enabled',
+  );
 
   const { data } = useGetDistributionQuery(
     {
@@ -211,9 +221,18 @@ export const useCustomizationRestrictions = ({
         isImageMode,
         isOnPremise,
         isRhel: isRhel(distro),
+        isImageModeRegistrationEnabled,
       },
     });
-  }, [data, distro, arch, isImageMode, isOnPremise, selectedImageTypes]);
+  }, [
+    data,
+    distro,
+    arch,
+    isImageMode,
+    isOnPremise,
+    selectedImageTypes,
+    isImageModeRegistrationEnabled,
+  ]);
 
   return {
     restrictions,
@@ -268,6 +287,9 @@ export const useImageTypeCustomizationSupport = (
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
   const selectedImageTypes = useAppSelector(selectImageTypes);
+  const isImageModeRegistrationEnabled = useFlag(
+    'image-builder.image-mode-registration.enabled',
+  );
 
   const { data } = useGetDistributionQuery(
     {
@@ -302,5 +324,6 @@ export const useImageTypeCustomizationSupport = (
     isImageMode,
     isOnPremise,
     isRhel: isRhel(distro),
+    isImageModeRegistrationEnabled,
   });
 };

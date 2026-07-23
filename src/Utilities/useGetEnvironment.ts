@@ -39,6 +39,8 @@ export const useFlagWithEphemDefault = (
 
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
+    case 'image-builder.image-mode-registration.enabled':
+      return true;
     case 'image-builder.images-table-revamp.enabled':
     default:
       return false;

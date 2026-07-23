@@ -7,7 +7,7 @@ import { CustomizationLabels } from '@/Components/sharedComponents/Customization
 import { useGetUser } from '@/Hooks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { changeOrgId } from '@/store/slices/wizard';
+import { changeOrgId, selectIsImageMode } from '@/store/slices/wizard';
 
 import AnsibleAutomationPlatform from './components/AnsibleAutomationPlatform';
 import Registration from './components/Registration';
@@ -17,6 +17,7 @@ const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,8 @@ const RegistrationStep = () => {
         </Content>
       </Content>
       <Registration onErrorChange={setShowAlert} />
-      <AnsibleAutomationPlatform />
+      {/* AAP registration is not supported for image mode yet */}
+      {!isImageMode && <AnsibleAutomationPlatform />}
       {showAlert && (
         <Alert title='Activation keys unavailable' variant='danger' isInline>
           Activation keys cannot be reached, try again later.

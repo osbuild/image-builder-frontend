@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeRegistrationType,
+  selectIsImageMode,
   selectRegistrationType,
 } from '@/store/slices/wizard';
 
@@ -19,6 +20,7 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageMode = useAppSelector(selectIsImageMode);
 
   return (
     <FormGroup label='Registration method'>
@@ -88,23 +90,26 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
           }
         />
       </Content>
-      <Content className='pf-v6-u-pb-sm'>
-        <Radio
-          label='Register for a Satellite or Capsule server'
-          isChecked={registrationType === 'register-satellite'}
-          onChange={() => {
-            dispatch(changeRegistrationType('register-satellite'));
-            onErrorChange(false);
-          }}
-          id='register-satellite'
-          name='registration-type'
-          body={
-            registrationType === 'register-satellite' && (
-              <SatelliteRegistration />
-            )
-          }
-        />
-      </Content>
+      {/* Satellite registration is not supported for image mode yet */}
+      {!isImageMode && (
+        <Content className='pf-v6-u-pb-sm'>
+          <Radio
+            label='Register for a Satellite or Capsule server'
+            isChecked={registrationType === 'register-satellite'}
+            onChange={() => {
+              dispatch(changeRegistrationType('register-satellite'));
+              onErrorChange(false);
+            }}
+            id='register-satellite'
+            name='registration-type'
+            body={
+              registrationType === 'register-satellite' && (
+                <SatelliteRegistration />
+              )
+            }
+          />
+        </Content>
+      )}
       <Content className='pf-v6-u-pb-sm'>
         <Radio
           label='Register later'

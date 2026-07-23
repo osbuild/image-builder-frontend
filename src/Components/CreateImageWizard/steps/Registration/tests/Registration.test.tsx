@@ -306,4 +306,47 @@ describe('Registration Component', () => {
       ).not.toBeInTheDocument();
     });
   });
+
+  describe('Image Mode', () => {
+    const imageModeOverrides = {
+      details: {
+        ...initialState.details,
+        blueprint: {
+          ...initialState.details.blueprint,
+          mode: 'image' as const,
+        },
+      },
+    };
+
+    test('hides the Satellite registration option', async () => {
+      renderRegistrationStep(imageModeOverrides);
+
+      expect(
+        await screen.findByRole('radio', {
+          name: /automatically register to red hat/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /register later/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('radio', {
+          name: /register for a satellite or capsule server/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('hides the Ansible Automation Platform registration', async () => {
+      renderRegistrationStep(imageModeOverrides);
+
+      await screen.findByRole('radio', {
+        name: /automatically register to red hat/i,
+      });
+      expect(
+        screen.queryByRole('checkbox', {
+          name: /register to ansible automation platform/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+  });
 });

@@ -55,6 +55,30 @@ describe('useCustomizationRestrictions hook logic', () => {
       }
     });
 
+    it('should allow registration in image mode when the flag is enabled', () => {
+      const result = computeRestrictionStrategy({
+        isImageMode: true,
+        isOnPremise: false,
+        isImageModeRegistrationEnabled: true,
+      });
+
+      expect(result.registration.shouldHide).toBe(false);
+
+      // aap remains hidden even with registration enabled
+      expect(result.aap.shouldHide).toBe(true);
+    });
+
+    it('should hide registration in image mode for non-RHEL distributions even when the flag is enabled', () => {
+      const result = computeRestrictionStrategy({
+        isImageMode: true,
+        isOnPremise: false,
+        distro: 'centos-9',
+        isImageModeRegistrationEnabled: true,
+      });
+
+      expect(result.registration.shouldHide).toBe(true);
+    });
+
     it('should not mark users as standalone in hosted image mode', () => {
       const result = computeRestrictionStrategy({
         isImageMode: true,
@@ -351,6 +375,40 @@ describe('isCustomizationSupported', () => {
       expect(
         isCustomizationSupported('registration', undefined, imageModeCxt),
       ).toBe(false);
+    });
+
+    describe('with image mode registration enabled', () => {
+      const registrationCtx: SupportContext = {
+        ...imageModeCxt,
+        isImageModeRegistrationEnabled: true,
+      };
+
+      it('should allow registration in image mode', () => {
+        expect(
+          isCustomizationSupported('registration', undefined, registrationCtx),
+        ).toBe(true);
+      });
+
+      it('should respect the image type supported options', () => {
+        const isoImageType: ImageTypeInfo = {
+          name: 'bootable-container-iso',
+          supported_blueprint_options: [],
+        };
+
+        expect(
+          isCustomizationSupported(
+            'registration',
+            isoImageType,
+            registrationCtx,
+          ),
+        ).toBe(false);
+      });
+
+      it('should still hide aap in image mode', () => {
+        expect(
+          isCustomizationSupported('aap', undefined, registrationCtx),
+        ).toBe(false);
+      });
     });
   });
 
