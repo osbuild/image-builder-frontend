@@ -10,12 +10,14 @@ export type ComputeRestrictionStrategyArgs = {
   isImageMode: boolean;
   isOnPremise: boolean;
   distro?: string;
+  isImageModeRegistrationEnabled?: boolean;
 };
 
 export const computeRestrictionStrategy = ({
   isImageMode,
   isOnPremise,
   distro = 'rhel-9',
+  isImageModeRegistrationEnabled,
 }: ComputeRestrictionStrategyArgs) => {
   return computeRestrictions({
     imageTypes: {},
@@ -23,6 +25,7 @@ export const computeRestrictionStrategy = ({
       isImageMode,
       isOnPremise,
       isRhel: isRhel(distro),
+      isImageModeRegistrationEnabled,
     },
   });
 };

@@ -9,7 +9,12 @@ import {
   selectDistribution,
   selectImageTypes,
 } from './output';
-import { changeRegistrationType } from './registration';
+import {
+  changeAapEnabled,
+  changeRegistrationType,
+  selectAapEnabled,
+  selectRegistrationType,
+} from './registration';
 
 export const filterImageTypes: WizardListenerEffect = (
   _action,
@@ -53,5 +58,26 @@ export const registerLater: WizardListenerEffect = (_action, listenerApi) => {
 
   if (process.env.IS_ON_PREMISE && !isRhel(distribution)) {
     listenerApi.dispatch(changeRegistrationType('register-later'));
+  }
+};
+
+// Satellite and AAP registration aren't supported for image mode, so any
+// selections carried over from package mode need to be dropped when the
+// user switches to image mode.
+export const resetUnsupportedImageModeRegistration: WizardListenerEffect = (
+  _action,
+  listenerApi,
+) => {
+  const state = listenerApi.getState();
+
+  if (!selectIsImageMode(state)) {
+    return;
+  }
+
+  if (selectRegistrationType(state) === 'register-satellite') {
+    listenerApi.dispatch(changeRegistrationType('register-now-rhc'));
+  }
+  if (selectAapEnabled(state)) {
+    listenerApi.dispatch(changeAapEnabled(false));
   }
 };
