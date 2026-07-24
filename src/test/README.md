@@ -4,8 +4,7 @@
 
 Code coverage is recorded in
 [codecov.io](https://codecov.io/gh/osbuild/image-builder-frontend/).
-This information comes only from unit tests and for the time being
-we're not concerned with collecting coverage information from integration
-tests.
+Coverage is collected from both unit tests (Vitest) and E2E tests
+(Playwright).
 
 It must be **over 85%** as required by Insights QE!
