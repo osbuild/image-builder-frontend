@@ -19,7 +19,7 @@ React/TypeScript frontend for Red Hat's Image Builder service, running on consol
 | `src/store/slices` | Redux store, slices, and RTK Query API definitions |
 | `src/Utilities/`   | Shared utility functions                           |
 | `src/Hooks/`       | Custom React hooks                                 |
-| `src/test/`        | Vitest utilities and legacy integration tests      |
+| `src/test/`        | Vitest test utilities and setup                    |
 | `api/config/`      | RTK Query codegen configuration files              |
 | `playwright/`      | Playwright E2E tests                               |
 | `cockpit/`         | Cockpit plugin build configuration                 |
@@ -31,8 +31,6 @@ npm ci                  # Install dependencies (prefer over npm install)
 npm run start:prod      # Run against production
 npm run start:stage     # Run against staging
 npm run test            # Run all Vitest tests
-npm run test:unit       # Run unit tests only (co-located with components)
-npm run test:integration # Run integration tests only (src/test/) - legacy
 npm run lint            # Auto-fix lint errors
 npm run format          # Auto-format code with Prettier
 npm run format:check    # Check formatting (CI)
@@ -90,8 +88,7 @@ Imports are enforced alphabetically by ESLint. Group order:
   - `mocks/` - Component-specific mock data and vitest mocks for API responses
   - `helpers.tsx` - Shared test utilities and render wrappers
 - Use React Testing Library patterns (query by role, text, etc.)
-- Mock API responses using vitest mocks; MSW is legacy and should not be used for new tests
-- Integration tests in `src/test/` are legacy; prefer co-located unit tests for new work
+- Mock API responses using vitest mocks
 - Playwright tests for E2E coverage of critical flows
 - The `TZ=UTC` prefix is applied automatically by npm scripts
 
