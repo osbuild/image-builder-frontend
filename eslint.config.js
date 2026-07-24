@@ -24,7 +24,6 @@ module.exports = defineConfig([
       'playwright-report/**',
       'pkg/**',
       // Generated API code
-      '**/mockServiceWorker.js',
       '**/imageBuilderApi.ts',
       '**/hosted/contentSourcesApi.ts',
       '**/rhsmApi.ts',
