@@ -14,14 +14,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  integration-tests:
-    name: Service Tests
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
-    - name: Run integration tests
+    - name: Run unit tests
       run: npm run test:coverage
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -40,13 +40,3 @@ jobs:
       uses: ./.github/actions/setup-node-cached
     - name: Run integration tests with cockpit
       run: npm run test:cockpit
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup Node.js with cached dependencies
-      uses: ./.github/actions/setup-node-cached
-    - name: Run unit tests
-      run: npm run test:unit
