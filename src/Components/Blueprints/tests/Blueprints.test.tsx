@@ -1,85 +1,106 @@
-import React from 'react';
-
 import { screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
 
-import LandingPage from '@/Components/LandingPage/LandingPage';
-import { IMAGE_BUILDER_API } from '@/constants';
-import {
-  emptyGetBlueprints,
-  mockBlueprintIds,
-} from '@/test/fixtures/blueprints';
+import { renderLandingPage } from '@/Components/LandingPage/tests/helpers';
 import { server } from '@/test/mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '@/test/renderUtils';
+import {
+  clearWithWait,
+  clickWithWait,
+  createUser,
+  keyboardWithWait,
+  typeWithWait,
+  type UserEventInstance,
+} from '@/test/testUtils';
 
-const selectBlueprintById = async (bpId: string) => {
-  const user = userEvent.setup();
+import {
+  BLUEPRINT_ID_CENTOS8,
+  BLUEPRINT_ID_COMPLIANCE,
+  BLUEPRINT_ID_DARK_CHOCOLATE,
+  BLUEPRINT_ID_MILK_CHOCOLATE,
+  BLUEPRINT_ID_MULTIPLE_TARGETS,
+  BLUEPRINT_ID_OUT_OF_SYNC,
+  createDefaultLandingPageHandler,
+  createLandingPageHandler,
+  emptyGetBlueprints,
+  fetchMock,
+} from './mocks';
+
+fetchMock.enableMocks();
+
+beforeAll(() => {
+  server.close();
+});
+
+afterAll(() => {
+  server.listen();
+});
+
+beforeEach(() => {
+  fetchMock.mockResponse(createDefaultLandingPageHandler);
+});
+
+afterEach(() => {
+  fetchMock.resetMocks();
+  vi.restoreAllMocks();
+});
+
+const selectBlueprintById = async (user: UserEventInstance, bpId: string) => {
   const blueprint = await screen.findByTestId(bpId);
-  await waitFor(() => user.click(blueprint));
+  await clickWithWait(user, blueprint);
   return blueprint;
 };
 
-const selectBlueprintByNameAndId = async (name: string, bpId: string) => {
-  const user = userEvent.setup();
+const selectBlueprintByNameAndId = async (
+  user: UserEventInstance,
+  name: string,
+  bpId: string,
+) => {
   const search = await screen.findByRole('textbox', {
     name: /search input/i,
   });
 
-  await waitFor(() => user.clear(search));
-  await waitFor(() => user.type(search, name));
+  await clearWithWait(user, search);
+  await typeWithWait(user, search, name);
   expect(screen.getByRole('textbox', { name: /search input/i })).toHaveValue(
     name,
   );
 
   await screen.findByText('compliance');
   const blueprint = await screen.findByTestId(bpId);
-  await waitFor(() => user.click(blueprint));
+  await clickWithWait(user, blueprint);
   return blueprint;
 };
 
 describe('Blueprints', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const user = userEvent.setup();
-  const blueprintNameWithComposes = 'Dark Chocolate';
-  const blueprintIdWithComposes = '677b010b-e95e-4694-9813-d11d847f1bfc';
-  const blueprintIdWithMultipleTargets = 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa';
-  const blueprintNameEmptyComposes = 'Milk Chocolate';
-  const blueprintIdEmptyComposes = '193482e4-4bd0-4898-a8bc-dc8c33ed669f';
-  const blueprintIdOutOfSync = '51243667-8d87-4aef-8dd1-84fc58261b05';
-  const blueprintIdCentos8 = 'b1f10309-a250-4db8-ab64-c110176e3eb7';
-
   test('renders blueprints page', async () => {
-    renderCustomRoutesWithReduxRouter();
-    await screen.findByText(blueprintNameWithComposes);
-    await screen.findByText(blueprintNameEmptyComposes);
+    renderLandingPage();
+    await screen.findByText('Dark Chocolate');
+    await screen.findByText('Milk Chocolate');
   });
 
   test('renders blueprint empty state', async () => {
-    server.use(
-      http.get(`${IMAGE_BUILDER_API}/blueprints`, () => {
-        return HttpResponse.json(emptyGetBlueprints);
+    fetchMock.mockResponse(
+      createLandingPageHandler({
+        blueprints: { blueprintsResponse: emptyGetBlueprints },
       }),
     );
 
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
     await screen.findByText('No blueprints');
     const emptyStateActions = await screen.findAllByRole('button', {
       name: /Create image blueprint/i,
     });
-    const emptyStateAction = emptyStateActions[1]; // Second button is the empty state
+    const emptyStateAction = emptyStateActions[1];
     expect(emptyStateAction).toBeInTheDocument();
 
-    await waitFor(() => user.click(emptyStateAction));
+    await clickWithWait(user, emptyStateAction);
   });
 
   test('renders blueprint composes', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdWithComposes);
+    await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
     const table = await screen.findByTestId('images-table');
     const { findAllByText } = within(table);
     const images = await findAllByText('dark-chocolate-aws');
@@ -87,18 +108,20 @@ describe('Blueprints', () => {
   });
 
   test('renders blueprint composes empty state', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdEmptyComposes);
+    await selectBlueprintById(user, BLUEPRINT_ID_MILK_CHOCOLATE);
     const table = await screen.findByTestId('images-table');
     const { findByText } = within(table);
     await findByText('No images');
   });
 
   test('click build images button', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdWithComposes);
+    await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
     const buildImageBtn = await screen.findByRole('button', {
       name: /Build images/i,
     });
@@ -106,22 +129,23 @@ describe('Blueprints', () => {
   });
 
   test('uncheck Target option and check that build images button is Disable', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdWithComposes);
+    await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
     const buildImageBtn = await screen.findByRole('button', {
       name: /Build images/i,
     });
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
-    await waitFor(() => user.click(buildImageDropDown));
+    await clickWithWait(user, buildImageDropDown);
 
     const awsCheckbox = await screen.findByRole('checkbox', {
       name: /amazon web services/i,
     });
     expect(awsCheckbox).toBeChecked();
 
-    await waitFor(() => user.click(awsCheckbox));
+    await clickWithWait(user, awsCheckbox);
     await waitFor(() => expect(awsCheckbox).not.toBeChecked());
 
     const buildSelectedBtn = await screen.findByRole('button', {
@@ -131,22 +155,23 @@ describe('Blueprints', () => {
   });
 
   test('uncheck one Target option and check that you can build an image', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdWithMultipleTargets);
+    await selectBlueprintById(user, BLUEPRINT_ID_MULTIPLE_TARGETS);
     const buildImageBtn = await screen.findByRole('button', {
       name: /Build images/i,
     });
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
 
-    await waitFor(() => user.click(buildImageDropDown));
+    await clickWithWait(user, buildImageDropDown);
     const awsCheckbox = await screen.findByRole('checkbox', {
       name: /amazon web services/i,
     });
     expect(awsCheckbox).toBeChecked();
 
-    await waitFor(() => user.click(awsCheckbox));
+    await clickWithWait(user, awsCheckbox);
     await waitFor(() => expect(awsCheckbox).not.toBeChecked());
     const buildSelectedBtn = await screen.findByRole('button', {
       name: /Build images/i,
@@ -155,14 +180,15 @@ describe('Blueprints', () => {
   });
 
   test('blueprint is out of sync', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdOutOfSync);
+    await selectBlueprintById(user, BLUEPRINT_ID_OUT_OF_SYNC);
     await screen.findByText(
       'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.',
     );
 
-    await selectBlueprintById(blueprintIdWithComposes);
+    await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
     expect(
       screen.queryByText(
         'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.',
@@ -171,14 +197,15 @@ describe('Blueprints', () => {
   });
 
   test('CentOS 8 Stream renders', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    await selectBlueprintById(blueprintIdCentos8);
+    await selectBlueprintById(user, BLUEPRINT_ID_CENTOS8);
     await screen.findByText(
       /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./,
     );
 
-    await selectBlueprintById(blueprintIdWithComposes);
+    await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
     await waitFor(() => {
       expect(
         screen.queryByText(
@@ -189,10 +216,14 @@ describe('Blueprints', () => {
   });
 
   test('blueprint linting and fixing', async () => {
-    renderCustomRoutesWithReduxRouter();
+    const user = createUser();
+    renderLandingPage();
 
-    const id = mockBlueprintIds.compliance;
-    await selectBlueprintByNameAndId('compliance', id);
+    await selectBlueprintByNameAndId(
+      user,
+      'compliance',
+      BLUEPRINT_ID_COMPLIANCE,
+    );
     await screen.findByText(
       'The selected blueprint has compliance errors that can be automatically fixed, action required.',
     );
@@ -201,7 +232,7 @@ describe('Blueprints', () => {
     const button = await screen.findByRole('button', {
       name: /fix errors automatically/i,
     });
-    await waitFor(() => user.click(button));
+    await clickWithWait(user, button);
     await waitFor(() => {
       expect(
         screen.queryByText(
@@ -212,61 +243,36 @@ describe('Blueprints', () => {
   });
 
   describe('edit blueprint', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    const editedBlueprintName = 'Dark Chocolate';
-    const routes = [
-      {
-        path: 'insights/image-builder/*',
-        element: <LandingPage />,
-      },
-    ];
-
     test('open blueprint wizard in editing mode', async () => {
-      await renderCustomRoutesWithReduxRouter(
-        'imagewizard/677b010b-e95e-4694-9813-d11d847f1bfc',
-        {},
-        routes,
-      );
-      await screen.findByText(editedBlueprintName);
+      renderLandingPage({
+        route: `/imagewizard/${BLUEPRINT_ID_DARK_CHOCOLATE}`,
+      });
+      await screen.findByText('Dark Chocolate');
     });
 
     test('redirect to index page when blueprint is invalid', async () => {
-      server.use(
-        http.get(`${IMAGE_BUILDER_API}/blueprints/invalid-compose-id`, () => {
-          return new HttpResponse(null, { status: 404 });
-        }),
-      );
-      await renderCustomRoutesWithReduxRouter(
-        'imagewizard/invalid-compose-id',
-        {},
-        routes,
-      );
+      renderLandingPage({
+        route: '/imagewizard/invalid-compose-id',
+      });
       await screen.findByTestId('blueprints-create-button');
     });
   });
 
   describe('filtering', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     test('filter blueprints', async () => {
-      renderCustomRoutesWithReduxRouter();
+      const user = createUser();
+      renderLandingPage();
 
       const searchInput = await screen.findByPlaceholderText(
         'Search by name or description',
       );
       searchInput.focus();
-      await waitFor(() => user.keyboard('Milk'));
+      await keyboardWithWait(user, 'Milk');
 
-      // wait for debounce
       await waitFor(
         () => {
           expect(
-            screen.getByTestId(blueprintIdEmptyComposes),
+            screen.getByTestId(BLUEPRINT_ID_MILK_CHOCOLATE),
           ).toBeInTheDocument();
         },
         {
@@ -277,12 +283,9 @@ describe('Blueprints', () => {
   });
 
   describe('pagination', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     test('paging of blueprints', async () => {
-      renderCustomRoutesWithReduxRouter();
+      const user = createUser();
+      renderLandingPage();
 
       expect(await screen.findAllByTestId('blueprint-card')).toHaveLength(10);
 
@@ -290,7 +293,7 @@ describe('Blueprints', () => {
       const prevButton = within(option).getByRole('button', {
         name: /Go to previous page/i,
       });
-      const button = within(option).getByRole('button', {
+      const nextButton = within(option).getByRole('button', {
         name: /Go to next page/i,
       });
 
@@ -298,14 +301,14 @@ describe('Blueprints', () => {
       expect(prevButton).toBeVisible();
       expect(prevButton).toBeDisabled();
 
-      expect(button).toBeInTheDocument();
-      expect(button).toBeVisible();
+      expect(nextButton).toBeInTheDocument();
+      expect(nextButton).toBeVisible();
       await waitFor(() => {
-        expect(button).toBeEnabled();
+        expect(nextButton).toBeEnabled();
       });
 
-      await waitFor(() => user.click(button));
-      await waitFor(() => user.click(button));
+      await clickWithWait(user, nextButton);
+      await clickWithWait(user, nextButton);
 
       await waitFor(() => {
         expect(screen.getAllByTestId('blueprint-card')).toHaveLength(10);
@@ -314,16 +317,12 @@ describe('Blueprints', () => {
   });
 
   describe('composes filtering', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     test('filter composes by blueprint version', async () => {
-      renderCustomRoutesWithReduxRouter();
+      const user = createUser();
+      renderLandingPage();
 
-      await selectBlueprintById(blueprintIdWithComposes);
+      await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
 
-      // Wait for the filter appear (right now it's hidden unless a blueprint is selected)
       const composesVersionFilter = await screen.findByRole('button', {
         name: /All Versions/i,
       });
@@ -332,9 +331,11 @@ describe('Blueprints', () => {
         within(screen.getByTestId('images-table')).getAllByRole('row'),
       ).toHaveLength(5);
 
-      await waitFor(() => user.click(composesVersionFilter));
-      const option = await screen.findByRole('menuitem', { name: 'Newest' });
-      await waitFor(() => user.click(option));
+      await clickWithWait(user, composesVersionFilter);
+      const versionOption = await screen.findByRole('menuitem', {
+        name: 'Newest',
+      });
+      await clickWithWait(user, versionOption);
       await waitFor(() =>
         expect(
           within(screen.getByTestId('images-table')).getAllByRole('row'),
@@ -344,17 +345,15 @@ describe('Blueprints', () => {
   });
 
   describe('import/export blueprint', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
     test('exporting blueprint', async () => {
-      renderCustomRoutesWithReduxRouter();
+      const user = createUser();
+      renderLandingPage();
 
-      await selectBlueprintById(blueprintIdWithComposes);
+      await selectBlueprintById(user, BLUEPRINT_ID_DARK_CHOCOLATE);
       const toggleButton = await screen.findByRole('button', {
         name: /blueprint menu toggle/i,
       });
-      await waitFor(() => user.click(toggleButton));
+      await clickWithWait(user, toggleButton);
 
       const downloadButton = screen.getByRole('menuitem', {
         name: /download blueprint \(\.json\)/i,
