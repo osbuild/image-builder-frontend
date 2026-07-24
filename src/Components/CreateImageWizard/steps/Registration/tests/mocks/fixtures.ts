@@ -29,16 +29,16 @@ export const mockEmptyActivationKeys: ListActivationKeysApiResponse = {
 
 export const VALID_SATELLITE_COMMAND = `
 set -o pipefail && curl -sS 'https://ec2-107-23-89.compute-1.amazonaws.com/register?activation_keys=ak&location_id=2&organization_id=1&update_packages=false'
-// -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjQxMDI0NDQ4MDB9.CQ6hOQJLJDfD_P5gaEIEseY5iMRLhnk7iC5ZJ4Rzno0 | bash`;
+// -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjQxMDI0NDQ4MDB9.CQ6hOQJLJDfD_P5gaEIEseY5iMRLhnk7iC5ZJ4Rzno0 | bash`; // notsecret
 
 export const SATELLITE_COMMAND_EXPIRED_TOKEN = `
 set -o pipefail && curl -sS 'https://ec2-107-23-89.compute-1.amazonaws.com/register?activation_keys=ak&location_id=2&organization_id=1&update_packages=false'
 // -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo1LCJpYXQiOjE3MjM4Mzc3MjIsImp0aSI6IjBhNTU3MDM3ZDIyNzUyMDYwM2M3MWIzZDI4NGYwZjQ1NmFjYjE5NzEyNmFmNTk5NzU0NWJmODcwZDczM2RhY2YiLCJleHAiOjE3MjM4NTIxMjIsInNjb3BlIjoicmVnaXN0cmF0aW9uI2dsb2JhbCByZWdpc3RyYXRpb24jaG9zdCJ9.HsSnZEqq--MIJfP3_awn6SflEruoEm77iSWh0Pi6EW4'
-//  | bash`;
+//  | bash`; // notsecret
 
 export const SATELLITE_COMMAND_NO_EXPIRATION = `
 set -o pipefail && curl -sS 'https://ec2-107-23-89.compute-1.amazonaws.com/register?activation_keys=ak&location_id=2&organization_id=1&update_packages=false'
-// -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c' | bash`;
+// -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c' | bash`; // notsecret
 
 export const INVALID_SATELLITE_COMMAND = 'invalid-command';
 
