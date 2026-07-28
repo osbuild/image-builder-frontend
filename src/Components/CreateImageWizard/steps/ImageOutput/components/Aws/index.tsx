@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Flex,
@@ -6,81 +6,21 @@ import {
   FormGroup,
   HelperText,
   HelperTextItem,
-  MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectOption,
   Stack,
   TextInput,
 } from '@patternfly/react-core';
 
 import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
 import { isAwsAccountIdValid } from '@/Components/CreateImageWizard/validators';
-import { AWS_REGIONS } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import {
-  changeAwsAccountId,
-  changeAwsRegion,
-  selectAwsAccountId,
-  selectAwsRegion,
-} from '@/store/slices/wizard';
-
-type FormGroupProps<T> = {
-  value: string;
-  onChange: (value: T) => void;
-};
-
-const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined,
-  ) => {
-    onChange(value as string);
-    setIsOpen(false);
-  };
-
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      onClick={() => setIsOpen(!isOpen)}
-      isExpanded={isOpen}
-      style={
-        {
-          width: '50%',
-        } as React.CSSProperties
-      }
-    >
-      {value}
-    </MenuToggle>
-  );
-
-  return (
-    <Select
-      isOpen={isOpen}
-      isScrollable
-      selected={value}
-      onSelect={onSelect}
-      onOpenChange={() => setIsOpen(!isOpen)}
-      toggle={toggle}
-    >
-      {AWS_REGIONS.map(({ description, value: region }) => (
-        <SelectOption key={description} value={region}>
-          {region}
-        </SelectOption>
-      ))}
-    </Select>
-  );
-};
+import { changeAwsAccountId, selectAwsAccountId } from '@/store/slices/wizard';
 
 const Aws = () => {
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const shareWithAccount = useAppSelector(selectAwsAccountId);
-  const region = useAppSelector(selectAwsRegion);
 
   return (
     <Stack hasGutter className='pf-v6-u-pb-md'>
@@ -123,12 +63,12 @@ const Aws = () => {
         </Flex>
       )}
       {isOnPremise && (
-        <FormGroup label='Region' isRequired>
-          <AWSRegion
-            value={region || ''}
-            onChange={(v) => dispatch(changeAwsRegion(v))}
-          />
-        </FormGroup>
+        <HelperText className='pf-v6-u-pt-sm'>
+          <HelperTextItem>
+            Configure AWS uploads, including the region, by configuring cloud
+            providers on the main page.
+          </HelperTextItem>
+        </HelperText>
       )}
     </Stack>
   );

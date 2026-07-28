@@ -18,7 +18,7 @@ export {
   useGetImageExistsQuery,
   useGetRegistryAuthStatusQuery,
   useLazyGetImageExistsQuery,
-  useGetWorkerConfigQuery,
+  useGetUploadConfigQuery,
   useLazyExportBlueprintCockpitQuery,
   useLazyGetBlueprintsQuery,
   useLazyGetOscapCustomizationsQuery,
@@ -26,7 +26,7 @@ export {
   useRegistryLoginMutation,
   useRegistryLogoutMutation,
   useUpdateBlueprintMutation,
-  useUpdateWorkerConfigMutation,
+  useUpdateUploadConfigMutation,
 } from './composerApi';
 
 export type * from './types';

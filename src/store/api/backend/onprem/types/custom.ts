@@ -13,33 +13,31 @@ import {
 
 import { Bootc } from './generated';
 
-export type AWSWorkerConfig = {
-  bucket?: string | undefined;
-  credentials?: string | undefined;
+export type AWSUploadConfig = {
+  credentials?: string;
+  profile?: string;
+  region?: string;
+  bucket?: string;
 };
 
-export type WorkerConfigResponse = {
-  aws?: AWSWorkerConfig;
+export type UploadConfigFile = {
+  aws?: AWSUploadConfig | undefined;
 };
 
-export type WorkerConfigFile = {
-  // the worker file has a key value/pair for
-  // each section, which could be of any type.
-  // Disable the linter warning for this.
-  // eslint-disable-next-line
-  [key: string]: any;
+export type UploadConfigResponse = {
+  aws?: AWSUploadConfig;
 };
 
 export type CloudProviderConfigState = {
-  aws: AWSWorkerConfig;
+  aws: AWSUploadConfig;
 };
 
-export type WorkerConfigRequest = {
-  aws?: AWSWorkerConfig | undefined;
+export type UploadConfigRequest = {
+  aws?: AWSUploadConfig | undefined;
 };
 
-export type UpdateWorkerConfigApiArg = {
-  updateWorkerConfigRequest: WorkerConfigRequest | undefined;
+export type UpdateUploadConfigApiArg = {
+  updateUploadConfigRequest: UploadConfigRequest | undefined;
 };
 
 export type ComposerUploadTypes = UploadTypes | 'local';
