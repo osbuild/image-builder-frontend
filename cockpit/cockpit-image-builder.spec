@@ -15,6 +15,8 @@ BuildRequires:  gettext
 BuildRequires:  libappstream-glib
 BuildRequires:  make
 BuildRequires:  /usr/bin/node
+# for _tmpfilesdir macro
+BuildRequires:  systemd-rpm-macros
 
 Requires:       cockpit
 Requires:       cockpit-files
@@ -39,6 +41,9 @@ as a frontend for osbuild.
 # drop source maps, they are large and just for debugging
 find %{buildroot}%{_datadir}/cockpit/ -name '*.map' | xargs --no-run-if-empty rm --verbose
 
+install -m 0755 -vd %{buildroot}%{_tmpfilesdir}
+install -m 0644 -vp cockpit/tmpfiles.d/cockpit-image-builder.conf %{buildroot}%{_tmpfilesdir}/cockpit-image-builder.conf
+
 %check
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 
@@ -47,6 +52,8 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 %license LICENSE
 %{_datadir}/cockpit/cockpit-image-builder
 %{_datadir}/metainfo/*
+%{_tmpfilesdir}/cockpit-image-builder.conf
+%ghost %attr(0700, root, root) %dir /var/cache/cockpit-image-builder
 
 %changelog
 # the changelog is distribution-specific, therefore there's just one entry
