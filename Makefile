@@ -90,7 +90,7 @@ $(TARFILE): cockpit/build
 	touch cockpit/public/*
 	tar czf $(TARFILE) --transform 's,^,$(PACKAGE_NAME)/,' \
 		--exclude node_modules \
-		$$(git ls-files) $(RPM_SPEC) $(NODE_MODULES_TEST) cockpit/public/ cockpit/README.md
+		$$(git ls-files) $(RPM_SPEC) $(NODE_MODULES_TEST) cockpit/public/ cockpit/README.md cockpit/tmpfiles.d
 	realpath $(TARFILE)
 
 dist: $(TARFILE)
