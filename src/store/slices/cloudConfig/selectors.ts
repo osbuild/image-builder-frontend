@@ -14,6 +14,14 @@ export const selectAWSBucketName = (state: RootState) => {
   return state.cloudConfig.aws.bucket;
 };
 
+export const selectAWSProfile = (state: RootState) => {
+  return state.cloudConfig.aws.profile;
+};
+
+export const selectAWSRegion = (state: RootState) => {
+  return state.cloudConfig.aws.region;
+};
+
 export const selectAWSCredsPath = (state: RootState) => {
   return state.cloudConfig.aws.credentials;
 };

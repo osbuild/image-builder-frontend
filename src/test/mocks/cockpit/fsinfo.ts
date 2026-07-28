@@ -10,6 +10,7 @@ const bpDir = '/default/.local/state/cockpit-image-builder';
 type fileinfo = {
   entries?: Record<string, fileinfo>;
   mtime: number;
+  type?: string;
 };
 
 interface FSInfoMap {
@@ -21,12 +22,14 @@ export const listBlueprints = (): Promise<fileinfo> => {
   for (const e of Object.values(mockBlueprintIds)) {
     result[e] = {
       mtime: 1,
+      type: 'dir',
     };
   }
   return new Promise((resolve) => {
     resolve({
       entries: result,
       mtime: 1,
+      type: 'dir',
     });
   });
 };
@@ -48,6 +51,7 @@ export const listComposes = (): Promise<fileinfo> => {
     resolve({
       entries: result,
       mtime: 1,
+      type: 'file',
     });
   });
 };

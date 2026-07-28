@@ -32,3 +32,4 @@ export { imageStatusFromBuildlog } from './imageStatusFromBuildlog';
 export { progressFromFile } from './progressFromFile';
 export { uploadStatusFromFile } from './uploadStatusFromFile';
 export { imageStatusFallback } from './imageStatusFallback';
+export { getUploadArgs } from './getUploadArgs';

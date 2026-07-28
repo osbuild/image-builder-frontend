@@ -70,11 +70,14 @@ export const blueprintEndpoints = (builder: OnPremBuilder) => ({
 
       // we probably don't need any more information other
       // than the entries from the directory
-      const info = await fsinfo(blueprintsDir, ['entries'], {
+      const info = await fsinfo(blueprintsDir, ['entries', 'type'], {
         superuser: 'try',
       });
 
-      const entries = Object.entries(info.entries || {});
+      // Filter to ensure the upload-config.json file is not counted as a blueprint.
+      const entries = Object.entries(info.entries || {}).filter(
+        (entry) => entry[1].type === 'dir',
+      );
       let blueprints: BlueprintItem[] = await Promise.all(
         entries.map(async ([filename]) => {
           const file = cockpit.file(

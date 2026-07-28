@@ -24,14 +24,16 @@ import { ExclamationIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
 import {
-  type AWSWorkerConfig,
-  useGetWorkerConfigQuery,
-  useUpdateWorkerConfigMutation,
+  type AWSUploadConfig,
+  useGetUploadConfigQuery,
+  useUpdateUploadConfigMutation,
 } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAWSBucketName,
   changeAWSCredsPath,
+  changeAWSProfile,
+  changeAWSRegion,
   reinitializeAWSConfig,
   selectAWSConfig,
 } from '@/store/slices/cloudConfig';
@@ -54,8 +56,8 @@ const ConfigError = ({
         Error
       </Title>
       <EmptyStateBody>
-        There was an error reading the `/etc/osbuild-worker/osbuild-worker.toml`
-        config file
+        There was an error reading the `upload-config` file in the
+        cockpit-image-builder state directory
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
@@ -82,11 +84,11 @@ export const CloudProviderConfig = ({
   const config = useAppSelector(selectAWSConfig);
   const [enabled, setEnabled] = useState<boolean>(true);
 
-  const [updateConfig] = useUpdateWorkerConfigMutation();
-  const { data, error, refetch, isLoading } = useGetWorkerConfigQuery();
+  const [updateConfig] = useUpdateUploadConfigMutation();
+  const { data, error, refetch, isLoading } = useGetUploadConfigQuery();
 
   const initAWSConfig = useCallback(
-    (config: AWSWorkerConfig | undefined) => {
+    (config: AWSUploadConfig | undefined) => {
       if (!config) {
         dispatch(reinitializeAWSConfig());
         setEnabled(false);
@@ -95,13 +97,21 @@ export const CloudProviderConfig = ({
 
       setEnabled(true);
 
-      const { bucket, credentials } = config;
+      const { bucket, credentials, profile, region } = config;
       if (bucket && bucket !== '') {
         dispatch(changeAWSBucketName(bucket));
       }
 
       if (credentials && credentials !== '') {
         dispatch(changeAWSCredsPath(credentials));
+      }
+
+      if (profile && profile !== '') {
+        dispatch(changeAWSProfile(profile));
+      }
+
+      if (region && region !== '') {
+        dispatch(changeAWSRegion(region));
       }
     },
     [dispatch, setEnabled],
@@ -151,7 +161,7 @@ export const CloudProviderConfig = ({
             onClick={async () => {
               try {
                 await updateConfig({
-                  updateWorkerConfigRequest: { aws: config },
+                  updateUploadConfigRequest: { aws: config },
                 });
                 setShowCloudConfigModal(false);
               } catch {

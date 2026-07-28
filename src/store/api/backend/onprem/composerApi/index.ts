@@ -3,7 +3,7 @@ import { blueprintEndpoints } from './blueprints';
 import { composeEndpoints } from './composes';
 import { oscapEndpoints } from './oscap';
 import { registryEndpoints } from './registry';
-import { workerEndpoints } from './worker';
+import { uploadEndpoints } from './upload';
 
 import { emptyComposerApi } from '../emptyComposerApi';
 
@@ -15,7 +15,7 @@ export const composerApi = emptyComposerApi.injectEndpoints({
       ...composeEndpoints(builder),
       ...oscapEndpoints(builder),
       ...registryEndpoints(builder),
-      ...workerEndpoints(builder),
+      ...uploadEndpoints(builder),
     };
   },
   // since we are inheriting some endpoints,
@@ -45,11 +45,11 @@ export const {
   useGetImageExistsQuery,
   useGetRegistryAuthStatusQuery,
   useLazyGetImageExistsQuery,
-  useGetWorkerConfigQuery,
+  useGetUploadConfigQuery,
   usePullImageMutation,
   useRegistryLoginMutation,
   useRegistryLogoutMutation,
-  useUpdateWorkerConfigMutation,
+  useUpdateUploadConfigMutation,
 } = composerApi;
 
 // re-export this for testing
