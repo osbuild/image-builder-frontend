@@ -68,8 +68,13 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         const hostDistro = await getHostDistro();
         const user = await cockpit.user();
         const id = uuidv4();
-        const bpPath = path.join('/tmp', `cockpit-image-builder-${id}.json`);
-        await cockpit.file(bpPath).replace(JSON.stringify(bpOnPrem));
+        const bpPath = path.join(
+          '/var/cache/cockpit-image-builder',
+          `cockpit-image-builder-${id}.json`,
+        );
+        await cockpit
+          .file(bpPath, { superuser: 'require' })
+          .replace(JSON.stringify(bpOnPrem));
         await cockpit.spawn(
           [
             'systemd-run',
