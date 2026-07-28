@@ -118,6 +118,10 @@ make cockpit/build
 make cockpit/devel-install
 ```
 
+If the `cockpit-image-builder` rpm is not installed, the `/var/cache/cockpit-image-builder`
+directory, which is used to store blueprints temporarily in order to pass them to `image-builder`,
+will not exist. Either install the rpm first or make this directory manually.
+
 To uninstall and remove the symbolic link, run the following command:
 
 ```bash
