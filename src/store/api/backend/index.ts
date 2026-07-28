@@ -104,10 +104,10 @@ export {
 export {
   useExportBlueprintCockpitQuery,
   useGetRegistryAuthStatusQuery,
-  useGetWorkerConfigQuery,
+  useGetUploadConfigQuery,
   useLazyExportBlueprintCockpitQuery,
   useRegistryLoginMutation,
-  useUpdateWorkerConfigMutation,
+  useUpdateUploadConfigMutation,
 } from './onprem';
 
 export { composerApi, errorMessage, imageBuilderApi };
@@ -132,12 +132,12 @@ export type {
   ComposerImageRequest,
   ComposerUploadTypes,
   // Worker config types (on-prem only)
-  AWSWorkerConfig,
+  AWSUploadConfig,
   CloudProviderConfigState,
-  UpdateWorkerConfigApiArg,
-  WorkerConfigFile,
-  WorkerConfigRequest,
-  WorkerConfigResponse,
+  UpdateUploadConfigApiArg,
+  UploadConfigFile,
+  UploadConfigRequest,
+  UploadConfigResponse,
   // Registry auth types (on-prem only)
   RegistryAuthStatus,
   // Non-conflicting generated types

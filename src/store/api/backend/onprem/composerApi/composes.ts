@@ -11,6 +11,7 @@ import { getHostDistro } from '@/Utilities/getHostInfo';
 import {
   byCreatedAtDesc,
   getBlueprintsPath,
+  getUploadArgs,
   imageStatusFallback,
   imageStatusFromBuildlog,
   progressFromFile,
@@ -68,6 +69,10 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         const hostDistro = await getHostDistro();
         const user = await cockpit.user();
         const id = uuidv4();
+        const { runArgs, ibArgs } = await getUploadArgs(
+          ir.upload_request.type,
+          id,
+        );
         const bpPath = path.join(
           '/var/cache/cockpit-image-builder',
           `cockpit-image-builder-${id}.json`,
@@ -80,6 +85,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             'systemd-run',
             '--setenv',
             'HOME=' + user.home,
+            ...runArgs,
             '--unit',
             'cockpit-image-builder-' + id,
             '--service-type=oneshot',
@@ -102,6 +108,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             'json',
             '--output-dir',
             path.join(dataDir, id),
+            ...ibArgs,
           ],
           {
             superuser: 'require',
@@ -117,7 +124,6 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
           .replace(JSON.stringify(crcComposeRequest));
         composes.push({ id });
       }
-
       return composes;
     }),
   }),
@@ -128,7 +134,10 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         superuser: 'try',
       });
       let composes: ComposesResponseItem[] = [];
-      const entries = Object.entries(info.entries || {});
+      // Filter to ensure the upload-config.json file is not counted as a blueprint.
+      const entries = Object.entries(info.entries || {}).filter(
+        (entry) => entry[1].type === 'dir',
+      );
       for (const entry of entries) {
         composes = composes.concat(await readComposes(entry[0]));
       }

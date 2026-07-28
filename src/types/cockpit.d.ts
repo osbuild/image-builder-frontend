@@ -74,9 +74,10 @@ declare module 'cockpit/fsinfo' {
   type FileInfo = {
     entries?: Record<string, FileInfo>;
     mtime: number;
+    type: string;
   };
 
-  type FileInfoAttribute = 'entries' | 'mtime';
+  type FileInfoAttribute = 'entries' | 'mtime' | 'type';
 
   type FSInfoOptions = {
     superuser?: 'try' | 'require';
