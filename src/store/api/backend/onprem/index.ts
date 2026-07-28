@@ -14,13 +14,13 @@ export {
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
   useGetRegistryAuthStatusQuery,
-  useGetWorkerConfigQuery,
+  useGetUploadConfigQuery,
   useLazyExportBlueprintCockpitQuery,
   useLazyGetBlueprintsQuery,
   useLazyGetOscapCustomizationsQuery,
   useRegistryLoginMutation,
   useUpdateBlueprintMutation,
-  useUpdateWorkerConfigMutation,
+  useUpdateUploadConfigMutation,
 } from './composerApi';
 
 export type * from './types';

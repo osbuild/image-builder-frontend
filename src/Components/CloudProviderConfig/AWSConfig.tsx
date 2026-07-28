@@ -12,17 +12,26 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
-import { AWSWorkerConfig, WorkerConfigResponse } from '@/store/api/backend';
+import { AWSUploadConfig, UploadConfigResponse } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAWSBucketName,
   changeAWSCredsPath,
+  changeAWSProfile,
+  changeAWSRegion,
   reinitializeAWSConfig,
   selectAWSBucketName,
   selectAWSCredsPath,
+  selectAWSProfile,
+  selectAWSRegion,
 } from '@/store/slices/cloudConfig';
 
-import { isAwsBucketValid, isAwsCredsPathValid } from './validators';
+import {
+  isAwsBucketValid,
+  isAwsCredsPathValid,
+  isAwsProfileValid,
+  isAwsRegionValid,
+} from './validators';
 
 import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 
@@ -100,6 +109,90 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   );
 };
 
+const ProfilePopover = () => {
+  return (
+    <Popover
+      minWidth='35rem'
+      headerContent={'What is the AWS profile?'}
+      bodyContent={
+        <Content component={ContentVariants.p}>
+          This is the name of the profile in your AWS credentials file which
+          contains your AWS access key ID and secret access key. The file is
+          typically located at the .aws directory (e.g.
+          /home/USERNAME/.aws/credentials).
+        </Content>
+      }
+    >
+      <Button
+        icon={<HelpIcon />}
+        variant='plain'
+        size='sm'
+        aria-label='Profile info'
+      />
+    </Popover>
+  );
+};
+
+const AWSProfile = ({
+  value,
+  onChange,
+  isDisabled,
+}: FormGroupProps<string>) => {
+  const dispatch = useAppDispatch();
+
+  const label = (
+    <>
+      AWS profile <ProfilePopover />
+    </>
+  );
+
+  if (isDisabled) {
+    return (
+      <DisabledInputGroup value={value} label={label} ariaLabel='aws-profile' />
+    );
+  }
+
+  return (
+    <FormGroup label={label} isRequired>
+      <ValidatedInput
+        placeholder='AWS profile in credentials file'
+        aria-label='aws-profile'
+        value={value || ''}
+        validator={isAwsProfileValid}
+        onChange={(_event, value) => onChange(value)}
+        helperText={!value ? 'AWS profile is required' : 'Invalid AWS profile'}
+        handleClear={() => dispatch(changeAWSProfile(''))}
+      />
+    </FormGroup>
+  );
+};
+
+const AWSRegion = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
+  const dispatch = useAppDispatch();
+
+  const label = <>AWS region</>;
+
+  if (isDisabled) {
+    return (
+      <DisabledInputGroup value={value} label={label} ariaLabel='aws-region' />
+    );
+  }
+
+  return (
+    <FormGroup label={label} isRequired>
+      <ValidatedInput
+        placeholder='AWS region'
+        aria-label='aws-region'
+        value={value || ''}
+        validator={isAwsRegionValid}
+        onChange={(_event, value) => onChange(value)}
+        helperText={!value ? 'AWS region is required' : 'Invalid AWS region'}
+        handleClear={() => dispatch(changeAWSRegion(''))}
+      />
+    </FormGroup>
+  );
+};
+
 const CredsPathPopover = () => {
   return (
     <Popover
@@ -168,9 +261,9 @@ const AWSCredsPath = ({
 type AWSConfigProps = {
   enabled: boolean;
   setEnabled: (enabled: boolean) => void;
-  reinit: (config: AWSWorkerConfig | undefined) => void;
+  reinit: (config: AWSUploadConfig | undefined) => void;
   refetch: () => Promise<{
-    data?: WorkerConfigResponse | undefined;
+    data?: UploadConfigResponse | undefined;
   }>;
 };
 
@@ -183,6 +276,8 @@ export const AWSConfig = ({
   const dispatch = useAppDispatch();
   const bucket = useAppSelector(selectAWSBucketName);
   const credentials = useAppSelector(selectAWSCredsPath);
+  const profile = useAppSelector(selectAWSProfile);
+  const region = useAppSelector(selectAWSRegion);
 
   const onToggle = async (v: boolean) => {
     if (v) {
@@ -202,14 +297,24 @@ export const AWSConfig = ({
   return (
     <Form>
       <AWSConfigToggle value={enabled} onChange={onToggle} />
+      <AWSCredsPath
+        value={credentials}
+        onChange={(v) => dispatch(changeAWSCredsPath(v))}
+        isDisabled={!enabled}
+      />
+      <AWSProfile
+        value={profile}
+        onChange={(v) => dispatch(changeAWSProfile(v))}
+        isDisabled={!enabled}
+      />
       <AWSBucket
         value={bucket}
         onChange={(v) => dispatch(changeAWSBucketName(v))}
         isDisabled={!enabled}
       />
-      <AWSCredsPath
-        value={credentials}
-        onChange={(v) => dispatch(changeAWSCredsPath(v))}
+      <AWSRegion
+        value={region}
+        onChange={(v) => dispatch(changeAWSRegion(v))}
         isDisabled={!enabled}
       />
     </Form>

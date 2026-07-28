@@ -10,6 +10,7 @@ const bpDir = '/default/.local/state/cockpit-image-builder';
 type fileinfo = {
   entries?: Record<string, fileinfo>;
   mtime: number;
+  type?: string;
 };
 
 interface FSInfoMap {
