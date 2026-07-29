@@ -90,6 +90,7 @@ import TimezoneStep from '../CreateImageWizard/steps/Timezone';
 import UserGroupsStep from '../CreateImageWizard/steps/UserGroups';
 import UsersStep from '../CreateImageWizard/steps/Users';
 import {
+  useAAPValidation,
   useAwsValidation,
   useAzureValidation,
   useDetailsValidation,
@@ -143,6 +144,7 @@ const CreateImageWizard = () => {
   const targetEnvironments = useAppSelector(selectImageTypes);
 
   // Validation hooks
+  const aapValidation = useAAPValidation();
   const awsValidation = useAwsValidation();
   const gcpValidation = useGcpValidation();
   const azureValidation = useAzureValidation();
@@ -176,6 +178,7 @@ const CreateImageWizard = () => {
     azureValidation.disabledNext ||
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
+    aapValidation.disabledNext ||
     snapshotValidation.disabledNext ||
     imagePullValidation.disabledNext ||
     (restrictions.users.isStandalone && usersHaveErrors);
