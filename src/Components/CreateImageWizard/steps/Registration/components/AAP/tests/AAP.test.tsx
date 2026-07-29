@@ -100,6 +100,20 @@ describe('AAP Component', () => {
       ).not.toBeInTheDocument();
     });
 
+    test('typing a partial URL does not show certificate errors', async () => {
+      renderAAPStep();
+      const user = createUser();
+
+      await enterCallbackUrl(user, 'htt');
+
+      expect(
+        screen.queryByText(/HTTP URL requires a custom TLS certificate/i),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/HTTPS URL requires either/i),
+      ).not.toBeInTheDocument();
+    });
+
     test('certificate input reappears when insecure checkbox is unchecked', async () => {
       renderAAPStep();
       const user = createUser();

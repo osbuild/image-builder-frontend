@@ -323,7 +323,7 @@ export function useAAPValidation(): StepValidation {
     }
   }
 
-  if (callbackUrl && callbackUrl.trim() !== '') {
+  if (callbackUrl && callbackUrl.trim() !== '' && isValidUrl(callbackUrl)) {
     const isHttpsUrl = callbackUrl.toLowerCase().startsWith('https://');
 
     // If URL is HTTP, require TLS certificate
