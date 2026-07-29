@@ -1,33 +1,11 @@
 import React from 'react';
 
 import { render, screen } from '@testing-library/react';
-import { useVariant } from '@unleash/proxy-client-react';
 
 import { createUser } from '@/test/testUtils';
 import { clickWithWait } from '@/test/testUtils/userEvents';
 
 import SingleTargetAlert from '../SingleTargetAlert';
-
-type PayloadData = {
-  title?: string;
-  body?: string;
-};
-
-const mockVariant = (payloadData?: PayloadData) => {
-  vi.mocked(useVariant).mockReturnValue({
-    name: 'image-builder.single-target-migration',
-    enabled: true,
-    payload: payloadData
-      ? {
-          type: 'json',
-          value: JSON.stringify(payloadData),
-        }
-      : {
-          type: 'json',
-          value: JSON.stringify(''),
-        },
-  });
-};
 
 const STORAGE_KEY = 'imageBuilder.singleTargetMigration.dismissed';
 
@@ -36,31 +14,15 @@ describe('Single Target Alert', () => {
     window.localStorage.clear();
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test('does not render when no payload is provided', () => {
-    mockVariant();
-
-    render(<SingleTargetAlert />);
-
-    expect(
-      screen.queryByTestId('single-target-migration-banner'),
-    ).not.toBeInTheDocument();
-  });
-
-  test('renders with title and body from payload', async () => {
+  test('renders with title and body', async () => {
     const user = createUser();
-    mockVariant({
-      title: 'Single target images coming soon',
-      body: 'Image Builder will transition to single-target images.',
-    });
 
     render(<SingleTargetAlert />);
 
     expect(
-      screen.getByText('Single target images coming soon'),
+      screen.getByText(
+        'Blueprints are transitioning to single image target environments.',
+      ),
     ).toBeInTheDocument();
 
     await clickWithWait(
@@ -70,17 +32,12 @@ describe('Single Target Alert', () => {
 
     expect(
       screen.getByText(
-        'Image Builder will transition to single-target images.',
+        /Existing multi-target blueprints will be migrated to single-target configurations/,
       ),
     ).toBeInTheDocument();
   });
 
   test('renders as a warning alert', () => {
-    mockVariant({
-      title: 'Single target images coming soon',
-      body: 'Details about the change.',
-    });
-
     render(<SingleTargetAlert />);
 
     const heading = screen.getByRole('heading', {
@@ -91,10 +48,6 @@ describe('Single Target Alert', () => {
 
   test('permanently dismisses alert via "Do not show me this again"', async () => {
     const user = createUser();
-    mockVariant({
-      title: 'Single target images coming soon',
-      body: 'Details about the change.',
-    });
 
     render(<SingleTargetAlert />);
 
@@ -108,10 +61,6 @@ describe('Single Target Alert', () => {
 
   test('temporarily dismisses alert via close button', async () => {
     const user = createUser();
-    mockVariant({
-      title: 'Single target images coming soon',
-      body: 'Details about the change.',
-    });
 
     render(<SingleTargetAlert />);
 
@@ -125,28 +74,6 @@ describe('Single Target Alert', () => {
 
   test('does not render when previously dismissed via localStorage', () => {
     window.localStorage.setItem(STORAGE_KEY, 'true');
-
-    mockVariant({
-      title: 'Single target images coming soon',
-      body: 'Details about the change.',
-    });
-
-    render(<SingleTargetAlert />);
-
-    expect(
-      screen.queryByTestId('single-target-migration-banner'),
-    ).not.toBeInTheDocument();
-  });
-
-  test('does not render when payload is malformed JSON', () => {
-    vi.mocked(useVariant).mockReturnValue({
-      name: 'image-builder.single-target-migration',
-      enabled: true,
-      payload: {
-        type: 'json',
-        value: 'not valid json{{{',
-      },
-    });
 
     render(<SingleTargetAlert />);
 

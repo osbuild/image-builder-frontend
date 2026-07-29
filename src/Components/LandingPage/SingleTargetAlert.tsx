@@ -8,20 +8,13 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import { useVariant } from '@unleash/proxy-client-react';
+
+const TITLE =
+  'Blueprints are transitioning to single image target environments.';
+const BODY =
+  'Existing multi-target blueprints will be migrated to single-target configurations.';
 
 const SingleTargetAlert = () => {
-  const variant = useVariant('image-builder.single-target-migration');
-  let payload;
-  try {
-    payload = variant.payload ? JSON.parse(variant.payload.value) : undefined;
-  } catch {
-    payload = undefined;
-  }
-
-  const title = payload?.title || '';
-  const body = payload?.body || '';
-
   const localStorageKey = 'imageBuilder.singleTargetMigration.dismissed';
   const isAlertDismissed = window.localStorage.getItem(localStorageKey);
 
@@ -33,7 +26,7 @@ const SingleTargetAlert = () => {
     window.localStorage.setItem(localStorageKey, 'true');
   };
 
-  if (!variant.enabled || !displayAlert || isTemporarilyHidden || !title) {
+  if (!displayAlert || isTemporarilyHidden) {
     return null;
   }
 
@@ -43,7 +36,7 @@ const SingleTargetAlert = () => {
       isExpandable
       variant='warning'
       style={{ margin: '0 0 16px 0' }}
-      title={title}
+      title={TITLE}
       actionClose={
         <Flex>
           <FlexItem>
@@ -59,7 +52,16 @@ const SingleTargetAlert = () => {
         </Flex>
       }
     >
-      <Content>{body}</Content>
+      <Content>
+        {BODY}{' '}
+        <a
+          href='https://access.redhat.com/articles/7145853'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Learn more about this upcoming change
+        </a>
+      </Content>
     </Alert>
   );
 };

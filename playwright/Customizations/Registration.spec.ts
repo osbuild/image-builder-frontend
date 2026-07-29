@@ -204,7 +204,7 @@ registrationModes.forEach(
               await viewDetailsBtn.click();
               await expect(viewDetailsBtn).toBeVisible();
               await expect(frame.getByText('activation-key-')).toBeVisible();
-              await frame.getByLabel('Close').click();
+              await frame.getByLabel('Close', { exact: true }).click();
             }
 
             // Test enabling/disabling predictive analytics
