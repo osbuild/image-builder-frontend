@@ -122,6 +122,7 @@ export type UsersStepValidation = {
 };
 
 export function useIsBlueprintValid(): boolean {
+  const aap = useAAPValidation();
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
@@ -139,6 +140,7 @@ export function useIsBlueprintValid(): boolean {
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
   return (
+    !aap.disabledNext &&
     !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
