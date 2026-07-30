@@ -88,13 +88,17 @@ describe('searchRpm endpoint', () => {
       const result = transformPackageResponse(mockPackages);
 
       expect(result).toHaveLength(3);
-      expect(result[0]).toEqual({
+      expect(result).toContainEqual({
         package_name: 'vim',
         summary: 'Vi Improved text editor (8.2-1.el9.x86_64)',
       });
-      expect(result[1]).toEqual({
+      expect(result).toContainEqual({
         package_name: 'git',
         summary: 'Fast distributed version control (2.39-3.el9.x86_64)',
+      });
+      expect(result).toContainEqual({
+        package_name: 'curl',
+        summary: 'Command line tool for transferring data (7.76-14.el9.x86_64)',
       });
     });
 
