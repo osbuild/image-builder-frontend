@@ -85,7 +85,6 @@ sudo podman run \
      -e "PLAYWRIGHT_PASSWORD=foobar" \
      --net=host \
      -v "$PWD:/tests" \
-     -v '/etc:/etc' \
      -v '/etc/os-release:/etc/os-release' \
      --privileged  \
      --rm \
