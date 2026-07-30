@@ -2,9 +2,9 @@ name: Development checks
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "image-builder-cli" ]
   push:
-    branches: [ "main" ]
+    branches: [ "main", "image-builder-cli" ]
   merge_group:
 
 concurrency:
