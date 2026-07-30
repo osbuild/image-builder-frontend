@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  isImageStatus,
-  isUploadStatus,
-} from '../typeguards';
+import { isImageStatus, isUploadStatus } from '../typeguards';
 
 describe('isImageStatus', () => {
   it('should return true for a valid image status', () => {
-    expect(isImageStatus({
-      status: 'abc-123',
-      upload_status: { status: 'abc-123', type: 'abc-123' },
-    })).toBe(true);
+    expect(
+      isImageStatus({
+        status: 'abc-123',
+        upload_status: { status: 'abc-123', type: 'abc-123' },
+      }),
+    ).toBe(true);
   });
 
   it('should return true when extra properties are present', () => {

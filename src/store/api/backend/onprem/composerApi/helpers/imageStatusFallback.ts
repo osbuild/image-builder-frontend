@@ -6,9 +6,9 @@ import type { ImageStatus } from '../../../hosted';
 import { assertImageStatus } from '../../typeguards';
 
 export const imageStatusFallback = async (
-  composeID: string
+  composeID: string,
 ): Promise<ImageStatus> => {
-  const dataDir = path.join("/var/lib/osbuild-composer/artifacts", composeID);
+  const dataDir = path.join('/var/lib/osbuild-composer/artifacts', composeID);
 
   let entries;
   try {
@@ -18,20 +18,20 @@ export const imageStatusFallback = async (
     entries = info.entries || {};
   } catch {
     return {
-      status: "failure",
+      status: 'failure',
       error: {
         id: 10,
-        reason: "missing artifact directory",
+        reason: 'missing artifact directory',
       },
     };
   }
 
   if (Object.keys(entries).length > 0) {
     return assertImageStatus({
-      status: "success",
+      status: 'success',
       upload_status: {
-        status: "success",
-        type: "local",
+        status: 'success',
+        type: 'local',
         options: {
           artifact_path: path.join(dataDir, Object.keys(entries)[0]),
         },
@@ -39,10 +39,10 @@ export const imageStatusFallback = async (
     });
   }
   return {
-    status: "failure",
+    status: 'failure',
     error: {
       id: 10,
-      reason: "missing artifact in fallback directory",
+      reason: 'missing artifact in fallback directory',
     },
   };
 };

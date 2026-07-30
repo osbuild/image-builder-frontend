@@ -21,20 +21,21 @@ describe('imageStatusFallback', () => {
 
     const status = await imageStatusFallback('compose-id');
     expect(status).toEqual({
-      status: "success",
+      status: 'success',
       upload_status: {
-        status: "success",
-        type: "local",
+        status: 'success',
+        type: 'local',
         options: {
-          artifact_path: "/var/lib/osbuild-composer/artifacts/compose-id/disk.qcow2",
+          artifact_path:
+            '/var/lib/osbuild-composer/artifacts/compose-id/disk.qcow2',
         },
       },
     });
 
     expect(fsinfo).toHaveBeenCalledWith(
       '/var/lib/osbuild-composer/artifacts/compose-id',
-      ["entries"],
-      { superuser: "try" }
+      ['entries'],
+      { superuser: 'try' },
     );
   });
 
@@ -45,16 +46,16 @@ describe('imageStatusFallback', () => {
 
     const status = await imageStatusFallback('compose-id');
     expect(status).toEqual({
-      status: "failure",
+      status: 'failure',
       error: {
-        reason: "missing artifact in fallback directory",
+        reason: 'missing artifact in fallback directory',
       },
     });
 
     expect(fsinfo).toHaveBeenCalledWith(
       '/var/lib/osbuild-composer/artifacts/compose-id',
-      ["entries"],
-      { superuser: "try" }
+      ['entries'],
+      { superuser: 'try' },
     );
   });
 
@@ -63,16 +64,16 @@ describe('imageStatusFallback', () => {
 
     const status = await imageStatusFallback('compose-id');
     expect(status).toEqual({
-      status: "failure",
+      status: 'failure',
       error: {
-        reason: "missing artifact directory",
+        reason: 'missing artifact directory',
       },
     });
 
     expect(fsinfo).toHaveBeenCalledWith(
       '/var/lib/osbuild-composer/artifacts/compose-id',
-      ["entries"],
-      { superuser: "try" }
+      ['entries'],
+      { superuser: 'try' },
     );
   });
 });
