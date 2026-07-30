@@ -3,12 +3,16 @@ import { isNonNullObject, OnPremApiError } from '@/store/api/shared';
 import type { ImageStatus, UploadStatus } from '../hosted';
 
 export const isImageStatus = (value: unknown): value is ImageStatus => {
-  if (!isNonNullObject(value) || !('status' in value) || typeof value.status !== 'string') {
+  if (
+    !isNonNullObject(value) ||
+    !('status' in value) ||
+    typeof value.status !== 'string'
+  ) {
     return false;
   }
   const uploadStatus = value.upload_status;
   if (uploadStatus) {
-    return isUploadStatus(uploadStatus)
+    return isUploadStatus(uploadStatus);
   }
   return true;
 };

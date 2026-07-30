@@ -11,7 +11,7 @@ export type Progress = SubProgress & {
 };
 
 export const progressFromFile = async (
-  file: string
+  file: string,
 ): Promise<Progress | undefined> => {
   const progress = await safeReadJsonFile<Progress>(file);
   if (progress === null) {

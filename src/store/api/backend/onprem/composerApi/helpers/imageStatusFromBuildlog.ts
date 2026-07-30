@@ -14,7 +14,7 @@ export type OSBuildResult = {
 };
 
 export const imageStatusFromBuildlog = async (
-  buildlog: string
+  buildlog: string,
 ): Promise<ImageStatus> => {
   const result = await safeReadJsonFile<OSBuildResult>(buildlog);
 
@@ -22,17 +22,17 @@ export const imageStatusFromBuildlog = async (
   // image-builder is no longer active.
   if (result === null) {
     return {
-      status: "failure",
+      status: 'failure',
       error: {
         id: 10,
-        reason: "image-builder process is not running and no result was found",
+        reason: 'image-builder process is not running and no result was found',
       },
     };
   }
 
   if (result.success) {
     return {
-      status: "success",
+      status: 'success',
     };
   }
 
@@ -45,11 +45,11 @@ export const imageStatusFromBuildlog = async (
 
   // osbuild failures are always id: 10
   return {
-    status: "failure",
+    status: 'failure',
     error: {
       id: 10,
-      reason: "osbuild failed",
+      reason: 'osbuild failed',
       details,
-    }
-  }
+    },
+  };
 };
