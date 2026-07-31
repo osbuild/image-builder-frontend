@@ -3,7 +3,6 @@ import { type OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 import {
   byDistroDescending,
   filterBootcImages,
-  getCloudConfigs,
   listPodmanImages,
   parseJsonUnsafe,
   toBootcDistro,
@@ -58,7 +57,6 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
     GetArchitecturesApiArg
   >({
     queryFn: onPremQueryHandler(async () => {
-      const cloudImageTypes = await getCloudConfigs();
       return [
         {
           arch: 'aarch64',
@@ -67,7 +65,7 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
             'image-installer',
             'network-installer',
             'pxe-tar-xz',
-            ...cloudImageTypes,
+            'aws',
           ],
           repositories: [],
         },
@@ -84,7 +82,7 @@ export const architectureEndpoints = (builder: OnPremBuilder) => ({
             'pxe-tar-xz',
             'vsphere',
             'vsphere-ova',
-            ...cloudImageTypes,
+            'aws',
           ],
           repositories: [],
         },
