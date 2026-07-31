@@ -25,7 +25,7 @@ import {
 } from '@/constants';
 import { useAppSelector } from '@/store/hooks';
 import { selectDistribution } from '@/store/slices/wizard';
-import 'chartjs-adapter-moment';
+import 'chartjs-adapter-date-fns';
 
 Chart.register(annotationPlugin);
 Chart.register(...registerables);
