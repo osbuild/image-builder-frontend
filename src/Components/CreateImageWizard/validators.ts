@@ -263,14 +263,6 @@ export const isHostnameValid = (hostname: string) => {
   );
 };
 
-export const isKernelNameValid = (kernelName: string) => {
-  return (
-    kernelName.length < 65 &&
-    /^([a-z0-9]|[a-z0-9][a-z0-9-_.+]*)[a-z0-9]$/.test(kernelName) &&
-    /[a-zA-Z]+/.test(kernelName) // contains at least one letter
-  );
-};
-
 export const isKernelArgumentValid = (arg: string) => {
   return /^[a-zA-Z0-9=\-_,."'/:#+;\\]*$/.test(arg);
 };
