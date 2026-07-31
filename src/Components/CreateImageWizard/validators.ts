@@ -90,11 +90,6 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
-export const isFileSystemConfigValid = (partitions: FilesystemPartition[]) => {
-  const duplicates = getDuplicateMountPoints(partitions);
-  return duplicates.length === 0;
-};
-
 export const isUserNameValid = (userName: string) => {
   const isLengthValid = userName.length <= 32;
   const isNotNumericOnly = !/^\d+$/.test(userName);
