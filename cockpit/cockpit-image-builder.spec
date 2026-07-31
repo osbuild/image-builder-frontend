@@ -20,7 +20,6 @@ BuildRequires:  systemd-rpm-macros
 
 Requires:       cockpit
 Requires:       cockpit-files
-Requires:       osbuild-composer >= 131
 Requires:       image-builder >= 76.0.0
 
 Recommends:     cockpit-machines
