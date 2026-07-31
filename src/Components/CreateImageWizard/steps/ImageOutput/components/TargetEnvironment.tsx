@@ -197,8 +197,8 @@ const TargetEnvironment = () => {
     >
       <Content component='small'>
         {isImageMode
-          ? 'Select a target environment for this image.'
-          : 'Select one or more target environments for this image.'}
+          ? 'Select a target environment.'
+          : 'Select one or more target environments.'}
       </Content>
       {forceShowErrors && environments.length === 0 && (
         <FormHelperText>

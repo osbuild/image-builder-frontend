@@ -15,8 +15,8 @@ const RepeatableBuildStep = () => {
           Repeatable build
         </Title>
         <Content component='small'>
-          Create images that can be reproduced consistently with the same
-          package versions and configurations.
+          Reproduce consistent results with the same package versions and
+          configurations.
         </Content>
       </Content>
       <Snapshot />

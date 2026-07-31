@@ -181,17 +181,15 @@ const OscapContent = () => {
             Security
           </Title>
           {restrictions.openscap.shouldHide ? (
-            <Content component='small'>
-              Configure security settings for your image.
-            </Content>
+            <Content component='small'>Configure security settings.</Content>
           ) : (
             <Content component='small'>
               Select which Red Hat Lightspeed compliance policy or OpenSCAP
-              profile you want your image to be compliant-ready for. Red Hat
-              Lightspeed compliance allows the use of tailored policies, whereas
-              OpenSCAP provides default versions. This step automatically helps
-              monitor the adherence of your registered RHEL systems to a
-              selected policy or profile.
+              profile to be compliant-ready for. Red Hat Lightspeed compliance
+              allows the use of tailored policies, whereas OpenSCAP provides
+              default versions. This step automatically helps monitor the
+              adherence of your registered RHEL systems to a selected policy or
+              profile.
             </Content>
           )}
         </Content>

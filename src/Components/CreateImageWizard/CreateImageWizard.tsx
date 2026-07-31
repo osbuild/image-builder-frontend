@@ -472,7 +472,7 @@ const CreateImageWizard = () => {
           <WizardHeader
             onClose={handleClose}
             title='Build an image'
-            description='Create custom system images with your preferred configurations, packages, and settings. Build images for different target environments and deployment scenarios.'
+            description='Create custom system images with your preferred configurations, packages, and settings for different target environments and deployment scenarios.'
           />
         }
       >

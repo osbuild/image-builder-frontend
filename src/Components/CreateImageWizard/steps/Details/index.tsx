@@ -42,7 +42,7 @@ const DetailsStep = () => {
           Details
         </Title>
         <Content component='small'>
-          Enter a name and description to identify your deployment-ready image.
+          Enter a name and description for your blueprint.
         </Content>
       </Content>
       <FormGroup isRequired label='Name' fieldId='blueprint-name'>
