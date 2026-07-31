@@ -65,10 +65,10 @@ const ImageOutputStep = () => {
           Image output
         </Title>
         <Content component='small'>
-          Select the release, architecture, and a target environment to build
-          your image.{' '}
+          Select the release, architecture, and a target environment for your
+          build.{' '}
           {!isImageMode &&
-            'Select any number of target environments to simultaneously build this image from. '}
+            'Select any number of target environments to simultaneously build from. '}
           Learn more about <DocumentationButton />.
         </Content>
       </Content>

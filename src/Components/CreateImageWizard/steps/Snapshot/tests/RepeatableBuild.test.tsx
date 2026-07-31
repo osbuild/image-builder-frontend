@@ -54,7 +54,7 @@ describe('Repeatable Build Component', () => {
         }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Create images that can be reproduced consistently/i),
+        screen.getByText(/Reproduce consistent results with the same package/i),
       ).toBeInTheDocument();
     });
 

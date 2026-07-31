@@ -35,9 +35,7 @@ describe('Details Component', () => {
         await screen.findByRole('heading', { name: /Details/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(
-          /Enter a name and description to identify your deployment-ready image/i,
-        ),
+        screen.getByText(/Enter a name and description for your blueprint/i),
       ).toBeInTheDocument();
     });
 

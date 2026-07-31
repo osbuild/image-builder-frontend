@@ -71,7 +71,7 @@ const Snapshot = () => {
         id='use latest snapshot radio'
         name='snapshot-type'
         label='Disable repeatable build'
-        description='Use the newest repository content available when building this image.'
+        description='Use the newest repository content available.'
         isChecked={selectedOption === 'latest'}
         onChange={() => handleOptionChange('latest')}
         className='pf-v6-u-pb-sm'
@@ -80,7 +80,7 @@ const Snapshot = () => {
         id='use snapshot date radio'
         name='snapshot-type'
         label='Enable repeatable build'
-        description='Build this image with the repository content of a selected date.'
+        description='Use the repository content of a selected date.'
         isChecked={selectedOption === 'snapshotDate'}
         onChange={() => handleOptionChange('snapshotDate')}
         className='pf-v6-u-pb-sm'
@@ -159,8 +159,8 @@ const Snapshot = () => {
         label='Use a content template'
         description={
           <>
-            Select a content template and build this image with repository
-            snapshots included in that template.{' '}
+            Select a content template and use the repository snapshots included
+            in that template.{' '}
             <Button
               component='a'
               target='_blank'
