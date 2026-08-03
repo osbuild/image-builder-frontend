@@ -9,24 +9,25 @@ import {
   FlexItem,
 } from '@patternfly/react-core';
 
+import useHasMultiTargetBlueprints from './useHasMultiTargetBlueprints';
+
 const TITLE =
   'Blueprints are transitioning to single image target environments.';
 const BODY =
   'Existing multi-target blueprints will be migrated to single-target configurations.';
 
-const SingleTargetAlert = () => {
-  const localStorageKey = 'imageBuilder.singleTargetMigration.dismissed';
-  const isAlertDismissed = window.localStorage.getItem(localStorageKey);
+const localStorageKey = 'imageBuilder.singleTargetMigration.dismissed';
 
-  const [displayAlert, setDisplayAlert] = useState(!isAlertDismissed);
+const SingleTargetAlert = () => {
+  const { hasMultiTarget } = useHasMultiTargetBlueprints();
   const [isTemporarilyHidden, setIsTemporarilyHidden] = useState(false);
 
   const dismissAlert = () => {
-    setDisplayAlert(false);
+    setIsTemporarilyHidden(true);
     window.localStorage.setItem(localStorageKey, 'true');
   };
 
-  if (!displayAlert || isTemporarilyHidden) {
+  if (!hasMultiTarget || isTemporarilyHidden) {
     return null;
   }
 
@@ -66,4 +67,10 @@ const SingleTargetAlert = () => {
   );
 };
 
-export default SingleTargetAlert;
+const SingleTargetAlertWrapper = () => {
+  const isAlertDismissed = window.localStorage.getItem(localStorageKey);
+  if (isAlertDismissed) return null;
+  return <SingleTargetAlert />;
+};
+
+export default SingleTargetAlertWrapper;
