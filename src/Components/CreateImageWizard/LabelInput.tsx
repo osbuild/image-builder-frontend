@@ -13,7 +13,7 @@ import {
   Truncate,
 } from '@patternfly/react-core/dist/esm';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { UnknownAction } from 'redux';
+import { UnknownAction } from '@reduxjs/toolkit';
 
 import { StepValidation } from './utilities/useValidation';
 
