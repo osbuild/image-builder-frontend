@@ -29,6 +29,7 @@ export const {
   useGetDistributionsQuery,
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
+  useLazyGetBlueprintQuery,
   useLazyGetBlueprintsQuery,
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,

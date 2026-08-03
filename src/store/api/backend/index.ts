@@ -31,6 +31,10 @@ export const useGetBlueprintsQuery = process.env.IS_ON_PREMISE
   ? composerQueries.useGetBlueprintsQuery
   : serviceQueries.useGetBlueprintsQuery;
 
+export const useLazyGetBlueprintQuery = process.env.IS_ON_PREMISE
+  ? composerQueries.useLazyGetBlueprintQuery
+  : serviceQueries.useLazyGetBlueprintQuery;
+
 export const useLazyGetBlueprintsQuery = process.env.IS_ON_PREMISE
   ? composerQueries.useLazyGetBlueprintsQuery
   : serviceQueries.useLazyGetBlueprintsQuery;
