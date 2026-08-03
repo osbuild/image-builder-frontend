@@ -39,8 +39,6 @@ export const useFlagWithEphemDefault = (
 
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
-    case 'image-builder.single-target-migration':
-      return true;
     case 'image-builder.images-table-revamp.enabled':
     default:
       return false;
