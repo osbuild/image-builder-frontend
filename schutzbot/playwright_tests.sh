@@ -37,46 +37,35 @@ function upload_artifacts {
 trap upload_artifacts EXIT
 
 # to make package search work, the cdn repositories need to be replaced
-# with the nightly repositories
+# with the nightly repositories. image-builder looks up repository
+# overrides in /etc/image-builder/repositories/$distro.json, where $distro
+# is the full distro name including the minor version, e.g. rhel-10.2.
 
-sudo mkdir -p /etc/osbuild-composer/repositories
+source /etc/os-release
 
-cat <<EOF | sudo tee -a /etc/osbuild-composer/repositories/rhel-9.json
+if [ "${ID}" = "rhel" ]; then
+    sudo mkdir -p /etc/image-builder/repositories
+
+    major="${VERSION_ID%%.*}"
+    nightly="http://download.devel.redhat.com/rhel-${major}/nightly/RHEL-${major}/latest-RHEL-${major}/compose"
+
+    cat <<EOF | sudo tee "/etc/image-builder/repositories/rhel-${VERSION_ID}.json"
 {
   "x86_64": [
     {
       "name": "baseos",
-      "baseurl": "http://download.devel.redhat.com/rhel-9/nightly/RHEL-9/latest-RHEL-9/compose/BaseOS/x86_64/os/",
+      "baseurl": "${nightly}/BaseOS/x86_64/os/",
       "check_gpg": false
     },
     {
       "name": "appstream",
-      "baseurl": "http://download.devel.redhat.com/rhel-9/nightly/RHEL-9/latest-RHEL-9/compose/AppStream/x86_64/os/",
+      "baseurl": "${nightly}/AppStream/x86_64/os/",
       "check_gpg": false
     }
   ]
 }
 EOF
-
-cat <<EOF | sudo tee -a /etc/osbuild-composer/repositories/rhel-10.json
-{
-  "x86_64": [
-    {
-      "name": "baseos",
-      "baseurl": "http://download.devel.redhat.com/rhel-10/nightly/RHEL-10/latest-RHEL-10/compose/BaseOS/x86_64/os/",
-      "check_gpg": false
-    },
-    {
-      "name": "appstream",
-      "baseurl": "http://download.devel.redhat.com/rhel-10/nightly/RHEL-10/latest-RHEL-10/compose/AppStream/x86_64/os/",
-      "check_gpg": false
-    }
-  ]
-}
-EOF
-
-sudo systemctl enable --now osbuild-composer.socket osbuild-local-worker.socket
-sudo systemctl start osbuild-worker@1
+fi
 
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
