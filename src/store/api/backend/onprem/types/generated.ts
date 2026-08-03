@@ -36,7 +36,12 @@ export type ObjectReference = {
 };
 export type ComposeStatusValue = 'success' | 'failure' | 'pending';
 export type ImageStatusValue =
-  'success' | 'failure' | 'pending' | 'building' | 'uploading' | 'registering';
+  | 'success'
+  | 'failure'
+  | 'pending'
+  | 'building'
+  | 'uploading'
+  | 'registering';
 export type SubProgress = {
   /** Amount of completed steps in the build. */
   done: number;

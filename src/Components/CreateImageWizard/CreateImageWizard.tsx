@@ -107,6 +107,7 @@ import {
   useTimezoneValidation,
   useUserGroupsValidation,
   useUsersValidation,
+  WIZARD_STEP_IDS,
 } from '../CreateImageWizard/utilities/useValidation';
 
 const CreateImageWizard = () => {
@@ -351,7 +352,9 @@ const CreateImageWizard = () => {
   useEffect(() => {
     if (!isOnPremise && showWizardModal && !hasTrackedInitialStepRef.current) {
       const initialStepId =
-        mode === 'edit' ? 'review-step' : 'base-settings-step';
+        mode === 'edit'
+          ? WIZARD_STEP_IDS.REVIEW
+          : WIZARD_STEP_IDS.BASE_SETTINGS;
       const accountId = userData?.identity.internal?.account_id;
 
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
@@ -409,15 +412,15 @@ const CreateImageWizard = () => {
   ) => {
     const status = (step.id !== activeStep.id && step.status) || 'default';
 
-    const isBaseSettingsStep = step.id === 'base-settings-step';
+    const isBaseSettingsStep = step.id === WIZARD_STEP_IDS.BASE_SETTINGS;
     const hasVisitedBaseSettings = _steps.find(
-      (s) => s.id === 'base-settings-step',
+      (s) => s.id === WIZARD_STEP_IDS.BASE_SETTINGS,
     )?.isVisited;
     const canNavigate =
       mode === 'edit' ||
       step.isVisited ||
       isBaseSettingsStep ||
-      (hasVisitedBaseSettings && !baseSettingsHasErrors);
+      hasVisitedBaseSettings;
 
     return (
       <WizardNavItem
@@ -478,7 +481,7 @@ const CreateImageWizard = () => {
       >
         <WizardStep
           name='Base settings'
-          id='base-settings-step'
+          id={WIZARD_STEP_IDS.BASE_SETTINGS}
           navItem={CustomStatusNavItem}
           status={baseSettingsHasErrors ? 'error' : 'default'}
           footer={
@@ -533,7 +536,7 @@ const CreateImageWizard = () => {
         </WizardStep>
         <WizardStep
           name='Repositories and packages'
-          id='content-step'
+          id={WIZARD_STEP_IDS.CONTENT}
           navItem={CustomStatusNavItem}
           status='default'
           isHidden={
@@ -564,7 +567,7 @@ const CreateImageWizard = () => {
         </WizardStep>
         <WizardStep
           name='Advanced settings'
-          id='advanced-settings-step'
+          id={WIZARD_STEP_IDS.ADVANCED_SETTINGS}
           navItem={CustomStatusNavItem}
           status={advancedSettingsHasErrors ? 'error' : 'default'}
           isHidden={
@@ -643,7 +646,7 @@ const CreateImageWizard = () => {
         </WizardStep>
         <WizardStep
           name='Review'
-          id='review-step'
+          id={WIZARD_STEP_IDS.REVIEW}
           navItem={CustomStatusNavItem}
           status='default'
           footer={<ReviewWizardFooter />}

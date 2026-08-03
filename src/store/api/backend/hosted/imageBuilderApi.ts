@@ -387,7 +387,8 @@ export type BootcDistributionItem = {
   iso_payload_references?: string[] | undefined;
 };
 export type DistributionsResponse = (
-  DistributionItem | BootcDistributionItem
+  | DistributionItem
+  | BootcDistributionItem
 )[];
 export type DistributionKind = 'bootc';
 export type PartitionType = 'gpt' | 'dos';
@@ -646,7 +647,11 @@ export type ImageTypes =
   | 'rhel-edge-installer'
   | 'vhd';
 export type UploadTypes =
-  'aws' | 'gcp' | 'azure' | 'aws.s3' | 'oci.objectstorage';
+  | 'aws'
+  | 'gcp'
+  | 'azure'
+  | 'aws.s3'
+  | 'oci.objectstorage';
 export type AwsUploadRequestOptions = {
   share_with_accounts?: string[] | undefined;
   share_with_sources?: string[] | undefined;

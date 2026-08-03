@@ -39,7 +39,8 @@ const HostedImageSourceSelect = () => {
   } = useGetDistributionsQuery({ kind: 'bootc', arch });
 
   const bootcDistributions = distributions as
-    BootcDistributionItem[] | undefined;
+    | BootcDistributionItem[]
+    | undefined;
 
   useEffect(() => {
     if (bootcDistributions) {

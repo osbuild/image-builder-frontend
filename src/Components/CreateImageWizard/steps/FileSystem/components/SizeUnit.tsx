@@ -23,7 +23,9 @@ const units = ['GiB', 'MiB'];
 
 type SizeUnitPropTypes = {
   partition:
-    FilesystemPartition | LogicalVolumeWithBase | VolumeGroupWithExtendedLV;
+    | FilesystemPartition
+    | LogicalVolumeWithBase
+    | VolumeGroupWithExtendedLV;
   customization: PartitioningCustomization;
   isOscapRequired?: boolean;
 };
