@@ -1,5 +1,4 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import promiseMiddleware from 'redux-promise-middleware';
 
 import {
   complianceApi,
@@ -51,7 +50,6 @@ export const serviceMiddleware = (getDefaultMiddleware: Function) =>
   getDefaultMiddleware()
     .prepend(listenerMiddleware.middleware)
     .concat(
-      promiseMiddleware,
       contentSourcesApi.middleware,
       imageBuilderApi.middleware,
       rhsmApi.middleware,
@@ -63,7 +61,6 @@ export const serviceMiddleware = (getDefaultMiddleware: Function) =>
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const onPremMiddleware = (getDefaultMiddleware: Function) =>
   getDefaultMiddleware().prepend(listenerMiddleware.middleware).concat(
-    promiseMiddleware,
     // TODO: add other endpoints so we can remove this.
     // It's still needed to get things to work.
     contentSourcesApi.middleware,
