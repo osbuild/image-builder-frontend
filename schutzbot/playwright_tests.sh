@@ -67,6 +67,23 @@ if [ "${ID}" = "rhel" ]; then
 EOF
 fi
 
+# warm the rpm metadata cache. the plugin shells out to image-builder as the
+# cockpit login user, and on a cold cache the first package search has to
+# download all of the repository metadata, which takes longer than playwright's
+# action timeout. this has to run after the repository override above so that
+# the cache is populated from the nightly repositories.
+admin_home="$(getent passwd admin | cut -d: -f6)"
+distro="${ID}-${VERSION_ID%%.*}"
+
+if ! sudo -u admin -H image-builder pkgsearch \
+        --rpmmd-cache "${admin_home}/.cache/image-builder" \
+        --distro "${distro}" \
+        --arch "$(uname -m)" \
+        bash >/dev/null; then
+    echo "WARNING: could not warm the rpm metadata cache for ${distro}," \
+         "package search tests are likely to time out"
+fi
+
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
      -e "CI=true" \
