@@ -88,6 +88,22 @@ export type ComposerComposesResponseItem = Omit<
   };
 };
 
+// Shape of the file consumed by `image-builder build --registrations`.
+// Unlike the hosted API, the CLI expects the organization as a string.
+export type Registrations = {
+  redhat: {
+    subscription: {
+      organization: string;
+      activation_key: string;
+      server_url: string;
+      base_url: string;
+      insights: boolean;
+      rhc: boolean;
+      proxy?: string;
+    };
+  };
+};
+
 type PodmanLabels = Record<string, string | undefined> & {
   version?: string | undefined;
   name?: string | undefined;
