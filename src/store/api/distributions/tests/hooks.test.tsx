@@ -4,6 +4,7 @@ import {
   computeImageTypeCustomizationSupport,
   computeRestrictions,
   CustomizationType,
+  DISTRO_DETAILS,
   isCustomizationSupported,
   RestrictionStrategy,
   SupportContext,
@@ -80,6 +81,44 @@ describe('useCustomizationRestrictions hook logic', () => {
       for (const customization of nonUserTypes) {
         expect(result[customization].isStandalone).toBe(false);
       }
+    });
+  });
+
+  describe('image mode registration (on-premise)', () => {
+    const onPremImageMode: SupportContext = {
+      isImageMode: true,
+      isOnPremise: true,
+      isRhel: true,
+    };
+
+    it('should show registration', () => {
+      const result = computeRestrictions({
+        imageTypes: {
+          'guest-image': DISTRO_DETAILS['guest-image'],
+          aws: DISTRO_DETAILS['aws'],
+        },
+        context: onPremImageMode,
+      });
+
+      expect(result.registration.shouldHide).toBe(false);
+    });
+
+    it('should show registration for non-RHEL custom images', () => {
+      const result = computeRestrictions({
+        imageTypes: { 'guest-image': DISTRO_DETAILS['guest-image'] },
+        context: { ...onPremImageMode, isRhel: false },
+      });
+
+      expect(result.registration.shouldHide).toBe(false);
+    });
+
+    it('should keep registration hidden in hosted image mode', () => {
+      const result = computeRestrictions({
+        imageTypes: { 'guest-image': DISTRO_DETAILS['guest-image'] },
+        context: { ...onPremImageMode, isOnPremise: false },
+      });
+
+      expect(result.registration.shouldHide).toBe(true);
     });
   });
 
