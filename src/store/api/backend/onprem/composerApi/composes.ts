@@ -9,6 +9,7 @@ import {
   byCreatedAtDesc,
   getBlueprintsPath,
   getHostDistro,
+  getRegistrationArgs,
   getUploadArgs,
   imageStatusFallback,
   imageStatusFromBuildlog,
@@ -79,6 +80,12 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         await cockpit
           .file(bpPath, { superuser: 'require' })
           .replace(JSON.stringify(bpOnPrem));
+
+        const registrationArgs = await getRegistrationArgs(
+          blueprint.customizations.subscription,
+          id,
+        );
+
         await cockpit.spawn(
           [
             'systemd-run',
@@ -107,6 +114,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             'json',
             '--output-dir',
             path.join(dataDir, id),
+            ...registrationArgs,
             ...ibArgs,
           ],
           {
