@@ -51,6 +51,13 @@ export const registerLater: WizardListenerEffect = (_action, listenerApi) => {
   const state = listenerApi.getState();
   const distribution = selectDistribution(state);
 
+  // In image mode the distribution doesn't determine whether registration
+  // is available — selecting a custom image dispatches changeDistribution
+  // with a possibly non-RHEL distro and must not reset the registration.
+  if (selectIsImageMode(state)) {
+    return;
+  }
+
   if (process.env.IS_ON_PREMISE && !isRhel(distribution)) {
     listenerApi.dispatch(changeRegistrationType('register-later'));
   }
