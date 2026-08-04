@@ -27,6 +27,10 @@ export type {
   SshKeyOnPrem,
   UserOnPrem,
 } from './blueprintMapper';
+export {
+  getRegistrationArgs,
+  mapSubscriptionToRegistrations,
+} from './registrations';
 export { imageStatusFromBuildlog } from './imageStatusFromBuildlog';
 export { progressFromFile } from './progressFromFile';
 export { uploadStatusFromFile } from './uploadStatusFromFile';
