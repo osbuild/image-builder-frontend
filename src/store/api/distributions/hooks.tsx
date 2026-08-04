@@ -111,14 +111,25 @@ export const isCustomizationSupported = (
 
   let supportedOptions = imageType?.supported_blueprint_options;
   if (ctx.isImageMode) {
-    // Image mode at most supports filesystem and users, and might not support any customization.
-    supportedOptions = supportedOptions?.filter((c) =>
-      ['filesystem', 'users'].includes(c),
-    ) ?? ['filesystem', 'users'];
+    // Image mode at most supports filesystem, users and registration, and
+    // might not support any customization. Registration is passed to
+    // image-builder via `--registrations`, which is only wired up
+    // on-premises so far — the hosted service (Lightspeed) can be enabled
+    // here later.
+    const imageModeOptions = ['filesystem', 'users'];
+    if (ctx.isOnPremise) {
+      imageModeOptions.push('registration');
+    }
+    supportedOptions =
+      supportedOptions?.filter((c) => imageModeOptions.includes(c)) ??
+      imageModeOptions;
   }
 
-  // only rhel distros support registration
+  // only rhel distros support registration; in image mode the OS comes from
+  // the selected container image (official RHEL or custom), not the
+  // distribution, so the check doesn't apply
   if (
+    !ctx.isImageMode &&
     !ctx.isRhel &&
     (customization === 'registration' || customization === 'aap')
   ) {
