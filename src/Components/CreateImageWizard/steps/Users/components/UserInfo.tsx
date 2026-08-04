@@ -4,6 +4,7 @@ import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { compactTableStyle } from '@/Components/CreateImageWizard/utilities/compactTableStyle';
 import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addUser, selectUsers } from '@/store/slices/wizard';
@@ -48,9 +49,9 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
-      <Table variant='compact' borders={false}>
+      <Table variant='compact' borders={false} style={compactTableStyle}>
         <Thead>
-          <Tr>
+          <Tr resetOffset>
             <Th width={20}>Username</Th>
             <Th width={20}>Password</Th>
             <Th width={20}>SSH key</Th>

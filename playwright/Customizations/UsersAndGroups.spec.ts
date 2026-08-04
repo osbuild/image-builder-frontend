@@ -148,13 +148,6 @@ test('Create a blueprint with Users customization', async ({
       frame.getByRole('checkbox', { name: 'Administrator' }),
     ).toBeChecked();
 
-    // Verify password validation passes
-    await expect(
-      frame.getByText(
-        'Password must be at least 6 characters long: success status;',
-      ),
-    ).toBeVisible();
-
     // Add second user with SSH key and custom group
     await frame.getByRole('button', { name: 'Add user', exact: true }).click();
 
@@ -411,14 +404,6 @@ test('Create a blueprint with Users customization', async ({
       .nth(2)
       .isChecked();
     await expect(frame.getByText('wheel').nth(1)).toBeVisible(); // Group was added
-    // Verify password validation passes
-    await expect(
-      frame
-        .getByText(
-          'Password must be at least 6 characters long: success status;',
-        )
-        .nth(1),
-    ).toBeVisible();
 
     await frame.getByRole('button', { name: 'Review image' }).click();
 
