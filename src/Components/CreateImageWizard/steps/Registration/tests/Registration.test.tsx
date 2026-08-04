@@ -306,4 +306,55 @@ describe('Registration Component', () => {
       ).not.toBeInTheDocument();
     });
   });
+
+  describe('Image mode', () => {
+    const renderImageModeStep = () =>
+      renderRegistrationStep(
+        {
+          details: {
+            ...initialState.details,
+            blueprint: { ...initialState.details.blueprint, mode: 'image' },
+          },
+          output: {
+            ...initialState.output,
+            imageTypes: ['guest-image'],
+          },
+        },
+        { preloadedState: { env: { isOnPremise: true } } },
+      );
+
+    test('displays the subscription options', async () => {
+      renderImageModeStep();
+
+      expect(
+        await screen.findByRole('radio', {
+          name: /automatically register to red hat/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('textbox', { name: /activation key/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('textbox', { name: /organization id/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('hides satellite and AAP registration', async () => {
+      renderImageModeStep();
+
+      expect(
+        await screen.findByRole('radio', { name: /register later/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('radio', {
+          name: /register for a satellite or capsule server/i,
+        }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('checkbox', {
+          name: /register to ansible automation platform/i,
+        }),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
