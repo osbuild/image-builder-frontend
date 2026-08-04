@@ -9,7 +9,13 @@ import {
   selectDistribution,
   selectImageTypes,
 } from './output';
-import { changeRegistrationType } from './registration';
+import {
+  changeAapEnabled,
+  changeRegistrationType,
+  registrationState,
+  selectAapEnabled,
+  selectRegistrationType,
+} from './registration';
 
 export const filterImageTypes: WizardListenerEffect = (
   _action,
@@ -60,5 +66,27 @@ export const registerLater: WizardListenerEffect = (_action, listenerApi) => {
 
   if (process.env.IS_ON_PREMISE && !isRhel(distribution)) {
     listenerApi.dispatch(changeRegistrationType('register-later'));
+  }
+};
+
+// Satellite and Ansible Automation Platform registration are not supported
+// for image mode yet, so a selection made in package mode must not carry
+// over into the blueprint when the user switches modes.
+export const clearUnsupportedRegistration: WizardListenerEffect = (
+  _action,
+  listenerApi,
+) => {
+  const state = listenerApi.getState();
+
+  if (!selectIsImageMode(state)) {
+    return;
+  }
+
+  if (selectRegistrationType(state) === 'register-satellite') {
+    listenerApi.dispatch(changeRegistrationType(registrationState.type));
+  }
+
+  if (selectAapEnabled(state)) {
+    listenerApi.dispatch(changeAapEnabled(false));
   }
 };
