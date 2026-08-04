@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
-import { v4 as uuidv4 } from 'uuid';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -25,7 +24,7 @@ const FileSystemConfiguration = () => {
   const dispatch = useAppDispatch();
 
   const handleAddPartition = () => {
-    const id = uuidv4();
+    const id = crypto.randomUUID();
     const mountpoint = getNextAvailableMountpoint(
       filesystemPartitions,
       diskPartitions,

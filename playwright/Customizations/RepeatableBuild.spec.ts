@@ -2,7 +2,6 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { ensureRepositoryExists } from '../helpers/apiHelpers';
@@ -29,7 +28,7 @@ test('Create a blueprint with Repeatable build customization', async ({
 }) => {
   test.skip(!isHosted(), 'Repeatable build is not available in the plugin');
 
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
   const repositoryName = 'image-builder-ci-repeatable-no-snapshot';
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/really-empty/';

@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   createCompliancePolicy,
@@ -44,7 +43,7 @@ test('Create a blueprint with Compliance policy selected', async ({
     );
   });
 
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
 
   // Delete the blueprint after the run fixture
   cleanup.add(() => deleteBlueprint(page, blueprintName));
@@ -115,8 +114,8 @@ test('Compliance alerts - lint warnings display', async ({ page, cleanup }) => {
   // TODO: Re-enable once compliance is working again
   test.skip(true, 'Compliance tests are temporarily disabled.');
   test.skip(!isHosted(), 'Compliance alerts are not available in the plugin');
-  const blueprintName = 'test-compliance-' + uuidv4();
-  const policyName = 'test-policy-' + uuidv4();
+  const blueprintName = 'test-compliance-' + crypto.randomUUID();
+  const policyName = 'test-policy-' + crypto.randomUUID();
   const policyType =
     'Centro Criptológico Nacional (CCN) - STIC for Red Hat Enterprise Linux 9 - Intermediate';
 

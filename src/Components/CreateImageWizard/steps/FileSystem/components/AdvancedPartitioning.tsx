@@ -13,7 +13,6 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
-import { v4 as uuidv4 } from 'uuid';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
@@ -46,7 +45,7 @@ const AdvancedPartitioning = () => {
   const stepValidation = useFilesystemValidation();
   const [isOpen, setIsOpen] = useState(false);
   const handleAddPartition = () => {
-    const id = uuidv4();
+    const id = crypto.randomUUID();
     const mountpoint = getNextAvailableMountpoint(
       filesystemPartitions,
       diskPartitions,

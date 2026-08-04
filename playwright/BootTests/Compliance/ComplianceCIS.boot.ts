@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { deleteCompliancePolicy, navigateToCompliance } from './helpers';
 
@@ -34,8 +33,8 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'compliance-cis-test-' + uuidv4();
-  const policyName = 'test-policy-' + uuidv4();
+  const blueprintName = 'compliance-cis-test-' + crypto.randomUUID();
+  const policyName = 'test-policy-' + crypto.randomUUID();
   const policyType =
     'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation';
   const filePath = constructFilePath(blueprintName, 'qcow2');

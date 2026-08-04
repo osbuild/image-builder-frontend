@@ -2,22 +2,21 @@ import path from 'path';
 
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
-import { v4 as uuidv4 } from 'uuid';
 
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import {
   byCreatedAtDesc,
   getBlueprintsPath,
+  getHostDistro,
   getUploadArgs,
   imageStatusFallback,
   imageStatusFromBuildlog,
+  mapHostedToOnPrem,
   progressFromFile,
   readComposes,
   safeReadJsonFile,
   uploadStatusFromFile,
-  getHostDistro,
-  mapHostedToOnPrem,
 } from './helpers';
 
 import {
@@ -68,7 +67,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         const bpOnPrem = mapHostedToOnPrem(parsed as CreateBlueprintRequest);
         const hostDistro = await getHostDistro();
         const user = await cockpit.user();
-        const id = uuidv4();
+        const id = crypto.randomUUID();
         const { runArgs, ibArgs } = await getUploadArgs(
           ir.upload_request.type,
           id,

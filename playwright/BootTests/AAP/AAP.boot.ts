@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
@@ -66,7 +65,7 @@ test('AAP registration boot integration test', async ({ page, cleanup }) => {
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'aap-test-' + uuidv4();
+  const blueprintName = 'aap-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));

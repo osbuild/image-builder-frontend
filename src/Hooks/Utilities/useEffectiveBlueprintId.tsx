@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
-import { validate as uuidValidate } from 'uuid';
 
 import { useAppSelector } from '@/store/hooks';
 import {
@@ -16,8 +15,12 @@ export const useEffectiveBlueprintId = (): string | undefined => {
 
   const [searchParams] = useSearchParams();
   const blueprintIdParam = searchParams.get('blueprint_id')?.trim();
+
+  const uuidRegex =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
+
   const validBlueprintIdParam =
-    blueprintIdParam && uuidValidate(blueprintIdParam)
+    blueprintIdParam && uuidRegex.test(blueprintIdParam)
       ? blueprintIdParam
       : undefined;
 

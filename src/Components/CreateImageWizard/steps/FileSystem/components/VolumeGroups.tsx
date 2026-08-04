@@ -9,7 +9,6 @@ import {
   FormGroup,
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
-import { v4 as uuidv4 } from 'uuid';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
@@ -54,8 +53,8 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
     setIsExpanded(isExpanded);
 
     if (isExpanded && !vg) {
-      const vgId = uuidv4();
-      const lvId = uuidv4();
+      const vgId = crypto.randomUUID();
+      const lvId = crypto.randomUUID();
       const mountpoint = getNextAvailableMountpoint(
         filesystemPartitions,
         diskPartitions,
@@ -86,7 +85,7 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
   };
 
   const handleAddLogicalVolume = (vgId: string) => {
-    const id = uuidv4();
+    const id = crypto.randomUUID();
     const mountpoint = getNextAvailableMountpoint(
       filesystemPartitions,
       diskPartitions,

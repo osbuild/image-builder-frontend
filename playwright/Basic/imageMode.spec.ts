@@ -2,7 +2,6 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
@@ -22,7 +21,7 @@ test('Image mode blueprint create, edit, export, import', async ({
 }) => {
   test.skip(!isHosted(), 'Image mode on hosted only');
 
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);

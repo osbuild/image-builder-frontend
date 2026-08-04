@@ -1,6 +1,5 @@
 /* eslint-disable playwright/no-wait-for-timeout */
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { deleteRepository, navigateToRepositories } from './helpers';
 
@@ -34,9 +33,10 @@ test('Content integration test - Non repeatable build - URL source', async ({
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'content-non-repeatable-test-' + uuidv4();
+  const blueprintName = 'content-non-repeatable-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
-  const repositoryName = 'content-non-repeatable-test-' + uuidv4().slice(0, 8);
+  const repositoryName =
+    'content-non-repeatable-test-' + crypto.randomUUID().slice(0, 8);
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata/';
   const packageName = 'cockateel';
@@ -152,9 +152,10 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'content-non-repeatable-test-' + uuidv4();
+  const blueprintName = 'content-non-repeatable-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
-  const repositoryName = 'content-non-repeatable-test-' + uuidv4().slice(0, 8);
+  const repositoryName =
+    'content-non-repeatable-test-' + crypto.randomUUID().slice(0, 8);
   const packageName = 'cockateel';
   const dependencyPackageName = 'wolf';
 
@@ -311,7 +312,7 @@ test('Content integration test - Non repeatable build - Community repository', a
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'content-non-repeatable-test-' + uuidv4();
+  const blueprintName = 'content-non-repeatable-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName = 'EPEL 10 Everything x86_64';
   const packageName = 'aha';

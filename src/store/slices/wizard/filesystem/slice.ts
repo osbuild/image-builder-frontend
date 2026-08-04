@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
 
 import { LogicalVolume } from '@/store/api/backend';
 
@@ -40,7 +39,7 @@ export const filesystemSlice = createSlice({
           case 'basic':
             state.fileSystem.partitions = [
               {
-                id: uuidv4(),
+                id: crypto.randomUUID(),
                 mountpoint: '/',
                 min_size: '10',
                 unit: 'GiB',
@@ -50,7 +49,7 @@ export const filesystemSlice = createSlice({
           case 'advanced':
             state.disk.partitions = [
               {
-                id: uuidv4(),
+                id: crypto.randomUUID(),
                 mountpoint: '/',
                 fs_type: 'xfs',
                 min_size: '10',
@@ -68,7 +67,7 @@ export const filesystemSlice = createSlice({
       if (currentMode === 'basic') {
         state.fileSystem.partitions = [
           {
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             mountpoint: '/',
             min_size: '10',
             unit: 'GiB',

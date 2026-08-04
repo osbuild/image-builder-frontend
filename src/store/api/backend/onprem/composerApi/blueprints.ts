@@ -2,7 +2,6 @@ import path from 'path';
 
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
-import { v4 as uuidv4 } from 'uuid';
 
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
@@ -138,7 +137,7 @@ export const blueprintEndpoints = (builder: OnPremBuilder) => ({
   >({
     queryFn: onPremQueryHandler(
       async ({ queryArgs: { createBlueprintRequest: blueprintReq } }) => {
-        const id = uuidv4();
+        const id = crypto.randomUUID();
         const blueprintsDir = await getBlueprintsPath();
         await cockpit.spawn(['mkdir', '-p', path.join(blueprintsDir, id)], {});
         await cockpit

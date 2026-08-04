@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import {
@@ -34,8 +33,8 @@ test('Create blueprint with repository and test edit mode removal', async ({
     'Repositories require content-sources API (hosted only)',
   );
 
-  const blueprintName = 'repo-test-' + uuidv4();
-  const repositoryName = 'repo-test-' + uuidv4().slice(0, 8);
+  const blueprintName = 'repo-test-' + crypto.randomUUID();
+  const repositoryName = 'repo-test-' + crypto.randomUUID().slice(0, 8);
 
   await ensureAuthenticated(page);
 

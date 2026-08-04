@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { getBlueprintIdByName } from '../helpers/apiHelpers';
@@ -24,7 +23,7 @@ test('Navigate with valid blueprint_id URL parameter', async ({
 }) => {
   test.skip(!isHosted(), 'Hosted only');
 
-  const blueprintName = uuidv4();
+  const blueprintName = crypto.randomUUID();
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);

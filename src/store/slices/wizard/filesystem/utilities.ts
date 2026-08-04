@@ -1,6 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { UNIT_GIB, UNIT_MIB } from '@/constants';
+
 import {
   BtrfsVolume,
   Filesystem,
@@ -148,7 +147,7 @@ export const getNextAvailableMountpoint = (
 export const convertFilesystemToPartition = (
   filesystem: Filesystem,
 ): FilesystemPartition => {
-  const id = uuidv4();
+  const id = crypto.randomUUID();
   const [size, unit] = parseSizeUnit(filesystem.min_size);
   const partition = {
     mountpoint: filesystem.mountpoint,
@@ -162,7 +161,7 @@ export const convertFilesystemToPartition = (
 export const convertDiskToFscDisk = (
   disk: FilesystemTyped | VolumeGroup | BtrfsVolume,
 ): DiskPartition => {
-  const id = uuidv4();
+  const id = crypto.randomUUID();
   let size;
   let unit;
 
@@ -204,7 +203,7 @@ export const convertDiskToFscDisk = (
 };
 
 export const convertLogicalVolume = (volume: LogicalVolume) => {
-  const id = uuidv4();
+  const id = crypto.randomUUID();
   let size;
   let unit;
 
