@@ -20,7 +20,6 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
-import { v4 as uuidv4 } from 'uuid';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
@@ -56,7 +55,7 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
   const forceShowErrors = useAppSelector(selectForceShowErrors);
   const stepValidation = useRegistrationValidation();
 
-  const defaultActivationKeyName = uuidv4();
+  const defaultActivationKeyName = crypto.randomUUID();
 
   const { isProd } = useGetEnvironment();
   const [isOpen, setIsOpen] = useState(false);

@@ -2,7 +2,6 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { IMPORT_WITH_DUPLICATE_VALUES } from '../fixtures/data/importFileContents';
@@ -21,7 +20,7 @@ test('Import a blueprint with invalid customization', async ({
   page,
   cleanup,
 }) => {
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
 
   // Delete the blueprint after the run fixture
   cleanup.add(() => deleteBlueprint(page, blueprintName));

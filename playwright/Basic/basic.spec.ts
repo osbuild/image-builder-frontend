@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
@@ -18,7 +17,7 @@ import {
 } from '../helpers/wizardHelpers';
 
 test('Basic create/build/delete test', async ({ page, cleanup }) => {
-  const blueprintName = uuidv4();
+  const blueprintName = crypto.randomUUID();
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
@@ -85,7 +84,7 @@ test('Basic create/build/delete test', async ({ page, cleanup }) => {
 });
 
 test('Basic delete BP tests', async ({ page }) => {
-  const blueprintName = uuidv4();
+  const blueprintName = crypto.randomUUID();
 
   await ensureAuthenticated(page);
 

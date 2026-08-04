@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { deleteRepository, navigateToRepositories } from './helpers';
 
@@ -33,9 +32,10 @@ test('Content integration test - Repeatable build - URL source', async ({
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'content-repeatable-test-' + uuidv4();
+  const blueprintName = 'content-repeatable-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
-  const repositoryName = 'content-repeatable-test-' + uuidv4().slice(0, 8);
+  const repositoryName =
+    'content-repeatable-test-' + crypto.randomUUID().slice(0, 8);
   const initialRepositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata-multi/1/';
   const updatedRepositoryUrl =

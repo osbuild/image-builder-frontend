@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { FIRST_BOOT_SERVICE } from '@/constants';
 import { Filesystem, Services } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -68,7 +66,7 @@ export const useSelectorHandlers = () => {
         mountpoint: filesystem.mountpoint,
         min_size: size.toString(),
         unit: unit as Units,
-        id: uuidv4(),
+        id: crypto.randomUUID(),
       };
       return partition;
     });

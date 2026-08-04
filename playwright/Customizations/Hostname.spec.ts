@@ -2,7 +2,6 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { exportedHostnameBP } from '../fixtures/data/exportBlueprintContents';
@@ -28,7 +27,7 @@ test('Create a blueprint with Hostname customization', async ({
   page,
   cleanup,
 }) => {
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
   const hostname = 'testsystem';
 
   // Delete the blueprint after the run fixture

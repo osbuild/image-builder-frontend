@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
@@ -33,7 +32,7 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'compliance-oscap-test-' + uuidv4();
+  const blueprintName = 'compliance-oscap-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));

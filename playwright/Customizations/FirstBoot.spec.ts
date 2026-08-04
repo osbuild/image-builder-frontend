@@ -2,7 +2,6 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
@@ -26,7 +25,7 @@ test('Create a blueprint with First boot customization', async ({
   page,
   cleanup,
 }) => {
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
   const scriptContent = '#!/bin/bash\necho "Hello, World!"';
   const editedScriptContent = '#!/bin/bash\necho "Edited script"';
 

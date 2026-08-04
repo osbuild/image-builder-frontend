@@ -3,7 +3,6 @@ import * as path from 'path';
 
 import { expect } from '@playwright/test';
 import { exportedPackagesBP } from 'playwright/fixtures/data/exportBlueprintContents';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
@@ -28,7 +27,7 @@ test('Create a blueprint with Packages customization', async ({
   page,
   cleanup,
 }) => {
-  const blueprintName = 'test-' + uuidv4();
+  const blueprintName = 'test-' + crypto.randomUUID();
 
   // Delete the blueprint after the run fixture
   cleanup.add(() => deleteBlueprint(page, blueprintName));

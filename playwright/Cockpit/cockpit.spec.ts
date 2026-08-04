@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
@@ -85,7 +84,7 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 
-  const blueprintName = uuidv4();
+  const blueprintName = crypto.randomUUID();
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await test.step('Cockpit cloud upload', async () => {

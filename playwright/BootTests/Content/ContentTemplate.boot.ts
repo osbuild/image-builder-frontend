@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   deleteRepository,
@@ -41,11 +40,13 @@ test('Content integration test - Content Template', async ({
     'Skipping test. Boot tests run only on the hosted service.',
   );
 
-  const blueprintName = 'content-template-test-' + uuidv4();
+  const blueprintName = 'content-template-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
-  const repositoryName = 'content-template-test-' + uuidv4().slice(0, 8);
-  const templateName = 'content-template-test-' + uuidv4().slice(0, 8);
-  const hostname = 'content-template-test-' + uuidv4().slice(0, 8);
+  const repositoryName =
+    'content-template-test-' + crypto.randomUUID().slice(0, 8);
+  const templateName =
+    'content-template-test-' + crypto.randomUUID().slice(0, 8);
+  const hostname = 'content-template-test-' + crypto.randomUUID().slice(0, 8);
   const repositoryUrl =
     'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata-multi/2/';
   const packageName = 'cockateel';

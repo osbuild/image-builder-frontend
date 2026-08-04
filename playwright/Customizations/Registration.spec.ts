@@ -2,7 +2,6 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import { isRhel } from '../../src/store/slices/wizard';
 import { test } from '../fixtures/customizations';
@@ -158,7 +157,7 @@ registrationModes.forEach(
           );
         }
 
-        const blueprintName = `test-${name}-${uuidv4()}`;
+        const blueprintName = `test-${name}-${crypto.randomUUID()}`;
 
         // Delete the blueprint after the run fixture
         cleanup.add(() => deleteBlueprint(page, blueprintName));

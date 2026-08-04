@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   registrationCurlCommand,
@@ -35,7 +34,7 @@ test('Satellite registration boot integration test', async ({
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
   );
-  const blueprintName = 'satellite-test-' + uuidv4();
+  const blueprintName = 'satellite-test-' + crypto.randomUUID();
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));

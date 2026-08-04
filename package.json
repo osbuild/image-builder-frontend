@@ -29,8 +29,7 @@
     "react-dom": "18.3.1",
     "react-redux": "9.3.0",
     "react-router-dom": "6.30.4",
-    "smol-toml": "1.7.1",
-    "uuid": "14.0.1"
+    "smol-toml": "1.7.1"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import { selectTarget } from 'playwright/helpers/targetChooser';
-import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../../fixtures/customizations';
 import { isHosted } from '../../helpers/helpers';
@@ -21,7 +20,7 @@ const RESOURCE_GROUP = 'testResourceGroup';
 test('Create a blueprint with Azure target', async ({ page, cleanup }) => {
   test.skip(!isHosted(), 'Azure target is only available on hosted service');
 
-  const blueprintName = 'test-azure-' + uuidv4();
+  const blueprintName = 'test-azure-' + crypto.randomUUID();
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
@@ -140,7 +139,7 @@ test('Deselecting Azure removes its config from the blueprint', async ({
 }) => {
   test.skip(!isHosted(), 'Azure target is only available on hosted service');
 
-  const blueprintName = 'test-azure-deselect-' + uuidv4();
+  const blueprintName = 'test-azure-deselect-' + crypto.randomUUID();
   cleanup.add(() => deleteBlueprint(page, blueprintName));
 
   await ensureAuthenticated(page);
