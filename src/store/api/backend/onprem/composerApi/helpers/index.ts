@@ -28,6 +28,7 @@ export type {
   UserOnPrem,
 } from './blueprintMapper';
 export { imageStatusFromBuildlog } from './imageStatusFromBuildlog';
+export { readJournalLogs } from './readJournalLogs';
 export { progressFromFile } from './progressFromFile';
 export { uploadStatusFromFile } from './uploadStatusFromFile';
 export { imageStatusFallback } from './imageStatusFallback';
