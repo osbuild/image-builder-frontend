@@ -9,13 +9,24 @@ import { inferDistro } from './inferDistro';
 // The backend (osbuild-composer) uses different names for some image
 // types than the frontend. Normalize at the boundary so downstream
 // code only deals with frontend types.
-const backendToFrontendType: Record<string, string> = {
+export const backendToFrontendType: Record<string, string> = {
   qcow2: 'guest-image',
   ami: 'aws',
 };
 
 const normalizeImageType = (type: string): string =>
   backendToFrontendType[type] ?? type;
+
+// The CLI's native type names (e.g. qcow2) are the backend ones, so the
+// normalization has to be undone when invoking it. A unit test ensures
+// this stays the exact inverse of backendToFrontendType above.
+export const frontendToBackendType: Record<string, string> = {
+  'guest-image': 'qcow2',
+  aws: 'ami',
+};
+
+export const toBackendImageType = (type: string): string =>
+  frontendToBackendType[type] ?? type;
 
 // Extract numeric version from a distro string like "rhel-10" or
 // "rhel-10.3". Returns NaN for non-RHEL distros so they sort after RHEL.
