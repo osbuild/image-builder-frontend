@@ -269,6 +269,9 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
               reason:
                 'image-builder process is not running and no result was found',
             };
+            // Return before the upload result check overwrites this error
+            // with the less specific "no upload result found" one.
+            return status;
           }
         }
 
