@@ -23,7 +23,6 @@ export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
         }
 
         const result = await listPackages({
-          distribution,
           architecture,
           packages,
         });
