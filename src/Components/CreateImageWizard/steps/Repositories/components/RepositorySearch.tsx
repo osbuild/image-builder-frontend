@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 
 import {
   Button,
-  MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
@@ -118,10 +117,6 @@ const RepositorySearch = ({
     setIsOpen(true);
   };
 
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
   const onClearButtonClick = () => {
     setInputValue('');
     setFilterValue('');
@@ -139,13 +134,13 @@ const RepositorySearch = ({
     return null;
   };
 
+  // MenuToggle with variant='typeahead' always renders a caret button that
+  // cannot be hidden via props. Using a div with the same PF classes gives
+  // identical styling without the caret.
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      variant='typeahead'
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-      isFullWidth
+    <div
+      ref={toggleRef as React.Ref<HTMLDivElement>}
+      className={`pf-v6-c-menu-toggle pf-m-typeahead pf-m-full-width${isOpen ? ' pf-m-expanded' : ''}`}
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
@@ -167,7 +162,7 @@ const RepositorySearch = ({
           />
         </TextInputGroupUtilities>
       </TextInputGroup>
-    </MenuToggle>
+    </div>
   );
 
   return (

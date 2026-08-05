@@ -46,9 +46,6 @@ describe('Repositories Component', () => {
         screen.getByRole('button', { name: /clear search/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: /menu toggle/i }),
-      ).toBeInTheDocument();
-      expect(
         screen.getByRole('button', { name: /refresh repositories/i }),
       ).toBeInTheDocument();
     });
@@ -90,11 +87,11 @@ describe('Repositories Component', () => {
       renderRepositoriesStep();
       const user = createUser();
 
-      // Open dropdown by clicking toggle
-      const toggle = await screen.findByRole('button', {
-        name: /menu toggle/i,
+      // Open dropdown by clicking the search input
+      const searchInput = await screen.findByRole('textbox', {
+        name: /filter repositories/i,
       });
-      await clickWithWait(user, toggle);
+      await clickWithWait(user, searchInput);
 
       // Should show repositories without typing
       expect(
@@ -113,10 +110,10 @@ describe('Repositories Component', () => {
       const user = createUser();
 
       // Open dropdown - should show "No repositories available"
-      const toggle = await screen.findByRole('button', {
-        name: /menu toggle/i,
+      const searchInput = await screen.findByRole('textbox', {
+        name: /filter repositories/i,
       });
-      await clickWithWait(user, toggle);
+      await clickWithWait(user, searchInput);
 
       expect(
         await screen.findByRole('option', {
@@ -125,9 +122,6 @@ describe('Repositories Component', () => {
       ).toBeInTheDocument();
 
       // Type to search - should show "No repositories found for..."
-      const searchInput = await screen.findByRole('textbox', {
-        name: /filter repositories/i,
-      });
       await typeWithWait(user, searchInput, 'nonexistent');
 
       expect(
@@ -156,17 +150,14 @@ describe('Repositories Component', () => {
       const user = createUser();
 
       // Open dropdown without search
-      const toggle = await screen.findByRole('button', {
-        name: /menu toggle/i,
+      const searchInput = await screen.findByRole('textbox', {
+        name: /filter repositories/i,
       });
-      await clickWithWait(user, toggle);
+      await clickWithWait(user, searchInput);
 
       await screen.findByRole('option', { name: /no repositories available/i });
 
       // Type to search - should use limit=50
-      const searchInput = await screen.findByRole('textbox', {
-        name: /filter repositories/i,
-      });
       await typeWithWait(user, searchInput, 'test');
 
       await screen.findByRole('option', {
@@ -718,9 +709,6 @@ describe('Request Payload Generation', () => {
       });
       await typeWithWait(user, searchInput, 'test-repo{Enter}');
 
-      expect(
-        screen.getByRole('button', { name: /menu toggle/i }),
-      ).toBeInTheDocument();
       expect(searchInput).toBeInTheDocument();
       expect(searchInput).toHaveValue('test-repo');
     });
