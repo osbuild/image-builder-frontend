@@ -8,7 +8,6 @@ import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 import {
   byCreatedAtDesc,
   getBlueprintsPath,
-  getHostDistro,
   getRegistrationArgs,
   getUploadArgs,
   imageStatusFallback,
@@ -66,7 +65,6 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
         }
 
         const bpOnPrem = mapHostedToOnPrem(parsed as CreateBlueprintRequest);
-        const hostDistro = await getHostDistro();
         const user = await cockpit.user();
         const id = crypto.randomUUID();
         const { runArgs, ibArgs } = await getUploadArgs(
@@ -86,6 +84,10 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
           id,
         );
 
+        // The distro is intentionally not passed: image-builder falls back to
+        // the host distro, including the minor version for distros that have
+        // one (e.g. rhel-10.3). Generic aliases like `rhel-10` are not
+        // supported by the CLI.
         await cockpit.spawn(
           [
             'systemd-run',
@@ -101,8 +103,6 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             'image-builder',
             'build',
             ir.image_type,
-            '--distro',
-            bpOnPrem.distro || hostDistro,
             '--blueprint',
             bpPath,
             '--with-buildlog',

@@ -86,12 +86,13 @@ const cacheDir = async () => {
   return path.join(cacheDir, 'image-builder');
 };
 
+// The distro is intentionally not passed: image-builder falls back to the
+// host distro, including the minor version for distros that have one (e.g.
+// rhel-10.3). Generic aliases like `rhel-10` are not supported by the CLI.
 export const listPackages = async ({
-  distribution,
   architecture,
   packages,
 }: {
-  distribution: string;
   architecture: string;
   packages: string[];
 }) => {
@@ -102,8 +103,6 @@ export const listPackages = async ({
       'pkgsearch',
       '--rpmmd-cache',
       rpmmdCache,
-      '--distro',
-      distribution,
       '--arch',
       architecture,
       ...packages,
