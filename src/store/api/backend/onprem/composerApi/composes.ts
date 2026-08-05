@@ -8,6 +8,7 @@ import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 import {
   byCreatedAtDesc,
   getBlueprintsPath,
+  getBootcArgs,
   getRegistrationArgs,
   getUploadArgs,
   imageStatusFallback,
@@ -16,6 +17,7 @@ import {
   progressFromFile,
   readComposes,
   safeReadJsonFile,
+  toBackendImageType,
   uploadStatusFromFile,
 } from './helpers';
 
@@ -84,6 +86,8 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
           id,
         );
 
+        const bootcArgs = getBootcArgs(blueprint.bootc);
+
         // The distro is intentionally not passed: image-builder falls back to
         // the host distro, including the minor version for distros that have
         // one (e.g. rhel-10.3). Generic aliases like `rhel-10` are not
@@ -102,7 +106,9 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             '--',
             'image-builder',
             'build',
-            ir.image_type,
+            // The CLI's native names (e.g. qcow2) differ from the frontend
+            // aliases, so translate them back before invoking it.
+            toBackendImageType(ir.image_type),
             '--blueprint',
             bpPath,
             '--with-buildlog',
@@ -115,6 +121,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             '--output-dir',
             path.join(dataDir, id),
             ...registrationArgs,
+            ...bootcArgs,
             ...ibArgs,
           ],
           {

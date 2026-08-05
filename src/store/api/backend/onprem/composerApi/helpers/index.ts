@@ -11,6 +11,7 @@ export {
   filterBootcImages,
   listPodmanImages,
   normalizeArch,
+  toBackendImageType,
   toBootcDistro,
 } from './podman';
 export { readComposes } from './readComposes';
@@ -36,3 +37,4 @@ export { progressFromFile } from './progressFromFile';
 export { uploadStatusFromFile } from './uploadStatusFromFile';
 export { imageStatusFallback } from './imageStatusFallback';
 export { getUploadArgs } from './getUploadArgs';
+export { getBootcArgs } from './getBootcArgs';
