@@ -15,6 +15,7 @@ import {
   mapHostedToOnPrem,
   progressFromFile,
   readComposes,
+  readJournalLogs,
   safeReadJsonFile,
   uploadStatusFromFile,
 } from './helpers';
@@ -255,11 +256,13 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
               return status;
             }
           } else {
+            const journalLogs = await readJournalLogs(queryArgs.composeId);
             status.image_status.status = 'failure';
             status.image_status.error = {
               id: 10,
               reason:
                 'image-builder process is not running and no result was found',
+              details: journalLogs,
             };
           }
         }
@@ -298,11 +301,13 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             };
           }
         } else if (!unitActive) {
+          const journalLogs = await readJournalLogs(queryArgs.composeId);
           status.image_status.status = 'failure';
           status.image_status.error = {
             id: 28,
             reason:
               'image-builder process is not running and no upload result found',
+            details: journalLogs,
           };
         }
 
