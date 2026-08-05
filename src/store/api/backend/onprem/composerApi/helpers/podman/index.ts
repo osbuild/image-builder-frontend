@@ -1,6 +1,7 @@
 export {
   byDistroDescending,
   filterBootcImages,
+  toBackendImageType,
   toBootcDistro,
 } from './filters';
 export { normalizeArch } from './normalizeArch';
