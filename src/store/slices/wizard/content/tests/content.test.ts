@@ -63,9 +63,9 @@ describe('content reducers', () => {
 
         expect(state.content.packages).toHaveLength(3);
         expect(state.content.packages.map((p) => p.name)).toEqual([
-          'vim',
-          'git',
           'curl',
+          'git',
+          'vim',
         ]);
       });
 
@@ -253,6 +253,25 @@ describe('content reducers', () => {
 
         expect(result.content.groups).toHaveLength(1);
         expect(result.content.groups[0].name).toBe('Development Tools');
+      });
+
+      it('should insert new groups at the beginning', () => {
+        let state = wizardReducer(
+          initialState,
+          addPackageGroup(createGroup('Development Tools')),
+        );
+        state = wizardReducer(state, addPackageGroup(createGroup('Server')));
+        state = wizardReducer(
+          state,
+          addPackageGroup(createGroup('Networking')),
+        );
+
+        expect(state.content.groups).toHaveLength(3);
+        expect(state.content.groups.map((g) => g.name)).toEqual([
+          'Networking',
+          'Server',
+          'Development Tools',
+        ]);
       });
 
       it('should update existing group if same name', () => {
