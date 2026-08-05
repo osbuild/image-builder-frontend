@@ -72,15 +72,17 @@ fi
 # download all of the repository metadata, which takes longer than playwright's
 # action timeout. this has to run after the repository override above so that
 # the cache is populated from the nightly repositories.
+#
+# --distro is intentionally not passed, matching the plugin: image-builder
+# falls back to the host distro including the minor version. the cache is
+# keyed by distro, so warming it for anything else would be useless.
 admin_home="$(getent passwd admin | cut -d: -f6)"
-distro="${ID}-${VERSION_ID%%.*}"
 
 if ! sudo -u admin -H image-builder pkgsearch \
         --rpmmd-cache "${admin_home}/.cache/image-builder" \
-        --distro "${distro}" \
         --arch "$(uname -m)" \
         bash >/dev/null; then
-    echo "WARNING: could not warm the rpm metadata cache for ${distro}," \
+    echo "WARNING: could not warm the rpm metadata cache," \
          "package search tests are likely to time out"
 fi
 
