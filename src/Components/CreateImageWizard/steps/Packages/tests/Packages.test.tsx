@@ -550,30 +550,27 @@ describe('Packages Component', () => {
       // Verify packages appear in UI
       const rows = await screen.findAllByTestId('package-row');
       expect(rows).toHaveLength(2);
-      expect(rows[0]).toHaveTextContent('another-pkg');
-      expect(rows[1]).toHaveTextContent('preloaded-pkg');
+      expect(rows[0]).toHaveTextContent('preloaded-pkg');
+      expect(rows[1]).toHaveTextContent('another-pkg');
     });
   });
 
   describe('Selected Packages View', () => {
-    test('selected packages are sorted alphabetically', async () => {
+    test('selected packages appear newest first', async () => {
       fetchMock.mockResponse(createFetchHandler({ rpms: mockSearchResults }));
       renderPackagesStep();
       const user = createUser();
 
-      // Search and select all packages (in reverse order to verify sorting)
       await typeIntoSearchBox(user, 'test');
 
       await screen.findByRole('option', { name: /test-lib/ });
 
-      // Select packages in reverse alphabetical order
       await selectPkgOption(user, 'testPkg');
       await clickOnSearchBox(user);
       await selectPkgOption(user, 'test-lib');
       await clickOnSearchBox(user);
       await selectPkgOption(user, 'test');
 
-      // Verify all packages are shown and sorted
       const rows = await screen.findAllByTestId('package-row');
       expect(rows).toHaveLength(3);
       expect(rows[0]).toHaveTextContent('test');
@@ -764,7 +761,7 @@ describe('Packages Component', () => {
       );
 
       expect(dataRows).toHaveLength(4);
-      // Required packages first (alphabetical)
+      // Required packages first
       expect(dataRows[0]).toHaveTextContent('aide');
       expect(dataRows[0]).toHaveAttribute(
         'data-testid',
@@ -775,10 +772,10 @@ describe('Packages Component', () => {
         'data-testid',
         'required-package-row',
       );
-      // User packages after (alphabetical)
-      expect(dataRows[2]).toHaveTextContent('curl');
+      // User packages after
+      expect(dataRows[2]).toHaveTextContent('zsh');
       expect(dataRows[2]).toHaveAttribute('data-testid', 'package-row');
-      expect(dataRows[3]).toHaveTextContent('zsh');
+      expect(dataRows[3]).toHaveTextContent('curl');
       expect(dataRows[3]).toHaveAttribute('data-testid', 'package-row');
     });
 

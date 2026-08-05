@@ -87,7 +87,7 @@ export const contentSlice = createSlice({
       if (existingPackageIndex !== -1) {
         state.packages[existingPackageIndex] = action.payload;
       } else {
-        state.packages.push(action.payload);
+        state.packages.unshift(action.payload);
       }
     },
     removePackage: (
@@ -136,7 +136,7 @@ export const contentSlice = createSlice({
       if (existingGrpIndex !== -1) {
         state.groups[existingGrpIndex] = action.payload;
       } else {
-        state.groups.push(action.payload);
+        state.groups.unshift(action.payload);
       }
     },
     removePackageGroup: (

@@ -223,7 +223,7 @@ timezone = "${tz}"
 languages = [ "C.UTF-8" ]
 
 [[packages]]
-name = "vim-minimal"
+name = "tmux"
 version = "*"
 
 [[packages]]
@@ -231,6 +231,6 @@ name = "bash"
 version = "*"
 
 [[packages]]
-name = "tmux"
+name = "vim-minimal"
 version = "*"`;
 };

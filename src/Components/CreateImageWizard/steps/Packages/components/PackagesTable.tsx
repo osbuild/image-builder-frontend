@@ -33,14 +33,9 @@ import RetirementDate from './RetirementDate';
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;
   epelRepo: ApiRepositoryCollectionResponseRead | undefined;
-  activeStream: string;
 };
 
-const PackagesTable = ({
-  isSuccessEpelRepo,
-  epelRepo,
-  activeStream,
-}: PackagesTableProps) => {
+const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
   const dispatch = useAppDispatch();
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
@@ -94,71 +89,11 @@ const PackagesTable = ({
     }
   };
 
-  const sortedPackages = useMemo(() => {
-    if (packages.length < 1 || !Array.isArray(packages)) {
-      return [];
-    }
-
-    return [...packages].sort((a, b) => {
-      // Active stream packages first (if activeStream is set)
-      const aIsActive = activeStream && a.stream === activeStream ? 0 : 1;
-      const bIsActive = activeStream && b.stream === activeStream ? 0 : 1;
-      if (aIsActive !== bIsActive) return aIsActive - bIsActive;
-
-      // Then by name (asc)
-      if (a.name !== b.name) return a.name.localeCompare(b.name);
-
-      // Then by stream version (desc)
-      const aStream = a.stream || '';
-      const bStream = b.stream || '';
-      if (aStream !== bStream) {
-        if (!aStream) return 1;
-        if (!bStream) return -1;
-        const aParts = aStream
-          .split('.')
-          .map((part) => parseInt(part, 10) || 0);
-        const bParts = bStream
-          .split('.')
-          .map((part) => parseInt(part, 10) || 0);
-        const aVersion = aParts
-          .map((p) => p.toString().padStart(10, '0'))
-          .join('.');
-        const bVersion = bParts
-          .map((p) => p.toString().padStart(10, '0'))
-          .join('.');
-        return bVersion.localeCompare(aVersion); // descending
-      }
-
-      // Then by end date (asc, nulls last)
-      const aEndDate = a.end_date || '9999-12-31';
-      const bEndDate = b.end_date || '9999-12-31';
-      if (aEndDate !== bEndDate) return aEndDate.localeCompare(bEndDate);
-
-      // Then by repository (asc)
-      const aRepo = a.repository || '';
-      const bRepo = b.repository || '';
-      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
-
-      // Finally by module name (asc)
-      const aModule = a.module_name || '';
-      const bModule = b.module_name || '';
-      return aModule.localeCompare(bModule);
-    });
-  }, [packages, activeStream]);
-
-  const sortedGroups = useMemo(() => {
-    if (groups.length < 1 || !Array.isArray(groups)) {
-      return [];
-    }
-
-    return [...groups].sort((a, b) => a.name.localeCompare(b.name));
-  }, [groups]);
-
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
 
     rows = rows.concat(
-      sortedGroups.map((grp, rowIndex) => (
+      groups.map((grp, rowIndex) => (
         <Tbody
           key={`${grp.name}-${grp.repository || 'default'}`}
           isExpanded={isGroupExpanded(grp.name)}
@@ -221,8 +156,8 @@ const PackagesTable = ({
 
     // Render required (oscap) packages first, then user-added packages
     const orderedPackages = [
-      ...sortedPackages.filter((pkg) => requiredSet.has(pkg.name)),
-      ...sortedPackages.filter((pkg) => !requiredSet.has(pkg.name)),
+      ...packages.filter((pkg) => requiredSet.has(pkg.name)),
+      ...packages.filter((pkg) => !requiredSet.has(pkg.name)),
     ];
 
     rows = rows.concat(
@@ -267,15 +202,7 @@ const PackagesTable = ({
     return composePkgTable();
     // Would need significant rewrite to fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    packages.length,
-    groups.length,
-    recommendedRepositories,
-    expandedGroups,
-    sortedPackages,
-    sortedGroups,
-    requiredSet,
-  ]);
+  }, [packages, groups, recommendedRepositories, expandedGroups, requiredSet]);
 
   return (
     <Table data-testid='packages-table' style={{ tableLayout: 'fixed' }}>
