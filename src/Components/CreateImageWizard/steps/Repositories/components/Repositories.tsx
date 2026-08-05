@@ -401,8 +401,6 @@ const Repositories = () => {
   }
 
   if (
-    isLoading ||
-    previousLoading ||
     isTemplateLoading ||
     isReposInTemplateLoading ||
     isReposInTemplateFetching
@@ -446,156 +444,164 @@ const Repositories = () => {
         </FormGroup>
         <Panel>
           <PanelMain>
-            {previousReposNowUnavailable > 0 && (
-              <RepositoryUnavailable quantity={previousReposNowUnavailable} />
-            )}
-            {!hasReposToShow || contentList.length === 0 ? (
-              <Empty />
+            {isLoading || previousLoading ? (
+              <Loading />
             ) : (
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th width={45}>Name</Th>
-                    {!snapshotDate ? (
-                      <>
-                        <Th>Version</Th>
-                        <Th width={15}>Architecture</Th>
-                        <Th width={10}>Packages</Th>
-                        <Th>Status</Th>
-                      </>
-                    ) : (
-                      <>
-                        <Th width={30}>Snapshot date</Th>
-                        <Th>Packages</Th>
-                      </>
-                    )}
-                    <Th aria-label='Remove repository' />
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {contentList.map((repo, rowIndex) => {
-                    const {
-                      uuid = '',
-                      url = '',
-                      name,
-                      status = '',
-                      origin = '',
-                      distribution_arch,
-                      distribution_versions,
-                      package_count,
-                      last_introspection_time,
-                      failed_introspections_count,
-                    } = repo;
-
-                    const [isDisabled, disabledReason] = isRepoDisabled(
-                      repo,
-                      selected.has(uuid),
-                      isFetching,
-                      contentList,
-                      selected,
-                      recommendedRepos,
-                      packages,
-                      groups,
-                      useLatestContent,
-                      arch,
-                      version,
-                    );
-
-                    const snapshot = snapshotsByDate?.data?.find(
-                      (s) => s.repository_uuid === uuid,
-                    );
-                    const snapshotPackages =
-                      snapshot?.match?.content_counts?.['rpm.package'];
-
-                    return (
-                      <Tr key={`${uuid}-${rowIndex}`}>
-                        <Td dataLabel={'Name'}>
-                          {name}{' '}
-                          {requiredRedHatRepoUUIDs.includes(uuid) && (
-                            <Label isCompact>Required</Label>
-                          )}
-                          {origin === ContentOrigin.UPLOAD ? (
-                            <UploadRepositoryLabel />
-                          ) : origin === ContentOrigin.COMMUNITY ? (
-                            <CommunityRepositoryLabel />
-                          ) : (
-                            isEPELUrl(url) && <CustomEpelWarning />
-                          )}
-                        </Td>
+              <>
+                {previousReposNowUnavailable > 0 && (
+                  <RepositoryUnavailable
+                    quantity={previousReposNowUnavailable}
+                  />
+                )}
+                {!hasReposToShow || contentList.length === 0 ? (
+                  <Empty />
+                ) : (
+                  <Table>
+                    <Thead>
+                      <Tr>
+                        <Th width={45}>Name</Th>
                         {!snapshotDate ? (
                           <>
-                            <Td dataLabel={'Version'}>
-                              {getReadableVersions(
-                                distribution_versions,
-                                repositoryParameters,
-                              )}
-                            </Td>
-                            <Td dataLabel={'Architecture'}>
-                              {getReadableArchitecture(
-                                distribution_arch,
-                                repositoryParameters,
-                              )}
-                            </Td>
-                            <Td dataLabel={'Packages'}>
-                              {package_count || '-'}
-                            </Td>
-                            <Td dataLabel={'Status'}>
-                              <RepositoriesStatus
-                                repoStatus={status || 'Unavailable'}
-                                repoUrl={url}
-                                repoIntrospections={last_introspection_time}
-                                repoFailCount={failed_introspections_count}
-                              />
-                            </Td>
+                            <Th>Version</Th>
+                            <Th width={15}>Architecture</Th>
+                            <Th width={10}>Packages</Th>
+                            <Th>Status</Th>
                           </>
                         ) : (
                           <>
-                            <Td dataLabel={'Snapshot date'}>
-                              {!isSnapshotsLoading ? (
-                                timestampToDisplayStringDetailed(
-                                  snapshot?.match?.created_at ?? '',
-                                  'UTC',
-                                ) || '-'
-                              ) : (
-                                <Spinner size='sm' />
-                              )}
-                            </Td>
-                            <Td dataLabel={'Packages'}>
-                              {!isSnapshotsLoading ? (
-                                snapshotPackages && snapshot.match?.uuid ? (
-                                  <Button
-                                    component='a'
-                                    target='_blank'
-                                    variant='link'
-                                    icon={<ExternalLinkAltIcon />}
-                                    iconPosition='right'
-                                    isInline
-                                    href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
-                                  >
-                                    {snapshotPackages}
-                                  </Button>
-                                ) : (
-                                  '-'
-                                )
-                              ) : (
-                                <Spinner size='sm' />
-                              )}
-                            </Td>
+                            <Th width={30}>Snapshot date</Th>
+                            <Th>Packages</Th>
                           </>
                         )}
-                        <Td>
-                          <RemoveRepositoryButton
-                            repo={repo}
-                            isDisabled={isDisabled}
-                            disabledReason={disabledReason}
-                            onRemove={handleRemove}
-                          />
-                        </Td>
+                        <Th aria-label='Remove repository' />
                       </Tr>
-                    );
-                  })}
-                </Tbody>
-              </Table>
+                    </Thead>
+                    <Tbody>
+                      {contentList.map((repo, rowIndex) => {
+                        const {
+                          uuid = '',
+                          url = '',
+                          name,
+                          status = '',
+                          origin = '',
+                          distribution_arch,
+                          distribution_versions,
+                          package_count,
+                          last_introspection_time,
+                          failed_introspections_count,
+                        } = repo;
+
+                        const [isDisabled, disabledReason] = isRepoDisabled(
+                          repo,
+                          selected.has(uuid),
+                          isFetching,
+                          contentList,
+                          selected,
+                          recommendedRepos,
+                          packages,
+                          groups,
+                          useLatestContent,
+                          arch,
+                          version,
+                        );
+
+                        const snapshot = snapshotsByDate?.data?.find(
+                          (s) => s.repository_uuid === uuid,
+                        );
+                        const snapshotPackages =
+                          snapshot?.match?.content_counts?.['rpm.package'];
+
+                        return (
+                          <Tr key={`${uuid}-${rowIndex}`}>
+                            <Td dataLabel={'Name'}>
+                              {name}{' '}
+                              {requiredRedHatRepoUUIDs.includes(uuid) && (
+                                <Label isCompact>Required</Label>
+                              )}
+                              {origin === ContentOrigin.UPLOAD ? (
+                                <UploadRepositoryLabel />
+                              ) : origin === ContentOrigin.COMMUNITY ? (
+                                <CommunityRepositoryLabel />
+                              ) : (
+                                isEPELUrl(url) && <CustomEpelWarning />
+                              )}
+                            </Td>
+                            {!snapshotDate ? (
+                              <>
+                                <Td dataLabel={'Version'}>
+                                  {getReadableVersions(
+                                    distribution_versions,
+                                    repositoryParameters,
+                                  )}
+                                </Td>
+                                <Td dataLabel={'Architecture'}>
+                                  {getReadableArchitecture(
+                                    distribution_arch,
+                                    repositoryParameters,
+                                  )}
+                                </Td>
+                                <Td dataLabel={'Packages'}>
+                                  {package_count || '-'}
+                                </Td>
+                                <Td dataLabel={'Status'}>
+                                  <RepositoriesStatus
+                                    repoStatus={status || 'Unavailable'}
+                                    repoUrl={url}
+                                    repoIntrospections={last_introspection_time}
+                                    repoFailCount={failed_introspections_count}
+                                  />
+                                </Td>
+                              </>
+                            ) : (
+                              <>
+                                <Td dataLabel={'Snapshot date'}>
+                                  {!isSnapshotsLoading ? (
+                                    timestampToDisplayStringDetailed(
+                                      snapshot?.match?.created_at ?? '',
+                                      'UTC',
+                                    ) || '-'
+                                  ) : (
+                                    <Spinner size='sm' />
+                                  )}
+                                </Td>
+                                <Td dataLabel={'Packages'}>
+                                  {!isSnapshotsLoading ? (
+                                    snapshotPackages && snapshot.match?.uuid ? (
+                                      <Button
+                                        component='a'
+                                        target='_blank'
+                                        variant='link'
+                                        icon={<ExternalLinkAltIcon />}
+                                        iconPosition='right'
+                                        isInline
+                                        href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
+                                      >
+                                        {snapshotPackages}
+                                      </Button>
+                                    ) : (
+                                      '-'
+                                    )
+                                  ) : (
+                                    <Spinner size='sm' />
+                                  )}
+                                </Td>
+                              </>
+                            )}
+                            <Td>
+                              <RemoveRepositoryButton
+                                repo={repo}
+                                isDisabled={isDisabled}
+                                disabledReason={disabledReason}
+                                onRemove={handleRemove}
+                              />
+                            </Td>
+                          </Tr>
+                        );
+                      })}
+                    </Tbody>
+                  </Table>
+                )}
+              </>
             )}
           </PanelMain>
         </Panel>
