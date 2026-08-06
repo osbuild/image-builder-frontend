@@ -111,6 +111,20 @@ describe('ImageSourceSelect', () => {
       expect(options).toHaveLength(2);
     });
 
+    test('displays the container reference for each image', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      await openImageSourceSelect(user);
+
+      expect(
+        await screen.findByText('registry.redhat.io/rhel10/rhel-kvm:latest'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('registry.redhat.io/rhel10/rhel-aws:latest'),
+      ).toBeInTheDocument();
+    });
+
     test('updates redux state when selecting an image', async () => {
       const { store } = renderImageSourceSelect();
       const user = createUser();

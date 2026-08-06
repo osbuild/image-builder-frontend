@@ -13,8 +13,6 @@ import { simpleTargetNames } from '@/constants';
 import type { BootcDistributionItem } from '@/store/api/backend';
 import { isImageType } from '@/store/slices/wizard';
 
-import './OnPrem.css';
-
 type ImageSelectProps = {
   items: BootcDistributionItem[];
   selectedRef: string | undefined;
@@ -82,16 +80,14 @@ const ImageSelect = ({
             <SelectOption
               key={item.reference}
               value={item.reference}
-              className='on-prem-image-item'
-              description={
-                <Label color='blue' isCompact>
-                  {isImageType(item.type)
-                    ? simpleTargetNames[item.type]
-                    : item.type}
-                </Label>
-              }
+              description={item.reference}
             >
-              {getLabel(item)}
+              {getLabel(item)}{' '}
+              <Label color='blue' isCompact>
+                {isImageType(item.type)
+                  ? simpleTargetNames[item.type]
+                  : item.type}
+              </Label>
             </SelectOption>
           ))}
         </SelectList>
