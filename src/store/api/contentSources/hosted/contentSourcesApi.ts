@@ -48,6 +48,7 @@ const injectedRtkApi = api.injectEndpoints({
           extended_release: queryArg.extendedRelease,
           extended_release_version: queryArg.extendedReleaseVersion,
           feature_name: queryArg.featureName,
+          partner: queryArg.partner,
         },
       }),
     }),
@@ -185,6 +186,8 @@ export type ListRepositoriesApiArg = {
   extendedReleaseVersion?: string;
   /** A comma separated list of feature names to filter on (e.g. feature1,feature2) */
   featureName?: string;
+  /** Filter repositories by type partner */
+  partner?: string;
 };
 export type CreateRepositoryApiResponse =
   /** status 201 Created */ ApiRepositoryResponseRead;
