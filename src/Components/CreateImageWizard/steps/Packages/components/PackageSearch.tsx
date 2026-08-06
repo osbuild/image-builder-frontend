@@ -1003,7 +1003,7 @@ const PackageSearch = ({
           icon={<SearchIcon />}
           aria-label={`Search ${packageTypeLabel}`}
           data-testid='packages-search-input'
-          placeholder='Add packages'
+          placeholder='Search and add packages'
         />
         <TextInputGroupUtilities>
           <Button
@@ -1018,7 +1018,7 @@ const PackageSearch = ({
   );
 
   return (
-    <FormGroup label='Packages' style={{ width: '100%' }}>
+    <FormGroup label='Add packages' style={{ width: '100%' }}>
       <Select
         isScrollable
         isOpen={isOpen}
