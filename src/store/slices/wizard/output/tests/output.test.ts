@@ -15,7 +15,6 @@ import {
   selectBootcDistributions,
   selectDistribution,
   selectImageSource,
-  selectImageSourceFilter,
   selectImageTypes,
   selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
@@ -24,7 +23,7 @@ import {
   type WizardState,
 } from '@/store/slices/wizard';
 
-import { createMockState, mockRootState } from '../../tests/mockWizardState';
+import { createMockState } from '../../tests/mockWizardState';
 
 describe('output reducers', () => {
   describe('changeImageSource', () => {
@@ -207,6 +206,57 @@ describe('output reducers', () => {
 
       expect(result.output.isoPayloadReference).toBe(
         'registry.example.org/payload:latest',
+      );
+    });
+
+    it('should switch a known image to its sibling for the selected type', () => {
+      const stateWithKvm: WizardState = {
+        ...initialState,
+        output: {
+          ...initialState.output,
+          imageSource: 'registry.redhat.io/rhel10/rhel-kvm:latest',
+          imageTypes: ['guest-image'],
+        },
+      };
+
+      const result = wizardReducer(stateWithKvm, changeImageTypes(['aws']));
+
+      expect(result.output.imageSource).toBe(
+        'registry.redhat.io/rhel10/rhel-aws:latest',
+      );
+    });
+
+    it('should keep a known image when its type is selected', () => {
+      const stateWithAws: WizardState = {
+        ...initialState,
+        output: {
+          ...initialState.output,
+          imageSource: 'registry.redhat.io/rhel10/rhel-aws:latest',
+          imageTypes: ['aws'],
+        },
+      };
+
+      const result = wizardReducer(stateWithAws, changeImageTypes(['aws']));
+
+      expect(result.output.imageSource).toBe(
+        'registry.redhat.io/rhel10/rhel-aws:latest',
+      );
+    });
+
+    it('should not change an unknown image when the type changes', () => {
+      const stateWithLocal: WizardState = {
+        ...initialState,
+        output: {
+          ...initialState.output,
+          imageSource: 'localhost/my-derived-image:latest',
+          imageTypes: ['guest-image'],
+        },
+      };
+
+      const result = wizardReducer(stateWithLocal, changeImageTypes(['aws']));
+
+      expect(result.output.imageSource).toBe(
+        'localhost/my-derived-image:latest',
       );
     });
   });
@@ -408,46 +458,6 @@ describe('output selectors', () => {
       });
 
       expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
-    });
-  });
-
-  describe('selectImageSourceFilter', () => {
-    it('should return imageSource when on-premise with imageSource set', () => {
-      const state = {
-        ...mockRootState,
-        env: { isOnPremise: true },
-        wizard: {
-          ...mockRootState.wizard,
-          output: {
-            ...initialState.output,
-            imageSource: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-          },
-        },
-      };
-
-      expect(selectImageSourceFilter(state)).toEqual({
-        imageSource: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-      });
-    });
-
-    it('should return empty object when on-premise with no imageSource', () => {
-      const state = {
-        ...mockRootState,
-        env: { isOnPremise: true },
-      };
-
-      expect(selectImageSourceFilter(state)).toEqual({});
-    });
-
-    it('should return empty object when hosted, even with imageSource set', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageSource: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-        },
-      });
-
-      expect(selectImageSourceFilter(state)).toEqual({});
     });
   });
 });

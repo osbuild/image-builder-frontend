@@ -5,6 +5,7 @@ import {
   Distributions,
   ImageRequest,
 } from '@/store/api/backend';
+import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
 
 import { initialState } from './state';
 import { ImageSource, ImageSourceType, SupportedImageTypes } from './types';
@@ -65,6 +66,23 @@ export const outputSlice = createSlice({
       // clear it when that image type is no longer selected
       if (!action.payload.includes('bootable-container-iso')) {
         state.isoPayloadReference = undefined;
+      }
+      // Official images ship one container per output type under a
+      // shared name; keep the selected image in sync with the type so
+      // the target environment radios and the image dropdown always
+      // agree.
+      const known = KNOWN_IMAGES.find((k) => k.reference === state.imageSource);
+      if (
+        known &&
+        action.payload.length > 0 &&
+        known.type !== action.payload[0]
+      ) {
+        const sibling = KNOWN_IMAGES.find(
+          (k) => k.name === known.name && k.type === action.payload[0],
+        );
+        if (sibling) {
+          state.imageSource = sibling.reference;
+        }
       }
     },
   },

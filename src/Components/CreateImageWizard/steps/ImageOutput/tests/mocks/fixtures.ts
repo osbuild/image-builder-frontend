@@ -141,4 +141,3 @@ export const mockBootcDistributionsMultipleTypes: BootcDistributionItem[] = [
     reference: 'registry.redhat.io/rhel10/rhel-bootc-aws:10.3',
   },
 ];
-
