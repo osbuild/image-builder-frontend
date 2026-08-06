@@ -81,12 +81,15 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
           .file(bpPath, { superuser: 'require' })
           .replace(JSON.stringify(bpOnPrem));
 
-        const registrationArgs = await getRegistrationArgs(
-          blueprint.customizations.subscription,
-          id,
-        );
+        const { args: registrationArgs, path: regsPath } =
+          await getRegistrationArgs(blueprint.customizations.subscription, id);
 
         const bootcArgs = getBootcArgs(blueprint.bootc);
+
+        // The blueprint and registrations files are only needed while the
+        // build runs, and the latter contains the activation key, so have
+        // the unit remove them when it stops (on success or failure).
+        const cacheFiles = [bpPath, ...(regsPath ? [regsPath] : [])];
 
         // The distro is intentionally not passed: image-builder falls back to
         // the host distro, including the minor version for distros that have
@@ -103,6 +106,8 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             '--service-type=oneshot',
             '--no-block',
             '--collect',
+            '-p',
+            `ExecStopPost=/usr/bin/rm -f ${cacheFiles.join(' ')}`,
             '--',
             'image-builder',
             'build',
