@@ -26,11 +26,13 @@ test:
     - schutzbot/save_journal.sh || true
     - schutzbot/upload_artifacts.sh
   tags:
-    - terraform/openstack
+    - terraform/gcp
   parallel:
     matrix:
       - RUNNER:
-          - rhos-01/fedora-43-x86_64-large
+          - gcp/fedora-44-x86_64
+          - gcp/fedora-45-x86_64
+          - gcp/rhel-10.3-nightly-x86_64
         INTERNAL_NETWORK: ["true"]
 
 finish:
