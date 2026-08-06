@@ -84,6 +84,17 @@ export const outputSlice = createSlice({
           state.imageSource = sibling.reference;
         }
       }
+      // The container installer needs a payload container; default to
+      // the one the selected official image ships with.
+      if (
+        action.payload.includes('bootable-container-iso') &&
+        !state.isoPayloadReference
+      ) {
+        const installer = KNOWN_IMAGES.find(
+          (k) => k.reference === state.imageSource,
+        );
+        state.isoPayloadReference = installer?.iso_payload_references?.[0];
+      }
     },
   },
   extraReducers: (builder) => {

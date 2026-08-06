@@ -108,7 +108,7 @@ describe('ImageSourceSelect', () => {
       const options = await screen.findAllByRole('option', {
         name: /red hat enterprise linux \(rhel\) 10.3/i,
       });
-      expect(options).toHaveLength(2);
+      expect(options).toHaveLength(3);
     });
 
     test('displays the container reference for each image', async () => {
@@ -141,6 +141,38 @@ describe('ImageSourceSelect', () => {
         );
         expect(selectDistribution(store.getState())).toBe('rhel-10.3');
       });
+    });
+
+    test('selecting the container installer shows the disabled payload container', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      await openImageSourceSelect(user);
+      const option = await screen.findByRole('option', {
+        name: /red hat enterprise linux \(rhel\) 10.3.*container installer/i,
+      });
+      await clickWithWait(user, option);
+
+      const payloadToggle = await screen.findByRole('button', {
+        name: /payload container/i,
+      });
+      expect(payloadToggle).toBeDisabled();
+      expect(payloadToggle).toHaveTextContent(
+        'registry.redhat.io/rhel10/rhel10-bootc:latest',
+      );
+    });
+
+    test('does not show the payload container for disk images', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      await openImageSourceSelect(user);
+      const option = await screen.findByRole('option', {
+        name: /red hat enterprise linux \(rhel\) 10.3.*guest image/i,
+      });
+      await clickWithWait(user, option);
+
+      expect(screen.queryByText('Payload container')).not.toBeInTheDocument();
     });
   });
 

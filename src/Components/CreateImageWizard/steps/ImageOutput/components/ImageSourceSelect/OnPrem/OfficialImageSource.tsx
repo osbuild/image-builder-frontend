@@ -4,9 +4,11 @@ import {
   Button,
   Flex,
   FlexItem,
+  FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
+  MenuToggle,
   Spinner,
 } from '@patternfly/react-core';
 
@@ -26,7 +28,9 @@ import {
   selectForceShowErrors,
   selectImageSource,
   selectImageSourceType,
+  selectImageTypes,
   selectIsOfficialImage,
+  selectIsoPayloadReference,
   type SupportedImageTypes,
 } from '@/store/slices/wizard';
 
@@ -40,6 +44,11 @@ const OfficialImageSource = () => {
   const imageSourceType = useAppSelector(selectImageSourceType);
   const forceShowErrors = useAppSelector(selectForceShowErrors);
   const hasOfficialSelection = useAppSelector(selectIsOfficialImage);
+  const imageTypes = useAppSelector(selectImageTypes);
+  const isoPayloadReference = useAppSelector(selectIsoPayloadReference);
+
+  const showPayloadSelect =
+    hasOfficialSelection && imageTypes.includes('bootable-container-iso');
 
   const { data: authStatus, isLoading: isAuthLoading } =
     useGetRegistryAuthStatusQuery();
@@ -118,6 +127,28 @@ const OfficialImageSource = () => {
             </FlexItem>
           )}
         </Flex>
+      )}
+      {isAuthenticated && showPayloadSelect && (
+        <FormGroup
+          label='Payload container'
+          fieldId='payload-container-select'
+          className='pf-v6-u-mt-md'
+        >
+          <MenuToggle
+            id='payload-container-select'
+            isDisabled
+            style={{ minWidth: '20rem', maxWidth: '100%' }}
+          >
+            {isoPayloadReference}
+          </MenuToggle>
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>
+                The installer deploys this base image.
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
       )}
       {showSelectionError && (
         <FormHelperText>
