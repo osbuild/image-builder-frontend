@@ -1,11 +1,27 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import { renderBlueprintMode, toggleBlueprintMode } from './helpers';
 
+const mockGetHostDistro = vi.fn();
+
+vi.mock('@/store/api/backend', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/store/api/backend')>();
+  return {
+    ...actual,
+    getHostDistro: () => mockGetHostDistro(),
+  };
+});
+
 describe('BlueprintMode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetHostDistro.mockResolvedValue('rhel-10');
+  });
+
   describe('Rendering', () => {
     test('displays image type label', async () => {
       renderBlueprintMode();
@@ -152,6 +168,66 @@ describe('BlueprintMode', () => {
         name: /image mode/i,
       });
       expect(imageModeButton).toHaveAttribute('aria-pressed', 'true');
+    });
+  });
+
+  describe('Host distro gating', () => {
+    // The toggle is re-parented into the tooltip wrapper once the host
+    // distro fetch resolves, so queries must run inside the waits.
+    test('enables image mode on a RHEL 10 host', async () => {
+      renderBlueprintMode();
+
+      const imageModeButton = await screen.findByRole('button', {
+        name: /image mode/i,
+      });
+      expect(imageModeButton).toBeEnabled();
+      expect(
+        screen.queryByTestId('image-mode-toggle-wrapper'),
+      ).not.toBeInTheDocument();
+    });
+
+    test('disables image mode on a Fedora host', async () => {
+      mockGetHostDistro.mockResolvedValue('fedora-43');
+
+      renderBlueprintMode();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /image mode/i }),
+        ).toBeDisabled();
+      });
+    });
+
+    test('disables image mode on a CentOS Stream host', async () => {
+      mockGetHostDistro.mockResolvedValue('centos-10');
+
+      renderBlueprintMode();
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /image mode/i }),
+        ).toBeDisabled();
+      });
+    });
+
+    test('shows a coming soon tooltip on non-RHEL hosts', async () => {
+      mockGetHostDistro.mockResolvedValue('fedora-43');
+
+      renderBlueprintMode();
+
+      const wrapper = await screen.findByTestId('image-mode-toggle-wrapper');
+      fireEvent.mouseEnter(wrapper);
+
+      expect(
+        await screen.findByText(
+          /image mode is currently available only on rhel 10 hosts/i,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /support for centos stream and fedora is coming soon/i,
+        ),
+      ).toBeInTheDocument();
     });
   });
 });
