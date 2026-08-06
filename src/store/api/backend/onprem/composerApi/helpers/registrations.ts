@@ -25,12 +25,14 @@ export const mapSubscriptionToRegistrations = (
 
 // The on-prem blueprint has no subscription customization, so the
 // registration details are passed separately via `--registrations`.
+// The path is returned so the caller can clean the file up once the
+// build is done — it contains the activation key.
 export const getRegistrationArgs = async (
   subscription: Subscription | undefined,
   id: string,
-): Promise<string[]> => {
+): Promise<{ args: string[]; path: string | undefined }> => {
   if (!subscription) {
-    return [];
+    return { args: [], path: undefined };
   }
   const regsPath = path.join(
     '/var/cache/cockpit-image-builder',
@@ -39,5 +41,5 @@ export const getRegistrationArgs = async (
   await cockpit
     .file(regsPath, { superuser: 'require' })
     .replace(JSON.stringify(mapSubscriptionToRegistrations(subscription)));
-  return ['--registrations', regsPath];
+  return { args: ['--registrations', regsPath], path: regsPath };
 };
