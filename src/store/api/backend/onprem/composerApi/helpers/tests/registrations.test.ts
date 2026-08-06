@@ -42,7 +42,10 @@ describe('mapSubscriptionToRegistrations', () => {
 
 describe('getRegistrationArgs', () => {
   it('returns no args without a subscription', async () => {
-    expect(await getRegistrationArgs(undefined, 'compose-id')).toEqual([]);
+    expect(await getRegistrationArgs(undefined, 'compose-id')).toEqual({
+      args: [],
+      path: undefined,
+    });
     expect(cockpit.file).not.toHaveBeenCalled();
   });
 
@@ -52,10 +55,10 @@ describe('getRegistrationArgs', () => {
 
     const regsPath =
       '/var/cache/cockpit-image-builder/cockpit-image-builder-compose-id-registrations.json';
-    expect(await getRegistrationArgs(subscription, 'compose-id')).toEqual([
-      '--registrations',
-      regsPath,
-    ]);
+    expect(await getRegistrationArgs(subscription, 'compose-id')).toEqual({
+      args: ['--registrations', regsPath],
+      path: regsPath,
+    });
     expect(cockpit.file).toHaveBeenCalledWith(regsPath, {
       superuser: 'require',
     });
