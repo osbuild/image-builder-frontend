@@ -103,6 +103,17 @@ describe('useCustomizationRestrictions hook logic', () => {
       expect(result.registration.shouldHide).toBe(false);
     });
 
+    it('should hide registration for the container installer', () => {
+      const result = computeRestrictions({
+        imageTypes: {
+          'bootable-container-iso': DISTRO_DETAILS['bootable-container-iso'],
+        },
+        context: onPremImageMode,
+      });
+
+      expect(result.registration.shouldHide).toBe(true);
+    });
+
     it('should show registration for non-RHEL custom images', () => {
       const result = computeRestrictions({
         imageTypes: { 'guest-image': DISTRO_DETAILS['guest-image'] },

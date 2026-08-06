@@ -25,7 +25,6 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeImageTypes,
-  changeIsoPayloadReference,
   changeRegistrationType,
   selectArchitecture,
   selectDistribution,
@@ -33,7 +32,6 @@ import {
   selectImageTypes,
   selectIsImageMode,
   selectIsOnlyNetworkInstallerSelected,
-  selectIsoPayloadReference,
   selectIsOtherEnvironmentSelected,
 } from '@/store/slices/wizard';
 
@@ -137,31 +135,6 @@ const TargetEnvironment = () => {
       dispatch(changeImageTypes([environments[0]]));
     }
   }, [isImageMode, environments, dispatch]);
-
-  const isoPayloadReference = useAppSelector(selectIsoPayloadReference);
-  useEffect(() => {
-    if (!isImageMode || !environments.includes('bootable-container-iso')) {
-      return;
-    }
-    const entry = distroResult.data?.distributions.find(
-      (d) => d.type === 'bootable-container-iso' && d.distro === distribution,
-    );
-    const refs = entry?.iso_payload_references;
-    if (!refs || refs.length === 0) {
-      return;
-    }
-    if (isoPayloadReference && refs.includes(isoPayloadReference)) {
-      return;
-    }
-    dispatch(changeIsoPayloadReference(refs[0]));
-  }, [
-    isImageMode,
-    environments,
-    distroResult.data,
-    distribution,
-    isoPayloadReference,
-    dispatch,
-  ]);
 
   if (isFetching) {
     return (

@@ -259,6 +259,50 @@ describe('output reducers', () => {
         'localhost/my-derived-image:latest',
       );
     });
+
+    it('should default the payload container for the container installer', () => {
+      const stateWithKvm: WizardState = {
+        ...initialState,
+        output: {
+          ...initialState.output,
+          imageSource: 'registry.redhat.io/rhel10/rhel-kvm:latest',
+          imageTypes: ['guest-image'],
+        },
+      };
+
+      const result = wizardReducer(
+        stateWithKvm,
+        changeImageTypes(['bootable-container-iso']),
+      );
+
+      expect(result.output.imageSource).toBe(
+        'registry.redhat.io/rhel10/rhel-bootc-installer:latest',
+      );
+      expect(result.output.isoPayloadReference).toBe(
+        'registry.redhat.io/rhel10/rhel10-bootc:latest',
+      );
+    });
+
+    it('should keep an explicit payload container reference', () => {
+      const stateWithPayload: WizardState = {
+        ...initialState,
+        output: {
+          ...initialState.output,
+          imageSource: 'registry.redhat.io/rhel10/rhel-bootc-installer:latest',
+          imageTypes: ['bootable-container-iso'],
+          isoPayloadReference: 'registry.example.org/payload:latest',
+        },
+      };
+
+      const result = wizardReducer(
+        stateWithPayload,
+        changeImageTypes(['bootable-container-iso']),
+      );
+
+      expect(result.output.isoPayloadReference).toBe(
+        'registry.example.org/payload:latest',
+      );
+    });
   });
 });
 

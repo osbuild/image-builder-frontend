@@ -108,7 +108,7 @@ describe('ImageSourceSelect', () => {
       const options = await screen.findAllByRole('option', {
         name: /red hat enterprise linux \(rhel\) 10.3/i,
       });
-      expect(options).toHaveLength(2);
+      expect(options).toHaveLength(3);
     });
 
     test('displays the container reference for each image', async () => {
@@ -141,6 +141,70 @@ describe('ImageSourceSelect', () => {
         );
         expect(selectDistribution(store.getState())).toBe('rhel-10.3');
       });
+    });
+
+    test('selecting the container installer shows the payload container', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      await openImageSourceSelect(user);
+      const option = await screen.findByRole('option', {
+        name: /red hat enterprise linux \(rhel\) 10.3.*container installer/i,
+      });
+      await clickWithWait(user, option);
+
+      expect(await screen.findByText('Payload container')).toBeInTheDocument();
+
+      // Both the installer and its payload show the same image name;
+      // the payload toggle is the second one.
+      const toggles = screen.getAllByRole('button', {
+        name: /red hat enterprise linux \(rhel\) 10.3/i,
+      });
+      expect(toggles).toHaveLength(2);
+      await clickWithWait(user, toggles[1]);
+
+      const payloadOption = await screen.findByRole('option', {
+        name: /red hat enterprise linux \(rhel\) 10.3.*base image/i,
+      });
+      expect(payloadOption).toBeDisabled();
+      expect(payloadOption).toHaveTextContent(
+        'registry.redhat.io/rhel10/rhel10-bootc:latest',
+      );
+    });
+
+    test('pulls the payload container with its own pull button', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      await openImageSourceSelect(user);
+      const option = await screen.findByRole('option', {
+        name: /red hat enterprise linux \(rhel\) 10.3.*container installer/i,
+      });
+      await clickWithWait(user, option);
+
+      const pullButtons = await screen.findAllByRole('button', {
+        name: /pull latest image/i,
+      });
+      expect(pullButtons).toHaveLength(2);
+
+      await clickWithWait(user, pullButtons[1]);
+
+      expect(mockPullImage).toHaveBeenCalledWith({
+        reference: 'registry.redhat.io/rhel10/rhel10-bootc:latest',
+      });
+    });
+
+    test('does not show the payload container for disk images', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      await openImageSourceSelect(user);
+      const option = await screen.findByRole('option', {
+        name: /red hat enterprise linux \(rhel\) 10.3.*guest image/i,
+      });
+      await clickWithWait(user, option);
+
+      expect(screen.queryByText('Payload container')).not.toBeInTheDocument();
     });
   });
 

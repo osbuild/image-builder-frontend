@@ -20,6 +20,7 @@ type ImageSelectProps = {
   getLabel: (item: BootcDistributionItem) => string;
   placeholder?: string;
   isDisabled?: boolean;
+  isOptionDisabled?: (item: BootcDistributionItem) => boolean;
   ariaDescribedBy?: string | undefined;
 };
 
@@ -35,6 +36,7 @@ const ImageSelect = ({
   getLabel,
   placeholder = 'Select an image',
   isDisabled = false,
+  isOptionDisabled,
   ariaDescribedBy,
 }: ImageSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +83,7 @@ const ImageSelect = ({
               key={item.reference}
               value={item.reference}
               description={item.reference}
+              isDisabled={isOptionDisabled?.(item) ?? false}
             >
               {getLabel(item)}{' '}
               <Label color='blue' isCompact>
