@@ -16,7 +16,7 @@ import {
   selectImageSourceType,
 } from '@/store/slices/wizard';
 
-import CustomImageSource from './CustomImageSource';
+import LocalImageSource from './LocalImageSource';
 import OfficialImageSource from './OfficialImageSource';
 
 const OnPremImageSourceSelect = () => {
@@ -52,33 +52,31 @@ const OnPremImageSourceSelect = () => {
           <CardBody>Remote images from registry.redhat.io</CardBody>
         </Card>
         <Card
-          id='custom-card'
+          id='local-card'
           isSelectable
-          isSelected={imageSourceType === 'custom'}
+          isSelected={imageSourceType === 'local'}
         >
           <CardHeader
             selectableActions={{
-              selectableActionId: 'custom-image-source-input',
-              selectableActionAriaLabelledby: 'custom-card-title',
+              selectableActionId: 'local-image-source-input',
+              selectableActionAriaLabelledby: 'local-card-title',
               name: 'image-source-type',
               variant: 'single',
               onChange: (_, checked) => {
                 if (checked) {
-                  dispatch(changeImageSourceType('custom'));
+                  dispatch(changeImageSourceType('local'));
                 }
               },
               hasNoOffset: true,
             }}
           >
-            <CardTitle id='custom-card-title'>
-              Custom images <Label isCompact>No login</Label>
-            </CardTitle>
+            <CardTitle id='local-card-title'>Local images</CardTitle>
           </CardHeader>
           <CardBody>Local container images</CardBody>
         </Card>
       </Gallery>
       {imageSourceType === 'official' && <OfficialImageSource />}
-      {imageSourceType === 'custom' && <CustomImageSource />}
+      {imageSourceType === 'local' && <LocalImageSource />}
     </FormGroup>
   );
 };

@@ -146,7 +146,7 @@ export const renderImageSourceSelect = (
       },
       output: {
         ...initialState.output,
-        imageSourceType: 'custom',
+        imageSourceType: 'official',
       },
       ...wizardStateOverrides,
     },
@@ -160,16 +160,9 @@ export const renderImageSourceSelect = (
 
 // ImageSourceSelect interaction helpers
 export const openImageSourceSelect = async (user: UserEventInstance) => {
-  // Custom on-prem uses a typeahead input; hosted uses a button toggle
-  const input = screen.queryByRole('textbox', {
-    name: /type to filter/i,
-  });
-  if (input) {
-    await clickWithWait(user, input);
-    return;
-  }
+  // On-prem uses the official image toggle; hosted uses its own label
   const toggle = await screen.findByRole('button', {
-    name: /select a bootc image/i,
+    name: /select an official image|select a bootc image/i,
   });
   await clickWithWait(user, toggle);
 };
@@ -183,11 +176,4 @@ export const selectImageSource = async (
     name: imageTag,
   });
   await clickWithWait(user, option);
-};
-
-export const clickRefreshImageSources = async (user: UserEventInstance) => {
-  const button = await screen.findByRole('button', {
-    name: /refresh image sources/i,
-  });
-  await clickWithWait(user, button);
 };

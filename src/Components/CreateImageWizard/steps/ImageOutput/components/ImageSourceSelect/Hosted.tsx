@@ -125,7 +125,7 @@ const HostedImageSourceSelect = () => {
 
   return (
     <FormGroup label='Image source' isRequired>
-      {isError && <ImageSourceError isOnPremise={false} />}
+      {isError && <ImageSourceError />}
       <Select
         isOpen={isOpen}
         selected={imageSource}
