@@ -143,7 +143,7 @@ module.exports = {
       }, {}),
     }),
   },
-  plugins: plugins,
+  plugins,
   moduleFederation: {
     exposes: {
       './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
