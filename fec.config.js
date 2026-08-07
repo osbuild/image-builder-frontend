@@ -49,30 +49,12 @@ class IstanbulCoveragePlugin {
 
 const plugins = [new IstanbulCoveragePlugin()];
 
-function add_define(key, value) {
-  const definePluginIndex = plugins.findIndex(
-    (plugin) => plugin instanceof webpack.DefinePlugin,
-  );
-  if (definePluginIndex !== -1) {
-    const definePlugin = plugins[definePluginIndex];
-
-    const newDefinePlugin = new webpack.DefinePlugin({
-      ...definePlugin.definitions,
-      [key]: JSON.stringify(value),
-    });
-
-    plugins[definePluginIndex] = newDefinePlugin;
-  } else {
-    plugins.push(
-      new webpack.DefinePlugin({
-        [key]: JSON.stringify(value),
-      }),
-    );
-  }
-}
-
 if (process.env.NODE_ENV) {
-  add_define('process.env.NODE_ENV', process.env.NODE_ENV);
+  plugins.push(
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    }),
+  );
 }
 
 if (process.env.ENABLE_SENTRY) {
@@ -106,7 +88,7 @@ module.exports = {
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      // we don't wan't these packages bundled with
+      // we don't want these packages bundled with
       // the service frontend, so we can set the aliases
       // to false
       cockpit: false,
@@ -119,18 +101,13 @@ module.exports = {
       {
         // running `make` on cockpit plugin creates './pkg'
         // directory, the generated files do not pass
-        // `npm run build` outputing failures
-        // this ensures the directory is exluded during build time
-        exclude: ',/pkg',
+        // `npm run build` outputting failures
+        // this ensures the directory is excluded during build time
+        exclude: path.resolve(__dirname, 'pkg'),
       },
     ],
   },
   routes: {
-    ...(process.env.CONFIG_PORT && {
-      [`${process.env.BETA ? '/beta' : ''}/config`]: {
-        host: `http://localhost:${process.env.CONFIG_PORT}`,
-      },
-    }),
     ...(process.env.LOCAL_IMAGE_BUILDER_API && {
       '/api/image-builder': {
         host: process.env.LOCAL_IMAGE_BUILDER_API,
@@ -144,14 +121,11 @@ module.exports = {
         return {
           ...acc,
           [`/apps/${appName}`]: { host: `${protocol}://${host}:${appPort}` },
-          [`/beta/apps/${appName}`]: {
-            host: `${protocol}://${host}:${appPort}`,
-          },
         };
       }, {}),
     }),
   },
-  plugins: plugins,
+  plugins,
   moduleFederation: {
     exposes: {
       './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
