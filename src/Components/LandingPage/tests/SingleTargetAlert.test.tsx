@@ -6,12 +6,21 @@ import { createUser } from '@/test/testUtils';
 import { clickWithWait } from '@/test/testUtils/userEvents';
 
 import SingleTargetAlert from '../SingleTargetAlert';
+import useHasMultiTargetBlueprints from '../useHasMultiTargetBlueprints';
 
 const STORAGE_KEY = 'imageBuilder.singleTargetMigration.dismissed';
+
+vi.mock('../useHasMultiTargetBlueprints', () => ({
+  default: vi.fn(() => ({ hasMultiTarget: true, isLoading: false })),
+}));
 
 describe('Single Target Alert', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    vi.mocked(useHasMultiTargetBlueprints).mockReturnValue({
+      hasMultiTarget: true,
+      isLoading: false,
+    });
   });
 
   test('renders with title and body', async () => {
@@ -74,6 +83,32 @@ describe('Single Target Alert', () => {
 
   test('does not render when previously dismissed via localStorage', () => {
     window.localStorage.setItem(STORAGE_KEY, 'true');
+
+    render(<SingleTargetAlert />);
+
+    expect(
+      screen.queryByTestId('single-target-migration-banner'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('does not render when no multi-target blueprints exist', () => {
+    vi.mocked(useHasMultiTargetBlueprints).mockReturnValue({
+      hasMultiTarget: false,
+      isLoading: false,
+    });
+
+    render(<SingleTargetAlert />);
+
+    expect(
+      screen.queryByTestId('single-target-migration-banner'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('does not render while loading', () => {
+    vi.mocked(useHasMultiTargetBlueprints).mockReturnValue({
+      hasMultiTarget: false,
+      isLoading: true,
+    });
 
     render(<SingleTargetAlert />);
 
