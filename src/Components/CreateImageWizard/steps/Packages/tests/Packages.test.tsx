@@ -764,18 +764,18 @@ describe('Packages Component', () => {
       );
 
       expect(dataRows).toHaveLength(4);
-      // Required packages first (alphabetical)
-      expect(dataRows[0]).toHaveTextContent('aide');
+      // Required packages first (newest first)
+      expect(dataRows[0]).toHaveTextContent('neovim');
       expect(dataRows[0]).toHaveAttribute(
         'data-testid',
         'required-package-row',
       );
-      expect(dataRows[1]).toHaveTextContent('neovim');
+      expect(dataRows[1]).toHaveTextContent('aide');
       expect(dataRows[1]).toHaveAttribute(
         'data-testid',
         'required-package-row',
       );
-      // User packages after (alphabetical)
+      // User packages after (newest first)
       expect(dataRows[2]).toHaveTextContent('curl');
       expect(dataRows[2]).toHaveAttribute('data-testid', 'package-row');
       expect(dataRows[3]).toHaveTextContent('zsh');

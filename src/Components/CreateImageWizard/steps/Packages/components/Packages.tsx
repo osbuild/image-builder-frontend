@@ -140,7 +140,6 @@ const Packages = () => {
       <PackagesTable
         isSuccessEpelRepo={isSuccessEpelRepo}
         epelRepo={epelRepo}
-        activeStream={activeStream}
       />
     </>
   );
