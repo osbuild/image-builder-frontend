@@ -119,9 +119,9 @@ module.exports = {
       {
         // running `make` on cockpit plugin creates './pkg'
         // directory, the generated files do not pass
-        // `npm run build` outputing failures
-        // this ensures the directory is exluded during build time
-        exclude: ',/pkg',
+        // `npm run build` outputting failures
+        // this ensures the directory is excluded during build time
+        exclude: path.resolve(__dirname, 'pkg'),
       },
     ],
   },
