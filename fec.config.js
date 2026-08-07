@@ -49,30 +49,12 @@ class IstanbulCoveragePlugin {
 
 const plugins = [new IstanbulCoveragePlugin()];
 
-function add_define(key, value) {
-  const definePluginIndex = plugins.findIndex(
-    (plugin) => plugin instanceof webpack.DefinePlugin,
-  );
-  if (definePluginIndex !== -1) {
-    const definePlugin = plugins[definePluginIndex];
-
-    const newDefinePlugin = new webpack.DefinePlugin({
-      ...definePlugin.definitions,
-      [key]: JSON.stringify(value),
-    });
-
-    plugins[definePluginIndex] = newDefinePlugin;
-  } else {
-    plugins.push(
-      new webpack.DefinePlugin({
-        [key]: JSON.stringify(value),
-      }),
-    );
-  }
-}
-
 if (process.env.NODE_ENV) {
-  add_define('process.env.NODE_ENV', process.env.NODE_ENV);
+  plugins.push(
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    }),
+  );
 }
 
 if (process.env.ENABLE_SENTRY) {
