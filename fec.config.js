@@ -126,11 +126,6 @@ module.exports = {
     ],
   },
   routes: {
-    ...(process.env.CONFIG_PORT && {
-      [`${process.env.BETA ? '/beta' : ''}/config`]: {
-        host: `http://localhost:${process.env.CONFIG_PORT}`,
-      },
-    }),
     ...(process.env.LOCAL_IMAGE_BUILDER_API && {
       '/api/image-builder': {
         host: process.env.LOCAL_IMAGE_BUILDER_API,
@@ -144,9 +139,6 @@ module.exports = {
         return {
           ...acc,
           [`/apps/${appName}`]: { host: `${protocol}://${host}:${appPort}` },
-          [`/beta/apps/${appName}`]: {
-            host: `${protocol}://${host}:${appPort}`,
-          },
         };
       }, {}),
     }),
