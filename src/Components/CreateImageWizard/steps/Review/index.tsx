@@ -9,6 +9,7 @@ import {
   AdvancedSettingsOverview,
   ContentOverview,
   ImageOverview,
+  NoUsersAlert,
   ReadyToBuildAlert,
   Registration,
   RepeatableBuild,
@@ -33,6 +34,7 @@ const ReviewStep = () => {
   return (
     <>
       <FormHeader />
+      <NoUsersAlert />
       <ImageOverview restrictions={restrictions} />
       <Registration restrictions={restrictions} />
       <RepeatableBuild restrictions={restrictions} />

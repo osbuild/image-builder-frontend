@@ -96,4 +96,33 @@ describe('Users Component', () => {
       );
     });
   });
+
+  describe('Password guidance', () => {
+    test('shows plain text warning and openssl hint on-prem', async () => {
+      renderWithRedux(
+        <UsersStep />,
+        {},
+        {
+          preloadedState: {
+            env: { isOnPremise: true },
+          },
+        },
+      );
+
+      expect(
+        await screen.findByText(/stored in plain text on this host/i),
+      ).toBeInTheDocument();
+      expect(screen.getByText('openssl passwd -6')).toBeInTheDocument();
+    });
+
+    test('does not show the plain text warning in the hosted service', async () => {
+      renderWithRedux(<UsersStep />, {});
+
+      await screen.findByText(/create user accounts/i);
+
+      expect(
+        screen.queryByText(/stored in plain text/i),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
