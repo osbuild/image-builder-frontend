@@ -28,6 +28,7 @@ import {
   useRegistryLoginMutation,
   useRegistryLogoutMutation,
 } from '@/store/api/backend';
+import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { OnPremError } from '@/store/api/shared';
 
 const EmptyCard = ({ openForm }: { openForm: (arg0: boolean) => void }) => {
@@ -35,7 +36,7 @@ const EmptyCard = ({ openForm }: { openForm: (arg0: boolean) => void }) => {
     <Card variant='secondary' className='pf-v6-u-mt-md pf-v6-u-py-md'>
       <EmptyState titleText='Login to select an image' headingLevel='h4'>
         <EmptyStateBody>
-          <Content>Registry images come from registry.redhat.io.</Content>
+          <Content>Registry images come from {IMAGE_REGISTRY_HOST}.</Content>
           <Content>
             Sign in to browse available images for this release.
           </Content>
@@ -92,7 +93,7 @@ const LoginCard = ({ closeForm }: { closeForm: (arg0: boolean) => void }) => {
   return (
     <Card variant='secondary' className='pf-v6-u-mt-md'>
       <CardHeader>
-        <CardTitle>Log in to registry.redhat.io</CardTitle>
+        <CardTitle>Log in to {IMAGE_REGISTRY_HOST}</CardTitle>
       </CardHeader>
       <CardBody>
         <Content component={ContentVariants.p}>
@@ -194,7 +195,7 @@ const RegistryStatus = ({ username }: { username: string }) => {
     <Flex gap={{ default: 'gapSm' }}>
       <FlexItem>
         <Content className='pf-v6-u-mt-md pf-v6-u-text-color-subtle'>
-          Connected to registry.redhat.io &middot; {username}
+          Connected to {IMAGE_REGISTRY_HOST} &middot; {username}
         </Content>
       </FlexItem>
       <FlexItem>

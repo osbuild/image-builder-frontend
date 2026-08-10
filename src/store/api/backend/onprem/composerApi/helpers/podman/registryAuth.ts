@@ -1,11 +1,15 @@
 import cockpit from 'cockpit';
 
+import {
+  IMAGE_REGISTRY,
+  IMAGE_REGISTRY_HOST,
+} from '@/store/api/backend/onprem/constants';
 import type { RegistryAuthStatus } from '@/store/api/backend/onprem/types';
 
 const getRegistryLogin = async (): Promise<string | null> => {
   try {
     const result = await cockpit.spawn(
-      ['podman', 'login', '--get-login', 'registry.redhat.io'],
+      ['podman', 'login', '--get-login', IMAGE_REGISTRY_HOST],
       { superuser: 'require' },
     );
     return (result as string).trim() || null;
@@ -16,10 +20,9 @@ const getRegistryLogin = async (): Promise<string | null> => {
 
 const verifyRegistryAccess = async (): Promise<boolean> => {
   try {
-    await cockpit.spawn(
-      ['podman', 'search', 'registry.redhat.io/rhel10', '--limit', '1'],
-      { superuser: 'require' },
-    );
+    await cockpit.spawn(['podman', 'search', IMAGE_REGISTRY, '--limit', '1'], {
+      superuser: 'require',
+    });
     return true;
   } catch {
     return false;

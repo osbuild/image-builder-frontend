@@ -1,5 +1,6 @@
 import cockpit from 'cockpit';
 
+import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import { checkImageExists, checkRegistryAuth } from './helpers';
@@ -25,7 +26,7 @@ export const registryEndpoints = (builder: OnPremBuilder) => ({
               '--username',
               username,
               '--password-stdin',
-              'registry.redhat.io',
+              IMAGE_REGISTRY_HOST,
             ],
             { superuser: 'require', err: 'message' },
           )
@@ -36,7 +37,7 @@ export const registryEndpoints = (builder: OnPremBuilder) => ({
   }),
   registryLogout: builder.mutation<void, void>({
     queryFn: onPremQueryHandler(async () => {
-      await cockpit.spawn(['podman', 'logout', 'registry.redhat.io'], {
+      await cockpit.spawn(['podman', 'logout', IMAGE_REGISTRY_HOST], {
         superuser: 'require',
       });
     }),
