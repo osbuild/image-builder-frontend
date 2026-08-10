@@ -8,6 +8,7 @@ import {
   HelperText,
   HelperTextItem,
   Spinner,
+  Tooltip,
 } from '@patternfly/react-core';
 
 import {
@@ -16,7 +17,10 @@ import {
   usePullImageMutation,
 } from '@/store/api/backend';
 import { Distributions } from '@/store/api/backend/hosted';
-import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
+import {
+  IMAGE_REGISTRY_HOST,
+  KNOWN_IMAGES,
+} from '@/store/api/backend/onprem/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeDistribution,
@@ -33,6 +37,42 @@ import {
 import ImageSelect from './ImageSelect';
 import RegistryAuth from './RegistryAuth';
 
+type PullButtonProps = {
+  onPull: () => void;
+  isPulling: boolean;
+  isAuthenticated: boolean;
+  isDisabled?: boolean;
+};
+
+const PullButton = ({
+  onPull,
+  isPulling,
+  isAuthenticated,
+  isDisabled,
+}: PullButtonProps) => {
+  const button = (
+    <Button
+      variant='secondary'
+      onClick={onPull}
+      isDisabled={isDisabled || isPulling}
+      isAriaDisabled={!isAuthenticated}
+      icon={isPulling ? <Spinner size='sm' /> : undefined}
+    >
+      {isPulling ? 'Pulling image...' : 'Pull latest image'}
+    </Button>
+  );
+
+  if (isAuthenticated) {
+    return button;
+  }
+
+  return (
+    <Tooltip content={`Log in to ${IMAGE_REGISTRY_HOST} to pull images.`}>
+      {button}
+    </Tooltip>
+  );
+};
+
 const OfficialImageSource = () => {
   const dispatch = useAppDispatch();
   const arch = useAppSelector(selectArchitecture);
@@ -47,13 +87,10 @@ const OfficialImageSource = () => {
     });
   const isAuthenticated = authStatus?.status === 'authenticated';
 
-  const images = useMemo(() => {
-    if (!isAuthenticated) {
-      return [];
-    }
-
-    return KNOWN_IMAGES.map((known) => ({ ...known, arch }));
-  }, [isAuthenticated, arch]);
+  const images = useMemo(
+    () => KNOWN_IMAGES.map((known) => ({ ...known, arch })),
+    [arch],
+  );
 
   // Local images can be removed outside the wizard (e.g. podman rmi),
   // so bypass the cache and re-check whenever this section mounts.
@@ -86,48 +123,42 @@ const OfficialImageSource = () => {
   return (
     <>
       <RegistryAuth />
-      {isAuthenticated && (
-        <Flex
-          spaceItems={{ default: 'spaceItemsMd' }}
-          alignItems={{ default: 'alignItemsFlexStart' }}
-        >
-          <FlexItem>
-            <ImageSelect
-              items={images}
-              selectedRef={selectedRef}
-              ariaDescribedBy={errorId}
-              onSelect={(_event, selection) => {
-                const selected = images.find(
-                  (img) => img.reference === selection,
+      <Flex
+        spaceItems={{ default: 'spaceItemsMd' }}
+        alignItems={{ default: 'alignItemsFlexStart' }}
+      >
+        <FlexItem>
+          <ImageSelect
+            items={images}
+            selectedRef={selectedRef}
+            ariaDescribedBy={errorId}
+            onSelect={(_event, selection) => {
+              const selected = images.find(
+                (img) => img.reference === selection,
+              );
+              if (selected) {
+                dispatch(changeImageSource(selected.reference));
+                dispatch(changeDistribution(selected.distro as Distributions));
+                dispatch(
+                  changeImageTypes([selected.type as SupportedImageTypes]),
                 );
-                if (selected) {
-                  dispatch(changeImageSource(selected.reference));
-                  dispatch(
-                    changeDistribution(selected.distro as Distributions),
-                  );
-                  dispatch(
-                    changeImageTypes([selected.type as SupportedImageTypes]),
-                  );
-                }
-              }}
-              getLabel={(item) => item.name}
-              placeholder={'Select an official image'}
+              }
+            }}
+            getLabel={(item) => item.name}
+            placeholder={'Select an official image'}
+          />
+        </FlexItem>
+        {hasOfficialSelection && (
+          <FlexItem className='pf-v6-u-mt-md'>
+            <PullButton
+              onPull={() => pullImage({ reference: selectedRef! })}
+              isPulling={isPulling}
+              isAuthenticated={isAuthenticated}
+              isDisabled={isAuthLoading}
             />
           </FlexItem>
-          {hasOfficialSelection && (
-            <FlexItem className='pf-v6-u-mt-md'>
-              <Button
-                variant='secondary'
-                onClick={() => pullImage({ reference: selectedRef! })}
-                isDisabled={isAuthLoading || isPulling}
-                icon={isPulling ? <Spinner size='sm' /> : undefined}
-              >
-                {isPulling ? 'Pulling image...' : 'Pull latest image'}
-              </Button>
-            </FlexItem>
-          )}
-        </Flex>
-      )}
+        )}
+      </Flex>
       {showSelectionError && (
         <FormHelperText>
           <HelperText>
@@ -143,7 +174,9 @@ const OfficialImageSource = () => {
             <HelperTextItem variant='error' id='official-image-pull-error'>
               {isPullError
                 ? 'Failed to pull image. Please try again.'
-                : 'Image must be pulled before proceeding.'}
+                : isAuthenticated
+                  ? 'Bootc container must be pulled before proceeding.'
+                  : `Bootc container is not in local storage. Log in to ${IMAGE_REGISTRY_HOST} to pull it.`}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

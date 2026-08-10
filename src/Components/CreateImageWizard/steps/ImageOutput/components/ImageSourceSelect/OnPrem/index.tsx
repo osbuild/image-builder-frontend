@@ -7,7 +7,6 @@ import {
   CardTitle,
   FormGroup,
   Gallery,
-  Label,
 } from '@patternfly/react-core';
 
 import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
@@ -47,7 +46,7 @@ const OnPremImageSourceSelect = () => {
             }}
           >
             <CardTitle id='official-card-title'>
-              Official Red Hat images <Label isCompact>Login required</Label>
+              Official Red Hat images
             </CardTitle>
           </CardHeader>
           <CardBody>Remote images from {IMAGE_REGISTRY_HOST}</CardBody>
