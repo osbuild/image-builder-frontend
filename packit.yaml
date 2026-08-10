@@ -19,6 +19,9 @@ jobs:
   - job: tests
     identifier: self
     trigger: pull_request
+    # Only for PRs targeting main - stacked PRs run these once they are
+    # retargeted after the PR below them merges.
+    branch: "^main$"
     tmt_plan: /plans/all/main
     targets:
       - centos-stream-10
@@ -27,6 +30,7 @@ jobs:
 
   - job: copr_build
     trigger: pull_request
+    branch: "^main$"
     targets: &build_targets
       - centos-stream-9
       - centos-stream-9-aarch64
