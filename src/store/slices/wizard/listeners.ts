@@ -1,12 +1,17 @@
-import { backendApi } from '@/store/api/backend';
+import { backendApi, type Distributions } from '@/store/api/backend';
+import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
 import type { WizardListenerEffect } from '@/store/middleware/types';
 
 import { selectIsImageMode } from './details';
 import {
+  changeDistribution,
+  changeImageSource,
   changeImageTypes,
   isRhel,
   selectArchitecture,
   selectDistribution,
+  selectImageSource,
+  selectImageSourceType,
   selectImageTypes,
 } from './output';
 import {
@@ -88,5 +93,61 @@ export const clearUnsupportedRegistration: WizardListenerEffect = (
 
   if (selectAapEnabled(state)) {
     listenerApi.dispatch(changeAapEnabled(false));
+  }
+};
+
+// On-prem, the target environment radios are the only way to choose an
+// official image: each type maps to exactly one official image, so a
+// type change resolves the image source and distribution. Guarded by
+// IS_ON_PREMISE, a build-time constant, so the hosted bundle
+// dead-code-eliminates it and can never have its image source
+// rewritten.
+export const resolveOfficialImage: WizardListenerEffect = (
+  _action,
+  listenerApi,
+) => {
+  if (!process.env.IS_ON_PREMISE) {
+    return;
+  }
+
+  const state = listenerApi.getState();
+  if (
+    !selectIsImageMode(state) ||
+    selectImageSourceType(state) !== 'official'
+  ) {
+    return;
+  }
+
+  const imageTypes = selectImageTypes(state);
+  if (imageTypes.length === 0) {
+    return;
+  }
+  const targetType = imageTypes[0];
+
+  const currentRef = selectImageSource(state);
+  const current = KNOWN_IMAGES.find((k) => k.reference === currentRef);
+  // A set but unknown reference belongs to another flow (e.g. an
+  // imported blueprint); leave it alone.
+  if (currentRef && !current) {
+    return;
+  }
+
+  // Prefer the sibling published under the same name, so a type change
+  // stays within the same release once several are offered.
+  const selected =
+    current?.type === targetType
+      ? current
+      : ((current &&
+          KNOWN_IMAGES.find(
+            (k) => k.name === current.name && k.type === targetType,
+          )) ??
+        KNOWN_IMAGES.find((k) => k.type === targetType));
+  if (!selected) {
+    return;
+  }
+
+  if (selected !== current) {
+    listenerApi.dispatch(changeImageSource(selected.reference));
+    listenerApi.dispatch(changeDistribution(selected.distro as Distributions));
   }
 };
