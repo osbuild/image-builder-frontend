@@ -24,7 +24,7 @@ export type MiscFormatType = Exclude<
 >;
 
 export type ImageSource = string;
-export type ImageSourceType = 'official' | 'custom';
+export type ImageSourceType = 'official' | 'local';
 
 export type RhelDistribution = (typeof RHEL_DISTRIBUTIONS)[number];
 

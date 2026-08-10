@@ -63,7 +63,7 @@ const parseImageSourceType = ({ bootc }: RequestLike): ImageSourceType => {
   }
 
   if (!isKnownImageRef(bootc.reference)) {
-    return 'custom';
+    return 'local';
   }
 
   return 'official';
