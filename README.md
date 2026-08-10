@@ -91,11 +91,14 @@ echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
 
 #### Cockpit setup
 
-To install and setup Cockpit follow guide at: https://cockpit-project.org/running.html
+To install and setup Cockpit follow guide at: https://cockpit-project.org/running.html. Additionally you will need `image-builder` as the image building backend, and `make` for cockpit-related development targets. Don't forget to install `npm` and `node` as noted in the previous section.
 
-#### On-premises image builder installation and configuration
+Generally, this is enough to get you started:
 
-To install and configure `osbuild-composer` on your local machine follow our documentation: https://osbuild.org/docs/on-premises/installation/
+```bash
+dnf install -y cockpit image-builder make npm
+systemctl enable --now cockpit.socket
+```
 
 #### Scripts for local development of image builder plugin
 
