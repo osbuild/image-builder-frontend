@@ -6,6 +6,7 @@ import {
   changeArchitecture,
   changeBlueprintMode,
   changeDistribution,
+  changeImageTypes,
 } from '../slices/wizard';
 // export from slices/wizard/listeners rather than slices/wizard
 // this is needed to avoid circular dependencies
@@ -13,6 +14,7 @@ import {
   clearUnsupportedRegistration,
   filterImageTypes,
   registerLater,
+  resolveOfficialImage,
 } from '../slices/wizard/listeners';
 
 export const listenerMiddleware = createListenerMiddleware();
@@ -38,4 +40,9 @@ startListening({
 startListening({
   actionCreator: changeBlueprintMode,
   effect: clearUnsupportedRegistration,
+});
+
+startListening({
+  actionCreator: changeImageTypes,
+  effect: resolveOfficialImage,
 });

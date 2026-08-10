@@ -15,7 +15,6 @@ import {
   selectBootcDistributions,
   selectDistribution,
   selectImageSource,
-  selectImageSourceFilter,
   selectImageTypes,
   selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
@@ -24,7 +23,7 @@ import {
   type WizardState,
 } from '@/store/slices/wizard';
 
-import { createMockState, mockRootState } from '../../tests/mockWizardState';
+import { createMockState } from '../../tests/mockWizardState';
 
 describe('output reducers', () => {
   describe('changeImageSource', () => {
@@ -408,46 +407,6 @@ describe('output selectors', () => {
       });
 
       expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
-    });
-  });
-
-  describe('selectImageSourceFilter', () => {
-    it('should return imageSource when on-premise with imageSource set', () => {
-      const state = {
-        ...mockRootState,
-        env: { isOnPremise: true },
-        wizard: {
-          ...mockRootState.wizard,
-          output: {
-            ...initialState.output,
-            imageSource: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-          },
-        },
-      };
-
-      expect(selectImageSourceFilter(state)).toEqual({
-        imageSource: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-      });
-    });
-
-    it('should return empty object when on-premise with no imageSource', () => {
-      const state = {
-        ...mockRootState,
-        env: { isOnPremise: true },
-      };
-
-      expect(selectImageSourceFilter(state)).toEqual({});
-    });
-
-    it('should return empty object when hosted, even with imageSource set', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageSource: 'registry.redhat.io/rhel10/rhel-bootc:10.0',
-        },
-      });
-
-      expect(selectImageSourceFilter(state)).toEqual({});
     });
   });
 });
