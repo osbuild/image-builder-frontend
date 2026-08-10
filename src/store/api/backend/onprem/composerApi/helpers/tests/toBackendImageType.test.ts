@@ -10,6 +10,9 @@ describe('toBackendImageType', () => {
   it('maps frontend aliases back to backend type names', () => {
     expect(toBackendImageType('guest-image')).toBe('qcow2');
     expect(toBackendImageType('aws')).toBe('ami');
+    expect(toBackendImageType('bootable-container-iso')).toBe(
+      'bootc-generic-iso',
+    );
   });
 
   it('passes through types without an alias', () => {
