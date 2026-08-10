@@ -5,6 +5,7 @@ import { useAppSelector } from '@/store/hooks';
 import {
   selectImageSource,
   selectImageSourceType,
+  selectIsoPayloadReference,
 } from '@/store/slices/wizard';
 
 import ContainerSection from './ContainerSection';
@@ -17,6 +18,8 @@ import RegistryAuth from './RegistryAuth';
 const OfficialImageSource = () => {
   const selectedRef = useAppSelector(selectImageSource);
   const imageSourceType = useAppSelector(selectImageSourceType);
+  // Only set while the container installer is selected
+  const isoPayloadReference = useAppSelector(selectIsoPayloadReference);
 
   const selected = KNOWN_IMAGES.find((img) => img.reference === selectedRef);
 
@@ -32,6 +35,14 @@ const OfficialImageSource = () => {
         reference={selected?.reference}
         name={selected?.name}
       />
+      {selected && isoPayloadReference && (
+        <ContainerSection
+          label='Payload container'
+          reference={isoPayloadReference}
+          name={selected.name}
+          helperText='The installer deploys this base image.'
+        />
+      )}
     </>
   );
 };

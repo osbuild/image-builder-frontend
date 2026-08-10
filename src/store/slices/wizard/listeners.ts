@@ -7,12 +7,14 @@ import {
   changeDistribution,
   changeImageSource,
   changeImageTypes,
+  changeIsoPayloadReference,
   isRhel,
   selectArchitecture,
   selectDistribution,
   selectImageSource,
   selectImageSourceType,
   selectImageTypes,
+  selectIsoPayloadReference,
 } from './output';
 import {
   changeAapEnabled,
@@ -149,5 +151,16 @@ export const resolveOfficialImage: WizardListenerEffect = (
   if (selected !== current) {
     listenerApi.dispatch(changeImageSource(selected.reference));
     listenerApi.dispatch(changeDistribution(selected.distro as Distributions));
+  }
+
+  // The container installer needs a payload container; default to the
+  // one the selected official image ships with.
+  const payloadRef = selected.iso_payload_references?.[0];
+  if (
+    targetType === 'bootable-container-iso' &&
+    payloadRef &&
+    !selectIsoPayloadReference(state)
+  ) {
+    listenerApi.dispatch(changeIsoPayloadReference(payloadRef));
   }
 };

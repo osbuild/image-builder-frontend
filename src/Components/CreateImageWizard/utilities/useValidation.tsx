@@ -53,6 +53,7 @@ import {
   selectImageSource,
   selectImageTypes,
   selectIsOfficialImage,
+  selectIsoPayloadReference,
   selectKernel,
   selectKeyboard,
   selectLanguages,
@@ -1279,10 +1280,19 @@ export const useImagePullValidation = (): StepValidation => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isOfficialImage = useAppSelector(selectIsOfficialImage);
   const imageSource = useAppSelector(selectImageSource);
+  // Only set when the container installer is selected; the installer
+  // needs its payload container in local storage too.
+  const isoPayloadReference = useAppSelector(selectIsoPayloadReference);
+
   const { data: imageExists, isLoading } = useGetImageExistsQuery(
     { reference: imageSource! },
     { skip: !isOnPremise || !isOfficialImage },
   );
+  const { data: payloadExists, isLoading: isPayloadLoading } =
+    useGetImageExistsQuery(
+      { reference: isoPayloadReference! },
+      { skip: !isOnPremise || !isOfficialImage || !isoPayloadReference },
+    );
   const { data: authStatus } = useGetRegistryAuthStatusQuery(undefined, {
     skip: !isOnPremise || !isOfficialImage,
   });
@@ -1292,7 +1302,9 @@ export const useImagePullValidation = (): StepValidation => {
     return { errors: {}, disabledNext: false };
   }
 
-  if (isLoading) {
+  const needsPayload = !!isoPayloadReference;
+
+  if (isLoading || (needsPayload && isPayloadLoading)) {
     return { errors: {}, disabledNext: true };
   }
 
@@ -1302,6 +1314,17 @@ export const useImagePullValidation = (): StepValidation => {
         imagePull: isAuthenticated
           ? 'Bootc container must be pulled before proceeding'
           : `Bootc container is not in local storage. Log in to ${IMAGE_REGISTRY_HOST} to pull it.`,
+      },
+      disabledNext: true,
+    };
+  }
+
+  if (needsPayload && payloadExists !== true) {
+    return {
+      errors: {
+        imagePull: isAuthenticated
+          ? 'Payload container must be pulled before proceeding'
+          : `Payload container is not in local storage. Log in to ${IMAGE_REGISTRY_HOST} to pull it.`,
       },
       disabledNext: true,
     };
