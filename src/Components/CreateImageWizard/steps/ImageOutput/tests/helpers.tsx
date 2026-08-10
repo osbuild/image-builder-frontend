@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { RHEL_10 } from '@/constants';
 import { initialState } from '@/store/slices/wizard';
@@ -130,6 +130,9 @@ export const toggleBlueprintMode = async (
 ) => {
   const buttonName = mode === 'package' ? /package mode/i : /image mode/i;
   const button = await screen.findByRole('button', { name: buttonName });
+  // Image mode starts disabled on-prem until the host distro check
+  // resolves; clicking a disabled toggle would silently do nothing.
+  await waitFor(() => expect(button).toBeEnabled());
   await clickWithWait(user, button);
 };
 
