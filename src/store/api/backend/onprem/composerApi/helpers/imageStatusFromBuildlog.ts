@@ -1,3 +1,4 @@
+import { getJournal } from './getJournal';
 import { safeReadJsonFile } from './safeReadJsonFile';
 
 import type { ImageStatus } from '../../../hosted';
@@ -15,6 +16,7 @@ export type OSBuildResult = {
 
 export const imageStatusFromBuildlog = async (
   buildlog: string,
+  composeId: string,
 ): Promise<ImageStatus> => {
   const result = await safeReadJsonFile<OSBuildResult>(buildlog);
 
@@ -26,6 +28,7 @@ export const imageStatusFromBuildlog = async (
       error: {
         id: 10,
         reason: 'image-builder process is not running and no result was found',
+        details: await getJournal(composeId),
       },
     };
   }
@@ -41,6 +44,9 @@ export const imageStatusFromBuildlog = async (
   // "error" contains build failures, and "errors" contains validation failures.
   if (result.error || result.errors) {
     details = JSON.stringify(result.error || result.errors);
+  }
+  if (!details) {
+    details = await getJournal(composeId);
   }
 
   // osbuild failures are always id: 10

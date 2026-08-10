@@ -9,6 +9,7 @@ import {
   byCreatedAtDesc,
   getBlueprintsPath,
   getBootcArgs,
+  getJournal,
   getRegistrationArgs,
   getUploadArgs,
   imageStatusFallback,
@@ -272,6 +273,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
           if (buildlogEntry !== undefined) {
             status.image_status = await imageStatusFromBuildlog(
               path.join(composeDir, buildlogEntry),
+              queryArgs.composeId,
             );
             if (status.image_status.status === 'failure') {
               return status;
@@ -282,6 +284,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
               id: 10,
               reason:
                 'image-builder process is not running and no result was found',
+              details: await getJournal(queryArgs.composeId),
             };
             // Return before the upload result check overwrites this error
             // with the less specific "no upload result found" one.
@@ -320,6 +323,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             status.image_status.error = {
               id: 28,
               reason: 'image build succeeded but upload failed',
+              details: await getJournal(queryArgs.composeId),
             };
           }
         } else if (!unitActive) {
@@ -328,6 +332,7 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
             id: 28,
             reason:
               'image-builder process is not running and no upload result found',
+            details: await getJournal(queryArgs.composeId),
           };
         }
 

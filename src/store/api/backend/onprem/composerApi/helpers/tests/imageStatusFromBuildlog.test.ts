@@ -9,6 +9,7 @@ import {
 vi.mock('cockpit', () => ({
   default: {
     file: vi.fn(),
+    spawn: vi.fn(),
   },
 }));
 
@@ -22,7 +23,7 @@ describe('imageStatusFromBuildlog', () => {
     vi.mocked(cockpit.file).mockReturnValue({
       read: vi.fn().mockResolvedValue(JSON.stringify(mockData)),
     } as never);
-    const status = await imageStatusFromBuildlog('/path/to/buildlog');
+    const status = await imageStatusFromBuildlog('/path/to/buildlog', '');
     expect(status).toEqual({
       status: 'success',
     });
@@ -39,7 +40,7 @@ describe('imageStatusFromBuildlog', () => {
     vi.mocked(cockpit.file).mockReturnValue({
       read: vi.fn().mockResolvedValue(JSON.stringify(mockData)),
     } as never);
-    const status = await imageStatusFromBuildlog('/path/to/buildlog');
+    const status = await imageStatusFromBuildlog('/path/to/buildlog', '');
     expect(status).toEqual({
       status: 'failure',
       error: {
@@ -57,12 +58,14 @@ describe('imageStatusFromBuildlog', () => {
     vi.mocked(cockpit.file).mockReturnValue({
       read: vi.fn().mockResolvedValue(''),
     } as never);
-    const status = await imageStatusFromBuildlog('/path/to/buildlog');
+    vi.mocked(cockpit.spawn).mockResolvedValue('journal-log');
+    const status = await imageStatusFromBuildlog('/path/to/buildlog', '');
     expect(status).toEqual({
       status: 'failure',
       error: {
         id: 10,
         reason: 'image-builder process is not running and no result was found',
+        details: 'journal-log',
       },
     });
     expect(cockpit.file).toHaveBeenCalledWith('/path/to/buildlog', {

@@ -38,3 +38,4 @@ export { uploadStatusFromFile } from './uploadStatusFromFile';
 export { imageStatusFallback } from './imageStatusFallback';
 export { getUploadArgs } from './getUploadArgs';
 export { getBootcArgs } from './getBootcArgs';
+export { getJournal } from './getJournal';
