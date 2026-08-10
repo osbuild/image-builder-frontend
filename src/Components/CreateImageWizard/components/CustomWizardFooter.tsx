@@ -20,6 +20,7 @@ import { scrollToFirstError } from '../utilities/scrollToFirstError';
 
 type CustomWizardFooterPropType = {
   disableBack?: boolean;
+  disableNext?: boolean;
   hasErrors: boolean;
   isPending?: boolean;
   beforeNext?: () => boolean;
@@ -28,6 +29,7 @@ type CustomWizardFooterPropType = {
 
 export const CustomWizardFooter = ({
   disableBack,
+  disableNext = false,
   hasErrors,
   isPending,
   beforeNext,
@@ -101,14 +103,14 @@ export const CustomWizardFooter = ({
         <Button
           variant='secondary'
           onClick={handleNext}
-          isDisabled={isWaitingOnValidation}
+          isDisabled={disableNext || isWaitingOnValidation}
         >
           Next
         </Button>
         <Button
           variant='primary'
           onClick={handleReview}
-          isDisabled={isWaitingOnValidation}
+          isDisabled={disableNext || isWaitingOnValidation}
         >
           Review image
         </Button>
