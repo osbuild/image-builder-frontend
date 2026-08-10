@@ -12,8 +12,10 @@ import {
   BlueprintsResponse,
   useGetImageExistsQuery,
   useGetOscapCustomizationsQuery,
+  useGetRegistryAuthStatusQuery,
   useLazyGetBlueprintsQuery,
 } from '@/store/api/backend';
+import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
@@ -1281,6 +1283,10 @@ export const useImagePullValidation = (): StepValidation => {
     { reference: imageSource! },
     { skip: !isOnPremise || !isOfficialImage },
   );
+  const { data: authStatus } = useGetRegistryAuthStatusQuery(undefined, {
+    skip: !isOnPremise || !isOfficialImage,
+  });
+  const isAuthenticated = authStatus?.status === 'authenticated';
 
   if (!isOnPremise || !isOfficialImage) {
     return { errors: {}, disabledNext: false };
@@ -1292,7 +1298,11 @@ export const useImagePullValidation = (): StepValidation => {
 
   if (imageExists !== true) {
     return {
-      errors: { imagePull: 'Image must be pulled before proceeding' },
+      errors: {
+        imagePull: isAuthenticated
+          ? 'Bootc container must be pulled before proceeding'
+          : `Bootc container is not in local storage. Log in to ${IMAGE_REGISTRY_HOST} to pull it.`,
+      },
       disabledNext: true,
     };
   }
