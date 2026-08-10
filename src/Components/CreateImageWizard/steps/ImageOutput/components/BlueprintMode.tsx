@@ -5,6 +5,7 @@ import {
   FormGroup,
   ToggleGroup,
   ToggleGroupItem,
+  Tooltip,
 } from '@patternfly/react-core';
 import { BuildIcon, RepositoryIcon } from '@patternfly/react-icons';
 
@@ -23,29 +24,63 @@ import {
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
+import './BlueprintMode.css';
+
 const BlueprintMode = () => {
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
   const distribution = useAppSelector(selectDistribution);
   const architecture = useAppSelector(selectArchitecture);
-  const [defaultDistro, setDefaultDistro] = useState<Distributions>(RHEL_10);
+  // undefined until the host distro check resolves on-prem
+  const [hostDistro, setHostDistro] = useState<Distributions | undefined>();
   const previousDistro = useRef<Distributions>(RHEL_10);
   const previousArch = useRef(architecture);
 
   useEffect(() => {
     if (!isOnPremise) return;
-    const fetchDefaultDistro = async () => {
+    const fetchHostDistro = async () => {
       try {
         const distro = await getHostDistro();
-        setDefaultDistro(distro as Distributions);
+        setHostDistro(distro as Distributions);
       } catch {
-        // defaultDistro remains RHEL_10
+        // Assume the default so a failed check doesn't lock image mode
+        setHostDistro(RHEL_10);
       }
     };
 
-    fetchDefaultDistro();
+    fetchHostDistro();
   }, [isOnPremise]);
+
+  // On-prem builds run on the host itself, and image mode only ships
+  // official RHEL 10 images for now. While the host distro is still
+  // unknown the toggle stays disabled without the tooltip, so RHEL 10
+  // users don't see a "coming soon" flash.
+  const isHostDistroKnown = !isOnPremise || hostDistro !== undefined;
+  const isImageModeSupported = !isOnPremise || hostDistro === RHEL_10;
+
+  const imageModeToggle = (
+    <ToggleGroupItem
+      icon={<BuildIcon />}
+      text='Image mode'
+      buttonId='blueprint-mode-image'
+      isSelected={isImageMode}
+      isDisabled={!isImageModeSupported}
+      onChange={() => {
+        if (!isOnPremise) {
+          previousDistro.current = distribution;
+          previousArch.current = architecture;
+        }
+        dispatch(changeBlueprintMode('image'));
+        dispatch(changeImageTypes([]));
+        if (!isOnPremise) {
+          dispatch(changeArchitecture(X86_64));
+          dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
+        }
+      }}
+      aria-describedby='blueprint-mode-description'
+    />
+  );
 
   return (
     <FormGroup label='Image type' isRequired>
@@ -59,7 +94,7 @@ const BlueprintMode = () => {
             dispatch(changeBlueprintMode('package'));
             dispatch(
               changeDistribution(
-                isOnPremise ? defaultDistro : previousDistro.current,
+                isOnPremise ? (hostDistro ?? RHEL_10) : previousDistro.current,
               ),
             );
             // Image source is only relevant in image mode
@@ -70,25 +105,20 @@ const BlueprintMode = () => {
           }}
           aria-describedby='blueprint-mode-description'
         />
-        <ToggleGroupItem
-          icon={<BuildIcon />}
-          text='Image mode'
-          buttonId='blueprint-mode-image'
-          isSelected={isImageMode}
-          onChange={() => {
-            if (!isOnPremise) {
-              previousDistro.current = distribution;
-              previousArch.current = architecture;
-            }
-            dispatch(changeBlueprintMode('image'));
-            dispatch(changeImageTypes([]));
-            if (!isOnPremise) {
-              dispatch(changeArchitecture(X86_64));
-              dispatch(changeImageSource(RHEL_10_IMAGE_MODE_IMAGE));
-            }
-          }}
-          aria-describedby='blueprint-mode-description'
-        />
+        {!isImageModeSupported && isHostDistroKnown ? (
+          // Disabled buttons don't emit hover events, so the tooltip
+          // needs a wrapper element as its trigger.
+          <Tooltip content='Image mode is currently available only on RHEL 10 hosts. Support for CentOS Stream and Fedora is coming soon.'>
+            <span
+              className='image-mode-toggle-wrapper'
+              data-testid='image-mode-toggle-wrapper'
+            >
+              {imageModeToggle}
+            </span>
+          </Tooltip>
+        ) : (
+          imageModeToggle
+        )}
       </ToggleGroup>
       <Content
         id='blueprint-mode-description'

@@ -1,0 +1,8 @@
+/* The tooltip wrapper makes the image mode item the first child of the
+   wrapper span instead of a middle child of the toggle group, so
+   PatternFly rounds its start corners. Square them so the item sits
+   flush against the package mode item. */
+.image-mode-toggle-wrapper {
+  --pf-v6-c-toggle-group__item--first-child__button--BorderStartStartRadius: 0;
+  --pf-v6-c-toggle-group__item--first-child__button--BorderEndStartRadius: 0;
+}
