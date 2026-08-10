@@ -3,6 +3,12 @@ name: Hosted playwright tests
 on:
   pull_request:
     types: [opened, reopened, synchronize]
+    # Too expensive to run once per PR in a stack: only run for PRs
+    # targeting main. Stacked PRs (base = another in-flight branch) run
+    # the full suite once they are retargeted after the PR below them
+    # merges, so every merge into main is still fully gated.
+    branches:
+      - main
   workflow_dispatch:
   merge_group:
 
