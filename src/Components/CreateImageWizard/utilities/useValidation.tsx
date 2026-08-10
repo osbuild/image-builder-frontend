@@ -886,8 +886,6 @@ const validateSshKey = (userSshKey: string): string => {
 
 export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
-  const blueprintMode = useAppSelector(selectBlueprintMode);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
@@ -896,14 +894,6 @@ export function useUsersValidation(): UsersStepValidation {
     users.length === 0 ||
     (users.length === 1 && (users[0].name || '').trim() === '')
   ) {
-    if (isOnPremise && blueprintMode === 'image') {
-      return {
-        errors: {},
-        warnings: {},
-        disabledNext: true,
-      };
-    }
-
     return {
       errors: {},
       warnings: {},
