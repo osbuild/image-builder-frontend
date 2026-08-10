@@ -58,8 +58,13 @@ const OfficialImageSource = () => {
     { skip: !selectedRef },
   );
 
-  const [pullImage, { isLoading: isPulling, isError: isPullError }] =
-    usePullImageMutation();
+  // The mutation state is scoped to the reference it was started with,
+  // so switching to another image doesn't show its busy/error state.
+  const [pullImage, pullState] = usePullImageMutation();
+  const isPulling =
+    pullState.isLoading && pullState.originalArgs?.reference === selectedRef;
+  const isPullError =
+    pullState.isError && pullState.originalArgs?.reference === selectedRef;
 
   const showSelectionError = forceShowErrors && !hasOfficialSelection;
   const showPullValidation = hasOfficialSelection && imageExists === false;
