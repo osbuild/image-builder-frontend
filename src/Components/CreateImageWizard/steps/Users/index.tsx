@@ -5,7 +5,6 @@ import { Content, Title } from '@patternfly/react-core';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { selectBlueprintMode } from '@/store/slices/wizard';
 
 import UserInfo from './components/UserInfo';
 
@@ -14,7 +13,6 @@ type UsersStepProps = {
 };
 
 const UsersStep = ({ attemptedNext }: UsersStepProps) => {
-  const blueprintMode = useAppSelector(selectBlueprintMode);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   return (
     <>
@@ -27,9 +25,16 @@ const UsersStep = ({ attemptedNext }: UsersStepProps) => {
           Create user accounts to manage access to your image. All usernames
           must be unique.
           {/* TO DO: learn more about accessing your SSH keys link */}
-          {isOnPremise &&
-            blueprintMode === 'image' &&
-            ' You must create a user during the image build process to be able to log in.'}
+          {isOnPremise && (
+            <>
+              {' '}
+              Passwords are stored in plain text on this host. To store a hashed
+              password instead, generate one with <code>
+                openssl passwd -6
+              </code>{' '}
+              and enter the result.
+            </>
+          )}
         </Content>
       </Content>
       <UserInfo attemptedNext={attemptedNext} />
