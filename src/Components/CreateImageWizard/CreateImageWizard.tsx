@@ -45,6 +45,7 @@ import {
   parseStateFromRequest,
   selectDistribution,
   selectImageSource,
+  selectImageSourceType,
   selectImageTypes,
   selectIsImageMode,
   selectTimezone,
@@ -121,6 +122,7 @@ const CreateImageWizard = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
   const imageSource = useAppSelector(selectImageSource);
+  const imageSourceType = useAppSelector(selectImageSourceType);
   const [searchParams, setSearchParams] = useSearchParams();
   const resolvePath = useAppSelector(selectPathResolver);
   const hasInitialized = useRef(false);
@@ -169,6 +171,11 @@ const CreateImageWizard = () => {
 
   const usersHaveErrors =
     usersValidation.disabledNext || userGroupsValidation.disabledNext;
+
+  // The "Local images" source is a fake door: it only shows a coming-soon
+  // note, so the wizard must not proceed past base settings.
+  const localImageSourceSelected =
+    isOnPremise && isImageMode && imageSourceType === 'local';
 
   const baseSettingsHasErrors =
     targetEnvironments.length === 0 ||
@@ -417,10 +424,11 @@ const CreateImageWizard = () => {
       (s) => s.id === 'base-settings-step',
     )?.isVisited;
     const canNavigate =
-      mode === 'edit' ||
-      step.isVisited ||
-      isBaseSettingsStep ||
-      (hasVisitedBaseSettings && !baseSettingsHasErrors);
+      (isBaseSettingsStep || !localImageSourceSelected) &&
+      (mode === 'edit' ||
+        step.isVisited ||
+        isBaseSettingsStep ||
+        (hasVisitedBaseSettings && !baseSettingsHasErrors));
 
     return (
       <WizardNavItem
@@ -487,6 +495,7 @@ const CreateImageWizard = () => {
           footer={
             <CustomWizardFooter
               disableBack={true}
+              disableNext={localImageSourceSelected}
               hasErrors={baseSettingsHasErrors}
               isOnPremise={isOnPremise}
             />
