@@ -16,6 +16,9 @@ import {
 
 import ImageSourceSelect from '../components/ImageSourceSelect';
 
+const KVM_REF = 'registry.redhat.io/rhel10/rhel-bootc-kvm:latest';
+const AWS_REF = 'registry.redhat.io/rhel10/rhel-bootc-aws:latest';
+
 const mockRefetch = vi.fn();
 const mockUseGetDistributionsQuery = vi.fn();
 const mockUseGetImageExistsQuery = vi.fn();
@@ -43,6 +46,19 @@ const renderHostedImageSourceSelect = () => {
     details: {
       ...initialState.details,
       blueprint: { ...initialState.details.blueprint, mode: 'image' },
+    },
+  });
+};
+
+// Tests preset the selected image in state rather than driving the
+// dropdown: the dropdown is on its way out as a selection mechanism.
+const renderWithGuestImage = () => {
+  return renderImageSourceSelect({
+    output: {
+      ...initialState.output,
+      imageSourceType: 'official',
+      imageTypes: ['guest-image'],
+      imageSource: KVM_REF,
     },
   });
 };
@@ -100,6 +116,65 @@ describe('ImageSourceSelect', () => {
       await screen.findByText('Image source');
 
       expect(selectImageSource(store.getState())).toBeUndefined();
+    });
+  });
+
+  describe('Official images', () => {
+    test('pulls the selected container', async () => {
+      renderWithGuestImage();
+      const user = createUser();
+
+      const pullButton = await screen.findByRole('button', {
+        name: /pull latest image/i,
+      });
+      await clickWithWait(user, pullButton);
+
+      expect(mockPullImage).toHaveBeenCalledWith({ reference: KVM_REF });
+    });
+
+    test('shows the pulling state for the selected image', async () => {
+      mockUsePullImageMutation.mockReturnValue([
+        mockPullImage,
+        {
+          isLoading: true,
+          isError: false,
+          originalArgs: { reference: KVM_REF },
+        },
+      ]);
+
+      renderWithGuestImage();
+
+      expect(
+        await screen.findByRole('button', { name: /pulling image/i }),
+      ).toBeInTheDocument();
+    });
+
+    test("does not show another image's pull as busy", async () => {
+      // A pull of the guest image is in flight while AWS is selected
+      mockUsePullImageMutation.mockReturnValue([
+        mockPullImage,
+        {
+          isLoading: true,
+          isError: false,
+          originalArgs: { reference: KVM_REF },
+        },
+      ]);
+
+      renderImageSourceSelect({
+        output: {
+          ...initialState.output,
+          imageSourceType: 'official',
+          imageTypes: ['aws'],
+          imageSource: AWS_REF,
+        },
+      });
+
+      expect(
+        await screen.findByRole('button', { name: /pull latest image/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /pulling image/i }),
+      ).not.toBeInTheDocument();
     });
   });
 
