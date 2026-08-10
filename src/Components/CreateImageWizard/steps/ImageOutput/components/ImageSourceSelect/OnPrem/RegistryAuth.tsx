@@ -210,7 +210,11 @@ const RegistryStatus = ({ username }: { username: string }) => {
 const RegistryAuth = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
 
-  const { data, isLoading } = useGetRegistryAuthStatusQuery();
+  // The login can change outside the wizard (e.g. podman logout), so
+  // bypass the cache and re-check whenever this section mounts.
+  const { data, isLoading } = useGetRegistryAuthStatusQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   if (isLoading) {
     return (
