@@ -50,8 +50,9 @@ const renderHostedImageSourceSelect = () => {
   });
 };
 
-// Tests preset the selected image in state rather than driving the
-// dropdown: the dropdown is on its way out as a selection mechanism.
+// The image is implied by the selected target environment; these tests
+// preset the resulting state (the radio interaction itself is covered
+// by the TargetEnvironment and output slice tests).
 const renderWithGuestImage = () => {
   return renderImageSourceSelect({
     output: {
@@ -121,6 +122,29 @@ describe('ImageSourceSelect', () => {
   });
 
   describe('Official images', () => {
+    test('shows a hint until a target environment is selected', async () => {
+      renderImageSourceSelect();
+
+      expect(await screen.findByText('Bootc container')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /select a target environment to see the container image it uses/i,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /pull latest image/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('shows the container reference for the selected target environment', async () => {
+      renderWithGuestImage();
+
+      expect(await screen.findByDisplayValue(KVM_REF)).toBeInTheDocument();
+      expect(
+        screen.getByText('Red Hat Enterprise Linux (RHEL) 10.3'),
+      ).toBeInTheDocument();
+    });
+
     test('pulls the selected container', async () => {
       renderWithGuestImage();
       const user = createUser();
@@ -216,6 +240,12 @@ describe('ImageSourceSelect', () => {
       ).not.toBeInTheDocument();
     });
 
+    test('still shows the selected container reference', async () => {
+      renderWithGuestImage();
+
+      expect(await screen.findByDisplayValue(KVM_REF)).toBeInTheDocument();
+    });
+
     test('disables the pull button', async () => {
       renderWithGuestImage();
       const user = createUser();
@@ -279,6 +309,7 @@ describe('ImageSourceSelect', () => {
       expect(
         screen.getByText(/cockpit image builder 10\.4/i),
       ).toBeInTheDocument();
+      expect(screen.queryByText('Bootc container')).not.toBeInTheDocument();
     });
 
     test('displays the image-builder CLI example', async () => {
