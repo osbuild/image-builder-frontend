@@ -2,7 +2,6 @@ import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from '@/store';
 import { isKnownImageRef } from '@/store/api/backend/onprem/constants';
-import { selectIsOnPremise } from '@/store/slices/env';
 
 export const selectImageSource = (state: RootState) => {
   return state.wizard.output.imageSource;
@@ -56,14 +55,4 @@ export const selectInitialImageTypeCount = (state: RootState) => {
 export const selectUseSingleTarget = createSelector(
   selectInitialImageTypeCount,
   (initialCount) => initialCount <= 1,
-);
-
-export const selectImageSourceFilter = createSelector(
-  selectIsOnPremise,
-  selectImageSource,
-  (
-    isOnPremise,
-    imageSource,
-  ): { imageSource: string } | Record<string, never> =>
-    isOnPremise && imageSource ? { imageSource } : {},
 );

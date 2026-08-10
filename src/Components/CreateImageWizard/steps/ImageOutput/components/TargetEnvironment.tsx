@@ -14,12 +14,15 @@ import {
 
 import { rhsmApi } from '@/store/api';
 import {
+  categorizeEnvironments,
   type Distributions,
   useGetArchitectureEnvironmentsQuery,
   useGetDistributionEnvironmentsQuery,
 } from '@/store/api/backend';
+import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeImageTypes,
   changeIsoPayloadReference,
@@ -27,7 +30,6 @@ import {
   selectArchitecture,
   selectDistribution,
   selectForceShowErrors,
-  selectImageSourceFilter,
   selectImageTypes,
   selectIsImageMode,
   selectIsOnlyNetworkInstallerSelected,
@@ -42,6 +44,13 @@ import Gcp from './Gcp';
 import TargetEnvironmentOption from './TargetEnvironmentOption';
 
 const TEXT_WRAP_WIDTH = '54rem';
+
+// On-prem image mode always offers the same environments: the ones the
+// official images support. Keeping the list independent of the current
+// selection means it doesn't shrink while no image is selected.
+const KNOWN_IMAGE_ENVIRONMENTS = categorizeEnvironments([
+  ...new Set(KNOWN_IMAGES.map((image) => image.type)),
+]);
 
 const createLabelWithTooltip = (
   prefix: string,
@@ -83,19 +92,24 @@ const TargetEnvironment = () => {
     selectedImageTypes: environments,
   });
 
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isOnPremImageMode = isImageMode && isOnPremise;
+
   const archResult = useGetArchitectureEnvironmentsQuery(
     { distribution: distribution as Distributions, arch },
     { skip: isImageMode },
   );
 
-  const imageSourceFilter = useAppSelector(selectImageSourceFilter);
-
   const distroResult = useGetDistributionEnvironmentsQuery(
-    { arch, distro: distribution, ...imageSourceFilter },
-    { skip: !isImageMode },
+    { arch, distro: distribution },
+    { skip: !isImageMode || isOnPremise },
   );
 
-  const { data, isFetching, isError } = isImageMode ? distroResult : archResult;
+  const { data, isFetching, isError } = isOnPremImageMode
+    ? { data: KNOWN_IMAGE_ENVIRONMENTS, isFetching: false, isError: false }
+    : isImageMode
+      ? distroResult
+      : archResult;
 
   const {
     publicClouds = [],
