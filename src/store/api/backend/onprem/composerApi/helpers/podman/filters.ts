@@ -12,6 +12,7 @@ import { inferDistro } from './inferDistro';
 export const backendToFrontendType: Record<string, string> = {
   qcow2: 'guest-image',
   ami: 'aws',
+  'bootc-generic-iso': 'bootable-container-iso',
 };
 
 const normalizeImageType = (type: string): string =>
@@ -23,6 +24,7 @@ const normalizeImageType = (type: string): string =>
 export const frontendToBackendType: Record<string, string> = {
   'guest-image': 'qcow2',
   aws: 'ami',
+  'bootable-container-iso': 'bootc-generic-iso',
 };
 
 export const toBackendImageType = (type: string): string =>
