@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
 import {
+  Alert,
+  AlertActionLink,
   Button,
   Card,
   CardBody,
@@ -9,10 +11,6 @@ import {
   CardTitle,
   Content,
   ContentVariants,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
   Flex,
   FlexItem,
   FormGroup,
@@ -31,23 +29,21 @@ import {
 import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { OnPremError } from '@/store/api/shared';
 
-const EmptyCard = ({ openForm }: { openForm: (arg0: boolean) => void }) => {
+const LoginPrompt = ({ openForm }: { openForm: (arg0: boolean) => void }) => {
   return (
-    <Card variant='secondary' className='pf-v6-u-mt-md pf-v6-u-py-md'>
-      <EmptyState titleText='Login to select an image' headingLevel='h4'>
-        <EmptyStateBody>
-          <Content>Registry images come from {IMAGE_REGISTRY_HOST}.</Content>
-          <Content>
-            Sign in to browse available images for this release.
-          </Content>
-        </EmptyStateBody>
-        <EmptyStateFooter>
-          <EmptyStateActions>
-            <Button onClick={() => openForm(true)}>Login</Button>
-          </EmptyStateActions>
-        </EmptyStateFooter>
-      </EmptyState>
-    </Card>
+    <Alert
+      variant='info'
+      isInline
+      title='Log in to pull the latest images'
+      className='pf-v6-u-mt-md'
+      actionLinks={
+        <AlertActionLink onClick={() => openForm(true)}>Log in</AlertActionLink>
+      }
+    >
+      You can build from images already on this system without logging in.
+      Pulling the latest images from {IMAGE_REGISTRY_HOST} requires a Red Hat
+      login.
+    </Alert>
   );
 };
 
@@ -230,7 +226,7 @@ const RegistryAuth = () => {
   }
 
   if (!isFormVisible) {
-    return <EmptyCard openForm={setIsFormVisible} />;
+    return <LoginPrompt openForm={setIsFormVisible} />;
   }
 
   return <LoginCard closeForm={setIsFormVisible} />;

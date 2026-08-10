@@ -108,6 +108,7 @@ describe('ImageSourceSelect', () => {
       expect(screen.getByText('Local images')).toBeInTheDocument();
       expect(screen.queryByText('Custom images')).not.toBeInTheDocument();
       expect(screen.queryByText('No login')).not.toBeInTheDocument();
+      expect(screen.queryByText('Login required')).not.toBeInTheDocument();
     });
 
     test('does not auto-select an image on-prem', async () => {
@@ -175,6 +176,87 @@ describe('ImageSourceSelect', () => {
       expect(
         screen.queryByRole('button', { name: /pulling image/i }),
       ).not.toBeInTheDocument();
+    });
+
+    test('requires the bootc container to be pulled', async () => {
+      mockUseGetImageExistsQuery.mockReturnValue({
+        data: false,
+        isLoading: false,
+        isError: false,
+      });
+
+      renderWithGuestImage();
+
+      expect(
+        await screen.findByText(
+          /bootc container must be pulled before proceeding/i,
+        ),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Not logged in', () => {
+    beforeEach(() => {
+      mockUseGetRegistryAuthStatusQuery.mockReturnValue({
+        data: { status: 'unauthenticated' },
+        isLoading: false,
+        isError: false,
+        error: undefined,
+      });
+    });
+
+    test('displays the login prompt instead of an empty state', async () => {
+      renderImageSourceSelect();
+
+      expect(
+        await screen.findByText(/log in to pull the latest images/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(/login to select an image/i),
+      ).not.toBeInTheDocument();
+    });
+
+    test('disables the pull button', async () => {
+      renderWithGuestImage();
+      const user = createUser();
+
+      const pullButton = await screen.findByRole('button', {
+        name: /pull latest image/i,
+      });
+      expect(pullButton).toHaveAttribute('aria-disabled', 'true');
+
+      await clickWithWait(user, pullButton);
+      expect(mockPullImage).not.toHaveBeenCalled();
+    });
+
+    test('points at the login when a missing image cannot be pulled', async () => {
+      mockUseGetImageExistsQuery.mockReturnValue({
+        data: false,
+        isLoading: false,
+        isError: false,
+      });
+
+      renderWithGuestImage();
+
+      expect(
+        await screen.findByText(/log in to registry\.redhat\.io to pull it/i),
+      ).toBeInTheDocument();
+    });
+
+    test('login action opens the login form', async () => {
+      renderImageSourceSelect();
+      const user = createUser();
+
+      const loginButton = await screen.findByRole('button', {
+        name: /log in/i,
+      });
+      await clickWithWait(user, loginButton);
+
+      expect(
+        await screen.findByText(/log in to registry\.redhat\.io/i),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     });
   });
 
