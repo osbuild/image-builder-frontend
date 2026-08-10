@@ -53,6 +53,22 @@ const renderHostedImageSourceSelect = () => {
 // The image is implied by the selected target environment; these tests
 // preset the resulting state (the radio interaction itself is covered
 // by the TargetEnvironment and output slice tests).
+const INSTALLER_REF = 'registry.redhat.io/rhel10/rhel-bootc-installer:latest';
+// The installer's payload: a distinct, non-cloud-specific base image
+const PLAIN_REF = 'registry.redhat.io/rhel10/rhel-bootc:latest';
+
+const renderWithInstaller = () => {
+  return renderImageSourceSelect({
+    output: {
+      ...initialState.output,
+      imageSourceType: 'official',
+      imageTypes: ['bootable-container-iso'],
+      imageSource: INSTALLER_REF,
+      isoPayloadReference: PLAIN_REF,
+    },
+  });
+};
+
 const renderWithGuestImage = () => {
   return renderImageSourceSelect({
     output: {
@@ -200,6 +216,58 @@ describe('ImageSourceSelect', () => {
       expect(
         screen.queryByRole('button', { name: /pulling image/i }),
       ).not.toBeInTheDocument();
+    });
+
+    test('shows the payload container for the installer', async () => {
+      renderWithInstaller();
+
+      expect(await screen.findByText('Payload container')).toBeInTheDocument();
+      expect(screen.getByDisplayValue(INSTALLER_REF)).toBeInTheDocument();
+      expect(screen.getByDisplayValue(PLAIN_REF)).toBeInTheDocument();
+      expect(
+        screen.getByText(/the installer deploys this base image/i),
+      ).toBeInTheDocument();
+    });
+
+    test('does not show the payload container for disk images', async () => {
+      renderWithGuestImage();
+
+      await screen.findByDisplayValue(KVM_REF);
+
+      expect(screen.queryByText('Payload container')).not.toBeInTheDocument();
+    });
+
+    test('pulls the payload container with its own pull button', async () => {
+      renderWithInstaller();
+      const user = createUser();
+
+      const pullButtons = await screen.findAllByRole('button', {
+        name: /pull latest image/i,
+      });
+      expect(pullButtons).toHaveLength(2);
+
+      await clickWithWait(user, pullButtons[1]);
+
+      expect(mockPullImage).toHaveBeenCalledWith({ reference: PLAIN_REF });
+    });
+
+    test('requires the payload container to be pulled', async () => {
+      // The installer image exists locally but its payload does not
+      mockUseGetImageExistsQuery.mockImplementation(
+        (arg: { reference: string }) => ({
+          data: arg.reference !== PLAIN_REF,
+          isLoading: false,
+          isError: false,
+        }),
+      );
+
+      renderWithInstaller();
+
+      expect(
+        await screen.findByText(
+          /payload container must be pulled before proceeding/i,
+        ),
+      ).toBeInTheDocument();
     });
 
     test('requires the bootc container to be pulled', async () => {

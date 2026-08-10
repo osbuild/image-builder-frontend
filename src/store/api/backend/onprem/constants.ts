@@ -30,6 +30,15 @@ export const KNOWN_IMAGES: KnownImage[] = [
     name: 'Red Hat Enterprise Linux (RHEL) 10.3',
     type: 'aws',
   },
+  {
+    reference: `${IMAGE_REGISTRY}/rhel-bootc-installer:latest`,
+    distro: 'rhel-10.3',
+    name: 'Red Hat Enterprise Linux (RHEL) 10.3',
+    type: 'bootable-container-iso',
+    // The installer targets bare-metal deployments, so its payload is
+    // the plain base image rather than a cloud/VM-specific one.
+    iso_payload_references: [`${IMAGE_REGISTRY}/rhel-bootc:latest`],
+  },
 ];
 
 export const isKnownImageRef = (ref: string) => {

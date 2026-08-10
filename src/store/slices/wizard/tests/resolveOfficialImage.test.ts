@@ -76,6 +76,46 @@ describe('resolveOfficialImage', () => {
     expect(listenerApi.dispatch).not.toHaveBeenCalled();
   });
 
+  it('defaults the payload container for the container installer', () => {
+    const listenerApi = createListenerApi(
+      imageModeState({
+        imageSource: KVM_REF,
+        imageTypes: ['bootable-container-iso'],
+      }),
+    );
+
+    resolveOfficialImage(
+      changeImageTypes(['bootable-container-iso']),
+      listenerApi,
+    );
+
+    expect(listenerApi.dispatch).toHaveBeenCalledWith({
+      type: 'wizard/output/changeImageSource',
+      payload: 'registry.redhat.io/rhel10/rhel-bootc-installer:latest',
+    });
+    expect(listenerApi.dispatch).toHaveBeenCalledWith({
+      type: 'wizard/output/changeIsoPayloadReference',
+      payload: 'registry.redhat.io/rhel10/rhel-bootc:latest',
+    });
+  });
+
+  it('keeps an explicit payload container reference', () => {
+    const listenerApi = createListenerApi(
+      imageModeState({
+        imageSource: 'registry.redhat.io/rhel10/rhel-bootc-installer:latest',
+        imageTypes: ['bootable-container-iso'],
+        isoPayloadReference: 'registry.example.org/payload:latest',
+      }),
+    );
+
+    resolveOfficialImage(
+      changeImageTypes(['bootable-container-iso']),
+      listenerApi,
+    );
+
+    expect(listenerApi.dispatch).not.toHaveBeenCalled();
+  });
+
   it('does not change an unknown image reference', () => {
     const listenerApi = createListenerApi(
       imageModeState({
