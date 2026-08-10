@@ -448,6 +448,9 @@ describe('TargetEnvironment', () => {
       expect(
         screen.getByRole('radio', { name: /Amazon Web Services/i }),
       ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /Container installer/i }),
+      ).toBeInTheDocument();
     });
 
     test('offers the same environments when no image is selected', async () => {
