@@ -197,10 +197,12 @@ export const composeEndpoints = (builder: OnPremBuilder) => ({
   >({
     queryFn: onPremQueryHandler(async ({ queryArgs }) => {
       const blueprintsDir = await getBlueprintsPath();
-      const bpinfo = await fsinfo(blueprintsDir, ['entries'], {
+      const bpinfo = await fsinfo(blueprintsDir, ['entries', 'type'], {
         superuser: 'try',
       });
-      const entries = Object.entries(bpinfo.entries || {});
+      const entries = Object.entries(bpinfo.entries || {}).filter(
+        (entry) => entry[1].type === 'dir',
+      );
       const dataDir = path.join('/var/lib/cockpit-image-builder');
 
       for (const bpEntry of entries) {
