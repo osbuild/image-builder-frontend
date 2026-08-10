@@ -59,6 +59,7 @@ import {
   selectLanguages,
   selectNtpServers,
   selectOrgId,
+  selectPendingInputFields,
   selectRegistrationType,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
@@ -127,6 +128,11 @@ export type UsersStepValidation = {
   };
   disabledNext: boolean;
 };
+
+const hasPendingInputForFields = (
+  pendingInputFields: string[],
+  fieldNames: string[],
+): boolean => fieldNames.some((f) => pendingInputFields.includes(f));
 
 export function useIsBlueprintValid(): boolean {
   const aap = useAAPValidation();
@@ -552,6 +558,7 @@ export function useSnapshotValidation(): StepValidation {
 export function useTimezoneValidation(): StepValidation {
   const timezone = useAppSelector(selectTimezone);
   const ntpServers = useAppSelector(selectNtpServers);
+  const pendingInputFields = useAppSelector(selectPendingInputFields);
   const invalidServers = [];
 
   if (ntpServers) {
@@ -581,7 +588,8 @@ export function useTimezoneValidation(): StepValidation {
     disabledNext:
       timezoneError !== '' ||
       invalidServers.length > 0 ||
-      duplicateNtpServers.length > 0,
+      duplicateNtpServers.length > 0 ||
+      hasPendingInputForFields(pendingInputFields, ['ntpServers']),
   };
 }
 
@@ -661,6 +669,7 @@ export function useHostnameValidation(): StepValidation {
 
 export function useKernelValidation(): StepValidation {
   const kernel = useAppSelector(selectKernel);
+  const pendingInputFields = useAppSelector(selectPendingInputFields);
 
   const invalidArgs = [];
   if (kernel.append.length > 0) {
@@ -685,12 +694,16 @@ export function useKernelValidation(): StepValidation {
     errors: {
       kernelAppend: kernelAppendError + '|' + duplicateKernelArgsError,
     },
-    disabledNext: kernelAppendError !== '' || duplicateKernelArgs.length > 0,
+    disabledNext:
+      kernelAppendError !== '' ||
+      duplicateKernelArgs.length > 0 ||
+      hasPendingInputForFields(pendingInputFields, ['kernelAppend']),
   };
 }
 
 export function useFirewallValidation(): StepValidation {
   const firewall = useAppSelector(selectFirewall);
+  const pendingInputFields = useAppSelector(selectPendingInputFields);
   const invalidPorts = [];
   const invalidDisabled = [];
   const invalidEnabled = [];
@@ -768,12 +781,18 @@ export function useFirewallValidation(): StepValidation {
       invalidEnabled.length > 0 ||
       duplicatePorts.length > 0 ||
       duplicateDisabledServices.length > 0 ||
-      duplicateEnabledServices.length > 0,
+      duplicateEnabledServices.length > 0 ||
+      hasPendingInputForFields(pendingInputFields, [
+        'ports',
+        'enabledServices',
+        'disabledServices',
+      ]),
   };
 }
 
 export function useServicesValidation(): StepValidation {
   const services = useAppSelector(selectServices);
+  const pendingInputFields = useAppSelector(selectPendingInputFields);
 
   const invalidDisabled = [];
   const invalidMasked = [];
@@ -851,7 +870,12 @@ export function useServicesValidation(): StepValidation {
       invalidEnabled.length > 0 ||
       duplicateDisabledServices.length > 0 ||
       duplicateMaskedServices.length > 0 ||
-      duplicateEnabledServices.length > 0,
+      duplicateEnabledServices.length > 0 ||
+      hasPendingInputForFields(pendingInputFields, [
+        'enabledSystemdServices',
+        'disabledSystemdServices',
+        'maskedSystemdServices',
+      ]),
   };
 }
 
@@ -888,6 +912,7 @@ export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
+  const pendingInputFields = useAppSelector(selectPendingInputFields);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
   if (
@@ -1005,7 +1030,8 @@ export function useUsersValidation(): UsersStepValidation {
   return {
     errors,
     warnings: {},
-    disabledNext: !canProceed,
+    disabledNext:
+      !canProceed || hasPendingInputForFields(pendingInputFields, ['groups']),
   };
 }
 

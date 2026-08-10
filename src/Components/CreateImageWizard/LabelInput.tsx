@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -18,7 +18,13 @@ import { UnknownAction } from '@reduxjs/toolkit';
 import { StepValidation } from './utilities/useValidation';
 
 import { UNDEFINED_GROUPS_WARNING_KEY } from '../../constants';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  clearPendingInput,
+  resetForceShowErrors,
+  selectForceShowErrors,
+  setPendingInput,
+} from '../../store/slices/wizard';
 
 const DEFAULT_TRUNCATE_LENGTH = 20;
 const DEFAULT_CHIP_COLLAPSE_THRESHOLD = 4;
@@ -59,10 +65,17 @@ const LabelInput = ({
   helperText,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
 
   const [inputValue, setInputValue] = useState('');
   const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
   let [invalidImports, duplicateImports] = ['', ''];
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearPendingInput(fieldName));
+    };
+  }, [dispatch, fieldName]);
 
   if (stepValidation.errors[fieldName]) {
     [invalidImports, duplicateImports] =
@@ -75,6 +88,14 @@ const LabelInput = ({
   ) => {
     setInputValue(value);
     setOnStepInputErrorText('');
+    if (forceShowErrors) {
+      dispatch(resetForceShowErrors());
+    }
+    if (value.trim()) {
+      dispatch(setPendingInput(fieldName));
+    } else {
+      dispatch(clearPendingInput(fieldName));
+    }
   };
 
   const addItem = (value: string) => {
@@ -135,6 +156,7 @@ const LabelInput = ({
     }
 
     dispatch(addAction(trimmed));
+    dispatch(clearPendingInput(fieldName));
     setInputValue('');
     setOnStepInputErrorText('');
   };
@@ -156,6 +178,10 @@ const LabelInput = ({
   if (duplicateImports) errors.push(duplicateImports);
 
   const warning = stepValidation.errors[UNDEFINED_GROUPS_WARNING_KEY];
+  const unaddedInputWarning =
+    forceShowErrors && inputValue.trim()
+      ? `"${inputValue.trim()}" has not been added. Press Enter or click ${hideAddLabel ? 'the add icon' : 'Add'} to add it.`
+      : '';
   const totalItems = (requiredList?.length ?? 0) + (list?.length ?? 0);
 
   return (
@@ -217,6 +243,11 @@ const LabelInput = ({
               )}
           {warning && (
             <HelperTextItem variant={'warning'}>{warning}</HelperTextItem>
+          )}
+          {unaddedInputWarning && errors.length === 0 && (
+            <HelperTextItem variant={'warning'}>
+              {unaddedInputWarning}
+            </HelperTextItem>
           )}
         </HelperText>
       </FlexItem>
