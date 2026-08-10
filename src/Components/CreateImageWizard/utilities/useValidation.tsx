@@ -1093,14 +1093,16 @@ export const checkPasswordValidity = (
   const trimmedValue = password.trim();
   const isLengthValid = trimmedValue.length >= 6 && trimmedValue.length <= 128;
   const { rulesCount, strCount } = countCharacterTypes(password);
+  const AZURE_MIN_CHAR_TYPES = 3;
+  const meetsAzureCharRules = !isAzure || rulesCount >= AZURE_MIN_CHAR_TYPES;
 
   const validationState: ValidationState = {
     ruleLength: isLengthValid ? 'success' : 'error',
-    ruleCharacters: rulesCount >= 3 ? 'success' : 'error',
+    ruleCharacters: rulesCount >= AZURE_MIN_CHAR_TYPES ? 'success' : 'error',
   };
 
   return {
-    isValid: isLengthValid,
+    isValid: isLengthValid && meetsAzureCharRules,
     strength: getStrength(strCount, rulesCount, isAzure),
     validationState: validationState,
   };
