@@ -53,9 +53,11 @@ const OfficialImageSource = () => {
     return KNOWN_IMAGES.map((known) => ({ ...known, arch }));
   }, [isAuthenticated, arch]);
 
+  // Local images can be removed outside the wizard (e.g. podman rmi),
+  // so bypass the cache and re-check whenever this section mounts.
   const { data: imageExists } = useGetImageExistsQuery(
     { reference: selectedRef! },
-    { skip: !selectedRef },
+    { skip: !selectedRef, refetchOnMountOrArgChange: true },
   );
 
   // The mutation state is scoped to the reference it was started with,
