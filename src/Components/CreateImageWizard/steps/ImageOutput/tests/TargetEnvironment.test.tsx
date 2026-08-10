@@ -1,14 +1,22 @@
+import React from 'react';
+
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { RHEL_10 } from '@/constants';
 import { Distributions } from '@/store/api/backend';
-import { initialState, selectImageTypes } from '@/store/slices/wizard';
+import {
+  initialState,
+  selectImageSource,
+  selectImageTypes,
+} from '@/store/slices/wizard';
 import {
   clickWithWait,
   composeHandlers,
   createArchitecturesHandler,
   createUser,
   fetchMock,
+  renderWithRedux,
   type WizardStateOverrides,
 } from '@/test/testUtils';
 
@@ -27,6 +35,8 @@ import {
   mockBootcDistributionsMultipleTypes,
   setupErrorHandler,
 } from './mocks';
+
+import TargetEnvironment from '../components/TargetEnvironment';
 
 fetchMock.enableMocks();
 
@@ -400,6 +410,103 @@ describe('TargetEnvironment', () => {
       });
       await clickWithWait(user, awsRadio);
       expect(selectImageTypes(store.getState())).toEqual(['aws']);
+    });
+
+    // On-prem image mode always offers the official image environments,
+    // independent of whether an image is selected yet.
+    const renderOnPremTargetEnvironment = (
+      outputOverrides: Partial<typeof initialState.output> = {},
+    ) => {
+      return renderWithRedux(
+        <TargetEnvironment />,
+        {
+          ...imageModeOverrides,
+          output: {
+            ...initialState.output,
+            distribution: RHEL_10 as Distributions,
+            imageSource: 'registry.redhat.io/rhel10/rhel-bootc-kvm:latest',
+            imageTypes: ['guest-image'],
+            ...outputOverrides,
+          },
+        },
+        {
+          preloadedState: {
+            env: { isOnPremise: true },
+          },
+        },
+      );
+    };
+
+    test('offers every official image type on-prem', async () => {
+      renderOnPremTargetEnvironment();
+
+      expect(
+        await screen.findByRole('radio', {
+          name: /Virtualization.*Guest image/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /Amazon Web Services/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('offers the same environments when no image is selected', async () => {
+      renderOnPremTargetEnvironment({
+        imageSource: undefined,
+        imageTypes: [],
+      });
+
+      expect(
+        await screen.findByRole('radio', {
+          name: /Virtualization.*Guest image/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /Amazon Web Services/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('selecting a radio selects the matching official image', async () => {
+      // The image selection in the output slice only ships on-prem
+      vi.stubEnv('IS_ON_PREMISE', 'true');
+
+      const user = createUser();
+      const { store } = renderOnPremTargetEnvironment({
+        imageSource: undefined,
+        imageTypes: [],
+      });
+
+      const guestRadio = await screen.findByRole('radio', {
+        name: /Virtualization.*Guest image/i,
+      });
+      await clickWithWait(user, guestRadio);
+
+      expect(selectImageTypes(store.getState())).toEqual(['guest-image']);
+      expect(selectImageSource(store.getState())).toBe(
+        'registry.redhat.io/rhel10/rhel-bootc-kvm:latest',
+      );
+
+      vi.unstubAllEnvs();
+    });
+
+    test('selecting a radio switches the official image to the sibling type', async () => {
+      // The image selection in the output slice only ships on-prem
+      vi.stubEnv('IS_ON_PREMISE', 'true');
+
+      const user = createUser();
+      const { store } = renderOnPremTargetEnvironment();
+
+      const awsRadio = await screen.findByRole('radio', {
+        name: /Amazon Web Services/i,
+      });
+      await clickWithWait(user, awsRadio);
+
+      expect(selectImageTypes(store.getState())).toEqual(['aws']);
+      expect(selectImageSource(store.getState())).toBe(
+        'registry.redhat.io/rhel10/rhel-bootc-aws:latest',
+      );
+
+      vi.unstubAllEnvs();
     });
 
     test('shows loading state while fetching distributions', async () => {
