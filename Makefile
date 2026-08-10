@@ -58,6 +58,12 @@ cockpit/devel-install:
 	PREFIX="~/.local"
 	mkdir -p $(PREFIX)$(INSTALL_DIR_BASE)
 	ln -s $(shell pwd)/cockpit/public $(PREFIX)$(INSTALL_DIR)
+	if [ ! -d "/var/cache/cockpit-image-builder" ]; then \
+		echo "Creating cache directory /var/cache/cockpit-image-builder"; \
+		echo "This requires root privileges"; \
+		sudo mkdir -p /var/cache/cockpit-image-builder; \
+		sudo chmod 700 /var/cache/cockpit-image-builder; \
+	fi
 
 .PHONY: cockpit/download
 cockpit/download: Makefile
