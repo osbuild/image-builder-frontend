@@ -10,6 +10,7 @@ import {
   Label,
 } from '@patternfly/react-core';
 
+import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeImageSourceType,
@@ -49,7 +50,7 @@ const OnPremImageSourceSelect = () => {
               Official Red Hat images <Label isCompact>Login required</Label>
             </CardTitle>
           </CardHeader>
-          <CardBody>Remote images from registry.redhat.io</CardBody>
+          <CardBody>Remote images from {IMAGE_REGISTRY_HOST}</CardBody>
         </Card>
         <Card
           id='custom-card'

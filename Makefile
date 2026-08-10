@@ -73,8 +73,12 @@ cockpit/download: Makefile
 
 .PHONY: cockpit/build
 cockpit/build: cockpit/download
-	npm run build:cockpit
+	DEV_REGISTRY="$(DEV_REGISTRY)" npm run build:cockpit
 
+# Set DEV_REGISTRY to redirect podman and image-builder invocations to a
+# registry holding unpublished containers, e.g.
+#   make cockpit/devel DEV_REGISTRY=registry.stage.redhat.io/rhel10
+# Everything (UI, blueprints, podman) uses the development references.
 .PHONY: cockpit/devel
 cockpit/devel: cockpit/devel-uninstall cockpit/build cockpit/devel-install
 

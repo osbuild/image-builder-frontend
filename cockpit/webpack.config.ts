@@ -20,6 +20,9 @@ const plugins = [
   }),
   new webpack.DefinePlugin({
     'process.env.IS_ON_PREMISE': JSON.stringify(true),
+    // Development-only registry override for unpublished containers;
+    // see IMAGE_REGISTRY in src/store/api/backend/onprem/constants.ts
+    'process.env.DEV_REGISTRY': JSON.stringify(process.env.DEV_REGISTRY || ''),
   }),
 ];
 
