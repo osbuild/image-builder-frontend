@@ -36,4 +36,5 @@ export type OutputSlice = {
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: SupportedImageTypes[];
+  initialImageTypeCount: number;
 };

@@ -49,6 +49,15 @@ export const selectIsOfficialImage = createSelector(
   (imageSource) => !!imageSource && isKnownImageRef(imageSource),
 );
 
+export const selectInitialImageTypeCount = (state: RootState) => {
+  return state.wizard.output.initialImageTypeCount;
+};
+
+export const selectUseSingleTarget = createSelector(
+  selectInitialImageTypeCount,
+  (initialCount) => initialCount <= 1,
+);
+
 export const selectImageSourceFilter = createSelector(
   selectIsOnPremise,
   selectImageSource,

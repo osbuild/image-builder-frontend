@@ -69,12 +69,16 @@ const parseImageSourceType = ({ bootc }: RequestLike): ImageSourceType => {
   return 'official';
 };
 
-export const parseOutputFromRequest = (request: RequestLike): OutputSlice => ({
-  architecture: parseArchitecture(request),
-  distribution: parseDistribution(request),
-  imageTypes: parseImageTypes(request),
-  imageSource: parseImageSource(request),
-  imageSourceType: parseImageSourceType(request),
-  isoPayloadReference: parseIsoPayloadRef(request),
-  bootcDistributions: [],
-});
+export const parseOutputFromRequest = (request: RequestLike): OutputSlice => {
+  const imageTypes = parseImageTypes(request);
+  return {
+    architecture: parseArchitecture(request),
+    distribution: parseDistribution(request),
+    imageTypes,
+    imageSource: parseImageSource(request),
+    imageSourceType: parseImageSourceType(request),
+    isoPayloadReference: parseIsoPayloadRef(request),
+    bootcDistributions: [],
+    initialImageTypeCount: imageTypes.length,
+  };
+};

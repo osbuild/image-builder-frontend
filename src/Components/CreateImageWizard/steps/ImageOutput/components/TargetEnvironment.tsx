@@ -33,6 +33,7 @@ import {
   selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
   selectIsOtherEnvironmentSelected,
+  selectUseSingleTarget,
 } from '@/store/slices/wizard';
 
 import Aws from './Aws';
@@ -75,6 +76,7 @@ const TargetEnvironment = () => {
   const isOtherEnvironmentSelected = useAppSelector(
     selectIsOtherEnvironmentSelected,
   );
+  const useSingleTarget = useAppSelector(selectUseSingleTarget);
   const forceShowErrors = useAppSelector(selectForceShowErrors);
 
   const { restrictions } = useCustomizationRestrictions({
@@ -196,7 +198,7 @@ const TargetEnvironment = () => {
       fieldId='target-environments'
     >
       <Content component='small'>
-        {isImageMode
+        {isImageMode || useSingleTarget
           ? 'Select a target environment.'
           : 'Select one or more target environments.'}
       </Content>
