@@ -80,6 +80,44 @@ describe('FileSystem Component', () => {
         }),
       ).toBeInTheDocument();
     });
+
+    test('offers basic filesystem partitioning in package mode', async () => {
+      const user = createUser();
+      renderFileSystemStep();
+
+      await clickWithWait(
+        user,
+        await screen.findByRole('button', { name: /Automatic partitioning/i }),
+      );
+
+      expect(
+        screen.getByRole('option', { name: /Basic filesystem partitioning/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('does not offer basic filesystem partitioning in image mode', async () => {
+      const user = createUser();
+      renderFileSystemStep({
+        details: {
+          ...initialState.details,
+          blueprint: { ...initialState.details.blueprint, mode: 'image' },
+        },
+      });
+
+      await clickWithWait(
+        user,
+        await screen.findByRole('button', { name: /Automatic partitioning/i }),
+      );
+
+      expect(
+        screen.queryByRole('option', {
+          name: /Basic filesystem partitioning/i,
+        }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: /Advanced disk partitioning/i }),
+      ).toBeInTheDocument();
+    });
   });
 
   describe('Validation', () => {
