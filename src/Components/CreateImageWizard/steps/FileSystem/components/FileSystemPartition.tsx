@@ -19,6 +19,7 @@ import {
   FilesystemMode,
   selectComplianceProfileID,
   selectFscMode,
+  selectIsImageMode,
 } from '@/store/slices/wizard';
 
 const fscModeOptions = [
@@ -46,7 +47,14 @@ const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fscMode = useAppSelector(selectFscMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
+  const isImageMode = useAppSelector(selectIsImageMode);
   const [isOpen, setIsOpen] = useState(false);
+
+  // Basic partitioning maps to customizations.filesystem, which image mode
+  // images don't support
+  const availableOptions = isImageMode
+    ? fscModeOptions.filter((opt) => opt.value !== 'basic')
+    : fscModeOptions;
 
   if (hasOscapProfile) {
     return undefined;
@@ -88,7 +96,7 @@ const FileSystemPartition = () => {
         style={{ width: '60%' }}
       >
         <SelectList>
-          {fscModeOptions.map((option) => (
+          {availableOptions.map((option) => (
             <SelectOption
               key={option.value}
               value={option.value}
