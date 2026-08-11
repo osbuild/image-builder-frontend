@@ -11,6 +11,7 @@ import {
 // export from slices/wizard/listeners rather than slices/wizard
 // this is needed to avoid circular dependencies
 import {
+  clearUnsupportedFilesystem,
   clearUnsupportedRegistration,
   filterImageTypes,
   registerLater,
@@ -40,6 +41,11 @@ startListening({
 startListening({
   actionCreator: changeBlueprintMode,
   effect: clearUnsupportedRegistration,
+});
+
+startListening({
+  actionCreator: changeBlueprintMode,
+  effect: clearUnsupportedFilesystem,
 });
 
 startListening({

@@ -3,6 +3,7 @@ import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
 import type { WizardListenerEffect } from '@/store/middleware/types';
 
 import { selectIsImageMode } from './details';
+import { changeFscMode, selectFscMode } from './filesystem';
 import {
   changeDistribution,
   changeImageSource,
@@ -95,6 +96,24 @@ export const clearUnsupportedRegistration: WizardListenerEffect = (
 
   if (selectAapEnabled(state)) {
     listenerApi.dispatch(changeAapEnabled(false));
+  }
+};
+
+// Basic partitioning maps to customizations.filesystem, which image mode
+// images don't support, so a selection made in package mode must not carry
+// over into the blueprint when the user switches modes.
+export const clearUnsupportedFilesystem: WizardListenerEffect = (
+  _action,
+  listenerApi,
+) => {
+  const state = listenerApi.getState();
+
+  if (!selectIsImageMode(state)) {
+    return;
+  }
+
+  if (selectFscMode(state) === 'basic') {
+    listenerApi.dispatch(changeFscMode('automatic'));
   }
 };
 
