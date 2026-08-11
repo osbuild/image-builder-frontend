@@ -180,7 +180,7 @@ describe('Repeatable Build Component', () => {
 
       expect(
         await screen.findByRole('menuitem', {
-          name: /template-abc snapshot date: use latest \| status: valid/i,
+          name: /template-abc\s*snapshot date: use latest \| status: valid/i,
         }),
       ).toBeVisible();
 
@@ -188,17 +188,17 @@ describe('Repeatable Build Component', () => {
 
       expect(
         await screen.findByRole('menuitem', {
-          name: /template-abc snapshot date: use latest \| status: valid/i,
+          name: /template-abc\s*snapshot date: use latest \| status: valid/i,
         }),
       ).toBeVisible();
       expect(
         await screen.findByRole('menuitem', {
-          name: /template-def snapshot date: use latest \| status: valid/i,
+          name: /template-def\s*snapshot date: use latest \| status: valid/i,
         }),
       ).toBeVisible();
       expect(
         await screen.findByRole('menuitem', {
-          name: /template-xyz snapshot date: 2025-02-28 \| status: valid/i,
+          name: /template-xyz\s*snapshot date: 2025-02-28 \| status: valid/i,
         }),
       ).toBeVisible();
     });
@@ -216,7 +216,7 @@ describe('Repeatable Build Component', () => {
 
       expect(
         await screen.findByRole('menuitem', {
-          name: /template-xyz snapshot date: 2025-02-28 \| status: valid/i,
+          name: /template-xyz\s*snapshot date: 2025-02-28 \| status: valid/i,
         }),
       ).toBeVisible();
     });
