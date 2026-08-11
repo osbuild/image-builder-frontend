@@ -81,7 +81,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     ).toBeHidden();
     // but the guest image is
     await expect(
-      frame.getByRole('radio', { name: 'Virtualization' }),
+      frame.getByRole('radio', { name: /^Virtualization/ }),
     ).toBeVisible();
 
     imageSourceDropdown = frame.getByRole('button', {
@@ -119,7 +119,7 @@ test('Image mode blueprint create, edit, export, import', async ({
       frame.getByRole('radio', { name: 'Microsoft Azure' }),
     ).toBeVisible();
 
-    await frame.getByRole('radio', { name: 'Virtualization' }).click();
+    await frame.getByRole('radio', { name: /^Virtualization/ }).click();
   });
 
   await test.step('Create blueprint', async () => {
@@ -146,10 +146,10 @@ test('Image mode blueprint create, edit, export, import', async ({
     ).toBeVisible();
 
     await expect(
-      frame.getByRole('radio', { name: 'Virtualization' }),
+      frame.getByRole('radio', { name: /^Virtualization/ }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('radio', { name: 'Virtualization' }),
+      frame.getByRole('radio', { name: /^Virtualization/ }),
     ).toBeChecked();
   });
 
@@ -187,7 +187,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     await expect(importedImageMode).toHaveAttribute('aria-pressed', 'true');
 
     // Export doesn't include image_requests, so image types must be re-selected
-    await frame.getByRole('radio', { name: 'Virtualization' }).click();
+    await frame.getByRole('radio', { name: /^Virtualization/ }).click();
 
     // Change the name to avoid "name already exists" conflict
     await frame

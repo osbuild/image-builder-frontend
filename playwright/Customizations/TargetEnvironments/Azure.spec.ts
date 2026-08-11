@@ -164,18 +164,14 @@ test('Deselecting Azure removes its config from the blueprint', async ({
       .fill(RESOURCE_GROUP);
   });
 
-  await test.step('Go back and deselect Azure', async () => {
+  await test.step('Go back and select a different target', async () => {
     await frame.getByRole('button', { name: 'Base settings' }).click();
 
-    await selectTarget(frame, 'azure');
+    await frame.getByRole('radio', { name: /^Virtualization/i }).click();
 
     await expect(
-      frame.getByRole('checkbox', { name: 'Microsoft Azure' }),
+      frame.getByRole('radio', { name: 'Microsoft Azure' }),
     ).not.toBeChecked();
-  });
-
-  await test.step('Select Guest Image and continue', async () => {
-    await frame.getByRole('checkbox', { name: /Virtualization/i }).click();
   });
 
   await test.step('Navigate to review and verify no Azure details', async () => {

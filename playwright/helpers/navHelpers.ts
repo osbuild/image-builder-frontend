@@ -43,7 +43,7 @@ export const fillInImageOutput = async (
   if (target) {
     await selectTarget(page, target);
   } else {
-    await page.getByRole('checkbox', { name: 'Virtualization' }).click();
+    await page.getByRole('radio', { name: /^Virtualization/ }).click();
   }
 };
 

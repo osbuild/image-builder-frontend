@@ -13,30 +13,30 @@ export const selectTarget = async (
    */
   switch (target) {
     case 'qcow2':
-      await page.getByRole('checkbox', { name: 'Virtualization' }).click();
+      await page.getByRole('radio', { name: /^Virtualization/ }).click();
       break;
     case 'iso':
-      await page.getByRole('checkbox', { name: 'Bare metal' }).click();
+      await page.getByRole('radio', { name: 'Bare metal' }).click();
       break;
     case 'wsl':
       await page
-        .getByRole('checkbox', { name: 'Windows Subsystem for Linux' })
+        .getByRole('radio', { name: 'Windows Subsystem for Linux' })
         .click();
       break;
     case 'ova':
       await page
-        .getByRole('checkbox', {
+        .getByRole('radio', {
           name: 'VMware vSphere - Open virtualization format',
         })
         .click();
       break;
     case 'vmdk':
       await page
-        .getByRole('checkbox', { name: 'VMware vSphere - Virtual disk' })
+        .getByRole('radio', { name: 'VMware vSphere - Virtual disk' })
         .click();
       break;
     case 'azure':
-      await page.getByRole('checkbox', { name: /Microsoft Azure/ }).click();
+      await page.getByRole('radio', { name: /Microsoft Azure/ }).click();
       break;
   }
 };

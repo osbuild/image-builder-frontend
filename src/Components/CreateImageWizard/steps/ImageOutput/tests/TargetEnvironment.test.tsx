@@ -12,7 +12,11 @@ import {
   type WizardStateOverrides,
 } from '@/test/testUtils';
 
-import { clickTargetCheckbox, renderTargetEnvironment } from './helpers';
+import {
+  clickTargetCheckbox,
+  clickTargetRadio,
+  renderTargetEnvironment,
+} from './helpers';
 import {
   createCustomArchitecturesHandler,
   createDefaultFetchHandler,
@@ -34,6 +38,13 @@ afterEach(() => {
   fetchMock.resetMocks();
 });
 
+const multiTargetOverrides: WizardStateOverrides = {
+  output: {
+    ...initialState.output,
+    initialImageTypeCount: 2,
+  },
+};
+
 describe('TargetEnvironment', () => {
   describe('Rendering', () => {
     test('renders target environment form group', async () => {
@@ -44,30 +55,30 @@ describe('TargetEnvironment', () => {
       ).toBeInTheDocument();
     });
 
-    test('shows public cloud targets for x86_64', async () => {
+    test('shows public cloud targets as radios in create mode', async () => {
       renderTargetEnvironment();
 
       expect(
-        await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
+        await screen.findByRole('radio', { name: /Amazon Web Services/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('checkbox', { name: /Google Cloud/i }),
+        screen.getByRole('radio', { name: /Google Cloud/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('checkbox', { name: /Microsoft Azure/i }),
+        screen.getByRole('radio', { name: /Microsoft Azure/i }),
       ).toBeInTheDocument();
     });
 
-    test('shows other target options', async () => {
+    test('shows other target options as radios in create mode', async () => {
       renderTargetEnvironment();
 
-      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
+      await screen.findByRole('radio', { name: /Amazon Web Services/i });
 
       expect(
-        screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
+        screen.getByRole('radio', { name: /Virtualization.*Guest image/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('checkbox', { name: /Bare metal installer/i }),
+        screen.getByRole('radio', { name: /Bare metal.*Installer/i }),
       ).toBeInTheDocument();
     });
 
@@ -81,61 +92,63 @@ describe('TargetEnvironment', () => {
     });
   });
 
-  describe('Target selection', () => {
-    test('clicking AWS checkbox properly adds and removes aws from image types', async () => {
+  describe('Single-target selection (create mode)', () => {
+    test('selecting a radio adds the target to image types', async () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await clickTargetCheckbox(user, /Amazon Web Services/i);
-      expect(selectImageTypes(store.getState())).toContain('aws');
-
-      await clickTargetCheckbox(user, /Amazon Web Services/i);
-      expect(selectImageTypes(store.getState())).not.toContain('aws');
+      await clickTargetRadio(user, /Amazon Web Services/i);
+      expect(selectImageTypes(store.getState())).toEqual(['aws']);
     });
 
-    test('clicking Google Cloud checkbox adds gcp to image types', async () => {
+    test('selecting a different radio replaces the previous selection', async () => {
       const user = createUser();
       const { store } = renderTargetEnvironment();
 
-      await clickTargetCheckbox(user, /Google Cloud/i);
+      await clickTargetRadio(user, /Amazon Web Services/i);
+      expect(selectImageTypes(store.getState())).toEqual(['aws']);
 
-      expect(selectImageTypes(store.getState())).toContain('gcp');
+      await clickTargetRadio(user, /Google Cloud/i);
+      expect(selectImageTypes(store.getState())).toEqual(['gcp']);
     });
 
-    test('clicking Azure checkbox adds azure to image types', async () => {
+    test('radio shows checked state when selected', async () => {
       const user = createUser();
-      const { store } = renderTargetEnvironment();
+      renderTargetEnvironment();
 
-      await clickTargetCheckbox(user, /Microsoft Azure/i);
+      const radio = await screen.findByRole('radio', {
+        name: /Amazon Web Services/i,
+      });
 
-      expect(selectImageTypes(store.getState())).toContain('azure');
+      await clickTargetRadio(user, /Amazon Web Services/i);
+
+      expect(radio).toBeChecked();
     });
 
-    test('clicking guest image checkbox properly addd and removes guest-image from image types', async () => {
-      const user = createUser();
-      const { store } = renderTargetEnvironment();
+    test('shows singular helper text', async () => {
+      renderTargetEnvironment();
 
-      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
-      await clickTargetCheckbox(user, /Virtualization guest image/i);
-      expect(selectImageTypes(store.getState())).toContain('guest-image');
-
-      await clickTargetCheckbox(user, /Virtualization guest image/i);
-      expect(selectImageTypes(store.getState())).not.toContain('guest-image');
+      expect(
+        await screen.findByText('Select a target environment.'),
+      ).toBeInTheDocument();
     });
+  });
 
-    test('clicking bare metal checkbox adds image-installer to image types', async () => {
-      const user = createUser();
-      const { store } = renderTargetEnvironment();
+  describe('Multi-target selection (edit with multiple targets)', () => {
+    test('renders checkboxes when initialImageTypeCount > 1', async () => {
+      renderTargetEnvironment(multiTargetOverrides);
 
-      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
-      await clickTargetCheckbox(user, /Bare metal installer/i);
-
-      expect(selectImageTypes(store.getState())).toContain('image-installer');
+      expect(
+        await screen.findByRole('checkbox', {
+          name: /Amazon Web Services checkbox/i,
+        }),
+      ).toBeInTheDocument();
+      expect(screen.queryAllByRole('radio')).toHaveLength(0);
     });
 
     test('can select multiple targets', async () => {
       const user = createUser();
-      const { store } = renderTargetEnvironment();
+      const { store } = renderTargetEnvironment(multiTargetOverrides);
 
       await clickTargetCheckbox(user, /Amazon Web Services/i);
       await clickTargetCheckbox(user, /Google Cloud/i);
@@ -146,21 +159,63 @@ describe('TargetEnvironment', () => {
       expect(imageTypes).toContain('gcp');
       expect(imageTypes).toContain('guest-image');
     });
-  });
 
-  describe('Visual state', () => {
-    test('checkbox shows checked state when selected', async () => {
+    test('clicking a checkbox toggles the target', async () => {
       const user = createUser();
-      renderTargetEnvironment();
+      const { store } = renderTargetEnvironment(multiTargetOverrides);
 
-      await screen.findByRole('checkbox', { name: /Amazon Web Services/i });
-      const checkbox = screen.getByRole('checkbox', {
-        name: /Virtualization guest image/i,
+      await clickTargetCheckbox(user, /Amazon Web Services/i);
+      expect(selectImageTypes(store.getState())).toContain('aws');
+
+      await clickTargetCheckbox(user, /Amazon Web Services/i);
+      expect(selectImageTypes(store.getState())).not.toContain('aws');
+    });
+
+    test('shows plural helper text', async () => {
+      renderTargetEnvironment(multiTargetOverrides);
+
+      expect(
+        await screen.findByText('Select one or more target environments.'),
+      ).toBeInTheDocument();
+    });
+
+    test('still shows checkboxes after unchecking down to one target', async () => {
+      const user = createUser();
+      renderTargetEnvironment({
+        output: {
+          ...initialState.output,
+          imageTypes: ['aws', 'gcp', 'guest-image'],
+          initialImageTypeCount: 3,
+        },
       });
 
-      await clickTargetCheckbox(user, /Virtualization guest image/i);
+      await screen.findByRole('checkbox', {
+        name: /Amazon Web Services checkbox/i,
+      });
 
-      expect(checkbox).toBeChecked();
+      await clickTargetCheckbox(user, /Amazon Web Services/i);
+      await clickTargetCheckbox(user, /Google Cloud/i);
+
+      expect(
+        screen.getByRole('checkbox', {
+          name: /Virtualization guest image checkbox/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    test('renders radios when editing a single-target blueprint', async () => {
+      renderTargetEnvironment({
+        output: {
+          ...initialState.output,
+          imageTypes: ['aws'],
+          initialImageTypeCount: 1,
+        },
+      });
+
+      expect(
+        await screen.findByRole('radio', { name: /Amazon Web Services/i }),
+      ).toBeInTheDocument();
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
     });
   });
 
@@ -178,16 +233,23 @@ describe('TargetEnvironment', () => {
         output: {
           ...initialState.output,
           imageTypes: ['network-installer'],
+          initialImageTypeCount: 2,
         },
       });
 
-      await screen.findByRole('checkbox', { name: /Network installer/i });
+      await screen.findByRole('checkbox', {
+        name: /Network installer checkbox/i,
+      });
 
       expect(
-        screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
+        screen.getByRole('checkbox', {
+          name: /Virtualization guest image checkbox/i,
+        }),
       ).toBeDisabled();
       expect(
-        screen.getByRole('checkbox', { name: /Bare metal installer/i }),
+        screen.getByRole('checkbox', {
+          name: /Bare metal installer checkbox/i,
+        }),
       ).toBeDisabled();
     });
 
@@ -196,6 +258,7 @@ describe('TargetEnvironment', () => {
         output: {
           ...initialState.output,
           imageTypes: ['network-installer'],
+          initialImageTypeCount: 2,
         },
       });
 
@@ -211,21 +274,27 @@ describe('TargetEnvironment', () => {
         output: {
           ...initialState.output,
           imageTypes: ['guest-image'],
+          initialImageTypeCount: 2,
         },
       });
 
       const networkInstallerCheckbox = await screen.findByRole('checkbox', {
-        name: /Network installer/i,
+        name: /Network installer checkbox/i,
       });
 
       expect(networkInstallerCheckbox).toBeDisabled();
     });
 
     test('network installer checkbox is enabled when no other targets selected', async () => {
-      renderTargetEnvironment();
+      renderTargetEnvironment({
+        output: {
+          ...initialState.output,
+          initialImageTypeCount: 2,
+        },
+      });
 
       const networkInstallerCheckbox = await screen.findByRole('checkbox', {
-        name: /Network installer/i,
+        name: /Network installer checkbox/i,
       });
 
       expect(networkInstallerCheckbox).toBeEnabled();
