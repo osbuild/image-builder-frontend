@@ -8,4 +8,5 @@ export const initialState: OutputSlice = {
   distribution: RHEL_10,
   imageSourceType: 'official',
   imageTypes: [],
+  initialImageTypeCount: 0,
 };

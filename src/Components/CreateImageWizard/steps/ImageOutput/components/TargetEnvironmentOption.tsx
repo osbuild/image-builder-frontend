@@ -12,6 +12,7 @@ import {
   removeImageType,
   selectImageTypes,
   selectIsImageMode,
+  selectUseSingleTarget,
   type SupportedImageTypes,
 } from '@/store/slices/wizard';
 
@@ -33,21 +34,27 @@ const TargetEnvironmentOption = ({
   const dispatch = useAppDispatch();
   const environments = useAppSelector(selectImageTypes);
   const isImageMode = useAppSelector(selectIsImageMode);
+  const useSingleTarget = useAppSelector(selectUseSingleTarget);
 
   const isChecked = environments.includes(environment);
 
+  const reinitializeCloudProvider = (env: SupportedImageTypes) => {
+    switch (env) {
+      case 'aws':
+        dispatch(reinitializeAws());
+        break;
+      case 'azure':
+        dispatch(reinitializeAzure());
+        break;
+      case 'gcp':
+        dispatch(reinitializeGcp());
+        break;
+    }
+  };
+
   const handleToggle = () => {
     if (isChecked) {
-      switch (environment) {
-        case 'aws':
-          dispatch(reinitializeAws());
-          break;
-        case 'azure':
-          dispatch(reinitializeAzure());
-          break;
-        case 'gcp':
-          dispatch(reinitializeGcp());
-      }
+      reinitializeCloudProvider(environment);
       dispatch(removeImageType(environment));
     } else {
       dispatch(addImageType(environment));
@@ -55,10 +62,15 @@ const TargetEnvironmentOption = ({
   };
 
   const handleSelect = () => {
+    for (const prev of environments) {
+      if (prev !== environment) {
+        reinitializeCloudProvider(prev);
+      }
+    }
     dispatch(changeImageTypes([environment]));
   };
 
-  if (isImageMode) {
+  if (isImageMode || useSingleTarget) {
     return (
       <Radio
         className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
