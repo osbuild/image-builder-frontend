@@ -46,7 +46,7 @@ test('Import a blueprint with invalid customization', async ({
   });
 
   await test.step('Select Virtualization and register later', async () => {
-    await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
+    await frame.getByRole('radio', { name: /^Virtualization/ }).click();
     await registerLater(frame);
   });
 

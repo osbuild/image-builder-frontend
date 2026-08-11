@@ -147,19 +147,19 @@ export const renderImportMode = async (
   });
 };
 
-export const testCheckbox = async (checkbox: HTMLElement) => {
+export const testRadio = async (radio: HTMLElement) => {
   const user = createUser();
 
-  checkbox.focus();
+  radio.focus();
   await keyboardWithWait(user, ' ');
-  expect(checkbox).toBeChecked();
+  expect(radio).toBeChecked();
 };
 
 export const selectGuestImage = async (user: UserEventInstance) => {
   await clickWithWait(
     user,
-    await screen.findByRole('checkbox', {
-      name: /virtualization guest image/i,
+    await screen.findByRole('radio', {
+      name: /virtualization.*guest image/i,
     }),
   );
 };

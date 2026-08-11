@@ -72,7 +72,7 @@ test('Image mode boot integration test', async ({ page, cleanup }) => {
     await rhelSourceOption.click();
 
     // In image mode, arch is determined by the image source, so we only select the target
-    await frame.getByRole('radio', { name: 'Virtualization' }).click();
+    await frame.getByRole('radio', { name: /^Virtualization/ }).click();
   });
 
   await test.step('Create blueprint', async () => {

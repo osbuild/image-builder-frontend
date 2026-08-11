@@ -47,14 +47,9 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await fillInDetails(frame, blueprintName);
   });
 
-  await test.step('WSL + Installer shows WSL is not supported', async () => {
-    await fillInImageOutput(frame, 'wsl', 'rhel9');
-    await frame.getByRole('checkbox', { name: 'Bare metal installer' }).click();
+  await test.step('Select target and register later', async () => {
+    await fillInImageOutput(frame, 'qcow2', 'rhel9');
     await registerLater(frame);
-
-    await expect(
-      frame.getByText('WSL: customization is not supported'),
-    ).toBeVisible();
   });
 
   await test.step('Select a CIS profile then switch to None', async () => {

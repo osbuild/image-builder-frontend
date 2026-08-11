@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 
 import { composeHandlers, createArchitecturesHandler } from '@/test/testUtils';
 
-import { renderCreateMode, testCheckbox } from './helpers';
+import { renderCreateMode, testRadio } from './helpers';
 import {
   createDefaultFetchHandler,
   fetchMock,
@@ -76,7 +76,7 @@ describe('Keyboard accessibility', () => {
     fetchMock.disableMocks();
   });
 
-  test('target environment checkboxes are keyboard selectable', async () => {
+  test('target environment radios are keyboard selectable', async () => {
     await renderCreateMode();
 
     await waitFor(() =>
@@ -87,14 +87,8 @@ describe('Keyboard accessibility', () => {
       ).not.toBeInTheDocument(),
     );
 
-    await testCheckbox(
-      await screen.findByRole('checkbox', { name: /Amazon Web Services/i }),
-    );
-    await testCheckbox(
-      await screen.findByRole('checkbox', { name: /Google Cloud/i }),
-    );
-    await testCheckbox(
-      await screen.findByRole('checkbox', { name: /Microsoft Azure/i }),
+    await testRadio(
+      await screen.findByRole('radio', { name: /Amazon Web Services/i }),
     );
   });
 });

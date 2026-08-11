@@ -106,6 +106,14 @@ export const clickTargetCheckbox = async (
   const checkbox = await screen.findByRole('checkbox', { name: checkboxLabel });
   await clickWithWait(user, checkbox);
 };
+
+export const clickTargetRadio = async (
+  user: UserEventInstance,
+  radioLabel: RegExp | string,
+) => {
+  const radio = await screen.findByRole('radio', { name: radioLabel });
+  await clickWithWait(user, radio);
+};
 // BlueprintMode render function (uses on-premise store)
 export const renderBlueprintMode = (
   wizardStateOverrides: WizardStateOverrides = {},
