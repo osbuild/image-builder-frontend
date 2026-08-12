@@ -162,7 +162,6 @@ export type ImageTypes =
   | 'gcp-rhui'
   | 'guest-image'
   | 'image-installer'
-  | 'iot-bootable-container'
   | 'iot-commit'
   | 'iot-container'
   | 'iot-installer'
