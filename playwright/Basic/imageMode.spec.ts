@@ -44,7 +44,7 @@ test('Image mode blueprint create, edit, export, import', async ({
   // Skip the test if the image mode flag is not enabled in this environment
   const imageModeToggle = frame.getByRole('button', { name: 'Image mode' });
   try {
-    await expect(imageModeToggle).toBeVisible({ timeout: 10000 });
+    await expect(imageModeToggle).toBeVisible();
   } catch {
     test.skip(true, 'Image mode flag not enabled');
   }
@@ -64,8 +64,8 @@ test('Image mode blueprint create, edit, export, import', async ({
     let imageSourceDropdown = frame.getByRole('button', {
       name: /Red Hat Enterprise Linux|RHEL/i,
     });
-    await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
-    await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
+    await expect(imageSourceDropdown).toBeVisible();
+    await expect(imageSourceDropdown).toBeEnabled();
     await imageSourceDropdown.click();
     await frame.getByRole('option', { name: 'Fedora Hummingbird' }).click();
 
@@ -88,8 +88,8 @@ test('Image mode blueprint create, edit, export, import', async ({
       name: /fedora hummingbird/i,
     });
     await imageSourceDropdown.click();
-    await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
-    await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
+    await expect(imageSourceDropdown).toBeVisible();
+    await expect(imageSourceDropdown).toBeEnabled();
     await frame
       .getByRole('option', { name: 'Red Hat Enterprise Linux (RHEL)' })
       .click();
@@ -99,14 +99,14 @@ test('Image mode blueprint create, edit, export, import', async ({
     const imageSourceDropdown = frame.getByRole('button', {
       name: /Red Hat Enterprise Linux|RHEL/i,
     });
-    await expect(imageSourceDropdown).toBeVisible({ timeout: 10000 });
-    await expect(imageSourceDropdown).toBeEnabled({ timeout: 5000 });
+    await expect(imageSourceDropdown).toBeVisible();
+    await expect(imageSourceDropdown).toBeEnabled();
     await imageSourceDropdown.click();
 
     const rhelSourceOption = frame
       .getByRole('option', { name: /RHEL/i })
       .first();
-    await expect(rhelSourceOption).toBeVisible({ timeout: 10000 });
+    await expect(rhelSourceOption).toBeVisible();
     await rhelSourceOption.click();
 
     await expect(
@@ -126,7 +126,6 @@ test('Image mode blueprint create, edit, export, import', async ({
     const reviewImageButton = frame.getByRole('button', {
       name: 'Review image',
     });
-    await expect(reviewImageButton).toBeEnabled({ timeout: 10000 });
     await reviewImageButton.click();
     await createBlueprint(frame, blueprintName);
   });
@@ -158,7 +157,6 @@ test('Image mode blueprint create, edit, export, import', async ({
     const reviewImageButton = frame.getByRole('button', {
       name: 'Review image',
     });
-    await expect(reviewImageButton).toBeEnabled({ timeout: 10000 });
     await reviewImageButton.click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
@@ -185,7 +183,7 @@ test('Image mode blueprint create, edit, export, import', async ({
     const importedImageMode = frame.getByRole('button', {
       name: 'Image mode',
     });
-    await expect(importedImageMode).toBeVisible({ timeout: 10000 });
+    await expect(importedImageMode).toBeVisible();
     await expect(importedImageMode).toHaveAttribute('aria-pressed', 'true');
 
     // Export doesn't include image_requests, so image types must be re-selected
