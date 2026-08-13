@@ -3,6 +3,7 @@ import { mergeTests } from '@playwright/test';
 
 import { test as ariaHiddenTest } from './ariaHiddenWorkaround';
 import { blockAnalyticsTest } from './blockAnalytics';
+import { test as browserDiagnosticsTest } from './browserDiagnostics';
 import { test as cleanupTest } from './cleanup';
 import { test as coverageTest } from './coverage';
 import { test as networkChaosTest } from './networkChaos';
@@ -12,6 +13,7 @@ import { test as popupTest } from './popupHandler';
 export const test = mergeTests(
   ariaHiddenTest,
   blockAnalyticsTest,
+  browserDiagnosticsTest,
   cleanupTest,
   coverageTest,
   networkChaosTest,
