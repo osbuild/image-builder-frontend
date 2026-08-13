@@ -1,4 +1,4 @@
-import { APIResponse, Page } from '@playwright/test';
+import { APIResponse, expect, Page } from '@playwright/test';
 
 /**
  * Call API and return the response
@@ -93,7 +93,14 @@ type RepositoryResponse = {
   uuid: string;
   name: string;
   url: string;
+  snapshot?: boolean;
+  status?: string;
+  last_introspection_time?: string;
 };
+
+// Introspection of a small repository takes seconds, but the backend gives no
+// completion signal, so we poll.
+const INTROSPECTION_TIMEOUT = 90_000;
 
 export const createRepositoryViaApi = async (
   page: Page,
@@ -138,58 +145,98 @@ export const deleteRepositoryViaApi = async (
   }
 };
 
-// Ensures a repository with the given name exists. If it already exists,
-// returns the existing repo. If not, creates it. Handles race conditions
-// where a concurrent test run creates the repo between the check and
-// the create attempt.
+const findRepositoryByName = async (
+  page: Page,
+  name: string,
+): Promise<RepositoryResponse | undefined> => {
+  const headers = await getAuthHeaders(page);
+  const response = await page
+    .context()
+    .request.get(
+      `/api/content-sources/v1/repositories/?name=${encodeURIComponent(name)}`,
+      { headers },
+    );
+
+  if (response.status() !== 200) {
+    return undefined;
+  }
+
+  const body = await response.json();
+  return body.data?.find((r: RepositoryResponse) => r.name === name);
+};
+
+const normalizeUrl = (url: string) => url.replace(/\/+$/, '');
+
+const matchesRequest = (
+  repo: RepositoryResponse,
+  request: RepositoryRequest,
+): boolean =>
+  normalizeUrl(repo.url) === normalizeUrl(request.url) &&
+  !!repo.snapshot === !!request.snapshot;
+
+// A repository is only usable by a test once it has been introspected. Before
+// that the wizard still disables it, but with "we are still learning about it"
+// rather than whatever reason the test is asserting on, so waiting here keeps
+// that timing out of the specs.
+const waitForIntrospection = async (
+  page: Page,
+  name: string,
+): Promise<void> => {
+  await expect
+    .poll(
+      async () => {
+        const repo = await findRepositoryByName(page, name);
+        if (!repo) return 'missing';
+        if (!repo.last_introspection_time) return 'not introspected yet';
+        return repo.status ?? 'unknown';
+      },
+      {
+        message: `Repository "${name}" never became usable`,
+        timeout: INTROSPECTION_TIMEOUT,
+        intervals: [500, 1000, 2000, 5000],
+      },
+    )
+    .toBe('Valid');
+};
+
+// Ensures a repository with the given name exists, matches the requested
+// configuration, and has been introspected. Handles a concurrent run creating
+// the repository between the search and the create attempt.
 export const ensureRepositoryExists = async (
   page: Page,
   repository: RepositoryRequest,
 ): Promise<RepositoryResponse> => {
-  const headers = await getAuthHeaders(page);
+  const existing = await findRepositoryByName(page, repository.name);
 
-  // Check if the repo already exists by name
-  const searchResponse = await page
-    .context()
-    .request.get(
-      `/api/content-sources/v1/repositories/?name=${encodeURIComponent(repository.name)}`,
-      { headers },
-    );
-
-  if (searchResponse.status() === 200) {
-    const body = await searchResponse.json();
-    const existing = body.data?.find(
-      (r: { name: string }) => r.name === repository.name,
-    );
-    if (existing) {
-      return existing;
-    }
+  // Matching on the name alone would reuse a repository left behind with the
+  // wrong url or snapshot setting, which then fails every later run for a
+  // reason that looks nothing like stale fixture data.
+  if (existing && !matchesRequest(existing, repository)) {
+    await deleteRepositoryViaApi(page, existing.uuid);
   }
 
-  // Repo doesn't exist, create it
-  try {
-    return await createRepositoryViaApi(page, repository);
-  } catch {
-    // Another run may have created it concurrently, try searching again
-    const retryResponse = await page
-      .context()
-      .request.get(
-        `/api/content-sources/v1/repositories/?name=${encodeURIComponent(repository.name)}`,
-        { headers },
-      );
-
-    if (retryResponse.status() === 200) {
-      const body = await retryResponse.json();
-      const existing = body.data?.find(
-        (r: { name: string }) => r.name === repository.name,
-      );
-      if (existing) {
-        return existing;
+  if (!existing || !matchesRequest(existing, repository)) {
+    try {
+      await createRepositoryViaApi(page, repository);
+    } catch {
+      // A concurrent run may have created it in the meantime.
+      if (!(await findRepositoryByName(page, repository.name))) {
+        throw new Error(
+          `Failed to create or find repository "${repository.name}"`,
+        );
       }
     }
-
-    throw new Error(`Failed to create or find repository "${repository.name}"`);
   }
+
+  await waitForIntrospection(page, repository.name);
+
+  const repo = await findRepositoryByName(page, repository.name);
+  if (!repo) {
+    throw new Error(
+      `Repository "${repository.name}" disappeared after introspection`,
+    );
+  }
+  return repo;
 };
 
 export const deleteRepositoryByUrlViaApi = async (
