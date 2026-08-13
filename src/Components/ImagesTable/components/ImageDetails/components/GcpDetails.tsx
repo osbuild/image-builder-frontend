@@ -22,7 +22,7 @@ import {
 export const parseGcpSharedWith = (
   sharedWith: GcpUploadRequestOptions['share_with_accounts'],
 ) => {
-  if (sharedWith) {
+  if (sharedWith?.[0]) {
     const splitGCPSharedWith = sharedWith[0].split(':');
     return splitGCPSharedWith[1];
   }
