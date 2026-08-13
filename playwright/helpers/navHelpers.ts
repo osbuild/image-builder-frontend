@@ -76,6 +76,7 @@ export const navigateToLandingPageFunc = async (page: Page) => {
   if (isHosted()) {
     await page.goto('/insights/image-builder/landing');
     await disablePreview(page);
+    //await page.getByRole('button', { name: 'Show more' }).click();
     await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible(
       { timeout: 30000 },
     );

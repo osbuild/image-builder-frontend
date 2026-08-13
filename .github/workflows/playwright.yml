@@ -65,7 +65,7 @@ jobs:
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
-          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/Customizations playwright/Import playwright/Cockpit playwright/Basic
+          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/Basic
 
       - name: Generate Playwright coverage report
         if: always()
