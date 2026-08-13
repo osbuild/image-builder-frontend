@@ -32,8 +32,15 @@ export const createBlueprint = async (
   // An informational modal may appear on first create if localStorage
   // does not have 'imageBuilder.saveAndBuildModalSeen'. Dismiss it and
   // click the button again.
+  // isVisible() ignores its timeout and reports the state right now, so a
+  // modal that took a moment to paint read as absent, the second click never
+  // happened, and the blueprint was silently never created.
   const closeBtn = page.getByTestId('close-button-saveandbuild-modal');
-  if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  const modalAppeared = await closeBtn
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .then(() => true)
+    .catch(() => false);
+  if (modalAppeared) {
     await closeBtn.click();
     await page.getByRole('button', { name: 'Create blueprint' }).click();
   }

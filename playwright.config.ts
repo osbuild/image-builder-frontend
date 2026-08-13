@@ -42,7 +42,11 @@ export default defineConfig({
       ? process.env.BASE_URL
       : 'http://127.0.0.1:9090',
     video: 'retain-on-failure',
-    trace: 'on',
+    // 'on' kept a trace for every passing test too, which is hundreds of
+    // megabytes of artifacts nobody opens. 'on-first-retry' would record
+    // nothing locally, where retries are 0, so match the video setting and
+    // keep a trace whenever there is a failure to look at.
+    trace: 'retain-on-failure',
 
     ignoreHTTPSErrors: true,
   },
@@ -50,7 +54,10 @@ export default defineConfig({
     { name: 'Setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'UI tests',
-      timeout: 29.5 * 60 * 1000, // 29.5m
+      // The slowest attempt observed is under 3m. This is only a ceiling on
+      // how long a hung test can burn before it is killed, and at 29.5m one
+      // could take a third of globalTimeout with it.
+      timeout: 5 * 60 * 1000, // 5m
       use: {
         ...devices['Desktop Chrome'],
         storageState: '.auth/user.json',
