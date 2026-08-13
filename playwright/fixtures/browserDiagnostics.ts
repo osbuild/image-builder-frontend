@@ -43,6 +43,7 @@ export const test = base.extend<BrowserDiagnosticsFixture>({
         if (type !== 'error' && type !== 'warning') return;
         record(
           `CONSOLE ${type.toUpperCase().padEnd(7)} ${message.text().slice(0, 300)}`,
+          type === 'warning',
         );
       });
 
