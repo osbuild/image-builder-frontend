@@ -178,7 +178,7 @@ const matchesRequest = (
 // that the wizard still disables it, but with "we are still learning about it"
 // rather than whatever reason the test is asserting on, so waiting here keeps
 // that timing out of the specs.
-const waitForIntrospection = async (
+export const waitForIntrospection = async (
   page: Page,
   name: string,
 ): Promise<void> => {

@@ -5,6 +5,7 @@ import {
   createRepositoryViaApi,
   deleteRepositoryByUrlViaApi,
   deleteRepositoryViaApi,
+  waitForIntrospection,
 } from '../helpers/apiHelpers';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
@@ -21,8 +22,11 @@ import {
   registerLater,
 } from '../helpers/wizardHelpers';
 
-const REPOSITORY_URL =
-  'https://jlsherrill.fedorapeople.org/fake-repos/really-empty/';
+// Content sources allows one repository per url per organization, and this
+// spec claims the url by deleting whatever already holds it. Every spec
+// therefore needs a url of its own - sharing one with RepeatableBuild meant
+// this test deleted that test's repository out from under it mid-run.
+const REPOSITORY_URL = 'https://jlsherrill.fedorapeople.org/fake-repos/signed/';
 
 test('Create blueprint with repository and test edit mode removal', async ({
   page,
@@ -50,6 +54,9 @@ test('Create blueprint with repository and test edit mode removal', async ({
       snapshot: false,
     });
     repositoryUuid = repository.uuid;
+    // The wizard lists repositories filtered by architecture and version, and
+    // a repository does not qualify until content sources has introspected it.
+    await waitForIntrospection(page, repositoryName);
   });
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));
