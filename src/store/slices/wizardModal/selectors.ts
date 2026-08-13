@@ -5,3 +5,6 @@ export const selectIsWizardModalOpen = (state: RootState) =>
 
 export const selectWizardModalMode = (state: RootState) =>
   state.wizardModal.mode;
+
+export const selectHasWizardInitialized = (state: RootState) =>
+  state.wizardModal.hasInitialized;
