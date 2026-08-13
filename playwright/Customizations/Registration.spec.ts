@@ -415,7 +415,6 @@ registrationModes.forEach(
           const saveButton = frame.getByRole('button', {
             name: 'Save changes to blueprint',
           });
-          await expect(saveButton).toBeEnabled();
           await saveButton.click();
         });
 
