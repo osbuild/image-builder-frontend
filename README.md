@@ -413,6 +413,27 @@ PLAYWRIGHT_STATIC_PASSWORD="<your_static_user_password>"
 
 For local development purposes, you can use the same credentials as for `PLAYWRIGHT_USER` and `PLAYWRIGHT_PASSWORD` if you are using your stage account for those.
 
+### Diagnosing a failure that has no visible cause
+
+A blank page, a control that never appears, and a page that renders slowly all
+look identical from the outside: an assertion times out and says only what it
+was waiting for. Failing tests therefore carry a `browser-diagnostics.log`
+attachment in the HTML report, holding what the browser reported while the test
+ran - uncaught exceptions, console errors and warnings, requests that failed,
+and any response of 400 or above, each stamped with the time since the test
+started.
+
+```
++  1429ms  HTTP 404    GET .../apps/chrome/operator-generated/fed-modules.json
++  2759ms  CONSOLE WARNING Unsatisfied version * from undefined of shared
+                           singleton module react-router-dom (required =6.30.4)
++  3210ms  HTTP 400    GET .../api/rbac/v1/access/?application=inventory
+```
+
+Passing tests attach nothing. Warnings have a smaller budget than errors,
+because the console shell emits them in bursts and they would otherwise crowd
+out the entries worth reading.
+
 ### Finding flaky tests with injected latency
 
 Races between the browser and the API are hard to reproduce on demand. The
