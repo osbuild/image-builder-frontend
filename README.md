@@ -413,6 +413,59 @@ PLAYWRIGHT_STATIC_PASSWORD="<your_static_user_password>"
 
 For local development purposes, you can use the same credentials as for `PLAYWRIGHT_USER` and `PLAYWRIGHT_PASSWORD` if you are using your stage account for those.
 
+### Finding flaky tests with injected latency
+
+Races between the browser and the API are hard to reproduce on demand. The
+window is usually a few hundred milliseconds wide, and it only matters when a
+test happens to click inside it. Setting `PW_CHAOS=1` delays the app's own API
+responses so those windows open wide enough to hit deliberately.
+
+```bash
+PW_CHAOS=1 npx playwright test --project="UI tests" --repeat-each=5
+```
+
+What finds bugs here is **reordering**, not slowness. Playwright waits for
+elements to become actionable, so uniformly slower responses are absorbed and
+nothing fails. Delays are drawn from a heavy tailed distribution instead: most
+requests pass straight through and a small share are held for up to two
+seconds, which is long enough for one response to overtake another issued
+before it. Code that assumes replies arrive in the order they were sent breaks
+under this. Code that does not, does not.
+
+Delays are capped below `actionTimeout`, so slowness on its own can never fail
+a test - anything that goes red under chaos is a real defect. Only requests to
+`**/api/**` are delayed, since holding bundles and fonts adds wall clock
+without producing anything worth finding.
+
+#### Reproducing a specific failure
+
+Every test records the seed it used as an annotation, visible in the HTML
+report:
+
+```
+chaos-seed     PW_CHAOS_SEED=2223827117 (test seed 729962994)
+chaos-summary  175 requests delayed, max 1982ms, total 19208ms
+```
+
+Passing that seed back replays the same delays:
+
+```bash
+PW_CHAOS=1 PW_CHAOS_SEED=2223827117 npx playwright test --project="UI tests"
+```
+
+Reproduction is close but not exact. Delays are drawn per request in dispatch
+order, so a run that issues its requests in a different order gets a different
+assignment - narrowing to a single spec is enough to change that. When a seed
+does not reproduce, raising `--repeat-each` is usually faster than chasing it.
+
+#### What it tends to find
+
+Failures under chaos point at state that outlives the request it came from:
+a cached answer that a slower, older response overwrites; a control that is
+enabled before the data behind it has arrived; an effect that re-runs after the
+component has already moved on. A failure that only appears under chaos is
+still real. It just needs an unlucky user rather than an unlucky test.
+
 ## Playwright Boot tests
 
 This section describes what Playwright Boot tests are, how they work and how to run them locally.
