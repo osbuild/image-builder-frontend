@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode } from 'jwt-decode';
@@ -9,10 +9,10 @@ import {
   UNIQUE_VALIDATION_DELAY,
 } from '@/constants';
 import {
-  BlueprintsResponse,
+  useGetBlueprintQuery,
+  useGetBlueprintsQuery,
   useGetImageExistsQuery,
   useGetOscapCustomizationsQuery,
-  useLazyGetBlueprintsQuery,
 } from '@/store/api/backend';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
@@ -68,6 +68,7 @@ import {
   selectUsers,
   UserWithAdditionalInfo,
 } from '@/store/slices/wizard';
+import useDebounce from '@/Utilities/useDebounce';
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
@@ -109,6 +110,9 @@ export type StepValidation = {
     [key: string]: string;
   };
   disabledNext: boolean;
+  // An async check has not answered yet. Kept separate from disabledNext so a
+  // step can wait for the answer instead of treating it as a validation error.
+  isPending?: boolean;
 };
 
 export type UsersStepValidation = {
@@ -152,6 +156,7 @@ export function useIsBlueprintValid(): boolean {
     !services.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext &&
+    !details.isPending &&
     !users.disabledNext &&
     !userGroups.disabledNext &&
     !azureTarget.disabledNext &&
@@ -1139,53 +1144,47 @@ export function useDetailsValidation(): StepValidation {
   const blueprintId = useAppSelector(selectBlueprintId);
 
   const nameValid = isBlueprintNameValid(name);
-  const [uniqueName, setUniqueName] = useState<boolean | null>(null);
 
-  const [trigger] = useLazyGetBlueprintsQuery();
+  // Already cached by the wizard, which fetches the same blueprint in edit mode
+  const { data: savedBlueprint } = useGetBlueprintQuery(
+    { id: blueprintId || '' },
+    { skip: !blueprintId },
+  );
 
-  // Debounce the API call to check if the name is unique
-  useEffect(() => {
-    if (name !== '' && nameValid) {
-      const timer = setTimeout(
-        () => {
-          setUniqueName(null);
-          trigger({ name })
-            .unwrap()
-            .then((response: BlueprintsResponse) => {
-              if (
-                response.meta.count > 0 &&
-                response.data[0].id !== blueprintId
-              ) {
-                setUniqueName(false);
-              } else {
-                setUniqueName(true);
-              }
-            })
-            .catch(() => {
-              // If the request fails, we assume the name is unique
-              setUniqueName(true);
-            });
-        },
-        UNIQUE_VALIDATION_DELAY, // If name is empty string, instantly return
-      );
+  // A name that hasn't been edited cannot collide with anything, so skip the
+  // lookup rather than spending a round trip to confirm it.
+  const isUnchangedName = !!blueprintId && name === savedBlueprint?.name;
+  const skipUniqueCheck = !name || !nameValid || isUnchangedName;
 
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [blueprintId, name, setUniqueName, trigger, nameValid]);
+  // Debouncing the query argument rather than the request itself lets RTK Query
+  // own the caching. Every call site of this hook then shares one cache entry
+  // and one in-flight request, and a remount reads the cached answer instead of
+  // restarting the check from scratch.
+  const debouncedName = useDebounce(name, UNIQUE_VALIDATION_DELAY);
+
+  const { data, isFetching, isError } = useGetBlueprintsQuery(
+    { name: debouncedName },
+    { skip: skipUniqueCheck || !debouncedName },
+  );
+
+  let isUniqueName: boolean | null;
+  if (skipUniqueCheck || isError) {
+    // A check we could not run is not evidence of a collision, so fail open
+    // rather than block the user on it.
+    isUniqueName = true;
+  } else if (debouncedName !== name || isFetching || !data) {
+    isUniqueName = null;
+  } else {
+    isUniqueName = data.meta.count === 0 || data.data[0].id === blueprintId;
+  }
 
   let nameError = '';
   if (!name) {
     nameError = 'Blueprint name is required';
-  }
-  if (name && !nameValid) {
+  } else if (!nameValid) {
     nameError = 'Invalid blueprint name';
-  } else if (uniqueName === false) {
+  } else if (isUniqueName === false) {
     nameError = 'Blueprint with this name already exists';
-  } else if (!blueprintId && uniqueName === null) {
-    // Hack to keep the error message from flickering in create mode
-    return { errors: { name: '' }, disabledNext: false };
   }
 
   let descriptionError = '';
@@ -1199,8 +1198,10 @@ export function useDetailsValidation(): StepValidation {
       name: nameError,
       description: descriptionError,
     },
-    // if uniqueName is null, we are still waiting for the API response
-    disabledNext: !!nameError || !!descriptionError || uniqueName !== true,
+    disabledNext: !!nameError || !!descriptionError,
+    // Reported separately from disabledNext: nothing is known to be wrong yet,
+    // so the step should wait for the answer rather than report an error.
+    isPending: isUniqueName === null,
   };
 }
 
