@@ -82,23 +82,43 @@ export const ensureAuthenticated = async (
   // Held in an object because TypeScript does not track assignments made
   // inside the poll callback.
   const seen: { state: AuthState } = { state: 'neither' };
-  try {
-    await expect
-      .poll(
-        async () => {
-          seen.state = await detectAuthState(appHeading, loginField);
-          return seen.state;
-        },
-        { timeout: AUTH_TIMEOUT, intervals: [250, 500, 1000] },
-      )
-      .not.toBe('neither');
-  } catch {
-    throw new Error(
-      `Neither image builder nor the login form appeared within ` +
-        `${AUTH_TIMEOUT / 1000}s at ${page.url()}. The app did not render, ` +
-        `which is not the same as being logged out - check the browser ` +
-        `console and the network log in the trace before suspecting SSO.`,
-    );
+  const settle = async () => {
+    try {
+      await expect
+        .poll(
+          async () => {
+            seen.state = await detectAuthState(appHeading, loginField);
+            return seen.state;
+          },
+          { timeout: AUTH_TIMEOUT, intervals: [250, 500, 1000] },
+        )
+        .not.toBe('neither');
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  if (!(await settle())) {
+    // A blank page usually means the federated module never mounted. Reloading
+    // recovers it often enough to be worth one attempt before failing.
+    await page.reload();
+    if (!(await settle())) {
+      // Distinguishes "chrome never loaded" from "chrome loaded but our module
+      // did not", which need to be chased in completely different places.
+      const chromeRendered = await page
+        .getByRole('banner')
+        .isVisible()
+        .catch(() => false);
+      throw new Error(
+        `Neither image builder nor the login form appeared within ` +
+          `${(AUTH_TIMEOUT / 1000) * 2}s (including one reload) at ` +
+          `${page.url()}. The console chrome ` +
+          `${chromeRendered ? 'rendered, so the image builder module failed to mount' : 'did not render either, so this is upstream of image builder'}. ` +
+          `This is not an authentication failure - check the browser console ` +
+          `and network log in the trace.`,
+      );
+    }
   }
 
   if (seen.state === 'login') {
