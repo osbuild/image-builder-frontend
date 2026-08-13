@@ -183,6 +183,8 @@ const CreateImageWizard = () => {
     imagePullValidation.disabledNext ||
     (restrictions.users.isStandalone && usersHaveErrors);
 
+  const baseSettingsIsPending = !!detailsValidation.isPending;
+
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
     timezoneValidation.disabledNext ||
@@ -488,6 +490,7 @@ const CreateImageWizard = () => {
             <CustomWizardFooter
               disableBack={true}
               hasErrors={baseSettingsHasErrors}
+              isPending={baseSettingsIsPending}
               isOnPremise={isOnPremise}
             />
           }

@@ -21,6 +21,7 @@ import { scrollToFirstError } from '../utilities/scrollToFirstError';
 type CustomWizardFooterPropType = {
   disableBack?: boolean;
   hasErrors: boolean;
+  isPending?: boolean;
   beforeNext?: () => boolean;
   isOnPremise: boolean;
 };
@@ -28,6 +29,7 @@ type CustomWizardFooterPropType = {
 export const CustomWizardFooter = ({
   disableBack,
   hasErrors,
+  isPending,
   beforeNext,
   isOnPremise,
 }: CustomWizardFooterPropType) => {
@@ -37,6 +39,13 @@ export const CustomWizardFooter = ({
   const dispatch = useAppDispatch();
   const reviewAndFinishBtnID = 'wizard-review-and-finish-btn';
   const cancelBtnID = 'wizard-cancel-btn';
+
+  // While a check is still running there is no error to show, so clicking would
+  // do nothing at all. Disable instead: an enabled button that silently
+  // discards the click is indistinguishable from a broken page, both to a user
+  // and to anything automating one. Real errors keep their enabled button so
+  // that clicking still reveals them.
+  const isWaitingOnValidation = !!isPending && !hasErrors;
 
   const handleNext = () => {
     if (hasErrors) {
@@ -89,10 +98,18 @@ export const CustomWizardFooter = ({
         >
           Back
         </Button>
-        <Button variant='secondary' onClick={handleNext}>
+        <Button
+          variant='secondary'
+          onClick={handleNext}
+          isDisabled={isWaitingOnValidation}
+        >
           Next
         </Button>
-        <Button variant='primary' onClick={handleReview}>
+        <Button
+          variant='primary'
+          onClick={handleReview}
+          isDisabled={isWaitingOnValidation}
+        >
           Review image
         </Button>
         <Button
