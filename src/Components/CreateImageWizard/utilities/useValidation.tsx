@@ -1175,7 +1175,7 @@ export function useDetailsValidation(): StepValidation {
   } else if (debouncedName !== name || isFetching || !data) {
     isUniqueName = null;
   } else {
-    isUniqueName = data.meta.count === 0 || data.data[0].id === blueprintId;
+    isUniqueName = data.meta.count === 0 || data.data[0]?.id === blueprintId;
   }
 
   let nameError = '';
