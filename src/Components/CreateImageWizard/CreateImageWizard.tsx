@@ -51,7 +51,9 @@ import {
 } from '@/store/slices/wizard';
 import {
   closeWizardModal,
+  markWizardInitialized,
   openWizardModal,
+  selectHasWizardInitialized,
   selectIsWizardModalOpen,
   selectWizardModalMode,
 } from '@/store/slices/wizardModal';
@@ -123,7 +125,7 @@ const CreateImageWizard = () => {
   const imageSource = useAppSelector(selectImageSource);
   const [searchParams, setSearchParams] = useSearchParams();
   const resolvePath = useAppSelector(selectPathResolver);
-  const hasInitialized = useRef(false);
+  const hasInitialized = useAppSelector(selectHasWizardInitialized);
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const hasTrackedInitialStepRef = useRef(false);
@@ -209,9 +211,9 @@ const CreateImageWizard = () => {
     }
 
     if (mode === 'create' && showWizardModal) {
-      if (!hasInitialized.current) {
+      if (!hasInitialized) {
         dispatch(initializeWizard());
-        hasInitialized.current = true;
+        dispatch(markWizardInitialized());
       }
 
       // Initialize registration URLs
@@ -389,7 +391,6 @@ const CreateImageWizard = () => {
   const handleClose = () => {
     dispatch(closeWizardModal());
     dispatch(initializeWizard());
-    hasInitialized.current = false;
     hasTrackedInitialStepRef.current = false;
     hasTrackedWizardOpenedRef.current = false;
 

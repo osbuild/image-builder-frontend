@@ -77,6 +77,7 @@ export const renderWithQueryParams = async (
       wizardModal: {
         isModalOpen: true,
         mode: 'create' as const,
+        hasInitialized: false,
       },
     },
     initialRoute: `/insights/image-builder${queryString}`,
@@ -92,6 +93,7 @@ export const renderCreateMode = async (): Promise<{
       wizardModal: {
         isModalOpen: true,
         mode: 'create' as const,
+        hasInitialized: false,
       },
     },
     initialRoute: '/insights/image-builder/',
@@ -107,6 +109,7 @@ export const renderEditMode = async (
       wizardModal: {
         isModalOpen: true,
         mode: 'edit' as const,
+        hasInitialized: false,
       },
       blueprints: {
         selectedBlueprintId: blueprintId,
@@ -135,6 +138,7 @@ export const renderImportMode = async (
       wizardModal: {
         isModalOpen: true,
         mode: 'import' as const,
+        hasInitialized: false,
       },
       wizard: importBlueprintState,
     },
