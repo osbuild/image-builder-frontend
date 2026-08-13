@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted } from './helpers';
 import { ibFrame } from './navHelpers';
@@ -36,38 +36,72 @@ export const login = async (page: Page, staticUser: boolean = false) => {
   return loginCockpit(page, user, password);
 };
 
-/**
- * Checks if the user is already authenticated, if not, logs them in
- * @param page - the page object
- * @param staticUser - if true, use the static user instead of dynamically created one
- */
+// How long the app gets to render before we give up. The landing page loads
+// chrome, the federated module, and the blueprint and image lists, so this is
+// not instant on a loaded CI runner.
+const AUTH_TIMEOUT = 30_000;
+
+type AuthState = 'app' | 'login' | 'neither';
+
+const detectAuthState = async (
+  appHeading: Locator,
+  loginField: Locator,
+): Promise<AuthState> => {
+  // Checked before the login form so that an app which has already rendered
+  // is never mistaken for a login prompt.
+  if (await appHeading.isVisible().catch(() => false)) return 'app';
+  if (await loginField.isVisible().catch(() => false)) return 'login';
+  return 'neither';
+};
+
+// Waits for the app or the login form, whichever arrives, and logs in only if
+// the login form is the one that showed up.
+//
+// This used to wait for the app alone and treat a timeout as "not logged in".
+// A slow render therefore sent the run off to fill a login form that was not
+// there, and the failure surfaced 30 seconds later as a missing "Red Hat login"
+// textbox - which reads as broken authentication no matter what actually went
+// wrong. Stage outages, a chrome-service 502, a saturated dev proxy and a slow
+// render have all been reported that way.
 export const ensureAuthenticated = async (
   page: Page,
   staticUser: boolean = false,
 ) => {
-  // Navigate to the target page
-  if (isHosted()) {
-    await page.goto('/insights/image-builder/landing');
-  } else {
-    await page.goto('/cockpit-image-builder');
-  }
+  await page.goto(
+    isHosted() ? '/insights/image-builder/landing' : '/cockpit-image-builder',
+  );
 
-  // Check for authentication success indicator
-  const successIndicator = isHosted()
+  const appHeading = isHosted()
     ? page.getByRole('heading', { name: 'Image builder' })
     : ibFrame(page).getByRole('heading', { name: 'Image builder' });
 
-  let isAuthenticated = false;
+  const loginField = isHosted()
+    ? page.getByRole('textbox', { name: 'Red Hat login' })
+    : page.getByRole('textbox', { name: 'User name' });
+
+  // Held in an object because TypeScript does not track assignments made
+  // inside the poll callback.
+  const seen: { state: AuthState } = { state: 'neither' };
   try {
-    // Give it a 30 second period to load, it's less expensive than having to rerun the test
-    await expect(successIndicator).toBeVisible({ timeout: 30000 });
-    isAuthenticated = true;
+    await expect
+      .poll(
+        async () => {
+          seen.state = await detectAuthState(appHeading, loginField);
+          return seen.state;
+        },
+        { timeout: AUTH_TIMEOUT, intervals: [250, 500, 1000] },
+      )
+      .not.toBe('neither');
   } catch {
-    isAuthenticated = false;
+    throw new Error(
+      `Neither image builder nor the login form appeared within ` +
+        `${AUTH_TIMEOUT / 1000}s at ${page.url()}. The app did not render, ` +
+        `which is not the same as being logged out - check the browser ` +
+        `console and the network log in the trace before suspecting SSO.`,
+    );
   }
 
-  if (!isAuthenticated) {
-    // Not authenticated, need to login
+  if (seen.state === 'login') {
     await login(page, staticUser);
   }
 };
