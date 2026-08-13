@@ -6,7 +6,8 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addUser, selectUsers } from '@/store/slices/wizard';
+import { selectIsOnPremise } from '@/store/slices/env';
+import { addUser, selectBlueprintMode, selectUsers } from '@/store/slices/wizard';
 
 import UserRow from './UserRow';
 
@@ -17,6 +18,8 @@ type UserInfoProps = {
 const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const usersToRender =
     users.length === 0
       ? [
@@ -48,6 +51,16 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
+      {isOnPremise &&
+        blueprintMode === 'image' &&
+        stepValidation.disabledNext && (
+          <Alert
+            variant='info'
+            isInline
+            title='At least one user is required to log in to the image.'
+            className='pf-v6-u-mt-lg'
+          />
+        )}
       <Table variant='compact' borders={false}>
         <Thead>
           <Tr>
