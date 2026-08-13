@@ -33,6 +33,11 @@ export default defineConfig({
     actionTimeout: 30_000, // 30s
     navigationTimeout: 30_000, // 30s
     headless: true,
+    // Specs assert on rendered dates. Without this the browser follows the
+    // host clock, so a date the wizard stores as UTC midnight renders as the
+    // previous day anywhere west of Greenwich - passing in CI and failing on
+    // a developer's machine.
+    timezoneId: 'UTC',
     baseURL: process.env.BASE_URL
       ? process.env.BASE_URL
       : 'http://127.0.0.1:9090',
