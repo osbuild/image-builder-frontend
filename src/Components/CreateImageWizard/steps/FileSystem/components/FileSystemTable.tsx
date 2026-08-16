@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import { Content, Flex, FlexItem } from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
@@ -65,42 +65,54 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   );
 
   return (
-    <Table
-      aria-label='File system table'
-      variant='compact'
-      borders={false}
-      style={{ backgroundColor: 'transparent' }}
-    >
-      <Thead>
-        <Tr>
-          {mode === 'disk-lvm' && <Th>Name</Th>}
-          <Th>Mount point</Th>
-          <Th>Type</Th>
-          <Th>Minimum size</Th>
-          <Th aria-label='Remove mount point' />
-        </Tr>
-      </Thead>
-
-      <Tbody>
-        {partitions.length > 0 && mode === 'filesystem'
-          ? partitions.map((partition) => (
-              <Row
-                key={partition.id}
-                partition={partition as FilesystemPartition}
-                isRemovingDisabled={
-                  rootPartitionsCount === 1 && partition.mountpoint === '/'
-                }
-                {...getOscapPartitionInfo(partition.mountpoint)}
-              />
-            ))
-          : partitions.map((partition) => (
-              <DiskRow
-                key={partition.id}
-                partition={partition as DiskPartition}
-              />
-            ))}
-      </Tbody>
-    </Table>
+    <div aria-label='File system table'>
+      <Flex className='pf-v6-u-pb-sm'>
+        {mode === 'disk-lvm' && (
+          <FlexItem style={{ flex: '0 0 25%' }}>
+            <Content component='small'>Name</Content>
+          </FlexItem>
+        )}
+        <FlexItem
+          style={{
+            flex: mode === 'disk-lvm' ? '0 0 25%' : '0 0 40%',
+          }}
+        >
+          <Content component='small'>Mount point</Content>
+        </FlexItem>
+        <FlexItem
+          style={{
+            flex: mode === 'filesystem' ? '0 0 20%' : '0 0 10%',
+          }}
+        >
+          <Content component='small'>Type</Content>
+        </FlexItem>
+        <FlexItem style={{ flex: '1 1 auto' }}>
+          <Content component='small'>Minimum size</Content>
+        </FlexItem>
+        <FlexItem style={{ flex: '0 0 auto' }}>
+          <Content component='small' aria-label='Remove mount point'>
+            {' '}
+          </Content>
+        </FlexItem>
+      </Flex>
+      {partitions.length > 0 && mode === 'filesystem'
+        ? partitions.map((partition) => (
+            <Row
+              key={partition.id}
+              partition={partition as FilesystemPartition}
+              isRemovingDisabled={
+                rootPartitionsCount === 1 && partition.mountpoint === '/'
+              }
+              {...getOscapPartitionInfo(partition.mountpoint)}
+            />
+          ))
+        : partitions.map((partition) => (
+            <DiskRow
+              key={partition.id}
+              partition={partition as DiskPartition}
+            />
+          ))}
+    </div>
   );
 };
 
