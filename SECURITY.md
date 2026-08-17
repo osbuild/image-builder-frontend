@@ -29,11 +29,11 @@ Direct all security questions and vulnerability reports to:
 
 ## **Security Policy**
 
-You can find the project's general vulnerability management and incidence response policy at [osbuild.org/docs/security/index](https://osbuild.org/docs/security/index/).
+You can find the project's general vulnerability management and incident response policy at [osbuild.org/docs/security/index](https://osbuild.org/docs/security/index/).
 
 ## **Supported Versions**
 
-We regularly perform patch releases for the supported latest version https://github.com/osbuild/image-builder-frontend/releases, which contains fixes for relevant security vulnerabilities and important bugs. Prior releases might receive critical security fixes on a best-effort basis. However, we cannot guarantee that security fixes will get back-ported to these unsupported versions, unless stated otherwise in our support  matrix https://osbuild.org/docs/on-premises/overview/release-overview/.
+We regularly perform patch releases for the supported latest version https://github.com/osbuild/image-builder-frontend/releases, which contains fixes for relevant security vulnerabilities and important bugs. Prior releases might receive critical security fixes on a best-effort basis. However, we cannot guarantee that security fixes will get back-ported to these unsupported versions, unless stated otherwise in our support matrix https://osbuild.org/docs/on-premises/overview/release-overview/.
 
 ## **EU Cyber Resilience Act — Open Source Steward Statement**
 
