@@ -377,7 +377,7 @@ const TargetEnvironment = () => {
         </FormGroup>
       )}
 
-      {isOnlyNetworkInstallerSelected && (
+      {isOnlyNetworkInstallerSelected && !useSingleTarget && !isImageMode && (
         <Alert
           variant='info'
           className='pf-v6-u-mt-lg'
