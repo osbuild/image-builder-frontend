@@ -65,14 +65,15 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   );
 
   return (
-    <div aria-label='File system table'>
-      <Flex className='pf-v6-u-pb-sm'>
+    <div role='table' aria-label='File system table'>
+      <Flex role='row' className='pf-v6-u-pb-sm'>
         {mode === 'disk-lvm' && (
-          <FlexItem style={{ flex: '0 0 25%' }}>
+          <FlexItem role='columnheader' style={{ flex: '0 0 25%' }}>
             <Content component='small'>Name</Content>
           </FlexItem>
         )}
         <FlexItem
+          role='columnheader'
           style={{
             flex: mode === 'disk-lvm' ? '0 0 25%' : '0 0 40%',
           }}
@@ -80,16 +81,17 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
           <Content component='small'>Mount point</Content>
         </FlexItem>
         <FlexItem
+          role='columnheader'
           style={{
             flex: mode === 'filesystem' ? '0 0 20%' : '0 0 10%',
           }}
         >
           <Content component='small'>Type</Content>
         </FlexItem>
-        <FlexItem style={{ flex: '1 1 auto' }}>
+        <FlexItem role='columnheader' style={{ flex: '1 1 auto' }}>
           <Content component='small'>Minimum size</Content>
         </FlexItem>
-        <FlexItem style={{ flex: '0 0 auto' }}>
+        <FlexItem role='columnheader' style={{ flex: '0 0 auto' }}>
           <Content component='small' aria-label='Remove mount point'>
             {' '}
           </Content>

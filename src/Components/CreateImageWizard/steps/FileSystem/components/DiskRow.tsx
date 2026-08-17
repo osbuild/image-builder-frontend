@@ -42,25 +42,27 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
 
   return (
     <Flex
+      role='row'
       id={partition.id}
       data-testid={`partition-row-${partition.id}`}
       alignItems={{ default: 'alignItemsFlexStart' }}
       className='pf-v6-u-pb-sm'
     >
       {partition.type !== 'plain' && (
-        <FlexItem style={{ flex: '0 0 25%' }}>
+        <FlexItem role='cell' style={{ flex: '0 0 25%' }}>
           <PartitionName partition={partition} customization={customization} />
         </FlexItem>
       )}
       <FlexItem
-        style={{ flex: partition.type !== 'plain' ? '0 0 25%' : '0 0 30%' }}
+        role='cell'
+        style={{ flex: partition.type !== 'plain' ? '0 0 25%' : '0 0 40%' }}
       >
         <Mountpoint partition={partition} customization={customization} />
       </FlexItem>
-      <FlexItem style={{ flex: '0 0 10%' }}>
+      <FlexItem role='cell' style={{ flex: '0 0 10%' }}>
         <PartitionType partition={partition} customization={customization} />
       </FlexItem>
-      <FlexItem style={{ flex: '1 1 auto' }}>
+      <FlexItem role='cell' style={{ flex: '1 1 auto' }}>
         <Split hasGutter>
           <SplitItem isFilled>
             <MinimumSize partition={partition} customization={customization} />
@@ -70,7 +72,7 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
           </SplitItem>
         </Split>
       </FlexItem>
-      <FlexItem style={{ flex: '0 0 auto' }}>
+      <FlexItem role='cell' style={{ flex: '0 0 auto' }}>
         <Button
           variant='plain'
           icon={<MinusCircleIcon />}

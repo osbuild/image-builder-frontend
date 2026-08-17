@@ -157,13 +157,8 @@ describe('FileSystem Component', () => {
         name: /File system configuration/i,
       });
 
-      const partitionsTable = screen.getByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(partitionsTable).getAllByRole('row');
-      const thirdRow = rows[3];
-
-      const thirdRowMountpoint = within(thirdRow).getByDisplayValue('/var');
+      const varRow = screen.getByTestId('partition-row-3');
+      const thirdRowMountpoint = within(varRow).getByDisplayValue('/var');
       await clickWithWait(user, thirdRowMountpoint);
       await clearWithWait(user, thirdRowMountpoint);
       await typeWithWait(user, thirdRowMountpoint, '/home');
@@ -211,12 +206,7 @@ describe('FileSystem Component', () => {
       );
       expect(mountPointAlerts.length).toBeGreaterThanOrEqual(1);
 
-      const partitionsTable = screen.getByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(partitionsTable).getAllByRole('row');
-      const thirdRow = rows[3];
-
+      const thirdRow = screen.getByTestId('partition-row-3');
       const thirdRowMountpoint = within(thirdRow).getByDisplayValue('/home');
       await clickWithWait(user, thirdRowMountpoint);
       await clearWithWait(user, thirdRowMountpoint);
@@ -664,12 +654,11 @@ describe('FileSystem Component', () => {
         },
       });
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
+      const table = await screen.findByLabelText(/file system table/i);
+      const mountpoints = within(table).getAllByRole('textbox', {
+        name: /mount point input/i,
       });
-      const rows = within(table).getAllByRole('row');
-      // Header row + 1 partition row
-      expect(rows).toHaveLength(2);
+      expect(mountpoints).toHaveLength(1);
     });
   });
 
@@ -694,7 +683,7 @@ describe('FileSystem Component', () => {
       });
 
       expect(
-        await screen.findByRole('grid', { name: /file system table/i }),
+        await screen.findByLabelText(/file system table/i),
       ).toBeInTheDocument();
     });
 
@@ -715,7 +704,7 @@ describe('FileSystem Component', () => {
       });
 
       expect(
-        screen.queryByRole('grid', { name: /file system table/i }),
+        screen.queryByLabelText(/file system table/i),
       ).not.toBeInTheDocument();
     });
 
@@ -797,14 +786,11 @@ describe('FileSystem Component', () => {
     test('OSCAP-required partition has disabled mountpoint input', async () => {
       renderWithOscapPartitions();
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(table).getAllByRole('row');
-      const requiredRow = rows[2]; // /home
+      await screen.findByLabelText(/file system table/i);
+      const homeRow = screen.getByTestId('partition-row-2');
       await waitFor(() =>
         expect(
-          within(requiredRow).getByRole('textbox', {
+          within(homeRow).getByRole('textbox', {
             name: /mount point input/i,
           }),
         ).toBeDisabled(),
@@ -814,14 +800,11 @@ describe('FileSystem Component', () => {
     test('OSCAP-required partition has disabled remove button', async () => {
       renderWithOscapPartitions();
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(table).getAllByRole('row');
-      const requiredRow = rows[3]; // /var
+      await screen.findByLabelText(/file system table/i);
+      const varRow = screen.getByTestId('partition-row-3');
       await waitFor(() =>
         expect(
-          within(requiredRow).getByRole('button', {
+          within(varRow).getByRole('button', {
             name: /remove partition/i,
           }),
         ).toBeDisabled(),
@@ -831,14 +814,11 @@ describe('FileSystem Component', () => {
     test('OSCAP-required partition has disabled size unit dropdown', async () => {
       renderWithOscapPartitions();
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(table).getAllByRole('row');
-      const requiredRow = rows[2]; // /home
+      await screen.findByLabelText(/file system table/i);
+      const homeRow = screen.getByTestId('partition-row-2');
       await waitFor(() =>
         expect(
-          within(requiredRow).getByRole('button', { name: 'GiB' }),
+          within(homeRow).getByRole('button', { name: 'GiB' }),
         ).toBeDisabled(),
       );
     });
@@ -846,43 +826,33 @@ describe('FileSystem Component', () => {
     test('non-required partition controls remain enabled', async () => {
       renderWithOscapPartitions();
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(table).getAllByRole('row');
+      await screen.findByLabelText(/file system table/i);
 
-      // Check that a required row is locked
-      const requiredRow = rows[2]; // /home — OSCAP-required
+      const homeRow = screen.getByTestId('partition-row-2');
       await waitFor(() =>
         expect(
-          within(requiredRow).getByRole('textbox', {
+          within(homeRow).getByRole('textbox', {
             name: /mount point input/i,
           }),
         ).toBeDisabled(),
       );
 
-      // Verify the non-required row remains enabled
-      const userRow = rows[4]; // /tmp — not in OSCAP profile
+      const tmpRow = screen.getByTestId('partition-row-4');
       expect(
-        within(userRow).getByRole('textbox', { name: /mount point input/i }),
+        within(tmpRow).getByRole('textbox', { name: /mount point input/i }),
       ).toBeEnabled();
       expect(
-        within(userRow).getByRole('button', { name: /remove partition/i }),
+        within(tmpRow).getByRole('button', { name: /remove partition/i }),
       ).toBeEnabled();
-      expect(
-        within(userRow).getByRole('button', { name: 'GiB' }),
-      ).toBeEnabled();
+      expect(within(tmpRow).getByRole('button', { name: 'GiB' })).toBeEnabled();
     });
 
     test('shows validation error when size is below OSCAP minimum', async () => {
       const user = createUser();
       renderWithOscapPartitions();
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(table).getAllByRole('row');
-      const varRow = rows[3]; // /var
+      await screen.findByLabelText(/file system table/i);
+      const varRow = screen.getByTestId('partition-row-3');
 
       await waitFor(() =>
         expect(
@@ -908,11 +878,8 @@ describe('FileSystem Component', () => {
     test('no validation error when size meets OSCAP minimum', async () => {
       renderWithOscapPartitions();
 
-      const table = await screen.findByRole('grid', {
-        name: /file system table/i,
-      });
-      const rows = within(table).getAllByRole('row');
-      const varRow = rows[3]; // /var
+      await screen.findByLabelText(/file system table/i);
+      const varRow = screen.getByTestId('partition-row-3');
 
       await waitFor(() =>
         expect(

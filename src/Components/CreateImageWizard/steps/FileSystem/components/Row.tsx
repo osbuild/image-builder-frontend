@@ -59,19 +59,20 @@ const Row = ({
 
   return (
     <Flex
+      role='row'
       id={partition.id}
       data-testid={`partition-row-${partition.id}`}
       alignItems={{ default: 'alignItemsFlexStart' }}
       className='pf-v6-u-pb-sm'
     >
-      <FlexItem style={{ flex: '0 0 40%' }}>
+      <FlexItem role='cell' style={{ flex: '0 0 40%' }}>
         <Mountpoint
           partition={partition}
           customization={customization}
           isOscapRequired={isOscapRequired}
         />
       </FlexItem>
-      <FlexItem style={{ flex: '0 0 20%' }}>
+      <FlexItem role='cell' style={{ flex: '0 0 20%' }}>
         <TextInput
           value='xfs'
           type='text'
@@ -79,7 +80,7 @@ const Row = ({
           isDisabled
         />
       </FlexItem>
-      <FlexItem style={{ flex: '1 1 auto' }}>
+      <FlexItem role='cell' style={{ flex: '1 1 auto' }}>
         <Split hasGutter>
           <SplitItem isFilled>
             <MinimumSize
@@ -98,7 +99,7 @@ const Row = ({
           </SplitItem>
         </Split>
       </FlexItem>
-      <FlexItem style={{ flex: '0 0 auto' }}>
+      <FlexItem role='cell' style={{ flex: '0 0 auto' }}>
         {isOscapRequired || isRemovingDisabled ? (
           <Tooltip
             content={
