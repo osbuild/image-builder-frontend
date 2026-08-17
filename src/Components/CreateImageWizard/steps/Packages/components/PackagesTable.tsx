@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
-import { Content, Label } from '@patternfly/react-core';
+import { Content, Label, Spinner } from '@patternfly/react-core';
 import {
   ExpandableRowContent,
   Table,
@@ -80,7 +80,11 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
 
   const [
     searchPackageInfo,
-    { data: dataPackageInfo, isSuccess: isSuccessPackageInfo },
+    {
+      data: dataPackageInfo,
+      isSuccess: isSuccessPackageInfo,
+      isLoading: isLoadingPackageInfo,
+    },
   ] = useSearchRpmMutation();
 
   useEffect(() => {
@@ -267,9 +271,21 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
               <Td>
                 {pkg.name} {isRequired && <Label isCompact>Required</Label>}
               </Td>
-              <Td>{pkg.stream ? pkg.stream : '--'}</Td>
               <Td>
-                <RetirementDate date={pkg.end_date} />
+                {isLoadingPackageInfo && !pkg.stream ? (
+                  <Spinner size='sm' />
+                ) : pkg.stream ? (
+                  pkg.stream
+                ) : (
+                  '--'
+                )}
+              </Td>
+              <Td>
+                {isLoadingPackageInfo && !pkg.end_date ? (
+                  <Spinner size='sm' />
+                ) : (
+                  <RetirementDate date={pkg.end_date} />
+                )}
               </Td>
               <Td>
                 <RemovePackageButton
@@ -295,7 +311,14 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
     return composePkgTable();
     // Would need significant rewrite to fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packages, groups, recommendedRepositories, expandedGroups, requiredSet]);
+  }, [
+    packages,
+    groups,
+    recommendedRepositories,
+    expandedGroups,
+    requiredSet,
+    isLoadingPackageInfo,
+  ]);
 
   return (
     <Table data-testid='packages-table' style={{ tableLayout: 'fixed' }}>
