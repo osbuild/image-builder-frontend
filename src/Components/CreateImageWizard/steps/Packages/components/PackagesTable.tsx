@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { Content, Label } from '@patternfly/react-core';
 import {
@@ -11,20 +11,33 @@ import {
   Tr,
 } from '@patternfly/react-table';
 
-import { useSecuritySummary } from '@/store/api/backend';
-import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
+import { EPEL_10_REPO_DEFINITION } from '@/constants';
+import {
+  useGetArchitecturesQuery,
+  useSecuritySummary,
+} from '@/store/api/backend';
+import {
+  ApiRepositoryCollectionResponseRead,
+  useSearchRpmMutation,
+} from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
+  addPackage,
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   removeModule,
   removePackage,
   removePackageGroup,
   removeRecommendedRepository,
+  selectArchitecture,
+  selectDistribution,
+  selectModules,
   selectPackageGroups,
   selectPackages,
   selectRecommendedRepositories,
+  selectWizardMode,
 } from '@/store/slices/wizard';
+import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
 import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
@@ -40,11 +53,91 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
+  const wizardMode = useAppSelector(selectWizardMode);
+  const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const modules = useAppSelector(selectModules);
+
   const { packages: requiredPkgNames } = useSecuritySummary();
   const requiredSet = useMemo(
     () => new Set(requiredPkgNames),
     [requiredPkgNames],
   );
+
+  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
+    useGetArchitecturesQuery({ distribution });
+
+  const distroUrls = useMemo(() => {
+    const urls = distroRepositories
+      ?.find((archItem) => archItem.arch === arch)
+      ?.repositories.filter((repo) => !!repo.baseurl)
+      .map((repo) => repo.baseurl!);
+    return urls ?? [];
+  }, [distroRepositories, arch]);
+
+  const epelRepoUrl =
+    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
+
+  const [
+    searchPackageInfo,
+    { data: dataPackageInfo, isSuccess: isSuccessPackageInfo },
+  ] = useSearchRpmMutation();
+
+  useEffect(() => {
+    if (
+      wizardMode !== 'create' &&
+      isSuccessDistroRepositories &&
+      packages.length > 0
+    ) {
+      searchPackageInfo({
+        apiContentUnitSearchRequest: {
+          exact_names: packages.map((pkg) => pkg.name),
+          urls: [...distroUrls, epelRepoUrl],
+          include_package_sources: true,
+        },
+      });
+    }
+  }, [isSuccessDistroRepositories, distroUrls]);
+
+  useEffect(() => {
+    if (!isSuccessPackageInfo) return;
+
+    dataPackageInfo.forEach((rpm) => {
+      const existingPackage = packages.find(
+        (pkg) => pkg.name === rpm.package_name,
+      );
+      if (!existingPackage) return;
+
+      const enabledModule = modules.find((m) =>
+        rpm.package_sources?.some(
+          (s) => s.name === m.name && s.stream === m.stream,
+        ),
+      );
+
+      if (enabledModule) {
+        const source = rpm.package_sources?.find(
+          (s) =>
+            s.name === enabledModule.name && s.stream === enabledModule.stream,
+        );
+        dispatch(
+          addPackage({
+            ...existingPackage,
+            type: 'module',
+            module_name: enabledModule.name,
+            stream: enabledModule.stream,
+            ...(source?.end_date && { end_date: source.end_date }),
+          }),
+        );
+      } else if (rpm.package_sources?.[0]?.end_date) {
+        dispatch(
+          addPackage({
+            ...existingPackage,
+            end_date: rpm.package_sources[0].end_date,
+          }),
+        );
+      }
+    });
+  }, [dataPackageInfo, dispatch, isSuccessPackageInfo, modules]);
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 

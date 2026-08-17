@@ -66,7 +66,6 @@ import {
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
-  selectWizardMode,
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
@@ -109,7 +108,6 @@ const PackageSearch = ({
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
-  const wizardMode = useAppSelector(selectWizardMode);
 
   const { packages: requiredPackages } = useSecuritySummary();
   const requiredSet = useMemo(
@@ -238,11 +236,6 @@ const PackageSearch = ({
       isLoading: isLoadingRecommendedGroups,
     },
   ] = useSearchPackageGroupMutation();
-
-  const [
-    searchPackageInfo,
-    { data: dataPackageInfo, isSuccess: isSuccessPackageInfo },
-  ] = useSearchRpmMutation();
 
   useEffect(() => {
     if (packageType === 'groups') {
@@ -382,62 +375,6 @@ const PackageSearch = ({
     isOnPremise,
     epelRepoUrlByDistribution,
   ]);
-
-  useEffect(() => {
-    if (
-      wizardMode !== 'create' &&
-      isSuccessDistroRepositories &&
-      packages.length > 0
-    ) {
-      searchPackageInfo({
-        apiContentUnitSearchRequest: {
-          exact_names: packages.map((pkg) => pkg.name),
-          urls: [...distroUrls, epelRepoUrlByDistribution],
-          include_package_sources: true,
-        },
-      });
-    }
-  }, [isSuccessDistroRepositories, distroUrls]);
-
-  useEffect(() => {
-    if (!isSuccessPackageInfo) return;
-
-    dataPackageInfo.forEach((rpm) => {
-      const existingPackage = packages.find(
-        (pkg) => pkg.name === rpm.package_name,
-      );
-      if (!existingPackage) return;
-
-      const enabledModule = modules.find((m) =>
-        rpm.package_sources?.some(
-          (s) => s.name === m.name && s.stream === m.stream,
-        ),
-      );
-
-      if (enabledModule) {
-        const source = rpm.package_sources?.find(
-          (s) =>
-            s.name === enabledModule.name && s.stream === enabledModule.stream,
-        );
-        dispatch(
-          addPackage({
-            ...existingPackage,
-            type: 'module',
-            module_name: enabledModule.name,
-            stream: enabledModule.stream,
-            ...(source?.end_date && { end_date: source.end_date }),
-          }),
-        );
-      } else if (rpm.package_sources?.[0]?.end_date) {
-        dispatch(
-          addPackage({
-            ...existingPackage,
-            end_date: rpm.package_sources[0].end_date,
-          }),
-        );
-      }
-    });
-  }, [dataPackageInfo, dispatch, isSuccessPackageInfo, modules]);
 
   const [
     fetchRecommendationDescriptions,
