@@ -173,15 +173,22 @@ describe('ImageSourceSelect', () => {
       expect(mockPullImage).toHaveBeenCalledWith({ reference: KVM_REF });
     });
 
+    // Mirrors fixedCacheKey: only the section keyed to this reference sees
+    // the pull as in flight.
+    const mockPullInFlightFor = (reference: string) => {
+      mockUsePullImageMutation.mockImplementation(
+        (options?: { fixedCacheKey?: string }) => [
+          mockPullImage,
+          {
+            isLoading: options?.fixedCacheKey === reference,
+            isError: false,
+          },
+        ],
+      );
+    };
+
     test('shows the pulling state for the selected image', async () => {
-      mockUsePullImageMutation.mockReturnValue([
-        mockPullImage,
-        {
-          isLoading: true,
-          isError: false,
-          originalArgs: { reference: KVM_REF },
-        },
-      ]);
+      mockPullInFlightFor(KVM_REF);
 
       renderWithGuestImage();
 
@@ -192,14 +199,7 @@ describe('ImageSourceSelect', () => {
 
     test("does not show another image's pull as busy", async () => {
       // A pull of the guest image is in flight while AWS is selected
-      mockUsePullImageMutation.mockReturnValue([
-        mockPullImage,
-        {
-          isLoading: true,
-          isError: false,
-          originalArgs: { reference: KVM_REF },
-        },
-      ]);
+      mockPullInFlightFor(KVM_REF);
 
       renderImageSourceSelect({
         output: {

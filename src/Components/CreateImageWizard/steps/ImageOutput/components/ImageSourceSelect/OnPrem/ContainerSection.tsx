@@ -91,13 +91,14 @@ const ContainerSection = ({
     { skip: !reference, refetchOnMountOrArgChange: true },
   );
 
-  // The mutation state is scoped to the reference it was started with,
-  // so switching to another image doesn't show its busy/error state.
-  const [pullImage, pullState] = usePullImageMutation();
-  const isPulling =
-    pullState.isLoading && pullState.originalArgs?.reference === reference;
-  const isPullError =
-    pullState.isError && pullState.originalArgs?.reference === reference;
+  // Keying the mutation by reference puts its state in the store instead
+  // of this component, so it is neither lost when the section unmounts nor
+  // confused with another reference's pull. Without the key the hook tracks
+  // only the most recent pull, and any earlier one still running becomes
+  // invisible - the button offers to start it a second time.
+  // Without a reference there is nothing to pull and no button to show.
+  const [pullImage, { isLoading: isPulling, isError: isPullError }] =
+    usePullImageMutation(reference ? { fixedCacheKey: reference } : undefined);
 
   const showPullValidation = !!reference && imageExists === false;
 
