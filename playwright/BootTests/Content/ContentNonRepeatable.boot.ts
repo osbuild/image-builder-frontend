@@ -18,12 +18,8 @@ import {
   openWizard,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import {
-  buildImage,
-  constructFilePath,
-  downloadImage,
-} from '../helpers/imageBuilding';
-import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
+import { buildImage } from '../helpers/imageBuilding';
+import { AwsWrapper } from '../helpers/AwsWrapper';
 
 test('Content integration test - Non repeatable build - URL source', async ({
   page,
@@ -34,7 +30,6 @@ test('Content integration test - Non repeatable build - URL source', async ({
     'Skipping test. Boot test run only on the hosted service.',
   );
   const blueprintName = 'content-non-repeatable-test-' + crypto.randomUUID();
-  const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName =
     'content-non-repeatable-test-' + crypto.randomUUID().slice(0, 8);
   const repositoryUrl =
@@ -44,11 +39,9 @@ test('Content integration test - Non repeatable build - URL source', async ({
   // Here we want to be sure that the repository is deleted due to URL exclusivity per repository
   await deleteRepository(page, repositoryUrl);
 
-  // Delete the blueprint, repository and Openstack resources after the run
+  // Delete the blueprint and repository after the run
   cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteRepository(page, repositoryName));
-  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
@@ -80,7 +73,10 @@ test('Content integration test - Non repeatable build - URL source', async ({
   });
 
   await test.step('Fill Image Output and Registration', async () => {
-    await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+    await fillInImageOutput(frame, 'aws', 'rhel10', 'x86_64');
+    await frame
+      .getByRole('textbox', { name: 'aws account id' })
+      .fill(process.env.AWS_ACCOUNT_ID!);
     await registerLater(frame);
   });
 
@@ -113,19 +109,22 @@ test('Content integration test - Non repeatable build - URL source', async ({
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Build the image', async () => {
+  let amiId: string = '';
+
+  await test.step('Build image and get AMI info', async () => {
     await buildImage(page);
+    await frame.getByText('Launch').click();
+    amiId =
+      (await frame
+        .locator('span.pf-v6-u-font-weight-bold')
+        .filter({ hasText: /^ami-/ })
+        .textContent()) ?? '';
   });
 
-  await test.step('Download the image', async () => {
-    await downloadImage(page, filePath);
-  });
+  const image = new AwsWrapper(amiId);
+  cleanup.add(() => image.terminateInstance());
 
-  // Initialize Openstack wrapper
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
-
-  await test.step('Prepare Openstack instance', async () => {
-    await image.createImage();
+  await test.step('Prepare AWS instance', async () => {
     await image.launchInstance();
   });
 
@@ -153,17 +152,14 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     'Skipping test. Boot test run only on the hosted service.',
   );
   const blueprintName = 'content-non-repeatable-test-' + crypto.randomUUID();
-  const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName =
     'content-non-repeatable-test-' + crypto.randomUUID().slice(0, 8);
   const packageName = 'cockateel';
   const dependencyPackageName = 'wolf';
 
-  // Delete the blueprint, repository and Openstack resources after the run
+  // Delete the blueprint and repository after the run
   cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteRepository(page, repositoryName));
-  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
@@ -225,7 +221,10 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   });
 
   await test.step('Fill Image Output and Registration', async () => {
-    await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+    await fillInImageOutput(frame, 'aws', 'rhel10', 'x86_64');
+    await frame
+      .getByRole('textbox', { name: 'aws account id' })
+      .fill(process.env.AWS_ACCOUNT_ID!);
     await registerLater(frame);
   });
 
@@ -273,19 +272,22 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Build the image', async () => {
+  let amiId: string = '';
+
+  await test.step('Build image and get AMI info', async () => {
     await buildImage(page);
+    await frame.getByText('Launch').click();
+    amiId =
+      (await frame
+        .locator('span.pf-v6-u-font-weight-bold')
+        .filter({ hasText: /^ami-/ })
+        .textContent()) ?? '';
   });
 
-  await test.step('Download the image', async () => {
-    await downloadImage(page, filePath);
-  });
+  const image = new AwsWrapper(amiId);
+  cleanup.add(() => image.terminateInstance());
 
-  // Initialize Openstack wrapper
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
-
-  await test.step('Prepare Openstack instance', async () => {
-    await image.createImage();
+  await test.step('Prepare AWS instance', async () => {
     await image.launchInstance();
   });
 
@@ -313,14 +315,11 @@ test('Content integration test - Non repeatable build - Community repository', a
     'Skipping test. Boot test run only on the hosted service.',
   );
   const blueprintName = 'content-non-repeatable-test-' + crypto.randomUUID();
-  const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName = 'EPEL 10 Everything x86_64';
   const packageName = 'aha';
 
-  // Delete the blueprint and Openstack resources after the run
+  // Delete the blueprint after the run
   cleanup.add(() => deleteBlueprint(page, blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
@@ -337,7 +336,10 @@ test('Content integration test - Non repeatable build - Community repository', a
   });
 
   await test.step('Fill Image Output and Registration', async () => {
-    await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+    await fillInImageOutput(frame, 'aws', 'rhel10', 'x86_64');
+    await frame
+      .getByRole('textbox', { name: 'aws account id' })
+      .fill(process.env.AWS_ACCOUNT_ID!);
     await registerLater(frame);
   });
 
@@ -370,19 +372,22 @@ test('Content integration test - Non repeatable build - Community repository', a
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Build the image', async () => {
+  let amiId: string = '';
+
+  await test.step('Build image and get AMI info', async () => {
     await buildImage(page);
+    await frame.getByText('Launch').click();
+    amiId =
+      (await frame
+        .locator('span.pf-v6-u-font-weight-bold')
+        .filter({ hasText: /^ami-/ })
+        .textContent()) ?? '';
   });
 
-  await test.step('Download the image', async () => {
-    await downloadImage(page, filePath);
-  });
+  const image = new AwsWrapper(amiId);
+  cleanup.add(() => image.terminateInstance());
 
-  // Initialize Openstack wrapper
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
-
-  await test.step('Prepare Openstack instance', async () => {
-    await image.createImage();
+  await test.step('Prepare AWS instance', async () => {
     await image.launchInstance();
   });
 
