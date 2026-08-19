@@ -14,9 +14,10 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - echo Adding SSH key to the agent...
+      - echo Adding SSH keys to the agent...
       - eval "$(ssh-agent -s)"
       - echo "$OS_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+      - echo "$AWS_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
   build:
     commands:

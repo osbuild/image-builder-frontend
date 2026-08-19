@@ -253,6 +253,7 @@ module.exports = defineConfig([
 
   {
     files: [
+      'playwright/BootTests/helpers/AwsWrapper.ts',
       'playwright/BootTests/helpers/OpenStackWrapper.ts',
       'playwright/BootTests/helpers/imageBuilding.ts',
     ],
