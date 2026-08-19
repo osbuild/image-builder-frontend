@@ -162,17 +162,18 @@ export class AwsWrapper {
     }
   }
 
-  public static async terminateInstance(instanceId: string): Promise<void> {
+  public async terminateInstance(): Promise<void> {
     await test.step(
-      'Terminate the EC2 instance with ID: ' + instanceId,
+      'Terminate the EC2 instance: ' + (this.instanceId ?? 'none'),
       async () => {
+        if (!this.instanceId) return;
         try {
           await AwsWrapper.ec2Client.send(
             new TerminateInstancesCommand({
-              InstanceIds: [instanceId],
+              InstanceIds: [this.instanceId],
             }),
           );
-          console.log(`Instance ${instanceId} terminated`);
+          console.log(`Instance ${this.instanceId} terminated`);
         } catch (error) {
           if (
             error instanceof Error &&
@@ -186,10 +187,6 @@ export class AwsWrapper {
         }
       },
     );
-  }
-
-  public getInstanceId(): string | undefined {
-    return this.instanceId;
   }
 }
 
