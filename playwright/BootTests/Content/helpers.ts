@@ -116,7 +116,7 @@ export const navigateToTemplatesFunc = async (page: Page) => {
   await page.goto('/insights/content/templates');
 
   const templateText = page.getByText(
-    'View all content templates within your organization.',
+    'Control content stability of your systems by combining repositories into templates.',
   );
 
   await expect(templateText).toBeVisible({ timeout: 15000 });
