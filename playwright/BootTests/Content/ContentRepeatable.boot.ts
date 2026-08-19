@@ -17,12 +17,8 @@ import {
   openWizard,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import {
-  buildImage,
-  constructFilePath,
-  downloadImage,
-} from '../helpers/imageBuilding';
-import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
+import { buildImage } from '../helpers/imageBuilding';
+import { AwsWrapper } from '../helpers/AwsWrapper';
 
 test('Content integration test - Repeatable build - URL source', async ({
   page,
@@ -33,7 +29,6 @@ test('Content integration test - Repeatable build - URL source', async ({
     'Skipping test. Boot test run only on the hosted service.',
   );
   const blueprintName = 'content-repeatable-test-' + crypto.randomUUID();
-  const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName =
     'content-repeatable-test-' + crypto.randomUUID().slice(0, 8);
   const initialRepositoryUrl =
@@ -48,8 +43,6 @@ test('Content integration test - Repeatable build - URL source', async ({
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteRepository(page, repositoryName));
-  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
 
@@ -124,7 +117,8 @@ test('Content integration test - Repeatable build - URL source', async ({
   });
 
   await test.step('Fill Image Output and Registration', async () => {
-    await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+    await fillInImageOutput(frame, 'aws', 'rhel10', 'x86_64');
+    await frame.getByRole('textbox', { name: 'aws account id' }).fill(process.env.AWS_ACCOUNT_ID!);
     await registerLater(frame);
   });
 
@@ -169,18 +163,18 @@ test('Content integration test - Repeatable build - URL source', async ({
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Build the image', async () => {
+  let amiId: string = '';
+
+  await test.step('Build image and get AMI info', async () => {
     await buildImage(page);
+    await frame.getByText('Launch').click();
+    amiId = await frame.locator('span.pf-v6-u-font-weight-bold').filter({ hasText: /^ami-/ }).textContent() ?? '';
   });
 
-  await test.step('Download the image', async () => {
-    await downloadImage(page, filePath);
-  });
+  const image = new AwsWrapper(amiId);
+  cleanup.add(() => image.terminateInstance());
 
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
-
-  await test.step('Prepare Openstack instance', async () => {
-    await image.createImage();
+  await test.step('Prepare AWS instance', async () => {
     await image.launchInstance();
   });
 

@@ -15,16 +15,14 @@ export class AwsWrapper {
   private privateIpAddress!: string;
   private instanceId?: string;
   private amiId: string;
-  private instanceName: string;
   private keyName: string =
     process.env.AWS_SSH_KEY_NAME ?? 'image-builder-frontend-ci';
   private securityGroupId: string = process.env.AWS_SECURITY_GROUP_ID!;
   private subnetId: string = process.env.AWS_SUBNET_ID!;
   private canConnect: boolean;
 
-  public constructor(amiId: string, instanceName: string) {
+  public constructor(amiId: string) {
     this.amiId = amiId;
-    this.instanceName = instanceName;
     this.canConnect = false;
   }
 
@@ -50,9 +48,7 @@ export class AwsWrapper {
 
   public async launchInstance(): Promise<void> {
     try {
-      console.log(
-        `Launching instance ${this.instanceName} from AMI ${this.amiId}`,
-      );
+      console.log(`Launching instance from AMI ${this.amiId}`);
 
       const runCommand = new RunInstancesCommand({
         ImageId: this.amiId,
@@ -88,7 +84,7 @@ export class AwsWrapper {
 
           if (instance && instance.State?.Name === 'running') {
             this.privateIpAddress = instance.PrivateIpAddress!;
-            console.log(`Instance ${this.instanceName} launched successfully`);
+            console.log(`Instance ${this.instanceId} launched successfully`);
             return;
           }
         } catch (describeError) {
@@ -102,7 +98,7 @@ export class AwsWrapper {
       }
 
       throw new AwsError(
-        `Instance ${this.instanceName} didn't launch after 5 minutes.`,
+        `Instance from AMI ${this.amiId} didn't launch after 5 minutes.`,
       );
     } catch (error) {
       console.error(`Error launching instance: ${error}`);
@@ -134,12 +130,12 @@ export class AwsWrapper {
             );
           } else {
             throw new AwsError(
-              `Failed to connect to instance ${this.instanceName} after ${i + 1} attempts. Reason: ${error}`,
+              `Failed to connect to instance ${this.instanceId} after ${i + 1} attempts. Reason: ${error}`,
             );
           }
         }
       }
-      console.log(`Instance ${this.instanceName} is ready to connect`);
+      console.log(`Instance ${this.instanceId} is ready to connect`);
     }
   }
 
@@ -164,7 +160,7 @@ export class AwsWrapper {
 
   public async terminateInstance(): Promise<void> {
     await test.step(
-      'Terminate the EC2 instance: ' + (this.instanceId ?? 'none'),
+      'Terminate the AWS EC2 instance: ' + (this.instanceId ?? 'none'),
       async () => {
         if (!this.instanceId) return;
         try {
