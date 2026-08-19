@@ -10,6 +10,11 @@ const createState = (overrides: Partial<RegistrationSlice> = {}) =>
     registration: { ...initialState, ...overrides },
   });
 
+const createOnPremState = (overrides: Partial<RegistrationSlice> = {}) => ({
+  ...createState(overrides),
+  env: { isOnPremise: true },
+});
+
 describe('mapRegistrationCustomizations', () => {
   describe('subscription', () => {
     it('returns subscription for register-now-rhc', () => {
@@ -27,6 +32,21 @@ describe('mapRegistrationCustomizations', () => {
           organization: 123,
           insights: true,
           rhc: true,
+        }),
+      );
+    });
+
+    it('never sets rhc on-premises', () => {
+      const state = createOnPremState({
+        type: 'register-now-rhc',
+        activationKey: 'my-key',
+        orgId: '123',
+      });
+      const result = mapRegistrationCustomizations(state);
+      expect(result.subscription).toEqual(
+        expect.objectContaining({
+          insights: true,
+          rhc: false,
         }),
       );
     });

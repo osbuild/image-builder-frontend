@@ -6,6 +6,7 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '@/constants';
 import type { File } from '@/store/api/backend';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 import {
   selectAapCallbackUrl,
@@ -31,8 +32,17 @@ const mapSubscription = createSelector(
     selectServerUrl,
     selectBaseUrl,
     selectProxy,
+    selectIsOnPremise,
   ],
-  (registrationType, activationKey, orgId, serverUrl, baseUrl, proxy) => {
+  (
+    registrationType,
+    activationKey,
+    orgId,
+    serverUrl,
+    baseUrl,
+    proxy,
+    isOnPremise,
+  ) => {
     if (
       registrationType === 'register-later' ||
       registrationType === 'register-satellite'
@@ -74,7 +84,7 @@ const mapSubscription = createSelector(
 
     if (registrationType === 'register-now-rhc') {
       return {
-        subscription: { ...subscription, insights: true, rhc: true },
+        subscription: { ...subscription, insights: true, rhc: !isOnPremise },
       };
     }
 

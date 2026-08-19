@@ -234,6 +234,45 @@ describe('Registration Component', () => {
     });
   });
 
+  describe('On-Premise RHC removal', () => {
+    test('does not offer the remote remediations toggle', async () => {
+      renderRegistrationStep(
+        {},
+        { preloadedState: { env: { isOnPremise: true } } },
+      );
+
+      expect(
+        await screen.findByRole('switch', {
+          name: /enable predictive analytics/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('switch', { name: /enable remote remediations/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('automatic registration stops at insights', async () => {
+      const { store } = renderRegistrationStep(
+        {
+          registration: {
+            ...initialState.registration,
+            type: 'register-later',
+          },
+        },
+        { preloadedState: { env: { isOnPremise: true } } },
+      );
+      const user = createUser();
+
+      await selectAutomaticRegistration(user);
+
+      await waitFor(() => {
+        expect(store.getState().wizard.registration.type).toBe(
+          'register-now-insights',
+        );
+      });
+    });
+  });
+
   describe('On-Premise Manual Activation Key', () => {
     test('displays activation key and org id inputs for on-premise', async () => {
       renderRegistrationStep(
