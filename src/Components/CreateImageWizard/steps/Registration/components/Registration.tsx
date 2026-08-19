@@ -34,7 +34,11 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
           }
           onChange={(_event, checked) => {
             if (checked) {
-              dispatch(changeRegistrationType('register-now-rhc'));
+              dispatch(
+                changeRegistrationType(
+                  isOnPremise ? 'register-now-insights' : 'register-now-rhc',
+                ),
+              );
             }
           }}
           id='register-system-now'
@@ -60,22 +64,26 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
                   hasCheckIcon
                 />
               </Content>
-              <Content className='pf-v6-u-pb-sm'>
-                <Switch
-                  label='Enable remote remediations and system management with automation'
-                  isChecked={registrationType === 'register-now-rhc'}
-                  onChange={(_event, checked) => {
-                    if (checked) {
-                      dispatch(changeRegistrationType('register-now-rhc'));
-                    } else {
-                      dispatch(changeRegistrationType('register-now-insights'));
-                    }
-                  }}
-                  id='register-system-now-rhc'
-                  name='register-system-rhc'
-                  hasCheckIcon
-                />
-              </Content>
+              {!isOnPremise && (
+                <Content className='pf-v6-u-pb-sm'>
+                  <Switch
+                    label='Enable remote remediations and system management with automation'
+                    isChecked={registrationType === 'register-now-rhc'}
+                    onChange={(_event, checked) => {
+                      if (checked) {
+                        dispatch(changeRegistrationType('register-now-rhc'));
+                      } else {
+                        dispatch(
+                          changeRegistrationType('register-now-insights'),
+                        );
+                      }
+                    }}
+                    id='register-system-now-rhc'
+                    name='register-system-rhc'
+                    hasCheckIcon
+                  />
+                </Content>
+              )}
               {!isOnPremise && registrationType.startsWith('register-now') && (
                 <Content className='pf-v6-u-pb-sm'>
                   <ActivationKeysList onErrorChange={onErrorChange} />

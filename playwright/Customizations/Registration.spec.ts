@@ -213,103 +213,116 @@ registrationModes.forEach(
             const insightsReviewStep = frame.getByText(
               'Enable predictive analytics and management capabilities',
             );
-            // Test enabling/disabling remote remediations
-            const rhcSwitch = frame.getByText('Enable remote remediations');
             const rhcReviewStep = frame.getByText(
               'Enable remote remediations and system management with automation',
             );
 
-            // insights on, rhc off
-            await rhcSwitch.click();
-            await expect(rhcSwitch).not.toBeChecked();
-            await expect(insightsSwitch).toBeChecked(); // does not influence insights toggle
-            await frame.getByRole('button', { name: 'Review image' }).click();
-            await expect(
-              frame.getByText('Register the system later'),
-            ).toBeHidden();
-            await expect(
-              frame.getByText(
-                'Enable predictive analytics and management capabilities',
-              ),
-            ).toBeVisible();
-            // Check activation key display based on environment
             if (isHosted()) {
-              await expect(frame.getByText('activation-key-')).toBeVisible();
-            } else if (isRhel(getHostDistroKey())) {
-              await expect(
-                frame.getByText('test-activation-key'),
-              ).toBeVisible();
-              await expect(frame.getByText('12345')).toBeVisible(); // organization id
-            }
-            await expect(insightsReviewStep).toBeVisible();
-            await expect(rhcReviewStep).toBeHidden();
-            await frame.getByRole('button', { name: 'Base settings' }).click();
-            // check if the state is the same after returning from review step
-            await expect(rhcSwitch).not.toBeChecked();
-            await expect(insightsSwitch).toBeChecked();
+              // Test enabling/disabling remote remediations
+              const rhcSwitch = frame.getByText('Enable remote remediations');
 
-            // insights off => rhc off
-            await rhcSwitch.click();
-            await insightsSwitch.click();
-            await expect(insightsSwitch).not.toBeChecked();
-            await expect(rhcSwitch).not.toBeChecked(); // to use rhc, insights must be enabled
-            await frame.getByRole('button', { name: 'Review image' }).click();
-            await expect(
-              frame.getByText('Register the system later'),
-            ).toBeHidden();
-            await expect(
-              frame.getByText(
-                'Register with Red Hat Subscription Manager (RHSM)',
-              ),
-            ).toBeVisible();
-            // Check activation key display based on environment
-            if (isHosted()) {
+              // insights on, rhc off
+              await rhcSwitch.click();
+              await expect(rhcSwitch).not.toBeChecked();
+              await expect(insightsSwitch).toBeChecked(); // does not influence insights toggle
+              await frame.getByRole('button', { name: 'Review image' }).click();
+              await expect(
+                frame.getByText('Register the system later'),
+              ).toBeHidden();
               await expect(frame.getByText('activation-key-')).toBeVisible();
+              await expect(insightsReviewStep).toBeVisible();
+              await expect(rhcReviewStep).toBeHidden();
+              await frame
+                .getByRole('button', { name: 'Base settings' })
+                .click();
+              // check if the state is the same after returning from review step
+              await expect(rhcSwitch).not.toBeChecked();
+              await expect(insightsSwitch).toBeChecked();
+
+              // insights off => rhc off
+              await rhcSwitch.click();
+              await insightsSwitch.click();
+              await expect(insightsSwitch).not.toBeChecked();
+              await expect(rhcSwitch).not.toBeChecked(); // to use rhc, insights must be enabled
+              await frame.getByRole('button', { name: 'Review image' }).click();
+              await expect(
+                frame.getByText('Register the system later'),
+              ).toBeHidden();
+              await expect(
+                frame.getByText(
+                  'Register with Red Hat Subscription Manager (RHSM)',
+                ),
+              ).toBeVisible();
+              await expect(frame.getByText('activation-key-')).toBeVisible();
+              await expect(insightsReviewStep).toBeHidden();
+              await expect(rhcReviewStep).toBeHidden();
+              await frame
+                .getByRole('button', { name: 'Base settings' })
+                .click();
+              // check if the state is the same after returning from review step
+              await expect(insightsSwitch).not.toBeChecked();
+              await expect(rhcSwitch).not.toBeChecked();
+
+              // rhc on => insights on
+              await rhcSwitch.click();
+              await expect(rhcSwitch).toBeChecked();
+              await expect(insightsSwitch).toBeChecked(); // turning on rhc turns on insights
+              await frame.getByRole('button', { name: 'Review image' }).click();
+              await expect(
+                frame.getByText('Register the system later'),
+              ).toBeHidden();
+              await expect(frame.getByText('activation-key-')).toBeVisible();
+              await expect(insightsReviewStep).toBeVisible();
+              await expect(rhcReviewStep).toBeVisible();
+              await frame
+                .getByRole('button', { name: 'Base settings' })
+                .click();
+              // check if the state is the same after returning from review step
+              await expect(rhcSwitch).toBeChecked();
+              await expect(insightsSwitch).toBeChecked();
             } else {
+              await expect(insightsSwitch).toBeChecked();
+              await frame.getByRole('button', { name: 'Review image' }).click();
               await expect(
-                frame.getByText('test-activation-key'),
-              ).toBeVisible();
-            }
-            await expect(insightsReviewStep).toBeHidden();
-            await expect(rhcReviewStep).toBeHidden();
-            await frame.getByRole('button', { name: 'Base settings' }).click();
-            // check if the state is the same after returning from review step
-            await expect(insightsSwitch).not.toBeChecked();
-            await expect(rhcSwitch).not.toBeChecked();
-
-            // rhc on => insights on
-            await rhcSwitch.click();
-            await expect(rhcSwitch).toBeChecked();
-            await expect(insightsSwitch).toBeChecked(); // turning on rhc turns on insights
-            await frame.getByRole('button', { name: 'Review image' }).click();
-            await expect(
-              frame.getByText('Register the system later'),
-            ).toBeHidden();
-            await expect(
-              frame.getByText(
-                'Enable predictive analytics and management capabilities',
-              ),
-            ).toBeVisible();
-            await expect(
-              frame.getByText(
-                'Enable remote remediations and system management with automation',
-              ),
-            ).toBeVisible();
-            // Check activation key display based on environment
-            if (isHosted()) {
-              await expect(frame.getByText('activation-key-')).toBeVisible();
-            } else if (isRhel(getHostDistroKey())) {
+                frame.getByText('Register the system later'),
+              ).toBeHidden();
               await expect(
                 frame.getByText('test-activation-key'),
               ).toBeVisible();
               await expect(frame.getByText('12345')).toBeVisible(); // organization id
+              await expect(insightsReviewStep).toBeVisible();
+              await expect(rhcReviewStep).toBeHidden();
+              await frame
+                .getByRole('button', { name: 'Base settings' })
+                .click();
+              // check if the state is the same after returning from review step
+              await expect(insightsSwitch).toBeChecked();
+
+              await insightsSwitch.click();
+              await expect(insightsSwitch).not.toBeChecked();
+              await frame.getByRole('button', { name: 'Review image' }).click();
+              await expect(
+                frame.getByText('Register the system later'),
+              ).toBeHidden();
+              await expect(
+                frame.getByText(
+                  'Register with Red Hat Subscription Manager (RHSM)',
+                ),
+              ).toBeVisible();
+              await expect(
+                frame.getByText('test-activation-key'),
+              ).toBeVisible();
+              await expect(insightsReviewStep).toBeHidden();
+              await expect(rhcReviewStep).toBeHidden();
+              await frame
+                .getByRole('button', { name: 'Base settings' })
+                .click();
+              // check if the state is the same after returning from review step
+              await expect(insightsSwitch).not.toBeChecked();
+
+              await insightsSwitch.click();
+              await expect(insightsSwitch).toBeChecked();
             }
-            await expect(insightsReviewStep).toBeVisible();
-            await expect(rhcReviewStep).toBeVisible();
-            await frame.getByRole('button', { name: 'Base settings' }).click();
-            // check if the state is the same after returning from review step
-            await expect(rhcSwitch).toBeChecked();
-            await expect(insightsSwitch).toBeChecked();
           } else if (name === 'satellite') {
             // Test satellite registration command validation
             const registrationCommandInput = frame.getByRole('textbox', {
