@@ -7,13 +7,15 @@ import {
   useWizardContext,
 } from '@patternfly/react-core';
 
+import { WizardStepId } from '@/Components/CreateImageWizard/utilities/useValidation';
+
 export const ReviewCardHeader = ({
   title,
   stepId,
   sectionId,
 }: {
   title: string;
-  stepId: string;
+  stepId: WizardStepId;
   sectionId?: string;
 }) => {
   const { goToStepById } = useWizardContext();
