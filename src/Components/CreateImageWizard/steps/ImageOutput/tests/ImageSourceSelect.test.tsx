@@ -372,11 +372,9 @@ describe('ImageSourceSelect', () => {
       renderLocalImageSource();
 
       expect(
-        await screen.findByText(/local image support is coming soon/i),
+        await screen.findByText(/local images are coming soon/i),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(/cockpit image builder 10\.4/i),
-      ).toBeInTheDocument();
+      expect(screen.queryByText(/10\.4/)).not.toBeInTheDocument();
       expect(screen.queryByText('Bootc container')).not.toBeInTheDocument();
     });
 
@@ -384,8 +382,11 @@ describe('ImageSourceSelect', () => {
       renderLocalImageSource();
 
       expect(
-        await screen.findByDisplayValue(
-          'image-builder build qcow2 --bootc-ref localhost/my-derived-image:latest',
+        await screen.findByDisplayValue('sudo podman login registry.redhat.io'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByDisplayValue(
+          'sudo image-builder build qcow2 --bootc-ref registry.redhat.io/rhel10/rhel-bootc',
         ),
       ).toBeInTheDocument();
     });
@@ -400,7 +401,7 @@ describe('ImageSourceSelect', () => {
       await clickWithWait(user, localCard);
 
       expect(
-        await screen.findByText(/local image support is coming soon/i),
+        await screen.findByText(/local images are coming soon/i),
       ).toBeInTheDocument();
     });
   });
