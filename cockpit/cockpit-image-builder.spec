@@ -15,6 +15,7 @@ BuildRequires:  gettext
 BuildRequires:  libappstream-glib
 BuildRequires:  make
 BuildRequires:  /usr/bin/node
+BuildRequires:  npm
 # for _tmpfilesdir macro
 BuildRequires:  systemd-rpm-macros
 
@@ -33,7 +34,7 @@ as a frontend for osbuild.
 %setup -q -n %{name}
 
 %build
-# Nothing to build
+NODE_ENV=production npm run build:cockpit
 
 %install
 %make_install PREFIX=/usr
@@ -45,6 +46,9 @@ install -m 0644 -vp cockpit/tmpfiles.d/cockpit-image-builder.conf %{buildroot}%{
 
 %check
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
+%if 0%{?fedora}
+npm run test:cockpit
+%endif
 
 %files
 %doc cockpit/README.md
