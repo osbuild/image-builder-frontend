@@ -9,12 +9,8 @@ import {
   deleteBlueprint,
   openWizard,
 } from '../../helpers/wizardHelpers';
-import {
-  buildImage,
-  constructFilePath,
-  downloadImage,
-} from '../helpers/imageBuilding';
-import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
+import { AwsWrapper } from '../helpers/AwsWrapper';
+import { buildImage } from '../helpers/imageBuilding';
 
 test('Image mode boot integration test', async ({ page, cleanup }) => {
   test.skip(
@@ -22,11 +18,8 @@ test('Image mode boot integration test', async ({ page, cleanup }) => {
     'Skipping test. Boot test run only on the hosted service.',
   );
   const blueprintName = 'image-mode-test-' + crypto.randomUUID();
-  const filePath = constructFilePath(blueprintName, 'qcow2');
 
   cleanup.add(() => deleteBlueprint(page, blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
-  cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
   await ensureAuthenticated(page);
   await navigateToLandingPage(page);
@@ -72,7 +65,8 @@ test('Image mode boot integration test', async ({ page, cleanup }) => {
     await rhelSourceOption.click();
 
     // In image mode, arch is determined by the image source, so we only select the target
-    await frame.getByRole('radio', { name: /^Virtualization/ }).click();
+    await frame.getByRole('radio', { name: /Amazon Web Services/ }).click();
+    await frame.getByRole('textbox', { name: 'aws account id' }).fill(process.env.AWS_ACCOUNT_ID!);
   });
 
   await test.step('Create blueprint', async () => {
@@ -84,18 +78,18 @@ test('Image mode boot integration test', async ({ page, cleanup }) => {
     await createBlueprint(frame, blueprintName);
   });
 
-  await test.step('Build the image', async () => {
+  let amiId: string = '';
+
+  await test.step('Build image and get AMI info', async () => {
     await buildImage(page);
+    await frame.getByText('Launch').click();
+    amiId = await frame.locator('span.pf-v6-u-font-weight-bold').filter({ hasText: /^ami-/ }).textContent() ?? '';
   });
 
-  await test.step('Download the image', async () => {
-    await downloadImage(page, filePath);
-  });
+  const image = new AwsWrapper(amiId);
+  cleanup.add(() => image.terminateInstance());
 
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
-
-  await test.step('Prepare Openstack instance', async () => {
-    await image.createImage();
+  await test.step('Prepare AWS instance', async () => {
     await image.launchInstance();
   });
 

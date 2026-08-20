@@ -1,6 +1,6 @@
 import { FrameLocator, Page } from '@playwright/test';
 
-export type ImageTarget = 'qcow2' | 'iso' | 'wsl' | 'ova' | 'vmdk' | 'azure';
+export type ImageTarget = 'qcow2' | 'iso' | 'wsl' | 'ova' | 'vmdk' | 'azure' | 'aws';
 
 export const selectTarget = async (
   page: Page | FrameLocator,
@@ -22,6 +22,9 @@ export const selectTarget = async (
       await page
         .getByRole('radio', { name: 'Windows Subsystem for Linux' })
         .click();
+      break;
+    case 'aws':
+      await page.getByRole('radio', { name: /Amazon Web Services/ }).click();
       break;
     case 'ova':
       await page
