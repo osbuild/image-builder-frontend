@@ -190,7 +190,9 @@ const CreateImageWizard = () => {
     aapValidation.disabledNext ||
     snapshotValidation.disabledNext ||
     imagePullValidation.disabledNext ||
-    (restrictions.users.isStandalone && usersHaveErrors);
+    (!restrictions.users.shouldHide &&
+      restrictions.users.isStandalone &&
+      usersHaveErrors);
 
   const baseSettingsIsPending = !!detailsValidation.isPending;
 
@@ -528,10 +530,12 @@ const CreateImageWizard = () => {
               !(
                 restrictions.openscap.shouldHide && restrictions.fips.shouldHide
               ) && <OscapStep key='oscap' />,
-              restrictions.users.isStandalone && <UsersStep key='users' />,
-              restrictions.users.isStandalone && (
-                <UserGroupsStep key='groups' />
-              ),
+              !restrictions.users.shouldHide &&
+                restrictions.users.isStandalone && <UsersStep key='users' />,
+              !restrictions.users.shouldHide &&
+                restrictions.users.isStandalone && (
+                  <UserGroupsStep key='groups' />
+                ),
             ]
               .filter(Boolean)
               .flatMap((component, index, array) =>
