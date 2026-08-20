@@ -87,20 +87,17 @@ cockpit/devel: cockpit/devel-uninstall cockpit/build cockpit/devel-install
 #
 
 RPM_SPEC=cockpit/$(PACKAGE_NAME).spec
-NODE_MODULES_TEST=package-lock.json
 TARFILE=$(PACKAGE_NAME)-$(VERSION).tar.gz
 
-$(RPM_SPEC): $(RPM_SPEC) $(NODE_MODULES_TEST)
-	provides=$$(npm ls --omit dev --package-lock-only --depth=Infinity | grep -Eo '[^[:space:]]+@[^[:space:]]+' | sort -u | sed 's/^/Provides: bundled(npm(/; s/\(.*\)@/\1)) = /'); \
-	awk -v p="$$provides" '{gsub(/%{VERSION}/, "$(VERSION)"); $(SUB_NODE_ENV) gsub(/%{NPM_PROVIDES}/, p)}1' $< > $@
-
 $(TARFILE): export NODE_ENV ?= production
-$(TARFILE): cockpit/build
+$(TARFILE): cockpit/download
+	npm ci --include=dev
 	touch -r package.json package-lock.json
 	touch cockpit/public/*
 	tar czf $(TARFILE) --transform 's,^,$(PACKAGE_NAME)/,' \
-		--exclude node_modules \
-		$$(git ls-files) $(RPM_SPEC) $(NODE_MODULES_TEST) cockpit/public/ cockpit/README.md cockpit/tmpfiles.d
+		$$(git ls-files) \
+		node_modules \
+		pkg
 	realpath $(TARFILE)
 
 dist: $(TARFILE)
