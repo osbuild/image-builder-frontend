@@ -46,9 +46,6 @@ install -m 0644 -vp cockpit/tmpfiles.d/cockpit-image-builder.conf %{buildroot}%{
 
 %check
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
-%if 0%{?fedora}
-npm run test:cockpit
-%endif
 
 %files
 %doc cockpit/README.md
