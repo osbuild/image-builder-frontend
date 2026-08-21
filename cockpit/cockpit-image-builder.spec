@@ -15,7 +15,6 @@ BuildRequires:  gettext
 BuildRequires:  libappstream-glib
 BuildRequires:  make
 BuildRequires:  /usr/bin/node
-BuildRequires:  npm
 # for _tmpfilesdir macro
 BuildRequires:  systemd-rpm-macros
 
@@ -34,7 +33,7 @@ as a frontend for osbuild.
 %setup -q -n %{name}
 
 %build
-NODE_ENV=production npm run build:cockpit
+# Nothing to build
 
 %install
 %make_install PREFIX=/usr
