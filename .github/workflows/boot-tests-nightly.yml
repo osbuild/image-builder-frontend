@@ -82,7 +82,7 @@ jobs:
           CURRENTS_PROJECT_ID=CNrla0 CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
 
       - name: Store front-end Test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
@@ -90,7 +90,7 @@ jobs:
           retention-days: 10
 
       - name: Store test results JSON
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-json
@@ -178,7 +178,7 @@ jobs:
 
       - name: Upload Slack ts artifact
         if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.event.inputs.rerun_of == '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: slack-ts-${{ matrix.channel.name }}
           path: slack-ts.txt
@@ -297,7 +297,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-credentials.json
 
       - name: Upload analysis reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: reports
