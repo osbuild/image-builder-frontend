@@ -94,7 +94,7 @@ $(TARFILE): cockpit/download
 	npm ci --include=dev
 	touch -r package.json package-lock.json
 	touch cockpit/public/*
-	tar czf $(TARFILE) --transform 'flags=r;s,^,$(PACKAGE_NAME)/,' \
+	tar czf $(TARFILE) --transform 's,^,$(PACKAGE_NAME)/,' \
 		$$(git ls-files) \
 		node_modules \
 		pkg
