@@ -76,10 +76,7 @@ test('Create a blueprint with Disk customization', async ({
 
   await test.step('Fill in some partitions and add a volume group', async () => {
     await frame.getByRole('button', { name: 'Add plain partition' }).click();
-    await frame
-      .getByRole('gridcell', { name: '/home' })
-      .getByPlaceholder('Define mount point')
-      .fill('/var/usb');
+    await frame.locator('input[value="/home"]').fill('/var/usb');
 
     await frame.getByPlaceholder('Define minimum size').nth(1).fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
