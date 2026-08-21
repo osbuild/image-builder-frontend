@@ -141,7 +141,7 @@ jobs:
     steps:
       - name: Notify Slack on success
         if: ${{ needs.boot-tests.result == 'success' && github.event.inputs.rerun_of == '' }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -158,7 +158,7 @@ jobs:
       - name: Notify Slack on failure
         id: slack-failure
         if: ${{ (needs.boot-tests.result == 'failure' || github.event.inputs.run_id != '') && github.event.inputs.rerun_of == '' }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -203,7 +203,7 @@ jobs:
 
       - name: Update original message on retry success
         if: ${{ needs.boot-tests.result == 'success' && github.event.inputs.rerun_of != '' && steps.slack-ts.outputs.ts }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.update
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -379,7 +379,7 @@ jobs:
 
       - name: Post analysis to Slack
         if: ${{ steps.analysis-payload.outputs.json }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -398,7 +398,7 @@ jobs:
 
       - name: Notify analysis failure
         if: ${{ github.event.inputs.rerun_of == '' && needs.analyze-failures.result == 'failure' && steps.slack-ts.outputs.ts }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -422,7 +422,7 @@ jobs:
 
       - name: Update original message — rerun in progress
         if: ${{ steps.rerun.outcome == 'success' && steps.slack-ts.outputs.ts }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.update
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -440,7 +440,7 @@ jobs:
       # --- Rerun: post a short thread reply ---
       - name: Post retry failure to Slack
         if: ${{ github.event.inputs.rerun_of != '' && steps.slack-ts.outputs.ts }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -451,7 +451,7 @@ jobs:
 
       - name: Revert original message on retry failure
         if: ${{ github.event.inputs.rerun_of != '' && steps.slack-ts.outputs.ts }}
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
           method: chat.update
           token: ${{ secrets.SLACK_BOT_TOKEN }}
