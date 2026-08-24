@@ -491,27 +491,8 @@ still real. It just needs an unlucky user rather than an unlucky test.
 
 This section describes what Playwright Boot tests are, how they work and how to run them locally.
 
-Boot tests provide end to end coverage for Image Builder and they are used to test mainly integrations with other services. Their main advantage is that they build an image, upload it and **launch it on RHOSP** (RedHat OpenStack Platform). This way we can test images and their customizations through remotely executed commands on an actual running VM booted from the image.
+Boot tests provide end to end coverage for Image Builder and they are used to test mainly integrations with other services. Their main advantage is that they build an image, upload it and **launch it on AWS EC2**. The built AMI is copied from the building AWS account and then launched from the CodeBuild runner. This way we can test images and their customizations through remotely executed commands on an actual running VM booted from the image.
 Boot tests are located in the [playwright/BootTests](playwright/BootTests) directory and are identified by the `*.boot.ts` file extension.
-
-### Local development setup
-
-In order to run the Boot tests locally, we need to set up few things first on top of what we did in the [Running hosted service Playwright tests](#running-hosted-service-playwright-tests) section.
-
-We need additional fields in the .env file, some of them are already set and don't need to be changed in the [example env file](playwright_example.env)), but some of them have to be set manually, specifically following:
-
-```.env
-OS_APPLICATION_CREDENTIAL_ID=<your_id>
-OS_APPLICATION_CREDENTIAL_SECRET=<your_secret>
-OS_SSH_KEY_NAME="<name_of_your_ssh_key_entry_in_openstack>"
-```
-
-> [!NOTE]
-> The OpenStack Client is required for boot tests to function properly.
-
-In order to be able to access RHOSP within the Boot tests, we need to generate credentials and create an entry with our public ssh key on the platform. Log into [RHOSP dashboard](https://api.rhos-01.prod.psi.rdu2.redhat.com/) using **Keystone credentials** and navigate to Identity -> Application Credentials. There you can create the credentials (you will get values for `OS_APPLICATION_CREDENTIAL_ID` and `OS_APPLICATION_CREDENTIAL_SECRET`). In order to create an entry for your SSH key, navigate to Project -> Compute -> Keys and add your public key there.
-
-By filling out these variables you should be able to run the Boot test locally successfully.
 
 ### CI setup
 
