@@ -167,7 +167,15 @@ export const deleteTemplate = async (page: Page, templateName: string) => {
         .click();
       await page.getByRole('menuitem', { name: 'Delete' }).click();
       await expect(page.getByText('Delete template?')).toBeVisible();
-      await page.getByRole('button', { name: 'Delete' }).click();
+      const [response] = await Promise.all([
+        page.waitForResponse(
+          (resp) =>
+            resp.url().includes('/api/content-sources/v1/templates/') &&
+            resp.request().method() === 'DELETE',
+        ),
+        page.getByRole('button', { name: 'Delete' }).click(),
+      ]);
+      expect(response.ok()).toBeTruthy();
     },
     { box: true },
   );
