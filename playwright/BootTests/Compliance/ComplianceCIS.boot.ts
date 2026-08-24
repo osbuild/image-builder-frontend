@@ -34,7 +34,7 @@ test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
   const policyType =
     'CIS Red Hat Enterprise Linux 10 Benchmark for Level 2 - Workstation';
 
-  // Delete the blueprint compliance policy and Openstack resources after the run
+  // Delete the blueprint compliance policy and AWS resources after the run
   cleanup.add(() => deleteBlueprint(page, blueprintName));
   cleanup.add(() => deleteCompliancePolicy(page, policyName));
 
