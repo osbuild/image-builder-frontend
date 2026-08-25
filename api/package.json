@@ -1,0 +1,17 @@
+{
+  "name": "ib-api-gen",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@rtk-query/codegen-openapi": "2.2.0",
+    "ts-node": "10.9.2"
+  },
+  "scripts": {
+    "api": "bash codegen.sh"
+  }
+}
