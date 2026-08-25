@@ -59,6 +59,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
+    - name: Setup Node.js for API code generation with cached dependencies
+      uses: ./.github/actions/api-setup-node-cached
     - name: Check for manual changes to API
       run: |
         npm run api
