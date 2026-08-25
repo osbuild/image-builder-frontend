@@ -16,8 +16,8 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
-      - name: Setup Node.js with cached dependencies
-        uses: ./.github/actions/setup-node-cached
+      - name: Setup Node.js for API code generation with cached dependencies
+        uses: ./.github/actions/api-setup-node-cached
 
       - name: Mark the working directory as safe for git
         run: git config --global --add safe.directory "$(pwd)"
