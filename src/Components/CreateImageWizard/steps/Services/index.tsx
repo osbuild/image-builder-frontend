@@ -5,11 +5,14 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
+import { selectComplianceType } from '@/store/slices';
 
 import ServicesInput from './components/ServicesInputs';
 
 const ServicesStep = () => {
   const { services: requiredByOpenSCAP } = useSecuritySummary();
+  const complianceType = useAppSelector(selectComplianceType);
 
   return (
     <>
@@ -23,7 +26,8 @@ const ServicesStep = () => {
           Systemd services
           {requiredByOpenSCAP.total > 0 && (
             <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-              {requiredByOpenSCAP.total} Added by OpenSCAP
+              {requiredByOpenSCAP.total} Added by{' '}
+              {complianceType === 'openscap' ? 'OpenSCAP' : 'compliance'}
             </Label>
           )}
         </Title>
