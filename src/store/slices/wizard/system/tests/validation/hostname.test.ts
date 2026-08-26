@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { hostnameSchema } from '../schemas';
-import { validateHostname } from '../validators';
+import { hostnameSchema } from '../../schemas';
+import { validateHostname } from '../../validators';
 
 describe('hostname validation', () => {
   describe('valid hostnames', () => {
