@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Content, Label, Title } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { Content, Title } from '@patternfly/react-core';
 
+import AddedByLabel from '@/Components/sharedComponents/AddedByLabel';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
@@ -24,12 +24,10 @@ const ServicesStep = () => {
           className='pf-v6-u-display-flex pf-v6-u-align-items-center'
         >
           Systemd services
-          {requiredByOpenSCAP.total > 0 && (
-            <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-              {requiredByOpenSCAP.total} Added by{' '}
-              {complianceType === 'openscap' ? 'OpenSCAP' : 'compliance'}
-            </Label>
-          )}
+          <AddedByLabel
+            count={requiredByOpenSCAP.total}
+            complianceType={complianceType}
+          />
         </Title>
         <Content component='small'>
           Configure systemd units to manage your system’s services and startup

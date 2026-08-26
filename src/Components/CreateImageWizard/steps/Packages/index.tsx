@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Content, Label, Title } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { Content, Title } from '@patternfly/react-core';
 
+import AddedByLabel from '@/Components/sharedComponents/AddedByLabel';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend/hooks';
 import { useAppSelector } from '@/store/hooks';
@@ -32,12 +32,10 @@ const PackagesStep = () => {
           className='pf-v6-u-display-flex pf-v6-u-align-items-center'
         >
           Packages
-          {requiredByOpenSCAPCount > 0 && (
-            <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-              {requiredByOpenSCAPCount} Added by{' '}
-              {complianceType === 'openscap' ? 'OpenSCAP' : 'compliance'}
-            </Label>
-          )}
+          <AddedByLabel
+            count={requiredByOpenSCAPCount}
+            complianceType={complianceType}
+          />
         </Title>
         <Content component='small'>
           Search and add individual packages to include in your image. You can

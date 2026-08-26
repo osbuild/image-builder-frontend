@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Alert, Content, Label, Title } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { Alert, Content, Title } from '@patternfly/react-core';
 
+import AddedByLabel from '@/Components/sharedComponents/AddedByLabel';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
@@ -29,12 +29,10 @@ const KernelStep = () => {
           className='pf-v6-u-display-flex pf-v6-u-align-items-center'
         >
           Kernel
-          {requiredByOpenSCAP.length > 0 && (
-            <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-              {requiredByOpenSCAP.length} Added by{' '}
-              {complianceType === 'openscap' ? 'OpenSCAP' : 'compliance'}
-            </Label>
-          )}
+          <AddedByLabel
+            count={requiredByOpenSCAP.length}
+            complianceType={complianceType}
+          />
         </Title>
         <Content component='small'>
           Choose a kernel package and append specific boot parameters to
