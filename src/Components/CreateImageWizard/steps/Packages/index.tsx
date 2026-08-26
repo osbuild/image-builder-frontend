@@ -7,12 +7,13 @@ import { CustomizationLabels } from '@/Components/sharedComponents/Customization
 import { useSecuritySummary } from '@/store/api/backend/hooks';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { selectPackages } from '@/store/slices/wizard';
+import { selectComplianceType, selectPackages } from '@/store/slices/wizard';
 
 import Packages from './components/Packages';
 
 const PackagesStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
+  const complianceType = useAppSelector(selectComplianceType);
   const packages = useAppSelector(selectPackages);
 
   const { packages: oscapPackages } = useSecuritySummary();
@@ -33,7 +34,8 @@ const PackagesStep = () => {
           Packages
           {requiredByOpenSCAPCount > 0 && (
             <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-              {requiredByOpenSCAPCount} Added by OpenSCAP
+              {requiredByOpenSCAPCount} Added by{' '}
+              {complianceType === 'openscap' ? 'OpenSCAP' : 'compliance'}
             </Label>
           )}
         </Title>

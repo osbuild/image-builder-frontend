@@ -6,12 +6,13 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
-import { selectFips } from '@/store/slices/wizard';
+import { selectComplianceType, selectFips } from '@/store/slices/wizard';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';
 
 const KernelStep = () => {
+  const complianceType = useAppSelector(selectComplianceType);
   const fips = useAppSelector(selectFips);
 
   const {
@@ -30,7 +31,8 @@ const KernelStep = () => {
           Kernel
           {requiredByOpenSCAP.length > 0 && (
             <Label icon={<InfoCircleIcon />} className='pf-v6-u-ml-sm'>
-              {requiredByOpenSCAP.length} Added by OpenSCAP
+              {requiredByOpenSCAP.length} Added by{' '}
+              {complianceType === 'openscap' ? 'OpenSCAP' : 'compliance'}
             </Label>
           )}
         </Title>
