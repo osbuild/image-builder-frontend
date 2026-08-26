@@ -254,15 +254,6 @@ export const isNtpServerValid = (ntpServer: string) => {
   return /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer);
 };
 
-export const isHostnameValid = (hostname: string) => {
-  return (
-    hostname.length < 65 &&
-    /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/.test(
-      hostname,
-    )
-  );
-};
-
 export const isKernelArgumentValid = (arg: string) => {
   return /^[a-zA-Z0-9=\-_,."'/:#+;\\]*$/.test(arg);
 };

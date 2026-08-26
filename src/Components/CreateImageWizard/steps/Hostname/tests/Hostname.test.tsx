@@ -112,7 +112,9 @@ describe('Hostname Component', () => {
       await enterHostname(user, 'a'.repeat(65));
       await tabAway(user);
 
-      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+      expect(
+        await screen.findByText(/Hostname must be no more than 64 characters/i),
+      ).toBeInTheDocument();
     });
 
     test('does not show error for valid hostname', async () => {
