@@ -176,6 +176,19 @@ describe('user reducers', () => {
 
       expect(result.system.users[0].groups).toEqual(['developers', 'docker']);
     });
+
+    it('should not duplicate wheel when user already has it', () => {
+      const state = createUserState([
+        createDefaultUser({ groups: ['wheel'], isAdministrator: true }),
+      ]);
+
+      const result = wizardReducer(
+        state,
+        setUserAdministratorByIndex({ index: 0, isAdministrator: true }),
+      );
+
+      expect(result.system.users[0].groups).toEqual(['wheel']);
+    });
   });
 
   describe('addGroupToUserByUserIndex', () => {
