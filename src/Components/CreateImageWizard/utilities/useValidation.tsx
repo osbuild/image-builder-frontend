@@ -135,7 +135,6 @@ export function useIsBlueprintValid(): boolean {
   const snapshot = useSnapshotValidation();
   const timezone = useTimezoneValidation();
   const locale = useLocaleValidation();
-  const hostname = useHostnameValidation();
   const kernel = useKernelValidation();
   const firewall = useFirewallValidation();
   const services = useServicesValidation();
@@ -146,6 +145,9 @@ export function useIsBlueprintValid(): boolean {
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
+
+  const hostnameErrors = validateHostname(useAppSelector(selectHostname));
+
   return (
     !aap.disabledNext &&
     !registration.disabledNext &&
@@ -153,7 +155,7 @@ export function useIsBlueprintValid(): boolean {
     !snapshot.disabledNext &&
     !timezone.disabledNext &&
     !locale.disabledNext &&
-    !hostname.disabledNext &&
+    hostnameErrors.length === 0 &&
     !kernel.disabledNext &&
     !firewall.disabledNext &&
     !services.disabledNext &&
@@ -638,16 +640,6 @@ export function useFirstBootValidation(): StepValidation {
       script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
     },
     disabledNext: !valid,
-  };
-}
-
-export function useHostnameValidation(): StepValidation {
-  const hostname = useAppSelector(selectHostname);
-  const errors = validateHostname(hostname);
-
-  return {
-    errors,
-    disabledNext: 'hostname' in errors,
   };
 }
 

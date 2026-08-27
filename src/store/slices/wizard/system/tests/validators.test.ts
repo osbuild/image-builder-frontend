@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { hostnameSchema } from '../schemas';
+import { validateHostname } from '../validators';
 
 describe('hostname validation', () => {
   describe('valid hostnames', () => {
@@ -106,5 +107,26 @@ describe('hostname validation', () => {
         'Hostname labels cannot start or end with a hyphen.',
       ]);
     });
+  });
+});
+
+describe('validateHostname', () => {
+  it('returns no issues for an empty string', () => {
+    expect(validateHostname('')).toEqual([]);
+  });
+
+  it('returns no issues for a valid hostname', () => {
+    expect(validateHostname('host.example.com')).toEqual([]);
+  });
+
+  it('maps every schema violation to a format issue', () => {
+    const issues = validateHostname('.-foo');
+    expect(issues).toHaveLength(2);
+    expect(issues.map((issue) => issue.kind)).toEqual(['format', 'format']);
+    expect(issues.map((issue) => issue.value)).toEqual(['.-foo', '.-foo']);
+    expect(issues.map((issue) => issue.message)).toEqual([
+      'Hostname cannot start or end with a dot.',
+      'Hostname labels cannot start or end with a hyphen.',
+    ]);
   });
 });
