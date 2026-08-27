@@ -18,8 +18,8 @@ import {
   openWizard,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import { buildImage } from '../helpers/imageBuilding';
 import { AwsWrapper } from '../helpers/AwsWrapper';
+import { buildImage } from '../helpers/imageBuilding';
 
 test('Content integration test - Non repeatable build - URL source', async ({
   page,

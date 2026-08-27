@@ -24,8 +24,8 @@ import {
   openWizard,
   registerAutomatically,
 } from '../../helpers/wizardHelpers';
-import { buildImage } from '../helpers/imageBuilding';
 import { AwsWrapper } from '../helpers/AwsWrapper';
+import { buildImage } from '../helpers/imageBuilding';
 
 test('Content integration test - Content Template', async ({
   page,

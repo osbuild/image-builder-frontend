@@ -14,8 +14,8 @@ import {
   fillInDetails,
   openWizard,
 } from '../../helpers/wizardHelpers';
-import { buildImage } from '../helpers/imageBuilding';
 import { AwsWrapper } from '../helpers/AwsWrapper';
+import { buildImage } from '../helpers/imageBuilding';
 
 // Clear the login from global setup so we can use static user
 test.use({ storageState: { cookies: [], origins: [] } });

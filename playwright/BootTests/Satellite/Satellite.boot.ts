@@ -19,8 +19,8 @@ import {
   fillInDetails,
   openWizard,
 } from '../../helpers/wizardHelpers';
-import { buildImage } from '../helpers/imageBuilding';
 import { AwsWrapper } from '../helpers/AwsWrapper';
+import { buildImage } from '../helpers/imageBuilding';
 
 test('Satellite registration boot integration test', async ({
   page,
