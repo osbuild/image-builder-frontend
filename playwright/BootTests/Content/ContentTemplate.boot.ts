@@ -266,7 +266,7 @@ test('Content integration test - Content Template', async ({
   });
 
   await test.step('Wait for system registration to complete', async () => {
-    const maxAttempts = 12;
+    const maxAttempts = 24;
     const delayMs = 10_000;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
