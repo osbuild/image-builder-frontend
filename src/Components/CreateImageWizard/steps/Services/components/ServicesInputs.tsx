@@ -5,7 +5,7 @@ import { FormGroup } from '@patternfly/react-core';
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useServicesValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { isServiceValid } from '@/Components/CreateImageWizard/validators';
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import {
   addDisabledService,
@@ -14,8 +14,6 @@ import {
   removeDisabledService,
   removeEnabledService,
   removeMaskedService,
-  selectComplianceProfileID,
-  selectDistribution,
   selectServices,
 } from '@/store/slices/wizard';
 
@@ -26,30 +24,18 @@ const ServicesInput = () => {
 
   const stepValidation = useServicesValidation();
 
-  const release = useAppSelector(selectDistribution);
-  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+  const { services: requiredServices } = useSecuritySummary();
 
-  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: complianceProfileID,
-    },
-    {
-      skip: !complianceProfileID,
-    },
+  const disabledRequiredByProfile = disabledServices.filter((service) =>
+    requiredServices.disabled.includes(service),
   );
 
-  const disabledRequiredByOpenSCAP = disabledServices.filter((service) =>
-    oscapProfileInfo?.services?.disabled?.includes(service),
+  const maskedRequiredByProfile = maskedServices.filter((service) =>
+    requiredServices.masked.includes(service),
   );
 
-  const maskedRequiredByOpenSCAP = maskedServices.filter((service) =>
-    oscapProfileInfo?.services?.masked?.includes(service),
-  );
-
-  const enabledRequiredByOpenSCAP = enabledServices.filter((service) =>
-    oscapProfileInfo?.services?.enabled?.includes(service),
+  const enabledRequiredByProfile = enabledServices.filter((service) =>
+    requiredServices.enabled.includes(service),
   );
 
   return (
@@ -60,9 +46,9 @@ const ServicesInput = () => {
           placeholder='Add enabled service'
           validator={isServiceValid}
           list={enabledServices.filter(
-            (service) => !enabledRequiredByOpenSCAP.includes(service),
+            (service) => !enabledRequiredByProfile.includes(service),
           )}
-          requiredList={enabledRequiredByOpenSCAP}
+          requiredList={enabledRequiredByProfile}
           item='Enabled service'
           addAction={addEnabledService}
           removeAction={removeEnabledService}
@@ -78,10 +64,9 @@ const ServicesInput = () => {
           placeholder='Add disabled service'
           validator={isServiceValid}
           list={disabledServices.filter(
-            (service) =>
-              !oscapProfileInfo?.services?.disabled?.includes(service),
+            (service) => !disabledRequiredByProfile.includes(service),
           )}
-          requiredList={disabledRequiredByOpenSCAP}
+          requiredList={disabledRequiredByProfile}
           item='Disabled service'
           addAction={addDisabledService}
           removeAction={removeDisabledService}
@@ -97,9 +82,9 @@ const ServicesInput = () => {
           placeholder='Add masked service'
           validator={isServiceValid}
           list={maskedServices.filter(
-            (service) => !oscapProfileInfo?.services?.masked?.includes(service),
+            (service) => !maskedRequiredByProfile.includes(service),
           )}
-          requiredList={maskedRequiredByOpenSCAP}
+          requiredList={maskedRequiredByProfile}
           item='Masked service'
           addAction={addMaskedService}
           removeAction={removeMaskedService}

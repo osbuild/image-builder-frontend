@@ -2,14 +2,11 @@ import React, { useMemo } from 'react';
 
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
-import { useAppSelector } from '@/store/hooks';
+import { useSecuritySummary } from '@/store/api/backend';
 import {
   DiskPartition,
   FilesystemPartition,
   parseSizeUnit,
-  selectComplianceProfileID,
-  selectDistribution,
 } from '@/store/slices/wizard';
 
 import DiskRow from './DiskRow';
@@ -26,28 +23,16 @@ type FileSystemTableTypes =
     };
 
 const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
-  const release = useAppSelector(selectDistribution);
-  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+  const { filesystem: requiredFilesystem } = useSecuritySummary();
 
-  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-expect-error skipped when undefined
-      profile: complianceProfileID,
-    },
-    {
-      skip: !complianceProfileID,
-    },
-  );
-
-  const getOscapPartitionInfo = (mountpoint: string) => {
-    const oscapPartition = oscapProfileInfo?.filesystem?.find(
+  const getSecurityPartitionInfo = (mountpoint: string) => {
+    const requiredPartition = requiredFilesystem.find(
       (fs) => fs.mountpoint === mountpoint,
     );
     return {
-      isOscapRequired: !!oscapPartition,
-      oscapMinSizeLabel: oscapPartition
-        ? parseSizeUnit(String(oscapPartition.min_size)).join(' ')
+      isOscapRequired: !!requiredPartition,
+      oscapMinSizeLabel: requiredPartition
+        ? parseSizeUnit(String(requiredPartition.min_size)).join(' ')
         : '',
     };
   };
@@ -90,7 +75,7 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
                 isRemovingDisabled={
                   rootPartitionsCount === 1 && partition.mountpoint === '/'
                 }
-                {...getOscapPartitionInfo(partition.mountpoint)}
+                {...getSecurityPartitionInfo(partition.mountpoint)}
               />
             ))
           : partitions.map((partition) => (
