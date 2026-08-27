@@ -16,6 +16,7 @@ describe('Security', () => {
       packages: [],
       services: { enabled: [], disabled: [], masked: [], total: 0 },
       kernel: { append: [] },
+      filesystem: [],
     };
 
     renderWithRedux(
@@ -86,6 +87,7 @@ describe('Security', () => {
         packages: [],
         services: { enabled: [], disabled: [], masked: [], total: 0 },
         kernel: { append: [] },
+        filesystem: [],
       };
 
       renderWithRedux(
@@ -121,6 +123,7 @@ describe('Security', () => {
         packages: [],
         services: { enabled: [], disabled: [], masked: [], total: 0 },
         kernel: { append: [] },
+        filesystem: [],
       };
 
       renderWithRedux(

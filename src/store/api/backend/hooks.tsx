@@ -81,6 +81,8 @@ export const useSecuritySummary = () => {
     [data?.fips?.enabled],
   );
 
+  const filesystem = useMemo(() => data?.filesystem ?? [], [data?.filesystem]);
+
   return useMemo(
     () => ({
       title,
@@ -95,7 +97,8 @@ export const useSecuritySummary = () => {
       kernel: {
         append: data?.kernel?.append?.split(' ').filter(Boolean) ?? [],
       },
+      filesystem,
     }),
-    [data, title, fipsRequired, enabled, disabled, masked],
+    [data, title, fipsRequired, enabled, disabled, masked, filesystem],
   );
 };
