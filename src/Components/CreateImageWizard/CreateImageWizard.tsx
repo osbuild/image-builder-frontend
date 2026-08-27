@@ -44,11 +44,13 @@ import {
   loadWizardState,
   parseStateFromRequest,
   selectDistribution,
+  selectHostname,
   selectImageSource,
   selectImageSourceType,
   selectImageTypes,
   selectIsImageMode,
   selectTimezone,
+  validateHostname,
 } from '@/store/slices/wizard';
 import {
   closeWizardModal,
@@ -101,7 +103,6 @@ import {
   useFirewallValidation,
   useFirstBootValidation,
   useGcpValidation,
-  useHostnameValidation,
   useImagePullValidation,
   useKernelValidation,
   useLocaleValidation,
@@ -158,7 +159,6 @@ const CreateImageWizard = () => {
   const filesystemValidation = useFilesystemValidation();
   const timezoneValidation = useTimezoneValidation();
   const localeValidation = useLocaleValidation();
-  const hostnameValidation = useHostnameValidation();
   const kernelValidation = useKernelValidation();
   const servicesValidation = useServicesValidation();
   const firewallValidation = useFirewallValidation();
@@ -166,6 +166,8 @@ const CreateImageWizard = () => {
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
   const imagePullValidation = useImagePullValidation();
+
+  const hostnameErrors = validateHostname(useAppSelector(selectHostname));
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
@@ -200,7 +202,7 @@ const CreateImageWizard = () => {
     filesystemValidation.disabledNext ||
     timezoneValidation.disabledNext ||
     localeValidation.disabledNext ||
-    hostnameValidation.disabledNext ||
+    hostnameErrors.length > 0 ||
     kernelValidation.disabledNext ||
     servicesValidation.disabledNext ||
     firewallValidation.disabledNext ||

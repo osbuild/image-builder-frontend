@@ -11,15 +11,18 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
-import { useHostnameValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { changeHostname, selectHostname } from '@/store/slices/wizard';
+import {
+  changeHostname,
+  selectHostname,
+  validateHostname,
+} from '@/store/slices/wizard';
 
 const HostnameInput = () => {
   const dispatch = useAppDispatch();
   const hostname = useAppSelector(selectHostname);
   const [isPristine, setIsPristine] = useState(!hostname);
-  const stepValidation = useHostnameValidation();
+  const errors = validateHostname(hostname);
 
   const handleChange = (
     _e: React.FormEvent<HTMLInputElement>,
@@ -44,7 +47,7 @@ const HostnameInput = () => {
     }
   };
 
-  const hasError = !isPristine && !!stepValidation.errors.hostname;
+  const hasError = !isPristine && errors.length > 0;
 
   return (
     <FormGroup label='Hostname'>
@@ -70,9 +73,11 @@ const HostnameInput = () => {
       </TextInputGroup>
       {hasError && (
         <HelperText>
-          <HelperTextItem variant='error'>
-            {stepValidation.errors.hostname}
-          </HelperTextItem>
+          {errors.map((error) => (
+            <HelperTextItem key={error.message} variant='error'>
+              {error.message}
+            </HelperTextItem>
+          ))}
         </HelperText>
       )}
     </FormGroup>
