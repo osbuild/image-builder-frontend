@@ -259,7 +259,9 @@ export const systemSlice = createSlice({
 
       user.isAdministrator = isAdministrator;
       if (isAdministrator) {
-        user.groups.push('wheel');
+        if (!user.groups.includes('wheel')) {
+          user.groups.push('wheel');
+        }
       } else {
         user.groups = user.groups.filter((group) => group !== 'wheel');
       }
