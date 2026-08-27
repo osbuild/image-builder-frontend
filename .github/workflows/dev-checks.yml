@@ -40,7 +40,7 @@ jobs:
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Run lint check
-      run: npm run lint
+      run: npm run lint:check
 
   circular-dependencies:
     name: Circular Dependencies Check
