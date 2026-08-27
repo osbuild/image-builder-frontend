@@ -5,6 +5,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectComplianceType } from '@/store/slices';
 import {
   changePartitionMountpoint,
   FilesystemPartition,
@@ -27,6 +28,7 @@ const Mountpoint = ({
   isOscapRequired,
 }: MountpointProps) => {
   const dispatch = useAppDispatch();
+  const complianceType = useAppSelector(selectComplianceType);
   const stepValidation = useFilesystemValidation();
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
@@ -41,7 +43,9 @@ const Mountpoint = ({
     hasOneRoot;
 
   const tooltipContent = isOscapRequired
-    ? 'Required by the selected OpenSCAP profile'
+    ? complianceType === 'openscap'
+      ? 'Required by the selected OpenSCAP profile'
+      : 'Required by the selected compliance policy'
     : 'Root partition is required';
 
   const mountpointInput = (
