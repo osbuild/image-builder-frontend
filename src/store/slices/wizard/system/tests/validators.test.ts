@@ -28,13 +28,13 @@ describe('hostname validation', () => {
     it('accepts hyphens in the middle', () => {
       expect(hostnameSchema.safeParse('my-cool-host').success).toBe(true);
     });
+
+    it('accepts an empty string (hostname is not required)', () => {
+      expect(hostnameSchema.safeParse('').success).toBe(true);
+    });
   });
 
   describe('invalid hostnames', () => {
-    it('rejects an empty string', () => {
-      expect(hostnameSchema.safeParse('').success).toBe(false);
-    });
-
     it('rejects a hostname over 64 characters', () => {
       const hostname = 'a'.repeat(65);
       expect(hostnameSchema.safeParse(hostname).success).toBe(false);
@@ -74,6 +74,37 @@ describe('hostname validation', () => {
 
     it('rejects consecutive dots', () => {
       expect(hostnameSchema.safeParse('host..example').success).toBe(false);
+    });
+  });
+
+  describe('rule-specific messages', () => {
+    const messagesFor = (hostname: string) =>
+      hostnameSchema.safeParse(hostname).error?.issues.map((i) => i.message) ??
+      [];
+
+    it('names the dot-placement rule for a leading dot', () => {
+      expect(messagesFor('.invalid')).toContain(
+        'Hostname cannot start or end with a dot.',
+      );
+    });
+
+    it('names the consecutive-dots rule', () => {
+      expect(messagesFor('a..b')).toContain(
+        'Hostname cannot contain consecutive dots.',
+      );
+    });
+
+    it('names the label-hyphen rule for a non-leading label', () => {
+      expect(messagesFor('host.-label')).toContain(
+        'Hostname labels cannot start or end with a hyphen.',
+      );
+    });
+
+    it('reports every violation at once rather than short-circuiting', () => {
+      expect(messagesFor('.-foo')).toEqual([
+        'Hostname cannot start or end with a dot.',
+        'Hostname labels cannot start or end with a hyphen.',
+      ]);
     });
   });
 });

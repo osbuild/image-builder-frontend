@@ -203,7 +203,9 @@ describe('ImportMode', () => {
     );
 
     // Hostname
-    expect(await screen.findByText(/Invalid hostname/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/labels cannot start or end with a hyphen/),
+    ).toBeInTheDocument();
     await clearWithWait(
       user,
       screen.getByRole('textbox', {
