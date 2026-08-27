@@ -3,9 +3,11 @@ import React from 'react';
 import { Button, Content, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import AddedByLabel from '@/Components/sharedComponents/AddedByLabel';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
-import { selectIsOnPremise } from '@/store/slices';
+import { selectComplianceType, selectIsOnPremise } from '@/store/slices';
 import { selectFscMode } from '@/store/slices/wizard';
 
 import AdvancedPartitioning from './components/AdvancedPartitioning';
@@ -18,13 +20,23 @@ const DOCS_URL =
 const FileSystemStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const fscMode = useAppSelector(selectFscMode);
+  const complianceType = useAppSelector(selectComplianceType);
+  const { filesystem: requiredByOpenSCAP } = useSecuritySummary();
 
   return (
     <>
       <CustomizationLabels customization='filesystem' />
       <Content>
-        <Title headingLevel='h2' size='lg'>
+        <Title
+          headingLevel='h2'
+          size='lg'
+          className='pf-v6-u-display-flex pf-v6-u-align-items-center'
+        >
           File system configuration
+          <AddedByLabel
+            count={requiredByOpenSCAP.length}
+            complianceType={complianceType}
+          />
         </Title>
         <Content component='small'>
           Configure the system and partitioning for your image. You can use
