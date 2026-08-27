@@ -92,7 +92,9 @@ describe('Hostname Component', () => {
       await enterHostname(user, '-invalid');
       await tabAway(user);
 
-      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+      expect(
+        await screen.findByText(/labels cannot start or end with a hyphen/i),
+      ).toBeInTheDocument();
     });
 
     test('shows error for hostname with uppercase letters', async () => {
@@ -102,7 +104,9 @@ describe('Hostname Component', () => {
       await enterHostname(user, 'INVALID');
       await tabAway(user);
 
-      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+      expect(
+        await screen.findByText(/may only contain lowercase letters/i),
+      ).toBeInTheDocument();
     });
 
     test('shows error for hostname exceeding 64 characters', async () => {
@@ -143,13 +147,17 @@ describe('Hostname Component', () => {
 
       await enterHostname(user, '-invalid');
       await tabAway(user);
-      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+      expect(
+        await screen.findByText(/labels cannot start or end with a hyphen/i),
+      ).toBeInTheDocument();
 
       await clearHostname(user);
       await enterHostname(user, 'valid-hostname');
       await tabAway(user);
 
-      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/labels cannot start or end with a hyphen/i),
+      ).not.toBeInTheDocument();
     });
 
     test('does not show error before interaction', async () => {
@@ -166,10 +174,14 @@ describe('Hostname Component', () => {
 
       await enterHostname(user, '-invalid');
       await tabAway(user);
-      expect(await screen.findByText(/Invalid hostname/i)).toBeInTheDocument();
+      expect(
+        await screen.findByText(/labels cannot start or end with a hyphen/i),
+      ).toBeInTheDocument();
 
       await clearHostname(user);
-      expect(screen.queryByText(/Invalid hostname/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/labels cannot start or end with a hyphen/i),
+      ).not.toBeInTheDocument();
     });
   });
 
