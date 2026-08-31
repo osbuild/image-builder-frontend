@@ -1,89 +1,114 @@
 import { describe, expect, it } from 'vitest';
 
-import { isKernelArgumentValid } from '@/Components/CreateImageWizard/validators';
+import { validateKernelArgs } from '../../validators';
+
+const isValid = (arg: string) => validateKernelArgs([arg]).length === 0;
 
 describe('kernel validation', () => {
   describe('valid kernel arguments', () => {
     it('accepts a simple key=value argument', () => {
-      expect(isKernelArgumentValid('quiet')).toBe(true);
+      expect(isValid('quiet')).toBe(true);
     });
 
     it('accepts an argument with equals sign', () => {
-      expect(isKernelArgumentValid('root=/dev/sda1')).toBe(true);
+      expect(isValid('root=/dev/sda1')).toBe(true);
     });
 
     it('accepts an argument with hyphens', () => {
-      expect(isKernelArgumentValid('no-scroll')).toBe(true);
+      expect(isValid('no-scroll')).toBe(true);
     });
 
     it('accepts an argument with underscores', () => {
-      expect(isKernelArgumentValid('net_ifnames=0')).toBe(true);
+      expect(isValid('net_ifnames=0')).toBe(true);
     });
 
     it('accepts an argument with dots', () => {
-      expect(isKernelArgumentValid('systemd.unit=rescue.target')).toBe(true);
+      expect(isValid('systemd.unit=rescue.target')).toBe(true);
     });
 
     it('accepts an argument with commas', () => {
-      expect(isKernelArgumentValid('console=ttyS0,115200')).toBe(true);
+      expect(isValid('console=ttyS0,115200')).toBe(true);
     });
 
     it('accepts an argument with quotes', () => {
-      expect(isKernelArgumentValid("key='value'")).toBe(true);
+      expect(isValid("key='value'")).toBe(true);
     });
 
     it('accepts an argument with double quotes', () => {
-      expect(isKernelArgumentValid('key="value"')).toBe(true);
+      expect(isValid('key="value"')).toBe(true);
     });
 
     it('accepts an argument with colons', () => {
-      expect(isKernelArgumentValid('rd.lvm.lv=vg/lv')).toBe(true);
+      expect(isValid('rd.lvm.lv=vg/lv')).toBe(true);
     });
 
     it('accepts an argument with hash', () => {
-      expect(isKernelArgumentValid('arg#1')).toBe(true);
+      expect(isValid('arg#1')).toBe(true);
     });
 
     it('accepts an argument with plus', () => {
-      expect(isKernelArgumentValid('arg+1')).toBe(true);
+      expect(isValid('arg+1')).toBe(true);
     });
 
     it('accepts an argument with semicolon', () => {
-      expect(isKernelArgumentValid('arg;next')).toBe(true);
+      expect(isValid('arg;next')).toBe(true);
     });
 
     it('accepts an argument with backslash', () => {
-      expect(isKernelArgumentValid('path\\to')).toBe(true);
+      expect(isValid('path\\to')).toBe(true);
     });
 
-    it('accepts an empty string', () => {
-      expect(isKernelArgumentValid('')).toBe(true);
+    it('accepts an argument at the maximum length', () => {
+      expect(isValid('a'.repeat(256))).toBe(true);
+    });
+
+    it('returns no issues for an empty list', () => {
+      expect(validateKernelArgs([])).toEqual([]);
     });
   });
 
   describe('invalid kernel arguments', () => {
     it('rejects an argument with spaces', () => {
-      expect(isKernelArgumentValid('key value')).toBe(false);
+      expect(isValid('key value')).toBe(false);
     });
 
     it('rejects an argument with exclamation mark', () => {
-      expect(isKernelArgumentValid('arg!')).toBe(false);
+      expect(isValid('arg!')).toBe(false);
     });
 
     it('rejects an argument with ampersand', () => {
-      expect(isKernelArgumentValid('arg&next')).toBe(false);
+      expect(isValid('arg&next')).toBe(false);
     });
 
     it('rejects an argument with pipe', () => {
-      expect(isKernelArgumentValid('arg|next')).toBe(false);
+      expect(isValid('arg|next')).toBe(false);
     });
 
     it('rejects an argument with parentheses', () => {
-      expect(isKernelArgumentValid('arg(1)')).toBe(false);
+      expect(isValid('arg(1)')).toBe(false);
     });
 
     it('rejects an argument with angle brackets', () => {
-      expect(isKernelArgumentValid('arg<1>')).toBe(false);
+      expect(isValid('arg<1>')).toBe(false);
+    });
+
+    it('rejects an argument longer than the maximum length', () => {
+      expect(isValid('a'.repeat(257))).toBe(false);
+    });
+  });
+
+  describe('duplicate kernel arguments', () => {
+    it('accepts a list with no duplicates', () => {
+      expect(validateKernelArgs(['quiet', 'splash'])).toEqual([]);
+    });
+
+    it('rejects a list with a duplicate argument', () => {
+      const result = validateKernelArgs(['quiet', 'quiet']);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        kind: 'duplicate',
+        value: 'quiet',
+      });
     });
   });
 });
