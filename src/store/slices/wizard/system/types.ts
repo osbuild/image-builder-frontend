@@ -1,4 +1,10 @@
+import z from 'zod';
+
 import { Locale, Timezone, User } from '@/store/api/backend';
+
+import { kernelSchema } from './schemas';
+
+export type Kernel = z.infer<typeof kernelSchema>;
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;

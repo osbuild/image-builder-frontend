@@ -70,6 +70,7 @@ import {
   selectUsers,
   UserWithAdditionalInfo,
   validateHostname,
+  validateKernel,
 } from '@/store/slices/wizard';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -90,7 +91,6 @@ import {
   isDiskMinSizeValid,
   isGcpDomainValid,
   isGcpEmailValid,
-  isKernelArgumentValid,
   isMountpointMinSizeValid,
   isNtpServerValid,
   isPartitionNameValid,
@@ -134,7 +134,6 @@ export function useIsBlueprintValid(): boolean {
   const snapshot = useSnapshotValidation();
   const timezone = useTimezoneValidation();
   const locale = useLocaleValidation();
-  const kernel = useKernelValidation();
   const firewall = useFirewallValidation();
   const services = useServicesValidation();
   const firstBoot = useFirstBootValidation();
@@ -146,6 +145,7 @@ export function useIsBlueprintValid(): boolean {
   const awsTarget = useAwsValidation();
 
   const hostnameErrors = validateHostname(useAppSelector(selectHostname));
+  const kernelErrors = validateKernel(useAppSelector(selectKernel));
 
   return (
     !aap.disabledNext &&
@@ -155,7 +155,7 @@ export function useIsBlueprintValid(): boolean {
     !timezone.disabledNext &&
     !locale.disabledNext &&
     hostnameErrors.length === 0 &&
-    !kernel.disabledNext &&
+    kernelErrors.length === 0 &&
     !firewall.disabledNext &&
     !services.disabledNext &&
     !firstBoot.disabledNext &&
@@ -632,36 +632,6 @@ export function useFirstBootValidation(): StepValidation {
       script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
     },
     disabledNext: !valid,
-  };
-}
-
-export function useKernelValidation(): StepValidation {
-  const kernel = useAppSelector(selectKernel);
-
-  const invalidArgs = [];
-  if (kernel.append.length > 0) {
-    for (const arg of kernel.append) {
-      if (!isKernelArgumentValid(arg)) {
-        invalidArgs.push(arg);
-      }
-    }
-  }
-
-  const duplicateKernelArgs = getListOfDuplicates(kernel.append);
-
-  const kernelAppendError =
-    invalidArgs.length > 0 ? `Invalid kernel arguments: ${invalidArgs}` : '';
-
-  const duplicateKernelArgsError =
-    duplicateKernelArgs.length > 0
-      ? `Includes duplicate kernel arguments: ${duplicateKernelArgs.join(', ')}`
-      : '';
-
-  return {
-    errors: {
-      kernelAppend: kernelAppendError + '|' + duplicateKernelArgsError,
-    },
-    disabledNext: kernelAppendError !== '' || duplicateKernelArgs.length > 0,
   };
 }
 
