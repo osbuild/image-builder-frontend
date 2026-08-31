@@ -50,7 +50,7 @@ jobs:
           PR_NUMBER: ${{ github.event.inputs.pr_number }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.pr_head_sha || github.ref }}
 
@@ -236,7 +236,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download test results JSON
         uses: actions/download-artifact@v8

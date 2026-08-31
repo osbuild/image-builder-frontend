@@ -16,7 +16,7 @@ jobs:
     name: Build Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Run build
@@ -26,7 +26,7 @@ jobs:
     name: Prettier
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Check formatting
@@ -36,7 +36,7 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Run lint check
@@ -46,7 +46,7 @@ jobs:
     name: Circular Dependencies Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Check for circular dependencies
@@ -56,7 +56,7 @@ jobs:
     name: Manual API Changes Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Setup Node.js for API code generation with cached dependencies
@@ -78,7 +78,7 @@ jobs:
     name: Pinned Dependencies Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Check for unpinned dependencies
       run: |
         UNPINNED=$(grep -F '": "^' package.json || true)

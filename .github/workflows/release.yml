@@ -11,7 +11,7 @@ jobs:
     steps:
       # create release artefact before creating the release to get the correct release in the
       # artefact name.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node.js with cached dependencies
         uses: ./.github/actions/setup-node-cached
