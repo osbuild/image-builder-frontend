@@ -18,7 +18,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Run unit tests
@@ -35,7 +35,7 @@ jobs:
     name: Cockpit Tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Setup Node.js with cached dependencies
       uses: ./.github/actions/setup-node-cached
     - name: Run integration tests with cockpit

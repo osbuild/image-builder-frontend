@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # https://scan.coverity.com/projects/image-builder-frontend
       - name: Run coverity scan script
