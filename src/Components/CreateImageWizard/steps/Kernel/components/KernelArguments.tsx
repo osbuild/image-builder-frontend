@@ -1,37 +1,40 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import LabelInput from '@/Components/CreateImageWizard/LabelInput';
-import { useKernelValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { isKernelArgumentValid } from '@/Components/CreateImageWizard/validators';
+import TextInputGroup from '@/Components/CreateImageWizard/TextInputGroup';
 import { useSecuritySummary } from '@/store/api/backend';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addKernelArg,
   removeKernelArg,
   selectKernel,
+  validateKernelArgs,
 } from '@/store/slices/wizard';
+import {
+  type MergedListItem,
+  mergeListItems,
+} from '@/Utilities/mergeListItems';
 
 const KernelArguments = () => {
+  const dispatch = useAppDispatch();
   const kernelAppend = useAppSelector(selectKernel).append;
-
-  const stepValidation = useKernelValidation();
   const { kernel: oscapKernel } = useSecuritySummary();
+
+  const items: MergedListItem[] = useMemo(
+    () => mergeListItems(oscapKernel.append, kernelAppend),
+    [kernelAppend, oscapKernel.append],
+  );
 
   return (
     <FormGroup isRequired={false} label='Arguments'>
-      <LabelInput
+      <TextInputGroup
         ariaLabel='Add kernel argument'
         placeholder='Add kernel argument'
-        validator={isKernelArgumentValid}
-        list={kernelAppend.filter((arg) => !oscapKernel.append.includes(arg))}
-        requiredList={oscapKernel.append}
-        item='Kernel argument'
-        addAction={addKernelArg}
-        removeAction={removeKernelArg}
-        stepValidation={stepValidation}
-        fieldName='kernelAppend'
+        validator={validateKernelArgs}
+        items={items}
+        onAdd={(value) => dispatch(addKernelArg(value))}
+        onRemove={(value) => dispatch(removeKernelArg(value))}
         helperText='Enter additional kernel boot parameters. Examples: nomodeset or console=ttyS0.'
       />
     </FormGroup>
