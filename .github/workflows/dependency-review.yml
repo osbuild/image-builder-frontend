@@ -28,7 +28,7 @@ jobs:
       # - License compliance issues
       # - Introduces new dependencies
       - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         with:
           # Fail on vulnerabilities with severity critical or high
           fail-on-severity: high
