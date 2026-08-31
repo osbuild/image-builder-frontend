@@ -254,10 +254,6 @@ export const isNtpServerValid = (ntpServer: string) => {
   return /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer);
 };
 
-export const isKernelArgumentValid = (arg: string) => {
-  return /^[a-zA-Z0-9=\-_,."'/:#+;\\]*$/.test(arg);
-};
-
 export const isPortValid = (port: string) => {
   return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?[:][a-z]{1,6}$/.test(port);
 };
