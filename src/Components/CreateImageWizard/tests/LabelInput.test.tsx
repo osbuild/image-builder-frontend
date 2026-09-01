@@ -12,12 +12,14 @@ import {
 import LabelInput from '../LabelInput';
 import type { StepValidation } from '../utilities/useValidation';
 
-const { dispatchMock } = vi.hoisted(() => ({
+const { dispatchMock, forceShowErrorsMock } = vi.hoisted(() => ({
   dispatchMock: vi.fn(),
+  forceShowErrorsMock: { value: false },
 }));
 
 vi.mock('@/store/hooks', () => ({
   useAppDispatch: () => dispatchMock,
+  useAppSelector: () => forceShowErrorsMock.value,
 }));
 
 const stepValidation: StepValidation = {
@@ -46,6 +48,7 @@ const renderLabelInput = (
 describe('LabelInput', () => {
   beforeEach(() => {
     dispatchMock.mockClear();
+    forceShowErrorsMock.value = false;
   });
 
   test('does not dispatch for empty input via Add button or Enter', async () => {
@@ -109,7 +112,10 @@ describe('LabelInput', () => {
     );
 
     expect(screen.getByText('Item already exists.')).toBeInTheDocument();
-    expect(dispatchMock).not.toHaveBeenCalled();
+    expect(dispatchMock).not.toHaveBeenCalledWith({
+      type: 'test/add',
+      payload: 'admins',
+    });
   });
 
   test('shows field-specific validation error for invalid input', async () => {
@@ -132,7 +138,10 @@ describe('LabelInput', () => {
     expect(
       screen.getByText('Expected format: <group-name>. Example: admin'),
     ).toBeInTheDocument();
-    expect(dispatchMock).not.toHaveBeenCalled();
+    expect(dispatchMock).not.toHaveBeenCalledWith({
+      type: 'test/add',
+      payload: 'invalid value',
+    });
   });
 
   test('dispatches remove action when removing a chip', async () => {
@@ -148,5 +157,36 @@ describe('LabelInput', () => {
       type: 'test/remove',
       payload: 'admins',
     });
+  });
+
+  test('shows warning for unadded input when forceShowErrors is true', async () => {
+    forceShowErrorsMock.value = true;
+    renderLabelInput();
+    const user = createUser();
+
+    await typeWithWait(
+      user,
+      screen.getByPlaceholderText('Add label'),
+      'pending-value',
+    );
+
+    expect(
+      screen.getByText(
+        '"pending-value" has not been added. Press Enter or click Add to add it.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test('does not show unadded warning when forceShowErrors is false', async () => {
+    renderLabelInput();
+    const user = createUser();
+
+    await typeWithWait(
+      user,
+      screen.getByPlaceholderText('Add label'),
+      'pending-value',
+    );
+
+    expect(screen.queryByText(/has not been added/)).not.toBeInTheDocument();
   });
 });
