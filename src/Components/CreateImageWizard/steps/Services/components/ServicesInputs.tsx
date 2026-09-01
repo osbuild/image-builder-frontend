@@ -5,7 +5,7 @@ import { FormGroup } from '@patternfly/react-core';
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { useServicesValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { isServiceValid } from '@/Components/CreateImageWizard/validators';
-import { useGetOscapCustomizationsQuery } from '@/store/api/backend';
+import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import {
   addDisabledService,
@@ -14,8 +14,6 @@ import {
   removeDisabledService,
   removeEnabledService,
   removeMaskedService,
-  selectComplianceProfileID,
-  selectDistribution,
   selectServices,
 } from '@/store/slices/wizard';
 
@@ -26,30 +24,18 @@ const ServicesInput = () => {
 
   const stepValidation = useServicesValidation();
 
-  const release = useAppSelector(selectDistribution);
-  const complianceProfileID = useAppSelector(selectComplianceProfileID);
-
-  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: complianceProfileID,
-    },
-    {
-      skip: !complianceProfileID,
-    },
-  );
+  const { services: oscapServices } = useSecuritySummary();
 
   const disabledRequiredByOpenSCAP = disabledServices.filter((service) =>
-    oscapProfileInfo?.services?.disabled?.includes(service),
+    oscapServices.disabled.includes(service),
   );
 
   const maskedRequiredByOpenSCAP = maskedServices.filter((service) =>
-    oscapProfileInfo?.services?.masked?.includes(service),
+    oscapServices.masked.includes(service),
   );
 
   const enabledRequiredByOpenSCAP = enabledServices.filter((service) =>
-    oscapProfileInfo?.services?.enabled?.includes(service),
+    oscapServices.enabled.includes(service),
   );
 
   return (
@@ -78,8 +64,7 @@ const ServicesInput = () => {
           placeholder='Add disabled service'
           validator={isServiceValid}
           list={disabledServices.filter(
-            (service) =>
-              !oscapProfileInfo?.services?.disabled?.includes(service),
+            (service) => !disabledRequiredByOpenSCAP.includes(service),
           )}
           requiredList={disabledRequiredByOpenSCAP}
           item='Disabled service'
@@ -97,7 +82,7 @@ const ServicesInput = () => {
           placeholder='Add masked service'
           validator={isServiceValid}
           list={maskedServices.filter(
-            (service) => !oscapProfileInfo?.services?.masked?.includes(service),
+            (service) => !maskedRequiredByOpenSCAP.includes(service),
           )}
           requiredList={maskedRequiredByOpenSCAP}
           item='Masked service'
