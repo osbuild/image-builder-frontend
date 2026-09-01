@@ -39,3 +39,26 @@ export const kernelSchema = z.object({
   name: z.string(),
   append: z.array(kernelArgSchema).superRefine(uniqueArray('kernel argument')),
 });
+
+export const serviceSchema = z
+  .string()
+  .max(256, 'Service name must be 256 characters or fewer')
+  // see `man systemd.unit` for the exact specification. The character-set and
+  // start/end rules are checked separately so each failure names its own rule
+  // instead of collapsing into one generic message.
+  .regex(
+    /^[a-zA-Z0-9.\-_:@]*$/,
+    'Service name may only contain letters, digits, and . - _ : @',
+  )
+  .regex(/^[a-zA-Z0-9]/, 'Service name must start with a letter or digit')
+  .regex(/[a-zA-Z0-9]$/, 'Service name must end with a letter or digit')
+  .regex(/^(?!.*--)/, 'Service name must not contain consecutive hyphens')
+  .regex(/[a-zA-Z]+/, 'Service name must contain at least one letter');
+
+export const servicesSchema = z.object({
+  enabled: z.array(serviceSchema).superRefine(uniqueArray('enabled services')),
+  masked: z.array(serviceSchema).superRefine(uniqueArray('masked services')),
+  disabled: z
+    .array(serviceSchema)
+    .superRefine(uniqueArray('disabled services')),
+});
