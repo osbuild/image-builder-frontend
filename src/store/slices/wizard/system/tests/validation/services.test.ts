@@ -1,70 +1,124 @@
 import { describe, expect, it } from 'vitest';
 
-import { isServiceValid } from '@/Components/CreateImageWizard/validators';
+import {
+  validateDisabledServices,
+  validateEnabledServices,
+  validateMaskedServices,
+} from '../../validators';
 
-// Services (systemd units) use the same validation rules as firewall services.
-// These tests cover the systemd-specific context (disabled, masked, enabled)
-// to ensure the validation function handles all three categories correctly.
+// All three service categories (enabled, disabled, masked) share the same
+// `serviceSchema`, so the format rules are exercised once through
+// `validateEnabledServices`. The per-category behaviour (including duplicate
+// detection, which uses a category-specific label) is covered separately.
+const isValid = (service: string) =>
+  validateEnabledServices([service]).length === 0;
 
 describe('systemd services validation', () => {
   describe('valid services', () => {
     it('accepts a systemd unit name', () => {
-      expect(isServiceValid('sshd.service')).toBe(true);
+      expect(isValid('sshd.service')).toBe(true);
     });
 
     it('accepts a timer unit', () => {
-      expect(isServiceValid('dnf-makecache.timer')).toBe(true);
+      expect(isValid('dnf-makecache.timer')).toBe(true);
     });
 
     it('accepts a socket unit', () => {
-      expect(isServiceValid('cockpit.socket')).toBe(true);
+      expect(isValid('cockpit.socket')).toBe(true);
     });
 
     it('accepts a template unit', () => {
-      expect(isServiceValid('getty@tty1')).toBe(true);
+      expect(isValid('getty@tty1')).toBe(true);
     });
 
     it('accepts a mount unit', () => {
-      expect(isServiceValid('home.mount')).toBe(true);
+      expect(isValid('home.mount')).toBe(true);
     });
 
     it('accepts a service with underscores', () => {
-      expect(isServiceValid('network_manager')).toBe(true);
+      expect(isValid('network_manager')).toBe(true);
     });
 
     it('accepts a service with mixed case', () => {
-      expect(isServiceValid('NetworkManager')).toBe(true);
+      expect(isValid('NetworkManager')).toBe(true);
+    });
+
+    it('accepts a single-character name', () => {
+      expect(isValid('a')).toBe(true);
+    });
+
+    it('accepts a name at the 256-character limit', () => {
+      expect(isValid('a'.repeat(256))).toBe(true);
+    });
+
+    it('accepts a colon in the middle of a name', () => {
+      expect(isValid('foo:bar')).toBe(true);
+    });
+
+    it('returns no issues for an empty list', () => {
+      expect(validateEnabledServices([])).toEqual([]);
     });
   });
 
   describe('invalid services', () => {
     it('rejects an empty string', () => {
-      expect(isServiceValid('')).toBe(false);
+      expect(isValid('')).toBe(false);
     });
 
     it('rejects a service with consecutive hyphens', () => {
-      expect(isServiceValid('my--service')).toBe(false);
+      expect(isValid('my--service')).toBe(false);
     });
 
     it('rejects a service starting with a dot', () => {
-      expect(isServiceValid('.hidden')).toBe(false);
+      expect(isValid('.hidden')).toBe(false);
     });
 
     it('rejects a service ending with a dot', () => {
-      expect(isServiceValid('service.')).toBe(false);
+      expect(isValid('service.')).toBe(false);
+    });
+
+    it('rejects a service starting with a hyphen', () => {
+      expect(isValid('-foo')).toBe(false);
+    });
+
+    it('rejects a service ending with a hyphen', () => {
+      expect(isValid('foo-')).toBe(false);
     });
 
     it('rejects a service with spaces', () => {
-      expect(isServiceValid('my service')).toBe(false);
+      expect(isValid('my service')).toBe(false);
     });
 
     it('rejects a purely numeric service', () => {
-      expect(isServiceValid('12345')).toBe(false);
+      expect(isValid('12345')).toBe(false);
     });
 
     it('rejects a service over 256 characters', () => {
-      const service = 'a'.repeat(257);
-      expect(isServiceValid(service)).toBe(false);
+      expect(isValid('a'.repeat(257))).toBe(false);
+    });
+  });
+
+  describe.each([
+    ['enabled', validateEnabledServices, 'enabled services'],
+    ['disabled', validateDisabledServices, 'disabled services'],
+    ['masked', validateMaskedServices, 'masked services'],
+  ])('%s services validator', (_category, validate, label) => {
+    it('accepts a valid service', () => {
+      expect(validate(['sshd.service'])).toEqual([]);
+    });
+
+    it('rejects an invalid service', () => {
+      expect(validate(['my--service']).length).toBeGreaterThan(0);
+    });
+
+    it('flags a duplicate service', () => {
+      const result = validate(['sshd', 'sshd']);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        kind: 'duplicate',
+        value: 'sshd',
+      });
+      expect(result[0].message).toContain(label);
     });
   });
 });
