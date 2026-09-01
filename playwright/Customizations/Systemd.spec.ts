@@ -239,21 +239,23 @@ test('Create a blueprint with Systemd customization', async ({
   await test.step('Select and incorrectly fill all of the service fields', async () => {
     await frame.getByPlaceholder('Add disabled service').fill('&&');
     await frame.getByPlaceholder('Add disabled service').press('Enter');
-    await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0),
-    ).toBeVisible();
 
     await frame.getByPlaceholder('Add enabled service').fill('áá');
     await frame.getByPlaceholder('Add enabled service').press('Enter');
-    await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1),
-    ).toBeVisible();
 
     await frame.getByPlaceholder('Add masked service').fill('78');
     await frame.getByPlaceholder('Add masked service').press('Enter');
+
+    // The schema reports the same messages for multiple fields, so assert the
+    // number of rendered errors instead of relying on their DOM order.
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(2),
-    ).toBeVisible();
+      frame.getByText(
+        'Service name may only contain letters, digits, and . - _ : @',
+      ),
+    ).toHaveCount(2);
+    await expect(
+      frame.getByText('Service name must contain at least one letter'),
+    ).toHaveCount(3);
   });
 
   await test.step('Navigate to review', async () => {
