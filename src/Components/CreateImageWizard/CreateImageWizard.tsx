@@ -50,9 +50,11 @@ import {
   selectImageTypes,
   selectIsImageMode,
   selectKernel,
+  selectServices,
   selectTimezone,
   validateHostname,
   validateKernel,
+  validateServices,
 } from '@/store/slices/wizard';
 import {
   closeWizardModal,
@@ -108,7 +110,6 @@ import {
   useImagePullValidation,
   useLocaleValidation,
   useRegistrationValidation,
-  useServicesValidation,
   useSnapshotValidation,
   useTimezoneValidation,
   useUserGroupsValidation,
@@ -160,7 +161,6 @@ const CreateImageWizard = () => {
   const filesystemValidation = useFilesystemValidation();
   const timezoneValidation = useTimezoneValidation();
   const localeValidation = useLocaleValidation();
-  const servicesValidation = useServicesValidation();
   const firewallValidation = useFirewallValidation();
   const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
@@ -169,6 +169,7 @@ const CreateImageWizard = () => {
 
   const hostnameErrors = validateHostname(useAppSelector(selectHostname));
   const kernelErrors = validateKernel(useAppSelector(selectKernel));
+  const servicesErrors = validateServices(useAppSelector(selectServices));
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
@@ -205,7 +206,7 @@ const CreateImageWizard = () => {
     localeValidation.disabledNext ||
     hostnameErrors.length > 0 ||
     kernelErrors.length > 0 ||
-    servicesValidation.disabledNext ||
+    servicesErrors.length > 0 ||
     firewallValidation.disabledNext ||
     firstBootValidation.disabledNext ||
     (!(restrictions.users.shouldHide || restrictions.users.isStandalone) &&

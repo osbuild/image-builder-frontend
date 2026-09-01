@@ -72,6 +72,7 @@ import {
   UserWithAdditionalInfo,
   validateHostname,
   validateKernel,
+  validateServices,
 } from '@/store/slices/wizard';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -136,7 +137,6 @@ export function useIsBlueprintValid(): boolean {
   const timezone = useTimezoneValidation();
   const locale = useLocaleValidation();
   const firewall = useFirewallValidation();
-  const services = useServicesValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
@@ -147,6 +147,7 @@ export function useIsBlueprintValid(): boolean {
 
   const hostnameErrors = validateHostname(useAppSelector(selectHostname));
   const kernelErrors = validateKernel(useAppSelector(selectKernel));
+  const serviceErrors = validateServices(useAppSelector(selectServices));
 
   return (
     !aap.disabledNext &&
@@ -158,7 +159,7 @@ export function useIsBlueprintValid(): boolean {
     hostnameErrors.length === 0 &&
     kernelErrors.length === 0 &&
     !firewall.disabledNext &&
-    !services.disabledNext &&
+    serviceErrors.length === 0 &&
     !firstBoot.disabledNext &&
     !details.disabledNext &&
     !details.isPending &&
@@ -722,89 +723,6 @@ export function useFirewallValidation(): StepValidation {
       invalidEnabled.length > 0 ||
       duplicatePorts.length > 0 ||
       duplicateDisabledServices.length > 0 ||
-      duplicateEnabledServices.length > 0,
-  };
-}
-
-export function useServicesValidation(): StepValidation {
-  const services = useAppSelector(selectServices);
-
-  const invalidDisabled = [];
-  const invalidMasked = [];
-  const invalidEnabled = [];
-
-  if (services.disabled.length > 0) {
-    for (const s of services.disabled) {
-      if (!isServiceValid(s)) {
-        invalidDisabled.push(s);
-      }
-    }
-  }
-
-  if (services.masked.length > 0) {
-    for (const s of services.masked) {
-      if (!isServiceValid(s)) {
-        invalidMasked.push(s);
-      }
-    }
-  }
-
-  if (services.enabled.length > 0) {
-    for (const s of services.enabled) {
-      if (!isServiceValid(s)) {
-        invalidEnabled.push(s);
-      }
-    }
-  }
-
-  const duplicateDisabledServices = getListOfDuplicates(services.disabled);
-  const duplicateMaskedServices = getListOfDuplicates(services.masked);
-  const duplicateEnabledServices = getListOfDuplicates(services.enabled);
-
-  const disabledSystemdServicesError =
-    invalidDisabled.length > 0
-      ? `Invalid disabled services: ${invalidDisabled}`
-      : '';
-  const maskedSystemdServicesError =
-    invalidMasked.length > 0 ? `Invalid masked services: ${invalidMasked}` : '';
-  const enabledSystemdServicesError =
-    invalidEnabled.length > 0
-      ? `Invalid enabled services: ${invalidEnabled}`
-      : '';
-  const duplicateDisabledServicesError =
-    duplicateDisabledServices.length > 0
-      ? `Includes duplicate disabled services: ${duplicateDisabledServices.join(
-          ', ',
-        )}`
-      : '';
-  const duplicateMaskedServicesError =
-    duplicateMaskedServices.length > 0
-      ? `Includes duplicate masked services: ${duplicateMaskedServices.join(
-          ', ',
-        )}`
-      : '';
-  const duplicateEnabledServicesError =
-    duplicateEnabledServices.length > 0
-      ? `Includes duplicate enabled services: ${duplicateEnabledServices.join(
-          ', ',
-        )}`
-      : '';
-
-  return {
-    errors: {
-      disabledSystemdServices:
-        disabledSystemdServicesError + '|' + duplicateDisabledServicesError,
-      maskedSystemdServices:
-        maskedSystemdServicesError + '|' + duplicateMaskedServicesError,
-      enabledSystemdServices:
-        enabledSystemdServicesError + '|' + duplicateEnabledServicesError,
-    },
-    disabledNext:
-      invalidDisabled.length > 0 ||
-      invalidMasked.length > 0 ||
-      invalidEnabled.length > 0 ||
-      duplicateDisabledServices.length > 0 ||
-      duplicateMaskedServices.length > 0 ||
       duplicateEnabledServices.length > 0,
   };
 }
