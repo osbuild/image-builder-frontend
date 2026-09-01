@@ -8,6 +8,7 @@ upstream_tag_template: v{version}
 
 actions:
   create-archive:
+    - npm ci
     - make dist
 
 srpm_build_deps:
@@ -55,6 +56,7 @@ jobs:
     targets: *build_targets
     actions:
       create-archive:
+        - npm ci
         - make dist
 
   - job: propose_downstream
