@@ -258,20 +258,15 @@ describe('ImportMode', () => {
 
     // Services
     expect(
-      await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-service/,
+      await screen.findAllByText(
+        'Service name must start with a letter or digit',
       ),
-    ).toBeInTheDocument();
+    ).toHaveLength(3);
     expect(
-      await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-service/,
+      await screen.findAllByText(
+        'Service name must not contain consecutive hyphens',
       ),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByText(
-        /Invalid masked services: --invalid-masked-service/,
-      ),
-    ).toBeInTheDocument();
+    ).toHaveLength(3);
 
     await clickWithWait(
       user,

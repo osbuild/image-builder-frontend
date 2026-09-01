@@ -116,7 +116,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
-      frame.getByText('Masked service already exists'),
+      frame.getByText('Duplicate masked services: nftables'),
     ).toBeVisible();
     await expect(frame.getByText('cups')).toBeVisible();
     await expect(frame.getByText('nfs-server')).toBeVisible();
@@ -124,7 +124,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(frame.getByText('avahi-daemon')).toBeVisible();
     await expect(frame.getByText('autofs')).toBeVisible();
     await expect(frame.getByText('bluetooth')).toBeVisible();
-    await expect(frame.getByText('nftables')).toBeVisible();
+    await expect(frame.getByText('nftables').last()).toBeVisible();
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 
@@ -180,7 +180,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
-      frame.getByText('Masked service already exists'),
+      frame.getByText('Duplicate masked services: nftables'),
     ).toBeVisible();
     await expect(frame.getByText('cups')).toBeVisible();
     await expect(frame.getByText('nfs-server')).toBeVisible();
@@ -188,7 +188,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(frame.getByText('avahi-daemon')).toBeVisible();
     await expect(frame.getByText('autofs')).toBeVisible();
     await expect(frame.getByText('bluetooth')).toBeVisible();
-    await expect(frame.getByText('nftables')).toBeVisible();
+    await expect(frame.getByText('nftables').last()).toBeVisible();
     await frame.getByRole('button', { name: 'Review image' }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })

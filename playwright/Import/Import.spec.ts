@@ -117,12 +117,14 @@ test('Import a blueprint with invalid customization', async ({
       .getByRole('heading', { name: 'Systemd services' })
       .scrollIntoViewIfNeeded();
     await expect(
-      frame.getByText('Includes duplicate enabled services: auditd'),
+      frame.getByText('Duplicate enabled services: auditd'),
     ).toBeVisible();
     await expect(
-      frame.getByText('Includes duplicate disabled services: sssd'),
+      frame.getByText('Duplicate disabled services: sssd'),
     ).toBeVisible();
-    await expect(frame.getByText('Includes duplicate masked')).toBeVisible();
+    await expect(
+      frame.getByText('Duplicate masked services: masked'),
+    ).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove auditd' }).first().click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
