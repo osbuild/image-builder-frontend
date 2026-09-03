@@ -141,13 +141,13 @@ describe('Services Component', () => {
       await addEnabledService(user, '-------');
 
       expect(
-        screen.getByText('Expected format: <service-name>. Example: sshd'),
+        screen.getByText('Service name must contain at least one letter'),
       ).toBeInTheDocument();
 
       await clearEnabledServiceInput(user);
 
       expect(
-        screen.queryByText('Expected format: <service-name>. Example: sshd'),
+        screen.queryByText('Service name must contain at least one letter'),
       ).not.toBeInTheDocument();
     });
   });
@@ -181,13 +181,13 @@ describe('Services Component', () => {
       await addDisabledService(user, '-------');
 
       expect(
-        screen.getByText('Expected format: <service-name>. Example: sshd'),
+        screen.getByText('Service name must contain at least one letter'),
       ).toBeInTheDocument();
 
       await clearDisabledServiceInput(user);
 
       expect(
-        screen.queryByText('Expected format: <service-name>. Example: sshd'),
+        screen.queryByText('Service name must contain at least one letter'),
       ).not.toBeInTheDocument();
     });
   });
@@ -221,13 +221,13 @@ describe('Services Component', () => {
       await addMaskedService(user, '-------');
 
       expect(
-        screen.getByText('Expected format: <service-name>. Example: sshd'),
+        screen.getByText('Service name must contain at least one letter'),
       ).toBeInTheDocument();
 
       await clearMaskedServiceInput(user);
 
       expect(
-        screen.queryByText('Expected format: <service-name>. Example: sshd'),
+        screen.queryByText('Service name must contain at least one letter'),
       ).not.toBeInTheDocument();
     });
   });

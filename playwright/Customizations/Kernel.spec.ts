@@ -128,9 +128,7 @@ test('Create a blueprint with Kernel customization', async ({
       .fill('invalid$argument');
     await frame.getByPlaceholder('Add kernel argument').press('Enter');
     await expect(
-      frame.getByText(
-        'Expected format: <kernel-argument>. Example: console=tty0',
-      ),
+      frame.getByText('Kernel argument contains invalid characters'),
     ).toBeVisible();
     await frame.getByPlaceholder('Add kernel argument').fill('console=tty0');
     await frame.getByPlaceholder('Add kernel argument').press('Enter');

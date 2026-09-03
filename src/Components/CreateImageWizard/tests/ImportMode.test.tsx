@@ -215,7 +215,7 @@ describe('ImportMode', () => {
 
     // Kernel
     expect(
-      await screen.findByText(/Invalid kernel arguments/),
+      await screen.findByText(/Kernel argument contains invalid characters/),
     ).toBeInTheDocument();
     await clickWithWait(
       user,
