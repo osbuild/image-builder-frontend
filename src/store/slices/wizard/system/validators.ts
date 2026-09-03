@@ -1,5 +1,10 @@
-import { hostnameSchema, kernelSchema, servicesSchema } from './schemas';
-import { Kernel, Services } from './types';
+import {
+  firewallSchema,
+  hostnameSchema,
+  kernelSchema,
+  servicesSchema,
+} from './schemas';
+import { Firewall, Kernel, Services } from './types';
 
 import { validateList, validateSchema } from '../validators';
 
@@ -29,4 +34,20 @@ export const validateMaskedServices = (items: string[]) => {
 
 export const validateServices = (services: Services) => {
   return validateSchema(servicesSchema, services);
+};
+
+export const validateFirewallPorts = (items: string[]) => {
+  return validateList(firewallSchema.shape.ports, items);
+};
+
+export const validateFirewallEnabledServices = (items: string[]) => {
+  return validateList(firewallSchema.shape.services.shape.enabled, items);
+};
+
+export const validateFirewallDisabledServices = (items: string[]) => {
+  return validateList(firewallSchema.shape.services.shape.disabled, items);
+};
+
+export const validateFirewall = (firewall: Firewall) => {
+  return validateSchema(firewallSchema, firewall);
 };
