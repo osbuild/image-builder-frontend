@@ -18,12 +18,9 @@ import {
 
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
-import { Users } from '../AdvancedSettings/components';
-import { UserGroups } from '../AdvancedSettings/components/UserGroups';
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
-import { ReviewCardProps } from '../types';
 
-const ImageOverview = ({ restrictions }: ReviewCardProps) => {
+const ImageOverview = () => {
   const imageName = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
   const isOnPremise = useAppSelector(selectIsOnPremise);
@@ -76,16 +73,6 @@ const ImageOverview = ({ restrictions }: ReviewCardProps) => {
           <PublicClouds environments={publicClouds} />
           <PrivateClouds environments={privateClouds} />
           <MiscFormats environments={miscFormats} />
-          <Users
-            shouldHide={
-              restrictions.users.shouldHide || !restrictions.users.isStandalone
-            }
-          />
-          <UserGroups
-            shouldHide={
-              restrictions.users.shouldHide || !restrictions.users.isStandalone
-            }
-          />
         </ReviewList>
       </CardBody>
     </Card>
