@@ -35,7 +35,7 @@ const ReviewStep = () => {
     <>
       <FormHeader />
       <NoUsersAlert />
-      <ImageOverview restrictions={restrictions} />
+      <ImageOverview />
       <Registration restrictions={restrictions} />
       <RepeatableBuild restrictions={restrictions} />
       <Security restrictions={restrictions} security={security} />
