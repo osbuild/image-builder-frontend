@@ -2,29 +2,28 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import LabelInput from '@/Components/CreateImageWizard/LabelInput';
-import { useFirewallValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { isPortValid } from '@/Components/CreateImageWizard/validators';
-import { useAppSelector } from '@/store/hooks';
-import { addPort, removePort, selectFirewall } from '@/store/slices/wizard';
+import ValidatedListInput from '@/Components/CreateImageWizard/ValidatedListInput';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addPort,
+  removePort,
+  selectFirewall,
+  validateFirewallPorts,
+} from '@/store/slices/wizard';
 
 const PortsInput = () => {
+  const dispatch = useAppDispatch();
   const ports = useAppSelector(selectFirewall).ports;
-
-  const stepValidation = useFirewallValidation();
 
   return (
     <FormGroup label='Ports'>
-      <LabelInput
+      <ValidatedListInput
         ariaLabel='Add ports'
         placeholder='Enter port'
-        validator={isPortValid}
-        list={ports}
-        item='Port'
-        addAction={addPort}
-        removeAction={removePort}
-        stepValidation={stepValidation}
-        fieldName='ports'
+        validator={validateFirewallPorts}
+        items={ports.map((port) => ({ value: port, required: false }))}
+        onAdd={(value) => dispatch(addPort(value))}
+        onRemove={(value) => dispatch(removePort(value))}
         helperText='Examples: 8080:tcp, 443:udp.'
       />
     </FormGroup>

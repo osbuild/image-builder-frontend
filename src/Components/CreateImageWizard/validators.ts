@@ -254,20 +254,6 @@ export const isNtpServerValid = (ntpServer: string) => {
   return /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer);
 };
 
-export const isPortValid = (port: string) => {
-  return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?[:][a-z]{1,6}$/.test(port);
-};
-
-export const isServiceValid = (service: string) => {
-  // see `man systemd.unit` for the exact specification
-  return (
-    service.length <= 256 &&
-    /^[a-zA-Z0-9]([a-zA-Z0-9.\-_:@]*[a-zA-Z0-9])?$/.test(service) &&
-    !/--/.test(service) && // does not contain more hyphens in a row
-    /[a-zA-Z]+/.test(service) // contains at least one letter
-  );
-};
-
 export const isValidUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url);

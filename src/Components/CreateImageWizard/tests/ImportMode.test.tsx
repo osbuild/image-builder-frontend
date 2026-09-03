@@ -226,18 +226,22 @@ describe('ImportMode', () => {
 
     // Firewall
     expect(
-      await screen.findByText(/Invalid ports: invalid-port/),
-    ).toBeInTheDocument();
-    expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-firewall-disabled-service/,
+        'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
       ),
     ).toBeInTheDocument();
+    // Firewall and systemd inputs share these schema messages while both
+    // customization groups still contain invalid values.
     expect(
-      await screen.findByText(
-        /Invalid enabled services: --invalid-firewall-enabled-service/,
+      await screen.findAllByText(
+        'Service name must start with a letter or digit',
       ),
-    ).toBeInTheDocument();
+    ).toHaveLength(5);
+    expect(
+      await screen.findAllByText(
+        'Service name must not contain consecutive hyphens',
+      ),
+    ).toHaveLength(5);
 
     await clickWithWait(
       user,
