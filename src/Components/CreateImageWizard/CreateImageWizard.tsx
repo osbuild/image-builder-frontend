@@ -44,6 +44,7 @@ import {
   loadWizardState,
   parseStateFromRequest,
   selectDistribution,
+  selectFirewall,
   selectHostname,
   selectImageSource,
   selectImageSourceType,
@@ -52,6 +53,7 @@ import {
   selectKernel,
   selectServices,
   selectTimezone,
+  validateFirewall,
   validateHostname,
   validateKernel,
   validateServices,
@@ -104,7 +106,6 @@ import {
   useAzureValidation,
   useDetailsValidation,
   useFilesystemValidation,
-  useFirewallValidation,
   useFirstBootValidation,
   useGcpValidation,
   useImagePullValidation,
@@ -161,7 +162,6 @@ const CreateImageWizard = () => {
   const filesystemValidation = useFilesystemValidation();
   const timezoneValidation = useTimezoneValidation();
   const localeValidation = useLocaleValidation();
-  const firewallValidation = useFirewallValidation();
   const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
@@ -170,6 +170,7 @@ const CreateImageWizard = () => {
   const hostnameErrors = validateHostname(useAppSelector(selectHostname));
   const kernelErrors = validateKernel(useAppSelector(selectKernel));
   const servicesErrors = validateServices(useAppSelector(selectServices));
+  const firewallErrors = validateFirewall(useAppSelector(selectFirewall));
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
@@ -204,7 +205,7 @@ const CreateImageWizard = () => {
     hostnameErrors.length > 0 ||
     kernelErrors.length > 0 ||
     servicesErrors.length > 0 ||
-    firewallValidation.disabledNext ||
+    firewallErrors.length > 0 ||
     firstBootValidation.disabledNext ||
     (!restrictions.users.shouldHide && usersHaveErrors);
 

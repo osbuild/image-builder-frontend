@@ -65,19 +65,15 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('443:udp', { exact: true })).toBeVisible();
   });
 
-  await test.step('Select and correctly fill the disabled services in Firewall step', async () => {
-    await frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(0)
-      .fill('cloud-init');
+  await test.step('Select and correctly fill the enabled services in Firewall step', async () => {
+    await frame.getByLabel('Add enabled firewall service').fill('cloud-init');
     await page.keyboard.press('Enter');
     await expect(frame.getByText('cloud-init')).toBeVisible();
   });
 
-  await test.step('Select and correctly fill the enabled services in Firewall step', async () => {
+  await test.step('Select and correctly fill the disabled services in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(1)
+      .getByLabel('Add disabled firewall service')
       .fill('telnet.socket');
     await page.keyboard.press('Enter');
     await expect(frame.getByText('telnet.socket')).toBeVisible();
@@ -86,24 +82,22 @@ test('Create a blueprint with Firewall customization', async ({
   await test.step('Prevent adding duplicate ports and services', async () => {
     await frame.getByPlaceholder('Enter port').fill('80:tcp');
     await page.keyboard.press('Enter');
-    await expect(frame.getByText('Port already exists.')).toBeVisible();
+    await expect(
+      frame.getByText('Duplicate firewall ports: 80:tcp'),
+    ).toBeVisible();
 
-    await frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(0)
-      .fill('cloud-init');
+    await frame.getByLabel('Add enabled firewall service').fill('cloud-init');
     await page.keyboard.press('Enter');
     await expect(
-      frame.getByText('Enabled service already exists.'),
+      frame.getByText('Duplicate enabled firewall services: cloud-init'),
     ).toBeVisible();
 
     await frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(1)
+      .getByLabel('Add disabled firewall service')
       .fill('telnet.socket');
     await page.keyboard.press('Enter');
     await expect(
-      frame.getByText('Disabled service already exists.'),
+      frame.getByText('Duplicate disabled firewall services: telnet.socket'),
     ).toBeVisible();
   });
 
@@ -111,34 +105,27 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByPlaceholder('Enter port').fill('00:wrongFormat');
     await page.keyboard.press('Enter');
     await expect(
-      frame
-        .getByText(
-          'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
-        )
-        .nth(0),
-    ).toBeVisible();
-  });
-
-  await test.step('Select and incorrectly fill the disabled services in Firewall step', async () => {
-    await frame.getByPlaceholder('Enter firewalld service').nth(0).fill('1');
-    await page.keyboard.press('Enter');
-    await expect(
-      frame
-        .getByText('Expected format: <firewalld-service-name>. Example: ssh.')
-        .nth(0),
+      frame.getByText(
+        'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
+      ),
     ).toBeVisible();
   });
 
   await test.step('Select and incorrectly fill the enabled services in Firewall step', async () => {
+    await frame.getByLabel('Add enabled firewall service').fill('1');
+    await page.keyboard.press('Enter');
+    await expect(
+      frame.getByText('Service name must contain at least one letter'),
+    ).toBeVisible();
+  });
+
+  await test.step('Select and incorrectly fill the disabled services in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(1)
+      .getByLabel('Add disabled firewall service')
       .fill('wrong--service');
     await page.keyboard.press('Enter');
     await expect(
-      frame
-        .getByText('Expected format: <firewalld-service-name>. Example: ssh.')
-        .nth(1),
+      frame.getByText('Service name must not contain consecutive hyphens'),
     ).toBeVisible();
   });
 
@@ -173,9 +160,9 @@ test('Create a blueprint with Firewall customization', async ({
 
     await frame.getByPlaceholder('Enter port').fill('90:tcp');
     await page.keyboard.press('Enter');
-    await frame.getByPlaceholder('Enter firewalld service').nth(0).fill('x');
+    await frame.getByLabel('Add enabled firewall service').fill('x');
     await page.keyboard.press('Enter');
-    await frame.getByPlaceholder('Enter firewalld service').nth(1).fill('y');
+    await frame.getByLabel('Add disabled firewall service').fill('y');
     await page.keyboard.press('Enter');
 
     await frame.getByRole('button', { name: 'Remove 80:tcp' }).click();
@@ -184,8 +171,8 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByRole('button', { name: 'Remove telnet.socket' }).click();
 
     await expect(frame.getByText('90:tcp')).toBeVisible();
-    await expect(frame.getByText('x').nth(0)).toBeVisible();
-    await expect(frame.getByText('y').nth(0)).toBeVisible();
+    await expect(frame.getByText('x', { exact: true })).toBeVisible();
+    await expect(frame.getByText('y', { exact: true })).toBeVisible();
 
     await expect(frame.getByText('80:tcp', { exact: true })).toBeHidden();
     await expect(frame.getByText('443:udp', { exact: true })).toBeHidden();
@@ -228,8 +215,8 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
 
     await expect(frame.getByText('90:tcp')).toBeVisible();
-    await expect(frame.getByText('x').nth(0)).toBeVisible();
-    await expect(frame.getByText('y').nth(0)).toBeVisible();
+    await expect(frame.getByText('x', { exact: true })).toBeVisible();
+    await expect(frame.getByText('y', { exact: true })).toBeVisible();
 
     await expect(frame.getByText('80:tcp', { exact: true })).toBeHidden();
     await expect(frame.getByText('443:udp', { exact: true })).toBeHidden();
@@ -327,9 +314,7 @@ test('Firewall fields collapse chips with show less / more', async ({
   });
 
   await test.step('Enabled services: collapses and shows "X more" when more than 4', async () => {
-    const enabledInput = frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(0);
+    const enabledInput = frame.getByLabel('Add enabled firewall service');
     for (const service of ['ssh', 'http', 'https', 'dhcp', 'dns']) {
       await enabledInput.fill(service);
       await page.keyboard.press('Enter');
@@ -344,9 +329,7 @@ test('Firewall fields collapse chips with show less / more', async ({
   });
 
   await test.step('Disabled services: collapses and shows "X more" when more than 4', async () => {
-    const disabledInput = frame
-      .getByPlaceholder('Enter firewalld service')
-      .nth(1);
+    const disabledInput = frame.getByLabel('Add disabled firewall service');
     for (const service of ['telnet', 'ftp', 'nfs', 'samba', 'cups']) {
       await disabledInput.fill(service);
       await page.keyboard.press('Enter');
@@ -357,6 +340,6 @@ test('Firewall fields collapse chips with show less / more', async ({
     await expect(frame.getByText('nfs')).toBeVisible();
     await expect(frame.getByText('samba')).toBeVisible();
     await expect(frame.getByText('cups')).toBeHidden();
-    await expect(frame.getByText('1 more').nth(1)).toBeVisible();
+    await expect(frame.getByText('1 more').last()).toBeVisible();
   });
 });

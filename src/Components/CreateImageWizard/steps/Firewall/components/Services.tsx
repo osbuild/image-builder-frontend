@@ -2,50 +2,49 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import LabelInput from '@/Components/CreateImageWizard/LabelInput';
-import { useFirewallValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { isServiceValid } from '@/Components/CreateImageWizard/validators';
-import { useAppSelector } from '@/store/hooks';
+import ValidatedListInput from '@/Components/CreateImageWizard/ValidatedListInput';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addDisabledFirewallService,
   addEnabledFirewallService,
   removeDisabledFirewallService,
   removeEnabledFirewallService,
   selectFirewall,
+  validateFirewallDisabledServices,
+  validateFirewallEnabledServices,
 } from '@/store/slices/wizard';
 
 const Services = () => {
+  const dispatch = useAppDispatch();
   const disabledServices = useAppSelector(selectFirewall).services.disabled;
   const enabledServices = useAppSelector(selectFirewall).services.enabled;
-
-  const stepValidation = useFirewallValidation();
 
   return (
     <>
       <FormGroup label='Enabled services'>
-        <LabelInput
+        <ValidatedListInput
           ariaLabel='Add enabled firewall service'
           placeholder='Enter firewalld service'
-          validator={isServiceValid}
-          list={enabledServices}
-          item='Enabled service'
-          addAction={addEnabledFirewallService}
-          removeAction={removeEnabledFirewallService}
-          stepValidation={stepValidation}
-          fieldName='enabledServices'
+          validator={validateFirewallEnabledServices}
+          items={enabledServices.map((service) => ({
+            value: service,
+            required: false,
+          }))}
+          onAdd={(value) => dispatch(addEnabledFirewallService(value))}
+          onRemove={(value) => dispatch(removeEnabledFirewallService(value))}
         />
       </FormGroup>
       <FormGroup label='Disabled services'>
-        <LabelInput
+        <ValidatedListInput
           ariaLabel='Add disabled firewall service'
           placeholder='Enter firewalld service'
-          validator={isServiceValid}
-          list={disabledServices}
-          item='Disabled service'
-          addAction={addDisabledFirewallService}
-          removeAction={removeDisabledFirewallService}
-          stepValidation={stepValidation}
-          fieldName='disabledServices'
+          validator={validateFirewallDisabledServices}
+          items={disabledServices.map((service) => ({
+            value: service,
+            required: false,
+          }))}
+          onAdd={(value) => dispatch(addDisabledFirewallService(value))}
+          onRemove={(value) => dispatch(removeDisabledFirewallService(value))}
         />
       </FormGroup>
     </>

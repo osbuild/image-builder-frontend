@@ -69,6 +69,7 @@ import {
   selectUserGroups,
   selectUsers,
   UserWithAdditionalInfo,
+  validateFirewall,
   validateHostname,
   validateKernel,
   validateServices,
@@ -95,8 +96,6 @@ import {
   isMountpointMinSizeValid,
   isNtpServerValid,
   isPartitionNameValid,
-  isPortValid,
-  isServiceValid,
   isSnapshotValid,
   isSshKeyValid,
   isUserGroupValid,
@@ -135,7 +134,6 @@ export function useIsBlueprintValid(): boolean {
   const snapshot = useSnapshotValidation();
   const timezone = useTimezoneValidation();
   const locale = useLocaleValidation();
-  const firewall = useFirewallValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
@@ -147,6 +145,7 @@ export function useIsBlueprintValid(): boolean {
   const hostnameErrors = validateHostname(useAppSelector(selectHostname));
   const kernelErrors = validateKernel(useAppSelector(selectKernel));
   const serviceErrors = validateServices(useAppSelector(selectServices));
+  const firewallErrors = validateFirewall(useAppSelector(selectFirewall));
 
   return (
     !aap.disabledNext &&
@@ -157,7 +156,7 @@ export function useIsBlueprintValid(): boolean {
     !locale.disabledNext &&
     hostnameErrors.length === 0 &&
     kernelErrors.length === 0 &&
-    !firewall.disabledNext &&
+    firewallErrors.length === 0 &&
     serviceErrors.length === 0 &&
     !firstBoot.disabledNext &&
     !details.disabledNext &&
@@ -633,89 +632,6 @@ export function useFirstBootValidation(): StepValidation {
       script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
     },
     disabledNext: !valid,
-  };
-}
-
-export function useFirewallValidation(): StepValidation {
-  const firewall = useAppSelector(selectFirewall);
-  const invalidPorts = [];
-  const invalidDisabled = [];
-  const invalidEnabled = [];
-
-  if (firewall.ports.length > 0) {
-    for (const port of firewall.ports) {
-      if (!isPortValid(port)) {
-        invalidPorts.push(port);
-      }
-    }
-  }
-
-  if (firewall.services.disabled.length > 0) {
-    for (const s of firewall.services.disabled) {
-      if (!isServiceValid(s)) {
-        invalidDisabled.push(s);
-      }
-    }
-  }
-
-  if (firewall.services.enabled.length > 0) {
-    for (const s of firewall.services.enabled) {
-      if (!isServiceValid(s)) {
-        invalidEnabled.push(s);
-      }
-    }
-  }
-
-  const duplicatePorts = getListOfDuplicates(firewall.ports);
-  const duplicateDisabledServices = getListOfDuplicates(
-    firewall.services.disabled,
-  );
-  const duplicateEnabledServices = getListOfDuplicates(
-    firewall.services.enabled,
-  );
-
-  const portsError =
-    invalidPorts.length > 0 ? `Invalid ports: ${invalidPorts}` : '';
-  const duplicatePortsError =
-    duplicatePorts.length > 0
-      ? `Includes duplicate ports: ${duplicatePorts.join(', ')}`
-      : '';
-  const duplicateDisabledServicesError =
-    duplicateDisabledServices.length > 0
-      ? `Includes duplicate disabled services: ${duplicateDisabledServices.join(
-          ', ',
-        )}`
-      : '';
-  const duplicateEnabledServicesError =
-    duplicateEnabledServices.length > 0
-      ? `Includes duplicate enabled services: ${duplicateEnabledServices.join(
-          ', ',
-        )}`
-      : '';
-  const disabledServicesError =
-    invalidDisabled.length > 0
-      ? `Invalid disabled services: ${invalidDisabled}`
-      : '';
-  const enabledServicesError =
-    invalidEnabled.length > 0
-      ? `Invalid enabled services: ${invalidEnabled}`
-      : '';
-
-  return {
-    errors: {
-      ports: portsError + '|' + duplicatePortsError,
-      disabledServices:
-        disabledServicesError + '|' + duplicateDisabledServicesError,
-      enabledServices:
-        enabledServicesError + '|' + duplicateEnabledServicesError,
-    },
-    disabledNext:
-      invalidPorts.length > 0 ||
-      invalidDisabled.length > 0 ||
-      invalidEnabled.length > 0 ||
-      duplicatePorts.length > 0 ||
-      duplicateDisabledServices.length > 0 ||
-      duplicateEnabledServices.length > 0,
   };
 }
 

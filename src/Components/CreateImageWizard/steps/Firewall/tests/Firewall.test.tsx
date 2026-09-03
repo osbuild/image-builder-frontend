@@ -102,7 +102,9 @@ describe('Firewall Component', () => {
       await addPort(user, '80:tcp');
       await addPort(user, '80:tcp');
 
-      expect(screen.getByText('Port already exists.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Duplicate firewall ports: 80:tcp'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -135,17 +137,13 @@ describe('Firewall Component', () => {
       await addEnabledService(user, '-------');
 
       expect(
-        screen.getByText(
-          'Expected format: <firewalld-service-name>. Example: ssh.',
-        ),
+        screen.getByText('Service name must start with a letter or digit'),
       ).toBeInTheDocument();
 
       await clearEnabledServiceInput(user);
 
       expect(
-        screen.queryByText(
-          'Expected format: <firewalld-service-name>. Example: ssh.',
-        ),
+        screen.queryByText('Service name must start with a letter or digit'),
       ).not.toBeInTheDocument();
     });
 
@@ -157,7 +155,7 @@ describe('Firewall Component', () => {
       await addEnabledService(user, 'ssh');
 
       expect(
-        screen.getByText('Enabled service already exists.'),
+        screen.getByText('Duplicate enabled firewall services: ssh'),
       ).toBeInTheDocument();
     });
   });
@@ -191,17 +189,13 @@ describe('Firewall Component', () => {
       await addDisabledService(user, '-------');
 
       expect(
-        screen.getByText(
-          'Expected format: <firewalld-service-name>. Example: ssh.',
-        ),
+        screen.getByText('Service name must start with a letter or digit'),
       ).toBeInTheDocument();
 
       await clearDisabledServiceInput(user);
 
       expect(
-        screen.queryByText(
-          'Expected format: <firewalld-service-name>. Example: ssh.',
-        ),
+        screen.queryByText('Service name must start with a letter or digit'),
       ).not.toBeInTheDocument();
     });
 
@@ -213,7 +207,7 @@ describe('Firewall Component', () => {
       await addDisabledService(user, 'telnet');
 
       expect(
-        screen.getByText('Disabled service already exists.'),
+        screen.getByText('Duplicate disabled firewall services: telnet'),
       ).toBeInTheDocument();
     });
   });
