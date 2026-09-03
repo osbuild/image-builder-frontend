@@ -62,3 +62,22 @@ export const servicesSchema = z.object({
     .array(serviceSchema)
     .superRefine(uniqueArray('disabled services')),
 });
+
+export const firewallPortSchema = z
+  .string()
+  .regex(
+    /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?[:][a-z]{1,6}$/,
+    'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
+  );
+
+export const firewallSchema = z.object({
+  ports: z.array(firewallPortSchema).superRefine(uniqueArray('firewall ports')),
+  services: z.object({
+    enabled: z
+      .array(serviceSchema)
+      .superRefine(uniqueArray('enabled firewall services')),
+    disabled: z
+      .array(serviceSchema)
+      .superRefine(uniqueArray('disabled firewall services')),
+  }),
+});
