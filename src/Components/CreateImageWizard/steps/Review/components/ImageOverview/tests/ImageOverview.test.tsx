@@ -269,30 +269,6 @@ describe('ImageOverview', () => {
   });
 
   describe('Users', () => {
-    test('does not render users + groups section when users are standalone', () => {
-      renderWithRedux(
-        <ImageOverview
-          restrictions={createDefaultRestrictions({
-            users: { isStandalone: true },
-          })}
-        />,
-        {
-          output: {
-            ...initialState.output,
-            imageTypes: ['guest-image'],
-          },
-          system: {
-            ...initialState.system,
-            users: [adminUser],
-            groups: userGroups,
-          },
-        },
-      );
-
-      expect(screen.queryByText('Custom users')).not.toBeInTheDocument();
-      expect(screen.queryByText('User groups')).not.toBeInTheDocument();
-    });
-
     test('does not render users section from image overview', () => {
       renderWithRedux(<ImageOverview />, {
         output: {

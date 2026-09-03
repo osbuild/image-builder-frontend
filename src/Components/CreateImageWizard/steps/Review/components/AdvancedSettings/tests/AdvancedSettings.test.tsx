@@ -1280,11 +1280,11 @@ echo 'Hello there, General Kenobi!'`;
       expect(screen.getByText('User groups')).toBeInTheDocument();
     });
 
-    test('renders users section when users are standalone', () => {
+    test('does not render users section when users are hidden', () => {
       renderWithRedux(
         <AdvancedSettingsOverview
           restrictions={createDefaultRestrictions({
-            users: { isStandalone: true },
+            users: { shouldHide: true },
           })}
         />,
         {
@@ -1300,8 +1300,8 @@ echo 'Hello there, General Kenobi!'`;
         },
       );
 
-      expect(screen.getAllByText('Users').length).toBeGreaterThan(0);
-      expect(screen.getByText('User groups')).toBeInTheDocument();
+      expect(screen.queryByText('Users')).not.toBeInTheDocument();
+      expect(screen.queryByText('User groups')).not.toBeInTheDocument();
     });
   });
 

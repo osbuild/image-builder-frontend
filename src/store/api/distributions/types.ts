@@ -23,5 +23,4 @@ export type CustomizationRestrictions = Partial<
 
 export type RestrictionStrategy = {
   shouldHide: boolean;
-  isStandalone: boolean;
 };
