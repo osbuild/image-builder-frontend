@@ -44,19 +44,13 @@ import {
   loadWizardState,
   parseStateFromRequest,
   selectDistribution,
-  selectFirewall,
-  selectHostname,
   selectImageSource,
   selectImageSourceType,
   selectImageTypes,
   selectIsImageMode,
-  selectKernel,
-  selectServices,
+  selectSystem,
   selectTimezone,
-  validateFirewall,
-  validateHostname,
-  validateKernel,
-  validateServices,
+  validateSystemSlice,
 } from '@/store/slices/wizard';
 import {
   closeWizardModal,
@@ -167,10 +161,8 @@ const CreateImageWizard = () => {
   const userGroupsValidation = useUserGroupsValidation();
   const imagePullValidation = useImagePullValidation();
 
-  const hostnameErrors = validateHostname(useAppSelector(selectHostname));
-  const kernelErrors = validateKernel(useAppSelector(selectKernel));
-  const servicesErrors = validateServices(useAppSelector(selectServices));
-  const firewallErrors = validateFirewall(useAppSelector(selectFirewall));
+  const system = useAppSelector(selectSystem);
+  const systemErrors = validateSystemSlice(system);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
@@ -202,10 +194,7 @@ const CreateImageWizard = () => {
     filesystemValidation.disabledNext ||
     timezoneValidation.disabledNext ||
     localeValidation.disabledNext ||
-    hostnameErrors.length > 0 ||
-    kernelErrors.length > 0 ||
-    servicesErrors.length > 0 ||
-    firewallErrors.length > 0 ||
+    systemErrors.length > 0 ||
     firstBootValidation.disabledNext ||
     (!restrictions.users.shouldHide && usersHaveErrors);
 
