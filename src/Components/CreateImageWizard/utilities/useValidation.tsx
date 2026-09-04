@@ -52,6 +52,7 @@ import {
   selectHostname,
   selectImageSource,
   selectImageTypes,
+  selectIsImageMode,
   selectIsOfficialImage,
   selectIsoPayloadReference,
   selectKernel,
@@ -128,7 +129,22 @@ export type UsersStepValidation = {
   disabledNext: boolean;
 };
 
-export function useIsBlueprintValid(): boolean {
+export const WIZARD_STEP_IDS = {
+  BASE_SETTINGS: 'base-settings-step',
+  CONTENT: 'content-step',
+  ADVANCED_SETTINGS: 'advanced-settings-step',
+  REVIEW: 'review-step',
+} as const;
+
+export type WizardStepId =
+  (typeof WIZARD_STEP_IDS)[keyof typeof WIZARD_STEP_IDS];
+
+type BlueprintValidation = {
+  isValid: boolean;
+  firstErrorStepId: WizardStepId | null;
+};
+
+export function useBlueprintValidation(): BlueprintValidation {
   const aap = useAAPValidation();
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
@@ -145,29 +161,54 @@ export function useIsBlueprintValid(): boolean {
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
-
+  const imagePull = useImagePullValidation();
+  const targetEnvironments = useAppSelector(selectImageTypes);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const isImageMode = useAppSelector(selectIsImageMode);
+  const imageSource = useAppSelector(selectImageSource);
   const hostnameErrors = validateHostname(useAppSelector(selectHostname));
 
-  return (
-    !aap.disabledNext &&
-    !registration.disabledNext &&
-    !filesystem.disabledNext &&
-    !snapshot.disabledNext &&
-    !timezone.disabledNext &&
-    !locale.disabledNext &&
-    hostnameErrors.length === 0 &&
-    !kernel.disabledNext &&
-    !firewall.disabledNext &&
-    !services.disabledNext &&
-    !firstBoot.disabledNext &&
-    !details.disabledNext &&
-    !details.isPending &&
-    !users.disabledNext &&
-    !userGroups.disabledNext &&
-    !azureTarget.disabledNext &&
-    !gcpTarget.disabledNext &&
-    !awsTarget.disabledNext
-  );
+  const usersAreStandalone = isImageMode && isOnPremise;
+  const usersHaveErrors = users.disabledNext || userGroups.disabledNext;
+
+  const baseSettingsInvalid =
+    targetEnvironments.length === 0 ||
+    (isImageMode && !imageSource) ||
+    aap.disabledNext ||
+    details.disabledNext ||
+    registration.disabledNext ||
+    snapshot.disabledNext ||
+    awsTarget.disabledNext ||
+    gcpTarget.disabledNext ||
+    azureTarget.disabledNext ||
+    imagePull.disabledNext ||
+    (usersAreStandalone && usersHaveErrors);
+
+  const advancedSettingsInvalid =
+    filesystem.disabledNext ||
+    timezone.disabledNext ||
+    locale.disabledNext ||
+    hostnameErrors.length > 0 ||
+    kernel.disabledNext ||
+    firewall.disabledNext ||
+    services.disabledNext ||
+    firstBoot.disabledNext ||
+    (!usersAreStandalone && usersHaveErrors);
+
+  const isValid = !baseSettingsInvalid && !advancedSettingsInvalid;
+
+  return {
+    isValid,
+    firstErrorStepId: !isValid
+      ? baseSettingsInvalid
+        ? WIZARD_STEP_IDS.BASE_SETTINGS
+        : WIZARD_STEP_IDS.ADVANCED_SETTINGS
+      : null,
+  };
+}
+
+export function useIsBlueprintValid(): boolean {
+  return useBlueprintValidation().isValid;
 }
 
 type PasswordValidationResult = {
