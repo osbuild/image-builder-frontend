@@ -10,7 +10,8 @@ import {
 import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectComplianceType } from '@/store/slices';
 import { FilesystemPartition, removePartition } from '@/store/slices/wizard';
 
 import MinimumSize from './MinimumSize';
@@ -33,6 +34,7 @@ const Row = ({
   oscapMinSizeLabel,
 }: RowPropTypes) => {
   const dispatch = useAppDispatch();
+  const complianceType = useAppSelector(selectComplianceType);
 
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
@@ -97,7 +99,9 @@ const Row = ({
           <Tooltip
             content={
               isOscapRequired
-                ? 'Required by the selected OpenSCAP profile'
+                ? complianceType === 'openscap'
+                  ? 'Required by the selected OpenSCAP profile'
+                  : 'Required by the selected compliance policy'
                 : 'Root partition is required'
             }
           >

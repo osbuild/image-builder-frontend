@@ -4,7 +4,8 @@ import { Tooltip } from '@patternfly/react-core';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectComplianceType } from '@/store/slices';
 import {
   changePartitionMinSize,
   changePartitionUnit,
@@ -29,6 +30,7 @@ const MinimumSize = ({
   oscapMinSizeLabel,
 }: MinimumSizePropTypes) => {
   const dispatch = useAppDispatch();
+  const complianceType = useAppSelector(selectComplianceType);
   const stepValidation = useFilesystemValidation();
 
   const sizeInput = (
@@ -69,7 +71,7 @@ const MinimumSize = ({
   if (isOscapRequired && oscapMinSizeLabel) {
     return (
       <Tooltip
-        content={`Minimum ${oscapMinSizeLabel} required by the selected OpenSCAP profile`}
+        content={`Minimum ${oscapMinSizeLabel} required by the selected ${complianceType === 'openscap' ? 'OpenSCAP profile' : 'compliance policy'}`}
       >
         <div>{sizeInput}</div>
       </Tooltip>
