@@ -160,7 +160,7 @@ describe('Kernel Component', () => {
       await addKernelArgument(user, 'invalid$argument');
 
       expect(
-        screen.getByText(/Expected format: <kernel-argument>/i),
+        screen.getByText(/Kernel argument contains invalid characters/i),
       ).toBeInTheDocument();
     });
   });

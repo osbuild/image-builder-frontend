@@ -1,16 +1,16 @@
-import { hostnameSchema } from './schemas';
+import { hostnameSchema, kernelSchema } from './schemas';
+import { Kernel } from './types';
 
-import type { ValidationResult } from '../types';
+import { validateList, validateSchema } from '../validators';
 
-export const validateHostname = (hostname: string): ValidationResult => {
-  if (!hostname) return [];
+export const validateHostname = (hostname: string) => {
+  return validateSchema(hostnameSchema, hostname);
+};
 
-  const result = hostnameSchema.safeParse(hostname);
-  if (result.success) return [];
+export const validateKernelArgs = (items: string[]) => {
+  return validateList(kernelSchema.shape.append, items);
+};
 
-  return result.error.issues.map((issue) => ({
-    kind: 'format' as const,
-    message: issue.message,
-    value: hostname,
-  }));
+export const validateKernel = (kernel: Kernel) => {
+  return validateSchema(kernelSchema, kernel);
 };
