@@ -43,17 +43,14 @@ import {
   selectDiskMinsize,
   selectDiskPartitions,
   selectFilesystemPartitions,
-  selectFirewall,
   selectFirstBootScript,
   selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
-  selectHostname,
   selectImageSource,
   selectImageTypes,
   selectIsOfficialImage,
   selectIsoPayloadReference,
-  selectKernel,
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
@@ -61,18 +58,15 @@ import {
   selectRegistrationType,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
-  selectServices,
   selectSnapshotDate,
+  selectSystem,
   selectTemplate,
   selectTimezone,
   selectUseLatest,
   selectUserGroups,
   selectUsers,
   UserWithAdditionalInfo,
-  validateFirewall,
-  validateHostname,
-  validateKernel,
-  validateServices,
+  validateSystemSlice,
 } from '@/store/slices/wizard';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -142,10 +136,8 @@ export function useIsBlueprintValid(): boolean {
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
 
-  const hostnameErrors = validateHostname(useAppSelector(selectHostname));
-  const kernelErrors = validateKernel(useAppSelector(selectKernel));
-  const serviceErrors = validateServices(useAppSelector(selectServices));
-  const firewallErrors = validateFirewall(useAppSelector(selectFirewall));
+  const system = useAppSelector(selectSystem);
+  const systemErrors = validateSystemSlice(system);
 
   return (
     !aap.disabledNext &&
@@ -154,10 +146,7 @@ export function useIsBlueprintValid(): boolean {
     !snapshot.disabledNext &&
     !timezone.disabledNext &&
     !locale.disabledNext &&
-    hostnameErrors.length === 0 &&
-    kernelErrors.length === 0 &&
-    firewallErrors.length === 0 &&
-    serviceErrors.length === 0 &&
+    systemErrors.length === 0 &&
     !firstBoot.disabledNext &&
     !details.disabledNext &&
     !details.isPending &&
