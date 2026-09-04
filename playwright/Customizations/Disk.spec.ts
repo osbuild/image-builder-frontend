@@ -1,7 +1,7 @@
 import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
-import { expect } from '@playwright/test';
+import { expect, FrameLocator, Page } from '@playwright/test';
 
 import { test } from '../fixtures/customizations';
 import { exportedDiskBP } from '../fixtures/data/exportBlueprintContents';
@@ -22,6 +22,20 @@ import {
   registerLater,
   verifyExportedBlueprint,
 } from '../helpers/wizardHelpers';
+
+const getPlainPartitionRow = (frame: FrameLocator | Page, index: number) =>
+  frame
+    .getByLabel('File system table')
+    .first()
+    .locator('[data-testid^="partition-row-"]')
+    .nth(index);
+
+const getLvmPartitionRow = (frame: FrameLocator | Page, index: number) =>
+  frame
+    .getByLabel('File system table')
+    .nth(1)
+    .locator('[data-testid^="partition-row-"]')
+    .nth(index);
 
 test('Create a blueprint with Disk customization', async ({
   page,
@@ -76,10 +90,7 @@ test('Create a blueprint with Disk customization', async ({
 
   await test.step('Fill in some partitions and add a volume group', async () => {
     await frame.getByRole('button', { name: 'Add plain partition' }).click();
-    await frame
-      .getByRole('gridcell', { name: '/home' })
-      .getByPlaceholder('Define mount point')
-      .fill('/var/usb');
+    await frame.locator('input[value="/home"]').fill('/var/usb');
 
     await frame.getByPlaceholder('Define minimum size').nth(1).fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
@@ -87,10 +98,9 @@ test('Create a blueprint with Disk customization', async ({
 
     await frame.getByRole('button', { name: 'Volume Group Manager' }).click();
     await expect(
-      frame
-        .getByRole('row')
-        .nth(1)
-        .getByRole('button', { name: 'Remove partition' }),
+      getPlainPartitionRow(frame, 0).getByRole('button', {
+        name: 'Remove partition',
+      }),
     ).toBeEnabled();
 
     await frame
@@ -108,18 +118,16 @@ test('Create a blueprint with Disk customization', async ({
       .fill('lv1');
     await frame.getByRole('button', { name: 'Add logical volume' }).click();
     await frame
-      .getByRole('gridcell', { name: /\/home/ })
-      .getByPlaceholder('Define mount point')
+      .getByLabel('File system table')
+      .nth(1)
+      .locator('input[value="/home"]')
       .fill('/tmp/usb');
 
-    await frame
-      .getByRole('row', { name: /lv1/ })
+    const lv1Row = getLvmPartitionRow(frame, 0);
+    await lv1Row
       .getByRole('textbox', { name: 'Partition name input' })
       .fill('lv2');
-    await frame
-      .getByRole('row', { name: /lv2/ })
-      .getByPlaceholder('Define minimum size')
-      .fill('10');
+    await lv1Row.getByPlaceholder('Define minimum size').fill('10');
     await frame.getByRole('button', { name: 'GiB' }).nth(1).click();
     await frame.getByRole('option', { name: 'MiB' }).click();
   });
@@ -142,13 +150,15 @@ test('Create a blueprint with Disk customization', async ({
       }),
     ).toBeVisible();
 
-    const removeRootButton = frame
-      .getByRole('row')
-      .nth(1)
-      .getByRole('button', { name: 'Remove partition' });
+    const removeRootButton = getPlainPartitionRow(frame, 0).getByRole(
+      'button',
+      {
+        name: 'Remove partition',
+      },
+    );
     await expect(removeRootButton).toBeEnabled();
 
-    const secondRow = frame.getByRole('row').nth(2);
+    const secondRow = getPlainPartitionRow(frame, 1);
 
     const removeTmpButton = secondRow.getByRole('button', {
       name: 'Remove partition',
@@ -218,25 +228,25 @@ test('Create a blueprint with Disk customization', async ({
       }),
     ).toBeVisible();
 
-    const removeRootButton = frame
-      .getByRole('row')
-      .nth(1)
-      .getByRole('button', { name: 'Remove partition' });
+    const removeRootButton = getPlainPartitionRow(frame, 0).getByRole(
+      'button',
+      {
+        name: 'Remove partition',
+      },
+    );
 
     await expect(removeRootButton).toBeEnabled();
 
-    const secondRow = frame.getByRole('row').nth(2);
+    const secondRow = getPlainPartitionRow(frame, 1);
 
     const removeTmpButton = secondRow.getByRole('button', {
       name: 'Remove partition',
     });
     await expect(removeTmpButton).toBeEnabled();
 
-    await expect(
-      secondRow
-        .getByRole('gridcell', { name: '/srv/data' })
-        .getByPlaceholder('Define mount point'),
-    ).toBeVisible();
+    await expect(secondRow.getByPlaceholder('Define mount point')).toHaveValue(
+      '/srv/data',
+    );
 
     const size = secondRow.getByPlaceholder('Define minimum size');
     await expect(size).toHaveValue('5');

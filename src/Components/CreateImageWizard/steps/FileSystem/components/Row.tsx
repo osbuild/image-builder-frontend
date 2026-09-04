@@ -2,13 +2,14 @@ import React from 'react';
 
 import {
   Button,
+  Flex,
+  FlexItem,
   Split,
   SplitItem,
   TextInput,
   Tooltip,
 } from '@patternfly/react-core';
 import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { Td, Tr } from '@patternfly/react-table';
 
 import { useAppDispatch } from '@/store/hooks';
 import { FilesystemPartition, removePartition } from '@/store/slices/wizard';
@@ -57,23 +58,29 @@ const Row = ({
   );
 
   return (
-    <Tr id={partition.id}>
-      <Td width={40}>
+    <Flex
+      role='row'
+      id={partition.id}
+      data-testid={`partition-row-${partition.id}`}
+      alignItems={{ default: 'alignItemsFlexStart' }}
+      className='pf-v6-u-pb-sm'
+    >
+      <FlexItem role='cell' style={{ flex: '0 0 40%' }}>
         <Mountpoint
           partition={partition}
           customization={customization}
           isOscapRequired={isOscapRequired}
         />
-      </Td>
-      <Td width={20}>
+      </FlexItem>
+      <FlexItem role='cell' style={{ flex: '0 0 20%' }}>
         <TextInput
           value='xfs'
           type='text'
           aria-label='Partition type'
           isDisabled
         />
-      </Td>
-      <Td width={40}>
+      </FlexItem>
+      <FlexItem role='cell' style={{ flex: '1 1 auto' }}>
         <Split hasGutter>
           <SplitItem isFilled>
             <MinimumSize
@@ -91,8 +98,8 @@ const Row = ({
             />
           </SplitItem>
         </Split>
-      </Td>
-      <Td isActionCell>
+      </FlexItem>
+      <FlexItem role='cell' style={{ flex: '0 0 auto' }}>
         {isOscapRequired || isRemovingDisabled ? (
           <Tooltip
             content={
@@ -106,8 +113,8 @@ const Row = ({
         ) : (
           removeButton
         )}
-      </Td>
-    </Tr>
+      </FlexItem>
+    </Flex>
   );
 };
 

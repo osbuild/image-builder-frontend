@@ -1,8 +1,13 @@
 import React from 'react';
 
-import { Button, Split, SplitItem } from '@patternfly/react-core';
+import {
+  Button,
+  Flex,
+  FlexItem,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-import { Td, Tr } from '@patternfly/react-table';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -36,19 +41,28 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
   }
 
   return (
-    <Tr id={partition.id}>
+    <Flex
+      role='row'
+      id={partition.id}
+      data-testid={`partition-row-${partition.id}`}
+      alignItems={{ default: 'alignItemsFlexStart' }}
+      className='pf-v6-u-pb-sm'
+    >
       {partition.type !== 'plain' && (
-        <Td width={30}>
+        <FlexItem role='cell' style={{ flex: '0 0 25%' }}>
           <PartitionName partition={partition} customization={customization} />
-        </Td>
+        </FlexItem>
       )}
-      <Td width={30}>
+      <FlexItem
+        role='cell'
+        style={{ flex: partition.type !== 'plain' ? '0 0 25%' : '0 0 40%' }}
+      >
         <Mountpoint partition={partition} customization={customization} />
-      </Td>
-      <Td width={10}>
+      </FlexItem>
+      <FlexItem role='cell' style={{ flex: '0 0 10%' }}>
         <PartitionType partition={partition} customization={customization} />
-      </Td>
-      <Td width={30}>
+      </FlexItem>
+      <FlexItem role='cell' style={{ flex: '1 1 auto' }}>
         <Split hasGutter>
           <SplitItem isFilled>
             <MinimumSize partition={partition} customization={customization} />
@@ -57,14 +71,12 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
             <SizeUnit partition={partition} customization={customization} />
           </SplitItem>
         </Split>
-      </Td>
-      <Td isActionCell>
+      </FlexItem>
+      <FlexItem role='cell' style={{ flex: '0 0 auto' }}>
         <Button
           variant='plain'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          // there needs to be at least one logical volume in a volume group
-          // this disables the "remove partition" button until another volume is added
           isDisabled={diskPartitions.some(
             (vg) =>
               vg.type === 'lvm' &&
@@ -73,8 +85,8 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
           )}
           aria-label='Remove partition'
         />
-      </Td>
-    </Tr>
+      </FlexItem>
+    </Flex>
   );
 };
 

@@ -77,15 +77,11 @@ describe('ImportMode', () => {
     await clickNext();
 
     // File system
-    const partitionsTable = await screen.findByRole('grid', {
-      name: /file system table/i,
-    });
+    const partitionsTable = await screen.findByLabelText(/file system table/i);
     expect(
       await within(partitionsTable).findByDisplayValue('/var'),
     ).toBeInTheDocument();
-    expect(
-      within(partitionsTable).getByRole('cell', { name: /2/i }),
-    ).toBeInTheDocument();
+    expect(within(partitionsTable).getByDisplayValue('2')).toBeInTheDocument();
 
     // Timezone
     await screen.findByRole('heading', { name: 'Time' });
