@@ -2,7 +2,12 @@ import z from 'zod';
 
 import { Locale, Timezone, User } from '@/store/api/backend';
 
-import { firewallSchema, kernelSchema, servicesSchema } from './schemas';
+import {
+  firewallSchema,
+  kernelSchema,
+  servicesSchema,
+  systemSchema,
+} from './schemas';
 
 export type Kernel = z.infer<typeof kernelSchema>;
 export type Services = z.infer<typeof servicesSchema>;
@@ -55,26 +60,9 @@ export type UserGroup = {
   gid?: number;
 };
 
-export type SystemSlice = {
-  services: {
-    enabled: string[];
-    masked: string[];
-    disabled: string[];
-  };
-  kernel: {
-    name: string;
-    append: string[];
-  };
+export type SystemSlice = z.infer<typeof systemSchema> & {
   locale: Locale;
   timezone: Timezone;
-  hostname: string;
-  firewall: {
-    ports: string[];
-    services: {
-      enabled: string[];
-      disabled: string[];
-    };
-  };
   firstBoot: {
     script: string;
   };

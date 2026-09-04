@@ -81,3 +81,11 @@ export const firewallSchema = z.object({
       .superRefine(uniqueArray('disabled firewall services')),
   }),
 });
+
+export const systemSchema = z.object({
+  services: servicesSchema,
+  kernel: kernelSchema,
+  hostname: hostnameSchema,
+  firewall: firewallSchema,
+  // the rest will follow
+});
