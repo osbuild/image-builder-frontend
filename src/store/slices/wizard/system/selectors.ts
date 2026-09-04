@@ -96,3 +96,7 @@ export const selectFirewallEnabled = createSelector(
     return false;
   },
 );
+
+// export the whole subslice. this is quite useful for validating
+// against a zod schema
+export const selectSystem = (state: RootState) => state.wizard.system;

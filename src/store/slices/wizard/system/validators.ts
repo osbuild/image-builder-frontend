@@ -1,8 +1,11 @@
+import z from 'zod';
+
 import {
   firewallSchema,
   hostnameSchema,
   kernelSchema,
   servicesSchema,
+  systemSchema,
 } from './schemas';
 import { Firewall, Kernel, Services } from './types';
 
@@ -50,4 +53,10 @@ export const validateFirewallDisabledServices = (items: string[]) => {
 
 export const validateFirewall = (firewall: Firewall) => {
   return validateSchema(firewallSchema, firewall);
+};
+
+// TODO: change this to the proper type once all the subslice elements
+// have been migrated to zod schemas
+export const validateSystemSlice = (system: z.infer<typeof systemSchema>) => {
+  return validateSchema(systemSchema, system);
 };
