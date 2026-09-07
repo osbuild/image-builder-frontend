@@ -64,7 +64,7 @@ jobs:
     - name: Check for manual changes to API
       run: |
         npm run api
-        if [ -n "$(git status --porcelain)" ]; then
+        if [ -n "$(git status --porcelain -- src/store/api/)" ]; then
           echo
           echo "✗ API manually changed, please refer to the README for the procedure to follow for programmatically generated API endpoints."
           exit 1
