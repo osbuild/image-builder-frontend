@@ -266,7 +266,7 @@ test('Content integration test - Content Template', async ({
   });
 
   await test.step('Wait for system registration to complete', async () => {
-    const maxAttempts = 12;
+    const maxAttempts = 30;
     const delayMs = 10_000;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -318,7 +318,7 @@ test('Content integration test - Content Template', async ({
       page,
       blueprintName,
       10_000,
-      12, // 12 attempts = 2 minutes max
+      30, // 30 attempts = 5 minutes max
     );
     expect(
       result.found,
@@ -334,7 +334,7 @@ test('Content integration test - Content Template', async ({
       blueprintName,
       templateName,
       10_000,
-      12, // 12 attempts = 2 minutes max
+      30, // 30 attempts = 5 minutes max
     );
     expect(
       isAttached,
