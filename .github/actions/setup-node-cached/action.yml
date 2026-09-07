@@ -9,11 +9,6 @@ runs:
       with:
         node-version: 24.20.0
 
-    - name: Fix dependabot lockfile
-      if: github.actor == 'dependabot[bot]'
-      run: npm install --package-lock-only
-      shell: bash
-
     - name: Restore npm cache
       id: cache-npm
       uses: actions/cache/restore@v6
