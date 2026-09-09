@@ -82,6 +82,7 @@ test('Create a blueprint with Packages customization', async ({
     await frame.getByRole('option', { name: /vim-minimal/i }).click();
     await frame.getByRole('textbox', { name: 'Search packages' }).fill('bash');
     await frame.getByRole('option', { name: /bash/i }).first().click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
   });
 
@@ -120,6 +121,7 @@ test('Create a blueprint with Packages customization', async ({
 
     await frame.getByRole('textbox', { name: 'Search packages' }).fill('tmux');
     await frame.getByRole('option', { name: /tmux/i }).first().click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
 
     await frame.getByRole('button', { name: 'Review image' }).click();
     await frame

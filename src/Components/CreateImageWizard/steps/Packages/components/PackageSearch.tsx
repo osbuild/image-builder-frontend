@@ -981,8 +981,6 @@ const PackageSearch = ({
         }
       }
     }
-
-    setIsOpen(false);
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
