@@ -18,7 +18,7 @@ import type { ValidationResult } from '@/store/slices/wizard/types';
 import type { MergedListItem } from '@/Utilities/mergeListItems';
 
 const DEFAULT_TRUNCATE_LENGTH = 20;
-const DEFAULT_CHIP_COLLAPSE_THRESHOLD = 4;
+const DEFAULT_MAX_VISIBLE_ITEMS = 4;
 
 type ValidatedListInputProps = {
   ariaLabel: string;
@@ -29,7 +29,7 @@ type ValidatedListInputProps = {
   onRemove: (value: string) => void;
   truncateLength?: number;
   isCompact?: boolean;
-  chipCollapseThreshold?: number;
+  maxVisibleItems?: number;
   hideAddLabel?: boolean;
   helperText?: string;
   addButtonAriaLabel?: string;
@@ -44,7 +44,7 @@ const ValidatedListInput = ({
   onRemove,
   truncateLength = DEFAULT_TRUNCATE_LENGTH,
   isCompact = false,
-  chipCollapseThreshold = DEFAULT_CHIP_COLLAPSE_THRESHOLD,
+  maxVisibleItems = DEFAULT_MAX_VISIBLE_ITEMS,
   hideAddLabel = false,
   helperText,
   addButtonAriaLabel = 'Add',
@@ -131,11 +131,11 @@ const ValidatedListInput = ({
             {items.length > 0 && (
               <LabelGroup
                 isCompact={isCompact}
-                numLabels={chipCollapseThreshold}
+                numLabels={maxVisibleItems}
                 expandedText='Show less'
                 collapsedText={
-                  items.length > chipCollapseThreshold
-                    ? `${items.length - chipCollapseThreshold} more`
+                  items.length > maxVisibleItems
+                    ? `${items.length - maxVisibleItems} more`
                     : undefined
                 }
                 className='pf-v6-u-mr-sm'
