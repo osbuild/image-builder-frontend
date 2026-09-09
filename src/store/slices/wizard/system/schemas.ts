@@ -31,7 +31,7 @@ export const kernelArgSchema = z
     // (#, \, ", ', ;) because they are valid in kernel arguments. The backend
     // is responsible for escaping these before writing them to the bootloader
     // config to prevent grub/bootloader injection.
-    /^[a-zA-Z0-9=\-_,."'/:#+;\\]*$/,
+    /^[a-zA-Z0-9=\-_,."'/:#+;\\ ]*$/,
     'Kernel argument contains invalid characters',
   );
 

@@ -58,6 +58,14 @@ describe('kernel validation', () => {
       expect(isValid('path\\to')).toBe(true);
     });
 
+    it('accepts an argument with spaces', () => {
+      expect(isValid('key value')).toBe(true);
+    });
+
+    it('accepts a quoted argument with spaces', () => {
+      expect(isValid('var="i have spaces"')).toBe(true);
+    });
+
     it('accepts an argument at the maximum length', () => {
       expect(isValid('a'.repeat(256))).toBe(true);
     });
@@ -68,10 +76,6 @@ describe('kernel validation', () => {
   });
 
   describe('invalid kernel arguments', () => {
-    it('rejects an argument with spaces', () => {
-      expect(isValid('key value')).toBe(false);
-    });
-
     it('rejects an argument with exclamation mark', () => {
       expect(isValid('arg!')).toBe(false);
     });
