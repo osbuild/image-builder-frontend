@@ -106,7 +106,6 @@ import {
   useLocaleValidation,
   useRegistrationValidation,
   useSnapshotValidation,
-  useTimezoneValidation,
   useUserGroupsValidation,
   useUsersValidation,
 } from '../CreateImageWizard/utilities/useValidation';
@@ -154,7 +153,6 @@ const CreateImageWizard = () => {
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const filesystemValidation = useFilesystemValidation();
-  const timezoneValidation = useTimezoneValidation();
   const localeValidation = useLocaleValidation();
   const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
@@ -192,7 +190,6 @@ const CreateImageWizard = () => {
 
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
-    timezoneValidation.disabledNext ||
     localeValidation.disabledNext ||
     systemErrors.length > 0 ||
     firstBootValidation.disabledNext ||
