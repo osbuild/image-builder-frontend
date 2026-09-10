@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { timezones } from './constants';
+
 import { uniqueArray } from '../utilities';
 
 export const hostnameSchema = z
@@ -82,10 +84,35 @@ export const firewallSchema = z.object({
   }),
 });
 
+export const timezoneValueSchema = z
+  .string()
+  .refine((tz) => !tz || timezones.includes(tz), {
+    error: 'Unknown timezone',
+  });
+
+export const ntpServerSchema = z
+  .string()
+  .regex(
+    /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/,
+    'Expected format: <ntp-server>. Example: time.redhat.com',
+  );
+
+// we need to create this separately so we can use this for validation,
+// while the timezone object can mark it as optional to satisfy the types
+export const ntpServersSchema = z
+  .array(ntpServerSchema)
+  .superRefine(uniqueArray('ntp servers'));
+
+export const timezoneSchema = z.object({
+  timezone: timezoneValueSchema.optional(),
+  ntpservers: ntpServersSchema.optional(),
+});
+
 export const systemSchema = z.object({
   services: servicesSchema,
   kernel: kernelSchema,
   hostname: hostnameSchema,
   firewall: firewallSchema,
+  timezone: timezoneSchema,
   // the rest will follow
 });
