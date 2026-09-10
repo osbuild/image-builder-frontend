@@ -68,7 +68,9 @@ test('Import a blueprint with invalid customization', async ({
   });
 
   await test.step('Fix timezone and locale errors on Advanced settings', async () => {
-    await expect(frame.getByText('Includes duplicate NTP')).toBeVisible();
+    await expect(
+      frame.getByText('Duplicate ntp servers: ntp/1313'),
+    ).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove ntp/' }).first().click();
 

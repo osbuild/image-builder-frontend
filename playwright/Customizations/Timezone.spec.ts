@@ -150,7 +150,9 @@ test('Create a blueprint with Timezone customization', async ({
     await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('0.nl.pool.ntp.org');
     await frame.getByPlaceholder('Add NTP servers').press('Enter');
-    await expect(frame.getByText('NTP server already exists.')).toBeVisible();
+    await expect(
+      frame.getByText('Duplicate ntp servers: 0.nl.pool.ntp.org'),
+    ).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('xxxx');
     await frame.getByPlaceholder('Add NTP servers').press('Enter');
     await expect(

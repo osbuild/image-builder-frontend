@@ -17,22 +17,20 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 
-import { useTimezoneValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { DEFAULT_TIMEZONE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeTimezone,
   selectTimezone,
   timezones,
+  validateTimezoneValue,
 } from '@/store/slices/wizard';
 
 const TimezoneDropDown = () => {
   const timezone = useAppSelector(selectTimezone);
   const dispatch = useAppDispatch();
+  const timezoneErrors = validateTimezoneValue(timezone);
 
-  const stepValidation = useTimezoneValidation();
-
-  const [errorText, setErrorText] = useState(stepValidation.errors['timezone']);
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
@@ -52,7 +50,6 @@ const TimezoneDropDown = () => {
   ) => {
     if (itemId && typeof itemId === 'string') {
       dispatch(changeTimezone(itemId));
-      setErrorText('');
       setSearchValue('');
       setIsOpen(false);
     }
@@ -151,11 +148,17 @@ const TimezoneDropDown = () => {
       <HelperText className='pf-v6-u-pt-sm'>
         <HelperTextItem>Search by city and continent.</HelperTextItem>
       </HelperText>
-      {errorText && (
-        <HelperText>
-          <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
-        </HelperText>
-      )}
+      <HelperText>
+        {timezoneErrors.length > 0 &&
+          timezoneErrors.map((issue, index) => (
+            <HelperTextItem
+              variant={'error'}
+              key={`${issue.value ?? ''}-${issue.message}-${index}`}
+            >
+              {issue.message}
+            </HelperTextItem>
+          ))}
+      </HelperText>
     </FormGroup>
   );
 };
