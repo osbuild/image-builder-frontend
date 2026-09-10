@@ -30,8 +30,10 @@ export const validateSchema = <T>(
 
 export const validateList = <T>(
   schema: z.ZodType<T[]>,
-  items: T[],
+  items?: T[] | undefined,
 ): ValidationResult => {
+  if (!items) return [];
+
   const result = schema.safeParse(items);
   if (result.success) return [];
 
