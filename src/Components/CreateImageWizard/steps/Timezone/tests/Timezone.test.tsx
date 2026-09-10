@@ -173,7 +173,7 @@ describe('Timezone Component', () => {
       await addNtpServer(user, '0.nl.pool.ntp.org');
 
       expect(
-        screen.getByText('NTP server already exists.'),
+        screen.getByText('Duplicate ntp servers: 0.nl.pool.ntp.org'),
       ).toBeInTheDocument();
     });
 

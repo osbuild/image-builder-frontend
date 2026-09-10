@@ -250,10 +250,6 @@ export const getInvalidMountpoints = (
   return invalidMountpoints;
 };
 
-export const isNtpServerValid = (ntpServer: string) => {
-  return /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer);
-};
-
 export const isValidUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url);

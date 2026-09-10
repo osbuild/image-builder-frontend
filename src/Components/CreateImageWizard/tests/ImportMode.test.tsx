@@ -151,7 +151,9 @@ describe('ImportMode', () => {
     // Timezone
     expect(await screen.findByText('Unknown timezone')).toBeInTheDocument();
     expect(
-      await screen.findByText('Invalid NTP servers: invalid-ntp-server'),
+      await screen.findByText(
+        'Expected format: <ntp-server>. Example: time.redhat.com',
+      ),
     ).toBeInTheDocument();
 
     const timezoneToggle = await screen.findByRole('button', {

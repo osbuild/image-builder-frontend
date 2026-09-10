@@ -53,7 +53,6 @@ import {
   selectIsoPayloadReference,
   selectKeyboard,
   selectLanguages,
-  selectNtpServers,
   selectOrgId,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -61,11 +60,9 @@ import {
   selectSnapshotDate,
   selectSystem,
   selectTemplate,
-  selectTimezone,
   selectUseLatest,
   selectUserGroups,
   selectUsers,
-  timezones,
   UserWithAdditionalInfo,
   validateSystemSlice,
 } from '@/store/slices/wizard';
@@ -88,7 +85,6 @@ import {
   isGcpDomainValid,
   isGcpEmailValid,
   isMountpointMinSizeValid,
-  isNtpServerValid,
   isPartitionNameValid,
   isSnapshotValid,
   isSshKeyValid,
@@ -528,42 +524,6 @@ export function useSnapshotValidation(): StepValidation {
     };
   }
   return { errors: {}, disabledNext: false };
-}
-
-export function useTimezoneValidation(): StepValidation {
-  const timezone = useAppSelector(selectTimezone);
-  const ntpServers = useAppSelector(selectNtpServers);
-  const invalidServers = [];
-
-  if (ntpServers) {
-    for (const server of ntpServers) {
-      if (!isNtpServerValid(server)) {
-        invalidServers.push(server);
-      }
-    }
-  }
-
-  const duplicateNtpServers = getListOfDuplicates(ntpServers || []);
-
-  const timezoneError =
-    timezone && !timezones.includes(timezone) ? 'Unknown timezone' : '';
-  const ntpServersError =
-    invalidServers.length > 0 ? `Invalid NTP servers: ${invalidServers}` : '';
-  const duplicateNtpServersError =
-    duplicateNtpServers.length > 0
-      ? `Includes duplicate NTP servers: ${duplicateNtpServers.join(', ')}`
-      : '';
-
-  return {
-    errors: {
-      timezone: timezoneError,
-      ntpServers: ntpServersError + '|' + duplicateNtpServersError,
-    },
-    disabledNext:
-      timezoneError !== '' ||
-      invalidServers.length > 0 ||
-      duplicateNtpServers.length > 0,
-  };
 }
 
 export function useLocaleValidation(): StepValidation {
