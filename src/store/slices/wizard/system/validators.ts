@@ -4,10 +4,13 @@ import {
   firewallSchema,
   hostnameSchema,
   kernelSchema,
+  ntpServersSchema,
   servicesSchema,
   systemSchema,
+  timezoneSchema,
+  timezoneValueSchema,
 } from './schemas';
-import { Firewall, Kernel, Services } from './types';
+import { Firewall, Kernel, Services, Timezone } from './types';
 
 import { validateList, validateSchema } from '../validators';
 
@@ -53,6 +56,18 @@ export const validateFirewallDisabledServices = (items: string[]) => {
 
 export const validateFirewall = (firewall: Firewall) => {
   return validateSchema(firewallSchema, firewall);
+};
+
+export const validateTimezoneValue = (timezone?: string) => {
+  return validateSchema(timezoneValueSchema, timezone);
+};
+
+export const validateNtpServers = (servers?: string[] | undefined) => {
+  return validateList(ntpServersSchema, servers);
+};
+
+export const validateTimezone = (timezone: Timezone) => {
+  return validateSchema(timezoneSchema, timezone);
 };
 
 // TODO: change this to the proper type once all the subslice elements
