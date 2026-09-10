@@ -13,7 +13,7 @@ import {
 } from './helpers';
 
 // Mock the large timezone list with smaller test data for faster tests
-vi.mock('../timezonesList', () => ({
+vi.mock('@/store/slices/wizard/system/constants', () => ({
   timezones: [
     'Etc/UTC',
     'Europe/Amsterdam',
