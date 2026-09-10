@@ -20,9 +20,11 @@ import {
 import { useTimezoneValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { DEFAULT_TIMEZONE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { changeTimezone, selectTimezone } from '@/store/slices/wizard';
-
-import { timezones } from '../timezonesList';
+import {
+  changeTimezone,
+  selectTimezone,
+  timezones,
+} from '@/store/slices/wizard';
 
 const TimezoneDropDown = () => {
   const timezone = useAppSelector(selectTimezone);

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { timezones } from '@/Components/CreateImageWizard/steps/Timezone/timezonesList';
 import { isNtpServerValid } from '@/Components/CreateImageWizard/validators';
+import { timezones } from '@/store/slices/wizard';
 
 const isTimezoneValid = (timezone: string) =>
   timezone === '' || timezones.includes(timezone);

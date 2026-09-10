@@ -65,6 +65,7 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
+  timezones,
   UserWithAdditionalInfo,
   validateSystemSlice,
 } from '@/store/slices/wizard';
@@ -74,7 +75,6 @@ import { getListOfDuplicates } from './getListOfDuplicates';
 
 import { keyboardsList } from '../steps/Locale/data/keyboardsList';
 import { languagesList } from '../steps/Locale/data/languagesList';
-import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
   getDuplicateNames,
