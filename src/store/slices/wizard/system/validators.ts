@@ -8,6 +8,7 @@ import {
   languageListSchema,
   localeSchema,
   ntpServersSchema,
+  scriptSchema,
   servicesSchema,
   systemSchema,
   timezoneSchema,
@@ -83,6 +84,10 @@ export const validateKeyboard = (keyboard?: string | undefined) => {
 
 export const validateLocale = (locale: Locale) => {
   return validateSchema(localeSchema, locale);
+};
+
+export const validateScript = (script: string) => {
+  return validateSchema(scriptSchema, script);
 };
 
 // TODO: change this to the proper type once all the subslice elements
