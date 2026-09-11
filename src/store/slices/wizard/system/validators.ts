@@ -86,7 +86,7 @@ export const validateLocale = (locale: Locale) => {
   return validateSchema(localeSchema, locale);
 };
 
-export const validateScript = (script: string) => {
+export const validateScript = (script?: string | undefined) => {
   return validateSchema(scriptSchema, script);
 };
 
