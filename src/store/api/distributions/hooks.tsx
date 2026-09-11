@@ -104,7 +104,7 @@ export const isCustomizationSupported = (
     ctx.isOnPremise &&
     // on-premise doesn't allow first boot & repository
     // customizations just yet
-    ['repositories', 'firstBoot'].includes(customization)
+    ['repositories', 'firstboot'].includes(customization)
   ) {
     return false;
   }

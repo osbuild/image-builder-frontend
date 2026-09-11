@@ -12,7 +12,7 @@ export const ALL_CUSTOMIZATIONS = [
   'firewall',
   'services',
   'hostname',
-  'firstBoot',
+  'firstboot',
   'openscap',
   'registration',
   'users',
@@ -41,7 +41,7 @@ export const BACKEND_TO_FRONTEND_OPTIONS: Record<
   'customizations.user': 'users',
   'customizations.rhsm': 'registration',
   'customizations.fips': 'fips',
-  'customizations.files': ['firstBoot', 'aap'],
+  'customizations.files': ['firstboot', 'aap'],
 };
 
 export const DISTRO_DETAILS: Record<string, ImageTypeInfo> = {

@@ -24,7 +24,7 @@ describe('normalizeOptions', () => {
       'firewall',
       'users',
       'registration',
-      'firstBoot',
+      'firstboot',
       'aap',
     ]);
   });

@@ -106,14 +106,14 @@ describe('useCustomizationRestrictions hook logic', () => {
   });
 
   describe('on-premise restrictions', () => {
-    it('should hide repositories and firstBoot on premise', () => {
+    it('should hide repositories and firstboot on premise', () => {
       const result = computeRestrictionStrategy({
         isImageMode: false,
         isOnPremise: true,
       });
 
       expect(result.repositories.shouldHide).toBe(true);
-      expect(result.firstBoot.shouldHide).toBe(true);
+      expect(result.firstboot.shouldHide).toBe(true);
     });
 
     it('should allow other customizations on premise', () => {
@@ -179,7 +179,7 @@ describe('useCustomizationRestrictions hook logic', () => {
       // Everything else should be hidden by image mode
       expect(result.packages.shouldHide).toBe(true);
       expect(result.repositories.shouldHide).toBe(true);
-      expect(result.firstBoot.shouldHide).toBe(true);
+      expect(result.firstboot.shouldHide).toBe(true);
     });
   });
 
@@ -319,7 +319,7 @@ describe('ALL_CUSTOMIZATIONS', () => {
       'firewall',
       'services',
       'hostname',
-      'firstBoot',
+      'firstboot',
       'openscap',
       'registration',
       'users',
@@ -375,12 +375,12 @@ describe('isCustomizationSupported', () => {
       isRhel: true,
     };
 
-    it('should hide repositories and firstBoot on premise', () => {
+    it('should hide repositories and firstboot on premise', () => {
       expect(
         isCustomizationSupported('repositories', undefined, onPremiseCtx),
       ).toBe(false);
       expect(
-        isCustomizationSupported('firstBoot', undefined, onPremiseCtx),
+        isCustomizationSupported('firstboot', undefined, onPremiseCtx),
       ).toBe(false);
     });
 
@@ -532,7 +532,7 @@ describe('isCustomizationSupported', () => {
       };
       const imageType: ImageTypeInfo = {
         name: 'test-image',
-        supported_blueprint_options: ['packages', 'repositories', 'firstBoot'],
+        supported_blueprint_options: ['packages', 'repositories', 'firstboot'],
       };
 
       // packages is in supported list and not blocked by on-premise
@@ -543,9 +543,9 @@ describe('isCustomizationSupported', () => {
       expect(
         isCustomizationSupported('repositories', imageType, onPremiseCtx),
       ).toBe(false);
-      // firstBoot is in supported list but blocked by on-premise
+      // firstboot is in supported list but blocked by on-premise
       expect(
-        isCustomizationSupported('firstBoot', imageType, onPremiseCtx),
+        isCustomizationSupported('firstboot', imageType, onPremiseCtx),
       ).toBe(false);
     });
   });
@@ -784,7 +784,7 @@ describe('computeImageTypeCustomizationSupport', () => {
           name: 'aws',
           supported_blueprint_options: [
             'repositories',
-            'firstBoot',
+            'firstboot',
             'packages',
           ],
         },
@@ -797,12 +797,12 @@ describe('computeImageTypeCustomizationSupport', () => {
       );
       expect(reposResult[0].supported).toBe(false);
 
-      const firstBootResult = computeImageTypeCustomizationSupport(
+      const firstbootResult = computeImageTypeCustomizationSupport(
         imageTypes,
-        'firstBoot',
+        'firstboot',
         onPremiseCtx,
       );
-      expect(firstBootResult[0].supported).toBe(false);
+      expect(firstbootResult[0].supported).toBe(false);
 
       const packagesResult = computeImageTypeCustomizationSupport(
         imageTypes,

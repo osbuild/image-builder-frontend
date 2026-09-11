@@ -66,7 +66,7 @@ export const systemSlice = createSlice({
       state.locale.keyboard = action.payload;
     },
     setFirstBootScript: (state, action: PayloadAction<string>) => {
-      state.firstBoot.script = action.payload;
+      state.firstboot.script = action.payload;
     },
     changeEnabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.enabled = action.payload;

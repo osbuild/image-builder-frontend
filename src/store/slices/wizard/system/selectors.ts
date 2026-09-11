@@ -44,7 +44,7 @@ export const selectKeyboard = (state: RootState) => {
 };
 
 export const selectFirstBootScript = (state: RootState) => {
-  return state.wizard.system.firstBoot.script;
+  return state.wizard.system.firstboot.script;
 };
 
 export const selectTimezone = (state: RootState) => {
