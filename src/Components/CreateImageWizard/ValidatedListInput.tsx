@@ -4,8 +4,6 @@ import {
   Button,
   Flex,
   FlexItem,
-  HelperText,
-  HelperTextItem,
   Label,
   LabelGroup,
   TextInputGroup,
@@ -16,6 +14,8 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import type { ValidationResult } from '@/store/slices/wizard/types';
 import type { MergedListItem } from '@/Utilities/mergeListItems';
+
+import ValidatedInputHelperText from './ValidatedInputHelperText';
 
 const DEFAULT_TRUNCATE_LENGTH = 20;
 const DEFAULT_MAX_VISIBLE_ITEMS = 4;
@@ -162,23 +162,16 @@ const ValidatedListInput = ({
             )}
           </TextInputGroupMain>
         </TextInputGroup>
-        <HelperText id={helperTextId}>
-          {allErrors.length > 0 ? (
-            allErrors.map((issue, index) => (
-              <HelperTextItem
-                key={`${issue.value ?? ''}-${issue.message}-${index}`}
-                variant='error'
-              >
-                {issue.message}
-              </HelperTextItem>
-            ))
-          ) : (
-            <HelperTextItem>
+        <ValidatedInputHelperText
+          errors={allErrors}
+          id={helperTextId}
+          helperText={
+            <>
               {helperText && `${helperText} `}
               Press Enter or click {hideAddLabel ? 'the add icon' : 'Add'}.
-            </HelperTextItem>
-          )}
-        </HelperText>
+            </>
+          }
+        />
       </FlexItem>
       <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
         <Button

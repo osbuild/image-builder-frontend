@@ -17,6 +17,7 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 
+import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
 import { DEFAULT_TIMEZONE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -148,17 +149,7 @@ const TimezoneDropDown = () => {
       <HelperText className='pf-v6-u-pt-sm'>
         <HelperTextItem>Search by city and continent.</HelperTextItem>
       </HelperText>
-      <HelperText>
-        {timezoneErrors.length > 0 &&
-          timezoneErrors.map((issue, index) => (
-            <HelperTextItem
-              variant={'error'}
-              key={`${issue.value ?? ''}-${issue.message}-${index}`}
-            >
-              {issue.message}
-            </HelperTextItem>
-          ))}
-      </HelperText>
+      <ValidatedInputHelperText errors={timezoneErrors} />
     </FormGroup>
   );
 };
