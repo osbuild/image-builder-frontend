@@ -24,6 +24,7 @@ import {
   convertToBytes,
   DiskPartition,
   FilesystemPartition,
+  keyboards,
   MAX_REGULAR_GID,
   MIN_REGULAR_GID,
   parseSizeUnit,
@@ -63,6 +64,7 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
+  languages as supportedLanguages,
   UserWithAdditionalInfo,
   validateSystemSlice,
 } from '@/store/slices/wizard';
@@ -70,8 +72,6 @@ import useDebounce from '@/Utilities/useDebounce';
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
-import { keyboardsList } from '../steps/Locale/data/keyboardsList';
-import { languagesList } from '../steps/Locale/data/languagesList';
 import {
   getDuplicateMountPoints,
   getDuplicateNames,
@@ -537,7 +537,7 @@ export function useLocaleValidation(): StepValidation {
 
   if (languages && languages.length > 0) {
     for (const lang of languages) {
-      if (!languagesList.includes(lang)) {
+      if (!supportedLanguages.includes(lang)) {
         unknownLanguages.push(lang);
       }
       if (languagesSet.has(lang)) {
@@ -552,7 +552,7 @@ export function useLocaleValidation(): StepValidation {
     unknownLanguages.length > 0 ? unknownLanguages.join(' ') : '';
   const duplicateLanguages = duplicates.length > 0 ? duplicates.join(' ') : '';
   const keyboardError =
-    keyboard && !keyboardsList.includes(keyboard) ? 'Unknown keyboard' : '';
+    keyboard && !keyboards.includes(keyboard) ? 'Unknown keyboard' : '';
 
   return {
     errors: {
