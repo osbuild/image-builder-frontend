@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { validateScript } from '../../validators';
+
 const isFirstBootScriptValid = (script: string) =>
-  !script || script.split('\n')[0].startsWith('#!');
+  validateScript(script).length === 0;
 
 describe('first boot validation', () => {
   describe('valid scripts', () => {
