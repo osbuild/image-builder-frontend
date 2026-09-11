@@ -146,6 +146,6 @@ export const systemSchema = z.object({
   firewall: firewallSchema,
   timezone: timezoneSchema,
   locale: localeSchema,
-  firstBoot: firstbootSchema,
+  firstboot: firstbootSchema,
   // the rest will follow
 });

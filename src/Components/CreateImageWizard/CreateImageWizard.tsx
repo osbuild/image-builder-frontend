@@ -571,7 +571,7 @@ const CreateImageWizard = () => {
             restrictions.services.shouldHide &&
             restrictions.firewall.shouldHide &&
             restrictions.users.shouldHide &&
-            restrictions.firstBoot.shouldHide
+            restrictions.firstboot.shouldHide
           }
           footer={
             <CustomWizardFooter
@@ -613,7 +613,7 @@ const CreateImageWizard = () => {
               ),
               !restrictions.users.shouldHide && <UsersStep key='users' />,
               !restrictions.users.shouldHide && <UserGroupsStep key='groups' />,
-              !restrictions.firstBoot.shouldHide && (
+              !restrictions.firstboot.shouldHide && (
                 <FirstBootStep key='firstboot' />
               ),
             ]

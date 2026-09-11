@@ -88,10 +88,10 @@ const parseFirewall = ({
 
 const parseFirstBoot = ({
   files,
-}: Customizations): SystemSlice['firstBoot'] => {
+}: Customizations): SystemSlice['firstboot'] => {
   const firstbootFile = files?.find((file) => file.path === FIRSTBOOT_PATH);
   if (!firstbootFile || !firstbootFile.data) {
-    return initialState.firstBoot;
+    return initialState.firstboot;
   }
 
   return {
@@ -134,7 +134,7 @@ export const parseSystemFromRequest = ({
   timezone: parseTimezone(customizations),
   hostname: parseHostname(customizations),
   firewall: parseFirewall(customizations),
-  firstBoot: parseFirstBoot(customizations),
+  firstboot: parseFirstBoot(customizations),
   users: parseUsers(customizations),
   groups: parseGroups(customizations),
 });
