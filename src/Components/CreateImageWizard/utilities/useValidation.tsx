@@ -43,7 +43,6 @@ import {
   selectDiskMinsize,
   selectDiskPartitions,
   selectFilesystemPartitions,
-  selectFirstBootScript,
   selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
@@ -51,8 +50,6 @@ import {
   selectImageTypes,
   selectIsOfficialImage,
   selectIsoPayloadReference,
-  selectKeyboard,
-  selectLanguages,
   selectOrgId,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -70,8 +67,6 @@ import useDebounce from '@/Utilities/useDebounce';
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
-import { keyboardsList } from '../steps/Locale/data/keyboardsList';
-import { languagesList } from '../steps/Locale/data/languagesList';
 import {
   getDuplicateMountPoints,
   getDuplicateNames,
@@ -122,8 +117,6 @@ export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
-  const locale = useLocaleValidation();
-  const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
   const userGroups = useUserGroupsValidation();
@@ -139,9 +132,7 @@ export function useIsBlueprintValid(): boolean {
     !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
-    !locale.disabledNext &&
     systemErrors.length === 0 &&
-    !firstBoot.disabledNext &&
     !details.disabledNext &&
     !details.isPending &&
     !users.disabledNext &&
@@ -524,62 +515,6 @@ export function useSnapshotValidation(): StepValidation {
     };
   }
   return { errors: {}, disabledNext: false };
-}
-
-export function useLocaleValidation(): StepValidation {
-  const languagesSet: Set<string> = new Set();
-  const duplicates: string[] = [];
-  const languages = useAppSelector(selectLanguages);
-  const keyboard = useAppSelector(selectKeyboard);
-
-  const errors = {};
-  const unknownLanguages = [];
-
-  if (languages && languages.length > 0) {
-    for (const lang of languages) {
-      if (!languagesList.includes(lang)) {
-        unknownLanguages.push(lang);
-      }
-      if (languagesSet.has(lang)) {
-        duplicates.push(lang);
-      } else {
-        languagesSet.add(lang);
-      }
-    }
-  }
-
-  const languagesError =
-    unknownLanguages.length > 0 ? unknownLanguages.join(' ') : '';
-  const duplicateLanguages = duplicates.length > 0 ? duplicates.join(' ') : '';
-  const keyboardError =
-    keyboard && !keyboardsList.includes(keyboard) ? 'Unknown keyboard' : '';
-
-  return {
-    errors: {
-      unknownLanguages: languagesError,
-      duplicateLanguages: duplicateLanguages,
-      keyboard: keyboardError,
-    },
-    disabledNext:
-      unknownLanguages.length > 0 ||
-      duplicateLanguages.length > 0 ||
-      'keyboard' in errors,
-  };
-}
-
-export function useFirstBootValidation(): StepValidation {
-  const script = useAppSelector(selectFirstBootScript);
-  let hasShebang = false;
-  if (script) {
-    hasShebang = script.split('\n')[0].startsWith('#!');
-  }
-  const valid = !script || hasShebang;
-  return {
-    errors: {
-      script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
-    },
-    disabledNext: !valid,
-  };
 }
 
 const validateUserName = (

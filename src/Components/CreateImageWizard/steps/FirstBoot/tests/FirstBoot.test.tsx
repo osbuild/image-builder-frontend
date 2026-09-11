@@ -81,7 +81,7 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep({
         system: {
           ...initialState.system,
-          firstBoot: {
+          firstboot: {
             script: VALID_SCRIPT,
           },
         },
@@ -121,7 +121,7 @@ describe('FirstBoot Component', () => {
       renderFirstBootStep({
         system: {
           ...initialState.system,
-          firstBoot: { script: VALID_SCRIPT },
+          firstboot: { script: VALID_SCRIPT },
         },
       });
 
@@ -137,7 +137,7 @@ describe('FirstBoot Component', () => {
       await uploadScript(user, VALID_SCRIPT);
 
       await waitForAction(() => {
-        expect(store.getState().wizard.system.firstBoot.script).toBe(
+        expect(store.getState().wizard.system.firstboot.script).toBe(
           VALID_SCRIPT,
         );
       });
@@ -148,7 +148,7 @@ describe('FirstBoot Component', () => {
       await waitForAction(() => user.click(revertButton));
 
       await waitForAction(() => {
-        expect(store.getState().wizard.system.firstBoot.script).toBe(
+        expect(store.getState().wizard.system.firstboot.script).toBe(
           VALID_SCRIPT,
         );
       });
@@ -160,12 +160,12 @@ describe('FirstBoot Component', () => {
       const { store } = renderFirstBootStep();
       const user = createUser();
 
-      expect(store.getState().wizard.system.firstBoot.script).toBe('');
+      expect(store.getState().wizard.system.firstboot.script).toBeUndefined();
 
       await uploadScript(user, VALID_SCRIPT);
 
       await waitForAction(() => {
-        expect(store.getState().wizard.system.firstBoot.script).toBe(
+        expect(store.getState().wizard.system.firstboot.script).toBe(
           VALID_SCRIPT,
         );
       });
@@ -191,7 +191,7 @@ describe('FirstBoot Component', () => {
       await uploadScript(user, CRLF_SCRIPT);
 
       await waitForAction(() => {
-        const storedScript = store.getState().wizard.system.firstBoot.script;
+        const storedScript = store.getState().wizard.system.firstboot.script;
         expect(storedScript).toBe(LF_SCRIPT);
         expect(storedScript).not.toContain('\r\n');
       });

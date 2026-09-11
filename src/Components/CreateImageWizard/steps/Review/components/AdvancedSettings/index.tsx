@@ -70,7 +70,7 @@ const AdvancedSettingsOverview = ({
         >
           <UserGroups />
         </ReviewSection>
-        <Firstboot shouldHide={restrictions.firstBoot.shouldHide} />
+        <Firstboot shouldHide={restrictions.firstboot.shouldHide} />
       </CardBody>
     </Card>
   );

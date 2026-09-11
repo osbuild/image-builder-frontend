@@ -4,13 +4,17 @@ import {
   firewallSchema,
   hostnameSchema,
   kernelSchema,
+  keyboardSchema,
+  languageListSchema,
+  localeSchema,
   ntpServersSchema,
+  scriptSchema,
   servicesSchema,
   systemSchema,
   timezoneSchema,
   timezoneValueSchema,
 } from './schemas';
-import { Firewall, Kernel, Services, Timezone } from './types';
+import { Firewall, Kernel, Locale, Services, Timezone } from './types';
 
 import { validateList, validateSchema } from '../validators';
 
@@ -68,6 +72,22 @@ export const validateNtpServers = (servers?: string[] | undefined) => {
 
 export const validateTimezone = (timezone: Timezone) => {
   return validateSchema(timezoneSchema, timezone);
+};
+
+export const validateLanguages = (languages?: string[] | undefined) => {
+  return validateList(languageListSchema, languages);
+};
+
+export const validateKeyboard = (keyboard?: string | undefined) => {
+  return validateSchema(keyboardSchema, keyboard);
+};
+
+export const validateLocale = (locale: Locale) => {
+  return validateSchema(localeSchema, locale);
+};
+
+export const validateScript = (script?: string | undefined) => {
+  return validateSchema(scriptSchema, script);
 };
 
 // TODO: change this to the proper type once all the subslice elements

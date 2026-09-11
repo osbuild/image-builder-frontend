@@ -955,7 +955,7 @@ describe('AdvancedSettingsOverview', () => {
   });
 
   describe('Firstboot', () => {
-    const firstBootScript = `#! /bin/bash
+    const firstbootScript = `#! /bin/bash
 
 echo 'Hello there, General Kenobi!'`;
 
@@ -967,7 +967,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, firstBoot: { script: '' } },
+          system: { ...initialState.system, firstboot: { script: '' } },
         },
       );
 
@@ -986,7 +986,7 @@ echo 'Hello there, General Kenobi!'`;
           },
           system: {
             ...initialState.system,
-            firstBoot: { script: firstBootScript },
+            firstboot: { script: firstbootScript },
           },
         },
       );
@@ -1004,7 +1004,7 @@ echo 'Hello there, General Kenobi!'`;
           },
           system: {
             ...initialState.system,
-            firstBoot: { script: firstBootScript },
+            firstboot: { script: firstbootScript },
           },
         },
       );

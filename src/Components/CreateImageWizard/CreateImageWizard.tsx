@@ -100,10 +100,8 @@ import {
   useAzureValidation,
   useDetailsValidation,
   useFilesystemValidation,
-  useFirstBootValidation,
   useGcpValidation,
   useImagePullValidation,
-  useLocaleValidation,
   useRegistrationValidation,
   useSnapshotValidation,
   useUserGroupsValidation,
@@ -153,8 +151,6 @@ const CreateImageWizard = () => {
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const filesystemValidation = useFilesystemValidation();
-  const localeValidation = useLocaleValidation();
-  const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
   const imagePullValidation = useImagePullValidation();
@@ -190,9 +186,7 @@ const CreateImageWizard = () => {
 
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
-    localeValidation.disabledNext ||
     systemErrors.length > 0 ||
-    firstBootValidation.disabledNext ||
     (!restrictions.users.shouldHide && usersHaveErrors);
 
   useEffect(() => {
@@ -577,7 +571,7 @@ const CreateImageWizard = () => {
             restrictions.services.shouldHide &&
             restrictions.firewall.shouldHide &&
             restrictions.users.shouldHide &&
-            restrictions.firstBoot.shouldHide
+            restrictions.firstboot.shouldHide
           }
           footer={
             <CustomWizardFooter
@@ -619,7 +613,7 @@ const CreateImageWizard = () => {
               ),
               !restrictions.users.shouldHide && <UsersStep key='users' />,
               !restrictions.users.shouldHide && <UserGroupsStep key='groups' />,
-              !restrictions.firstBoot.shouldHide && (
+              !restrictions.firstboot.shouldHide && (
                 <FirstBootStep key='firstboot' />
               ),
             ]

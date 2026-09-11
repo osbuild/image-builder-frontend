@@ -26,7 +26,7 @@ export const initialState: SystemSlice = {
       disabled: [],
     },
   },
-  firstBoot: { script: '' },
+  firstboot: {},
   users: [],
   groups: [{ name: '' }],
 };

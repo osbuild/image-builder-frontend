@@ -43,8 +43,8 @@ export const selectKeyboard = (state: RootState) => {
   return state.wizard.system.locale.keyboard;
 };
 
-export const selectFirstBootScript = (state: RootState) => {
-  return state.wizard.system.firstBoot.script;
+export const selectFirstBootScript = (state: RootState): string | undefined => {
+  return state.wizard.system.firstboot.script;
 };
 
 export const selectTimezone = (state: RootState) => {

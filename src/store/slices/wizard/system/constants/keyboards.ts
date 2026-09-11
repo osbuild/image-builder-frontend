@@ -1,4 +1,4 @@
-export const keyboardsList = [
+export const keyboards = [
   '3l',
   'adnw',
   'al',

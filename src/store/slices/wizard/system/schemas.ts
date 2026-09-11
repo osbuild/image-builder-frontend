@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { timezones } from './constants';
+import { keyboards, languages, timezones } from './constants';
 
 import { uniqueArray } from '../utilities';
 
@@ -108,11 +108,44 @@ export const timezoneSchema = z.object({
   ntpservers: ntpServersSchema.optional(),
 });
 
+export const languageSchema = z
+  .string()
+  .refine((lg) => languages.includes(lg), {
+    error: 'Unknown language',
+  });
+
+export const languageListSchema = z
+  .array(languageSchema)
+  .superRefine(uniqueArray('languages'));
+
+export const keyboardSchema = z
+  .string()
+  .refine((kb) => !kb || keyboards.includes(kb), {
+    error: 'Unknown keyboard',
+  });
+
+export const localeSchema = z.object({
+  languages: languageListSchema.optional(),
+  keyboard: keyboardSchema.optional(),
+});
+
+export const scriptSchema = z
+  .string()
+  .refine((script) => !script || script.startsWith('#!'), {
+    error: 'Missing shebang at first line, e.g. #!/bin/bash',
+  });
+
+export const firstbootSchema = z.object({
+  script: scriptSchema.optional(),
+});
+
 export const systemSchema = z.object({
   services: servicesSchema,
   kernel: kernelSchema,
   hostname: hostnameSchema,
   firewall: firewallSchema,
   timezone: timezoneSchema,
+  locale: localeSchema,
+  firstboot: firstbootSchema,
   // the rest will follow
 });

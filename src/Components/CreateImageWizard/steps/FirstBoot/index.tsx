@@ -11,14 +11,12 @@ import {
   DropEvent,
   FileUpload,
   FormGroup,
-  FormHelperText,
   HelperText,
   HelperTextItem,
   Title,
 } from '@patternfly/react-core';
 import { UndoIcon } from '@patternfly/react-icons';
 
-import { useFirstBootValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { FIRST_BOOT_SERVICE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -28,7 +26,10 @@ import {
   selectFirstBootScript,
   selectRegistrationType,
   setFirstBootScript,
+  validateScript,
 } from '@/store/slices/wizard';
+
+import ValidatedInputHelperText from '../../ValidatedInputHelperText';
 
 // Inline <style> needed because sassPrefix wraps SCSS in .imageBuilder,
 // but the wizard Modal renders in a portal outside that wrapper.
@@ -44,7 +45,11 @@ const editorStyles = `
   display: none;
 }`;
 
-const detectScriptType = (scriptString: string): Language => {
+const detectScriptType = (scriptString?: string | undefined): Language => {
+  if (!scriptString) {
+    return Language.shell;
+  }
+
   const lines = scriptString.split('\n');
 
   if (lines[0].startsWith('#!')) {
@@ -70,9 +75,9 @@ const FirstBootStep = () => {
   const selectedScript = useAppSelector(selectFirstBootScript);
   const registrationType = useAppSelector(selectRegistrationType);
   const language = detectScriptType(selectedScript);
-  const { errors } = useFirstBootValidation();
+  const errors = validateScript(selectedScript);
 
-  const initialScriptRef = useRef(selectedScript);
+  const initialScriptRef = useRef(selectedScript ?? '');
   const [filename, setFilename] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedScript, setUploadedScript] = useState('');
@@ -127,7 +132,7 @@ const FirstBootStep = () => {
 
   return (
     <>
-      <CustomizationLabels customization='firstBoot' />
+      <CustomizationLabels customization='firstboot' />
       <Content>
         <Title headingLevel='h2' size='lg'>
           First boot configuration
@@ -176,7 +181,7 @@ const FirstBootStep = () => {
           className='first-boot-editor'
           language={language}
           onCodeChange={(code) => handleScriptChange(code)}
-          code={selectedScript}
+          code={selectedScript ?? ''}
           height='35vh'
           isCopyEnabled
           isDownloadEnabled
@@ -192,13 +197,7 @@ const FirstBootStep = () => {
             Supports bash shell, python, or Ansible playbooks
           </HelperTextItem>
         </HelperText>
-        {errors.script && (
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem variant='error'>{errors.script}</HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        )}
+        <ValidatedInputHelperText errors={errors} />
       </FormGroup>
     </>
   );

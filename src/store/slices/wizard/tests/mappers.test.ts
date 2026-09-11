@@ -16,7 +16,7 @@ describe('mapFileCustomizations', () => {
     const state = createMockState({
       system: {
         ...initialState.system,
-        firstBoot: { script: 'echo hello' },
+        firstboot: { script: 'echo hello' },
       },
     });
     const result = mapFileCustomizations(state);
@@ -49,7 +49,7 @@ describe('mapFileCustomizations', () => {
     const state = createMockState({
       system: {
         ...initialState.system,
-        firstBoot: { script: 'echo hello' },
+        firstboot: { script: 'echo hello' },
       },
       registration: {
         ...initialState.registration,

@@ -10,7 +10,7 @@ export type CustomizationType =
   | 'firewall'
   | 'services'
   | 'hostname'
-  | 'firstBoot'
+  | 'firstboot'
   | 'openscap'
   | 'registration'
   | 'users'
