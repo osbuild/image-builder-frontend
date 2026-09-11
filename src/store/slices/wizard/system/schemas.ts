@@ -129,6 +129,16 @@ export const localeSchema = z.object({
   keyboard: keyboardSchema.optional(),
 });
 
+export const scriptSchema = z
+  .string()
+  .refine((script) => !script || script.startsWith('#!'), {
+    error: 'Missing shebang at first line, e.g. #!/bin/bash',
+  });
+
+export const firstbootSchema = z.object({
+  script: scriptSchema,
+});
+
 export const systemSchema = z.object({
   services: servicesSchema,
   kernel: kernelSchema,
@@ -136,5 +146,6 @@ export const systemSchema = z.object({
   firewall: firewallSchema,
   timezone: timezoneSchema,
   locale: localeSchema,
+  firstBoot: firstbootSchema,
   // the rest will follow
 });

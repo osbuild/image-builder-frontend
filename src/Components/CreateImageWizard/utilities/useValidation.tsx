@@ -118,7 +118,6 @@ export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
-  const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
   const userGroups = useUserGroupsValidation();
@@ -135,7 +134,6 @@ export function useIsBlueprintValid(): boolean {
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
     systemErrors.length === 0 &&
-    !firstBoot.disabledNext &&
     !details.disabledNext &&
     !details.isPending &&
     !users.disabledNext &&

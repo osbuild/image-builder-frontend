@@ -100,7 +100,6 @@ import {
   useAzureValidation,
   useDetailsValidation,
   useFilesystemValidation,
-  useFirstBootValidation,
   useGcpValidation,
   useImagePullValidation,
   useRegistrationValidation,
@@ -152,7 +151,6 @@ const CreateImageWizard = () => {
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const filesystemValidation = useFilesystemValidation();
-  const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
   const imagePullValidation = useImagePullValidation();
@@ -189,7 +187,6 @@ const CreateImageWizard = () => {
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
     systemErrors.length > 0 ||
-    firstBootValidation.disabledNext ||
     (!restrictions.users.shouldHide && usersHaveErrors);
 
   useEffect(() => {
