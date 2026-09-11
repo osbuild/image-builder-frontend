@@ -1,10 +1,11 @@
 import z from 'zod';
 
-import { Locale, User } from '@/store/api/backend';
+import { User } from '@/store/api/backend';
 
 import {
   firewallSchema,
   kernelSchema,
+  localeSchema,
   servicesSchema,
   systemSchema,
   timezoneSchema,
@@ -14,6 +15,7 @@ export type Kernel = z.infer<typeof kernelSchema>;
 export type Services = z.infer<typeof servicesSchema>;
 export type Firewall = z.infer<typeof firewallSchema>;
 export type Timezone = z.infer<typeof timezoneSchema>;
+export type Locale = z.infer<typeof localeSchema>;
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
@@ -63,7 +65,6 @@ export type UserGroup = {
 };
 
 export type SystemSlice = z.infer<typeof systemSchema> & {
-  locale: Locale;
   firstBoot: {
     script: string;
   };

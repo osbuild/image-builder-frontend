@@ -74,8 +74,10 @@ test('Import a blueprint with invalid customization', async ({
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove ntp/' }).first().click();
 
-    await expect(frame.getByText('Unknown languages: random:')).toBeVisible();
-    await expect(frame.getByText('Duplicated languages: af_ZA.')).toBeVisible();
+    await expect(frame.getByText('Unknown language')).toBeVisible();
+    await expect(
+      frame.getByText('Duplicate languages: af_ZA.UTF-8'),
+    ).toBeVisible();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
     await frame.getByRole('button', { name: 'Remove language' }).last().click();
     await expect(frame.getByRole('button', { name: 'Next' })).toBeEnabled();
