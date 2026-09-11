@@ -160,7 +160,7 @@ describe('FirstBoot Component', () => {
       const { store } = renderFirstBootStep();
       const user = createUser();
 
-      expect(store.getState().wizard.system.firstboot.script).toBe('');
+      expect(store.getState().wizard.system.firstboot.script).toBeUndefined();
 
       await uploadScript(user, VALID_SCRIPT);
 

@@ -15,7 +15,7 @@ import { Hideable } from '../../types';
 const MAX_LINES = 8;
 
 export const Firstboot = ({ shouldHide }: Hideable) => {
-  const script = useAppSelector(selectFirstBootScript);
+  const script = useAppSelector(selectFirstBootScript) ?? '';
   const [isExpanded, setIsExpanded] = useState(false);
 
   const lines = script.split('\n');
