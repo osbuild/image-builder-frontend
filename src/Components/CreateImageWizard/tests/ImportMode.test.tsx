@@ -181,9 +181,7 @@ describe('ImportMode', () => {
     );
 
     // Locale
-    expect(
-      await screen.findByText('Unknown languages: invalid-language'),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('Unknown language')).toBeInTheDocument();
     expect(await screen.findByText('Unknown keyboard')).toBeInTheDocument();
 
     await clickWithWait(

@@ -24,7 +24,6 @@ import {
   convertToBytes,
   DiskPartition,
   FilesystemPartition,
-  keyboards,
   MAX_REGULAR_GID,
   MIN_REGULAR_GID,
   parseSizeUnit,
@@ -52,8 +51,6 @@ import {
   selectImageTypes,
   selectIsOfficialImage,
   selectIsoPayloadReference,
-  selectKeyboard,
-  selectLanguages,
   selectOrgId,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -64,7 +61,6 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
-  languages as supportedLanguages,
   UserWithAdditionalInfo,
   validateSystemSlice,
 } from '@/store/slices/wizard';
@@ -522,47 +518,6 @@ export function useSnapshotValidation(): StepValidation {
     };
   }
   return { errors: {}, disabledNext: false };
-}
-
-export function useLocaleValidation(): StepValidation {
-  const languagesSet: Set<string> = new Set();
-  const duplicates: string[] = [];
-  const languages = useAppSelector(selectLanguages);
-  const keyboard = useAppSelector(selectKeyboard);
-
-  const errors = {};
-  const unknownLanguages = [];
-
-  if (languages && languages.length > 0) {
-    for (const lang of languages) {
-      if (!supportedLanguages.includes(lang)) {
-        unknownLanguages.push(lang);
-      }
-      if (languagesSet.has(lang)) {
-        duplicates.push(lang);
-      } else {
-        languagesSet.add(lang);
-      }
-    }
-  }
-
-  const languagesError =
-    unknownLanguages.length > 0 ? unknownLanguages.join(' ') : '';
-  const duplicateLanguages = duplicates.length > 0 ? duplicates.join(' ') : '';
-  const keyboardError =
-    keyboard && !keyboards.includes(keyboard) ? 'Unknown keyboard' : '';
-
-  return {
-    errors: {
-      unknownLanguages: languagesError,
-      duplicateLanguages: duplicateLanguages,
-      keyboard: keyboardError,
-    },
-    disabledNext:
-      unknownLanguages.length > 0 ||
-      duplicateLanguages.length > 0 ||
-      'keyboard' in errors,
-  };
 }
 
 export function useFirstBootValidation(): StepValidation {

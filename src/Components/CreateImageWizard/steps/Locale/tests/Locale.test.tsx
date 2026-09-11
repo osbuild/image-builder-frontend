@@ -386,7 +386,7 @@ describe('Locale Component', () => {
       });
 
       expect(
-        await screen.findByText(/duplicated languages/i),
+        await screen.findByText(/duplicate languages: en_US\.UTF-8/i),
       ).toBeInTheDocument();
     });
 

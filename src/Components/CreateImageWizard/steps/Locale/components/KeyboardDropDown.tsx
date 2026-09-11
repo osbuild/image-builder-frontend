@@ -1,23 +1,21 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
-import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 
-import { useLocaleValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
 import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeKeyboard,
   keyboards,
   selectKeyboard,
+  validateKeyboard,
 } from '@/store/slices/wizard';
 
 const KeyboardDropDown = () => {
-  const keyboard = useAppSelector(selectKeyboard);
   const dispatch = useAppDispatch();
-
-  const stepValidation = useLocaleValidation();
-
-  const [errorText, setErrorText] = useState(stepValidation.errors['keyboard']);
+  const keyboard = useAppSelector(selectKeyboard);
+  const errors = validateKeyboard(keyboard);
 
   const options = useMemo(
     () => keyboards.map((kb) => ({ value: kb, label: kb })),
@@ -26,7 +24,6 @@ const KeyboardDropDown = () => {
 
   const handleSelect = (value: string | undefined) => {
     dispatch(changeKeyboard(value ?? ''));
-    setErrorText('');
   };
 
   return (
@@ -37,11 +34,7 @@ const KeyboardDropDown = () => {
         placeholder='Select a keyboard'
         onSelect={handleSelect}
       />
-      {errorText && (
-        <HelperText>
-          <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
-        </HelperText>
-      )}
+      <ValidatedInputHelperText errors={errors} />
     </FormGroup>
   );
 };
