@@ -82,6 +82,35 @@ export const mockArchitectures: Record<string, Architectures> = {
   ],
 };
 
+export const mockPackageInfoResults: ApiSearchRpmResponse[] = [
+  {
+    package_name: 'vim',
+    package_sources: [
+      {
+        type: 'package',
+        end_date: '2030-06-15',
+      },
+    ],
+  },
+  {
+    package_name: 'nginx',
+    package_sources: [
+      {
+        name: 'nginx',
+        type: 'module',
+        stream: '1.22',
+        end_date: '2026-05-01',
+      },
+      {
+        name: 'nginx',
+        type: 'module',
+        stream: '1.24',
+        end_date: '2028-11-01',
+      },
+    ],
+  },
+];
+
 export const mockRecommendations: string[] = [
   'recommendedPackage1',
   'recommendedPackage2',

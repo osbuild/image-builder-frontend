@@ -27,6 +27,7 @@ import {
   mockOscapCustomizations,
   mockOscapProfile,
   mockOscapSearchResults,
+  mockPackageInfoResults,
   mockRecommendations,
   mockSearchResults,
 } from './mocks';
@@ -987,6 +988,76 @@ describe('Packages Component', () => {
       await clickWithWait(user, testLibOptionAgain);
       expect(store.getState().wizard.content.packages).toHaveLength(1);
       expect(store.getState().wizard.content.packages[0].name).toBe('test-lib');
+    });
+
+    test('end_date is re-fetched for packages in edit mode', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ rpms: mockPackageInfoResults }),
+      );
+
+      renderPackagesStep({
+        details: {
+          mode: 'edit',
+          blueprint: {
+            name: 'test-blueprint',
+            isCustomName: true,
+            description: '',
+            mode: 'package',
+          },
+        },
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'vim',
+              summary: '',
+              repository: 'distro',
+            },
+          ],
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/Jun 2030/)).toBeInTheDocument();
+      });
+    });
+
+    test('module stream and end_date are re-fetched in edit mode', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ rpms: mockPackageInfoResults }),
+      );
+
+      const { store } = renderPackagesStep({
+        details: {
+          mode: 'edit',
+          blueprint: {
+            name: 'test-blueprint',
+            isCustomName: true,
+            description: '',
+            mode: 'package',
+          },
+        },
+        content: {
+          ...initialState.content,
+          packages: [
+            {
+              name: 'nginx',
+              summary: '',
+              repository: 'distro',
+            },
+          ],
+          enabledModules: [{ name: 'nginx', stream: '1.24' }],
+        },
+      });
+
+      await waitFor(() => {
+        const packages = store.getState().wizard.content.packages;
+        expect(packages[0].type).toBe('module');
+        expect(packages[0].stream).toBe('1.24');
+        expect(packages[0].end_date).toBe('2028-11-01');
+      });
+
+      expect(screen.getByText(/Nov 2028/)).toBeInTheDocument();
     });
 
     test('required package not yet selected can still be added via search', async () => {
