@@ -5,9 +5,11 @@ import { FormGroup, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useLocaleValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { changeKeyboard, selectKeyboard } from '@/store/slices/wizard';
-
-import { keyboardsList } from '../data/keyboardsList';
+import {
+  changeKeyboard,
+  keyboards,
+  selectKeyboard,
+} from '@/store/slices/wizard';
 
 const KeyboardDropDown = () => {
   const keyboard = useAppSelector(selectKeyboard);
@@ -18,7 +20,7 @@ const KeyboardDropDown = () => {
   const [errorText, setErrorText] = useState(stepValidation.errors['keyboard']);
 
   const options = useMemo(
-    () => keyboardsList.map((kb) => ({ value: kb, label: kb })),
+    () => keyboards.map((kb) => ({ value: kb, label: kb })),
     [],
   );
 

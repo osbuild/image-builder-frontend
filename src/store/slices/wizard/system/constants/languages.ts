@@ -1,4 +1,4 @@
-export const languagesList = [
+export const languages = [
   'aa_DJ.UTF-8',
   'aa_ER.UTF-8',
   'aa_ET.UTF-8',

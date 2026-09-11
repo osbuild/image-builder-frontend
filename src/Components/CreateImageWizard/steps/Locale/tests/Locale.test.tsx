@@ -16,8 +16,8 @@ import {
 } from './helpers';
 
 // Mock the large lists with smaller test data for faster tests
-vi.mock('../data/languagesList', () => ({
-  languagesList: [
+vi.mock('@/store/slices/wizard/system/constants', () => ({
+  languages: [
     'nl_AW.UTF-8',
     'nl_BE.UTF-8',
     'nl_NL.UTF-8',
@@ -28,18 +28,7 @@ vi.mock('../data/languagesList', () => ({
     'kw_GB.UTF-8',
     'C.UTF-8',
   ],
-}));
-
-vi.mock('../data/keyboardsList', () => ({
-  keyboardsList: [
-    'us',
-    'us-acentos',
-    'us-alt-intl',
-    'us-dvorak',
-    'de',
-    'gb',
-    'fr',
-  ],
+  keyboards: ['us', 'us-acentos', 'us-alt-intl', 'us-dvorak', 'de', 'gb', 'fr'],
 }));
 
 describe('Locale Component', () => {

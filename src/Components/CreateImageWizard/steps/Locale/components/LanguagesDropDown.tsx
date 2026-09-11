@@ -16,9 +16,8 @@ import {
   removeLanguage,
   replaceLanguage,
   selectLanguages,
+  languages as supportedLanguages,
 } from '@/store/slices/wizard';
-
-import { languagesList } from '../data/languagesList';
 
 const parseLanguageOption = (language: string) => {
   try {
@@ -39,7 +38,7 @@ const parseLanguageOption = (language: string) => {
 };
 
 const parsedLanguages: Record<string, string> = Object.fromEntries(
-  languagesList.map((lang) => [lang, parseLanguageOption(lang)]),
+  supportedLanguages.map((lang) => [lang, parseLanguageOption(lang)]),
 );
 
 type LanguageRowProps = {

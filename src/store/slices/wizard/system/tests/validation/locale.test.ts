@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { keyboardsList } from '@/Components/CreateImageWizard/steps/Locale/data/keyboardsList';
-import { languagesList } from '@/Components/CreateImageWizard/steps/Locale/data/languagesList';
+import {
+  keyboards,
+  languages as supportedLanguages,
+} from '@/store/slices/wizard';
 
-const isLanguageValid = (language: string) => languagesList.includes(language);
+const isLanguageValid = (language: string) =>
+  supportedLanguages.includes(language);
 const isKeyboardValid = (keyboard: string) =>
-  keyboard === '' || keyboardsList.includes(keyboard);
+  keyboard === '' || keyboards.includes(keyboard);
 
 const getDuplicateLanguages = (languages: string[]) => [
   ...new Set(
