@@ -43,7 +43,6 @@ import {
   selectDiskMinsize,
   selectDiskPartitions,
   selectFilesystemPartitions,
-  selectFirstBootScript,
   selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
@@ -516,21 +515,6 @@ export function useSnapshotValidation(): StepValidation {
     };
   }
   return { errors: {}, disabledNext: false };
-}
-
-export function useFirstBootValidation(): StepValidation {
-  const script = useAppSelector(selectFirstBootScript);
-  let hasShebang = false;
-  if (script) {
-    hasShebang = script.split('\n')[0].startsWith('#!');
-  }
-  const valid = !script || hasShebang;
-  return {
-    errors: {
-      script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
-    },
-    disabledNext: !valid,
-  };
 }
 
 const validateUserName = (
