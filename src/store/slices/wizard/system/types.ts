@@ -4,6 +4,7 @@ import { User } from '@/store/api/backend';
 
 import {
   firewallSchema,
+  firstbootSchema,
   kernelSchema,
   localeSchema,
   servicesSchema,
@@ -16,6 +17,7 @@ export type Services = z.infer<typeof servicesSchema>;
 export type Firewall = z.infer<typeof firewallSchema>;
 export type Timezone = z.infer<typeof timezoneSchema>;
 export type Locale = z.infer<typeof localeSchema>;
+export type Firstboot = z.infer<typeof firstbootSchema>;
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
@@ -65,9 +67,6 @@ export type UserGroup = {
 };
 
 export type SystemSlice = z.infer<typeof systemSchema> & {
-  firstBoot: {
-    script: string;
-  };
   users: UserWithAdditionalInfo[];
   groups: UserGroup[];
 };
