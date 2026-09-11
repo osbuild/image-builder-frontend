@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
-import { useLocaleValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
 import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -17,6 +17,7 @@ import {
   replaceLanguage,
   selectLanguages,
   languages as supportedLanguages,
+  validateLanguages,
 } from '@/store/slices/wizard';
 
 const parseLanguageOption = (language: string) => {
@@ -91,17 +92,10 @@ const LanguageRow = ({
 };
 
 const LanguagesDropDown = () => {
-  const languages = useAppSelector(selectLanguages) ?? [];
   const dispatch = useAppDispatch();
   const [showNewRow, setShowNewRow] = useState(false);
-
-  const stepValidation = useLocaleValidation();
-  const unknownLanguages = stepValidation.errors['unknownLanguages']
-    ? stepValidation.errors['unknownLanguages'].split(' ')
-    : [];
-  const duplicateLanguages = stepValidation.errors['duplicateLanguages']
-    ? stepValidation.errors['duplicateLanguages'].split(' ')
-    : [];
+  const languages = useAppSelector(selectLanguages) ?? [];
+  const errors = validateLanguages(languages);
 
   const handleSelectNewLanguage = (language: string | undefined) => {
     if (language) {
@@ -152,20 +146,7 @@ const LanguagesDropDown = () => {
       <HelperText>
         <HelperTextItem>Search by country, language or UTF code</HelperTextItem>
       </HelperText>
-      {unknownLanguages.length > 0 && (
-        <HelperText>
-          <HelperTextItem variant='error'>{`Unknown languages: ${unknownLanguages.join(
-            ', ',
-          )}`}</HelperTextItem>
-        </HelperText>
-      )}
-      {duplicateLanguages.length > 0 && (
-        <HelperText>
-          <HelperTextItem variant='error'>{`Duplicated languages: ${duplicateLanguages.join(
-            ', ',
-          )}`}</HelperTextItem>
-        </HelperText>
-      )}
+      <ValidatedInputHelperText errors={errors} />
       <Button
         className='pf-v6-u-text-align-left pf-v6-u-mt-sm'
         variant='link'
