@@ -11,14 +11,12 @@ import {
   DropEvent,
   FileUpload,
   FormGroup,
-  FormHelperText,
   HelperText,
   HelperTextItem,
   Title,
 } from '@patternfly/react-core';
 import { UndoIcon } from '@patternfly/react-icons';
 
-import { useFirstBootValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
 import { FIRST_BOOT_SERVICE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -28,7 +26,10 @@ import {
   selectFirstBootScript,
   selectRegistrationType,
   setFirstBootScript,
+  validateScript,
 } from '@/store/slices/wizard';
+
+import ValidatedInputHelperText from '../../ValidatedInputHelperText';
 
 // Inline <style> needed because sassPrefix wraps SCSS in .imageBuilder,
 // but the wizard Modal renders in a portal outside that wrapper.
@@ -70,7 +71,7 @@ const FirstBootStep = () => {
   const selectedScript = useAppSelector(selectFirstBootScript);
   const registrationType = useAppSelector(selectRegistrationType);
   const language = detectScriptType(selectedScript);
-  const { errors } = useFirstBootValidation();
+  const errors = validateScript(selectedScript);
 
   const initialScriptRef = useRef(selectedScript);
   const [filename, setFilename] = useState('');
@@ -192,13 +193,7 @@ const FirstBootStep = () => {
             Supports bash shell, python, or Ansible playbooks
           </HelperTextItem>
         </HelperText>
-        {errors.script && (
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem variant='error'>{errors.script}</HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        )}
+        <ValidatedInputHelperText errors={errors} />
       </FormGroup>
     </>
   );
