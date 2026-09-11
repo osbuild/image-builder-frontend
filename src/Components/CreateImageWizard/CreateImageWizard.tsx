@@ -103,7 +103,6 @@ import {
   useFirstBootValidation,
   useGcpValidation,
   useImagePullValidation,
-  useLocaleValidation,
   useRegistrationValidation,
   useSnapshotValidation,
   useUserGroupsValidation,
@@ -153,7 +152,6 @@ const CreateImageWizard = () => {
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const filesystemValidation = useFilesystemValidation();
-  const localeValidation = useLocaleValidation();
   const firstBootValidation = useFirstBootValidation();
   const usersValidation = useUsersValidation();
   const userGroupsValidation = useUserGroupsValidation();
@@ -190,7 +188,6 @@ const CreateImageWizard = () => {
 
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
-    localeValidation.disabledNext ||
     systemErrors.length > 0 ||
     firstBootValidation.disabledNext ||
     (!restrictions.users.shouldHide && usersHaveErrors);

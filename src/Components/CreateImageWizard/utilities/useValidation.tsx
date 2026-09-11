@@ -122,7 +122,6 @@ export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
-  const locale = useLocaleValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
@@ -139,7 +138,6 @@ export function useIsBlueprintValid(): boolean {
     !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
-    !locale.disabledNext &&
     systemErrors.length === 0 &&
     !firstBoot.disabledNext &&
     !details.disabledNext &&
