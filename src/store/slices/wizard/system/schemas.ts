@@ -136,7 +136,7 @@ export const scriptSchema = z
   });
 
 export const firstbootSchema = z.object({
-  script: scriptSchema,
+  script: scriptSchema.optional(),
 });
 
 export const systemSchema = z.object({

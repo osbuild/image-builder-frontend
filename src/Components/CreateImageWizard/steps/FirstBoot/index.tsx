@@ -45,7 +45,11 @@ const editorStyles = `
   display: none;
 }`;
 
-const detectScriptType = (scriptString: string): Language => {
+const detectScriptType = (scriptString?: string | undefined): Language => {
+  if (!scriptString) {
+    return Language.shell;
+  }
+
   const lines = scriptString.split('\n');
 
   if (lines[0].startsWith('#!')) {
@@ -73,7 +77,7 @@ const FirstBootStep = () => {
   const language = detectScriptType(selectedScript);
   const errors = validateScript(selectedScript);
 
-  const initialScriptRef = useRef(selectedScript);
+  const initialScriptRef = useRef(selectedScript ?? '');
   const [filename, setFilename] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedScript, setUploadedScript] = useState('');
@@ -177,7 +181,7 @@ const FirstBootStep = () => {
           className='first-boot-editor'
           language={language}
           onCodeChange={(code) => handleScriptChange(code)}
-          code={selectedScript}
+          code={selectedScript ?? ''}
           height='35vh'
           isCopyEnabled
           isDownloadEnabled
