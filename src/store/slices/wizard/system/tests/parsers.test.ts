@@ -202,31 +202,31 @@ describe('parseSystemFromRequest', () => {
     });
   });
 
-  describe('firstBoot', () => {
-    it('returns initial firstBoot when no files provided', () => {
+  describe('firstboot', () => {
+    it('returns initial firstboot when no files provided', () => {
       const result = parseSystemFromRequest(withCustomizations({}));
-      expect(result.firstBoot).toEqual(initialState.firstBoot);
+      expect(result.firstboot).toEqual(initialState.firstboot);
     });
 
-    it('returns initial firstBoot when files array is empty', () => {
+    it('returns initial firstboot when files array is empty', () => {
       const result = parseSystemFromRequest(withCustomizations({ files: [] }));
-      expect(result.firstBoot).toEqual(initialState.firstBoot);
+      expect(result.firstboot).toEqual(initialState.firstboot);
     });
 
-    it('returns initial firstBoot when no file matches FIRSTBOOT_PATH', () => {
+    it('returns initial firstboot when no file matches FIRSTBOOT_PATH', () => {
       const result = parseSystemFromRequest(
         withCustomizations({
           files: [{ path: '/some/other/path', data: btoa('echo hello') }],
         }),
       );
-      expect(result.firstBoot).toEqual(initialState.firstBoot);
+      expect(result.firstboot).toEqual(initialState.firstboot);
     });
 
-    it('returns initial firstBoot when firstboot file has no data', () => {
+    it('returns initial firstboot when firstboot file has no data', () => {
       const result = parseSystemFromRequest(
         withCustomizations({ files: [{ path: FIRSTBOOT_PATH }] }),
       );
-      expect(result.firstBoot).toEqual(initialState.firstBoot);
+      expect(result.firstboot).toEqual(initialState.firstboot);
     });
 
     it('decodes base64 firstboot script', () => {
@@ -236,7 +236,7 @@ describe('parseSystemFromRequest', () => {
           files: [{ path: FIRSTBOOT_PATH, data: btoa(script) }],
         }),
       );
-      expect(result.firstBoot).toEqual({ script });
+      expect(result.firstboot).toEqual({ script });
     });
 
     it('finds firstboot file among multiple files', () => {
@@ -250,7 +250,7 @@ describe('parseSystemFromRequest', () => {
           ],
         }),
       );
-      expect(result.firstBoot).toEqual({ script });
+      expect(result.firstboot).toEqual({ script });
     });
   });
 
@@ -476,7 +476,7 @@ describe('parseSystemFromRequest', () => {
         ports: ['80:tcp'],
         services: { enabled: ['http'], disabled: ['ftp'] },
       });
-      expect(result.firstBoot).toEqual({ script });
+      expect(result.firstboot).toEqual({ script });
       expect(result.users).toEqual([
         {
           name: 'admin',

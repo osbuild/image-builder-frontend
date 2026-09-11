@@ -343,7 +343,7 @@ describe('mapSystemCustomizations', () => {
 describe('mapFirstbootFiles', () => {
   it('returns files when firstboot script is set', () => {
     const state = createState({
-      firstBoot: { script: 'echo hello' },
+      firstboot: { script: 'echo hello' },
     });
     const result = mapFirstbootFiles(state);
     expect(result).toHaveLength(2);

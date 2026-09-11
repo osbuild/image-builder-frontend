@@ -128,7 +128,7 @@ const FirstBootStep = () => {
 
   return (
     <>
-      <CustomizationLabels customization='firstBoot' />
+      <CustomizationLabels customization='firstboot' />
       <Content>
         <Title headingLevel='h2' size='lg'>
           First boot configuration
