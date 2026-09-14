@@ -1,5 +1,6 @@
 import { FIRSTBOOT_PATH } from '@/constants';
 import { Customizations } from '@/store/api/backend';
+import { splitKernelArgs } from '@/Utilities/splitKernelArgs';
 
 import { initialState } from './state';
 import { SystemSlice } from './types';
@@ -29,7 +30,7 @@ const parseKernel = ({ kernel }: Customizations): SystemSlice['kernel'] => {
 
   return {
     name: kernel.name || defaults.name,
-    append: kernel.append?.split(' ') || defaults.append,
+    append: kernel.append ? splitKernelArgs(kernel.append) : defaults.append,
   };
 };
 

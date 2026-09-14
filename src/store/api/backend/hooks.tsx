@@ -10,6 +10,7 @@ import {
   selectIsImageMode,
   selectIsOnPremise,
 } from '@/store/slices';
+import { splitKernelArgs } from '@/Utilities/splitKernelArgs';
 
 import {
   Distributions,
@@ -95,7 +96,7 @@ export const useSecuritySummary = () => {
         total: enabled.length + disabled.length + masked.length,
       },
       kernel: {
-        append: data?.kernel?.append?.split(' ').filter(Boolean) ?? [],
+        append: data?.kernel?.append ? splitKernelArgs(data.kernel.append) : [],
       },
       filesystem,
     }),

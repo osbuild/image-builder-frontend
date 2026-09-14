@@ -17,6 +17,7 @@ import {
   selectServices,
   Units,
 } from '@/store/slices/wizard';
+import { splitKernelArgs } from '@/Utilities/splitKernelArgs';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +33,7 @@ export const useSelectorHandlers = () => {
     dispatch(clearKernelAppend());
 
     if (kernelAppend) {
-      const kernelArgsArray = kernelAppend.split(' ');
+      const kernelArgsArray = splitKernelArgs(kernelAppend);
       for (const arg of kernelArgsArray) {
         dispatch(addKernelArg(arg));
       }
