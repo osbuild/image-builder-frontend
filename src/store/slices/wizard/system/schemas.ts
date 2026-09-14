@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { splitKernelArgs } from '@/Utilities/splitKernelArgs';
+
 import { keyboards, languages, timezones } from './constants';
 
 import { uniqueArray } from '../utilities';
@@ -35,6 +37,15 @@ export const kernelArgSchema = z
     // config to prevent grub/bootloader injection.
     /^[a-zA-Z0-9=\-_,."'/:#+;\\ ]*$/,
     'Kernel argument contains invalid characters',
+  )
+  .refine(
+    (arg) => splitKernelArgs(arg).length <= 1,
+    'Spaces must be inside quotes, e.g. key="value with spaces"',
+  )
+  .refine(
+    // arg not in plain (unquoted) | double quoted | single quoted
+    (arg) => /^([^"']*|"[^"]*"|'[^']*')*$/.test(arg),
+    'Closing quote is missing',
   );
 
 export const kernelSchema = z.object({

@@ -58,10 +58,6 @@ describe('kernel validation', () => {
       expect(isValid('path\\to')).toBe(true);
     });
 
-    it('accepts an argument with spaces', () => {
-      expect(isValid('key value')).toBe(true);
-    });
-
     it('accepts a quoted argument with spaces', () => {
       expect(isValid('var="i have spaces"')).toBe(true);
     });
@@ -94,6 +90,18 @@ describe('kernel validation', () => {
 
     it('rejects an argument with angle brackets', () => {
       expect(isValid('arg<1>')).toBe(false);
+    });
+
+    it('rejects an argument with unquoted spaces', () => {
+      expect(isValid('key value')).toBe(false);
+    });
+
+    it('rejects an argument with an unclosed double quote', () => {
+      expect(isValid('a="open b')).toBe(false);
+    });
+
+    it('rejects an argument with an unclosed single quote', () => {
+      expect(isValid("a='open b")).toBe(false);
     });
 
     it('rejects an argument longer than the maximum length', () => {
