@@ -266,16 +266,17 @@ test('Content integration test - Content Template', async ({
   });
 
   await test.step('Wait for system registration to complete', async () => {
-    const maxAttempts = 12;
+    const maxAttempts = 50;
     const delayMs = 10_000;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       const [exitCode, output] = await image.exec(
         'sudo subscription-manager status',
       );
+      const [, dateOut] = await image.exec('date -u');
       // eslint-disable-next-line no-console
       console.log(
-        `Registration check attempt ${attempt}/${maxAttempts}: exit=${exitCode}`,
+        `Registration check attempt ${attempt}/${maxAttempts}: exit=${exitCode}, output=${output}, date=${dateOut.trim()}`,
       );
 
       if (exitCode === 0) {
@@ -291,7 +292,18 @@ test('Content integration test - Content Template', async ({
       }
     }
 
-    // If we get here, registration never completed
+    const [code, out] = await image.exec('cloud-init status --long');
+    // eslint-disable-next-line no-console
+    console.log(`[DIAG] cloud-init status (exit=${code}):\n${out}`);
+
+    const [, timectl] = await image.exec('timedatectl');
+    // eslint-disable-next-line no-console
+    console.log(`[DIAG] timedatectl:\n${timectl}`);
+
+    const [, chrony] = await image.exec('chronyc tracking');
+    // eslint-disable-next-line no-console
+    console.log(`[DIAG] chronyc tracking:\n${chrony}`);
+
     throw new Error(
       `System did not register within ${(maxAttempts * delayMs) / 1000} seconds`,
     );

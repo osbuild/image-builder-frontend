@@ -36,8 +36,10 @@ export class AwsWrapper {
     args: string[],
   ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      execFile(executable, args, (error, stdout) => {
+      execFile(executable, args, (error, stdout, stderr) => {
         if (error) {
+          (error as Error & { stdout: string; stderr: string }).stdout = stdout;
+          (error as Error & { stderr: string }).stderr = stderr;
           reject(error);
           return;
         }
@@ -163,7 +165,12 @@ export class AwsWrapper {
           exitCode = error.code as number;
         }
       }
-      const message = error instanceof Error ? error.message : String(error);
+      let message = '';
+      if (error instanceof Error) {
+        if ('stdout' in error) message += String((error as Record<string, unknown>).stdout);
+        if ('stderr' in error) message += String((error as Record<string, unknown>).stderr);
+      }
+      if (!message) message = error instanceof Error ? error.message : String(error);
       return [exitCode, message];
     }
   }
