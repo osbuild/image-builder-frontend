@@ -270,8 +270,8 @@ test('Content integration test - Content Template', async ({
     const delayMs = 10_000;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      const [exitCode, output] = await image.exec(
-        'sudo subscription-manager status',
+      const [exitCode] = await image.exec(
+        'sudo subscription-manager identity',
       );
       // eslint-disable-next-line no-console
       console.log(
@@ -280,7 +280,7 @@ test('Content integration test - Content Template', async ({
 
       if (exitCode === 0) {
         // eslint-disable-next-line no-console
-        console.log('System registration complete:', output);
+        console.log('System registration complete');
         return;
       }
 
