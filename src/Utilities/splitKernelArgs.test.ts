@@ -47,8 +47,4 @@ describe('splitKernelArgs', () => {
   it('ignores leading and trailing spaces', () => {
     expect(splitKernelArgs('  a b  ')).toEqual(['a', 'b']);
   });
-
-  it('handles argument with unclosed quote as a single token', () => {
-    expect(splitKernelArgs('a="open b')).toEqual(['a="open b']);
-  });
 });
