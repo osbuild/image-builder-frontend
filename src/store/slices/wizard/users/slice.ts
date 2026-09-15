@@ -33,6 +33,10 @@ export const usersSlice = createSlice({
     removeUser: (state, action: PayloadAction<number>) => {
       state.users = state.users.filter((_, index) => index !== action.payload);
     },
+    clearUsersAndGroups: (state) => {
+      state.users = [];
+      state.groups = [{ name: '' }];
+    },
     setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
       state.users[action.payload.index].name = action.payload.name;
     },
@@ -167,6 +171,7 @@ export const {
   removeUserGroup,
   addUser,
   removeUser,
+  clearUsersAndGroups,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
