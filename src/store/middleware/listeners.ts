@@ -13,6 +13,7 @@ import {
 import {
   clearUnsupportedFilesystem,
   clearUnsupportedRegistration,
+  clearUnsupportedUsersAndGroups,
   filterImageTypes,
   registerLater,
   resolveOfficialImage,
@@ -46,6 +47,11 @@ startListening({
 startListening({
   actionCreator: changeBlueprintMode,
   effect: clearUnsupportedFilesystem,
+});
+
+startListening({
+  actionCreator: changeImageTypes,
+  effect: clearUnsupportedUsersAndGroups,
 });
 
 startListening({
