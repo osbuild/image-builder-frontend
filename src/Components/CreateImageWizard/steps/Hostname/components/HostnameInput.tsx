@@ -22,7 +22,7 @@ const HostnameInput = () => {
   const dispatch = useAppDispatch();
   const hostname = useAppSelector(selectHostname);
   const [isPristine, setIsPristine] = useState(!hostname);
-  const errors = validateHostname(hostname);
+  const { errors } = validateHostname(hostname);
 
   const handleChange = (
     _e: React.FormEvent<HTMLInputElement>,

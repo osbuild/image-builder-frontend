@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { validateKernelArgs } from '../../validators';
 
-const isValid = (arg: string) => validateKernelArgs([arg]).length === 0;
+const isValid = (arg: string) => validateKernelArgs([arg]).errors.length === 0;
 
 describe('kernel validation', () => {
   describe('valid kernel arguments', () => {
@@ -67,7 +67,7 @@ describe('kernel validation', () => {
     });
 
     it('returns no issues for an empty list', () => {
-      expect(validateKernelArgs([])).toEqual([]);
+      expect(validateKernelArgs([]).errors).toEqual([]);
     });
   });
 
@@ -111,13 +111,13 @@ describe('kernel validation', () => {
 
   describe('duplicate kernel arguments', () => {
     it('accepts a list with no duplicates', () => {
-      expect(validateKernelArgs(['quiet', 'splash'])).toEqual([]);
+      expect(validateKernelArgs(['quiet', 'splash']).errors).toEqual([]);
     });
 
     it('rejects a list with a duplicate argument', () => {
-      const result = validateKernelArgs(['quiet', 'quiet']);
-      expect(result).toHaveLength(1);
-      expect(result[0]).toMatchObject({
+      const { errors } = validateKernelArgs(['quiet', 'quiet']);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatchObject({
         kind: 'duplicate',
         value: 'quiet',
       });
