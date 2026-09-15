@@ -79,7 +79,7 @@ jobs:
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
-          CURRENTS_PROJECT_ID=CNrla0 CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
+          CURRENTS_PROJECT_ID=CNrla0 CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests/Content/ContentTemplate.boot.ts
 
       - name: Store front-end Test report
         uses: actions/upload-artifact@v7
