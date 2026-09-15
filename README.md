@@ -74,7 +74,7 @@ Make sure you have npm@10 and node 22+ installed. If you need multiple versions 
 echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 ```
 
-4. open browser at `https://prod.foo.redhat.com:1337/beta/insights/image-builder`
+4. open browser at `https://prod.foo.redhat.com:1337/insights/image-builder`
 
 #### Webpack proxy (staging) -- _Runs with image-builder's stage deployment_
 
@@ -88,7 +88,7 @@ echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
 ```
 
-4. open browser at `https://stage.foo.redhat.com:1337/beta/insights/image-builder`
+4. open browser at `https://stage.foo.redhat.com:1337/insights/image-builder`
 
 ### Image builder as Cockpit plugin
 
@@ -249,15 +249,12 @@ Then connect to the following platforms:
 - https://insights.unleash.devshift.net prod
 
 Once you have a toggle to work with, on the frontend code there's just need to
-import the `useFlag` hook and to use it. You can get some inspiration from
-existing flags:
-
-https://github.com/RedHatInsights/image-builder-frontend/blob/c84b493eba82ce83a7844943943d91112ffe8322/src/Components/ImagesTable/ImageLink.js#L99
+import the `useFlag` hook and to use it. For example, see
+[`src/Components/ImagesTable/components/Row/components/Row.tsx`](src/Components/ImagesTable/components/Row/components/Row.tsx).
 
 ### Mocking flags for tests
 
-Flags can be mocked for the unit tests to access some feature. Checkout:
-https://github.com/osbuild/image-builder-frontend/blob/9a464e416bc3769cfc8e23b62f1dd410eb0e0455/src/test/Components/CreateImageWizard/CreateImageWizard.test.tsx#L49
+Flags are mocked globally in [`src/test/setup.ts`](src/test/setup.ts) via `vi.mock('@unleash/proxy-client-react')`.
 
 If the two possible code path accessible via the toggles are defined in the code
 base, then it's good practice to test the two of them. If not, only test what's
@@ -287,7 +284,7 @@ we're planning on using.
 
 ## Style Guidelines
 
-This project uses recommended rule sets rom several plugins:
+This project uses recommended rule sets from several plugins:
 
 - `@eslint/js`
 - `typescript-eslint`
@@ -301,10 +298,10 @@ This project uses recommended rule sets rom several plugins:
 - `eslint-plugin-playwright`
 - `@redhat-cloud-services/eslint-config-redhat-cloud-services`
 
-To run the linter, use:
+To check for lint errors without modifying files:
 
 ```bash
-npm run lint
+npm run lint:check
 ```
 
 Any errors that can be fixed automatically, can be corrected by running:
@@ -362,8 +359,8 @@ Note that `testing-library` DOM printout is currently disabled for all tests by 
 
 ```typescript
 configure({
-  getElementError: (message: string) => {
-    const error = new Error(message);
+  getElementError: (message: string | null, _container: Element) => {
+    const error = new Error(message ?? '');
     error.name = 'TestingLibraryElementError';
     error.stack = '';
     return error;
