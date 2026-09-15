@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
-import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
+import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { CDN_PROD_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {

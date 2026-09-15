@@ -10,11 +10,11 @@ import {
   Stack,
 } from '@patternfly/react-core';
 
-import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
 import {
   isGcpDomainValid,
   isGcpEmailValid,
 } from '@/Components/CreateImageWizard/validators';
+import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeGcpAccountType,

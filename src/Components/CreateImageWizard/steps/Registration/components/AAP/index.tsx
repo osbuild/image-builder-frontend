@@ -13,8 +13,8 @@ import {
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { useAAPValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { validateMultipleCertificates } from '@/Components/CreateImageWizard/validators';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { AAP_DOCS_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {

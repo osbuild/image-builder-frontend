@@ -7,8 +7,8 @@ import { Td, Tr } from '@patternfly/react-table';
 import LabelInput from '@/Components/CreateImageWizard/LabelInput';
 import { PasswordValidatedInput } from '@/Components/CreateImageWizard/utilities/PasswordValidatedInput';
 import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
 import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
 import {
   addGroupToUserByUserIndex,

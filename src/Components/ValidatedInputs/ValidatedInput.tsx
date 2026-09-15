@@ -14,10 +14,9 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
+import type { StepValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppSelector } from '@/store/hooks';
 import { selectForceShowErrors } from '@/store/slices/wizard';
-
-import type { StepValidation } from './utilities/useValidation';
 
 type ValidatedTextInputPropTypes = Omit<
   TextInputGroupMainProps,
