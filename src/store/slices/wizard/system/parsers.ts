@@ -96,32 +96,6 @@ const parseFirstBoot = ({
   };
 };
 
-const parseUsers = ({ users }: Customizations): SystemSlice['users'] => {
-  if (!users || users.length === 0) {
-    return initialState.users;
-  }
-
-  return users.map((user) => ({
-    name: user.name,
-    password: '', // The image-builder API does not return the password.
-    ssh_key: user.ssh_key || '',
-    groups: user.groups || [],
-    isAdministrator: user.groups?.includes('wheel') || false,
-    hasPassword: user.hasPassword || false,
-  }));
-};
-
-const parseGroups = ({ groups }: Customizations): SystemSlice['groups'] => {
-  if (!groups || groups.length === 0) {
-    return initialState.groups;
-  }
-
-  return groups.map((group) => ({
-    name: group.name,
-    ...(group.gid && { gid: group.gid }),
-  }));
-};
-
 export const parseSystemFromRequest = ({
   customizations,
 }: RequestLike): SystemSlice => ({
@@ -132,6 +106,4 @@ export const parseSystemFromRequest = ({
   hostname: parseHostname(customizations),
   firewall: parseFirewall(customizations),
   firstboot: parseFirstBoot(customizations),
-  users: parseUsers(customizations),
-  groups: parseGroups(customizations),
 });

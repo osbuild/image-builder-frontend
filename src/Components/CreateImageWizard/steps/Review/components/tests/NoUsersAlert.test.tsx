@@ -18,11 +18,11 @@ const testUser = {
 
 const renderForTargets = (
   imageTypes: SupportedImageTypes[],
-  users = initialState.system.users,
+  users = initialState.users.users,
 ) =>
   renderWithRedux(<NoUsersAlert />, {
     output: { ...initialState.output, imageTypes },
-    system: { ...initialState.system, users },
+    users: { ...initialState.users, users },
   });
 
 describe('NoUsersAlert', () => {
