@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import ValidatedListInput from '@/Components/CreateImageWizard/ValidatedListInput';
+import { ValidatedListInput } from '@/Components/ValidatedInputs';
 import { useSecuritySummary } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {

@@ -10,7 +10,7 @@ import {
   typeWithWait,
 } from '@/test/testUtils';
 
-import ValidatedListInput from '../ValidatedListInput';
+import { ValidatedListInput } from '../ValidatedListInput';
 
 // Mirrors the real validators: flags format violations and duplicates.
 const validator = (values: string[]): ValidationResult => {
