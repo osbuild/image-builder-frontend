@@ -34,6 +34,7 @@ import {
   mapSatelliteFiles,
 } from './registration';
 import { mapFirstbootFiles, mapSystemCustomizations } from './system';
+import { mapUsersCustomizations } from './users';
 
 export const mapFileCustomizations = createSelector(
   [mapSatelliteFiles, mapFirstbootFiles],
@@ -54,8 +55,9 @@ export const mapCustomizations = createSelector(
     mapComplianceCustomizations,
     mapFilesystemCustomizations,
     mapSystemCustomizations,
+    mapUsersCustomizations,
   ],
-  (files, subscription, content, compliance, filesystem, system) => ({
+  (files, subscription, content, compliance, filesystem, system, users) => ({
     customizations: {
       // first boot & satellite use file customizations
       ...files,
@@ -67,8 +69,10 @@ export const mapCustomizations = createSelector(
       ...compliance,
       // disk, filesystem + partition mode
       ...filesystem,
-      // users, groups, services, hostname, kernel, timezone, locale + firewall
+      // services, hostname, kernel, timezone, locale + firewall
       ...system,
+      // users & groups
+      ...users,
     },
   }),
 );

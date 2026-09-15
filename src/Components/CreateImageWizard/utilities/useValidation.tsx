@@ -552,10 +552,13 @@ export function useUsersValidation(): UsersStepValidation {
   const userGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
-  if (
-    users.length === 0 ||
-    (users.length === 1 && (users[0].name || '').trim() === '')
-  ) {
+  const isEmptyUser = (user: UserWithAdditionalInfo) =>
+    (user.name || '').trim() === '' &&
+    !user.password &&
+    !user.ssh_key &&
+    user.groups.length === 0;
+
+  if (users.length === 0 || (users.length === 1 && isEmptyUser(users[0]))) {
     return {
       errors: {},
       warnings: {},

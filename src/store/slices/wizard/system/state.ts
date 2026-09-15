@@ -27,6 +27,4 @@ export const initialState: SystemSlice = {
     },
   },
   firstboot: {},
-  users: [],
-  groups: [{ name: '' }],
 };

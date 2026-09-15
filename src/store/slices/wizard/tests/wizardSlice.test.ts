@@ -40,8 +40,8 @@ describe('wizardSlice core reducers', () => {
     it('should reset users array to empty', () => {
       const stateWithUsers: WizardState = {
         ...initialState,
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           users: [
             {
               name: 'user1',
@@ -57,7 +57,7 @@ describe('wizardSlice core reducers', () => {
 
       const result = wizardReducer(stateWithUsers, initializeWizard());
 
-      expect(result.system.users).toEqual([]);
+      expect(result.users.users).toEqual([]);
     });
 
     it('should reset partitions to empty arrays', () => {
@@ -159,6 +159,9 @@ describe('wizardSlice core reducers', () => {
         system: {
           ...initialState.system,
           hostname: 'existing-hostname',
+        },
+        users: {
+          ...initialState.users,
           users: [
             {
               name: 'existinguser',
@@ -177,6 +180,9 @@ describe('wizardSlice core reducers', () => {
         system: {
           ...initialState.system,
           hostname: 'new-hostname',
+        },
+        users: {
+          ...initialState.users,
           users: [],
         },
       };
@@ -184,7 +190,7 @@ describe('wizardSlice core reducers', () => {
       const result = wizardReducer(existingState, loadWizardState(newState));
 
       expect(result.system.hostname).toBe('new-hostname');
-      expect(result.system.users).toEqual([]);
+      expect(result.users.users).toEqual([]);
     });
 
     it('loadWizardState should fall back to initialState when system is missing', () => {
