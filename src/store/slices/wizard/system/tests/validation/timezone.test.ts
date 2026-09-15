@@ -25,6 +25,7 @@ describe('timezone validation', () => {
           kind: 'format',
           message: 'Unknown timezone',
           value: 'Invalid/Timezone',
+          path: [],
         },
       ]);
     });
@@ -66,6 +67,7 @@ describe('timezone validation', () => {
             kind: 'format',
             message: 'Expected format: <ntp-server>. Example: time.redhat.com',
             value: 'not a server',
+            path: [0],
           },
         ]);
       });
@@ -99,6 +101,7 @@ describe('timezone validation', () => {
             kind: 'duplicate',
             message: 'Duplicate ntp servers: time.example.com',
             value: 'time.example.com',
+            path: [],
           },
         ]);
       });

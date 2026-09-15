@@ -24,6 +24,7 @@ describe('locale validation', () => {
           kind: 'format',
           message: 'Unknown language',
           value: 'xx_XX.UTF-8',
+          path: [0],
         },
       ]);
     });
@@ -39,6 +40,7 @@ describe('locale validation', () => {
           kind: 'duplicate',
           message: 'Duplicate languages: en_US.UTF-8',
           value: 'en_US.UTF-8',
+          path: [],
         },
       ]);
     });
@@ -59,6 +61,7 @@ describe('locale validation', () => {
           kind: 'format',
           message: 'Unknown keyboard',
           value: 'unknown-keyboard',
+          path: [],
         },
       ]);
     });
