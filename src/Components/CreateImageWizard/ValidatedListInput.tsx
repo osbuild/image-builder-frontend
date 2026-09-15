@@ -12,10 +12,9 @@ import {
 } from '@patternfly/react-core/dist/esm';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import type { ValidationResult } from '@/store/slices/wizard/types';
 import type { MergedListItem } from '@/Utilities/mergeListItems';
-
-import ValidatedInputHelperText from './ValidatedInputHelperText';
 
 const DEFAULT_TRUNCATE_LENGTH = 20;
 const DEFAULT_MAX_VISIBLE_ITEMS = 4;

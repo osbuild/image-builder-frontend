@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 
 import type { ValidationResult } from '@/store/slices/wizard/types';
 
-import ValidatedInputHelperText from '../ValidatedInputHelperText';
+import { ValidatedInputHelperText } from '../ValidatedInputHelperText';
 
 describe('ValidatedInputHelperText', () => {
   it('renders each validation error', () => {
