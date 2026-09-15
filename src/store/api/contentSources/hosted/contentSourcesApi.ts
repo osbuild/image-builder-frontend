@@ -475,6 +475,8 @@ export type ApiRepositoryResponse = {
 export type ApiRepositoryResponseRead = {
   /** Account ID of the owner */
   account_id?: string | undefined;
+  /** Lightwell: total security advisories */
+  advisory_count?: number | undefined;
   /** Number of builds last read in the repository, not applicable to all repositories */
   build_count?: number | undefined;
   /** Content Type (rpm) of the repository */
@@ -689,6 +691,8 @@ export type ApiRepositoryImportResponse = {
 export type ApiRepositoryImportResponseRead = {
   /** Account ID of the owner */
   account_id?: string | undefined;
+  /** Lightwell: total security advisories */
+  advisory_count?: number | undefined;
   /** Number of builds last read in the repository, not applicable to all repositories */
   build_count?: number | undefined;
   /** Content Type (rpm) of the repository */
