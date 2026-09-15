@@ -10,7 +10,16 @@ export type ValidationIssue = {
   kind?: 'format' | 'duplicate';
 };
 
-export type ValidationResult = ValidationIssue[];
+export type SchemaValidationResult<T> = {
+  data?: T | undefined;
+  issues: ValidationIssue[];
+};
+
+export type ValidationResult<T = unknown> = {
+  errors: ValidationIssue[];
+  warnings?: ValidationIssue[];
+  data?: T | undefined;
+};
 
 type BlueprintWithImageRequests = BlueprintExportResponse & {
   image_requests?: ImageRequest[] | undefined;

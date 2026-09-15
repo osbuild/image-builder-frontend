@@ -11,7 +11,7 @@ import {
 // `validateEnabledServices`. The per-category behaviour (including duplicate
 // detection, which uses a category-specific label) is covered separately.
 const isValid = (service: string) =>
-  validateEnabledServices([service]).length === 0;
+  validateEnabledServices([service]).errors.length === 0;
 
 describe('systemd services validation', () => {
   describe('valid services', () => {
@@ -56,7 +56,7 @@ describe('systemd services validation', () => {
     });
 
     it('returns no issues for an empty list', () => {
-      expect(validateEnabledServices([])).toEqual([]);
+      expect(validateEnabledServices([]).errors).toEqual([]);
     });
   });
 
@@ -104,21 +104,21 @@ describe('systemd services validation', () => {
     ['masked', validateMaskedServices, 'masked services'],
   ])('%s services validator', (_category, validate, label) => {
     it('accepts a valid service', () => {
-      expect(validate(['sshd.service'])).toEqual([]);
+      expect(validate(['sshd.service']).errors).toEqual([]);
     });
 
     it('rejects an invalid service', () => {
-      expect(validate(['my--service']).length).toBeGreaterThan(0);
+      expect(validate(['my--service']).errors.length).toBeGreaterThan(0);
     });
 
     it('flags a duplicate service', () => {
-      const result = validate(['sshd', 'sshd']);
-      expect(result).toHaveLength(1);
-      expect(result[0]).toMatchObject({
+      const { errors } = validate(['sshd', 'sshd']);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatchObject({
         kind: 'duplicate',
         value: 'sshd',
       });
-      expect(result[0].message).toContain(label);
+      expect(errors[0].message).toContain(label);
     });
   });
 });

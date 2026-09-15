@@ -2,7 +2,10 @@ import React, { type ComponentProps } from 'react';
 
 import { render, screen } from '@testing-library/react';
 
-import type { ValidationResult } from '@/store/slices/wizard/types';
+import type {
+  ValidationIssue,
+  ValidationResult,
+} from '@/store/slices/wizard/types';
 import {
   clickWithWait,
   createUser,
@@ -14,18 +17,18 @@ import { ValidatedListInput } from '../ValidatedListInput';
 
 // Mirrors the real validators: flags format violations and duplicates.
 const validator = (values: string[]): ValidationResult => {
-  const issues: ValidationResult = [];
+  const errors: ValidationIssue[] = [];
   const seen = new Set<string>();
   values.forEach((value) => {
     if (!/^[a-z]+$/.test(value)) {
-      issues.push({ message: 'Invalid value', kind: 'format', value });
+      errors.push({ message: 'Invalid value', kind: 'format', value });
     }
     if (seen.has(value)) {
-      issues.push({ message: 'Duplicate value', kind: 'duplicate', value });
+      errors.push({ message: 'Duplicate value', kind: 'duplicate', value });
     }
     seen.add(value);
   });
-  return issues;
+  return { errors };
 };
 
 const onAdd = vi.fn();

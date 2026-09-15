@@ -15,7 +15,7 @@ import {
 const KeyboardDropDown = () => {
   const dispatch = useAppDispatch();
   const keyboard = useAppSelector(selectKeyboard);
-  const errors = validateKeyboard(keyboard);
+  const { errors } = validateKeyboard(keyboard);
 
   const options = useMemo(
     () => keyboards.map((kb) => ({ value: kb, label: kb })),

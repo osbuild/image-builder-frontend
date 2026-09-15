@@ -125,7 +125,7 @@ export function useIsBlueprintValid(): boolean {
   const awsTarget = useAwsValidation();
 
   const system = useAppSelector(selectSystem);
-  const systemErrors = validateSystemSlice(system);
+  const { errors: systemErrors } = validateSystemSlice(system);
 
   return (
     !aap.disabledNext &&
