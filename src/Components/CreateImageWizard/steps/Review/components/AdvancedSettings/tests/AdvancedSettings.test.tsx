@@ -1025,7 +1025,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [] },
+          users: { ...initialState.users, users: [] },
         },
       );
 
@@ -1040,8 +1040,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [
               {
                 name: '',
@@ -1067,8 +1067,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [
               {
                 name: '',
@@ -1097,7 +1097,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [adminUser, developerUser] },
+          users: { ...initialState.users, users: [adminUser, developerUser] },
         },
       );
 
@@ -1112,7 +1112,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [] },
+          users: { ...initialState.users, users: [] },
         },
       );
 
@@ -1131,7 +1131,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [adminUser] },
+          users: { ...initialState.users, users: [adminUser] },
         },
       );
 
@@ -1150,7 +1150,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [adminUser, developerUser] },
+          users: { ...initialState.users, users: [adminUser, developerUser] },
         },
       );
 
@@ -1166,7 +1166,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [adminUser, developerUser] },
+          users: { ...initialState.users, users: [adminUser, developerUser] },
         },
       );
 
@@ -1183,7 +1183,7 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: { ...initialState.system, users: [adminUser, developerUser] },
+          users: { ...initialState.users, users: [adminUser, developerUser] },
         },
       );
 
@@ -1201,8 +1201,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [{ ...adminUser, ssh_key: 'ssh-rsa AAAA' }],
           },
         },
@@ -1220,8 +1220,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [{ ...adminUser, groups: ['wheel', 'docker'] }],
           },
         },
@@ -1239,8 +1239,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [
               { ...adminUser, ssh_key: 'ssh-rsa adminkey', groups: ['wheel'] },
               {
@@ -1268,8 +1268,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [adminUser],
             groups: userGroups,
           },
@@ -1292,8 +1292,8 @@ echo 'Hello there, General Kenobi!'`;
             ...initialState.output,
             imageTypes: ['guest-image'],
           },
-          system: {
-            ...initialState.system,
+          users: {
+            ...initialState.users,
             users: [adminUser],
             groups: userGroups,
           },

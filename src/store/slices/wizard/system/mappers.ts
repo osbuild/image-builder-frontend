@@ -5,7 +5,7 @@ import {
   FIRSTBOOT_PATH,
   FIRSTBOOT_SERVICE_PATH,
 } from '@/constants';
-import type { File, Group, User } from '@/store/api/backend';
+import type { File } from '@/store/api/backend';
 
 import {
   selectFirewall,
@@ -17,74 +17,9 @@ import {
   selectNtpServers,
   selectServices,
   selectTimezone,
-  selectUserGroups,
-  selectUsers,
 } from './selectors';
-import { UserWithAdditionalInfo } from './types';
 
 import { selectIsImageMode } from '../details';
-
-const mapUsers = createSelector([selectUsers], (users) => {
-  if (users.length === 0) {
-    return undefined;
-  }
-
-  const customizationUsers = users
-    .filter(
-      (user: UserWithAdditionalInfo) =>
-        user.name || user.password || user.ssh_key || user.groups.length > 0,
-    )
-    .map((user: UserWithAdditionalInfo) => {
-      const result: User = {
-        name: user.name,
-      };
-      if (user.password !== '') {
-        result.password = user.password;
-      }
-      if (user.ssh_key !== '') {
-        result.ssh_key = user.ssh_key;
-      }
-      if (user.groups.length > 0) {
-        result.groups = user.groups;
-      }
-      result.hasPassword = user.hasPassword || user.password !== '';
-      return result as User;
-    });
-
-  if (customizationUsers.length === 0) {
-    return undefined;
-  }
-
-  return {
-    users: customizationUsers,
-  };
-});
-
-const mapGroups = createSelector([selectUserGroups], (groups) => {
-  if (groups.length === 0) {
-    return undefined;
-  }
-
-  const customizationGroups = groups
-    .filter((group) => group.name && group.name.trim() !== '')
-    .map((group) => {
-      const result: Group = {
-        name: group.name,
-      };
-      if (group.gid !== undefined) {
-        result.gid = group.gid;
-      }
-      return result;
-    });
-
-  if (customizationGroups.length === 0) {
-    return undefined;
-  }
-
-  return {
-    groups: customizationGroups,
-  };
-});
 
 const mapServices = createSelector([selectServices], (services) => {
   if (
@@ -269,19 +204,8 @@ export const mapFirstbootFiles = createSelector(
 );
 
 export const mapSystemCustomizations = createSelector(
-  [
-    mapUsers,
-    mapGroups,
-    mapServices,
-    mapHostname,
-    mapKernel,
-    mapTimezone,
-    mapLocale,
-    mapFirewall,
-  ],
-  (users, groups, services, hostname, kernel, timezone, locale, firewall) => ({
-    ...users,
-    ...groups,
+  [mapServices, mapHostname, mapKernel, mapTimezone, mapLocale, mapFirewall],
+  (services, hostname, kernel, timezone, locale, firewall) => ({
     ...services,
     ...hostname,
     ...kernel,

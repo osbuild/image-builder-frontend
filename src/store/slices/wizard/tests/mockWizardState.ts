@@ -45,11 +45,11 @@ export const createMockState = (
 
 // Helper to create a state with a user for user-related tests
 export const createStateWithUser = (
-  userOverrides: Partial<WizardState['system']['users'][0]> = {},
+  userOverrides: Partial<WizardState['users']['users'][0]> = {},
 ): RootState =>
   createMockState({
-    system: {
-      ...initialState.system,
+    users: {
+      ...initialState.users,
       users: [
         {
           name: 'testuser',

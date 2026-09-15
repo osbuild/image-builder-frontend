@@ -12,6 +12,7 @@ import { parseOutputFromRequest } from './output';
 import { parseRegistrationFromRequest } from './registration';
 import type { WizardState } from './slice';
 import { parseSystemFromRequest } from './system';
+import { parseUsersFromRequest } from './users';
 import { validationState } from './validation';
 
 export const parseStateFromRequest = (
@@ -19,6 +20,7 @@ export const parseStateFromRequest = (
 ): WizardState => ({
   details: parseDetailsFromRequest(request),
   system: parseSystemFromRequest(request),
+  users: parseUsersFromRequest(request),
   filesystem: parseFilesystemFromRequest(request),
   compliance: parseComplianceFromRequest(request),
   content: parseContentFromRequest(request),
