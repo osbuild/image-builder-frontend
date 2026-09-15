@@ -42,7 +42,6 @@ import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
-  useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
 } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -67,7 +66,6 @@ import {
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
-  selectWizardMode,
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
@@ -110,7 +108,6 @@ const PackageSearch = ({
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
-  const wizardMode = useAppSelector(selectWizardMode);
 
   const { packages: requiredPackages } = useSecuritySummary();
   const requiredSet = useMemo(
@@ -239,11 +236,6 @@ const PackageSearch = ({
       isLoading: isLoadingRecommendedGroups,
     },
   ] = useSearchPackageGroupMutation();
-
-  const [
-    searchModulesInfo,
-    { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
-  ] = useSearchRepositoryModuleStreamsMutation();
 
   useEffect(() => {
     if (packageType === 'groups') {
@@ -383,49 +375,6 @@ const PackageSearch = ({
     isOnPremise,
     epelRepoUrlByDistribution,
   ]);
-
-  useEffect(() => {
-    if (
-      wizardMode !== 'create' &&
-      isSuccessDistroRepositories &&
-      modules.length > 0
-    ) {
-      searchModulesInfo({
-        apiSearchModuleStreamsRequest: {
-          rpm_names: modules.map((module) => module.name),
-          urls: [...distroUrls, epelRepoUrlByDistribution],
-          uuids: [],
-        },
-      });
-    }
-  }, [isSuccessDistroRepositories, modules, distroUrls]);
-
-  useEffect(() => {
-    if (!isSuccessModulesInfo) return;
-
-    dataModulesInfo.forEach((module) => {
-      const enabledModule = modules.find((m) => m.name === module.module_name);
-
-      module.streams
-        ?.find((stream) => stream.stream === enabledModule?.stream)
-        ?.package_names?.forEach((packageName) => {
-          const existingPackage = packages.find(
-            (pkg) => pkg.name === packageName,
-          );
-
-          if (existingPackage && module.module_name && enabledModule) {
-            dispatch(
-              addPackage({
-                ...existingPackage,
-                type: 'module',
-                module_name: module.module_name,
-                stream: enabledModule.stream,
-              }),
-            );
-          }
-        });
-    });
-  }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
 
   const [
     fetchRecommendationDescriptions,
