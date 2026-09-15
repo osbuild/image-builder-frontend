@@ -9,7 +9,7 @@ import {
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { REGISTRATION_DOCS_URL, SATELLITE_SERVICE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {

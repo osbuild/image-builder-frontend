@@ -3,7 +3,7 @@ import React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectComplianceType } from '@/store/slices';
 import {

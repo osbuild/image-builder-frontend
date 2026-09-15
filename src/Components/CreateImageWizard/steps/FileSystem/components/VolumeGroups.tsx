@@ -11,7 +11,7 @@ import {
 import { AddCircleOIcon } from '@patternfly/react-icons';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { VolumeGroup } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {

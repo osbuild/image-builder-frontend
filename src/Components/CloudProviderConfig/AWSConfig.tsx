@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
+import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { AWSUploadConfig, UploadConfigResponse } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -32,8 +33,6 @@ import {
   isAwsProfileValid,
   isAwsRegionValid,
 } from './validators';
-
-import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 
 type FormGroupProps<T> = {
   value: T | undefined;

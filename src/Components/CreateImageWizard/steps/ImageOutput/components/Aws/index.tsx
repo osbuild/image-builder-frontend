@@ -10,8 +10,8 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 
-import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
 import { isAwsAccountIdValid } from '@/Components/CreateImageWizard/validators';
+import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { changeAwsAccountId, selectAwsAccountId } from '@/store/slices/wizard';
