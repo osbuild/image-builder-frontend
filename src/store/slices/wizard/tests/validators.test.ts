@@ -30,6 +30,7 @@ describe('validateSchema', () => {
           message: 'Value is required',
           kind: 'format',
           value: '',
+          path: [],
         },
       ],
     });
@@ -67,6 +68,7 @@ describe('validateList', () => {
           message: 'Only lowercase letters allowed',
           kind: 'format',
           value: 'FOO',
+          path: [0],
         },
       ],
     });
@@ -81,6 +83,7 @@ describe('validateList', () => {
           message: 'Duplicate item: foo',
           kind: 'duplicate',
           value: 'foo',
+          path: [],
         },
       ],
     });

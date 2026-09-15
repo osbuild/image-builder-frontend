@@ -9,9 +9,7 @@ export const validateSchema = <T>(
   if (item === undefined) return { data: undefined, issues: [] };
 
   const result = schema.safeParse(item);
-  if (result.success) {
-    return { data: result.data, issues: [] };
-  }
+  if (result.success) return { data: result.data, issues: [] };
 
   return {
     issues: result.error.issues.map((i): ValidationIssue => {
@@ -20,6 +18,7 @@ export const validateSchema = <T>(
           message: i.message,
           kind: 'duplicate',
           value: i.params.value,
+          path: i.path,
         };
       }
 
@@ -27,6 +26,7 @@ export const validateSchema = <T>(
         message: i.message,
         kind: 'format',
         value: String(item),
+        path: i.path,
       };
     }),
   };
@@ -39,9 +39,7 @@ export const validateList = <T>(
   if (items === undefined) return { data: undefined, issues: [] };
 
   const result = schema.safeParse(items);
-  if (result.success) {
-    return { data: result.data, issues: [] };
-  }
+  if (result.success) return { data: result.data, issues: [] };
 
   return {
     issues: result.error.issues.map((i): ValidationIssue => {
@@ -50,6 +48,7 @@ export const validateList = <T>(
           message: i.message,
           kind: 'duplicate',
           value: i.params.value,
+          path: i.path,
         };
       }
 
@@ -58,6 +57,7 @@ export const validateList = <T>(
         message: i.message,
         kind: 'format',
         ...(typeof index === 'number' ? { value: String(items[index]) } : {}),
+        path: i.path,
       };
     }),
   };
