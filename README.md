@@ -18,7 +18,7 @@ The frontend code for Image Builder.
 
 ## Table of Contents
 
-1. [How to build and run image-builder-frontend](#frontend-development)
+1. [How to build and run image-builder-frontend](#how-to-build-and-run-image-builder-frontend)
    1. [Frontend Development](#frontend-development)
    2. [Image builder as Cockpit plugin](#image-builder-as-cockpit-plugin)
    3. [Backend Development](#backend-development)
@@ -30,11 +30,17 @@ The frontend code for Image Builder.
    2. [Cleaning the flags](#cleaning-the-flags)
 4. [File Structure](#file-structure)
 5. [Style Guidelines](#style-guidelines)
+   1. [Import Paths](#import-paths)
 6. [Test Guidelines](#test-guidelines)
+   1. [Running the tests](#running-the-tests)
+   2. [Test structure](#test-structure)
 7. [Running hosted service Playwright tests](#running-hosted-service-playwright-tests)
+   1. [Running tests](#running-tests)
+   2. [Dynamic vs static users](#dynamic-vs-static-users)
+   3. [Diagnosing a failure that has no visible cause](#diagnosing-a-failure-that-has-no-visible-cause)
+   4. [Finding flaky tests with injected latency](#finding-flaky-tests-with-injected-latency)
 8. [Playwright Boot tests](#playwright-boot-tests)
-   1. [Local development setup](#local-development-setup)
-   2. [CI setup](#ci-setup)
+   1. [CI setup](#ci-setup)
 
 ## How to build and run image-builder-frontend
 
