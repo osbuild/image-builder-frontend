@@ -2,13 +2,13 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
-import type { ValidationResult } from '@/store/slices/wizard/types';
+import type { ValidationIssue } from '@/store/slices/wizard/types';
 
-import ValidatedInputHelperText from '../ValidatedInputHelperText';
+import { ValidatedInputHelperText } from '../ValidatedInputHelperText';
 
 describe('ValidatedInputHelperText', () => {
   it('renders each validation error', () => {
-    const errors: ValidationResult = [
+    const errors: ValidationIssue[] = [
       { kind: 'format', message: 'Invalid value', value: 'bad' },
       { kind: 'duplicate', message: 'Duplicate value', value: 'bad' },
     ];

@@ -1,11 +1,11 @@
 import type z from 'zod';
 
-import type { ValidationIssue, ValidationResult } from './types';
+import type { ValidationIssue } from './types';
 
 export const validateSchema = <T>(
   schema: z.ZodType<T>,
   item?: T | undefined,
-): ValidationResult => {
+): ValidationIssue[] => {
   if (!item) return [];
 
   const result = schema.safeParse(item);
@@ -31,7 +31,7 @@ export const validateSchema = <T>(
 export const validateList = <T>(
   schema: z.ZodType<T[]>,
   items?: T[] | undefined,
-): ValidationResult => {
+): ValidationIssue[] => {
   if (!items) return [];
 
   const result = schema.safeParse(items);

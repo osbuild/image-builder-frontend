@@ -8,8 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
-import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
 import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addLanguage,
@@ -95,7 +95,7 @@ const LanguagesDropDown = () => {
   const dispatch = useAppDispatch();
   const [showNewRow, setShowNewRow] = useState(false);
   const languages = useAppSelector(selectLanguages) ?? [];
-  const errors = validateLanguages(languages);
+  const { errors } = validateLanguages(languages);
 
   const handleSelectNewLanguage = (language: string | undefined) => {
     if (language) {

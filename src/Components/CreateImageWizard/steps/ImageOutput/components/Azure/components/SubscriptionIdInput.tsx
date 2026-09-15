@@ -2,8 +2,8 @@ import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import { ValidatedInput } from '@/Components/CreateImageWizard/ValidatedInput';
 import { isAzureSubscriptionIdValid } from '@/Components/CreateImageWizard/validators';
+import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeAzureSubscriptionId,

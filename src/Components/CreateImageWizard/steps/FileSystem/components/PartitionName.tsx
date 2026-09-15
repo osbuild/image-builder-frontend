@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { VolumeGroup } from '@/store/api/backend';
 import { useAppDispatch } from '@/store/hooks';
 import {

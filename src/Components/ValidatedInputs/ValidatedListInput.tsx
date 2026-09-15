@@ -15,7 +15,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import type { ValidationResult } from '@/store/slices/wizard/types';
 import type { MergedListItem } from '@/Utilities/mergeListItems';
 
-import ValidatedInputHelperText from './ValidatedInputHelperText';
+import { ValidatedInputHelperText } from './ValidatedInputHelperText';
 
 const DEFAULT_TRUNCATE_LENGTH = 20;
 const DEFAULT_MAX_VISIBLE_ITEMS = 4;
@@ -35,7 +35,7 @@ type ValidatedListInputProps = {
   addButtonAriaLabel?: string;
 };
 
-const ValidatedListInput = ({
+export const ValidatedListInput = ({
   ariaLabel,
   placeholder,
   validator,
@@ -74,7 +74,7 @@ const ValidatedListInput = ({
     // Only block the add when the new value itself is the problem (bad
     // format or a duplicate). Pre-existing invalid items in the store must
     // not prevent the user from adding otherwise-valid input.
-    const newValueIssues = validator([...allValues, trimmed]).filter(
+    const newValueIssues = validator([...allValues, trimmed]).errors.filter(
       (issue) => issue.value === trimmed,
     );
     if (newValueIssues.length > 0) {
@@ -98,7 +98,7 @@ const ValidatedListInput = ({
   const attemptErrors = useMemo(
     () =>
       attemptedValue !== null
-        ? validator([...allValues, attemptedValue]).filter(
+        ? validator([...allValues, attemptedValue]).errors.filter(
             (issue) => issue.value === attemptedValue,
           )
         : [],
@@ -107,7 +107,7 @@ const ValidatedListInput = ({
 
   // Validate items already in the store (e.g. loaded from a blueprint).
   const storeIssues = useMemo(
-    () => (allValues.length > 0 ? validator(allValues) : []),
+    () => (allValues.length > 0 ? validator(allValues).errors : []),
     [allValues, validator],
   );
 
@@ -186,5 +186,3 @@ const ValidatedListInput = ({
     </Flex>
   );
 };
-
-export default ValidatedListInput;

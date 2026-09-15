@@ -9,19 +9,19 @@ import {
 describe('timezone validation', () => {
   describe('timezone values', () => {
     it('accepts an empty timezone', () => {
-      expect(validateTimezoneValue('')).toEqual([]);
+      expect(validateTimezoneValue('').errors).toEqual([]);
     });
 
     it('accepts a timezone from the supported timezone list', () => {
-      expect(validateTimezoneValue('Europe/Amsterdam')).toEqual([]);
+      expect(validateTimezoneValue('Europe/Amsterdam').errors).toEqual([]);
     });
 
     it('accepts the default UTC timezone', () => {
-      expect(validateTimezoneValue('Etc/UTC')).toEqual([]);
+      expect(validateTimezoneValue('Etc/UTC').errors).toEqual([]);
     });
 
     it('rejects an unknown timezone', () => {
-      expect(validateTimezoneValue('Invalid/Timezone')).toEqual([
+      expect(validateTimezoneValue('Invalid/Timezone').errors).toEqual([
         {
           kind: 'format',
           message: 'Unknown timezone',
@@ -34,35 +34,35 @@ describe('timezone validation', () => {
   describe('NTP servers', () => {
     describe('valid servers', () => {
       it('accepts a hostname', () => {
-        expect(validateNtpServers(['time.example.com'])).toEqual([]);
+        expect(validateNtpServers(['time.example.com']).errors).toEqual([]);
       });
 
       it('accepts an IPv4 address', () => {
-        expect(validateNtpServers(['192.0.2.1'])).toEqual([]);
+        expect(validateNtpServers(['192.0.2.1']).errors).toEqual([]);
       });
 
       it('accepts an IPv6 address', () => {
-        expect(validateNtpServers(['2001:db8::1'])).toEqual([]);
+        expect(validateNtpServers(['2001:db8::1']).errors).toEqual([]);
       });
 
       it('accepts multiple servers', () => {
         expect(
-          validateNtpServers(['0.pool.ntp.org', '1.pool.ntp.org']),
+          validateNtpServers(['0.pool.ntp.org', '1.pool.ntp.org']).errors,
         ).toEqual([]);
       });
 
       it('accepts an empty server list', () => {
-        expect(validateNtpServers([])).toEqual([]);
+        expect(validateNtpServers([]).errors).toEqual([]);
       });
 
       it('accepts an omitted server list', () => {
-        expect(validateNtpServers()).toEqual([]);
+        expect(validateNtpServers().errors).toEqual([]);
       });
     });
 
     describe('invalid servers', () => {
       it('rejects a server containing spaces', () => {
-        expect(validateNtpServers(['not a server'])).toEqual([
+        expect(validateNtpServers(['not a server']).errors).toEqual([
           {
             kind: 'format',
             message: 'Expected format: <ntp-server>. Example: time.redhat.com',
@@ -72,18 +72,21 @@ describe('timezone validation', () => {
       });
 
       it('rejects an empty server value', () => {
-        expect(validateNtpServers([''])).toHaveLength(1);
+        expect(validateNtpServers(['']).errors).toHaveLength(1);
       });
 
       it('rejects a server with uppercase characters', () => {
-        expect(validateNtpServers(['TIME.EXAMPLE.COM'])).toHaveLength(1);
+        expect(validateNtpServers(['TIME.EXAMPLE.COM']).errors).toHaveLength(1);
       });
 
       it('rejects a list containing an invalid server', () => {
-        const result = validateNtpServers(['time.example.com', 'not a server']);
+        const { errors } = validateNtpServers([
+          'time.example.com',
+          'not a server',
+        ]);
 
-        expect(result).toHaveLength(1);
-        expect(result[0]).toMatchObject({
+        expect(errors).toHaveLength(1);
+        expect(errors[0]).toMatchObject({
           kind: 'format',
           value: 'not a server',
         });
@@ -91,7 +94,7 @@ describe('timezone validation', () => {
 
       it('flags duplicate servers', () => {
         expect(
-          validateNtpServers(['time.example.com', 'time.example.com']),
+          validateNtpServers(['time.example.com', 'time.example.com']).errors,
         ).toEqual([
           {
             kind: 'duplicate',
@@ -105,7 +108,7 @@ describe('timezone validation', () => {
 
   describe('timezone objects', () => {
     it('accepts an object without optional values', () => {
-      expect(validateTimezone({})).toEqual([]);
+      expect(validateTimezone({}).errors).toEqual([]);
     });
 
     it('accepts a timezone with NTP servers', () => {
@@ -113,18 +116,18 @@ describe('timezone validation', () => {
         validateTimezone({
           timezone: 'Europe/Amsterdam',
           ntpservers: ['time.example.com'],
-        }),
+        }).errors,
       ).toEqual([]);
     });
 
     it('reports invalid values in the timezone object', () => {
-      const result = validateTimezone({
+      const { errors } = validateTimezone({
         timezone: 'Invalid/Timezone',
         ntpservers: ['not a server'],
       });
 
-      expect(result).toHaveLength(2);
-      expect(result.map(({ message }) => message)).toEqual([
+      expect(errors).toHaveLength(2);
+      expect(errors.map(({ message }) => message)).toEqual([
         'Unknown timezone',
         'Expected format: <ntp-server>. Example: time.redhat.com',
       ]);

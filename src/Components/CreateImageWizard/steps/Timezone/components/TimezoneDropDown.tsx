@@ -17,7 +17,7 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 
-import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import { DEFAULT_TIMEZONE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -30,7 +30,7 @@ import {
 const TimezoneDropDown = () => {
   const timezone = useAppSelector(selectTimezone);
   const dispatch = useAppDispatch();
-  const timezoneErrors = validateTimezoneValue(timezone);
+  const { errors: timezoneErrors } = validateTimezoneValue(timezone);
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');

@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 
-import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
 import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeKeyboard,
@@ -15,7 +15,7 @@ import {
 const KeyboardDropDown = () => {
   const dispatch = useAppDispatch();
   const keyboard = useAppSelector(selectKeyboard);
-  const errors = validateKeyboard(keyboard);
+  const { errors } = validateKeyboard(keyboard);
 
   const options = useMemo(
     () => keyboards.map((kb) => ({ value: kb, label: kb })),

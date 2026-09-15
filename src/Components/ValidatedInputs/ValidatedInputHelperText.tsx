@@ -2,18 +2,20 @@ import React from 'react';
 
 import { HelperText, HelperTextItem } from '@patternfly/react-core';
 
-import type { ValidationResult } from '@/store/slices/wizard/types';
+import type { ValidationIssue } from '@/store/slices/wizard/types';
 
 type ValidatedInputHelperTextProps = {
-  errors: ValidationResult;
+  errors: ValidationIssue[];
   id?: string;
   helperText?: React.ReactNode;
+  variant?: 'error' | 'warning' | 'default';
 };
 
-const ValidatedInputHelperText = ({
+export const ValidatedInputHelperText = ({
   errors,
   id,
   helperText,
+  variant = 'error',
 }: ValidatedInputHelperTextProps) => {
   if (errors.length === 0 && !helperText) {
     return null;
@@ -25,7 +27,7 @@ const ValidatedInputHelperText = ({
         errors.map((issue, index) => (
           <HelperTextItem
             key={`${issue.value ?? ''}-${issue.message}-${index}`}
-            variant='error'
+            variant={variant}
           >
             {issue.message}
           </HelperTextItem>
@@ -36,5 +38,3 @@ const ValidatedInputHelperText = ({
     </HelperText>
   );
 };
-
-export default ValidatedInputHelperText;

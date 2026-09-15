@@ -5,7 +5,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
 import { useUserGroupsValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/CreateImageWizard/ValidatedInput';
+import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
 import {
   removeUserGroup,
