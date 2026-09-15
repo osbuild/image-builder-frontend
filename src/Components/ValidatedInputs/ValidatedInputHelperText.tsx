@@ -8,12 +8,14 @@ type ValidatedInputHelperTextProps = {
   errors: ValidationIssue[];
   id?: string;
   helperText?: React.ReactNode;
+  variant?: 'error' | 'warning' | 'default';
 };
 
 export const ValidatedInputHelperText = ({
   errors,
   id,
   helperText,
+  variant = 'error',
 }: ValidatedInputHelperTextProps) => {
   if (errors.length === 0 && !helperText) {
     return null;
@@ -25,7 +27,7 @@ export const ValidatedInputHelperText = ({
         errors.map((issue, index) => (
           <HelperTextItem
             key={`${issue.value ?? ''}-${issue.message}-${index}`}
-            variant='error'
+            variant={variant}
           >
             {issue.message}
           </HelperTextItem>
