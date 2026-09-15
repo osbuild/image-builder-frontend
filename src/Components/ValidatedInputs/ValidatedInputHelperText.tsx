@@ -10,7 +10,7 @@ type ValidatedInputHelperTextProps = {
   helperText?: React.ReactNode;
 };
 
-const ValidatedInputHelperText = ({
+export const ValidatedInputHelperText = ({
   errors,
   id,
   helperText,
@@ -36,5 +36,3 @@ const ValidatedInputHelperText = ({
     </HelperText>
   );
 };
-
-export default ValidatedInputHelperText;

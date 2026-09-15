@@ -17,7 +17,7 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 
-import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import { DEFAULT_TIMEZONE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {

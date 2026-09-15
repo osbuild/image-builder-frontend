@@ -8,8 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
-import ValidatedInputHelperText from '@/Components/CreateImageWizard/ValidatedInputHelperText';
 import SearchableSelect from '@/Components/sharedComponents/SearchableSelect';
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addLanguage,
