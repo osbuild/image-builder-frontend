@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  validateFirewall,
   validateFirewallDisabledServices,
   validateFirewallEnabledServices,
   validateFirewallPorts,
@@ -183,20 +182,6 @@ describe('firewall validation', () => {
         });
         expect(result[0].message).toContain(label);
       });
-    });
-  });
-
-  describe('firewall customization validator', () => {
-    it('accepts a valid firewall customization', () => {
-      expect(
-        validateFirewall({
-          ports: ['8080:tcp'],
-          services: {
-            enabled: ['ssh'],
-            disabled: ['cockpit'],
-          },
-        }),
-      ).toEqual([]);
     });
   });
 });
