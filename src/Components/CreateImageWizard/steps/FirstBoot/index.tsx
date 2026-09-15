@@ -18,6 +18,7 @@ import {
 import { UndoIcon } from '@patternfly/react-icons';
 
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
+import { ValidatedInputHelperText } from '@/Components/ValidatedInputs';
 import { FIRST_BOOT_SERVICE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -28,8 +29,6 @@ import {
   setFirstBootScript,
   validateScript,
 } from '@/store/slices/wizard';
-
-import ValidatedInputHelperText from '../../ValidatedInputHelperText';
 
 // Inline <style> needed because sassPrefix wraps SCSS in .imageBuilder,
 // but the wizard Modal renders in a portal outside that wrapper.
@@ -75,7 +74,7 @@ const FirstBootStep = () => {
   const selectedScript = useAppSelector(selectFirstBootScript);
   const registrationType = useAppSelector(selectRegistrationType);
   const language = detectScriptType(selectedScript);
-  const errors = validateScript(selectedScript);
+  const { errors } = validateScript(selectedScript);
 
   const initialScriptRef = useRef(selectedScript ?? '');
   const [filename, setFilename] = useState('');

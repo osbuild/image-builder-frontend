@@ -156,7 +156,7 @@ const CreateImageWizard = () => {
   const imagePullValidation = useImagePullValidation();
 
   const system = useAppSelector(selectSystem);
-  const systemErrors = validateSystemSlice(system);
+  const { errors: systemErrors } = validateSystemSlice(system);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,

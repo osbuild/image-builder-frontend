@@ -2,10 +2,10 @@ import React from 'react';
 
 import { HelperText, HelperTextItem } from '@patternfly/react-core';
 
-import type { ValidationResult } from '@/store/slices/wizard/types';
+import type { ValidationIssue } from '@/store/slices/wizard/types';
 
 type ValidatedInputHelperTextProps = {
-  errors: ValidationResult;
+  errors: ValidationIssue[];
   id?: string;
   helperText?: React.ReactNode;
 };

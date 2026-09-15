@@ -8,13 +8,13 @@ import {
 } from '../../validators';
 
 const isPortValid = (port: string) =>
-  validateFirewallPorts([port]).length === 0;
+  validateFirewallPorts([port]).errors.length === 0;
 
 // Firewall services share the same service schema as systemd services. The
 // format rules are exercised once through enabled services; per-category
 // behaviour, including duplicate labels, is covered separately.
 const isServiceValid = (service: string) =>
-  validateFirewallEnabledServices([service]).length === 0;
+  validateFirewallEnabledServices([service]).errors.length === 0;
 
 describe('firewall validation', () => {
   describe('ports', () => {
@@ -44,7 +44,7 @@ describe('firewall validation', () => {
       });
 
       it('returns no issues for an empty list', () => {
-        expect(validateFirewallPorts([])).toEqual([]);
+        expect(validateFirewallPorts([]).errors).toEqual([]);
       });
     });
 
@@ -74,13 +74,13 @@ describe('firewall validation', () => {
       });
 
       it('flags a duplicate port', () => {
-        const result = validateFirewallPorts(['8080:tcp', '8080:tcp']);
-        expect(result).toHaveLength(1);
-        expect(result[0]).toMatchObject({
+        const { errors } = validateFirewallPorts(['8080:tcp', '8080:tcp']);
+        expect(errors).toHaveLength(1);
+        expect(errors[0]).toMatchObject({
           kind: 'duplicate',
           value: '8080:tcp',
         });
-        expect(result[0].message).toContain('firewall ports');
+        expect(errors[0].message).toContain('firewall ports');
       });
     });
   });
@@ -120,7 +120,7 @@ describe('firewall validation', () => {
       });
 
       it('returns no issues for an empty list', () => {
-        expect(validateFirewallEnabledServices([])).toEqual([]);
+        expect(validateFirewallEnabledServices([]).errors).toEqual([]);
       });
     });
 
@@ -167,21 +167,21 @@ describe('firewall validation', () => {
       ],
     ])('%s firewall services validator', (_category, validate, label) => {
       it('accepts a valid service', () => {
-        expect(validate(['ssh'])).toEqual([]);
+        expect(validate(['ssh']).errors).toEqual([]);
       });
 
       it('rejects an invalid service', () => {
-        expect(validate(['my--service']).length).toBeGreaterThan(0);
+        expect(validate(['my--service']).errors.length).toBeGreaterThan(0);
       });
 
       it('flags a duplicate service', () => {
-        const result = validate(['ssh', 'ssh']);
-        expect(result).toHaveLength(1);
-        expect(result[0]).toMatchObject({
+        const { errors } = validate(['ssh', 'ssh']);
+        expect(errors).toHaveLength(1);
+        expect(errors[0]).toMatchObject({
           kind: 'duplicate',
           value: 'ssh',
         });
-        expect(result[0].message).toContain(label);
+        expect(errors[0].message).toContain(label);
       });
     });
   });
@@ -195,7 +195,7 @@ describe('firewall validation', () => {
             enabled: ['ssh'],
             disabled: ['cockpit'],
           },
-        }),
+        }).errors,
       ).toEqual([]);
     });
   });

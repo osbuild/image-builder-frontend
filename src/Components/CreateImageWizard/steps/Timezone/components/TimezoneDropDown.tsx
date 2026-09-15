@@ -30,7 +30,7 @@ import {
 const TimezoneDropDown = () => {
   const timezone = useAppSelector(selectTimezone);
   const dispatch = useAppDispatch();
-  const timezoneErrors = validateTimezoneValue(timezone);
+  const { errors: timezoneErrors } = validateTimezoneValue(timezone);
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
