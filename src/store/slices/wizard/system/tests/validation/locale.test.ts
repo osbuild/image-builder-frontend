@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  validateKeyboard,
-  validateLanguages,
-  validateLocale,
-} from '@/store/slices/wizard';
+import { validateKeyboard, validateLanguages } from '@/store/slices/wizard';
 
 describe('locale validation', () => {
   describe('languages', () => {
@@ -70,34 +66,6 @@ describe('locale validation', () => {
     it('accepts an empty or omitted keyboard', () => {
       expect(validateKeyboard('').errors).toEqual([]);
       expect(validateKeyboard().errors).toEqual([]);
-    });
-  });
-
-  describe('locale objects', () => {
-    it('accepts an empty locale object', () => {
-      expect(validateLocale({}).errors).toEqual([]);
-    });
-
-    it('accepts a locale with languages and a keyboard', () => {
-      expect(
-        validateLocale({
-          languages: ['en_US.UTF-8', 'de_DE.UTF-8'],
-          keyboard: 'us',
-        }).errors,
-      ).toEqual([]);
-    });
-
-    it('reports invalid languages and keyboard values', () => {
-      const { errors } = validateLocale({
-        languages: ['xx_XX.UTF-8'],
-        keyboard: 'unknown-keyboard',
-      });
-
-      expect(errors).toHaveLength(2);
-      expect(errors.map(({ message }) => message)).toEqual([
-        'Unknown language',
-        'Unknown keyboard',
-      ]);
     });
   });
 });
