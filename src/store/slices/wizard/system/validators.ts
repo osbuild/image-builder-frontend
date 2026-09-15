@@ -1,5 +1,3 @@
-import z from 'zod';
-
 import {
   firewallSchema,
   hostnameSchema,
@@ -14,7 +12,14 @@ import {
   timezoneSchema,
   timezoneValueSchema,
 } from './schemas';
-import { Firewall, Kernel, Locale, Services, Timezone } from './types';
+import {
+  Firewall,
+  Kernel,
+  Locale,
+  Services,
+  SystemSlice,
+  Timezone,
+} from './types';
 
 import { validateList, validateSchema } from '../validators';
 
@@ -90,8 +95,6 @@ export const validateScript = (script?: string | undefined) => {
   return validateSchema(scriptSchema, script);
 };
 
-// TODO: change this to the proper type once all the subslice elements
-// have been migrated to zod schemas
-export const validateSystemSlice = (system: z.infer<typeof systemSchema>) => {
+export const validateSystemSlice = (system: SystemSlice) => {
   return validateSchema(systemSchema, system);
 };
