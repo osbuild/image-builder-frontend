@@ -4,22 +4,13 @@ import {
   kernelSchema,
   keyboardSchema,
   languageListSchema,
-  localeSchema,
   ntpServersSchema,
   scriptSchema,
   servicesSchema,
   systemSchema,
-  timezoneSchema,
   timezoneValueSchema,
 } from './schemas';
-import {
-  Firewall,
-  Kernel,
-  Locale,
-  Services,
-  SystemSlice,
-  Timezone,
-} from './types';
+import type { SystemSlice } from './types';
 
 import type { ValidationResult } from '../types';
 import { validateList, validateSchema } from '../validators';
@@ -39,15 +30,6 @@ export const validateKernelArgs = (
   items: string[],
 ): ValidationResult<string[]> => {
   const result = validateList(kernelSchema.shape.append, items);
-
-  return {
-    data: result.data,
-    errors: result.issues,
-  };
-};
-
-export const validateKernel = (kernel: Kernel): ValidationResult<Kernel> => {
-  const result = validateSchema(kernelSchema, kernel);
 
   return {
     data: result.data,
@@ -81,17 +63,6 @@ export const validateMaskedServices = (
   items: string[],
 ): ValidationResult<string[]> => {
   const result = validateList(servicesSchema.shape.masked, items);
-
-  return {
-    data: result.data,
-    errors: result.issues,
-  };
-};
-
-export const validateServices = (
-  services: Services,
-): ValidationResult<Services> => {
-  const result = validateSchema(servicesSchema, services);
 
   return {
     data: result.data,
@@ -138,17 +109,6 @@ export const validateFirewallDisabledServices = (
   };
 };
 
-export const validateFirewall = (
-  firewall: Firewall,
-): ValidationResult<Firewall> => {
-  const result = validateSchema(firewallSchema, firewall);
-
-  return {
-    data: result.data,
-    errors: result.issues,
-  };
-};
-
 export const validateTimezoneValue = (
   timezone?: string,
 ): ValidationResult<string> => {
@@ -171,17 +131,6 @@ export const validateNtpServers = (
   };
 };
 
-export const validateTimezone = (
-  timezone: Timezone,
-): ValidationResult<Timezone> => {
-  const result = validateSchema(timezoneSchema, timezone);
-
-  return {
-    data: result.data,
-    errors: result.issues,
-  };
-};
-
 export const validateLanguages = (
   languages?: string[] | undefined,
 ): ValidationResult<string[]> => {
@@ -197,15 +146,6 @@ export const validateKeyboard = (
   keyboard?: string | undefined,
 ): ValidationResult<string> => {
   const result = validateSchema(keyboardSchema, keyboard);
-
-  return {
-    data: result.data,
-    errors: result.issues,
-  };
-};
-
-export const validateLocale = (locale: Locale): ValidationResult<Locale> => {
-  const result = validateSchema(localeSchema, locale);
 
   return {
     data: result.data,
