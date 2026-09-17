@@ -1,6 +1,12 @@
 import { screen } from '@testing-library/react';
 
-import { createUser, typeWithWait } from '@/test/testUtils';
+import { changeHostname } from '@/store/slices/wizard';
+import {
+  clearWithWait,
+  createUser,
+  typeWithWait,
+  waitForAction,
+} from '@/test/testUtils';
 
 import {
   clearHostname,
@@ -59,17 +65,61 @@ describe('Hostname Component', () => {
         await screen.findByPlaceholderText(/Add a hostname/i);
       expect(hostnameInput).toHaveValue('existing-hostname');
     });
+
+    test('updates when the committed hostname changes externally', async () => {
+      const { store } = renderHostnameStep({ hostname: 'existing-hostname' });
+      const hostnameInput =
+        await screen.findByPlaceholderText(/Add a hostname/i);
+
+      await waitForAction(() => {
+        store.dispatch(changeHostname('updated-hostname'));
+      });
+
+      expect(await screen.findByDisplayValue('updated-hostname')).toBe(
+        hostnameInput,
+      );
+    });
   });
 
   describe('State Updates', () => {
-    test('updates store when hostname is entered', async () => {
+    test('commits hostname to the store after it is validated', async () => {
       const { store } = renderHostnameStep();
       const user = createUser();
 
       await enterHostname(user, 'my-new-hostname');
+      expect(store.getState().wizard.system.hostname).toBeUndefined();
 
-      const state = store.getState();
-      expect(state.wizard.system.hostname).toBe('my-new-hostname');
+      await tabAway(user);
+
+      expect(store.getState().wizard.system.hostname).toBe('my-new-hostname');
+    });
+
+    test('does not write an empty draft to the store', async () => {
+      const { store } = renderHostnameStep();
+      const user = createUser();
+      let dispatchCount = 0;
+      const unsubscribe = store.subscribe(() => {
+        dispatchCount += 1;
+      });
+
+      await tabAway(user);
+
+      unsubscribe();
+      expect(dispatchCount).toBe(0);
+      expect(store.getState().wizard.system.hostname).toBeUndefined();
+    });
+
+    test('does not overwrite the committed hostname with an invalid draft', async () => {
+      const { store } = renderHostnameStep({ hostname: 'existing-hostname' });
+      const user = createUser();
+
+      const hostnameInput =
+        await screen.findByPlaceholderText(/Add a hostname/i);
+      await clearWithWait(user, hostnameInput);
+      await typeWithWait(user, hostnameInput, '-invalid');
+      await tabAway(user);
+
+      expect(store.getState().wizard.system.hostname).toBe('existing-hostname');
     });
 
     test('clears store when hostname is cleared via X button', async () => {
@@ -80,7 +130,7 @@ describe('Hostname Component', () => {
 
       await clearHostname(user);
 
-      expect(store.getState().wizard.system.hostname).toBe('');
+      expect(store.getState().wizard.system.hostname).toBeUndefined();
     });
   });
 
@@ -97,16 +147,17 @@ describe('Hostname Component', () => {
       ).toBeInTheDocument();
     });
 
-    test('shows error for hostname with uppercase letters', async () => {
+    test('accepts uppercase hostname and commits lowercase value', async () => {
       const user = createUser();
-      renderHostnameStep();
+      const { store } = renderHostnameStep();
 
       await enterHostname(user, 'INVALID');
       await tabAway(user);
 
+      expect(store.getState().wizard.system.hostname).toBe('invalid');
       expect(
-        await screen.findByText(/may only contain lowercase letters/i),
-      ).toBeInTheDocument();
+        screen.queryByText(/may only contain lowercase letters/i),
+      ).not.toBeInTheDocument();
     });
 
     test('shows error for hostname exceeding 64 characters', async () => {
@@ -193,6 +244,7 @@ describe('Hostname Component', () => {
       const hostnameInput =
         await screen.findByPlaceholderText(/Add a hostname/i);
       await typeWithWait(user, hostnameInput, 'test-hostname{Enter}');
+      await tabAway(user);
 
       expect(
         screen.getByRole('heading', { name: /Hostname/i }),
