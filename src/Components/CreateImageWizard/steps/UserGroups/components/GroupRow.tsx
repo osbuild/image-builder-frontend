@@ -8,16 +8,16 @@ import { useUserGroupsValidation } from '@/Components/CreateImageWizard/utilitie
 import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
 import {
+  Group,
   removeUserGroup,
   setUserGroupGidByIndex,
   setUserGroupNameByIndex,
-  UserGroup,
 } from '@/store/slices/wizard';
 
 type GroupRowProps = {
   index: number;
   groupCount: number;
-  group: UserGroup;
+  group: Group;
 };
 
 const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
