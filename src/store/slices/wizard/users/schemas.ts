@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { MAX_REGULAR_GID, MIN_REGULAR_GID } from './constants';
+
 import { uniqueBy } from '../utilities';
 
 // see `man groupadd` for the exact specification
@@ -41,6 +43,16 @@ export const groupListSchema = z
   .array(groupSchema)
   .superRefine(uniqueBy('group names', 'name', (group) => group.name))
   .superRefine(uniqueBy('group ids', 'gid', (group) => group.gid));
+
+export const groupWarningSchema = z.object({
+  name: z.string(),
+  gid: groupGidSchema
+    .min(MIN_REGULAR_GID, `Standard GID should be above ${MIN_REGULAR_GID}`)
+    .max(MAX_REGULAR_GID, `Standard GID should be below ${MAX_REGULAR_GID}`)
+    .optional(),
+});
+
+export const groupListWarningsSchema = z.array(groupWarningSchema);
 
 export const usersSliceSchema = z.object({
   groups: groupListSchema,
