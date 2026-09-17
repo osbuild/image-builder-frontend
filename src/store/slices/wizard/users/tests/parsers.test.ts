@@ -173,7 +173,7 @@ describe('parseUsersFromRequest', () => {
       expect(result.groups).toEqual([{ name: 'developers', gid: 1001 }]);
     });
 
-    it('includes a gid of zero', () => {
+    it('preserves a zero gid', () => {
       const result = parseUsersFromRequest(
         withCustomizations({
           groups: [{ name: 'root', gid: 0 }],
