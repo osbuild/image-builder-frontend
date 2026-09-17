@@ -153,7 +153,7 @@ export const firstbootSchema = z.object({
 export const systemSchema = z.object({
   services: servicesSchema,
   kernel: kernelSchema,
-  hostname: hostnameSchema,
+  hostname: hostnameSchema.optional(),
   firewall: firewallSchema,
   timezone: timezoneSchema,
   locale: localeSchema,

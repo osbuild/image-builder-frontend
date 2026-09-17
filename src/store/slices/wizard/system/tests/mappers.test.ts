@@ -155,8 +155,8 @@ describe('mapSystemCustomizations', () => {
       );
     });
 
-    it('omits hostname when empty', () => {
-      const state = createState({ hostname: '' });
+    it('omits hostname when absent', () => {
+      const state = createState({ hostname: undefined });
       expect(mapSystemCustomizations(state)).not.toHaveProperty('hostname');
     });
   });

@@ -111,12 +111,23 @@ describe('hostname validation', () => {
 });
 
 describe('validateHostname', () => {
-  it('returns no issues and the parsed data for an empty string', () => {
-    expect(validateHostname('')).toEqual({ data: '', errors: [] });
+  it('returns no data for an empty string', () => {
+    expect(validateHostname('')).toEqual({ errors: [] });
+  });
+
+  it('returns no data for a whitespace-only string', () => {
+    expect(validateHostname('   ')).toEqual({ errors: [] });
   });
 
   it('returns no issues and the parsed data for a valid hostname', () => {
     expect(validateHostname('host.example.com')).toEqual({
+      data: 'host.example.com',
+      errors: [],
+    });
+  });
+
+  it('trims and lowercases hostnames before validation', () => {
+    expect(validateHostname('  Host.Example.COM  ')).toEqual({
       data: 'host.example.com',
       errors: [],
     });

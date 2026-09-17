@@ -18,7 +18,7 @@ export const initialState: SystemSlice = {
     timezone: '',
     ntpservers: [],
   },
-  hostname: '',
+  hostname: undefined,
   firewall: {
     ports: [],
     services: {

@@ -4,6 +4,7 @@ import {
   addImageType,
   changeArchitecture,
   changeDistribution,
+  changeHostname,
   changeImageTypes,
   clearLocale,
   clearTimezone,
@@ -16,6 +17,22 @@ import {
 } from '@/store/slices/wizard';
 
 describe('wizardSlice core reducers', () => {
+  describe('changeHostname', () => {
+    it('clears the committed hostname when passed undefined', () => {
+      const state: WizardState = {
+        ...initialState,
+        system: {
+          ...initialState.system,
+          hostname: 'existing-hostname',
+        },
+      };
+
+      const result = wizardReducer(state, changeHostname(undefined));
+
+      expect(result.system.hostname).toBeUndefined();
+    });
+  });
+
   describe('initializeWizard', () => {
     it('should reset state to initial state', () => {
       const modifiedState: WizardState = {
