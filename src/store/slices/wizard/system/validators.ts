@@ -19,10 +19,18 @@ import { Firewall, Kernel, Locale, Services, Timezone } from './types';
 import type { ValidationResult } from '../types';
 import { validateList, validateSchema } from '../validators';
 
+// Normalize hostname text input before validating the optional stored value.
+const hostnameInputSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .transform((value) => (value === '' ? undefined : value))
+  .pipe(hostnameSchema.optional());
+
 export const validateHostname = (
   hostname: string,
 ): ValidationResult<string> => {
-  const result = validateSchema(hostnameSchema, hostname);
+  const result = validateSchema(hostnameInputSchema, hostname);
 
   return {
     data: result.data,

@@ -212,7 +212,7 @@ export const systemSlice = createSlice({
       state.timezone.timezone = '';
       state.timezone.ntpservers = [];
     },
-    changeHostname: (state, action: PayloadAction<string>) => {
+    changeHostname: (state, action: PayloadAction<string | undefined>) => {
       state.hostname = action.payload;
     },
     addUser: (state) => {

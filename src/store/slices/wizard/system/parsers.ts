@@ -63,11 +63,7 @@ const parseTimezone = ({
 const parseHostname = ({
   hostname,
 }: Customizations): SystemSlice['hostname'] => {
-  if (!hostname) {
-    return initialState.hostname;
-  }
-
-  return hostname;
+  return hostname || initialState.hostname;
 };
 
 const parseFirewall = ({
