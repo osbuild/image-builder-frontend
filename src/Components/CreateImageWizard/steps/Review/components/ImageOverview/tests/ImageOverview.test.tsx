@@ -275,8 +275,8 @@ describe('ImageOverview', () => {
           ...initialState.output,
           imageTypes: ['guest-image'],
         },
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           users: [adminUser],
           groups: userGroups,
         },

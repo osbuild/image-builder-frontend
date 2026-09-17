@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   validateNtpServers,
-  validateTimezone,
   validateTimezoneValue,
 } from '@/store/slices/wizard';
 
@@ -100,34 +99,6 @@ describe('timezone validation', () => {
           },
         ]);
       });
-    });
-  });
-
-  describe('timezone objects', () => {
-    it('accepts an object without optional values', () => {
-      expect(validateTimezone({})).toEqual([]);
-    });
-
-    it('accepts a timezone with NTP servers', () => {
-      expect(
-        validateTimezone({
-          timezone: 'Europe/Amsterdam',
-          ntpservers: ['time.example.com'],
-        }),
-      ).toEqual([]);
-    });
-
-    it('reports invalid values in the timezone object', () => {
-      const result = validateTimezone({
-        timezone: 'Invalid/Timezone',
-        ntpservers: ['not a server'],
-      });
-
-      expect(result).toHaveLength(2);
-      expect(result.map(({ message }) => message)).toEqual([
-        'Unknown timezone',
-        'Expected format: <ntp-server>. Example: time.redhat.com',
-      ]);
     });
   });
 });

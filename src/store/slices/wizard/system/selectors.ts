@@ -8,29 +8,6 @@ export const selectServices = (state: RootState) => {
   return state.wizard.system.services;
 };
 
-export const selectUsers = (state: RootState) => {
-  return state.wizard.system.users;
-};
-
-export const selectNonEmptyUsers = createSelector([selectUsers], (users) =>
-  users.filter(
-    (user) =>
-      user.name.trim() ||
-      user.password.trim() ||
-      user.ssh_key.trim() ||
-      user.hasPassword,
-  ),
-);
-
-export const selectUserGroups = (state: RootState) => {
-  return state.wizard.system.groups;
-};
-
-export const selectNonEmptyUserGroups = createSelector(
-  [selectUserGroups],
-  (groups) => groups.filter((group) => group.name.trim() || group.gid),
-);
-
 export const selectKernel = (state: RootState) => {
   return state.wizard.system.kernel;
 };
@@ -75,16 +52,6 @@ export const selectLocaleLangpackCandidates = createSelector(
     }
     return Array.from(set);
   },
-);
-
-export const selectHasUsers = createSelector(
-  [selectNonEmptyUsers],
-  (users) => users.length > 0,
-);
-
-export const selectHasUserGroups = createSelector(
-  [selectNonEmptyUserGroups],
-  (groups) => groups.length > 0,
 );
 
 export const selectFirewallEnabled = createSelector(

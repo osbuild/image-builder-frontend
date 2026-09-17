@@ -24,6 +24,7 @@ import {
   selectAapEnabled,
   selectRegistrationType,
 } from './registration';
+import { clearUsersAndGroups } from './users';
 
 export const filterImageTypes: WizardListenerEffect = (
   _action,
@@ -114,6 +115,25 @@ export const clearUnsupportedFilesystem: WizardListenerEffect = (
 
   if (selectFscMode(state) === 'basic') {
     listenerApi.dispatch(changeFscMode('automatic'));
+  }
+};
+
+// TODO: Replace this list with capability-driven restrictions once the
+// distributions API can be consumed by listeners without duplicating the
+// restrictions hook's data-loading flow.
+const UNSUPPORTED_USERS_IMAGE_TYPES = new Set([
+  'bootable-container-iso',
+  'network-installer',
+]);
+
+export const clearUnsupportedUsersAndGroups: WizardListenerEffect = (
+  _action,
+  listenerApi,
+) => {
+  const imageType = selectImageTypes(listenerApi.getState())[0];
+
+  if (UNSUPPORTED_USERS_IMAGE_TYPES.has(imageType)) {
+    listenerApi.dispatch(clearUsersAndGroups());
   }
 };
 

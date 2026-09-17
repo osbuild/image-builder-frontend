@@ -11,8 +11,8 @@ describe('Users Component', () => {
   describe('Form submission', () => {
     test('pressing Enter in username input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           users: [
             {
               name: '',
@@ -33,13 +33,13 @@ describe('Users Component', () => {
       await typeWithWait(user, usernameInput, 'testuser{Enter}');
 
       expect(usernameInput).toBeInTheDocument();
-      expect(store.getState().wizard.system.users[0].name).toBe('testuser');
+      expect(store.getState().wizard.users.users[0].name).toBe('testuser');
     });
 
     test('pressing Enter in password input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           users: [
             {
               name: 'testuser',
@@ -58,15 +58,15 @@ describe('Users Component', () => {
       await typeWithWait(user, passwordInput, 'SecurePass123{Enter}');
 
       expect(passwordInput).toBeInTheDocument();
-      expect(store.getState().wizard.system.users[0].password).toBe(
+      expect(store.getState().wizard.users.users[0].password).toBe(
         'SecurePass123',
       );
     });
 
     test('pressing Enter in SSH key input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           users: [
             {
               name: 'testuser',
@@ -91,7 +91,7 @@ describe('Users Component', () => {
       );
 
       expect(sshKeyInput).toBeInTheDocument();
-      expect(store.getState().wizard.system.users[0].ssh_key).toBe(
+      expect(store.getState().wizard.users.users[0].ssh_key).toBe(
         'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ',
       );
     });

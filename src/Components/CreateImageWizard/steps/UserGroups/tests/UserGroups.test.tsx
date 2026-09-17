@@ -11,8 +11,8 @@ describe('UserGroups Component', () => {
   describe('Form submission', () => {
     test('pressing Enter in group name input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UserGroupsStep />, {
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           groups: [
             {
               name: '',
@@ -28,13 +28,13 @@ describe('UserGroups Component', () => {
       await typeWithWait(user, groupInput, 'developers{Enter}');
 
       expect(groupInput).toBeInTheDocument();
-      expect(store.getState().wizard.system.groups[0].name).toBe('developers');
+      expect(store.getState().wizard.users.groups[0].name).toBe('developers');
     });
 
     test('pressing Enter in group ID input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UserGroupsStep />, {
-        system: {
-          ...initialState.system,
+        users: {
+          ...initialState.users,
           groups: [
             {
               name: 'developers',
@@ -50,7 +50,7 @@ describe('UserGroups Component', () => {
       await typeWithWait(user, gidInput, '1001{Enter}');
 
       expect(gidInput).toBeInTheDocument();
-      expect(store.getState().wizard.system.groups[0].gid).toBe(1001);
+      expect(store.getState().wizard.users.groups[0].gid).toBe(1001);
     });
   });
 });
