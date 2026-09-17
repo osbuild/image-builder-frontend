@@ -3,8 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './state';
 import {
   UserAdministratorPayload,
-  UserGroupGidPayload,
-  UserGroupNamePayload,
   UserGroupPayload,
   UserPasswordPayload,
   UserPayload,
@@ -100,7 +98,7 @@ export const usersSlice = createSlice({
     },
     setUserGroupNameByIndex: (
       state,
-      action: PayloadAction<UserGroupNamePayload>,
+      action: PayloadAction<{ index: number; name: string }>,
     ) => {
       const { index, name } = action.payload;
       state.groups[index].name = name.trim();
@@ -110,7 +108,7 @@ export const usersSlice = createSlice({
     },
     setUserGroupGidByIndex: (
       state,
-      action: PayloadAction<UserGroupGidPayload>,
+      action: PayloadAction<{ index: number; gid?: number | undefined }>,
     ) => {
       const { index, gid } = action.payload;
       if (gid === undefined) {
