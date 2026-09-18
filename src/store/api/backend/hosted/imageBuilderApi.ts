@@ -992,7 +992,7 @@ export type CreateBlueprintRequest = {
   description?: string | undefined;
   distribution?: Distributions | undefined;
   bootc?: BootcBody | undefined;
-  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
+  /** Array of exactly one image request. Having more image requests in a single blueprint is currently not supported.
    */
   image_requests: ImageRequest[];
   customizations: Customizations;
