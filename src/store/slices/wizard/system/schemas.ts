@@ -27,6 +27,14 @@ export const hostnameSchema = z
     { error: 'Hostname labels cannot start or end with a hyphen.' },
   );
 
+// Normalize hostname text input before validating the optional stored value.
+export const hostnameInputSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .transform((value) => (value === '' ? undefined : value))
+  .pipe(hostnameSchema.optional());
+
 export const kernelArgSchema = z
   .string()
   .max(256, 'Kernel argument must be no more than 256 characters.')
