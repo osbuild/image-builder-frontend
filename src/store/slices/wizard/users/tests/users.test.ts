@@ -277,51 +277,22 @@ describe('user reducers', () => {
 
 describe('user group reducers', () => {
   describe('addUserGroup', () => {
-    it('should add a new user group with auto-generated GID', () => {
+    it('should add an empty group without assigning a GID', () => {
       const result = wizardReducer(initialState, addUserGroup());
 
-      // Initial state has one empty group, so this adds a second
-      expect(result.users.groups.length).toBeGreaterThan(
-        initialState.users.groups.length,
-      );
       const newGroup = result.users.groups[result.users.groups.length - 1];
-      expect(newGroup.name).toBe('');
-      expect(newGroup.gid).toBeDefined();
+      expect(newGroup).toEqual({ name: '' });
     });
 
-    it('should assign incrementing GIDs starting from 1000', () => {
+    it('should not allocate a GID when adding multiple groups', () => {
       let state = wizardReducer(initialState, addUserGroup());
       state = wizardReducer(state, addUserGroup());
 
-      // Filter out groups with GIDs
-      const groupsWithGids = state.users.groups.filter(
-        (g) => g.gid !== undefined,
-      );
-      const gids = groupsWithGids.map((g) => g.gid);
-
-      // GIDs should be unique
-      const uniqueGids = new Set(gids);
-      expect(uniqueGids.size).toBe(gids.length);
-
-      // GIDs should be >= 1000
-      gids.forEach((gid) => {
-        expect(gid).toBeGreaterThanOrEqual(1000);
-      });
-    });
-
-    it('should skip already used GIDs', () => {
-      const stateWithExistingGid: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: 'existing', gid: 1000 }],
-        },
-      };
-
-      const result = wizardReducer(stateWithExistingGid, addUserGroup());
-
-      const newGroup = result.users.groups[result.users.groups.length - 1];
-      expect(newGroup.gid).toBe(1001);
+      expect(state.users.groups).toEqual([
+        { name: '' },
+        { name: '' },
+        { name: '' },
+      ]);
     });
   });
 
@@ -378,7 +349,7 @@ describe('user group reducers', () => {
       expect(result.users.groups[0].gid).toBeUndefined();
     });
 
-    it('should assign GID when name is set on group without GID', () => {
+    it('should not assign GID when name is set on group without GID', () => {
       const state: WizardState = {
         ...initialState,
         users: {
@@ -392,8 +363,7 @@ describe('user group reducers', () => {
         setUserGroupNameByIndex({ index: 0, name: 'developers' }),
       );
 
-      expect(result.users.groups[0].name).toBe('developers');
-      expect(result.users.groups[0].gid).toBeGreaterThanOrEqual(1000);
+      expect(result.users.groups).toEqual([{ name: 'developers' }]);
     });
   });
 

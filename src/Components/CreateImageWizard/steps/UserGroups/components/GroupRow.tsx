@@ -101,7 +101,7 @@ const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
         />
         <HelperText>
           <HelperTextItem>
-            Each group will automatically be assigned an ID number.
+            A Group ID will be assigned if this field is left blank
           </HelperTextItem>
         </HelperText>
       </Td>
