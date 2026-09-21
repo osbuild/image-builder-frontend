@@ -34,3 +34,5 @@ export const selectHasUserGroups = createSelector(
   [selectNonEmptyUserGroups],
   (groups) => groups.length > 0,
 );
+
+export const selectUsersSlice = (state: RootState) => state.wizard.users;

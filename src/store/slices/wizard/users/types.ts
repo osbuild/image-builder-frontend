@@ -2,9 +2,10 @@ import z from 'zod';
 
 import { User } from '@/store/api/backend';
 
-import { groupSchema } from './schemas';
+import { groupInputSchema, groupSchema } from './schemas';
 
 export type Group = z.infer<typeof groupSchema>;
+export type GroupInput = z.input<typeof groupInputSchema>;
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;

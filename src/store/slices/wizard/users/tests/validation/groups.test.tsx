@@ -1,25 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
-
 import { MAX_REGULAR_GID, MIN_REGULAR_GID } from '../../constants';
+import { validateGroupList } from '../../validators';
 
-const getGroupGidWarning = (gid?: number): string | undefined => {
-  if (gid === undefined) {
-    return undefined;
-  }
-
-  if (gid < MIN_REGULAR_GID || gid > MAX_REGULAR_GID) {
-    return `Standard GID range is ${MIN_REGULAR_GID}–${MAX_REGULAR_GID}`;
-  }
-
-  return undefined;
-};
+const getGroupValidation = (gid?: number) =>
+  validateGroupList([
+    { name: 'developers', ...(gid === undefined ? {} : { gid }) },
+  ]);
 
 describe('group validation', () => {
   describe('group names', () => {
-    const isValid = isUserGroupValid;
-
     it.each([
       ['a', 'single letter'],
       ['developers', 'simple group name'],
@@ -31,7 +21,7 @@ describe('group validation', () => {
       ['group123', 'group name with digits'],
       ['a'.repeat(32), 'group name at the maximum length'],
     ])('accepts %s as a valid %s', (name) => {
-      expect(isValid(name)).toBe(true);
+      expect(validateGroupList([{ name }]).errors).toEqual([]);
     });
 
     it.each([
@@ -42,7 +32,51 @@ describe('group validation', () => {
       ['-developers', 'group name starting with a hyphen'],
       ['a'.repeat(33), 'group name over the maximum length'],
     ])('rejects %s as an invalid %s', (name) => {
-      expect(isValid(name)).toBe(false);
+      const { errors } = validateGroupList([{ name }]);
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            kind: 'format',
+            path: [0, 'name'],
+          }),
+        ]),
+      );
+      expect(
+        errors.every(({ path }) => path?.[0] === 0 && path[1] === 'name'),
+      ).toBe(true);
+    });
+  });
+
+  describe('duplicate groups', () => {
+    it('rejects duplicate group names', () => {
+      const { errors } = validateGroupList([
+        { name: 'developers', gid: 1000 },
+        { name: 'developers', gid: 1001 },
+      ]);
+
+      expect(errors).toEqual([
+        expect.objectContaining({
+          kind: 'duplicate',
+          message: 'Duplicate group names: developers',
+          path: [1, 'name'],
+        }),
+      ]);
+    });
+
+    it('rejects duplicate GIDs', () => {
+      const { errors } = validateGroupList([
+        { name: 'developers', gid: 1000 },
+        { name: 'operators', gid: 1000 },
+      ]);
+
+      expect(errors).toEqual([
+        expect.objectContaining({
+          kind: 'duplicate',
+          message: 'Duplicate group ids: 1000',
+          path: [1, 'gid'],
+        }),
+      ]);
     });
   });
 
@@ -53,16 +87,51 @@ describe('group validation', () => {
       [MAX_REGULAR_GID, 'maximum standard GID'],
       [1001, 'GID inside the standard range'],
     ])('does not warn for %s, the %s', (gid, _description) => {
-      expect(getGroupGidWarning(gid)).toBeUndefined();
+      expect(getGroupValidation(gid).warnings).toEqual([]);
     });
 
     it.each([
-      [MIN_REGULAR_GID - 1, 'below'],
-      [MAX_REGULAR_GID + 1, 'above'],
-    ])('warns for GID %i, which is %s the standard range', (gid, _position) => {
-      expect(getGroupGidWarning(gid)).toBe(
-        `Standard GID range is ${MIN_REGULAR_GID}–${MAX_REGULAR_GID}`,
-      );
+      [MIN_REGULAR_GID - 1, `Standard GID should be above ${MIN_REGULAR_GID}`],
+      [MAX_REGULAR_GID + 1, `Standard GID should be below ${MAX_REGULAR_GID}`],
+    ])(
+      'warns for an out-of-range GID: %i without blocking validation',
+      (gid, message) => {
+        const { errors, warnings } = getGroupValidation(gid);
+
+        expect(errors).toEqual([]);
+        expect(warnings).toEqual([
+          expect.objectContaining({
+            kind: 'format',
+            message,
+            path: [0, 'gid'],
+          }),
+        ]);
+      },
+    );
+
+    it('retains range warnings alongside duplicate GID errors', () => {
+      const { errors, warnings } = validateGroupList([
+        { name: 'developers', gid: MIN_REGULAR_GID - 1 },
+        { name: 'operators', gid: MIN_REGULAR_GID - 1 },
+      ]);
+
+      expect(errors).toEqual([
+        expect.objectContaining({
+          kind: 'duplicate',
+          message: `Duplicate group ids: ${MIN_REGULAR_GID - 1}`,
+          path: [1, 'gid'],
+        }),
+      ]);
+      expect(warnings).toEqual([
+        expect.objectContaining({
+          message: `Standard GID should be above ${MIN_REGULAR_GID}`,
+          path: [0, 'gid'],
+        }),
+        expect.objectContaining({
+          message: `Standard GID should be above ${MIN_REGULAR_GID}`,
+          path: [1, 'gid'],
+        }),
+      ]);
     });
   });
 });

@@ -2,10 +2,10 @@ import type z from 'zod';
 
 import type { SchemaValidationResult, ValidationIssue } from './types';
 
-export const validateSchema = <T>(
-  schema: z.ZodType<T>,
-  item?: T,
-): SchemaValidationResult<T> => {
+export const validateSchema = <Output, Input = Output>(
+  schema: z.ZodType<Output, Input>,
+  item?: Input,
+): SchemaValidationResult<Output> => {
   if (item === undefined) return { data: undefined, issues: [] };
 
   const result = schema.safeParse(item);
