@@ -5,3 +5,4 @@ export * from './selectors';
 export * from './slice';
 export { initialState as usersState } from './state';
 export * from './types';
+export * from './validators';
