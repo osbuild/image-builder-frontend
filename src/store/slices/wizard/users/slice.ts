@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { MAX_REGULAR_GID, MIN_REGULAR_GID } from './constants';
 import { initialState } from './state';
 import {
   UserAdministratorPayload,
@@ -97,20 +96,7 @@ export const usersSlice = createSlice({
       }
     },
     addUserGroup: (state) => {
-      const existingGids = new Set(
-        state.groups
-          .map((g) => g.gid)
-          .filter((gid): gid is number => gid !== undefined),
-      );
-      let nextGid = MIN_REGULAR_GID;
-      while (existingGids.has(nextGid) && nextGid <= MAX_REGULAR_GID) {
-        nextGid++;
-      }
-      if (nextGid <= MAX_REGULAR_GID) {
-        state.groups.push({ name: '', gid: nextGid });
-      } else {
-        state.groups.push({ name: '' });
-      }
+      state.groups.push({ name: '' });
     },
     setUserGroupNameByIndex: (
       state,
@@ -120,19 +106,6 @@ export const usersSlice = createSlice({
       state.groups[index].name = name.trim();
       if (name.trim() === '') {
         delete state.groups[index].gid;
-      } else if (state.groups[index].gid === undefined) {
-        const existingGids = new Set(
-          state.groups
-            .map((g) => g.gid)
-            .filter((gid): gid is number => gid !== undefined),
-        );
-        let nextGid = MIN_REGULAR_GID;
-        while (existingGids.has(nextGid) && nextGid <= MAX_REGULAR_GID) {
-          nextGid++;
-        }
-        if (nextGid <= MAX_REGULAR_GID) {
-          state.groups[index].gid = nextGid;
-        }
       }
     },
     setUserGroupGidByIndex: (

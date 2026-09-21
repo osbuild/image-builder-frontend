@@ -68,7 +68,7 @@ test('Create a blueprint with Users customization', async ({
     await expect(gidInput).toBeVisible();
 
     await frame.getByRole('textbox', { name: 'Group name' }).fill('testgroup');
-    await expect(gidInput).toHaveValue('1000');
+    await expect(gidInput).toHaveValue('');
     await gidInput.fill('2000');
     await expect(gidInput).toHaveValue('2000');
 
