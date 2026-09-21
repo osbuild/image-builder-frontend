@@ -162,15 +162,12 @@ password = ""
 
 [[customizations.group]]
 name = "developers"
-gid = 1000
 
 [[customizations.group]]
 name = "qa-team"
-gid = 1001
 
 [[customizations.group]]
 name = "ops"
-gid = 1002
 
 [customizations.timezone]
 timezone = "${tz}"
