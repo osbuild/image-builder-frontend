@@ -158,6 +158,7 @@ test('Content integration test - Repeatable build - URL source', async ({
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
     await frame.getByRole('option', { name: packageName }).click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 

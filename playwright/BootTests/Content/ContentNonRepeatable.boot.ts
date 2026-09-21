@@ -102,6 +102,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
     await frame.getByRole('option', { name: packageName }).click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 
@@ -267,6 +268,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
       frame.getByRole('option', { name: dependencyPackageName }),
     ).toBeVisible();
     await frame.getByRole('option', { name: dependencyPackageName }).click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 
@@ -367,6 +369,7 @@ test('Content integration test - Non repeatable build - Community repository', a
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
     await frame.getByRole('option', { name: packageName }).click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 

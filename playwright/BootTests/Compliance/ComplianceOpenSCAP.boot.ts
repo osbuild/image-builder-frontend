@@ -95,6 +95,7 @@ test('Compliance step integration test - OpenSCAP default profile', async ({
       frame.getByRole('option', { name: 'perl-XML-XPath' }),
     ).toBeVisible({ timeout: 60000 });
     await frame.getByRole('option', { name: 'perl-XML-XPath' }).click();
+    await frame.getByRole('textbox', { name: 'Search packages' }).press('Tab');
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 
