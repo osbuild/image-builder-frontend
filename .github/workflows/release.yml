@@ -18,8 +18,8 @@ jobs:
 
       - name: Make dist
         run: |
-          make dist
           RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
+          make dist VERSION=$RELEASE_NO
           mv "cockpit-image-builder-$RELEASE_NO.tar.gz" ../cockpit-image-builder-$RELEASE_NO.tar.gz
 
       # create release, which will bump the version
@@ -28,6 +28,8 @@ jobs:
         with:
           token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
+          branch: "rhel-10.3"
+          tag: ${{github.ref_name}}
 
       # upload release artefact
       # Source0 expands to `https://github.com/osbuild/image-builder-frontend/releases/download/v$VERSION/cockpit-image-builder-v$VERSION.tar.gz`,
