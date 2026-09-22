@@ -5,7 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to tag. Useful for making the first "dot" release from a rhel-x.y branch.'
+        description: |
+          Version to tag. Use when creating dot-releases (e.g. v94 -> v94.1, v94.1 -> v94.2).
+          Leave empty for major (v94 -> v95).
+        required: false
+        default: ""
+      branch:
+        description: 'Branch to create the release on.'
         required: false
         default: ""
   schedule:
@@ -28,3 +34,4 @@ jobs:
           username: "imagebuilder-bot"
           email: "imagebuilder-bots+imagebuilder-bot@redhat.com"
           version: ${{ github.event.inputs.version }}
+          base_branch: ${{ inputs.branch || 'main' }}
