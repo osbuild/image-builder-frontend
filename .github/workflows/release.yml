@@ -22,20 +22,26 @@ jobs:
           make dist VERSION=$RELEASE_NO
           mv "cockpit-image-builder-$RELEASE_NO.tar.gz" ../cockpit-image-builder-$RELEASE_NO.tar.gz
 
+      - name: Discover branch for release action
+        run: |
+          COMMIT=$(git rev-parse ${{ github.ref_name }})
+          BRANCH=$(git branch --points-at "$COMMIT")
+          RESULT=${BRANCH:-main}
+          echo "RELEASE_BRANCH=$RESULT" >> $GITHUB_OUTPUT
+          echo running upstream release against "$RESULT" branch
+
       # create release, which will bump the version
       - name: Upstream release
         uses: osbuild/release-action@main
         with:
           token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
+          branch: ${{ needs.release.outputs.RELEASE_BRANCH }}
 
-      # upload release artefact
-      # Source0 expands to `https://github.com/osbuild/image-builder-frontend/releases/download/v$VERSION/cockpit-image-builder-v$VERSION.tar.gz`,
-      # so the v needs to be in the tarball when we upload it as a release artefact.
       - name: Upload release artefact
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
-          gh release upload ${{github.ref_name}} \
+          RELEASE_NO=$(echo ${{ github.ref_name }} | tr -d 'v')
+          gh release upload ${{ github.ref_name }} \
             ../cockpit-image-builder-$RELEASE_NO.tar.gz
