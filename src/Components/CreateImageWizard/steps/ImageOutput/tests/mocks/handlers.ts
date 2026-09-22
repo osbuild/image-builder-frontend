@@ -1,4 +1,4 @@
-import { Architectures, BootcDistributionItem } from '@/store/api/backend';
+import { BootcDistributionItem } from '@/store/api/backend';
 import {
   composeHandlers,
   createArchitecturesHandler,
@@ -32,12 +32,6 @@ export const createDefaultFetchHandler = (): FetchHandler => {
       },
     }),
   );
-};
-
-export const createCustomArchitecturesHandler = (
-  architectures: Record<string, Architectures>,
-): FetchHandler => {
-  return composeHandlers(createArchitecturesHandler({ architectures }));
 };
 
 export const setupErrorHandler = (

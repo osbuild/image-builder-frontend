@@ -1,18 +1,14 @@
 import React from 'react';
 
-import { Checkbox, Radio } from '@patternfly/react-core';
+import { Radio } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  addImageType,
   changeImageTypes,
   reinitializeAws,
   reinitializeAzure,
   reinitializeGcp,
-  removeImageType,
   selectImageTypes,
-  selectIsImageMode,
-  selectUseSingleTarget,
   type SupportedImageTypes,
 } from '@/store/slices/wizard';
 
@@ -21,7 +17,6 @@ type TargetEnvironmentOptionProps = {
   label: React.ReactNode;
   ariaLabel: string;
   body?: React.ReactNode;
-  isDisabled?: boolean;
 };
 
 const TargetEnvironmentOption = ({
@@ -29,12 +24,9 @@ const TargetEnvironmentOption = ({
   label,
   ariaLabel,
   body,
-  isDisabled,
 }: TargetEnvironmentOptionProps) => {
   const dispatch = useAppDispatch();
   const environments = useAppSelector(selectImageTypes);
-  const isImageMode = useAppSelector(selectIsImageMode);
-  const useSingleTarget = useAppSelector(selectUseSingleTarget);
 
   const isChecked = environments.includes(environment);
 
@@ -52,15 +44,6 @@ const TargetEnvironmentOption = ({
     }
   };
 
-  const handleToggle = () => {
-    if (isChecked) {
-      reinitializeCloudProvider(environment);
-      dispatch(removeImageType(environment));
-    } else {
-      dispatch(addImageType(environment));
-    }
-  };
-
   const handleSelect = () => {
     for (const prev of environments) {
       if (prev !== environment) {
@@ -70,32 +53,15 @@ const TargetEnvironmentOption = ({
     dispatch(changeImageTypes([environment]));
   };
 
-  if (isImageMode || useSingleTarget) {
-    return (
-      <Radio
-        className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-        id={`radio-${environment}`}
-        name='target-environment'
-        label={label}
-        aria-label={ariaLabel}
-        isChecked={isChecked}
-        onChange={handleSelect}
-        body={isChecked ? body : undefined}
-      />
-    );
-  }
-
   return (
-    <Checkbox
+    <Radio
       className='pf-v6-u-mb-sm pf-v6-u-ml-lg'
-      id={`checkbox-${environment}`}
-      isLabelWrapped
-      name={ariaLabel}
+      id={`radio-${environment}`}
+      name='target-environment'
       label={label}
-      aria-label={`${ariaLabel} checkbox`}
+      aria-label={ariaLabel}
       isChecked={isChecked}
-      isDisabled={isDisabled}
-      onChange={handleToggle}
+      onChange={handleSelect}
       body={isChecked ? body : undefined}
     />
   );
