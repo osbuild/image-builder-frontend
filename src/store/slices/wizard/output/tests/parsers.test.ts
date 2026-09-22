@@ -64,7 +64,6 @@ describe('parseOutputFromRequest', () => {
         isoPayloadReference: undefined,
         imageTypes: ['guest-image'],
         bootcDistributions: [],
-        initialImageTypeCount: 1,
       });
     });
 

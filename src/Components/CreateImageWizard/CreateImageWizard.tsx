@@ -31,10 +31,10 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 import {
-  addImageType,
   changeArchitecture,
   changeBaseUrl,
   changeDistribution,
+  changeImageTypes,
   changeProxy,
   changeServerUrl,
   changeTimezone,
@@ -231,10 +231,10 @@ const CreateImageWizard = () => {
         dispatch(changeArchitecture(AARCH64));
       }
       if (searchParams.get('target') === 'iso') {
-        dispatch(addImageType('image-installer'));
+        dispatch(changeImageTypes(['image-installer']));
       }
       if (searchParams.get('target') === 'qcow2') {
-        dispatch(addImageType('guest-image'));
+        dispatch(changeImageTypes(['guest-image']));
       }
     }
     // This useEffect hook should run *only* when the modal opens in create mode
