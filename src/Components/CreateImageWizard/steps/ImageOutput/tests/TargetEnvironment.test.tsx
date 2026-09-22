@@ -20,16 +20,11 @@ import {
   type WizardStateOverrides,
 } from '@/test/testUtils';
 
+import { clickTargetRadio, renderTargetEnvironment } from './helpers';
 import {
-  clickTargetRadio,
-  renderTargetEnvironment,
-} from './helpers';
-import {
-  createCustomArchitecturesHandler,
   createDefaultFetchHandler,
   createDistributionsHandler,
   mockArchitecturesBoth,
-  mockArchitecturesWithNetworkInstaller,
   mockBootcDistributions,
   mockBootcDistributionsMultipleTypes,
   setupErrorHandler,
@@ -142,7 +137,6 @@ describe('TargetEnvironment', () => {
         output: {
           ...initialState.output,
           imageTypes: ['aws'],
-          initialImageTypeCount: 1,
         },
       });
 
@@ -150,55 +144,23 @@ describe('TargetEnvironment', () => {
         await screen.findByRole('radio', { name: /Amazon Web Services/i }),
       ).toBeInTheDocument();
       expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
-    });
-
-    test('renders radios and keeps the first target when editing a multi-target blueprint', async () => {
-      const { store } = renderTargetEnvironment({
-        output: {
-          ...initialState.output,
-          imageTypes: ['aws', 'gcp', 'guest-image'],
-          initialImageTypeCount: 3,
-        },
-      });
-
-      expect(
-        await screen.findByRole('radio', { name: /Amazon Web Services/i }),
-      ).toBeInTheDocument();
-      expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
-      expect(selectImageTypes(store.getState())).toEqual(['aws']);
     });
   });
 
   describe('Network installer behavior', () => {
-    beforeEach(() => {
-      fetchMock.mockResponse(
-        createCustomArchitecturesHandler({
-          'rhel-10': mockArchitecturesWithNetworkInstaller,
-        }),
-      );
-    });
-
-    test('renders network installer as a radio option', async () => {
-      renderTargetEnvironment();
-
-      expect(
-        await screen.findByRole('radio', { name: /Network.*Installer/i }),
-      ).toBeInTheDocument();
-    });
-
-    test('selecting network installer replaces other targets', async () => {
-      const user = createUser();
-      const { store } = renderTargetEnvironment({
+    test('shows info alert when network installer is selected', async () => {
+      renderTargetEnvironment({
         output: {
           ...initialState.output,
-          imageTypes: ['guest-image'],
+          imageTypes: ['network-installer'],
         },
       });
 
-      await clickTargetRadio(user, /Network.*Installer/i);
-      expect(selectImageTypes(store.getState())).toEqual([
-        'network-installer',
-      ]);
+      expect(
+        await screen.findByText(
+          /This image type requires specific, minimal configuration/i,
+        ),
+      ).toBeInTheDocument();
     });
   });
 

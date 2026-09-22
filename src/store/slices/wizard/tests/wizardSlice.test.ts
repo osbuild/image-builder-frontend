@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  addImageType,
   changeArchitecture,
   changeDistribution,
   changeHostname,
@@ -11,7 +10,6 @@ import {
   initializeWizard,
   initialState,
   loadWizardState,
-  removeImageType,
   wizardReducer,
   type WizardState,
 } from '@/store/slices/wizard';
@@ -316,60 +314,6 @@ describe('wizardSlice core reducers', () => {
   });
 
   describe('image type management', () => {
-    describe('addImageType', () => {
-      it('should add an image type to empty array', () => {
-        const result = wizardReducer(initialState, addImageType('aws'));
-
-        expect(result.output.imageTypes).toContain('aws');
-        expect(result.output.imageTypes).toHaveLength(1);
-      });
-
-      it('should add multiple image types', () => {
-        let state = wizardReducer(initialState, addImageType('aws'));
-        state = wizardReducer(state, addImageType('gcp'));
-        state = wizardReducer(state, addImageType('azure'));
-
-        expect(state.output.imageTypes).toEqual(['aws', 'gcp', 'azure']);
-      });
-
-      it('should not add duplicate image types', () => {
-        let state = wizardReducer(initialState, addImageType('aws'));
-        state = wizardReducer(state, addImageType('aws'));
-
-        expect(state.output.imageTypes).toEqual(['aws']);
-      });
-    });
-
-    describe('removeImageType', () => {
-      it('should remove an existing image type', () => {
-        const stateWithTypes: WizardState = {
-          ...initialState,
-          output: {
-            ...initialState.output,
-            imageTypes: ['aws', 'gcp', 'azure'],
-          },
-        };
-
-        const result = wizardReducer(stateWithTypes, removeImageType('gcp'));
-
-        expect(result.output.imageTypes).toEqual(['aws', 'azure']);
-      });
-
-      it('should do nothing when removing non-existent type', () => {
-        const stateWithTypes: WizardState = {
-          ...initialState,
-          output: {
-            ...initialState.output,
-            imageTypes: ['aws', 'gcp'],
-          },
-        };
-
-        const result = wizardReducer(stateWithTypes, removeImageType('azure'));
-
-        expect(result.output.imageTypes).toEqual(['aws', 'gcp']);
-      });
-    });
-
     describe('changeImageTypes', () => {
       it('should replace all image types', () => {
         const stateWithTypes: WizardState = {

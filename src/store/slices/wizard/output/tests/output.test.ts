@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import type { BootcDistributionItem } from '@/store/api/backend';
 import {
-  addImageType,
   changeArchitecture,
   changeBootcDistributions,
   changeDistribution,
@@ -10,15 +9,12 @@ import {
   changeImageTypes,
   changeIsoPayloadReference,
   initialState,
-  removeImageType,
   selectArchitecture,
   selectBootcDistributions,
   selectDistribution,
   selectImageSource,
   selectImageTypes,
-  selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
-  selectIsOtherEnvironmentSelected,
   wizardReducer,
   type WizardState,
 } from '@/store/slices/wizard';
@@ -118,38 +114,6 @@ describe('output reducers', () => {
       const result = wizardReducer(initialState, changeDistribution('rhel-9'));
 
       expect(result.output.distribution).toBe('rhel-9');
-    });
-  });
-
-  describe('addImageType', () => {
-    it('should add an image type under output', () => {
-      const result = wizardReducer(initialState, addImageType('aws'));
-
-      expect(result.output.imageTypes).toContain('aws');
-      expect(result.output.imageTypes).toHaveLength(1);
-    });
-
-    it('should not add duplicate image types', () => {
-      let state = wizardReducer(initialState, addImageType('aws'));
-      state = wizardReducer(state, addImageType('aws'));
-
-      expect(state.output.imageTypes).toEqual(['aws']);
-    });
-  });
-
-  describe('removeImageType', () => {
-    it('should remove an existing image type from output', () => {
-      const stateWithTypes: WizardState = {
-        ...initialState,
-        output: {
-          ...initialState.output,
-          imageTypes: ['aws', 'gcp', 'azure'],
-        },
-      };
-
-      const result = wizardReducer(stateWithTypes, removeImageType('gcp'));
-
-      expect(result.output.imageTypes).toEqual(['aws', 'azure']);
     });
   });
 
@@ -304,109 +268,6 @@ describe('output selectors', () => {
       });
 
       expect(selectImageTypes(state)).toEqual(['aws', 'gcp']);
-    });
-  });
-
-  describe('selectIsOnlyNetworkInstallerSelected', () => {
-    it('should return true when only network-installer is selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['network-installer'],
-        },
-      });
-
-      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(true);
-    });
-
-    it('should return false when network-installer is combined with other types', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['network-installer', 'aws'],
-        },
-      });
-
-      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(false);
-    });
-
-    it('should return false when no image types are selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: [],
-        },
-      });
-
-      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(false);
-    });
-
-    it('should return false when a non-network-installer type is selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['aws'],
-        },
-      });
-
-      expect(selectIsOnlyNetworkInstallerSelected(state)).toBe(false);
-    });
-  });
-
-  describe('selectIsOtherEnvironmentSelected', () => {
-    it('should return true when a non-network-installer type is selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['aws'],
-        },
-      });
-
-      expect(selectIsOtherEnvironmentSelected(state)).toBe(true);
-    });
-
-    it('should return true when multiple non-network-installer types are selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['aws', 'gcp'],
-        },
-      });
-
-      expect(selectIsOtherEnvironmentSelected(state)).toBe(true);
-    });
-
-    it('should return false when only network-installer is selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['network-installer'],
-        },
-      });
-
-      expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
-    });
-
-    it('should return false when network-installer is combined with other types', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: ['network-installer', 'aws'],
-        },
-      });
-
-      expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
-    });
-
-    it('should return false when no image types are selected', () => {
-      const state = createMockState({
-        output: {
-          ...initialState.output,
-          imageTypes: [],
-        },
-      });
-
-      expect(selectIsOtherEnvironmentSelected(state)).toBe(false);
     });
   });
 });

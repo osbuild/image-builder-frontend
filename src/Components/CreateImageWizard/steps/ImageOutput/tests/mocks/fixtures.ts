@@ -45,27 +45,6 @@ export const mockArchitecturesBoth: Architectures = [
   ...mockArchitecturesAarch64,
 ];
 
-export const mockArchitecturesWithNetworkInstaller: Architectures = [
-  {
-    arch: 'x86_64',
-    image_types: [
-      'aws',
-      'gcp',
-      'azure',
-      'guest-image',
-      'image-installer',
-      'network-installer',
-    ],
-    repositories: [
-      {
-        baseurl:
-          'https://cdn.redhat.com/content/dist/rhel/server/10/x86_64/baseos/os',
-        rhsm: true,
-      },
-    ],
-  },
-];
-
 export const mockBootcDistributions: BootcDistributionItem[] = [
   {
     distro: 'rhel-10',

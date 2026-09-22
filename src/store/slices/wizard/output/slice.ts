@@ -47,18 +47,6 @@ export const outputSlice = createSlice({
     changeDistribution: (state, action: PayloadAction<Distributions>) => {
       state.distribution = action.payload;
     },
-    addImageType: (state, action: PayloadAction<SupportedImageTypes>) => {
-      // Remove (if present) before adding to avoid duplicates
-      state.imageTypes = state.imageTypes.filter(
-        (imageType) => imageType !== action.payload,
-      );
-      state.imageTypes.push(action.payload);
-    },
-    removeImageType: (state, action: PayloadAction<SupportedImageTypes>) => {
-      state.imageTypes = state.imageTypes.filter(
-        (imageType) => imageType !== action.payload,
-      );
-    },
     changeImageTypes: (state, action: PayloadAction<SupportedImageTypes[]>) => {
       state.imageTypes = action.payload;
       // isoPayloadReference is only relevant for bootable-container-iso,
@@ -91,7 +79,5 @@ export const {
   changeBootcDistributions,
   changeArchitecture,
   changeDistribution,
-  addImageType,
-  removeImageType,
   changeImageTypes,
 } = outputSlice.actions;

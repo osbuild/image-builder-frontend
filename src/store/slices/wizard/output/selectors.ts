@@ -31,30 +31,7 @@ export const selectImageTypes = (state: RootState) => {
   return state.wizard.output.imageTypes;
 };
 
-export const selectIsOnlyNetworkInstallerSelected = createSelector(
-  selectImageTypes,
-  (imageTypes) =>
-    imageTypes.length === 1 && imageTypes.includes('network-installer'),
-);
-
-export const selectIsOtherEnvironmentSelected = createSelector(
-  selectImageTypes,
-  (imageTypes) =>
-    imageTypes.length >= 1 && !imageTypes.includes('network-installer'),
-);
-
 export const selectIsOfficialImage = createSelector(
   selectImageSource,
   (imageSource) => !!imageSource && isKnownImageRef(imageSource),
-);
-
-export const selectInitialImageTypeCount = (state: RootState) => {
-  return state.wizard.output.initialImageTypeCount;
-};
-
-export const selectUseSingleTarget = createSelector(
-  selectInitialImageTypeCount,
-  // Always single-target for create and edit; initialImageTypeCount is kept
-  // temporarily for a follow-up that handles customization migration.
-  () => true,
 );
