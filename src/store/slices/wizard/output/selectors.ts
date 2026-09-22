@@ -54,5 +54,7 @@ export const selectInitialImageTypeCount = (state: RootState) => {
 
 export const selectUseSingleTarget = createSelector(
   selectInitialImageTypeCount,
-  (initialCount) => initialCount <= 1,
+  // Always single-target for create and edit; initialImageTypeCount is kept
+  // temporarily for a follow-up that handles customization migration.
+  () => true,
 );
