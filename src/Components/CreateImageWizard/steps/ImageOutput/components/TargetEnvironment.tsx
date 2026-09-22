@@ -135,10 +135,10 @@ const TargetEnvironment = () => {
   }, [restrictions.registration.shouldHide, dispatch]);
 
   useEffect(() => {
-    if (isImageMode && environments.length > 1) {
+    if ((isImageMode || useSingleTarget) && environments.length > 1) {
       dispatch(changeImageTypes([environments[0]]));
     }
-  }, [isImageMode, environments, dispatch]);
+  }, [isImageMode, useSingleTarget, environments, dispatch]);
 
   const isoPayloadReference = useAppSelector(selectIsoPayloadReference);
   useEffect(() => {
