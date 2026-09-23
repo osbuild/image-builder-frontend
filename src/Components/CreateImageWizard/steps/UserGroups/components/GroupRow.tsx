@@ -14,7 +14,7 @@ import { ValidationResult } from '@/store/slices/wizard/types';
 
 type GroupRowProps = {
   index: number;
-  group: Group;
+  group: Group | undefined;
   validator: (candidate: Group) => ValidationResult<Group[]>;
   onUpdate: (group?: Partial<Group> | undefined) => void;
   onRemove: () => void;
@@ -35,18 +35,18 @@ const GroupRow = ({
   onRemove,
 }: GroupRowProps) => {
   const [draft, setDraft] = useState<GroupDraft>({
-    name: group.name,
-    gid: String(group.gid ?? ''),
+    name: group?.name ?? '',
+    gid: String(group?.gid ?? ''),
   });
 
   useEffect(() => {
     // Reset local drafts when the committed group changes externally.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDraft({
-      name: group.name,
-      gid: String(group.gid ?? ''),
+      name: group?.name ?? '',
+      gid: String(group?.gid ?? ''),
     });
-  }, [group.name, group.gid]);
+  }, [group?.name, group?.gid]);
 
   const handleGroupNameChange = (
     _: React.FormEvent<HTMLInputElement>,
@@ -80,6 +80,10 @@ const GroupRow = ({
   };
 
   const validateGroup = (field: 'name' | 'gid') => {
+    if (!group && draft.name === '') {
+      return { errors: [] };
+    }
+
     const parsed = validateGroupInput(draft);
     if (!parsed.data || parsed.errors.length > 0) {
       return {
@@ -129,6 +133,7 @@ const GroupRow = ({
           onChange={handleGroupGidChange}
           validator={() => validateGroup('gid')}
           onCommit={(group) => onUpdate(group)}
+          isDisabled={!group}
         />
         <HelperText>
           <HelperTextItem>

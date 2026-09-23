@@ -203,6 +203,10 @@ key = ""
 groups = []
 password = ""
 
+[[customizations.group]]
+name = "testgroup"
+gid = 1500
+
 [customizations.timezone]
 timezone = "${tz}"
 

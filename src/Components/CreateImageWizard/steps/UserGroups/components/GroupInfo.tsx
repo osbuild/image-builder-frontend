@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
@@ -6,7 +6,7 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  addUserGroup,
+  Group,
   removeUserGroup,
   selectUserGroups,
   upsertUserGroup,
@@ -22,12 +22,23 @@ type GroupInfoProps = {
 const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
   const dispatch = useAppDispatch();
   const groups = useAppSelector(selectUserGroups);
+  const [showEmptyGroup, setShowEmptyGroup] = useState(false);
 
   const { errors } = validateGroupList(groups);
-  const showAlert = attemptedNext && errors.length > 0;
 
-  const onAddGroupClick = () => {
-    dispatch(addUserGroup());
+  const showAlert = attemptedNext && errors.length > 0;
+  const shouldShowEmptyGroup = showEmptyGroup || groups.length === 0;
+  // Keep the empty editor in the same list so its input survives the first store update.
+  const displayGroups = shouldShowEmptyGroup ? [...groups, undefined] : groups;
+
+  const handleGroupValidation = (index: number, candidate: Group) => {
+    if (index < groups.length) {
+      const updatedGroups = [...groups];
+      updatedGroups[index] = candidate;
+      return validateGroupList(updatedGroups);
+    }
+
+    return validateGroupList([...groups, candidate]);
   };
 
   return (
@@ -49,25 +60,38 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
           </Tr>
         </Thead>
         <Tbody>
-          {groups.map((group, index) => (
+          {displayGroups.map((group, index) => (
             <GroupRow
               key={index}
               index={index}
               group={group}
-              validator={(candidate) =>
-                validateGroupList(
-                  groups.map((current, currentIndex) =>
-                    index === currentIndex ? candidate : current,
-                  ),
-                )
-              }
+              validator={(candidate) => handleGroupValidation(index, candidate)}
               onUpdate={(group) => {
                 if (!group) return;
 
-                dispatch(upsertUserGroup({ index, group }));
+                if (index < groups.length) {
+                  dispatch(upsertUserGroup({ index, group }));
+                  return;
+                }
+
+                if (typeof group.name !== 'string' || !group.name.trim()) {
+                  return;
+                }
+
+                dispatch(
+                  upsertUserGroup({ group: { ...group, name: group.name } }),
+                );
+                setShowEmptyGroup(false);
               }}
-              onRemove={() => dispatch(removeUserGroup(index))}
-              isRemoveDisabled={groups.length <= 1}
+              onRemove={() => {
+                if (index < groups.length) {
+                  dispatch(removeUserGroup(index));
+                  return;
+                }
+
+                setShowEmptyGroup(false);
+              }}
+              isRemoveDisabled={groups.length === 0}
             />
           ))}
         </Tbody>
@@ -75,9 +99,9 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
       <Content>
         <Button
           variant='link'
-          onClick={onAddGroupClick}
+          onClick={() => setShowEmptyGroup(true)}
           icon={<AddCircleOIcon />}
-          isDisabled={errors.length > 0}
+          isDisabled={errors.length > 0 || shouldShowEmptyGroup}
         >
           Add group
         </Button>
