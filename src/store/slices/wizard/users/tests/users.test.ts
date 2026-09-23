@@ -3,13 +3,11 @@ import { describe, expect, it } from 'vitest';
 import {
   addGroupToUserByUserIndex,
   addUser,
-  addUserGroup,
   initialState,
   removeGroupFromUserByIndex,
   removeUser,
   removeUserGroup,
   setUserAdministratorByIndex,
-  setUserGroupNameByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
@@ -277,22 +275,6 @@ describe('user reducers', () => {
 });
 
 describe('user group reducers', () => {
-  describe('addUserGroup', () => {
-    it('should add an empty group without assigning a GID', () => {
-      const result = wizardReducer(initialState, addUserGroup());
-
-      const newGroup = result.users.groups[result.users.groups.length - 1];
-      expect(newGroup).toEqual({ name: '' });
-    });
-
-    it('should not allocate a GID when adding multiple groups', () => {
-      let state = wizardReducer(initialState, addUserGroup());
-      state = wizardReducer(state, addUserGroup());
-
-      expect(state.users.groups).toEqual([{ name: '' }, { name: '' }]);
-    });
-  });
-
   describe('upsertUserGroup', () => {
     it('should append a group when no index is provided', () => {
       const state: WizardState = {
@@ -370,77 +352,6 @@ describe('user group reducers', () => {
         ]);
       },
     );
-  });
-
-  describe('setUserGroupNameByIndex', () => {
-    it('should update group name', () => {
-      const state: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: '', gid: 1000 }],
-        },
-      };
-
-      const result = wizardReducer(
-        state,
-        setUserGroupNameByIndex({ index: 0, name: 'developers' }),
-      );
-
-      expect(result.users.groups[0].name).toBe('developers');
-    });
-
-    it('should trim whitespace from name', () => {
-      const state: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: '', gid: 1000 }],
-        },
-      };
-
-      const result = wizardReducer(
-        state,
-        setUserGroupNameByIndex({ index: 0, name: '  developers  ' }),
-      );
-
-      expect(result.users.groups[0].name).toBe('developers');
-    });
-
-    it('should remove GID when name is set to empty', () => {
-      const state: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: 'developers', gid: 1000 }],
-        },
-      };
-
-      const result = wizardReducer(
-        state,
-        setUserGroupNameByIndex({ index: 0, name: '' }),
-      );
-
-      expect(result.users.groups[0].name).toBe('');
-      expect(result.users.groups[0].gid).toBeUndefined();
-    });
-
-    it('should not assign GID when name is set on group without GID', () => {
-      const state: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: '' }],
-        },
-      };
-
-      const result = wizardReducer(
-        state,
-        setUserGroupNameByIndex({ index: 0, name: 'developers' }),
-      );
-
-      expect(result.users.groups).toEqual([{ name: 'developers' }]);
-    });
   });
 
   describe('removeUserGroup', () => {
