@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { initialState } from './state';
 import {
+  Group,
   UserAdministratorPayload,
   UserGroupPayload,
   UserPasswordPayload,
@@ -96,6 +97,35 @@ export const usersSlice = createSlice({
     addUserGroup: (state) => {
       state.groups.push({ name: '' });
     },
+    upsertUserGroup: (
+      state,
+      action: PayloadAction<
+        { group: Group } | { index: number; group: Partial<Group> }
+      >,
+    ) => {
+      if (!('index' in action.payload)) {
+        state.groups.push(action.payload.group);
+        return;
+      }
+
+      const { index, group } = action.payload;
+      if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= state.groups.length
+      ) {
+        return;
+      }
+
+      state.groups[index] = {
+        ...state.groups[index],
+        ...group,
+      };
+
+      if ('gid' in group && group.gid === undefined) {
+        delete state.groups[index].gid;
+      }
+    },
     setUserGroupNameByIndex: (
       state,
       action: PayloadAction<{ index: number; name: string }>,
@@ -137,6 +167,7 @@ export const usersSlice = createSlice({
 
 export const {
   addUserGroup,
+  upsertUserGroup,
   setUserGroupNameByIndex,
   setUserGroupGidByIndex,
   removeUserGroup,
