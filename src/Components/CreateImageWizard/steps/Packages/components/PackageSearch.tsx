@@ -142,6 +142,7 @@ const PackageSearch = ({
       data: recommendationsData,
       isLoading: isLoadingRecommendations,
       isError: isErrorRecommendations,
+      reset: resetRecommendations,
     },
   ] = useRecommendPackageMutation();
 
@@ -433,42 +434,47 @@ const PackageSearch = ({
   ] = useSearchRpmMutation();
 
   useEffect(() => {
-    if (!isOnPremise && packages.length > 0) {
-      const packageNames = packages.map((pkg) => pkg.name);
-      const noDashDistro = distribution.replace('-', '');
+    resetRecommendations();
 
-      (async () => {
-        try {
-          const response = await fetchRecommendedPackages({
-            recommendPackageRequest: {
-              packages: packageNames,
-              recommendedPackages: 5,
-              distribution: noDashDistro,
-            },
-          });
-
-          // there is a mismatch between API type and real data
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          if (response?.data?.packages && response.data.packages.length > 0) {
-            analytics.track(
-              `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
-              {
-                module: AMPLITUDE_MODULE_NAME,
-                isPreview: isBeta(),
-                foundRecommendations: response.data.packages,
-                selectedPackages: packageNames,
-                distribution: noDashDistro,
-                modelVersion: response.data.modelVersion,
-              },
-            );
-          }
-        } catch {
-          // error state handled by isErrorRecommendations
-        }
-      })();
+    if (isOnPremise || packages.length === 0) {
+      return;
     }
-    // fetchRecommendedPackages, analytics, and isBeta are unstable dependencies
-    // that were causing an infinite loop when included in the dependency array
+
+    const packageNames = packages.map((pkg) => pkg.name);
+    const noDashDistro = distribution.replace('-', '');
+
+    (async () => {
+      try {
+        const response = await fetchRecommendedPackages({
+          recommendPackageRequest: {
+            packages: packageNames,
+            recommendedPackages: 5,
+            distribution: noDashDistro,
+          },
+        });
+
+        // there is a mismatch between API type and real data
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (response?.data?.packages && response.data.packages.length > 0) {
+          analytics.track(
+            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
+            {
+              module: AMPLITUDE_MODULE_NAME,
+              isPreview: isBeta(),
+              foundRecommendations: response.data.packages,
+              selectedPackages: packageNames,
+              distribution: noDashDistro,
+              modelVersion: response.data.modelVersion,
+            },
+          );
+        }
+      } catch {
+        // error state handled by isErrorRecommendations
+      }
+    })();
+    // fetchRecommendedPackages, resetRecommendations, analytics, and isBeta
+    // are unstable dependencies that were causing an infinite loop when
+    // included in the dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packages, distribution, isOnPremise]);
 
