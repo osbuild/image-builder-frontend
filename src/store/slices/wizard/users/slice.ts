@@ -91,9 +91,6 @@ export const usersSlice = createSlice({
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
-    addUserGroup: (state) => {
-      state.groups.push({ name: '' });
-    },
     upsertUserGroup: (
       state,
       action: PayloadAction<
@@ -123,27 +120,6 @@ export const usersSlice = createSlice({
         delete state.groups[index].gid;
       }
     },
-    setUserGroupNameByIndex: (
-      state,
-      action: PayloadAction<{ index: number; name: string }>,
-    ) => {
-      const { index, name } = action.payload;
-      state.groups[index].name = name.trim();
-      if (name.trim() === '') {
-        delete state.groups[index].gid;
-      }
-    },
-    setUserGroupGidByIndex: (
-      state,
-      action: PayloadAction<{ index: number; gid?: number | undefined }>,
-    ) => {
-      const { index, gid } = action.payload;
-      if (gid === undefined) {
-        delete state.groups[index].gid;
-      } else {
-        state.groups[index].gid = gid;
-      }
-    },
     removeUserGroup: (state, action: PayloadAction<number>) => {
       state.groups = state.groups.filter(
         (_, index) => index !== action.payload,
@@ -163,10 +139,7 @@ export const usersSlice = createSlice({
 });
 
 export const {
-  addUserGroup,
   upsertUserGroup,
-  setUserGroupNameByIndex,
-  setUserGroupGidByIndex,
   removeUserGroup,
   addUser,
   removeUser,
