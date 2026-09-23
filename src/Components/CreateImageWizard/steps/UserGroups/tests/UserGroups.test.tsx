@@ -31,6 +31,24 @@ describe('UserGroups Component', () => {
       expect(store.getState().wizard.users.groups[0].name).toBe('developers');
     });
 
+    test('persists an invalid group name for step validation', async () => {
+      const { store } = renderWithRedux(<UserGroupsStep />, {
+        users: {
+          ...initialState.users,
+          groups: [{ name: '' }],
+        },
+      });
+      const user = createUser();
+
+      const groupInput = await screen.findByRole('textbox', {
+        name: /group name/i,
+      });
+      await typeWithWait(user, groupInput, '!');
+
+      expect(store.getState().wizard.users.groups[0].name).toBe('!');
+      expect(screen.getByRole('button', { name: /add group/i })).toBeDisabled();
+    });
+
     test('pressing Enter in group ID input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UserGroupsStep />, {
         users: {
@@ -50,6 +68,7 @@ describe('UserGroups Component', () => {
       await typeWithWait(user, gidInput, '1001{Enter}');
 
       expect(gidInput).toBeInTheDocument();
+      expect(store.getState().wizard.users.groups[0].name).toBe('developers');
       expect(store.getState().wizard.users.groups[0].gid).toBe(1001);
     });
   });
