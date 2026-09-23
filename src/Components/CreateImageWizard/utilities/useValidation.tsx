@@ -16,6 +16,7 @@ import {
   useSecuritySummary,
 } from '@/store/api/backend';
 import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
+import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
 import { selectComplianceType } from '@/store/slices';
@@ -60,8 +61,10 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
+  selectUsersSlice,
   UserWithAdditionalInfo,
   validateSystemSlice,
+  validateUsersSlice,
 } from '@/store/slices/wizard';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -119,13 +122,22 @@ export function useIsBlueprintValid(): boolean {
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
-  const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
+  const targetEnvironments = useAppSelector(selectImageTypes);
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: targetEnvironments,
+  });
 
   const system = useAppSelector(selectSystem);
   const { errors: systemErrors } = validateSystemSlice(system);
+
+  const usersSlice = useAppSelector(selectUsersSlice);
+  const { errors: usersErrors } = validateUsersSlice(
+    usersSlice,
+    restrictions.users.shouldHide,
+  );
 
   return (
     !aap.disabledNext &&
@@ -135,8 +147,8 @@ export function useIsBlueprintValid(): boolean {
     systemErrors.length === 0 &&
     !details.disabledNext &&
     !details.isPending &&
-    !users.disabledNext &&
-    !userGroups.disabledNext &&
+    (restrictions.users.shouldHide || !users.disabledNext) &&
+    usersErrors.length === 0 &&
     !azureTarget.disabledNext &&
     !gcpTarget.disabledNext &&
     !awsTarget.disabledNext
