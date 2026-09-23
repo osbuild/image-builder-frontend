@@ -25,8 +25,6 @@ import {
   convertToBytes,
   DiskPartition,
   FilesystemPartition,
-  MAX_REGULAR_GID,
-  MIN_REGULAR_GID,
   parseSizeUnit,
   selectAapCallbackUrl,
   selectAapHostConfigKey,
@@ -682,59 +680,6 @@ export function useUsersValidation(): UsersStepValidation {
   return {
     errors,
     warnings: {},
-    disabledNext: !canProceed,
-  };
-}
-
-export function useUserGroupsValidation(): UsersStepValidation {
-  const userGroups = useAppSelector(selectUserGroups);
-  const errors: { [key: string]: { [key: string]: string } } = {};
-  const warnings: { [key: string]: { [key: string]: string } } = {};
-
-  for (let index = 0; index < userGroups.length; index++) {
-    const groupErrors: { [key: string]: string } = {};
-    const groupWarnings: { [key: string]: string } = {};
-    const group = userGroups[index];
-
-    if (group.name) {
-      if (!isUserGroupValid(group.name)) {
-        groupErrors.groupName = 'Invalid group name';
-      } else {
-        const duplicates = userGroups.filter(
-          (g, idx) => idx !== index && g.name === group.name,
-        );
-        if (duplicates.length > 0) {
-          groupErrors.groupName = 'Group name must be unique';
-        }
-      }
-    }
-
-    if (group.gid !== undefined) {
-      const duplicateGids = userGroups.filter(
-        (g, idx) => idx !== index && g.gid === group.gid,
-      );
-      if (duplicateGids.length > 0) {
-        groupErrors.groupGid = 'Group ID must be unique';
-      }
-      if (group.gid < MIN_REGULAR_GID || group.gid > MAX_REGULAR_GID) {
-        groupWarnings.groupGid = `Standard GID range is ${MIN_REGULAR_GID}–${MAX_REGULAR_GID}`;
-      }
-    }
-
-    if (Object.keys(groupErrors).length > 0) {
-      errors[index] = groupErrors;
-    }
-    if (Object.keys(groupWarnings).length > 0) {
-      warnings[index] = groupWarnings;
-    }
-  }
-
-  // All groups are either empty or valid (no errors)
-  const canProceed = Object.keys(errors).length === 0;
-
-  return {
-    errors,
-    warnings,
     disabledNext: !canProceed,
   };
 }
