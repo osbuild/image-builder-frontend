@@ -64,7 +64,7 @@ export type PoliciesApiArg = {
     | 'compliance_threshold:asc'
     | 'compliance_threshold:desc'
   )[];
-  /** Query string to filter items by their attributes. Compliant with <a href="https://github.com/wvanbergen/scoped_search/wiki/Query-language" target="_blank" title="github.com/wvanbergen/scoped_search">scoped_search query language</a>. However, only `=` or `!=` (resp. `<>`) operators are supported.<br><br>Policies are searchable using attributes `title`, `os_major_version`, and `os_minor_version`<br><br>(e.g.: `(field_1=something AND field_2!="something else") OR field_3>40`) */
+  /** Query string to filter items by their attributes. Compliant with <a href="https://github.com/wvanbergen/scoped_search/wiki/Query-language" target="_blank" title="github.com/wvanbergen/scoped_search">scoped_search query language</a>. Only the operators listed next to each attribute are supported.<br><br>Policies are searchable using attributes `title` (`~`, `!~`, `=`, `!=`), `os_major_version` (`=`, `!=`, `^`, `!^`), and `os_minor_version` (`=`)<br><br>(e.g.: `(field_1=something AND field_2^(a b)) OR field_3>40`) */
   filter?: string;
 };
 export type PolicyApiResponse = /** status 200 Returns a Policy */ {
