@@ -13,6 +13,7 @@ import {
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
+  upsertUserGroup,
   type UserWithAdditionalInfo,
   wizardReducer,
   type WizardState,
@@ -294,6 +295,85 @@ describe('user group reducers', () => {
         { name: '' },
       ]);
     });
+  });
+
+  describe('upsertUserGroup', () => {
+    it('should append a group when no index is provided', () => {
+      const state: WizardState = {
+        ...initialState,
+        users: {
+          ...initialState.users,
+          groups: [],
+        },
+      };
+
+      const result = wizardReducer(
+        state,
+        upsertUserGroup({ group: { name: 'developers' } }),
+      );
+
+      expect(result.users.groups).toEqual([{ name: 'developers' }]);
+    });
+
+    it('should replace a group at the specified index', () => {
+      const state: WizardState = {
+        ...initialState,
+        users: {
+          ...initialState.users,
+          groups: [{ name: 'developers' }, { name: 'docker', gid: 1001 }],
+        },
+      };
+
+      const result = wizardReducer(
+        state,
+        upsertUserGroup({ index: 1, group: { name: 'containers' } }),
+      );
+
+      expect(result.users.groups).toEqual([
+        { name: 'developers' },
+        { name: 'containers', gid: 1001 },
+      ]);
+    });
+
+    it('should clear a group GID when it is explicitly undefined', () => {
+      const state: WizardState = {
+        ...initialState,
+        users: {
+          ...initialState.users,
+          groups: [{ name: 'developers', gid: 1001 }],
+        },
+      };
+
+      const result = wizardReducer(
+        state,
+        upsertUserGroup({ index: 0, group: { gid: undefined } }),
+      );
+
+      expect(result.users.groups).toEqual([{ name: 'developers' }]);
+    });
+
+    it.each([-1, 2, 0.5])(
+      'should ignore an invalid group index: %s',
+      (index) => {
+        const state: WizardState = {
+          ...initialState,
+          users: {
+            ...initialState.users,
+            groups: [{ name: 'developers' }, { name: 'docker' }],
+          },
+        };
+
+        const result = wizardReducer(
+          state,
+          upsertUserGroup({ index, group: { name: 'containers' } }),
+        );
+
+        expect(result.users.groups).toEqual([
+          { name: 'developers' },
+          { name: 'docker' },
+        ]);
+      },
+    );
   });
 
   describe('setUserGroupNameByIndex', () => {
