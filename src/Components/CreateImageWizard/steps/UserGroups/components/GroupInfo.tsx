@@ -4,9 +4,14 @@ import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { useUserGroupsValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addUserGroup, selectUserGroups } from '@/store/slices/wizard';
+import {
+  addUserGroup,
+  removeUserGroup,
+  selectUserGroups,
+  upsertUserGroup,
+  validateGroupList,
+} from '@/store/slices/wizard';
 
 import GroupRow from './GroupRow';
 
@@ -17,9 +22,9 @@ type GroupInfoProps = {
 const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
   const dispatch = useAppDispatch();
   const groups = useAppSelector(selectUserGroups);
-  const groupsValidation = useUserGroupsValidation();
-  const hasErrors = !!groupsValidation.disabledNext;
-  const showAlert = attemptedNext && hasErrors;
+
+  const { errors } = validateGroupList(groups);
+  const showAlert = attemptedNext && errors.length > 0;
 
   const onAddGroupClick = () => {
     dispatch(addUserGroup());
@@ -48,8 +53,21 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
             <GroupRow
               key={index}
               index={index}
-              groupCount={groups.length}
               group={group}
+              validator={(candidate) =>
+                validateGroupList(
+                  groups.map((current, currentIndex) =>
+                    index === currentIndex ? candidate : current,
+                  ),
+                )
+              }
+              onUpdate={(group) => {
+                if (!group) return;
+
+                dispatch(upsertUserGroup({ index, group }));
+              }}
+              onRemove={() => dispatch(removeUserGroup(index))}
+              isRemoveDisabled={groups.length <= 1}
             />
           ))}
         </Tbody>
@@ -59,7 +77,7 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
           variant='link'
           onClick={onAddGroupClick}
           icon={<AddCircleOIcon />}
-          isDisabled={!!groupsValidation.disabledNext}
+          isDisabled={errors.length > 0}
         >
           Add group
         </Button>
