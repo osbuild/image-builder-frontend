@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
@@ -6,7 +6,6 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  addUserGroup,
   removeUserGroup,
   selectUserGroups,
   upsertUserGroup,
@@ -22,13 +21,12 @@ type GroupInfoProps = {
 const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
   const dispatch = useAppDispatch();
   const groups = useAppSelector(selectUserGroups);
+  const [showDraft, setShowDraft] = useState(false);
 
   const { errors } = validateGroupList(groups);
-  const showAlert = attemptedNext && errors.length > 0;
 
-  const onAddGroupClick = () => {
-    dispatch(addUserGroup());
-  };
+  const showAlert = attemptedNext && errors.length > 0;
+  const shouldShowDraft = showDraft || groups.length === 0;
 
   return (
     <>
@@ -53,6 +51,7 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
             <GroupRow
               key={index}
               index={index}
+              kind='committed'
               group={group}
               validator={(candidate) =>
                 validateGroupList(
@@ -70,14 +69,39 @@ const GroupInfo = ({ attemptedNext = false }: GroupInfoProps) => {
               isRemoveDisabled={groups.length <= 1}
             />
           ))}
+          {shouldShowDraft && (
+            <GroupRow
+              key='draft'
+              index={groups.length}
+              kind='draft'
+              group={{ name: '' }}
+              validator={(candidate) =>
+                validateGroupList([...groups, candidate])
+              }
+              onUpdate={(group) => {
+                if (!group) return;
+
+                if (typeof group.name !== 'string') {
+                  return;
+                }
+
+                dispatch(
+                  upsertUserGroup({ group: { ...group, name: group.name } }),
+                );
+                setShowDraft(false);
+              }}
+              onRemove={() => setShowDraft(false)}
+              isRemoveDisabled={groups.length === 0}
+            />
+          )}
         </Tbody>
       </Table>
       <Content>
         <Button
           variant='link'
-          onClick={onAddGroupClick}
+          onClick={() => setShowDraft(true)}
           icon={<AddCircleOIcon />}
-          isDisabled={errors.length > 0}
+          isDisabled={errors.length > 0 || shouldShowDraft}
         >
           Add group
         </Button>

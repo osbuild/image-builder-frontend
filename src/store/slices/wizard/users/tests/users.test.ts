@@ -289,11 +289,7 @@ describe('user group reducers', () => {
       let state = wizardReducer(initialState, addUserGroup());
       state = wizardReducer(state, addUserGroup());
 
-      expect(state.users.groups).toEqual([
-        { name: '' },
-        { name: '' },
-        { name: '' },
-      ]);
+      expect(state.users.groups).toEqual([{ name: '' }, { name: '' }]);
     });
   });
 

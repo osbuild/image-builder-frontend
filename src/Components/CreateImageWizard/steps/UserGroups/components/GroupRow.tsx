@@ -15,6 +15,7 @@ import { ValidationResult } from '@/store/slices/wizard/types';
 type GroupRowProps = {
   index: number;
   group: Group;
+  kind: 'committed' | 'draft';
   validator: (candidate: Group) => ValidationResult<Group[]>;
   onUpdate: (group?: Partial<Group> | undefined) => void;
   onRemove: () => void;
@@ -28,6 +29,7 @@ type GroupDraft = {
 
 const GroupRow = ({
   index,
+  kind,
   group,
   isRemoveDisabled,
   validator,
@@ -56,6 +58,10 @@ const GroupRow = ({
       ...draft,
       name: value,
     });
+
+    // the draft is a presentational input, we only
+    // want to commit this to the redux store on blur
+    if (kind === 'draft') return;
 
     onUpdate({ name: value });
   };
@@ -100,6 +106,13 @@ const GroupRow = ({
     };
   };
 
+  const handleGroupGidCommit = (group?: Group) => {
+    // Keep invalid-name drafts editable when focus leaves the GID field.
+    if (kind === 'draft') return;
+
+    onUpdate(group);
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -128,7 +141,8 @@ const GroupRow = ({
           inputProps={{ onKeyDown: handleKeyDown }}
           onChange={handleGroupGidChange}
           validator={() => validateGroup('gid')}
-          onCommit={(group) => onUpdate(group)}
+          onCommit={handleGroupGidCommit}
+          isDisabled={kind === 'draft' && draft.name.trim() === ''}
         />
         <HelperText>
           <HelperTextItem>

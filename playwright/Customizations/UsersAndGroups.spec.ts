@@ -67,7 +67,9 @@ test('Create a blueprint with Users customization', async ({
     const gidInput = frame.getByRole('textbox', { name: 'Group ID' });
     await expect(gidInput).toBeVisible();
 
-    await frame.getByRole('textbox', { name: 'Group name' }).fill('testgroup');
+    const groupNameInput = frame.getByRole('textbox', { name: 'Group name' });
+    await groupNameInput.fill('testgroup');
+    await groupNameInput.press('Tab');
     await expect(gidInput).toHaveValue('');
     await gidInput.fill('2000');
     await expect(gidInput).toHaveValue('2000');
@@ -121,6 +123,7 @@ test('Create a blueprint with Users customization', async ({
       name: 'Group name',
     });
     await groupNameInputs.nth(1).fill('testgroup2');
+    await groupNameInputs.nth(1).press('Tab');
     await gidInputs.nth(1).fill('1500');
     await gidInputs.nth(1).press('Tab');
     await expect(
@@ -128,8 +131,6 @@ test('Create a blueprint with Users customization', async ({
     ).toBeVisible();
 
     await frame.getByRole('button', { name: 'Remove group' }).nth(1).click();
-    await groupNameInputs.first().fill('');
-    await gidInput.fill('');
   });
 
   await test.step('Create initial valid users', async () => {
@@ -591,13 +592,16 @@ test('Create a blueprint with Groups customization', async ({
   await test.step('Add groups', async () => {
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
     await frame.getByPlaceholder('Set group name').fill('developers');
+    await frame.getByPlaceholder('Set group name').press('Tab');
     await expect(frame.getByPlaceholder('Set group ID')).toBeVisible();
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('qa-team');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('ops');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
   });
 
   await test.step('Test group validation errors', async () => {
@@ -665,9 +669,11 @@ test('Create a blueprint with Groups customization', async ({
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('qa-team');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('ops');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
   });
 
   await test.step('Add a user assigned to a group', async () => {
