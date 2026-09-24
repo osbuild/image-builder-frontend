@@ -99,14 +99,6 @@ export const renderTargetEnvironment = (
   });
 };
 
-export const clickTargetCheckbox = async (
-  user: UserEventInstance,
-  checkboxLabel: RegExp | string,
-) => {
-  const checkbox = await screen.findByRole('checkbox', { name: checkboxLabel });
-  await clickWithWait(user, checkbox);
-};
-
 export const clickTargetRadio = async (
   user: UserEventInstance,
   radioLabel: RegExp | string,

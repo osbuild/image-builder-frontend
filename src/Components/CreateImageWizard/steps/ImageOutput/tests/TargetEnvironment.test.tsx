@@ -20,11 +20,7 @@ import {
   type WizardStateOverrides,
 } from '@/test/testUtils';
 
-import {
-  clickTargetCheckbox,
-  clickTargetRadio,
-  renderTargetEnvironment,
-} from './helpers';
+import { clickTargetRadio, renderTargetEnvironment } from './helpers';
 import {
   createCustomArchitecturesHandler,
   createDefaultFetchHandler,
@@ -47,13 +43,6 @@ beforeEach(() => {
 afterEach(() => {
   fetchMock.resetMocks();
 });
-
-const multiTargetOverrides: WizardStateOverrides = {
-  output: {
-    ...initialState.output,
-    initialImageTypeCount: 2,
-  },
-};
 
 describe('TargetEnvironment', () => {
   describe('Rendering', () => {
@@ -144,81 +133,12 @@ describe('TargetEnvironment', () => {
     });
   });
 
-  describe('Multi-target selection (edit with multiple targets)', () => {
-    test('renders checkboxes when initialImageTypeCount > 1', async () => {
-      renderTargetEnvironment(multiTargetOverrides);
-
-      expect(
-        await screen.findByRole('checkbox', {
-          name: /Amazon Web Services checkbox/i,
-        }),
-      ).toBeInTheDocument();
-      expect(screen.queryAllByRole('radio')).toHaveLength(0);
-    });
-
-    test('can select multiple targets', async () => {
-      const user = createUser();
-      const { store } = renderTargetEnvironment(multiTargetOverrides);
-
-      await clickTargetCheckbox(user, /Amazon Web Services/i);
-      await clickTargetCheckbox(user, /Google Cloud/i);
-      await clickTargetCheckbox(user, /Virtualization guest image/i);
-
-      const imageTypes = selectImageTypes(store.getState());
-      expect(imageTypes).toContain('aws');
-      expect(imageTypes).toContain('gcp');
-      expect(imageTypes).toContain('guest-image');
-    });
-
-    test('clicking a checkbox toggles the target', async () => {
-      const user = createUser();
-      const { store } = renderTargetEnvironment(multiTargetOverrides);
-
-      await clickTargetCheckbox(user, /Amazon Web Services/i);
-      expect(selectImageTypes(store.getState())).toContain('aws');
-
-      await clickTargetCheckbox(user, /Amazon Web Services/i);
-      expect(selectImageTypes(store.getState())).not.toContain('aws');
-    });
-
-    test('shows plural helper text', async () => {
-      renderTargetEnvironment(multiTargetOverrides);
-
-      expect(
-        await screen.findByText('Select one or more target environments.'),
-      ).toBeInTheDocument();
-    });
-
-    test('still shows checkboxes after unchecking down to one target', async () => {
-      const user = createUser();
-      renderTargetEnvironment({
-        output: {
-          ...initialState.output,
-          imageTypes: ['aws', 'gcp', 'guest-image'],
-          initialImageTypeCount: 3,
-        },
-      });
-
-      await screen.findByRole('checkbox', {
-        name: /Amazon Web Services checkbox/i,
-      });
-
-      await clickTargetCheckbox(user, /Amazon Web Services/i);
-      await clickTargetCheckbox(user, /Google Cloud/i);
-
-      expect(
-        screen.getByRole('checkbox', {
-          name: /Virtualization guest image checkbox/i,
-        }),
-      ).toBeInTheDocument();
-    });
-
+  describe('Edit mode', () => {
     test('renders radios when editing a single-target blueprint', async () => {
       renderTargetEnvironment({
         output: {
           ...initialState.output,
           imageTypes: ['aws'],
-          initialImageTypeCount: 1,
         },
       });
 
@@ -238,29 +158,25 @@ describe('TargetEnvironment', () => {
       );
     });
 
-    test('disables other targets when network installer is selected', async () => {
-      renderTargetEnvironment({
+    test('renders network installer as a radio option', async () => {
+      renderTargetEnvironment();
+
+      expect(
+        await screen.findByRole('radio', { name: /Network.*Installer/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('selecting network installer replaces other targets', async () => {
+      const user = createUser();
+      const { store } = renderTargetEnvironment({
         output: {
           ...initialState.output,
-          imageTypes: ['network-installer'],
-          initialImageTypeCount: 2,
+          imageTypes: ['guest-image'],
         },
       });
 
-      await screen.findByRole('checkbox', {
-        name: /Network installer checkbox/i,
-      });
-
-      expect(
-        screen.getByRole('checkbox', {
-          name: /Virtualization guest image checkbox/i,
-        }),
-      ).toBeDisabled();
-      expect(
-        screen.getByRole('checkbox', {
-          name: /Bare metal installer checkbox/i,
-        }),
-      ).toBeDisabled();
+      await clickTargetRadio(user, /Network.*Installer/i);
+      expect(selectImageTypes(store.getState())).toEqual(['network-installer']);
     });
 
     test('shows info alert when network installer is selected', async () => {
@@ -268,7 +184,6 @@ describe('TargetEnvironment', () => {
         output: {
           ...initialState.output,
           imageTypes: ['network-installer'],
-          initialImageTypeCount: 2,
         },
       });
 
@@ -277,37 +192,6 @@ describe('TargetEnvironment', () => {
           /This image type requires specific, minimal configuration/i,
         ),
       ).toBeInTheDocument();
-    });
-
-    test('disables network installer when other targets are selected', async () => {
-      renderTargetEnvironment({
-        output: {
-          ...initialState.output,
-          imageTypes: ['guest-image'],
-          initialImageTypeCount: 2,
-        },
-      });
-
-      const networkInstallerCheckbox = await screen.findByRole('checkbox', {
-        name: /Network installer checkbox/i,
-      });
-
-      expect(networkInstallerCheckbox).toBeDisabled();
-    });
-
-    test('network installer checkbox is enabled when no other targets selected', async () => {
-      renderTargetEnvironment({
-        output: {
-          ...initialState.output,
-          initialImageTypeCount: 2,
-        },
-      });
-
-      const networkInstallerCheckbox = await screen.findByRole('checkbox', {
-        name: /Network installer checkbox/i,
-      });
-
-      expect(networkInstallerCheckbox).toBeEnabled();
     });
   });
 
