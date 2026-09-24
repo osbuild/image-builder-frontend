@@ -783,7 +783,7 @@ export type ApiRepositoryRpm = {
   release?: string | undefined;
   /** The summary of the rpm */
   summary?: string | undefined;
-  /** Identifier of the rpm */
+  /** Identifier of the rpm (not present for foreign partner repo rpms) */
   uuid?: string | undefined;
   /** The version of the  rpm */
   version?: string | undefined;
