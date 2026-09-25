@@ -181,28 +181,17 @@ export const deleteTemplate = async (page: Page, templateName: string) => {
   );
 };
 
-/**
- * Poll the API to check if a system with the given hostname is attached to a template.
- * @param page - Playwright Page object
- * @param hostname - The display name of the system to check
- * @param expectedTemplateName - The expected template name (optional, if provided will verify it matches)
- * @param delayMs - Delay between polling attempts in milliseconds (default: 10000ms / 10s)
- * @param maxAttempts - Number of times to poll (default: 30)
- * @returns Promise<boolean> - true if system is attached to template, false otherwise
- */
-interface PatchSystemAttributes {
-  display_name: string;
-  template_uuid?: string;
-  template_name?: string;
-}
-interface PatchSystem {
+type PatchSystem = {
   id: string;
-  attributes: PatchSystemAttributes;
-}
+  attributes: {
+    template_uuid?: string;
+    template_name?: string;
+  };
+};
 
 export const pollForSystemTemplateAttachment = async (
   page: Page,
-  hostname: string,
+  inventoryId: string,
   expectedTemplateName?: string,
   delayMs: number = 10000,
   maxAttempts: number = 30,
@@ -210,10 +199,9 @@ export const pollForSystemTemplateAttachment = async (
   /* eslint-disable no-console */
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      // Query the systems API with search filter for the hostname
       const headers = await getAuthHeaders(page);
       const response = await page.request.get(
-        `/api/patch/v3/systems?search=${encodeURIComponent(hostname)}&limit=100`,
+        `/api/patch/v3/systems/${encodeURIComponent(inventoryId)}`,
         { headers },
       );
 
@@ -224,49 +212,30 @@ export const pollForSystemTemplateAttachment = async (
       } else {
         const body = await response.json();
 
-        if (!body.data || !Array.isArray(body.data)) {
+        if (
+          !body.data ||
+          !body.data.attributes ||
+          body.data.id !== inventoryId
+        ) {
           console.log(
             `Invalid response format, attempt ${attempt}/${maxAttempts}`,
           );
         } else {
-          const systems: PatchSystem[] = body.data;
-
-          // Log all returned systems for debugging
-          if (systems.length > 0) {
+          const system: PatchSystem = body.data;
+          if (!system.attributes.template_uuid) {
             console.log(
-              `Patch API returned ${systems.length} system(s):`,
-              systems.map((s) => ({
-                id: s.id,
-                display_name: s.attributes.display_name,
-              })),
-            );
-          }
-
-          // Find the system with matching hostname (exact match or starts with)
-          const system = systems.find(
-            (sys) =>
-              sys.attributes.display_name === hostname ||
-              sys.attributes.display_name.startsWith(hostname),
-          );
-
-          if (!system) {
-            console.log(
-              `System '${hostname}' not found in Patch results, attempt ${attempt}/${maxAttempts}`,
-            );
-          } else if (!system.attributes.template_uuid) {
-            console.log(
-              `System '${hostname}' is not attached to any template, attempt ${attempt}/${maxAttempts}`,
+              `Patch reports no template UUID for system '${inventoryId}', attempt ${attempt}/${maxAttempts}`,
             );
           } else if (
             expectedTemplateName &&
             system.attributes.template_name !== expectedTemplateName
           ) {
             console.log(
-              `System '${hostname}' is attached to template '${system.attributes.template_name}' but expected '${expectedTemplateName}', attempt ${attempt}/${maxAttempts}`,
+              `System '${inventoryId}' is attached to template '${system.attributes.template_name}' but expected '${expectedTemplateName}', attempt ${attempt}/${maxAttempts}`,
             );
           } else {
             console.log(
-              `System '${hostname}' is attached to template: ${system.attributes.template_name}`,
+              `System '${inventoryId}' is attached to template: ${system.attributes.template_name}`,
             );
             return true;
           }
@@ -287,17 +256,15 @@ export const pollForSystemTemplateAttachment = async (
   return false;
 };
 
-/**
- * Poll the Inventory API to check if a system with the given hostname exists.
- * @param page - Playwright Page object
- * @param hostname - The hostname of the system to check
- * @param delayMs - Delay between polling attempts in milliseconds (default: 10000ms / 10s)
- * @param maxAttempts - Number of times to poll (default: 30)
- * @returns Promise<{ found: boolean; inventoryId?: string }> - found status and inventory ID if found
- */
+type InventorySystem = {
+  id: string;
+  provider_id?: string | null;
+  provider_type?: string | null;
+};
+
 export const pollForSystemInInventory = async (
   page: Page,
-  hostname: string,
+  instanceId: string,
   delayMs: number = 20000,
   maxAttempts: number = 30,
 ): Promise<{ found: boolean; inventoryId?: string }> => {
@@ -308,13 +275,12 @@ export const pollForSystemInInventory = async (
     attempts++;
 
     try {
-      // Query the Inventory API with display_name parameter
-      // Extract auth token from cookies for API authentication
+      // EC2 instance IDs distinguish guests even when AWS reuses an IP and hostname.
       const headers = await getAuthHeaders(page);
-      const response = await page.request.get(
-        `/api/inventory/v1/hosts?display_name=${encodeURIComponent(hostname)}`,
-        { headers },
-      );
+      const response = await page.request.get('/api/inventory/v1/hosts', {
+        headers,
+        params: { provider_type: 'aws', provider_id: instanceId },
+      });
 
       if (response.status() !== 200) {
         console.log(
@@ -329,38 +295,22 @@ export const pollForSystemInInventory = async (
           );
         } else if (body.results.length === 0) {
           console.log(
-            `System '${hostname}' not found in Inventory, attempt ${attempts}/${maxAttempts}`,
+            `System '${instanceId}' not found in Inventory, attempt ${attempts}/${maxAttempts}`,
           );
         } else {
-          // Log all returned systems for debugging
-          console.log(
-            `Inventory API returned ${body.results.length} system(s):`,
-            body.results.map(
-              (s: { id: string; display_name?: string; fqdn?: string }) => ({
-                id: s.id,
-                display_name: s.display_name,
-                fqdn: s.fqdn,
-              }),
-            ),
-          );
-
-          // Find the system with matching hostname (exact match or starts with)
           const system = body.results.find(
-            (sys: { display_name?: string; fqdn?: string }) =>
-              sys.display_name === hostname ||
-              sys.fqdn === hostname ||
-              sys.display_name?.startsWith(hostname) ||
-              sys.fqdn?.startsWith(hostname),
+            (sys: InventorySystem) =>
+              sys.provider_type === 'aws' && sys.provider_id === instanceId,
           );
 
           if (system) {
             console.log(
-              `System '${hostname}' found in Inventory with ID: ${system.id}`,
+              `System '${instanceId}' found in Inventory with ID: ${system.id}`,
             );
             return { found: true, inventoryId: system.id };
           } else {
             console.log(
-              `System '${hostname}' not found in Inventory results, attempt ${attempts}/${maxAttempts}`,
+              `System '${instanceId}' not found in Inventory results, attempt ${attempts}/${maxAttempts}`,
             );
           }
         }

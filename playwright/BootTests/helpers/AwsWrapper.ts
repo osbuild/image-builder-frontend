@@ -26,6 +26,13 @@ export class AwsWrapper {
     this.canConnect = false;
   }
 
+  public getInstanceId(): string {
+    if (!this.instanceId) {
+      throw new AwsError('Instance has not been launched');
+    }
+    return this.instanceId;
+  }
+
   // The EC2 client inherits IAM credentials from the CodeBuild service role
   private static ec2Client = new EC2Client({
     region: process.env.AWS_DEFAULT_REGION ?? 'us-east-1',

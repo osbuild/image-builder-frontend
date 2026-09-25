@@ -230,7 +230,7 @@ test('Content integration test - Content Template', async ({
     await frame.getByRole('option', { name: packageName }).click();
   });
 
-  await test.step('Set hostname for system identification', async () => {
+  await test.step('Set hostname', async () => {
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
     await frame.getByRole('textbox', { name: 'hostname input' }).fill(hostname);
     await frame.getByRole('button', { name: 'Review image' }).click();
@@ -266,35 +266,60 @@ test('Content integration test - Content Template', async ({
   });
 
   await test.step('Wait for system registration to complete', async () => {
-    const maxAttempts = 12;
-    const delayMs = 10_000;
-
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      const [exitCode, output] = await image.exec(
-        'sudo subscription-manager status',
+    const deadline = Date.now() + 5 * 60_000;
+    while (Date.now() < deadline) {
+      const [serviceExitCode, output] = await image.exec(
+        'sudo -n timeout 10s systemctl show --no-pager osbuild-subscription-register.service ' +
+          '-p LoadState -p ActiveState -p Result -p ExecMainStatus ' +
+          '-p ExecMainExitTimestampMonotonic -p ConditionResult -p ConditionTimestampMonotonic',
       );
-      // eslint-disable-next-line no-console
-      console.log(
-        `Registration check attempt ${attempt}/${maxAttempts}: exit=${exitCode}`,
+      expect(
+        serviceExitCode,
+        'Reading registration service state should succeed',
+      ).toBe(0);
+      const state = Object.fromEntries(
+        output
+          .trim()
+          .split('\n')
+          .map((line) => line.split('=')),
       );
+      expect(state.LoadState, 'Registration service should exist').toBe(
+        'loaded',
+      );
+      expect(
+        state.ActiveState,
+        `Registration service failed: ${state.Result}, exit=${state.ExecMainStatus}`,
+      ).not.toBe('failed');
+      if (
+        state.ConditionResult === 'no' &&
+        Number(state.ConditionTimestampMonotonic) > 0
+      ) {
+        throw new Error(
+          'Registration service was skipped because its condition was not met',
+        );
+      }
 
-      if (exitCode === 0) {
-        // eslint-disable-next-line no-console
-        console.log('System registration complete:', output);
+      // This oneshot becomes inactive after finishing; the timestamp proves it ran.
+      if (
+        state.ActiveState === 'inactive' &&
+        Number(state.ExecMainExitTimestampMonotonic) > 0
+      ) {
+        expect(
+          state.Result,
+          'Registration service should finish successfully',
+        ).toBe('success');
+        expect(state.ExecMainStatus).toBe('0');
+        const [exitCode] = await image.exec(
+          'sudo -n timeout 30s subscription-manager status',
+        );
+        expect(exitCode, 'System should be registered after first boot').toBe(
+          0,
+        );
         return;
       }
-
-      if (attempt < maxAttempts) {
-        // eslint-disable-next-line no-console
-        console.log(`System not yet registered, waiting ${delayMs / 1000}s...`);
-        await sleep(delayMs);
-      }
+      await sleep(Math.max(0, Math.min(10_000, deadline - Date.now())));
     }
-
-    // If we get here, registration never completed
-    throw new Error(
-      `System did not register within ${(maxAttempts * delayMs) / 1000} seconds`,
-    );
+    throw new Error('First-boot registration did not finish within 5 minutes');
   });
 
   await test.step('Install package from layered product repo', async () => {
@@ -310,35 +335,38 @@ test('Content integration test - Content Template', async ({
     expect(output).toContain(layeredPackageName);
   });
 
-  await test.step('Verify system appears in Inventory', async () => {
-    // Re-authenticate to refresh cookies (session might have expired during long build)
-    await ensureAuthenticated(page);
+  const instanceId = image.getInstanceId();
 
-    const result = await pollForSystemInInventory(
-      page,
-      blueprintName,
-      10_000,
-      12, // 12 attempts = 2 minutes max
-    );
-    expect(
-      result.found,
-      `System '${blueprintName}' should appear in Inventory`,
-    ).toBe(true);
-  });
+  const inventoryId =
+    await test.step('Verify system appears in Inventory', async () => {
+      // The session may have expired during the image build; log in again if prompted.
+      await ensureAuthenticated(page);
+
+      const result = await pollForSystemInInventory(
+        page,
+        instanceId,
+        10_000,
+        12, // 12 attempts = 2 minutes max
+      );
+      if (!result.found || !result.inventoryId) {
+        throw new Error(
+          `AWS instance '${instanceId}' should appear in Inventory`,
+        );
+      }
+      return result.inventoryId;
+    });
 
   await test.step('Verify system is attached to content template', async () => {
-    await ensureAuthenticated(page);
-
     const isAttached = await pollForSystemTemplateAttachment(
       page,
-      blueprintName,
+      inventoryId,
       templateName,
       10_000,
       12, // 12 attempts = 2 minutes max
     );
     expect(
       isAttached,
-      `System '${blueprintName}' should be attached to template '${templateName}'`,
+      `AWS instance '${instanceId}' (Inventory ID '${inventoryId}') should be attached to template '${templateName}'`,
     ).toBe(true);
   });
 });
