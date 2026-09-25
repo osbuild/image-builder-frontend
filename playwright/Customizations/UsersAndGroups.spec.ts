@@ -67,48 +67,50 @@ test('Create a blueprint with Users customization', async ({
     const gidInput = frame.getByRole('textbox', { name: 'Group ID' });
     await expect(gidInput).toBeVisible();
 
-    await frame.getByRole('textbox', { name: 'Group name' }).fill('testgroup');
-    await expect(gidInput).toHaveValue('1000');
+    const groupNameInput = frame.getByRole('textbox', { name: 'Group name' });
+    await groupNameInput.fill('testgroup');
+    await groupNameInput.press('Tab');
+    await expect(gidInput).toHaveValue('');
     await gidInput.fill('2000');
     await expect(gidInput).toHaveValue('2000');
 
     await gidInput.fill('500');
     await gidInput.press('Tab');
-    await expect(frame.getByText('Group ID must be unique')).toBeHidden();
+    await expect(frame.getByText('Duplicate group ids: 500')).toHaveCount(0);
 
     await gidInput.fill('abc');
     await gidInput.press('Tab');
     await expect(
-      frame.getByText('Invalid input. Must be a number'),
+      frame.getByText('Group ID must contain only digits'),
     ).toBeVisible();
 
     await gidInput.fill('12!@');
     await gidInput.press('Tab');
     await expect(
-      frame.getByText('Invalid input. Must be a number'),
+      frame.getByText('Group ID must contain only digits'),
     ).toBeVisible();
 
     await gidInput.fill('500');
     await gidInput.press('Tab');
     await expect(
-      frame.getByText('Invalid input. Must be a number'),
+      frame.getByText('Group ID must contain only digits'),
     ).toBeHidden();
 
     await expect(
-      frame.getByText('Standard GID range is 1000–60000'),
+      frame.getByText('Standard GID should be above 1000'),
     ).toBeVisible();
 
     await gidInput.fill('1500');
     await gidInput.press('Tab');
     await expect(
-      frame.getByText('Standard GID range is 1000–60000'),
+      frame.getByText('Standard GID should be above 1000'),
     ).toBeHidden();
 
     // GID above the standard range should show the warning
     await gidInput.fill('70000');
     await gidInput.press('Tab');
     await expect(
-      frame.getByText('Standard GID range is 1000–60000'),
+      frame.getByText('Standard GID should be below 60000'),
     ).toBeVisible();
 
     // Reset to a valid in-range GID
@@ -121,15 +123,14 @@ test('Create a blueprint with Users customization', async ({
       name: 'Group name',
     });
     await groupNameInputs.nth(1).fill('testgroup2');
+    await groupNameInputs.nth(1).press('Tab');
     await gidInputs.nth(1).fill('1500');
     await gidInputs.nth(1).press('Tab');
     await expect(
-      frame.getByText('Group ID must be unique').first(),
+      frame.getByText('Duplicate group ids: 1500').first(),
     ).toBeVisible();
 
     await frame.getByRole('button', { name: 'Remove group' }).nth(1).click();
-    await groupNameInputs.first().fill('');
-    await gidInput.fill('');
   });
 
   await test.step('Create initial valid users', async () => {
@@ -591,24 +592,31 @@ test('Create a blueprint with Groups customization', async ({
   await test.step('Add groups', async () => {
     await frame.getByRole('button', { name: 'Advanced settings' }).click();
     await frame.getByPlaceholder('Set group name').fill('developers');
+    await frame.getByPlaceholder('Set group name').press('Tab');
     await expect(frame.getByPlaceholder('Set group ID')).toBeVisible();
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('qa-team');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('ops');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
   });
 
   await test.step('Test group validation errors', async () => {
     await frame.getByRole('button', { name: 'Add group' }).click();
     const lastGroupInput = frame.getByPlaceholder('Set group name').last();
     await lastGroupInput.fill('invalid group');
-    await expect(frame.getByText('Invalid group name')).toBeVisible();
+    await lastGroupInput.press('Tab');
+    await expect(
+      frame.getByText('Group name contains invalid characters'),
+    ).toBeVisible();
 
     await lastGroupInput.fill('developers');
+    await lastGroupInput.press('Tab');
     await expect(
-      frame.getByText('Group name must be unique').first(),
+      frame.getByText('Duplicate group names: developers').first(),
     ).toBeVisible();
 
     await expect(
@@ -616,8 +624,13 @@ test('Create a blueprint with Groups customization', async ({
     ).toBeDisabled();
 
     await lastGroupInput.fill('valid-group');
-    await expect(frame.getByText('Invalid group name')).toHaveCount(0);
-    await expect(frame.getByText('Group name must be unique')).toHaveCount(0);
+    await lastGroupInput.press('Tab');
+    await expect(
+      frame.getByText('Group name contains invalid characters'),
+    ).toHaveCount(0);
+    await expect(
+      frame.getByText('Duplicate group names: developers'),
+    ).toHaveCount(0);
   });
 
   await test.step('Test group removal', async () => {
@@ -656,9 +669,11 @@ test('Create a blueprint with Groups customization', async ({
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('qa-team');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
 
     await frame.getByRole('button', { name: 'Add group' }).click();
     await frame.getByPlaceholder('Set group name').last().fill('ops');
+    await frame.getByPlaceholder('Set group name').last().press('Tab');
   });
 
   await test.step('Add a user assigned to a group', async () => {

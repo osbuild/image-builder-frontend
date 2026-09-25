@@ -8,6 +8,7 @@ export type ValidationIssue = {
   message: string;
   value?: string;
   kind?: 'format' | 'duplicate';
+  path?: PropertyKey[];
 };
 
 export type SchemaValidationResult<T> = {

@@ -162,15 +162,12 @@ password = ""
 
 [[customizations.group]]
 name = "developers"
-gid = 1000
 
 [[customizations.group]]
 name = "qa-team"
-gid = 1001
 
 [[customizations.group]]
 name = "ops"
-gid = 1002
 
 [customizations.timezone]
 timezone = "${tz}"
@@ -205,6 +202,10 @@ name = "newuser"
 key = ""
 groups = []
 password = ""
+
+[[customizations.group]]
+name = "testgroup"
+gid = 1500
 
 [customizations.timezone]
 timezone = "${tz}"

@@ -3,16 +3,15 @@ import { describe, expect, it } from 'vitest';
 import {
   addGroupToUserByUserIndex,
   addUser,
-  addUserGroup,
   initialState,
   removeGroupFromUserByIndex,
   removeUser,
   removeUserGroup,
   setUserAdministratorByIndex,
-  setUserGroupNameByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
+  upsertUserGroup,
   type UserWithAdditionalInfo,
   wizardReducer,
   type WizardState,
@@ -276,125 +275,83 @@ describe('user reducers', () => {
 });
 
 describe('user group reducers', () => {
-  describe('addUserGroup', () => {
-    it('should add a new user group with auto-generated GID', () => {
-      const result = wizardReducer(initialState, addUserGroup());
-
-      // Initial state has one empty group, so this adds a second
-      expect(result.users.groups.length).toBeGreaterThan(
-        initialState.users.groups.length,
-      );
-      const newGroup = result.users.groups[result.users.groups.length - 1];
-      expect(newGroup.name).toBe('');
-      expect(newGroup.gid).toBeDefined();
-    });
-
-    it('should assign incrementing GIDs starting from 1000', () => {
-      let state = wizardReducer(initialState, addUserGroup());
-      state = wizardReducer(state, addUserGroup());
-
-      // Filter out groups with GIDs
-      const groupsWithGids = state.users.groups.filter(
-        (g) => g.gid !== undefined,
-      );
-      const gids = groupsWithGids.map((g) => g.gid);
-
-      // GIDs should be unique
-      const uniqueGids = new Set(gids);
-      expect(uniqueGids.size).toBe(gids.length);
-
-      // GIDs should be >= 1000
-      gids.forEach((gid) => {
-        expect(gid).toBeGreaterThanOrEqual(1000);
-      });
-    });
-
-    it('should skip already used GIDs', () => {
-      const stateWithExistingGid: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: 'existing', gid: 1000 }],
-        },
-      };
-
-      const result = wizardReducer(stateWithExistingGid, addUserGroup());
-
-      const newGroup = result.users.groups[result.users.groups.length - 1];
-      expect(newGroup.gid).toBe(1001);
-    });
-  });
-
-  describe('setUserGroupNameByIndex', () => {
-    it('should update group name', () => {
+  describe('upsertUserGroup', () => {
+    it('should append a group when no index is provided', () => {
       const state: WizardState = {
         ...initialState,
         users: {
           ...initialState.users,
-          groups: [{ name: '', gid: 1000 }],
+          groups: [],
         },
       };
 
       const result = wizardReducer(
         state,
-        setUserGroupNameByIndex({ index: 0, name: 'developers' }),
+        upsertUserGroup({ group: { name: 'developers' } }),
       );
 
-      expect(result.users.groups[0].name).toBe('developers');
+      expect(result.users.groups).toEqual([{ name: 'developers' }]);
     });
 
-    it('should trim whitespace from name', () => {
+    it('should replace a group at the specified index', () => {
       const state: WizardState = {
         ...initialState,
         users: {
           ...initialState.users,
-          groups: [{ name: '', gid: 1000 }],
+          groups: [{ name: 'developers' }, { name: 'docker', gid: 1001 }],
         },
       };
 
       const result = wizardReducer(
         state,
-        setUserGroupNameByIndex({ index: 0, name: '  developers  ' }),
+        upsertUserGroup({ index: 1, group: { name: 'containers' } }),
       );
 
-      expect(result.users.groups[0].name).toBe('developers');
+      expect(result.users.groups).toEqual([
+        { name: 'developers' },
+        { name: 'containers', gid: 1001 },
+      ]);
     });
 
-    it('should remove GID when name is set to empty', () => {
+    it('should clear a group GID when it is explicitly undefined', () => {
       const state: WizardState = {
         ...initialState,
         users: {
           ...initialState.users,
-          groups: [{ name: 'developers', gid: 1000 }],
+          groups: [{ name: 'developers', gid: 1001 }],
         },
       };
 
       const result = wizardReducer(
         state,
-        setUserGroupNameByIndex({ index: 0, name: '' }),
+        upsertUserGroup({ index: 0, group: { gid: undefined } }),
       );
 
-      expect(result.users.groups[0].name).toBe('');
-      expect(result.users.groups[0].gid).toBeUndefined();
+      expect(result.users.groups).toEqual([{ name: 'developers' }]);
     });
 
-    it('should assign GID when name is set on group without GID', () => {
-      const state: WizardState = {
-        ...initialState,
-        users: {
-          ...initialState.users,
-          groups: [{ name: '' }],
-        },
-      };
+    it.each([-1, 2, 0.5])(
+      'should ignore an invalid group index: %s',
+      (index) => {
+        const state: WizardState = {
+          ...initialState,
+          users: {
+            ...initialState.users,
+            groups: [{ name: 'developers' }, { name: 'docker' }],
+          },
+        };
 
-      const result = wizardReducer(
-        state,
-        setUserGroupNameByIndex({ index: 0, name: 'developers' }),
-      );
+        const result = wizardReducer(
+          state,
+          upsertUserGroup({ index, group: { name: 'containers' } }),
+        );
 
-      expect(result.users.groups[0].name).toBe('developers');
-      expect(result.users.groups[0].gid).toBeGreaterThanOrEqual(1000);
-    });
+        expect(result.users.groups).toEqual([
+          { name: 'developers' },
+          { name: 'docker' },
+        ]);
+      },
+    );
   });
 
   describe('removeUserGroup', () => {

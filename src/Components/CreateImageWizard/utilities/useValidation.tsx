@@ -16,6 +16,7 @@ import {
   useSecuritySummary,
 } from '@/store/api/backend';
 import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
+import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
 import { selectComplianceType } from '@/store/slices';
@@ -24,8 +25,6 @@ import {
   convertToBytes,
   DiskPartition,
   FilesystemPartition,
-  MAX_REGULAR_GID,
-  MIN_REGULAR_GID,
   parseSizeUnit,
   selectAapCallbackUrl,
   selectAapHostConfigKey,
@@ -60,8 +59,10 @@ import {
   selectUseLatest,
   selectUserGroups,
   selectUsers,
+  selectUsersSlice,
   UserWithAdditionalInfo,
   validateSystemSlice,
+  validateUsersSlice,
 } from '@/store/slices/wizard';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -119,13 +120,22 @@ export function useIsBlueprintValid(): boolean {
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
-  const userGroups = useUserGroupsValidation();
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
+  const targetEnvironments = useAppSelector(selectImageTypes);
+  const { restrictions } = useCustomizationRestrictions({
+    selectedImageTypes: targetEnvironments,
+  });
 
   const system = useAppSelector(selectSystem);
   const { errors: systemErrors } = validateSystemSlice(system);
+
+  const usersSlice = useAppSelector(selectUsersSlice);
+  const { errors: usersErrors } = validateUsersSlice(
+    usersSlice,
+    restrictions.users.shouldHide,
+  );
 
   return (
     !aap.disabledNext &&
@@ -135,8 +145,8 @@ export function useIsBlueprintValid(): boolean {
     systemErrors.length === 0 &&
     !details.disabledNext &&
     !details.isPending &&
-    !users.disabledNext &&
-    !userGroups.disabledNext &&
+    (restrictions.users.shouldHide || !users.disabledNext) &&
+    usersErrors.length === 0 &&
     !azureTarget.disabledNext &&
     !gcpTarget.disabledNext &&
     !awsTarget.disabledNext
@@ -670,59 +680,6 @@ export function useUsersValidation(): UsersStepValidation {
   return {
     errors,
     warnings: {},
-    disabledNext: !canProceed,
-  };
-}
-
-export function useUserGroupsValidation(): UsersStepValidation {
-  const userGroups = useAppSelector(selectUserGroups);
-  const errors: { [key: string]: { [key: string]: string } } = {};
-  const warnings: { [key: string]: { [key: string]: string } } = {};
-
-  for (let index = 0; index < userGroups.length; index++) {
-    const groupErrors: { [key: string]: string } = {};
-    const groupWarnings: { [key: string]: string } = {};
-    const group = userGroups[index];
-
-    if (group.name) {
-      if (!isUserGroupValid(group.name)) {
-        groupErrors.groupName = 'Invalid group name';
-      } else {
-        const duplicates = userGroups.filter(
-          (g, idx) => idx !== index && g.name === group.name,
-        );
-        if (duplicates.length > 0) {
-          groupErrors.groupName = 'Group name must be unique';
-        }
-      }
-    }
-
-    if (group.gid !== undefined) {
-      const duplicateGids = userGroups.filter(
-        (g, idx) => idx !== index && g.gid === group.gid,
-      );
-      if (duplicateGids.length > 0) {
-        groupErrors.groupGid = 'Group ID must be unique';
-      }
-      if (group.gid < MIN_REGULAR_GID || group.gid > MAX_REGULAR_GID) {
-        groupWarnings.groupGid = `Standard GID range is ${MIN_REGULAR_GID}–${MAX_REGULAR_GID}`;
-      }
-    }
-
-    if (Object.keys(groupErrors).length > 0) {
-      errors[index] = groupErrors;
-    }
-    if (Object.keys(groupWarnings).length > 0) {
-      warnings[index] = groupWarnings;
-    }
-  }
-
-  // All groups are either empty or valid (no errors)
-  const canProceed = Object.keys(errors).length === 0;
-
-  return {
-    errors,
-    warnings,
     disabledNext: !canProceed,
   };
 }

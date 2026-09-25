@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import z from 'zod';
 
-import { uniqueArray } from '../utilities';
+import { uniqueArray, uniqueBy } from '../utilities';
 import { validateList, validateSchema } from '../validators';
 
 const schema = z
   .array(z.string().regex(/^[a-z]+$/, 'Only lowercase letters allowed'))
   .superRefine(uniqueArray('item'));
+
+const namedItemsSchema = z
+  .array(z.object({ name: z.string() }))
+  .superRefine(uniqueBy('item names', 'name', (item) => item.name));
 
 describe('validateSchema', () => {
   it('returns parsed data for a valid value', () => {
@@ -30,6 +34,7 @@ describe('validateSchema', () => {
           message: 'Value is required',
           kind: 'format',
           value: '',
+          path: [],
         },
       ],
     });
@@ -67,6 +72,7 @@ describe('validateList', () => {
           message: 'Only lowercase letters allowed',
           kind: 'format',
           value: 'FOO',
+          path: [0],
         },
       ],
     });
@@ -81,6 +87,7 @@ describe('validateList', () => {
           message: 'Duplicate item: foo',
           kind: 'duplicate',
           value: 'foo',
+          path: [],
         },
       ],
     });
@@ -97,6 +104,24 @@ describe('validateList', () => {
     expect(validateList(schema)).toEqual({
       data: undefined,
       issues: [],
+    });
+  });
+
+  it('preserves nested paths from schema issues', () => {
+    const result = validateSchema(namedItemsSchema, [
+      { name: 'developers' },
+      { name: 'developers' },
+    ]);
+
+    expect(result).toEqual({
+      issues: [
+        {
+          message: 'Duplicate item names: developers',
+          kind: 'duplicate',
+          value: 'developers',
+          path: [1, 'name'],
+        },
+      ],
     });
   });
 });

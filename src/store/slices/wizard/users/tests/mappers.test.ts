@@ -85,6 +85,15 @@ describe('mapUsersCustomizations', () => {
       expect(result.groups).toEqual([{ name: 'developers', gid: 1001 }]);
     });
 
+    it('preserves a zero gid', () => {
+      const state = createState({
+        groups: [{ name: 'root', gid: 0 }],
+      });
+      expect(mapUsersCustomizations(state).groups).toEqual([
+        { name: 'root', gid: 0 },
+      ]);
+    });
+
     it('filters out groups with empty name', () => {
       const state = createState({
         groups: [{ name: '' }],

@@ -4,113 +4,158 @@ import { Button, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import { useUserGroupsValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
-import { useAppDispatch } from '@/store/hooks';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import {
-  removeUserGroup,
-  setUserGroupGidByIndex,
-  setUserGroupNameByIndex,
-  UserGroup,
+  Group,
+  validateGroupGidInput,
+  validateGroupInput,
 } from '@/store/slices/wizard';
+import { ValidationResult } from '@/store/slices/wizard/types';
 
 type GroupRowProps = {
   index: number;
-  groupCount: number;
-  group: UserGroup;
+  group: Group;
+  kind: 'committed' | 'draft';
+  validator: (candidate: Group) => ValidationResult<Group[]>;
+  onUpdate: (group?: Partial<Group> | undefined) => void;
+  onRemove: () => void;
+  isRemoveDisabled: boolean;
 };
 
-const GroupRow = ({ index, groupCount, group }: GroupRowProps) => {
-  const dispatch = useAppDispatch();
-  const stepValidation = useUserGroupsValidation();
-  const [gidInput, setGidInput] = useState<string>(
-    group.gid !== undefined ? String(group.gid) : '',
-  );
+type GroupDraft = {
+  name: string;
+  gid: string;
+};
+
+const GroupRow = ({
+  index,
+  kind,
+  group,
+  isRemoveDisabled,
+  validator,
+  onUpdate,
+  onRemove,
+}: GroupRowProps) => {
+  const [draft, setDraft] = useState<GroupDraft>({
+    name: group.name,
+    gid: String(group.gid ?? ''),
+  });
 
   useEffect(() => {
-    setGidInput(group.gid !== undefined ? String(group.gid) : '');
-  }, [group.gid]);
-
-  const isDigitsOnly = (value: string) => /^\d+$/.test(value);
-  const isGidInputInvalid = gidInput !== '' && !isDigitsOnly(gidInput);
-
-  const getValidationByIndex = (idx: number) => {
-    const errors =
-      idx in stepValidation.errors ? { ...stepValidation.errors[idx] } : {};
-    if (isGidInputInvalid) {
-      errors.groupGid = 'Invalid input. Must be a number';
-    }
-    return {
-      errors,
-      disabledNext: stepValidation.disabledNext || isGidInputInvalid,
-    };
-  };
-
-  const getWarningByIndex = (idx: number) => {
-    const warnings =
-      idx in stepValidation.warnings ? stepValidation.warnings[idx] : {};
-    return warnings;
-  };
-
-  const onRemoveGroup = () => {
-    dispatch(removeUserGroup(index));
-  };
+    // Reset local drafts when the committed group changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft({
+      name: group.name,
+      gid: String(group.gid ?? ''),
+    });
+  }, [group.name, group.gid]);
 
   const handleGroupNameChange = (
-    _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    _: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    dispatch(setUserGroupNameByIndex({ index, name: value }));
+    setDraft({
+      ...draft,
+      name: value,
+    });
+
+    // the draft is a presentational input, we only
+    // want to commit this to the redux store on blur
+    if (kind === 'draft') return;
+
+    onUpdate({ name: value });
   };
 
   const handleGroupGidChange = (
-    _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    _: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    setGidInput(value);
-    if (value === '') {
-      dispatch(setUserGroupGidByIndex({ index, gid: undefined }));
-    } else if (isDigitsOnly(value)) {
-      dispatch(setUserGroupGidByIndex({ index, gid: parseInt(value, 10) }));
+    setDraft({
+      ...draft,
+      gid: value,
+    });
+
+    const parsed = validateGroupGidInput(value);
+    if (parsed.errors.length > 0) {
+      return;
+    }
+
+    onUpdate({
+      gid: parsed.data,
+    });
+  };
+
+  const validateGroup = (field: 'name' | 'gid') => {
+    const parsed = validateGroupInput(draft);
+    if (!parsed.data || parsed.errors.length > 0) {
+      return {
+        ...parsed,
+        errors: parsed.errors.filter((issue) => issue.path?.[0] === field),
+      };
+    }
+
+    const { errors, warnings } = validator(parsed.data);
+    return {
+      data: parsed.data,
+      errors: errors.filter(
+        (issue) => issue.path?.[0] === index && issue.path[1] === field,
+      ),
+      warnings: (warnings ?? []).filter(
+        (issue) => issue.path?.[0] === index && issue.path[1] === field,
+      ),
+    };
+  };
+
+  const handleGroupGidCommit = (group?: Group) => {
+    // Keep invalid-name drafts editable when focus leaves the GID field.
+    if (kind === 'draft') return;
+
+    onUpdate(group);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.currentTarget.blur();
     }
   };
 
   return (
     <Tr resetOffset>
       <Td>
-        <ValidatedInputAndTextArea
+        <ValidatedTextInput
           ariaLabel='Group name'
-          value={group.name || ''}
+          value={draft.name}
           placeholder='Set group name'
+          inputProps={{ onKeyDown: handleKeyDown }}
           onChange={handleGroupNameChange}
-          stepValidation={getValidationByIndex(index)}
-          fieldName='groupName'
+          validator={() => validateGroup('name')}
+          onCommit={(group) => onUpdate(group)}
         />
       </Td>
       <Td>
-        <ValidatedInputAndTextArea
+        <ValidatedTextInput
           ariaLabel='Group ID'
-          value={gidInput}
+          value={draft.gid}
           placeholder='Set group ID'
+          inputProps={{ onKeyDown: handleKeyDown }}
           onChange={handleGroupGidChange}
-          stepValidation={getValidationByIndex(index)}
-          fieldName='groupGid'
-          warning={
-            !isGidInputInvalid ? getWarningByIndex(index).groupGid : undefined
-          }
+          validator={() => validateGroup('gid')}
+          onCommit={handleGroupGidCommit}
+          isDisabled={kind === 'draft' && draft.name.trim() === ''}
         />
         <HelperText>
           <HelperTextItem>
-            Each group will automatically be assigned an ID number.
+            A Group ID will be assigned if this field is left blank
           </HelperTextItem>
         </HelperText>
       </Td>
       <Td>
         <Button
-          isDisabled={groupCount <= 1}
+          isDisabled={isRemoveDisabled}
           variant='plain'
           icon={<MinusCircleIcon />}
-          onClick={onRemoveGroup}
+          onClick={() => onRemove()}
           aria-label='Remove group'
         />
       </Td>

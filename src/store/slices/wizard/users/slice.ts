@@ -1,11 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { MAX_REGULAR_GID, MIN_REGULAR_GID } from './constants';
 import { initialState } from './state';
 import {
+  Group,
   UserAdministratorPayload,
-  UserGroupGidPayload,
-  UserGroupNamePayload,
   UserGroupPayload,
   UserPasswordPayload,
   UserPayload,
@@ -33,10 +31,7 @@ export const usersSlice = createSlice({
     removeUser: (state, action: PayloadAction<number>) => {
       state.users = state.users.filter((_, index) => index !== action.payload);
     },
-    clearUsersAndGroups: (state) => {
-      state.users = [];
-      state.groups = [{ name: '' }];
-    },
+    clearUsersAndGroups: (_) => initialState,
     setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
       state.users[action.payload.index].name = action.payload.name;
     },
@@ -96,54 +91,33 @@ export const usersSlice = createSlice({
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
-    addUserGroup: (state) => {
-      const existingGids = new Set(
-        state.groups
-          .map((g) => g.gid)
-          .filter((gid): gid is number => gid !== undefined),
-      );
-      let nextGid = MIN_REGULAR_GID;
-      while (existingGids.has(nextGid) && nextGid <= MAX_REGULAR_GID) {
-        nextGid++;
-      }
-      if (nextGid <= MAX_REGULAR_GID) {
-        state.groups.push({ name: '', gid: nextGid });
-      } else {
-        state.groups.push({ name: '' });
-      }
-    },
-    setUserGroupNameByIndex: (
+    upsertUserGroup: (
       state,
-      action: PayloadAction<UserGroupNamePayload>,
+      action: PayloadAction<
+        { group: Group } | { index: number; group: Partial<Group> }
+      >,
     ) => {
-      const { index, name } = action.payload;
-      state.groups[index].name = name.trim();
-      if (name.trim() === '') {
-        delete state.groups[index].gid;
-      } else if (state.groups[index].gid === undefined) {
-        const existingGids = new Set(
-          state.groups
-            .map((g) => g.gid)
-            .filter((gid): gid is number => gid !== undefined),
-        );
-        let nextGid = MIN_REGULAR_GID;
-        while (existingGids.has(nextGid) && nextGid <= MAX_REGULAR_GID) {
-          nextGid++;
-        }
-        if (nextGid <= MAX_REGULAR_GID) {
-          state.groups[index].gid = nextGid;
-        }
+      if (!('index' in action.payload)) {
+        state.groups.push(action.payload.group);
+        return;
       }
-    },
-    setUserGroupGidByIndex: (
-      state,
-      action: PayloadAction<UserGroupGidPayload>,
-    ) => {
-      const { index, gid } = action.payload;
-      if (gid === undefined) {
+
+      const { index, group } = action.payload;
+      if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= state.groups.length
+      ) {
+        return;
+      }
+
+      state.groups[index] = {
+        ...state.groups[index],
+        ...group,
+      };
+
+      if ('gid' in group && group.gid === undefined) {
         delete state.groups[index].gid;
-      } else {
-        state.groups[index].gid = gid;
       }
     },
     removeUserGroup: (state, action: PayloadAction<number>) => {
@@ -165,9 +139,7 @@ export const usersSlice = createSlice({
 });
 
 export const {
-  addUserGroup,
-  setUserGroupNameByIndex,
-  setUserGroupGidByIndex,
+  upsertUserGroup,
   removeUserGroup,
   addUser,
   removeUser,

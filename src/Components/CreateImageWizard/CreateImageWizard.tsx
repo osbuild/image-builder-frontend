@@ -50,7 +50,9 @@ import {
   selectIsImageMode,
   selectSystem,
   selectTimezone,
+  selectUsersSlice,
   validateSystemSlice,
+  validateUsersSlice,
 } from '@/store/slices/wizard';
 import {
   closeWizardModal,
@@ -104,7 +106,6 @@ import {
   useImagePullValidation,
   useRegistrationValidation,
   useSnapshotValidation,
-  useUserGroupsValidation,
   useUsersValidation,
 } from '../CreateImageWizard/utilities/useValidation';
 
@@ -152,18 +153,20 @@ const CreateImageWizard = () => {
   const snapshotValidation = useSnapshotValidation();
   const filesystemValidation = useFilesystemValidation();
   const usersValidation = useUsersValidation();
-  const userGroupsValidation = useUserGroupsValidation();
   const imagePullValidation = useImagePullValidation();
-
-  const system = useAppSelector(selectSystem);
-  const { errors: systemErrors } = validateSystemSlice(system);
 
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
 
-  const usersHaveErrors =
-    usersValidation.disabledNext || userGroupsValidation.disabledNext;
+  const system = useAppSelector(selectSystem);
+  const { errors: systemErrors } = validateSystemSlice(system);
+
+  const users = useAppSelector(selectUsersSlice);
+  const { errors: userErrors } = validateUsersSlice(
+    users,
+    restrictions.users.shouldHide,
+  );
 
   // The "Local images" source is a fake door: it only shows a coming-soon
   // note, so the wizard must not proceed past base settings.
@@ -187,7 +190,8 @@ const CreateImageWizard = () => {
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
     systemErrors.length > 0 ||
-    (!restrictions.users.shouldHide && usersHaveErrors);
+    (!restrictions.users.shouldHide && usersValidation.disabledNext) ||
+    userErrors.length > 0;
 
   useEffect(() => {
     const hasUrlParams =

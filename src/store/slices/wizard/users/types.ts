@@ -1,4 +1,11 @@
+import z from 'zod';
+
 import { User } from '@/store/api/backend';
+
+import { groupInputSchema, groupSchema } from './schemas';
+
+export type Group = z.infer<typeof groupSchema>;
+export type GroupInput = z.input<typeof groupInputSchema>;
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
@@ -32,22 +39,7 @@ export type UserGroupPayload = {
   group: string;
 };
 
-export type UserGroupNamePayload = {
-  index: number;
-  name: string;
-};
-
-export type UserGroupGidPayload = {
-  index: number;
-  gid: number | undefined;
-};
-
-export type UserGroup = {
-  name: string;
-  gid?: number;
-};
-
 export type UsersSlice = {
   users: UserWithAdditionalInfo[];
-  groups: UserGroup[];
+  groups: Group[];
 };
