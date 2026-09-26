@@ -595,26 +595,8 @@ export type ApiRepositoryRequest = {
   module_hotfixes?: boolean | undefined;
   /** Name of the remote yum repository */
   name: string;
-  /** Enable snapshotting and hosting of this repository */
-  snapshot?: boolean | undefined;
-  /** URL of the remote yum repository */
-  url?: string | undefined;
-};
-export type ApiRepositoryRequestRead = {
-  /** Architecture to restrict client usage to */
-  distribution_arch?: string | undefined;
-  /** Versions to restrict client usage to */
-  distribution_versions?: string[] | undefined;
-  /** GPG key for repository */
-  gpg_key?: string | undefined;
-  /** Verify packages */
-  metadata_verification?: boolean | undefined;
-  /** Disable modularity filtering on this repository */
-  module_hotfixes?: boolean | undefined;
-  /** Name of the remote yum repository */
-  name: string;
-  /** Origin of the repository */
-  origin?: string | undefined;
+  /** Origin of the repository (`external` or `upload`). Defaults to `external`. Set to `upload` for repositories that receive uploaded RPMs. */
+  origin?: ('external' | 'upload') | undefined;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean | undefined;
   /** URL of the remote yum repository */
