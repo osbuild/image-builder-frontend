@@ -27,10 +27,7 @@ const RepositoriesStep = () => {
         </Title>
         <Content component='small'>
           Can&apos;t find a repository? Ensure it&apos;s been added on{' '}
-          <ManageRepositoriesButton
-            label={'the Repositories page'}
-            icon={true}
-          />
+          <ManageRepositoriesButton label={'the Repositories page'} icon />
         </Content>
       </Content>
       {wizardMode === 'edit' && (
