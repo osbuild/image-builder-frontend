@@ -4,6 +4,16 @@ import {
   ApiRepositoryResponse,
   ApiRepositoryResponseRead,
 } from '@/store/api/contentSources';
+import { useAppSelector } from '@/store/hooks';
+import {
+  selectArchitecture,
+  selectDistribution,
+  selectPackageGroups,
+  selectPackages,
+  selectRecommendedRepositories,
+  selectUseLatest,
+} from '@/store/slices';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
 import {
   convertStringToDate,
@@ -161,6 +171,35 @@ export const isRepoDisabled = (
   }
 
   return [false, ''];
+};
+
+export const useIsRepoDisabled = (
+  contentList: ApiRepositoryResponseRead[],
+  selectedIds: Set<string>,
+  isFetching: boolean,
+) => {
+  const arch = useAppSelector(selectArchitecture);
+  const distribution = useAppSelector(selectDistribution);
+  const recommendedRepos = useAppSelector(selectRecommendedRepositories);
+  const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectPackageGroups);
+  const useLatestContent = useAppSelector(selectUseLatest);
+  const version = releaseToVersion(distribution);
+
+  return (repo: ApiRepositoryResponseRead): [boolean, string] =>
+    isRepoDisabled(
+      repo,
+      selectedIds.has(repo.uuid || ''),
+      isFetching,
+      contentList,
+      selectedIds,
+      recommendedRepos,
+      packages,
+      groups,
+      useLatestContent,
+      arch,
+      version,
+    );
 };
 
 // Until IB has full support for extended release repositories, filter them out
