@@ -4,12 +4,17 @@ import {
   Package,
   Repository,
 } from '@/store/api/backend';
-import {
-  ApiRepositoryResponseRead,
-  ApiSearchRpmResponse,
-} from '@/store/api/contentSources';
+import { ApiSearchRpmResponse } from '@/store/api/contentSources';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
+
+export type CustomRepositoryWithFlag = CustomRepository & {
+  isRecommended?: boolean;
+};
+
+export type PayloadRepositoryWithFlag = Repository & {
+  isRecommended?: boolean;
+};
 
 export type ItemWithSources = {
   name: Package['name'];
@@ -43,9 +48,8 @@ export type PackageRecommendation = {
 
 export type ContentSlice = {
   repositories: {
-    customRepositories: CustomRepository[];
-    payloadRepositories: Repository[];
-    recommendedRepositories: ApiRepositoryResponseRead[];
+    customRepositories: CustomRepositoryWithFlag[];
+    payloadRepositories: PayloadRepositoryWithFlag[];
     redHatRepositories: Repository[];
   };
   packages: IBPackageWithRepositoryInfo[];

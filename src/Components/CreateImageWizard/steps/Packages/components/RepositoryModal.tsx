@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addPackage,
   addPackageGroup,
-  addRecommendedRepository,
+  addRepository,
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   selectDistribution,
@@ -74,12 +74,13 @@ const RepositoryModal = ({
           EPEL_10_REPO_DEFINITION,
       });
       dispatch(
-        addRecommendedRepository(
-          (result as { data: ApiRepositoryResponseRead }).data,
-        ),
+        addRepository({
+          repo: (result as { data: ApiRepositoryResponseRead }).data,
+          isRecommended: true,
+        }),
       );
     } else {
-      dispatch(addRecommendedRepository(epelRepo.data[0]));
+      dispatch(addRepository({ repo: epelRepo.data[0], isRecommended: true }));
     }
     if (isSelectingPackage) {
       dispatch(addPackage(isSelectingPackage!));

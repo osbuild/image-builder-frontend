@@ -16,7 +16,6 @@ const parseRepositories = ({
 }: Customizations): ContentSlice['repositories'] => ({
   customRepositories: custom_repositories || [],
   payloadRepositories: payload_repositories || [],
-  recommendedRepositories: [],
   redHatRepositories: [],
 });
 

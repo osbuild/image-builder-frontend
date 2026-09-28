@@ -33,7 +33,6 @@ import {
   selectCustomRepositories,
   selectDistribution,
   selectPayloadRepositories,
-  selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
@@ -72,7 +71,6 @@ const Repositories = () => {
   const useLatestContent = useAppSelector(selectUseLatest);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
-  const recommendedRepos = useAppSelector(selectRecommendedRepositories);
   const templateUuid = useAppSelector(selectTemplate);
 
   const version = releaseToVersion(distribution);
@@ -91,10 +89,9 @@ const Repositories = () => {
         [
           ...customRepositories.map(({ id }) => id).flat(1),
           ...payloadRepositories.map(({ id }) => id),
-          ...recommendedRepos.map(({ uuid }) => uuid),
         ].filter((id) => !!id) as string[],
       ),
-    [customRepositories, payloadRepositories, recommendedRepos],
+    [customRepositories, payloadRepositories],
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -204,7 +201,7 @@ const Repositories = () => {
     if (!communityEpel?.uuid || customEpel.id === communityEpel.uuid) return;
 
     dispatch(removeRepositoriesById([customEpel.id!]));
-    dispatch(addRepository(communityEpel));
+    dispatch(addRepository({ repo: communityEpel }));
     // ↓ On purpose to prevent repeated executions.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
@@ -217,7 +214,7 @@ const Repositories = () => {
   };
 
   const addSelected = (repo: ApiRepositoryResponseRead) => {
-    dispatch(addRepository(repo));
+    dispatch(addRepository({ repo }));
   };
 
   const removeSelected = (

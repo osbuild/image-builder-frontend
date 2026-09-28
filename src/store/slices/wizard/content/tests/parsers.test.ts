@@ -234,11 +234,10 @@ describe('parseContentFromRequest', () => {
         );
         expect(result.repositories.customRepositories).toEqual([]);
         expect(result.repositories.payloadRepositories).toEqual([]);
-        expect(result.repositories.recommendedRepositories).toEqual([]);
         expect(result.repositories.redHatRepositories).toEqual([]);
       });
 
-      it('always sets recommendedRepositories and redHatRepositories to empty', () => {
+      it('always sets redHatRepositories to empty', () => {
         const result = parseContentFromRequest(
           createMinimalBlueprint({
             customizations: {
@@ -251,7 +250,6 @@ describe('parseContentFromRequest', () => {
             },
           }),
         );
-        expect(result.repositories.recommendedRepositories).toEqual([]);
         expect(result.repositories.redHatRepositories).toEqual([]);
       });
     });

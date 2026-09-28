@@ -26,9 +26,10 @@ export const selectPayloadRepositories = (state: RootState) => {
   return state.wizard.content.repositories.payloadRepositories;
 };
 
-export const selectRecommendedRepositories = (state: RootState) => {
-  return state.wizard.content.repositories.recommendedRepositories;
-};
+export const selectRecommendedRepositories = createSelector(
+  [(state: RootState) => state.wizard.content.repositories.customRepositories],
+  (custom) => custom.filter((r) => r.isRecommended),
+);
 
 export const selectRedHatRepositories = (state: RootState) => {
   return state.wizard.content.repositories.redHatRepositories;
@@ -50,19 +51,13 @@ export const selectVerifiedLocaleLangpacks = (state: RootState) => {
   return state.wizard.content.verifiedLocaleLangpacks;
 };
 
-// Derived selector for getting all repositories
 export const selectAllRepositoryIds = createSelector(
-  [
-    selectCustomRepositories,
-    selectPayloadRepositories,
-    selectRecommendedRepositories,
-  ],
-  (custom, payload, recommended) =>
+  [selectCustomRepositories, selectPayloadRepositories],
+  (custom, payload) =>
     Array.from(
       new Set([
         ...custom.map(({ id }) => id),
         ...payload.flatMap(({ id }) => (id ? [id] : [])),
-        ...recommended.flatMap(({ uuid }) => (uuid ? [uuid] : [])),
       ]),
     ),
 );
