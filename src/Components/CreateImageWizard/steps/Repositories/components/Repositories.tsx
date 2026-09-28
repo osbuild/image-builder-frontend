@@ -54,15 +54,13 @@ import Loading from './Loading';
 import RemoveRepositoryButton from './RemoveRepositoryButton';
 import RemoveRepositoryModal from './RemoveRepositoryModal';
 import RepositoriesAddedAlert from './RepositoriesAddedAlert';
-import RepositoriesStatus from './RepositoriesStatus';
+import RepositoryColumns from './RepositoryColumns';
 import RepositoryLabel from './RepositoryLabel';
 import RepositorySearch from './RepositorySearch';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
 import {
   excludeEUSReposFilter,
-  getReadableArchitecture,
-  getReadableVersions,
   isEPELUrl,
   isRepoDisabled,
 } from '../repositoriesUtilities';
@@ -476,18 +474,7 @@ const Repositories = () => {
                     </Thead>
                     <Tbody>
                       {contentList.map((repo, rowIndex) => {
-                        const {
-                          uuid = '',
-                          url = '',
-                          name,
-                          status = '',
-                          origin = '',
-                          distribution_arch,
-                          distribution_versions,
-                          package_count,
-                          last_introspection_time,
-                          failed_introspections_count,
-                        } = repo;
+                        const { uuid = '', url = '', name, origin = '' } = repo;
 
                         const [isDisabled, disabledReason] = isRepoDisabled(
                           repo,
@@ -519,31 +506,10 @@ const Repositories = () => {
                               <RepositoryLabel origin={origin} url={url} />
                             </Td>
                             {!snapshotDate ? (
-                              <>
-                                <Td dataLabel={'Version'}>
-                                  {getReadableVersions(
-                                    distribution_versions,
-                                    repositoryParameters,
-                                  )}
-                                </Td>
-                                <Td dataLabel={'Architecture'}>
-                                  {getReadableArchitecture(
-                                    distribution_arch,
-                                    repositoryParameters,
-                                  )}
-                                </Td>
-                                <Td dataLabel={'Packages'}>
-                                  {package_count || '-'}
-                                </Td>
-                                <Td dataLabel={'Status'}>
-                                  <RepositoriesStatus
-                                    repoStatus={status || 'Unavailable'}
-                                    repoUrl={url}
-                                    repoIntrospections={last_introspection_time}
-                                    repoFailCount={failed_introspections_count}
-                                  />
-                                </Td>
-                              </>
+                              <RepositoryColumns
+                                repo={repo}
+                                repositoryParameters={repositoryParameters}
+                              />
                             ) : (
                               <>
                                 <Td dataLabel={'Snapshot date'}>
@@ -617,46 +583,15 @@ const Repositories = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {reposInTemplate.map((repo, rowIndex) => {
-                    const {
-                      uuid = '',
-                      url = '',
-                      name,
-                      status = '',
-                      distribution_arch,
-                      distribution_versions,
-                      package_count,
-                      last_introspection_time,
-                      failed_introspections_count,
-                    } = repo;
-
-                    return (
-                      <Tr key={`${uuid}-${rowIndex}`}>
-                        <Td dataLabel={'Name'}>{name}</Td>
-                        <Td dataLabel={'Version'}>
-                          {getReadableVersions(
-                            distribution_versions,
-                            repositoryParameters,
-                          )}
-                        </Td>
-                        <Td dataLabel={'Architecture'}>
-                          {getReadableArchitecture(
-                            distribution_arch,
-                            repositoryParameters,
-                          )}
-                        </Td>
-                        <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
-                        <Td dataLabel={'Status'}>
-                          <RepositoriesStatus
-                            repoStatus={status || 'Unavailable'}
-                            repoUrl={url}
-                            repoIntrospections={last_introspection_time}
-                            repoFailCount={failed_introspections_count}
-                          />
-                        </Td>
-                      </Tr>
-                    );
-                  })}
+                  {reposInTemplate.map((repo, rowIndex) => (
+                    <Tr key={`${repo.uuid || ''}-${rowIndex}`}>
+                      <Td dataLabel={'Name'}>{repo.name}</Td>
+                      <RepositoryColumns
+                        repo={repo}
+                        repositoryParameters={repositoryParameters}
+                      />
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
             </PanelMain>
