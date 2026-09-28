@@ -57,7 +57,7 @@ import {
   removeModule,
   removePackage,
   removePackageGroup,
-  removeRecommendedRepository,
+  removeRecommendedRepositoriesById,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
@@ -950,7 +950,7 @@ const PackageSearch = ({
             1 &&
           groups.filter((grp) => grp.repository === 'recommended').length === 0
         ) {
-          dispatch(removeRecommendedRepository(epelRepo.data[0]));
+          dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
         }
       }
     } else {
@@ -983,7 +983,7 @@ const PackageSearch = ({
           packages.filter((pkg) => pkg.repository === 'recommended').length ===
             0
         ) {
-          dispatch(removeRecommendedRepository(epelRepo.data[0]));
+          dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
         }
       }
     }

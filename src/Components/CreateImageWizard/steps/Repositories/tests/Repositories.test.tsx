@@ -428,7 +428,6 @@ describe('Repositories Component', () => {
               },
             ],
             redHatRepositories: [],
-            recommendedRepositories: [],
           },
         },
       });
@@ -516,7 +515,6 @@ describe('Request Payload Generation', () => {
           },
         ],
         redHatRepositories: [],
-        recommendedRepositories: [],
       },
     });
 
@@ -557,7 +555,6 @@ describe('Request Payload Generation', () => {
           },
         ],
         redHatRepositories: [],
-        recommendedRepositories: [],
       },
     });
 
@@ -599,7 +596,6 @@ describe('Request Payload Generation', () => {
           },
         ],
         redHatRepositories: [],
-        recommendedRepositories: [],
       },
     });
 
@@ -619,7 +615,6 @@ describe('Request Payload Generation', () => {
         customRepositories: [],
         payloadRepositories: [],
         redHatRepositories: [],
-        recommendedRepositories: [],
       },
     });
 
@@ -647,7 +642,6 @@ describe('Request Payload Generation', () => {
           },
         ],
         redHatRepositories: [],
-        recommendedRepositories: [],
       },
     });
 
@@ -686,7 +680,6 @@ describe('Request Payload Generation', () => {
           },
         ],
         redHatRepositories: [],
-        recommendedRepositories: [],
       },
     });
 

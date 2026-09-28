@@ -37,7 +37,7 @@ describe('ContentOverview', () => {
             repositories: {
               customRepositories: [],
               payloadRepositories: [],
-              recommendedRepositories: [],
+
               redHatRepositories: [],
             },
           },

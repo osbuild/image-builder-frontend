@@ -8,17 +8,12 @@ import {
   selectPackageGroups,
   selectPackages,
   selectPayloadRepositories,
-  selectRecommendedRepositories,
   selectSnapshotDate,
   selectTemplate,
   selectTemplateName,
   selectUseLatest,
   selectVerifiedLocaleLangpacks,
 } from './selectors';
-import {
-  convertSchemaToIBCustomRepo,
-  convertSchemaToIBPayloadRepo,
-} from './utilities';
 
 const mapPackages = createSelector(
   [selectPackages, selectPackageGroups, selectVerifiedLocaleLangpacks],
@@ -47,43 +42,37 @@ const mapModules = createSelector([selectModules], (modules) => {
 });
 
 const mapCustomRepos = createSelector(
-  [selectCustomRepositories, selectRecommendedRepositories],
-  (customRepositories, recommendedRepositories) => {
-    const cleaned = customRepositories.map((cr) => {
-      return {
-        ...cr,
-        baseurl: cr.baseurl && cr.baseurl.length !== 0 ? cr.baseurl : undefined,
-      } as CustomRepository;
-    });
+  [selectCustomRepositories],
+  (customRepositories) => {
+    const cleaned = customRepositories.map(
+      ({ isRecommended: _, ...cr }) =>
+        ({
+          ...cr,
+          baseurl:
+            cr.baseurl && cr.baseurl.length !== 0 ? cr.baseurl : undefined,
+        }) as CustomRepository,
+    );
 
-    const combined = [...cleaned];
-
-    for (const repo of recommendedRepositories) {
-      combined.push(convertSchemaToIBCustomRepo(repo));
-    }
-
-    if (combined.length === 0) {
+    if (cleaned.length === 0) {
       return undefined;
     }
 
-    return { custom_repositories: combined };
+    return { custom_repositories: cleaned };
   },
 );
 
 const mapPayloadRepos = createSelector(
-  [selectPayloadRepositories, selectRecommendedRepositories],
-  (payloadRepositories, recommendedRepositories) => {
-    const combined = [...payloadRepositories];
+  [selectPayloadRepositories],
+  (payloadRepositories) => {
+    const cleaned = payloadRepositories.map(
+      ({ isRecommended: _, ...rest }) => rest,
+    );
 
-    for (const repo of recommendedRepositories) {
-      combined.push(convertSchemaToIBPayloadRepo(repo));
-    }
-
-    if (combined.length === 0) {
+    if (cleaned.length === 0) {
       return undefined;
     }
 
-    return { payload_repositories: combined };
+    return { payload_repositories: cleaned };
   },
 );
 

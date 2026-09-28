@@ -4,7 +4,6 @@ export const initialState: ContentSlice = {
   repositories: {
     customRepositories: [],
     payloadRepositories: [],
-    recommendedRepositories: [],
     redHatRepositories: [],
   },
   packages: [],

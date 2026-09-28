@@ -5,7 +5,12 @@ import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initialState } from './state';
-import { GroupWithRepositoryInfo, IBPackageWithRepositoryInfo } from './types';
+import {
+  CustomRepositoryWithFlag,
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+  PayloadRepositoryWithFlag,
+} from './types';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
@@ -46,14 +51,33 @@ export const contentSlice = createSlice({
     },
     addRepository: (
       state,
-      action: PayloadAction<ApiRepositoryResponseRead>,
+      action: PayloadAction<{
+        repo: ApiRepositoryResponseRead;
+        isRecommended?: boolean;
+      }>,
     ) => {
-      state.repositories.customRepositories.push(
-        convertSchemaToIBCustomRepo(action.payload),
-      );
-      state.repositories.payloadRepositories.push(
-        convertSchemaToIBPayloadRepo(action.payload),
-      );
+      const { repo, isRecommended } = action.payload;
+
+      if (!repo.uuid) return;
+
+      if (isRecommended) {
+        const alreadyExists = state.repositories.customRepositories.some(
+          (r) => r.id === repo.uuid,
+        );
+        if (alreadyExists) return;
+      }
+
+      const customRepo: CustomRepositoryWithFlag = {
+        ...convertSchemaToIBCustomRepo(repo),
+        ...(isRecommended ? { isRecommended: true } : {}),
+      };
+      const payloadRepo: PayloadRepositoryWithFlag = {
+        ...convertSchemaToIBPayloadRepo(repo),
+        ...(isRecommended ? { isRecommended: true } : {}),
+      };
+
+      state.repositories.customRepositories.push(customRepo);
+      state.repositories.payloadRepositories.push(payloadRepo);
     },
     removeRepositoriesById: (state, action: PayloadAction<string[]>) => {
       const idsToRemove = new Set(action.payload);
@@ -77,25 +101,19 @@ export const contentSlice = createSlice({
         convertSchemaToIBPayloadRepo(repo),
       );
     },
-    addRecommendedRepository: (
+    removeRecommendedRepositoriesById: (
       state,
-      action: PayloadAction<ApiRepositoryResponseRead>,
+      action: PayloadAction<string[]>,
     ) => {
-      if (
-        !state.repositories.recommendedRepositories.some(
-          (repo) => repo.url === action.payload.url,
-        )
-      ) {
-        state.repositories.recommendedRepositories.push(action.payload);
-      }
-    },
-    removeRecommendedRepository: (
-      state,
-      action: PayloadAction<ApiRepositoryResponseRead>,
-    ) => {
-      state.repositories.recommendedRepositories =
-        state.repositories.recommendedRepositories.filter(
-          (repo) => repo.url !== action.payload.url,
+      const idsToRemove = new Set(action.payload);
+      state.repositories.customRepositories =
+        state.repositories.customRepositories.filter(
+          ({ id, isRecommended }) => !isRecommended || !idsToRemove.has(id),
+        );
+      state.repositories.payloadRepositories =
+        state.repositories.payloadRepositories.filter(
+          ({ id, isRecommended }) =>
+            !isRecommended || !id || !idsToRemove.has(id),
         );
     },
     addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
@@ -194,8 +212,6 @@ export const {
   changeSnapshotDate,
   changeTemplate,
   changeTemplateName,
-  addRecommendedRepository,
-  removeRecommendedRepository,
   addPackage,
   removePackage,
   addModule,
@@ -205,6 +221,7 @@ export const {
   changeRedHatRepositories,
   addRepository,
   removeRepositoriesById,
+  removeRecommendedRepositoriesById,
   setRepositoriesFromContentSources,
   setVerifiedLocaleLangpacks,
 } = contentSlice.actions;

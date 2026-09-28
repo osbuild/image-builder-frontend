@@ -20,10 +20,9 @@ import {
   removeModule,
   removePackage,
   removePackageGroup,
-  removeRecommendedRepository,
+  removeRecommendedRepositoriesById,
   selectPackageGroups,
   selectPackages,
-  selectRecommendedRepositories,
 } from '@/store/slices/wizard';
 
 import EmptySearch from './EmptySearch';
@@ -37,7 +36,6 @@ type PackagesTableProps = {
 
 const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
   const dispatch = useAppDispatch();
-  const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
   const { packages: requiredPkgNames } = useSecuritySummary();
@@ -72,7 +70,7 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
       packages.filter((p) => p.repository === 'recommended').length === 1 &&
       groups.filter((grp) => grp.repository === 'recommended').length === 0
     ) {
-      dispatch(removeRecommendedRepository(epelRepo.data[0]));
+      dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
     }
   };
 
@@ -85,7 +83,7 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
       groups.filter((g) => g.repository === 'recommended').length === 1 &&
       packages.filter((pkg) => pkg.repository === 'recommended').length === 0
     ) {
-      dispatch(removeRecommendedRepository(epelRepo.data[0]));
+      dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
     }
   };
 
@@ -202,7 +200,7 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
     return composePkgTable();
     // Would need significant rewrite to fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packages, groups, recommendedRepositories, expandedGroups, requiredSet]);
+  }, [packages, groups, expandedGroups, requiredSet]);
 
   return (
     <Table data-testid='packages-table' style={{ tableLayout: 'fixed' }}>

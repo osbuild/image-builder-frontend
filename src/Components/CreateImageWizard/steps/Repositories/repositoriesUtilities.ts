@@ -7,10 +7,10 @@ import {
 import { useAppSelector } from '@/store/hooks';
 import {
   selectArchitecture,
+  selectCustomRepositories,
   selectDistribution,
   selectPackageGroups,
   selectPackages,
-  selectRecommendedRepositories,
   selectUseLatest,
 } from '@/store/slices';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
@@ -99,7 +99,7 @@ export const isRepoDisabled = (
   isFetching: boolean,
   contentList: ApiRepositoryResponseRead[],
   selected: Set<string>,
-  recommendedRepos: ApiRepositoryResponseRead[],
+  hasRecommendedRepos: boolean,
   packages: { name: string; summary: string }[],
   groups: { name: string; description: string; package_list?: string[] }[],
   useLatestContent: boolean,
@@ -131,7 +131,7 @@ export const isRepoDisabled = (
   }
 
   if (
-    recommendedRepos.length > 0 &&
+    hasRecommendedRepos &&
     repo.url?.includes('epel') &&
     isSelected &&
     (packages.length || groups.length)
@@ -180,11 +180,13 @@ export const useIsRepoDisabled = (
 ) => {
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
-  const recommendedRepos = useAppSelector(selectRecommendedRepositories);
+  const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
   const useLatestContent = useAppSelector(selectUseLatest);
   const version = releaseToVersion(distribution);
+
+  const hasRecommendedRepos = customRepositories.some((r) => r.isRecommended);
 
   return (repo: ApiRepositoryResponseRead): [boolean, string] =>
     isRepoDisabled(
@@ -193,7 +195,7 @@ export const useIsRepoDisabled = (
       isFetching,
       contentList,
       selectedIds,
-      recommendedRepos,
+      hasRecommendedRepos,
       packages,
       groups,
       useLatestContent,
