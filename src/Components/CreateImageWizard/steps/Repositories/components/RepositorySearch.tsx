@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -37,6 +37,12 @@ import {
   isRepoDisabled,
 } from '../repositoriesUtilities';
 
+const ORIGIN_PARAM = [
+  ContentOrigin.CUSTOM,
+  ContentOrigin.COMMUNITY,
+  ContentOrigin.REDHAT,
+].join(',');
+
 type RepositorySearchProps = {
   onSelectRepository: (repo: ApiRepositoryResponseRead) => void;
   onRemoveRepository: (repo: ApiRepositoryResponseRead) => void;
@@ -60,13 +66,6 @@ const RepositorySearch = ({
   const [inputValue, setInputValue] = useState('');
   const [filterValue, setFilterValue] = useState('');
 
-  const originParam = useMemo(() => {
-    const origins = [ContentOrigin.CUSTOM];
-    origins.push(ContentOrigin.COMMUNITY);
-    origins.push(ContentOrigin.REDHAT);
-    return origins.join(',');
-  }, []);
-
   const debouncedFilterValue = useDebounce(filterValue);
 
   const { data: { data: repositories = [] } = {}, isFetching } =
@@ -76,7 +75,7 @@ const RepositorySearch = ({
         availableForVersion: version,
         ...excludeEUSReposFilter,
         contentType: 'rpm',
-        origin: originParam,
+        origin: ORIGIN_PARAM,
         limit: 50,
         offset: 0,
         search: debouncedFilterValue,
