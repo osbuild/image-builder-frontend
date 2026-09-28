@@ -41,11 +41,6 @@ export type PackageRecommendation = {
   summary: string;
 };
 
-export enum Repos {
-  INCLUDED = 'included-repos',
-  OTHER = 'other-repos',
-}
-
 export type ContentSlice = {
   repositories: {
     customRepositories: CustomRepository[];
