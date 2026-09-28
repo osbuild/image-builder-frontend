@@ -30,13 +30,10 @@ import {
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import useDebounce from '@/Utilities/useDebounce';
 
-import CommunityRepositoryLabel from './CommunityRepositoryLabel';
-import CustomEpelWarning from './CustomEpelWarning';
-import UploadRepositoryLabel from './UploadRepositoryLabel';
+import RepositoryLabel from './RepositoryLabel';
 
 import {
   excludeEUSReposFilter,
-  isEPELUrl,
   isRepoDisabled,
 } from '../repositoriesUtilities';
 
@@ -128,17 +125,6 @@ const RepositorySearch = ({
     setIsOpen(false);
   };
 
-  const getRepositoryLabel = (repo: ApiRepositoryResponseRead) => {
-    if (repo.origin === ContentOrigin.UPLOAD) {
-      return <UploadRepositoryLabel />;
-    } else if (repo.origin === ContentOrigin.COMMUNITY) {
-      return <CommunityRepositoryLabel />;
-    } else if (isEPELUrl(repo.url!)) {
-      return <CustomEpelWarning />;
-    }
-    return null;
-  };
-
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
@@ -215,7 +201,7 @@ const RepositorySearch = ({
               >
                 <span>
                   {repo.name}
-                  {getRepositoryLabel(repo)}
+                  <RepositoryLabel origin={repo.origin} url={repo.url || ''} />
                 </span>
               </SelectOption>
             );
