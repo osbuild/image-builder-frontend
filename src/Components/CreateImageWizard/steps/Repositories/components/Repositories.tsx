@@ -48,8 +48,6 @@ import {
   timestampToDisplayStringDetailed,
 } from '@/Utilities/time';
 
-import CommunityRepositoryLabel from './CommunityRepositoryLabel';
-import CustomEpelWarning from './CustomEpelWarning';
 import Empty from './Empty';
 import Error from './Error';
 import Loading from './Loading';
@@ -57,9 +55,9 @@ import RemoveRepositoryButton from './RemoveRepositoryButton';
 import RemoveRepositoryModal from './RemoveRepositoryModal';
 import RepositoriesAddedAlert from './RepositoriesAddedAlert';
 import RepositoriesStatus from './RepositoriesStatus';
+import RepositoryLabel from './RepositoryLabel';
 import RepositorySearch from './RepositorySearch';
 import RepositoryUnavailable from './RepositoryUnavailable';
-import UploadRepositoryLabel from './UploadRepositoryLabel';
 
 import {
   excludeEUSReposFilter,
@@ -518,13 +516,7 @@ const Repositories = () => {
                               {requiredRedHatRepoUUIDs.includes(uuid) && (
                                 <Label isCompact>Required</Label>
                               )}
-                              {origin === ContentOrigin.UPLOAD ? (
-                                <UploadRepositoryLabel />
-                              ) : origin === ContentOrigin.COMMUNITY ? (
-                                <CommunityRepositoryLabel />
-                              ) : (
-                                isEPELUrl(url) && <CustomEpelWarning />
-                              )}
+                              <RepositoryLabel origin={origin} url={url} />
                             </Td>
                             {!snapshotDate ? (
                               <>
