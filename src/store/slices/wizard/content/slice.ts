@@ -1,11 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { CustomRepository, Module, Repository } from '@/store/api/backend';
+import { Module, Repository } from '@/store/api/backend';
 import { ApiRepositoryResponseRead } from '@/store/api/contentSources';
 import { yyyyMMddFormat } from '@/Utilities/time';
 
 import { initialState } from './state';
 import { GroupWithRepositoryInfo, IBPackageWithRepositoryInfo } from './types';
+import {
+  convertSchemaToIBCustomRepo,
+  convertSchemaToIBPayloadRepo,
+} from './utilities';
 
 import { initializeWizard, loadWizardState } from '../actions';
 
@@ -37,26 +41,41 @@ export const contentSlice = createSlice({
     changeTemplateName: (state, action: PayloadAction<string>) => {
       state.snapshotting.templateName = action.payload;
     },
-    importCustomRepositories: (
-      state,
-      action: PayloadAction<CustomRepository[]>,
-    ) => {
-      state.repositories.customRepositories = [
-        ...state.repositories.customRepositories,
-        ...action.payload,
-      ];
-    },
-    changeCustomRepositories: (
-      state,
-      action: PayloadAction<CustomRepository[]>,
-    ) => {
-      state.repositories.customRepositories = action.payload;
-    },
-    changePayloadRepositories: (state, action: PayloadAction<Repository[]>) => {
-      state.repositories.payloadRepositories = action.payload;
-    },
     changeRedHatRepositories: (state, action: PayloadAction<Repository[]>) => {
       state.repositories.redHatRepositories = action.payload;
+    },
+    addRepository: (
+      state,
+      action: PayloadAction<ApiRepositoryResponseRead>,
+    ) => {
+      state.repositories.customRepositories.push(
+        convertSchemaToIBCustomRepo(action.payload),
+      );
+      state.repositories.payloadRepositories.push(
+        convertSchemaToIBPayloadRepo(action.payload),
+      );
+    },
+    removeRepositoriesById: (state, action: PayloadAction<string[]>) => {
+      const idsToRemove = new Set(action.payload);
+      state.repositories.customRepositories =
+        state.repositories.customRepositories.filter(
+          ({ id }) => !idsToRemove.has(id),
+        );
+      state.repositories.payloadRepositories =
+        state.repositories.payloadRepositories.filter(
+          ({ id }) => !id || !idsToRemove.has(id),
+        );
+    },
+    setRepositoriesFromContentSources: (
+      state,
+      action: PayloadAction<ApiRepositoryResponseRead[]>,
+    ) => {
+      state.repositories.customRepositories = action.payload.map((repo) =>
+        convertSchemaToIBCustomRepo(repo),
+      );
+      state.repositories.payloadRepositories = action.payload.map((repo) =>
+        convertSchemaToIBPayloadRepo(repo),
+      );
     },
     addRecommendedRepository: (
       state,
@@ -175,9 +194,6 @@ export const {
   changeSnapshotDate,
   changeTemplate,
   changeTemplateName,
-  changeCustomRepositories,
-  importCustomRepositories,
-  changePayloadRepositories,
   addRecommendedRepository,
   removeRecommendedRepository,
   addPackage,
@@ -187,5 +203,8 @@ export const {
   addPackageGroup,
   removePackageGroup,
   changeRedHatRepositories,
+  addRepository,
+  removeRepositoriesById,
+  setRepositoriesFromContentSources,
   setVerifiedLocaleLangpacks,
 } = contentSlice.actions;
