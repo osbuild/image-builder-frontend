@@ -8,13 +8,8 @@ import {
   ModalHeader,
 } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  changeCustomRepositories,
-  changePayloadRepositories,
-  selectCustomRepositories,
-  selectPayloadRepositories,
-} from '@/store/slices/wizard';
+import { useAppDispatch } from '@/store/hooks';
+import { removeRepositoriesById } from '@/store/slices/wizard';
 
 type RemoveRepositoryModalProps = {
   modalOpen: boolean;
@@ -30,26 +25,11 @@ const RemoveRepositoryModal = ({
   setReposToRemove,
 }: RemoveRepositoryModalProps) => {
   const dispatch = useAppDispatch();
-  const customRepositories = useAppSelector(selectCustomRepositories);
-  const payloadRepositories = useAppSelector(selectPayloadRepositories);
 
   const onClose = () => setModalOpen(false);
 
   const handleRemoveAnyway = () => {
-    const itemsToRemove = new Set(reposToRemove);
-
-    dispatch(
-      changeCustomRepositories(
-        customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
-      ),
-    );
-
-    dispatch(
-      changePayloadRepositories(
-        payloadRepositories.filter(({ id }) => !itemsToRemove.has(id || '')),
-      ),
-    );
-
+    dispatch(removeRepositoriesById(reposToRemove));
     setReposToRemove([]);
     onClose();
   };

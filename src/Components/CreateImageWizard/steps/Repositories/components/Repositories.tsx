@@ -25,11 +25,10 @@ import {
 } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  changeCustomRepositories,
-  changePayloadRepositories,
+  addRepository,
   changeRedHatRepositories,
-  convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
+  removeRepositoriesById,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
@@ -38,6 +37,7 @@ import {
   selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
+  setRepositoriesFromContentSources,
 } from '@/store/slices/wizard';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
@@ -203,18 +203,8 @@ const Repositories = () => {
     );
     if (!communityEpel?.uuid || customEpel.id === communityEpel.uuid) return;
 
-    dispatch(
-      changeCustomRepositories([
-        ...customRepositories.filter(({ id }) => id !== customEpel.id),
-        convertSchemaToIBCustomRepo(communityEpel),
-      ]),
-    );
-    dispatch(
-      changePayloadRepositories([
-        ...payloadRepositories.filter(({ id }) => !id || id !== customEpel.id),
-        convertSchemaToIBPayloadRepo(communityEpel),
-      ]),
-    );
+    dispatch(removeRepositoriesById([customEpel.id!]));
+    dispatch(addRepository(communityEpel));
     // ↓ On purpose to prevent repeated executions.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
@@ -227,31 +217,17 @@ const Repositories = () => {
   };
 
   const addSelected = (repo: ApiRepositoryResponseRead) => {
-    const customToAdd = convertSchemaToIBCustomRepo(repo);
-    const payloadToAdd = convertSchemaToIBPayloadRepo(repo);
-
-    dispatch(changeCustomRepositories([...customRepositories, customToAdd]));
-    dispatch(changePayloadRepositories([...payloadRepositories, payloadToAdd]));
+    dispatch(addRepository(repo));
   };
 
   const removeSelected = (
     repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
   ) => {
-    const itemsToRemove = Array.isArray(repo)
-      ? new Set(repo.map(({ uuid }) => uuid))
-      : new Set([repo.uuid]);
+    const idsToRemove = Array.isArray(repo)
+      ? repo.map(({ uuid }) => uuid).filter((id): id is string => !!id)
+      : [repo.uuid].filter((id): id is string => !!id);
 
-    dispatch(
-      changeCustomRepositories(
-        customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
-      ),
-    );
-
-    dispatch(
-      changePayloadRepositories(
-        payloadRepositories.filter(({ id }) => !itemsToRemove.has(id)),
-      ),
-    );
+    dispatch(removeRepositoriesById(idsToRemove));
   };
 
   const handleRemove = (repo: ApiRepositoryResponseRead) => {
@@ -363,21 +339,7 @@ const Repositories = () => {
         (repo) => repo.origin === ContentOrigin.REDHAT,
       );
 
-      dispatch(
-        changeCustomRepositories(
-          customReposInTemplate.map((repo) =>
-            convertSchemaToIBCustomRepo(repo!),
-          ),
-        ),
-      );
-
-      dispatch(
-        changePayloadRepositories(
-          customReposInTemplate.map((repo) =>
-            convertSchemaToIBPayloadRepo(repo!),
-          ),
-        ),
-      );
+      dispatch(setRepositoriesFromContentSources(customReposInTemplate));
 
       dispatch(
         changeRedHatRepositories(
