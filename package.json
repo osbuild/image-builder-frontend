@@ -57,7 +57,7 @@
     "@vitest/coverage-istanbul": "4.1.11",
     "babel-loader": "10.1.1",
     "css-loader": "7.1.5",
-    "eslint": "9.39.5",
+    "eslint": "10.11.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jest-dom": "5.10.1",
