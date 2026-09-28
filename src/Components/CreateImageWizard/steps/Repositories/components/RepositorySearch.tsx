@@ -19,14 +19,7 @@ import {
   useListRepositoriesQuery,
 } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
-import {
-  selectArchitecture,
-  selectDistribution,
-  selectPackageGroups,
-  selectPackages,
-  selectRecommendedRepositories,
-  selectUseLatest,
-} from '@/store/slices';
+import { selectArchitecture, selectDistribution } from '@/store/slices';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -34,7 +27,7 @@ import RepositoryLabel from './RepositoryLabel';
 
 import {
   excludeEUSReposFilter,
-  isRepoDisabled,
+  useIsRepoDisabled,
 } from '../repositoriesUtilities';
 
 const ORIGIN_PARAM = [
@@ -56,10 +49,6 @@ const RepositorySearch = ({
 }: RepositorySearchProps) => {
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
-  const recommendedRepos = useAppSelector(selectRecommendedRepositories);
-  const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectPackageGroups);
-  const useLatestContent = useAppSelector(selectUseLatest);
   const version = releaseToVersion(distribution);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -84,6 +73,12 @@ const RepositorySearch = ({
         skip: !isOpen,
       },
     );
+
+  const checkRepoDisabled = useIsRepoDisabled(
+    repositories,
+    selectedRepoIds,
+    isFetching,
+  );
 
   const onInputClick = () => {
     if (!isOpen) {
@@ -170,20 +165,7 @@ const RepositorySearch = ({
           <SelectOption isDisabled>Loading repositories...</SelectOption>
         ) : repositories.length > 0 ? (
           repositories.map((repo) => {
-            const isSelected = selectedRepoIds.has(repo.uuid || '');
-            const [isDisabled, disabledReason] = isRepoDisabled(
-              repo,
-              isSelected,
-              isFetching,
-              repositories,
-              selectedRepoIds,
-              recommendedRepos,
-              packages,
-              groups,
-              useLatestContent,
-              arch,
-              version,
-            );
+            const [isDisabled, disabledReason] = checkRepoDisabled(repo);
 
             return (
               <SelectOption

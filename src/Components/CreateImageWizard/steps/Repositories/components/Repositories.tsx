@@ -33,8 +33,6 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
-  selectPackageGroups,
-  selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectSnapshotDate,
@@ -62,7 +60,7 @@ import RepositoryUnavailable from './RepositoryUnavailable';
 import {
   excludeEUSReposFilter,
   isEPELUrl,
-  isRepoDisabled,
+  useIsRepoDisabled,
 } from '../repositoriesUtilities';
 
 const Repositories = () => {
@@ -75,8 +73,6 @@ const Repositories = () => {
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
-  const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectPackageGroups);
   const templateUuid = useAppSelector(selectTemplate);
 
   const version = releaseToVersion(distribution);
@@ -178,6 +174,12 @@ const Repositories = () => {
       skip: isTemplateSelected || !hasReposToShow,
       pollingInterval: isStatusPollingEnabled ? 8000 : 0,
     },
+  );
+
+  const checkRepoDisabled = useIsRepoDisabled(
+    contentList,
+    selected,
+    isFetching,
   );
 
   useEffect(() => {
@@ -476,19 +478,8 @@ const Repositories = () => {
                       {contentList.map((repo, rowIndex) => {
                         const { uuid = '', url = '', name, origin = '' } = repo;
 
-                        const [isDisabled, disabledReason] = isRepoDisabled(
-                          repo,
-                          selected.has(uuid),
-                          isFetching,
-                          contentList,
-                          selected,
-                          recommendedRepos,
-                          packages,
-                          groups,
-                          useLatestContent,
-                          arch,
-                          version,
-                        );
+                        const [isDisabled, disabledReason] =
+                          checkRepoDisabled(repo);
 
                         const snapshot = snapshotsByDate?.data?.find(
                           (s) => s.repository_uuid === uuid,
