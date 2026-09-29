@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { Card, CardBody, Title } from '@patternfly/react-core';
+import { Card, CardBody, Content, Title } from '@patternfly/react-core';
 
-import { ON_PREM_RELEASES, RELEASES } from '@/constants';
+import { ON_PREM_RELEASES, RELEASES, RHEL_8, RHEL_9 } from '@/constants';
 import { useTargetEnvironmentCategories } from '@/Hooks';
 import { useAppSelector } from '@/store/hooks';
 import {
@@ -18,6 +18,7 @@ import {
 
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
+import { MajorReleasesLifecyclesChart } from '../../../ImageOutput/components/ReleaseLifecycle';
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 
 const ImageOverview = () => {
@@ -60,7 +61,17 @@ const ImageOverview = () => {
           }
           <ReviewGroup
             heading={!isImageMode ? 'Base release' : 'Image'}
-            description={release}
+            description={
+              <>
+                {release}
+                {!isImageMode &&
+                  (distribution === RHEL_8 || distribution === RHEL_9) && (
+                    <Content className='pf-v6-u-mt-md'>
+                      <MajorReleasesLifecyclesChart />
+                    </Content>
+                  )}
+              </>
+            }
           />
           <ReviewGroup
             className='pf-v6-u-mb-md'
