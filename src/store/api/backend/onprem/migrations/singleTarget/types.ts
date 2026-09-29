@@ -3,6 +3,8 @@ import type {
   ComposerCreateBlueprintRequest,
 } from '../../types';
 
+export type BlueprintMigrationError = Error & { backupPath: string };
+
 export type Split = {
   sourceId: string;
   blueprints: { id: string; blueprint: ComposerCreateBlueprintRequest }[];
