@@ -39,7 +39,7 @@ export const getBlueprintSplits = async () => {
     ) as ComposerCreateBlueprintRequest;
     names.add(blueprint.name);
 
-    if (blueprint.image_requests.length <= 1) continue;
+    if (blueprint.image_requests.length === 1) continue;
 
     const directory = await fsinfo(blueprintDir, ['entries', 'type']);
     if (!directory.entries)
@@ -126,7 +126,7 @@ export const getBlueprintSplits = async () => {
           error: { blueprintId: id, composeId, code: 'unmatched-compose' },
         };
       }
-      composeAssignments.push({ id: composeId, blueprintId });
+      composeAssignments.push({ id: composeId, blueprintId, request });
     }
 
     splits.push({ sourceId: id, blueprints, composes: composeAssignments });
