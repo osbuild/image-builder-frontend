@@ -197,32 +197,80 @@ describe('Repositories Component', () => {
   });
 
   describe('Repositories Table Component', () => {
-    test('shows loading spinner while searching for repositories', async () => {
-      // Create a promise that won't resolve immediately to keep loading state
-      let resolveSearch!: (value: string) => void;
-      const searchPromise = new Promise<string>((resolve) => {
-        resolveSearch = resolve;
-      });
+    test('shows loading spinner while fetching repositories', async () => {
+      fetchMock.mockResponse(() => new Promise(() => {}));
 
-      // Override the default handler to return a pending promise for repositories searches
-      fetchMock.mockResponse((req) => {
-        if (req.url.endsWith('/repositories') && req.method === 'GET') {
-          return searchPromise;
-        }
-        return createDefaultFetchHandler(req);
+      renderRepositoriesStep({
+        content: {
+          ...initialState.content,
+          repositories: {
+            customRepositories: [
+              {
+                name: '01-test-valid-repo',
+                id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+                baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+              },
+            ],
+            payloadRepositories: [
+              {
+                id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+                baseurl: 'http://valid.link.to.repo.org/x86_64/',
+                rhsm: false,
+              },
+            ],
+            redHatRepositories: [],
+          },
+        },
       });
-
-      renderRepositoriesStep();
 
       expect(await screen.findByText(/loading/i)).toBeInTheDocument();
+    });
 
-      // Resolve the promise to complete the test
-      resolveSearch('');
+    test('shows warning when a preloaded repository is no longer available', async () => {
+      const missingUuid = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
 
-      await waitFor(() => {
-        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+      fetchMock.mockResponse(
+        createFetchHandler({ repositories: mockRepositoryResults }),
+      );
+
+      renderRepositoriesStep({
+        content: {
+          ...initialState.content,
+          repositories: {
+            customRepositories: [
+              {
+                name: '01-test-valid-repo',
+                id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+                baseurl: ['http://valid.link.to.repo.org/x86_64/'],
+              },
+              {
+                name: 'deleted-repo',
+                id: missingUuid,
+                baseurl: ['http://deleted.repo.org/x86_64/'],
+              },
+            ],
+            payloadRepositories: [
+              {
+                id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
+                baseurl: 'http://valid.link.to.repo.org/x86_64/',
+                rhsm: false,
+              },
+              {
+                id: missingUuid,
+                baseurl: 'http://deleted.repo.org/x86_64/',
+                rhsm: false,
+              },
+            ],
+            redHatRepositories: [],
+          },
+        },
       });
-      await screen.findByRole('heading', { name: /No custom repositories/i });
+
+      expect(
+        await screen.findByText(
+          /previously added custom repository unavailable/i,
+        ),
+      ).toBeInTheDocument();
     });
 
     test('shows default empty state', async () => {
