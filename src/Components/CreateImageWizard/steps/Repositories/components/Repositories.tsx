@@ -341,6 +341,9 @@ const Repositories = () => {
           reposToRemove={reposToRemove}
           setReposToRemove={setReposToRemove}
         />
+        {unavailableRepoCount > 0 && (
+          <RepositoryUnavailable quantity={unavailableRepoCount} />
+        )}
         <FormGroup label='Add repositories'>
           <Toolbar>
             <ToolbarContent>
@@ -372,9 +375,6 @@ const Repositories = () => {
               <Loading />
             ) : (
               <>
-                {unavailableRepoCount > 0 && (
-                  <RepositoryUnavailable quantity={unavailableRepoCount} />
-                )}
                 {!hasReposToShow || contentList.length === 0 ? (
                   <Empty />
                 ) : (
