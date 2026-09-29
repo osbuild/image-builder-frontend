@@ -97,23 +97,6 @@ const Repositories = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialSelectedState = useMemo(() => new Set([...selected]), []);
 
-  const {
-    data: { data: previousReposData = [] } = {},
-    isLoading: previousLoading,
-    isSuccess: previousSuccess,
-    refetch: refetchInitial,
-  } = useListRepositoriesQuery(
-    {
-      availableForArch: arch,
-      availableForVersion: version,
-      ...excludeEUSReposFilter,
-      limit: 999, // O.O Oh dear, if possible this whole call should be removed
-      offset: 0,
-      uuid: [...initialSelectedState].join(','),
-    },
-    { refetchOnMountOrArgChange: false, skip: isTemplateSelected },
-  );
-
   const requiredUrls = useMemo(
     () => requiredRedHatRepos(arch, version) || [],
     [arch, version],
@@ -128,24 +111,13 @@ const Repositories = () => {
       { skip: requiredUrls.length === 0 || isTemplateSelected },
     );
 
-  const requiredRedHatRepoUUIDs = useMemo(() => {
-    // First try to find the required repos in the previousReposData
-    // (works when initialSelectedState is empty since the API returns all repos)
-    const fromPrevious = previousReposData
-      .filter((repo) => repo.url && requiredUrls.includes(repo.url))
-      .map((repo) => repo.uuid)
-      .filter((uuid): uuid is string => !!uuid);
-
-    if (fromPrevious.length > 0) {
-      return fromPrevious;
-    }
-
-    // Fall back to the dedicated URL query when previousReposData is
-    // filtered by UUID and doesn't include the required repos
-    return requiredReposData
-      .map((repo) => repo.uuid)
-      .filter((uuid): uuid is string => !!uuid);
-  }, [previousReposData, requiredUrls, requiredReposData]);
+  const requiredRedHatRepoUUIDs = useMemo(
+    () =>
+      requiredReposData
+        .map((repo) => repo.uuid)
+        .filter((uuid): uuid is string => !!uuid),
+    [requiredReposData],
+  );
 
   const hasReposToShow =
     selected.size > 0 || requiredRedHatRepoUUIDs.length > 0;
@@ -180,6 +152,14 @@ const Repositories = () => {
   );
 
   useEffect(() => {
+    if (initialSelectedState.size > 0) {
+      refetchMain();
+    }
+    // Force refetch on mount when there are preselected repos
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     setIsStatusPollingEnabled(
       contentList.some((repo) => repo.status === 'Pending'),
     );
@@ -206,25 +186,14 @@ const Repositories = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const refresh = () => {
-    // In case the user deletes an initially selected repository.
-    // Refetching will react to both added and removed repositories.
-    refetchMain();
-    refetchInitial();
-  };
-
   const addSelected = (repo: ApiRepositoryResponseRead) => {
     dispatch(addRepository({ repo }));
   };
 
-  const removeSelected = (
-    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
-  ) => {
-    const idsToRemove = Array.isArray(repo)
-      ? repo.map(({ uuid }) => uuid).filter((id): id is string => !!id)
-      : [repo.uuid].filter((id): id is string => !!id);
-
-    dispatch(removeRepositoriesById(idsToRemove));
+  const removeSelected = (repo: ApiRepositoryResponseRead) => {
+    if (repo.uuid) {
+      dispatch(removeRepositoriesById([repo.uuid]));
+    }
   };
 
   const handleRemove = (repo: ApiRepositoryResponseRead) => {
@@ -240,28 +209,26 @@ const Repositories = () => {
     removeSelected(repo);
   };
 
-  const previousReposNowUnavailable: number = useMemo(() => {
-    if (
-      !previousLoading &&
-      previousSuccess &&
-      previousReposData.length !== initialSelectedState.size &&
-      previousReposData.length < initialSelectedState.size
-    ) {
-      const prevSet = new Set(previousReposData.map(({ uuid }) => uuid));
-      const itemsToRemove = [...initialSelectedState]
-        .filter((uuid) => !prevSet.has(uuid))
-        .map((uuid) => ({ uuid })) as ApiRepositoryResponseRead[];
-      removeSelected(itemsToRemove);
-      return initialSelectedState.size - previousReposData.length;
+  useEffect(() => {
+    if (isFetching || initialSelectedState.size === 0) return;
+
+    const contentUuids = new Set(contentList.map(({ uuid }) => uuid));
+    const missingUuids = [...initialSelectedState].filter(
+      (uuid) => !contentUuids.has(uuid),
+    );
+
+    if (missingUuids.length > 0) {
+      dispatch(removeRepositoriesById(missingUuids));
     }
-    return 0;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    previousLoading,
-    previousSuccess,
-    previousReposData,
-    initialSelectedState,
-  ]);
+  }, [isFetching, contentList, initialSelectedState]);
+
+  const unavailableRepoCount =
+    !isLoading && initialSelectedState.size > 0
+      ? [...initialSelectedState].filter(
+          (uuid) => !contentList.some((repo) => repo.uuid === uuid),
+        ).length
+      : 0;
 
   const {
     data: selectedTemplateData,
@@ -388,7 +355,7 @@ const Repositories = () => {
                 <Button
                   variant='secondary'
                   isInline
-                  onClick={() => refresh()}
+                  onClick={() => refetchMain()}
                   isLoading={isFetching && !isStatusPollingEnabled}
                 >
                   {isFetching && !isStatusPollingEnabled
@@ -401,14 +368,12 @@ const Repositories = () => {
         </FormGroup>
         <Panel>
           <PanelMain>
-            {isLoading || previousLoading ? (
+            {isLoading ? (
               <Loading />
             ) : (
               <>
-                {previousReposNowUnavailable > 0 && (
-                  <RepositoryUnavailable
-                    quantity={previousReposNowUnavailable}
-                  />
+                {unavailableRepoCount > 0 && (
+                  <RepositoryUnavailable quantity={unavailableRepoCount} />
                 )}
                 {!hasReposToShow || contentList.length === 0 ? (
                   <Empty />
