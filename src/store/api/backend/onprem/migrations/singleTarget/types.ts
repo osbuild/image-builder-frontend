@@ -3,7 +3,12 @@ import type {
   ComposerCreateBlueprintRequest,
 } from '../../types';
 
-export type BlueprintMigrationError = Error & { backupPath: string };
+export type BlueprintMigrationStage = 'planning' | 'backup' | 'migration';
+
+export type BlueprintMigrationError = Error & {
+  stage: BlueprintMigrationStage;
+  backupPath?: string;
+};
 
 export type Split = {
   sourceId: string;
