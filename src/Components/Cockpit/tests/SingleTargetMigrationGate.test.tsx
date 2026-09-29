@@ -3,14 +3,13 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { applyBlueprintSplits } from '@/store/api/backend/onprem/migrations/singleTarget/applyBlueprintSplits';
+import { applyBlueprintSplits } from '@/store/api/backend/onprem/migrations';
 
 import SingleTargetMigrationGate from '../SingleTargetMigrationGate';
 
-vi.mock(
-  '@/store/api/backend/onprem/migrations/singleTarget/applyBlueprintSplits',
-  () => ({ applyBlueprintSplits: vi.fn() }),
-);
+vi.mock('@/store/api/backend/onprem/migrations', () => ({
+  applyBlueprintSplits: vi.fn(),
+}));
 
 afterEach(() => vi.clearAllMocks());
 
@@ -45,9 +44,9 @@ describe('SingleTargetMigrationGate', () => {
     expect(screen.getByText('Blueprint list')).toBeInTheDocument();
   });
 
-  it('shows an error instead of the app when the migration fails', async () => {
+  it('explains that planning failures happen before migration writes', async () => {
     vi.mocked(applyBlueprintSplits).mockRejectedValue(
-      new Error('could not write blueprint'),
+      Object.assign(new Error('duplicate-target'), { stage: 'planning' }),
     );
 
     render(
@@ -63,7 +62,62 @@ describe('SingleTargetMigrationGate', () => {
       'pf-m-danger',
     );
     expect(alert).toHaveTextContent('Blueprint migration failed');
-    expect(alert).toHaveTextContent('could not write blueprint');
+    expect(alert).toHaveTextContent('Migration writes have not started');
+    expect(alert).toHaveTextContent('duplicate-target');
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByText('Blueprint list')).not.toBeInTheDocument();
+  });
+
+  it('warns that a failed backup may be incomplete before migration writes', async () => {
+    vi.mocked(applyBlueprintSplits).mockRejectedValue(
+      Object.assign(new Error('backup failed'), {
+        stage: 'backup',
+        backupPath: '/state/cockpit-image-builder-backup-partial',
+      }),
+    );
+
+    render(
+      <SingleTargetMigrationGate>
+        <div>Blueprint list</div>
+      </SingleTargetMigrationGate>,
+    );
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Migration writes have not started');
+    expect(alert).toHaveTextContent('A complete backup may not exist');
+    expect(alert).toHaveTextContent(
+      '/state/cockpit-image-builder-backup-partial',
+    );
+    expect(alert).toHaveTextContent('backup failed');
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByText('Blueprint list')).not.toBeInTheDocument();
+  });
+
+  it('shows the retained backup and recovery guide after a file-operation failure', async () => {
+    vi.mocked(applyBlueprintSplits).mockRejectedValue(
+      Object.assign(new Error('write failed'), {
+        stage: 'migration',
+        backupPath: '/state/cockpit-image-builder-backup-complete',
+      }),
+    );
+
+    render(
+      <SingleTargetMigrationGate>
+        <div>Blueprint list</div>
+      </SingleTargetMigrationGate>,
+    );
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Migration may be partial');
+    expect(alert).toHaveTextContent(
+      '/state/cockpit-image-builder-backup-complete',
+    );
+    expect(alert).toHaveTextContent('write failed');
+    expect(
+      screen.getByRole('link', {
+        name: 'Read the local recovery instructions',
+      }),
+    ).toHaveAttribute('href', 'single-target-migration-recovery.md');
     expect(screen.queryByText('Blueprint list')).not.toBeInTheDocument();
   });
 });

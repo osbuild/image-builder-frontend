@@ -5,31 +5,58 @@ import cockpit from 'cockpit';
 import { getBlueprintsPath } from '@/store/api/backend/onprem/composerApi/helpers/getBlueprintsPath';
 
 import { getBlueprintSplits } from './getBlueprintSplits';
-import type { BlueprintMigrationError } from './types';
+import type { BlueprintMigrationError, BlueprintMigrationStage } from './types';
+
+const asMigrationError = (
+  reason: unknown,
+  stage: BlueprintMigrationStage,
+  backupPath?: string,
+): BlueprintMigrationError =>
+  Object.assign(reason instanceof Error ? reason : new Error(String(reason)), {
+    stage,
+    ...(backupPath ? { backupPath } : {}),
+  });
 
 export const applyBlueprintSplits = async () => {
-  const result = await getBlueprintSplits();
+  let result: Awaited<ReturnType<typeof getBlueprintSplits>>;
+  try {
+    result = await getBlueprintSplits();
+  } catch (reason) {
+    throw asMigrationError(reason, 'planning');
+  }
+
   if ('error' in result) {
     const { blueprintId, composeId, code } = result.error;
-    throw new Error(
-      `Could not split blueprint ${blueprintId}${composeId ? ` compose ${composeId}` : ''}: ${code}`,
+    throw asMigrationError(
+      new Error(
+        `Could not split blueprint ${blueprintId}${composeId ? ` compose ${composeId}` : ''}: ${code}`,
+      ),
+      'planning',
     );
   }
   if (result.splits.length === 0) return;
 
-  const blueprintsDir = await getBlueprintsPath();
-  const backupPath = (
-    (await cockpit.spawn([
-      'mktemp',
-      '-d',
-      path.join(
-        path.dirname(blueprintsDir),
-        'cockpit-image-builder-backup-XXXXXXXX',
-      ),
-    ])) as string
-  ).trim();
-
+  let blueprintsDir: string;
   try {
+    blueprintsDir = await getBlueprintsPath();
+  } catch (reason) {
+    throw asMigrationError(reason, 'planning');
+  }
+
+  let backupPath = '';
+  try {
+    backupPath = (
+      (await cockpit.spawn([
+        'mktemp',
+        '-d',
+        path.join(
+          path.dirname(blueprintsDir),
+          'cockpit-image-builder-backup-XXXXXXXX',
+        ),
+      ])) as string
+    ).trim();
+    if (!backupPath) throw new Error('Could not create the backup directory');
+
     await cockpit.spawn([
       'cp',
       '-a',
@@ -39,7 +66,11 @@ export const applyBlueprintSplits = async () => {
       ),
       backupPath,
     ]);
+  } catch (reason) {
+    throw asMigrationError(reason, 'backup', backupPath);
+  }
 
+  try {
     for (const split of result.splits) {
       for (const { id, blueprint } of split.blueprints.slice(1)) {
         const blueprintDir = path.join(blueprintsDir, id);
@@ -82,10 +113,6 @@ export const applyBlueprintSplits = async () => {
       // Cleanup failure shouldn't turn a successful migration into a failure.
     }
   } catch (reason) {
-    const error: BlueprintMigrationError = Object.assign(
-      reason instanceof Error ? reason : new Error(String(reason)),
-      { backupPath },
-    );
-    throw error;
+    throw asMigrationError(reason, 'migration', backupPath);
   }
 };

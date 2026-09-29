@@ -131,12 +131,30 @@ describe('applyBlueprintSplits', () => {
     );
 
     expect(failure).toHaveProperty('message', 'backup failed');
+    expect(failure).toHaveProperty('stage', 'backup');
     expect(failure).toHaveProperty('backupPath', backupPath);
     expect(operations).toEqual([
       'plan',
       `mktemp -d ${backupTemplate}`,
       `cp -a -- ${root}/source ${backupPath}`,
     ]);
+  });
+
+  it('reports a backup creation failure before a path is available', async () => {
+    const { operations } = setup();
+    vi.mocked(cockpit.spawn).mockImplementation((args) => {
+      operations.push(args.join(' '));
+      return Promise.reject(new Error('mktemp failed')) as never;
+    });
+
+    const failure = await applyBlueprintSplits().catch(
+      (reason: unknown) => reason,
+    );
+
+    expect(failure).toHaveProperty('message', 'mktemp failed');
+    expect(failure).toHaveProperty('stage', 'backup');
+    expect(failure).not.toHaveProperty('backupPath');
+    expect(operations).toEqual(['plan', `mktemp -d ${backupTemplate}`]);
   });
 
   it('does not fail a successful migration if backup cleanup fails', async () => {
@@ -169,6 +187,7 @@ describe('applyBlueprintSplits', () => {
     );
 
     expect(failure).toHaveProperty('message', 'write failed');
+    expect(failure).toHaveProperty('stage', 'migration');
     expect(failure).toHaveProperty('backupPath', backupPath);
     expect(operations).not.toContain(`replace ${sourceBlueprintPath}`);
     expect(operations).not.toContain(`rm -f ${sourceComposePath}`);
@@ -181,9 +200,10 @@ describe('applyBlueprintSplits', () => {
       error: { blueprintId: 'source', code: 'duplicate-target' },
     });
 
-    await expect(applyBlueprintSplits()).rejects.toThrow(
-      'Could not split blueprint source: duplicate-target',
-    );
+    await expect(applyBlueprintSplits()).rejects.toMatchObject({
+      message: 'Could not split blueprint source: duplicate-target',
+      stage: 'planning',
+    });
     expect(cockpit.spawn).not.toHaveBeenCalled();
     expect(cockpit.file).not.toHaveBeenCalled();
   });
