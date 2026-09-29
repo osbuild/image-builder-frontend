@@ -11,6 +11,7 @@ const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
       variant='warning'
       title='Previously added custom repository unavailable'
       isInline
+      className='pf-v6-u-mb-lg'
     >
       {quantity > 1
         ? `${quantity} repositories that were used to build this image previously are not available.`
