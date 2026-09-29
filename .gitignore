@@ -35,6 +35,8 @@ deps.png
 cockpit/public/vendor*
 cockpit/public/src_*
 cockpit/public/main*
+cockpit/public/[0-9]*.css*
+cockpit/public/[0-9]*.main.js*
 
 # Sentry Config File
 .sentryclirc
