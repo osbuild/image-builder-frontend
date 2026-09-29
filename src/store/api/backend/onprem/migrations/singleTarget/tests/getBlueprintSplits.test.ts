@@ -19,6 +19,16 @@ const root = '/state/cockpit-image-builder';
 const awsX86 = { image_type: 'aws', architecture: 'x86_64' };
 const awsArm = { image_type: 'aws', architecture: 'aarch64' };
 const gcpX86 = { image_type: 'gcp', architecture: 'x86_64' };
+const fedora44GuestImage = {
+  architecture: 'x86_64',
+  image_type: 'guest-image',
+  upload_request: { type: 'aws.s3', options: {} },
+};
+const fedora44InstallerImage = {
+  architecture: 'x86_64',
+  image_type: 'image-installer',
+  upload_request: { type: 'aws.s3', options: {} },
+};
 const blueprint = (name: string, image_requests: unknown[]) => ({
   name,
   image_requests,
@@ -141,6 +151,74 @@ describe('getBlueprintSplits', () => {
             {
               id: 'gcp-x86',
               blueprintId: '22222222-2222-4222-8222-222222222222',
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('splits a realistic Fedora 44 blueprint and assigns matching composes', async () => {
+    const fedoraBlueprint = {
+      name: 'Fedora 44 x86_64',
+      description: '',
+      distribution: 'fedora-44',
+      image_requests: [fedora44GuestImage, fedora44InstallerImage],
+      customizations: {
+        timezone: { timezone: 'America/New_York' },
+        locale: { languages: ['C.UTF-8'] },
+      },
+    };
+    setup(
+      { fedora: fedoraBlueprint },
+      {
+        fedora: {
+          'guest-image-compose': {
+            distribution: 'fedora-44',
+            image_requests: [fedora44GuestImage],
+            customizations: fedoraBlueprint.customizations,
+          },
+          'installer-compose': {
+            distribution: 'fedora-44',
+            image_requests: [fedora44InstallerImage],
+            customizations: fedoraBlueprint.customizations,
+          },
+        },
+      },
+    );
+    vi.spyOn(crypto, 'randomUUID').mockReturnValueOnce(
+      '44444444-4444-4444-8444-444444444444',
+    );
+
+    const result = await getBlueprintSplits();
+
+    expect(result).toEqual({
+      splits: [
+        {
+          sourceId: 'fedora',
+          blueprints: [
+            {
+              id: 'fedora',
+              blueprint: {
+                ...fedoraBlueprint,
+                name: 'Fedora 44 x86_64 - guest-image',
+                image_requests: [fedora44GuestImage],
+              },
+            },
+            {
+              id: '44444444-4444-4444-8444-444444444444',
+              blueprint: {
+                ...fedoraBlueprint,
+                name: 'Fedora 44 x86_64 - image-installer',
+                image_requests: [fedora44InstallerImage],
+              },
+            },
+          ],
+          composes: [
+            { id: 'guest-image-compose', blueprintId: 'fedora' },
+            {
+              id: 'installer-compose',
+              blueprintId: '44444444-4444-4444-8444-444444444444',
             },
           ],
         },
