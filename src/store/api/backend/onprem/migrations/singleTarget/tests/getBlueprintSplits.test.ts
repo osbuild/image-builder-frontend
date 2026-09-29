@@ -143,14 +143,20 @@ describe('getBlueprintSplits', () => {
             },
           ],
           composes: [
-            { id: 'aws-x86', blueprintId: 'source' },
+            {
+              id: 'aws-x86',
+              blueprintId: 'source',
+              request: { image_requests: [awsX86] },
+            },
             {
               id: 'aws-arm',
               blueprintId: '11111111-1111-4111-8111-111111111111',
+              request: { image_requests: [awsArm] },
             },
             {
               id: 'gcp-x86',
               blueprintId: '22222222-2222-4222-8222-222222222222',
+              request: { image_requests: [gcpX86] },
             },
           ],
         },
@@ -215,10 +221,23 @@ describe('getBlueprintSplits', () => {
             },
           ],
           composes: [
-            { id: 'guest-image-compose', blueprintId: 'fedora' },
+            {
+              id: 'guest-image-compose',
+              blueprintId: 'fedora',
+              request: {
+                distribution: 'fedora-44',
+                image_requests: [fedora44GuestImage],
+                customizations: fedoraBlueprint.customizations,
+              },
+            },
             {
               id: 'installer-compose',
               blueprintId: '44444444-4444-4444-8444-444444444444',
+              request: {
+                distribution: 'fedora-44',
+                image_requests: [fedora44InstallerImage],
+                customizations: fedoraBlueprint.customizations,
+              },
             },
           ],
         },
