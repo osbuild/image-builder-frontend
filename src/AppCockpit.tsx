@@ -12,6 +12,7 @@ import { HashRouter } from 'react-router-dom';
 
 import './AppCockpit.scss';
 import { RequireAdmin } from './Components/Cockpit';
+import SingleTargetMigrationGate from './Components/Cockpit/SingleTargetMigrationGate';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
 import { useGetRegistryAuthStatusQuery } from './store/api/backend';
@@ -29,19 +30,19 @@ const Application = () => {
   }
 
   return (
-    <React.Fragment>
+    <SingleTargetMigrationGate>
       <NotificationsProvider>
         <HashRouter>
           <Router />
         </HashRouter>
       </NotificationsProvider>
-    </React.Fragment>
+    </SingleTargetMigrationGate>
   );
 };
 const ImageBuilder = () => (
   <Provider store={store}>
     <Page className='no-masthead-sidebar' isContentFilled>
-      <PageSection>
+      <PageSection isFilled hasBodyWrapper={false}>
         <Application />
       </PageSection>
     </Page>
