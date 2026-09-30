@@ -54,6 +54,7 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 %{_datadir}/metainfo/*
 %{_tmpfilesdir}/cockpit-image-builder.conf
 %ghost %attr(0700, root, root) %dir /var/cache/cockpit-image-builder
+%ghost %attr(0700, root, root) %dir /var/lib/cockpit-image-builder
 
 %changelog
 # the changelog is distribution-specific, therefore there's just one entry
