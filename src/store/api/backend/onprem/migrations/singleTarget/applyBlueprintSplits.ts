@@ -1,11 +1,14 @@
 import path from 'path';
 
 import cockpit from 'cockpit';
+import { fsinfo } from 'cockpit/fsinfo';
 
 import { getBlueprintsPath } from '@/store/api/backend/onprem/composerApi/helpers/getBlueprintsPath';
 
 import { getBlueprintSplits } from './getBlueprintSplits';
 import type { BlueprintMigrationError, BlueprintMigrationStage } from './types';
+
+const migrationMarker = '.single-target-migration-complete';
 
 const asMigrationError = (
   reason: unknown,
@@ -17,7 +20,29 @@ const asMigrationError = (
     ...(backupPath ? { backupPath } : {}),
   });
 
+const markMigrationComplete = async (blueprintsDir: string) => {
+  try {
+    await cockpit.file(path.join(blueprintsDir, migrationMarker)).replace('');
+  } catch {
+    // If the marker cannot be written, the next startup can safely plan again.
+  }
+};
+
 export const applyBlueprintSplits = async () => {
+  let blueprintsDir: string;
+  try {
+    blueprintsDir = await getBlueprintsPath();
+    const directory = await fsinfo(blueprintsDir, ['entries', 'type']);
+    if (!directory.entries) throw new Error('Could not list blueprints');
+    if (
+      migrationMarker in directory.entries &&
+      directory.entries[migrationMarker].type === 'reg'
+    )
+      return;
+  } catch (reason) {
+    throw asMigrationError(reason, 'planning');
+  }
+
   let result: Awaited<ReturnType<typeof getBlueprintSplits>>;
   try {
     result = await getBlueprintSplits();
@@ -34,13 +59,9 @@ export const applyBlueprintSplits = async () => {
       'planning',
     );
   }
-  if (result.splits.length === 0) return;
-
-  let blueprintsDir: string;
-  try {
-    blueprintsDir = await getBlueprintsPath();
-  } catch (reason) {
-    throw asMigrationError(reason, 'planning');
+  if (result.splits.length === 0) {
+    await markMigrationComplete(blueprintsDir);
+    return;
   }
 
   let backupPath = '';
@@ -106,6 +127,8 @@ export const applyBlueprintSplits = async () => {
         ]);
       }
     }
+
+    await markMigrationComplete(blueprintsDir);
 
     try {
       await cockpit.spawn(['rm', '-rf', '--', backupPath]);
