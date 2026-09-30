@@ -14,7 +14,7 @@ import useHasMultiTargetBlueprints from './useHasMultiTargetBlueprints';
 const TITLE =
   'Blueprints are transitioning to single image target environments.';
 const BODY =
-  'Existing multi-target blueprints will be migrated to single-target configurations.';
+  'Existing multi-target blueprints will appear as single-target configurations in the service starting Tuesday.';
 
 const localStorageKey = 'imageBuilder.singleTargetMigration.dismissed';
 
