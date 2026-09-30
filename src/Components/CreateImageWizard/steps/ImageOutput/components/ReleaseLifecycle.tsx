@@ -8,6 +8,7 @@ import {
   PanelMain,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { t_global_text_color_regular } from '@patternfly/react-tokens';
 import { Chart, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
@@ -32,96 +33,107 @@ Chart.register(...registerables);
 
 const currentDate = new Date().toISOString();
 
-export const chartMajorVersionCfg = {
-  data: {
-    labels: ['RHEL 10', 'RHEL 9', 'RHEL 8'],
-    datasets: [
-      {
-        label: 'Full support',
-        backgroundColor: '#0066CC',
-        data: [
-          {
-            x: RHEL_10_FULL_SUPPORT,
-            y: 'RHEL 10',
-          },
-          {
-            x: RHEL_9_FULL_SUPPORT,
-            y: 'RHEL 9',
-          },
-          {
-            x: RHEL_8_FULL_SUPPORT,
-            y: 'RHEL 8',
-          },
-        ],
-      },
-      {
-        label: 'Maintenance support',
-        backgroundColor: '#8BC1F7',
-        data: [
-          {
-            x: RHEL_10_MAINTENANCE_SUPPORT,
-            y: 'RHEL 10',
-          },
-          {
-            x: RHEL_9_MAINTENANCE_SUPPORT,
-            y: 'RHEL 9',
-          },
-          {
-            x: RHEL_8_MAINTENANCE_SUPPORT,
-            y: 'RHEL 8',
-          },
-        ],
-      },
-    ],
-  },
-  options: {
-    indexAxis: 'y' as const,
-    scales: {
-      x: {
-        type: 'time' as const,
-        time: {
-          unit: 'year' as const,
+// Chart.js <canvas> doesn't inherit CSS variables
+// This will get appropriate text color for light/dark theme
+const setTextColorByTheme = () =>
+  getComputedStyle(document.documentElement)
+    .getPropertyValue(t_global_text_color_regular.name)
+    .trim() || t_global_text_color_regular.value;
+
+const chartMajorVersionCfg = () => {
+  const textColor = setTextColorByTheme();
+  return {
+    data: {
+      labels: ['RHEL 10', 'RHEL 9', 'RHEL 8'],
+      datasets: [
+        {
+          label: 'Full support',
+          backgroundColor: '#0066CC',
+          data: [
+            {
+              x: RHEL_10_FULL_SUPPORT,
+              y: 'RHEL 10',
+            },
+            {
+              x: RHEL_9_FULL_SUPPORT,
+              y: 'RHEL 9',
+            },
+            {
+              x: RHEL_8_FULL_SUPPORT,
+              y: 'RHEL 8',
+            },
+          ],
         },
-        min: '2019-01-01' as const,
-        max: '2036-01-01' as const,
-      },
-      y: {
-        stacked: true,
-      },
+        {
+          label: 'Maintenance support',
+          backgroundColor: '#8BC1F7',
+          data: [
+            {
+              x: RHEL_10_MAINTENANCE_SUPPORT,
+              y: 'RHEL 10',
+            },
+            {
+              x: RHEL_9_MAINTENANCE_SUPPORT,
+              y: 'RHEL 9',
+            },
+            {
+              x: RHEL_8_MAINTENANCE_SUPPORT,
+              y: 'RHEL 8',
+            },
+          ],
+        },
+      ],
     },
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      tooltip: {
-        enabled: false,
-      },
-      legend: {
-        position: 'bottom' as const,
-      },
-      annotation: {
-        annotations: {
-          today: {
-            type: 'line' as const,
-            xMin: currentDate,
-            xMax: currentDate,
-            borderColor: 'black',
-            borderWidth: 2,
-            borderDash: [8, 2],
+    options: {
+      indexAxis: 'y' as const,
+      scales: {
+        x: {
+          type: 'time' as const,
+          time: {
+            unit: 'year' as const,
           },
+          min: '2019-01-01' as const,
+          max: '2036-01-01' as const,
+          ticks: { color: textColor },
+        },
+        y: {
+          stacked: true,
+          ticks: { color: textColor },
         },
       },
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          enabled: false,
+        },
+        legend: {
+          position: 'bottom' as const,
+          labels: { color: textColor },
+        },
+        annotation: {
+          annotations: {
+            today: {
+              type: 'line' as const,
+              xMin: currentDate,
+              xMax: currentDate,
+              borderColor: textColor,
+              borderWidth: 2,
+              borderDash: [8, 2],
+            },
+          },
+        },
+      },
     },
-  },
+  };
 };
 
 export const MajorReleasesLifecyclesChart = () => {
+  const chartCfg = chartMajorVersionCfg();
   return (
     <Panel>
       <PanelMain maxHeight='10rem'>
-        <Bar
-          options={chartMajorVersionCfg.options}
-          data={chartMajorVersionCfg.data}
-        />
+        <Bar options={chartCfg.options} data={chartCfg.data} />
       </PanelMain>
     </Panel>
   );
