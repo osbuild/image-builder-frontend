@@ -1,4 +1,5 @@
 import cockpit from 'cockpit';
+import { fsinfo } from 'cockpit/fsinfo';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getBlueprintsPath } from '@/store/api/backend/onprem/composerApi/helpers/getBlueprintsPath';
@@ -9,6 +10,7 @@ import { getBlueprintSplits } from '../getBlueprintSplits';
 vi.mock('cockpit', () => ({
   default: { file: vi.fn(), spawn: vi.fn() },
 }));
+vi.mock('cockpit/fsinfo', () => ({ fsinfo: vi.fn() }));
 vi.mock(
   '@/store/api/backend/onprem/composerApi/helpers/getBlueprintsPath',
   () => ({ getBlueprintsPath: vi.fn() }),
@@ -16,6 +18,8 @@ vi.mock(
 vi.mock('../getBlueprintSplits', () => ({ getBlueprintSplits: vi.fn() }));
 
 const root = '/state/cockpit-image-builder';
+const migrationMarker = '.single-target-migration-complete';
+const migrationMarkerPath = `${root}/${migrationMarker}`;
 const backupPath = '/state/cockpit-image-builder-backup-12345678';
 const backupTemplate = '/state/cockpit-image-builder-backup-XXXXXXXX';
 const sourceRequest = { image_type: 'aws', architecture: 'x86_64' };
@@ -37,8 +41,25 @@ const sourceComposePath = `${root}/source/compose-child`;
 const setup = () => {
   const operations: string[] = [];
   const writes = new Map<string, string>();
+  let migrationComplete = false;
+  let markerWriteFails = false;
   vi.clearAllMocks();
   vi.mocked(getBlueprintsPath).mockResolvedValue(root);
+  vi.mocked(fsinfo).mockImplementation(async (filePath, attributes) => {
+    operations.push(`fsinfo ${filePath}`);
+    return {
+      entries:
+        filePath === root && migrationComplete
+          ? {
+              [migrationMarker]: attributes.includes('type')
+                ? { type: 'reg' }
+                : {},
+            }
+          : {},
+      mtime: 1,
+      type: 'dir',
+    } as never;
+  });
   vi.mocked(getBlueprintSplits).mockImplementation(async () => {
     operations.push('plan');
     return {
@@ -74,23 +95,77 @@ const setup = () => {
       ({
         replace: vi.fn(async (contents: string) => {
           operations.push(`replace ${filePath}`);
+          if (filePath === migrationMarkerPath && markerWriteFails)
+            throw new Error('marker write failed');
           writes.set(filePath, contents);
+          if (filePath === migrationMarkerPath) migrationComplete = true;
         }),
       }) as never,
   );
 
-  return { operations, writes };
+  return {
+    operations,
+    writes,
+    setMigrationComplete: () => {
+      migrationComplete = true;
+    },
+    failMarkerWrites: () => {
+      markerWriteFails = true;
+    },
+  };
 };
 
 afterEach(() => vi.restoreAllMocks());
 
 describe('applyBlueprintSplits', () => {
+  it('skips planning when the migration marker exists', async () => {
+    const { operations, setMigrationComplete } = setup();
+    setMigrationComplete();
+
+    await applyBlueprintSplits();
+
+    expect(operations).toEqual([`fsinfo ${root}`]);
+    expect(fsinfo).toHaveBeenCalledWith(root, ['entries', 'type']);
+    expect(getBlueprintSplits).not.toHaveBeenCalled();
+    expect(cockpit.spawn).not.toHaveBeenCalled();
+  });
+
+  it('writes the marker when there are no blueprints to migrate', async () => {
+    const { operations, writes } = setup();
+    vi.mocked(getBlueprintSplits).mockImplementation(async () => {
+      operations.push('plan');
+      return { splits: [] };
+    });
+
+    await applyBlueprintSplits();
+
+    expect(operations).toEqual([
+      `fsinfo ${root}`,
+      'plan',
+      `replace ${migrationMarkerPath}`,
+    ]);
+    expect(writes.get(migrationMarkerPath)).toBe('');
+    expect(cockpit.spawn).not.toHaveBeenCalled();
+  });
+
+  it('continues when the marker cannot be written', async () => {
+    const { operations, writes, failMarkerWrites } = setup();
+    vi.mocked(getBlueprintSplits).mockResolvedValue({ splits: [] });
+    failMarkerWrites();
+
+    await expect(applyBlueprintSplits()).resolves.toBeUndefined();
+
+    expect(operations).toContain(`replace ${migrationMarkerPath}`);
+    expect(writes.has(migrationMarkerPath)).toBe(false);
+  });
+
   it('backs up affected directories after planning and before migration writes', async () => {
     const { operations, writes } = setup();
 
     await applyBlueprintSplits();
 
     expect(operations).toEqual([
+      `fsinfo ${root}`,
       'plan',
       `mktemp -d ${backupTemplate}`,
       `cp -a -- ${root}/source ${backupPath}`,
@@ -99,12 +174,19 @@ describe('applyBlueprintSplits', () => {
       `replace ${childComposePath}`,
       `replace ${sourceBlueprintPath}`,
       `rm -f ${sourceComposePath}`,
+      `replace ${migrationMarkerPath}`,
       `rm -rf -- ${backupPath}`,
     ]);
+    expect(writes.get(migrationMarkerPath)).toBe('');
     expect(JSON.parse(writes.get(childComposePath)!)).toEqual(composeRequest);
     expect(JSON.parse(writes.get(sourceBlueprintPath)!)).toEqual(
       sourceBlueprint,
     );
+    expect(
+      vi
+        .mocked(fsinfo)
+        .mock.calls.every(([, , options]) => !options?.superuser),
+    ).toBe(true);
     expect(
       vi
         .mocked(cockpit.spawn)
@@ -134,6 +216,7 @@ describe('applyBlueprintSplits', () => {
     expect(failure).toHaveProperty('stage', 'backup');
     expect(failure).toHaveProperty('backupPath', backupPath);
     expect(operations).toEqual([
+      `fsinfo ${root}`,
       'plan',
       `mktemp -d ${backupTemplate}`,
       `cp -a -- ${root}/source ${backupPath}`,
@@ -154,7 +237,11 @@ describe('applyBlueprintSplits', () => {
     expect(failure).toHaveProperty('message', 'mktemp failed');
     expect(failure).toHaveProperty('stage', 'backup');
     expect(failure).not.toHaveProperty('backupPath');
-    expect(operations).toEqual(['plan', `mktemp -d ${backupTemplate}`]);
+    expect(operations).toEqual([
+      `fsinfo ${root}`,
+      'plan',
+      `mktemp -d ${backupTemplate}`,
+    ]);
   });
 
   it('does not fail a successful migration if backup cleanup fails', async () => {
@@ -191,11 +278,12 @@ describe('applyBlueprintSplits', () => {
     expect(failure).toHaveProperty('backupPath', backupPath);
     expect(operations).not.toContain(`replace ${sourceBlueprintPath}`);
     expect(operations).not.toContain(`rm -f ${sourceComposePath}`);
+    expect(operations).not.toContain(`replace ${migrationMarkerPath}`);
     expect(operations).not.toContain(`rm -rf -- ${backupPath}`);
   });
 
   it('does not write when planning reports an error', async () => {
-    setup();
+    const { writes } = setup();
     vi.mocked(getBlueprintSplits).mockResolvedValue({
       error: { blueprintId: 'source', code: 'duplicate-target' },
     });
@@ -205,6 +293,6 @@ describe('applyBlueprintSplits', () => {
       stage: 'planning',
     });
     expect(cockpit.spawn).not.toHaveBeenCalled();
-    expect(cockpit.file).not.toHaveBeenCalled();
+    expect(writes.has(migrationMarkerPath)).toBe(false);
   });
 });
