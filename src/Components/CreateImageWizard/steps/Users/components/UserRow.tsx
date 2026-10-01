@@ -10,16 +10,7 @@ import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/use
 import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
 import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
-import {
-  addGroupToUserByUserIndex,
-  addUser,
-  removeGroupFromUserByIndex,
-  removeUser,
-  setUserNameByIndex,
-  setUserPasswordByIndex,
-  setUserSshKeyByIndex,
-  User,
-} from '@/store/slices/wizard';
+import { removeUser, upsertUser, User } from '@/store/slices/wizard';
 
 import RemoveUserModal from './RemoveUserModal';
 
@@ -27,9 +18,10 @@ type UserRowProps = {
   user: User;
   index: number;
   userCount: number;
+  onUpdate: (user?: Partial<User> | undefined) => void;
 };
 
-const UserRow = ({ user, index, userCount }: UserRowProps) => {
+const UserRow = ({ user, index, userCount, onUpdate }: UserRowProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useUsersValidation();
   const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
@@ -50,50 +42,20 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
     }
   };
 
-  const handleNameChange = (
-    _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string,
-  ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserNameByIndex({ index: index, name: value }));
-  };
-
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserPasswordByIndex({ index: index, password: value }));
-  };
-
-  const handleSshKeyChange = (
-    _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string,
-  ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserSshKeyByIndex({ index: index, sshKey: value }));
-  };
-
   const handleCheckboxChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: boolean,
+    isAdmin: boolean,
   ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-
-    if (value) {
-      dispatch(addGroupToUserByUserIndex({ index: index, group: 'wheel' }));
+    if (isAdmin) {
+      onUpdate({
+        groups: Array.from(new Set([...user.groups, 'wheel'])),
+      });
       return;
     }
 
-    dispatch(removeGroupFromUserByIndex({ index: index, group: 'wheel' }));
+    onUpdate({
+      groups: user.groups.filter((group) => group !== 'wheel'),
+    });
   };
 
   return (
@@ -104,7 +66,9 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             ariaLabel='blueprint user name'
             value={user.name || ''}
             placeholder='Set username'
-            onChange={(_e, value) => handleNameChange(_e, value)}
+            onChange={(_, name) => {
+              onUpdate({ name });
+            }}
             stepValidation={getValidationByIndex(index)}
             fieldName='userName'
             forceErrorDisplay={true}
@@ -115,7 +79,9 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             value={user.password || ''}
             ariaLabel='blueprint user password'
             placeholder='Set password'
-            onChange={(_e, value) => handlePasswordChange(_e, value)}
+            onChange={(_, password) => {
+              onUpdate({ password });
+            }}
             hasPassword={user.hasPassword}
           />
         </Td>
@@ -124,7 +90,9 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             ariaLabel='public SSH key'
             value={user.ssh_key || ''}
             type={'text'}
-            onChange={(_e, value) => handleSshKeyChange(_e, value)}
+            onChange={(_, ssh_key) => {
+              onUpdate({ ssh_key });
+            }}
             placeholder='Paste SSH key here'
             stepValidation={getValidationByIndex(index)}
             fieldName='userSshKey'
@@ -138,10 +106,19 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             list={user.groups}
             item='Group'
             addAction={(value) =>
-              addGroupToUserByUserIndex({ index: index, group: value })
+              upsertUser({
+                index,
+                user: { ...user, groups: [...user.groups, value] },
+              })
             }
             removeAction={(value) =>
-              removeGroupFromUserByIndex({ index: index, group: value })
+              upsertUser({
+                index,
+                user: {
+                  ...user,
+                  groups: user.groups.filter((group) => group !== value),
+                },
+              })
             }
             stepValidation={getValidationByIndex(index)}
             fieldName='groups'
