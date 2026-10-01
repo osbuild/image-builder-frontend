@@ -6,8 +6,9 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addUser, selectUsers } from '@/store/slices/wizard';
+import { addUser, selectUsers, upsertUser } from '@/store/slices/wizard';
 
+import { emptyUser } from './constants';
 import UserRow from './UserRow';
 
 type UserInfoProps = {
@@ -17,18 +18,7 @@ type UserInfoProps = {
 const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
-  const usersToRender =
-    users.length === 0
-      ? [
-          {
-            name: '',
-            password: '',
-            ssh_key: '',
-            groups: [],
-            hasPassword: false,
-          },
-        ]
-      : users;
+  const usersToRender = users.length === 0 ? [emptyUser] : users;
 
   const stepValidation = useUsersValidation();
   const hasErrors = !!stepValidation.disabledNext;
@@ -65,6 +55,23 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
               user={user}
               index={index}
               userCount={users.length}
+              onUpdate={(user) => {
+                if (!user) return;
+
+                if (index < users.length) {
+                  dispatch(upsertUser({ index, user }));
+                  return;
+                }
+
+                dispatch(
+                  upsertUser({
+                    user: {
+                      ...emptyUser,
+                      ...user,
+                    },
+                  }),
+                );
+              }}
             />
           ))}
         </Tbody>
