@@ -11,7 +11,6 @@ const testUser = {
   name: 'testuser',
   password: '',
   ssh_key: '',
-  isAdministrator: false,
   groups: [],
   hasPassword: false,
 };

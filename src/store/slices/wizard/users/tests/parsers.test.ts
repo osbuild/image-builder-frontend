@@ -79,31 +79,6 @@ describe('parseUsersFromRequest', () => {
       expect(result2.users[0].groups).toEqual([]);
     });
 
-    it('sets isAdministrator true when user is in wheel group', () => {
-      const result = parseUsersFromRequest(
-        withCustomizations({
-          users: [{ name: 'admin', groups: ['wheel', 'docker'] }],
-        }),
-      );
-      expect(result.users[0].isAdministrator).toBe(true);
-    });
-
-    it('sets isAdministrator false when user is not in wheel group', () => {
-      const result = parseUsersFromRequest(
-        withCustomizations({
-          users: [{ name: 'regular', groups: ['docker'] }],
-        }),
-      );
-      expect(result.users[0].isAdministrator).toBe(false);
-    });
-
-    it('sets isAdministrator false when groups is undefined', () => {
-      const result = parseUsersFromRequest(
-        withCustomizations({ users: [{ name: 'nogroups' }] }),
-      );
-      expect(result.users[0].isAdministrator).toBe(false);
-    });
-
     it('maps hasPassword flag', () => {
       const result = parseUsersFromRequest(
         withCustomizations({
@@ -138,10 +113,10 @@ describe('parseUsersFromRequest', () => {
       );
       expect(result.users).toHaveLength(2);
       expect(result.users[0].name).toBe('admin');
-      expect(result.users[0].isAdministrator).toBe(true);
+      expect(result.users[0].groups.includes('wheel')).toBe(true);
       expect(result.users[0].hasPassword).toBe(true);
       expect(result.users[1].name).toBe('deploy');
-      expect(result.users[1].isAdministrator).toBe(false);
+      expect(result.users[1].groups.includes('wheel')).toBe(false);
       expect(result.users[1].hasPassword).toBe(false);
     });
   });

@@ -56,7 +56,6 @@ export const createStateWithUser = (
           password: '',
           ssh_key: '',
           groups: [],
-          isAdministrator: false,
           hasPassword: false,
           ...userOverrides,
         },
