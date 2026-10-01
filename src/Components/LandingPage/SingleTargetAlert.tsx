@@ -12,11 +12,11 @@ import {
 import useHasMultiTargetBlueprints from './useHasMultiTargetBlueprints';
 
 const TITLE =
-  'Blueprints are transitioning to single image target environments.';
+  'Blueprints are transitioning to single image target environments starting Tuesday.';
 const BODY =
-  'Existing multi-target blueprints will appear as single-target configurations in the service starting Tuesday.';
+  'Existing multi-target blueprints will appear as single-target configurations in the service.';
 
-const localStorageKey = 'imageBuilder.singleTargetMigration.dismissed';
+const localStorageKey = 'imageBuilder.singleTargetMigration.tuesday.dismissed';
 
 const SingleTargetAlert = () => {
   const { hasMultiTarget } = useHasMultiTargetBlueprints();

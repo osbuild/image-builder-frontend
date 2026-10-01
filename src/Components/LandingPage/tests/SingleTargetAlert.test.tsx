@@ -8,7 +8,7 @@ import { clickWithWait } from '@/test/testUtils/userEvents';
 import SingleTargetAlert from '../SingleTargetAlert';
 import useHasMultiTargetBlueprints from '../useHasMultiTargetBlueprints';
 
-const STORAGE_KEY = 'imageBuilder.singleTargetMigration.dismissed';
+const STORAGE_KEY = 'imageBuilder.singleTargetMigration.tuesday.dismissed';
 
 vi.mock('../useHasMultiTargetBlueprints', () => ({
   default: vi.fn(() => ({ hasMultiTarget: true, isLoading: false })),
@@ -30,7 +30,7 @@ describe('Single Target Alert', () => {
 
     expect(
       screen.getByText(
-        'Blueprints are transitioning to single image target environments.',
+        'Blueprints are transitioning to single image target environments starting Tuesday.',
       ),
     ).toBeInTheDocument();
 
@@ -41,7 +41,7 @@ describe('Single Target Alert', () => {
 
     expect(
       screen.getByText(
-        'Existing multi-target blueprints will appear as single-target configurations in the service starting Tuesday.',
+        'Existing multi-target blueprints will appear as single-target configurations in the service.',
       ),
     ).toBeInTheDocument();
   });
