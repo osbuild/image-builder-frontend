@@ -39,7 +39,7 @@ export const Users = ({ shouldHide }: Partial<Hideable>) => {
             items={users.map(({ ssh_key }, index) => (
               <Truncate
                 key={`inner-ssh-key-${index}`}
-                content={ssh_key}
+                content={ssh_key ?? ''}
                 position='end'
                 maxCharsDisplayed={15}
               />

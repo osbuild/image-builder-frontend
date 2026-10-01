@@ -53,6 +53,17 @@ describe('mapUsersCustomizations', () => {
       expect(result.users![0]).not.toHaveProperty('groups');
     });
 
+    it('omits undefined credentials and does not infer a password', () => {
+      const state = createState({
+        users: [{ name: 'testuser', groups: [], hasPassword: false }],
+      });
+      const result = mapUsersCustomizations(state);
+
+      expect(result.users![0]).not.toHaveProperty('password');
+      expect(result.users![0]).not.toHaveProperty('ssh_key');
+      expect(result.users![0]).toHaveProperty('hasPassword', false);
+    });
+
     it('filters out users with no name, password, ssh_key, or groups', () => {
       const state = createState({
         users: [

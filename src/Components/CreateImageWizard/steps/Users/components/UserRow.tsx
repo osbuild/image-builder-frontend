@@ -18,13 +18,13 @@ import {
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
-  UserWithAdditionalInfo,
+  User,
 } from '@/store/slices/wizard';
 
 import RemoveUserModal from './RemoveUserModal';
 
 type UserRowProps = {
-  user: UserWithAdditionalInfo;
+  user: User;
   index: number;
   userCount: number;
 };
