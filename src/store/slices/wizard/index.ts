@@ -14,3 +14,6 @@ export * from './registration';
 export * from './system';
 export * from './users';
 export * from './validation';
+
+// types
+export type * from './types';
