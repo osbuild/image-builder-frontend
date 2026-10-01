@@ -1,21 +1,33 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
-import { createUser, renderWithRedux, typeWithWait } from '@/test/testUtils';
+import {
+  clickWithWait,
+  createUser,
+  renderWithRedux,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import UsersStep from '../index';
 
 describe('Users Component', () => {
-  describe('Form submission', () => {
-    test('pressing Enter in username input does not trigger page reload', async () => {
+  describe('User removal', () => {
+    test('allows cancelling and removes only the selected user when confirmed', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
         users: {
           ...initialState.users,
           users: [
             {
-              name: '',
+              name: 'firstuser',
+              password: '',
+              ssh_key: '',
+              groups: [],
+              hasPassword: false,
+            },
+            {
+              name: 'seconduser',
               password: '',
               ssh_key: '',
               groups: [],
@@ -24,6 +36,48 @@ describe('Users Component', () => {
           ],
         },
       });
+      const user = createUser();
+
+      await clickWithWait(
+        user,
+        screen.getAllByRole('button', { name: 'Remove user' })[1],
+      );
+
+      let dialog = screen.getByRole('dialog');
+      expect(
+        within(dialog).getByText('Remove user seconduser?'),
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole('dialog')).toHaveLength(1);
+
+      await clickWithWait(
+        user,
+        within(dialog).getByRole('button', { name: 'Cancel' }),
+      );
+      expect(
+        store.getState().wizard.users.users.map(({ name }) => name),
+      ).toEqual(['firstuser', 'seconduser']);
+
+      await clickWithWait(
+        user,
+        screen.getAllByRole('button', { name: 'Remove user' })[1],
+      );
+      dialog = screen.getByRole('dialog');
+      await clickWithWait(
+        user,
+        within(dialog).getByRole('button', { name: 'Remove user' }),
+      );
+
+      expect(
+        store.getState().wizard.users.users.map(({ name }) => name),
+      ).toEqual(['firstuser']);
+    });
+  });
+
+  describe('Form submission', () => {
+    test('pressing Enter in username input does not trigger page reload', async () => {
+      const { store } = renderWithRedux(<UsersStep />);
+      expect(store.getState().wizard.users.users).toEqual([]);
+
       const user = createUser();
 
       const usernameInput = await screen.findByRole('textbox', {
