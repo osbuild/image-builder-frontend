@@ -7,7 +7,6 @@ import {
   removeGroupFromUserByIndex,
   removeUser,
   removeUserGroup,
-  setUserAdministratorByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
@@ -32,7 +31,6 @@ const createDefaultUser = (
   password: '',
   ssh_key: '',
   groups: [],
-  isAdministrator: false,
   hasPassword: false,
   ...overrides,
 });
@@ -45,7 +43,7 @@ describe('user reducers', () => {
       expect(result.users.users).toHaveLength(1);
       expect(result.users.users[0].name).toBe('');
       expect(result.users.users[0].groups).toEqual([]);
-      expect(result.users.users[0].isAdministrator).toBe(false);
+      expect(result.users.users[0].groups.includes('wheel')).toBe(false);
     });
 
     it('should add multiple users', () => {
@@ -121,75 +119,6 @@ describe('user reducers', () => {
     });
   });
 
-  describe('setUserAdministratorByIndex', () => {
-    it('should add wheel group when setting user as administrator', () => {
-      const state = createUserState([createDefaultUser()]);
-
-      const result = wizardReducer(
-        state,
-        setUserAdministratorByIndex({ index: 0, isAdministrator: true }),
-      );
-
-      expect(result.users.users[0].isAdministrator).toBe(true);
-      expect(result.users.users[0].groups).toContain('wheel');
-    });
-
-    it('should remove wheel group when unsetting administrator', () => {
-      const state = createUserState([
-        createDefaultUser({
-          groups: ['wheel', 'developers'],
-          isAdministrator: true,
-        }),
-      ]);
-
-      const result = wizardReducer(
-        state,
-        setUserAdministratorByIndex({ index: 0, isAdministrator: false }),
-      );
-
-      expect(result.users.users[0].isAdministrator).toBe(false);
-      expect(result.users.users[0].groups).not.toContain('wheel');
-      expect(result.users.users[0].groups).toContain('developers');
-    });
-
-    it('should preserve other groups when toggling administrator', () => {
-      const state = createUserState([
-        createDefaultUser({ groups: ['developers', 'docker'] }),
-      ]);
-
-      let result = wizardReducer(
-        state,
-        setUserAdministratorByIndex({ index: 0, isAdministrator: true }),
-      );
-
-      expect(result.users.users[0].groups).toEqual([
-        'developers',
-        'docker',
-        'wheel',
-      ]);
-
-      result = wizardReducer(
-        result,
-        setUserAdministratorByIndex({ index: 0, isAdministrator: false }),
-      );
-
-      expect(result.users.users[0].groups).toEqual(['developers', 'docker']);
-    });
-
-    it('should not duplicate wheel when user already has it', () => {
-      const state = createUserState([
-        createDefaultUser({ groups: ['wheel'], isAdministrator: true }),
-      ]);
-
-      const result = wizardReducer(
-        state,
-        setUserAdministratorByIndex({ index: 0, isAdministrator: true }),
-      );
-
-      expect(result.users.users[0].groups).toEqual(['wheel']);
-    });
-  });
-
   describe('addGroupToUserByUserIndex', () => {
     it('should add a group to user', () => {
       const state = createUserState([createDefaultUser()]);
@@ -214,18 +143,6 @@ describe('user reducers', () => {
 
       expect(result.users.users[0].groups).toEqual(['developers']);
     });
-
-    it('should set isAdministrator to true when adding wheel group', () => {
-      const state = createUserState([createDefaultUser()]);
-
-      const result = wizardReducer(
-        state,
-        addGroupToUserByUserIndex({ index: 0, group: 'wheel' }),
-      );
-
-      expect(result.users.users[0].groups).toContain('wheel');
-      expect(result.users.users[0].isAdministrator).toBe(true);
-    });
   });
 
   describe('removeGroupFromUserByIndex', () => {
@@ -240,23 +157,6 @@ describe('user reducers', () => {
       );
 
       expect(result.users.users[0].groups).toEqual(['docker']);
-    });
-
-    it('should set isAdministrator to false when removing wheel group', () => {
-      const state = createUserState([
-        createDefaultUser({
-          groups: ['wheel', 'developers'],
-          isAdministrator: true,
-        }),
-      ]);
-
-      const result = wizardReducer(
-        state,
-        removeGroupFromUserByIndex({ index: 0, group: 'wheel' }),
-      );
-
-      expect(result.users.users[0].groups).not.toContain('wheel');
-      expect(result.users.users[0].isAdministrator).toBe(false);
     });
 
     it('should do nothing when removing non-existent group', () => {

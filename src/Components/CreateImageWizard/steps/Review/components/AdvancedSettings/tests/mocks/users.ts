@@ -6,8 +6,7 @@ export const adminUser = {
   password: '',
   hasPassword: true,
   ssh_key: '',
-  groups: [] as string[],
-  isAdministrator: true,
+  groups: ['wheel'] as string[],
 };
 
 export const developerUser = {
@@ -17,7 +16,6 @@ export const developerUser = {
   hasPassword: true,
   ssh_key: '',
   groups: [] as string[],
-  isAdministrator: false,
 };
 
 export const guestUser = {
@@ -27,7 +25,6 @@ export const guestUser = {
   hasPassword: true,
   ssh_key: '',
   groups: [] as string[],
-  isAdministrator: false,
 };
 
 export const userGroups = [

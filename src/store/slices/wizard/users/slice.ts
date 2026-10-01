@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './state';
 import {
   Group,
-  UserAdministratorPayload,
   UserGroupPayload,
   UserPasswordPayload,
   UserPayload,
@@ -22,7 +21,6 @@ export const usersSlice = createSlice({
         password: '',
         ssh_key: '',
         groups: [],
-        isAdministrator: false,
         hasPassword: false,
       };
 
@@ -44,22 +42,6 @@ export const usersSlice = createSlice({
     setUserSshKeyByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
       state.users[action.payload.index].ssh_key = action.payload.sshKey;
     },
-    setUserAdministratorByIndex: (
-      state,
-      action: PayloadAction<UserAdministratorPayload>,
-    ) => {
-      const { index, isAdministrator } = action.payload;
-      const user = state.users[index];
-
-      user.isAdministrator = isAdministrator;
-      if (isAdministrator) {
-        if (!user.groups.includes('wheel')) {
-          user.groups.push('wheel');
-        }
-      } else {
-        user.groups = user.groups.filter((group) => group !== 'wheel');
-      }
-    },
     addGroupToUserByUserIndex: (
       state,
       action: PayloadAction<UserGroupPayload>,
@@ -71,10 +53,6 @@ export const usersSlice = createSlice({
         )
       ) {
         state.users[index].groups.push(group);
-
-        if (group === 'wheel') {
-          state.users[index].isAdministrator = true;
-        }
       }
     },
     removeGroupFromUserByIndex: (
@@ -85,9 +63,6 @@ export const usersSlice = createSlice({
         (group) => group === action.payload.group,
       );
       if (groupIndex !== -1) {
-        if (action.payload.group === 'wheel') {
-          state.users[action.payload.index].isAdministrator = false;
-        }
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
@@ -147,7 +122,6 @@ export const {
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
-  setUserAdministratorByIndex,
   addGroupToUserByUserIndex,
   removeGroupFromUserByIndex,
 } = usersSlice.actions;

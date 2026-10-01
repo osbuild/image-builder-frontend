@@ -112,7 +112,6 @@ export const mapOnPremToHosted = async (
     name: u.name,
     ssh_key: u.key,
     groups: u.groups,
-    isAdministrator: u.groups.includes('wheel') || false,
   }));
   const user_keys = blueprint.customizations?.sshkey?.map((k) => ({
     name: k.user,

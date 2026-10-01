@@ -57,12 +57,12 @@ export const Users = ({ shouldHide }: Partial<Hideable>) => {
           <FlexColumn
             heading='Administrator'
             labelKey='user-admin-review'
-            items={users.map(({ isAdministrator }, index) => (
+            items={users.map(({ groups }, index) => (
               <StatusItem
                 key={`inner-admin-key-${index}`}
-                variant={isAdministrator ? 'success' : 'danger'}
+                variant={groups.includes('wheel') ? 'success' : 'danger'}
               >
-                {isAdministrator ? 'Enabled' : 'Disabled'}
+                {groups.includes('wheel') ? 'Enabled' : 'Disabled'}
               </StatusItem>
             ))}
           />
