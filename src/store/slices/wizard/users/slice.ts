@@ -1,13 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { initialState } from './state';
-import {
-  Group,
-  UserGroupPayload,
-  UserPasswordPayload,
-  UserPayload,
-  UserSshKeyPayload,
-} from './types';
+import { Group, User } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
 
@@ -30,41 +24,26 @@ export const usersSlice = createSlice({
       state.users = state.users.filter((_, index) => index !== action.payload);
     },
     clearUsersAndGroups: (_) => initialState,
-    setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
-      state.users[action.payload.index].name = action.payload.name;
-    },
-    setUserPasswordByIndex: (
+    upsertUser: (
       state,
-      action: PayloadAction<UserPasswordPayload>,
+      action: PayloadAction<
+        { user: User } | { index: number; user: Partial<User> }
+      >,
     ) => {
-      state.users[action.payload.index].password = action.payload.password;
-    },
-    setUserSshKeyByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
-      state.users[action.payload.index].ssh_key = action.payload.sshKey;
-    },
-    addGroupToUserByUserIndex: (
-      state,
-      action: PayloadAction<UserGroupPayload>,
-    ) => {
-      const { index, group } = action.payload;
-      if (
-        !state.users[index].groups.some(
-          (existingGroup) => existingGroup === group,
-        )
-      ) {
-        state.users[index].groups.push(group);
+      if (!('index' in action.payload)) {
+        state.users.push(action.payload.user);
+        return;
       }
-    },
-    removeGroupFromUserByIndex: (
-      state,
-      action: PayloadAction<UserGroupPayload>,
-    ) => {
-      const groupIndex = state.users[action.payload.index].groups.findIndex(
-        (group) => group === action.payload.group,
-      );
-      if (groupIndex !== -1) {
-        state.users[action.payload.index].groups.splice(groupIndex, 1);
+
+      const { index, user } = action.payload;
+      if (!Number.isInteger(index) || index < 0) {
+        return;
       }
+
+      state.users[index] = {
+        ...state.users[index],
+        ...user,
+      };
     },
     upsertUserGroup: (
       state,
@@ -117,11 +96,7 @@ export const {
   upsertUserGroup,
   removeUserGroup,
   addUser,
+  upsertUser,
   removeUser,
   clearUsersAndGroups,
-  setUserNameByIndex,
-  setUserPasswordByIndex,
-  setUserSshKeyByIndex,
-  addGroupToUserByUserIndex,
-  removeGroupFromUserByIndex,
 } = usersSlice.actions;

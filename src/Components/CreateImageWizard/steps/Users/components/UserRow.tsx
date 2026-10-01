@@ -10,16 +10,7 @@ import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/use
 import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
 import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
-import {
-  addGroupToUserByUserIndex,
-  addUser,
-  removeGroupFromUserByIndex,
-  removeUser,
-  setUserNameByIndex,
-  setUserPasswordByIndex,
-  setUserSshKeyByIndex,
-  User,
-} from '@/store/slices/wizard';
+import { removeUser, upsertUser, User } from '@/store/slices/wizard';
 
 import RemoveUserModal from './RemoveUserModal';
 
@@ -52,48 +43,51 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
 
   const handleNameChange = (
     _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string,
+    name: string,
   ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserNameByIndex({ index: index, name: value }));
+    dispatch(upsertUser({ index, user: { ...user, name } }));
   };
 
   const handlePasswordChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string,
+    password: string,
   ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserPasswordByIndex({ index: index, password: value }));
+    dispatch(upsertUser({ index, user: { ...user, password } }));
   };
 
   const handleSshKeyChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string,
+    ssh_key: string,
   ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserSshKeyByIndex({ index: index, sshKey: value }));
+    dispatch(upsertUser({ index, user: { ...user, ssh_key } }));
   };
 
   const handleCheckboxChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: boolean,
+    isAdmin: boolean,
   ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-
-    if (value) {
-      dispatch(addGroupToUserByUserIndex({ index: index, group: 'wheel' }));
+    if (isAdmin) {
+      dispatch(
+        upsertUser({
+          index,
+          user: {
+            ...user,
+            groups: Array.from(new Set(...user.groups, ['wheel'])),
+          },
+        }),
+      );
       return;
     }
 
-    dispatch(removeGroupFromUserByIndex({ index: index, group: 'wheel' }));
+    dispatch(
+      upsertUser({
+        index,
+        user: {
+          ...user,
+          groups: user.groups.filter((group) => group !== 'wheel'),
+        },
+      }),
+    );
   };
 
   return (
@@ -138,10 +132,19 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
             list={user.groups}
             item='Group'
             addAction={(value) =>
-              addGroupToUserByUserIndex({ index: index, group: value })
+              upsertUser({
+                index,
+                user: { ...user, groups: [...user.groups, value] },
+              })
             }
             removeAction={(value) =>
-              removeGroupFromUserByIndex({ index: index, group: value })
+              upsertUser({
+                index,
+                user: {
+                  ...user,
+                  groups: user.groups.filter((group) => group !== value),
+                },
+              })
             }
             stepValidation={getValidationByIndex(index)}
             fieldName='groups'
