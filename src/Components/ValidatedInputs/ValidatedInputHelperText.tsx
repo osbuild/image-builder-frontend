@@ -2,7 +2,7 @@ import React from 'react';
 
 import { HelperText, HelperTextItem } from '@patternfly/react-core';
 
-import type { ValidationIssue } from '@/store/slices/wizard/types';
+import type { ValidationIssue } from '@/store/slices/wizard';
 
 type ValidatedInputHelperTextProps = {
   errors: ValidationIssue[];
