@@ -8,6 +8,8 @@ import {
 } from '@aws-sdk/client-ec2';
 import { test } from '@playwright/test';
 
+import { buildBootTestInstanceIdentity } from './ec2InstanceIdentity';
+
 export class AwsWrapper {
   private static readonly SLEEP_TIME = 15000; // 15 seconds
   private static readonly RETRY_LAUNCH_INSTANCE = 20; // 20 * 15 seconds = 5 minutes to launch the instance
@@ -55,7 +57,10 @@ export class AwsWrapper {
 
   public async launchInstance(): Promise<void> {
     try {
-      console.log(`Launching instance from AMI ${this.amiId}`);
+      const { instanceName, tags } = buildBootTestInstanceIdentity(
+        test.info().file,
+      );
+      console.log(`Launching instance ${instanceName} from AMI ${this.amiId}`);
 
       const runCommand = new RunInstancesCommand({
         ImageId: this.amiId,
@@ -65,6 +70,12 @@ export class AwsWrapper {
         SubnetId: this.subnetId,
         MinCount: 1,
         MaxCount: 1,
+        TagSpecifications: [
+          {
+            ResourceType: 'instance',
+            Tags: tags.map(({ Key, Value }) => ({ Key, Value })),
+          },
+        ],
       });
 
       const response = await AwsWrapper.ec2Client.send(runCommand);

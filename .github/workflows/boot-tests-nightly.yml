@@ -78,6 +78,7 @@ jobs:
       - name: Run front-end Playwright tests
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number || '' }}
         run: |
           CURRENTS_PROJECT_ID=CNrla0 CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
 
