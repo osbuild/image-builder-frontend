@@ -107,7 +107,6 @@ import {
   useImagePullValidation,
   useRegistrationValidation,
   useSnapshotValidation,
-  useUsersValidation,
 } from '../CreateImageWizard/utilities/useValidation';
 
 const CreateImageWizard = () => {
@@ -153,7 +152,6 @@ const CreateImageWizard = () => {
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const filesystemValidation = useFilesystemValidation();
-  const usersValidation = useUsersValidation();
   const imagePullValidation = useImagePullValidation();
 
   const hasPendingInputs = useAppSelector(selectHasPendingInputs);
@@ -193,9 +191,8 @@ const CreateImageWizard = () => {
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
     systemErrors.length > 0 ||
-    hasPendingInputs ||
-    (!restrictions.users.shouldHide && usersValidation.disabledNext) ||
-    userErrors.length > 0;
+    userErrors.length > 0 ||
+    hasPendingInputs;
 
   useEffect(() => {
     const hasUrlParams =

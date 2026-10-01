@@ -10,8 +10,8 @@ export const selectNonEmptyUsers = createSelector([selectUsers], (users) =>
   users.filter(
     (user) =>
       user.name.trim() ||
-      user.password.trim() ||
-      user.ssh_key.trim() ||
+      user.password?.trim() ||
+      user.ssh_key?.trim() ||
       user.hasPassword,
   ),
 );

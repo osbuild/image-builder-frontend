@@ -2,7 +2,7 @@ import z from 'zod';
 
 import { MAX_REGULAR_GID, MIN_REGULAR_GID } from './constants';
 
-import { uniqueBy } from '../utilities';
+import { uniqueArray, uniqueBy } from '../utilities';
 
 // see `man groupadd` for the exact specification
 export const groupNameSchema = z
@@ -54,6 +54,97 @@ export const groupWarningSchema = z.object({
 
 export const groupListWarningsSchema = z.array(groupWarningSchema);
 
+export const userNameSchema = z
+  .string()
+  .max(32, 'User name must be 32 characters or fewer')
+  .regex(/^(?!\d+$)/, 'User name cannot only contain numbers')
+  .regex(
+    // TODO: we could probably break this down even further
+    // and make the errors more atomic
+    /^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9_$]$/,
+    'Invalid user name format',
+  );
+
+const encryptedPasswordSchema = z
+  .string()
+  .regex(/^\$[^$]+\$/, 'Invalid encrypted passsword');
+
+// NOTE: password is a special case since we could have an encrypted password
+// so we have to define the schema slightly differently to how we would normally
+// i.e. setting z.string().min().max() is not enough in this case
+export const passwordSchema = z.string().superRefine((password, ctx) => {
+  if (password === '' || encryptedPasswordSchema.safeParse(password).success) {
+    return;
+  }
+
+  if (password.trim() === '') {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Password cannot contain only whitespace',
+    });
+    return;
+  }
+
+  if (password.length < 6) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Password must contain at least 6 characters',
+    });
+    return;
+  }
+
+  if (password.length > 128) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Password must be 128 characters or fewer',
+    });
+  }
+});
+
+export const sshKeySchema = z.union([
+  z.literal(''),
+  z
+    .string()
+    .regex(
+      // Key types: ssh-rsa, ssh-dss, ssh-ed25519, or ecdsa-sha2-nistp(256|384|521).
+      /^(ssh-rsa|ssh-dss|ssh-ed25519|ecdsa-sha2-nistp(?:256|384|521))\s/,
+      'Unsupported SSH key type',
+    )
+    .regex(
+      // Base64-encoded key material.
+      // Optional comment at the end.
+      /^\S+\s+[A-Za-z0-9+/]+={0,2}(?:\s+.*)?$/,
+      'Invalid SSH key format',
+    ),
+]);
+
+export const userGroupListSchema = z
+  .array(groupNameSchema)
+  .superRefine(uniqueArray('user groups'));
+
+export const userSchema = z
+  .object({
+    name: userNameSchema,
+    password: passwordSchema.optional(),
+    ssh_key: sshKeySchema.optional(),
+    groups: userGroupListSchema,
+    hasPassword: z.boolean(),
+  })
+  .superRefine((user, ctx) => {
+    if (user.groups.includes(user.name)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['groups'],
+        message: 'User cannot be a member of a group with the same name',
+      });
+    }
+  });
+
+export const userListSchema = z
+  .array(userSchema)
+  .superRefine(uniqueBy('user names', 'name', (user) => user.name));
+
 export const usersSliceSchema = z.object({
+  users: userListSchema,
   groups: groupListSchema,
 });
