@@ -9,10 +9,7 @@ export const selectUsers = (state: RootState) => {
 export const selectNonEmptyUsers = createSelector([selectUsers], (users) =>
   users.filter(
     (user) =>
-      user.name.trim() ||
-      user.password.trim() ||
-      user.ssh_key.trim() ||
-      user.hasPassword,
+      user.name.trim() || user.password || user.ssh_key || user.hasPassword,
   ),
 );
 

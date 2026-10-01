@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import type { Group, User } from '@/store/api/backend';
+import type { User as ApiUser, Group } from '@/store/api/backend';
 
 import { selectUserGroups, selectUsers } from './selectors';
-import { UserWithAdditionalInfo } from './types';
+import { User } from './types';
 
 const mapUsers = createSelector([selectUsers], (users) => {
   if (users.length === 0) {
@@ -12,11 +12,11 @@ const mapUsers = createSelector([selectUsers], (users) => {
 
   const customizationUsers = users
     .filter(
-      (user: UserWithAdditionalInfo) =>
+      (user: User) =>
         user.name || user.password || user.ssh_key || user.groups.length > 0,
     )
-    .map((user: UserWithAdditionalInfo) => {
-      const result: User = {
+    .map((user: User) => {
+      const result: ApiUser = {
         name: user.name,
       };
       if (user.password !== '') {
@@ -29,7 +29,7 @@ const mapUsers = createSelector([selectUsers], (users) => {
         result.groups = user.groups;
       }
       result.hasPassword = user.hasPassword || user.password !== '';
-      return result as User;
+      return result as ApiUser;
     });
 
   if (customizationUsers.length === 0) {

@@ -11,12 +11,12 @@ import {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   upsertUserGroup,
-  type UserWithAdditionalInfo,
+  type User,
   wizardReducer,
   type WizardState,
 } from '@/store/slices/wizard';
 
-const createUserState = (users: UserWithAdditionalInfo[]): WizardState => ({
+const createUserState = (users: User[]): WizardState => ({
   ...initialState,
   users: {
     ...initialState.users,
@@ -24,9 +24,7 @@ const createUserState = (users: UserWithAdditionalInfo[]): WizardState => ({
   },
 });
 
-const createDefaultUser = (
-  overrides: Partial<UserWithAdditionalInfo> = {},
-): UserWithAdditionalInfo => ({
+const createDefaultUser = (overrides: Partial<User> = {}): User => ({
   name: 'testuser',
   password: '',
   ssh_key: '',

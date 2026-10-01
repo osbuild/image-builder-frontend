@@ -59,7 +59,7 @@ import {
   selectUserGroups,
   selectUsers,
   selectUsersSlice,
-  UserWithAdditionalInfo,
+  User,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
@@ -519,7 +519,7 @@ export function useSnapshotValidation(): StepValidation {
 }
 
 const validateUserName = (
-  users: UserWithAdditionalInfo[],
+  users: User[],
   userName: string,
   currentIndex: number,
 ): string => {
@@ -540,7 +540,7 @@ const validateUserName = (
   return '';
 };
 
-const validateSshKey = (userSshKey: string): string => {
+const validateSshKey = (userSshKey?: string | undefined): string => {
   if (userSshKey && !isSshKeyValid(userSshKey)) {
     return 'Invalid SSH key';
   }
@@ -552,7 +552,7 @@ export function useUsersValidation(): UsersStepValidation {
   const userGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
 
-  const isEmptyUser = (user: UserWithAdditionalInfo) =>
+  const isEmptyUser = (user: User) =>
     (user.name || '').trim() === '' &&
     !user.password &&
     !user.ssh_key &&
@@ -674,7 +674,7 @@ export function useUsersValidation(): UsersStepValidation {
 }
 
 export const checkPasswordValidity = (
-  password: string,
+  password?: string | undefined,
 ): PasswordValidationResult => {
   if (!password) {
     return {

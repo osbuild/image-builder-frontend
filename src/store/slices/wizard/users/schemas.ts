@@ -2,7 +2,7 @@ import z from 'zod';
 
 import { MAX_REGULAR_GID, MIN_REGULAR_GID } from './constants';
 
-import { uniqueBy } from '../utilities';
+import { uniqueArray, uniqueBy } from '../utilities';
 
 // see `man groupadd` for the exact specification
 export const groupNameSchema = z
@@ -54,6 +54,76 @@ export const groupWarningSchema = z.object({
 
 export const groupListWarningsSchema = z.array(groupWarningSchema);
 
+export const userNameSchema = z
+  .string()
+  .max(32, 'User name must be 32 characters or fewer')
+  .regex(/^(?!\d+$)/, 'User name cannot only contain numbers')
+  .regex(
+    // TODO: we could probably break this down even further
+    // and make the errors more atomic
+    /^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9_$]$/,
+    'Invalid user name format',
+  );
+
+const plainTextPasswordSchema = z
+  .string()
+  .min(6, 'Password must contain at least 6 characters')
+  .max(128, 'Password must be 128 characters or fewer');
+
+const encryptedPasswordSchema = z
+  .string()
+  .regex(/^\$[^$]+\$/, 'Invalid encrypted passsword');
+
+export const passwordSchema = z.union([
+  z.literal(''),
+  plainTextPasswordSchema,
+  encryptedPasswordSchema,
+]);
+
+export const sshKeySchema = z.union([
+  z.literal(''),
+  z
+    .string()
+    .regex(
+      // Key types: ssh-rsa, ssh-dss, ssh-ed25519, or ecdsa-sha2-nistp(256|384|521).
+      /^(ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp256)\s/,
+      'Unsupported SSH key type',
+    )
+    .regex(
+      // Base64-encoded key material.
+      // Optional comment at the end.
+      /^\S+\s+[A-Za-z0-9+/]+={0,2}(?:\s+.*)?$/,
+      'Invalid SSH key format',
+    ),
+]);
+
+export const userGroupListSchema = z
+  .array(groupNameSchema)
+  .superRefine(uniqueArray('user groups'));
+
+export const userSchema = z
+  .object({
+    name: userNameSchema,
+    password: passwordSchema.optional(),
+    ssh_key: sshKeySchema.optional(),
+    groups: userGroupListSchema,
+    hasPassword: z.boolean(),
+  })
+  .superRefine((user, ctx) => {
+    if (user.groups.includes(user.name)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['groups'],
+        message: 'User cannot be a member of a group with the same name',
+      });
+    }
+  });
+
+export const userListSchema = z
+  .array(userSchema)
+  .superRefine(uniqueBy('user names', 'name', (user) => user.name));
+
 export const usersSliceSchema = z.object({
+  users: userListSchema,
   groups: groupListSchema,
 });
