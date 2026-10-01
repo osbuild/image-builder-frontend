@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
@@ -6,27 +6,41 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addUser, selectUsers, upsertUser } from '@/store/slices/wizard';
+import {
+  removeUser,
+  selectUsers,
+  upsertUser,
+  User,
+} from '@/store/slices/wizard';
 
 import { emptyUser } from './constants';
+import RemoveUserModal from './RemoveUserModal';
 import UserRow from './UserRow';
 
 type UserInfoProps = {
   attemptedNext?: boolean | undefined;
 };
 
+type ActiveUser = {
+  index: number;
+  user: User;
+};
+
 const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
-  const usersToRender = users.length === 0 ? [emptyUser] : users;
+  const [showEmptyUser, setShowEmptyUser] = useState(false);
+  const [activeUser, setActiveUser] = useState<ActiveUser | undefined>(
+    undefined,
+  );
+
+  const shouldShowEmptyUser = showEmptyUser || users.length === 0;
+  const displayUsers = shouldShowEmptyUser ? [...users, undefined] : users;
 
   const stepValidation = useUsersValidation();
   const hasErrors = !!stepValidation.disabledNext;
   const showAlert = attemptedNext && hasErrors;
 
-  const onAddUserClick = () => {
-    dispatch(addUser());
-  };
   return (
     <>
       {showAlert && (
@@ -37,6 +51,17 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           className='pf-v6-u-mt-lg'
         />
       )}
+      <RemoveUserModal
+        isOpen={activeUser !== undefined}
+        userName={activeUser?.user.name ?? ''}
+        onClose={() => setActiveUser(undefined)}
+        onRemove={() => {
+          if (activeUser) {
+            dispatch(removeUser(activeUser.index));
+          }
+          setActiveUser(undefined);
+        }}
+      />
       <Table variant='compact' borders={false}>
         <Thead>
           <Tr>
@@ -49,12 +74,12 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           </Tr>
         </Thead>
         <Tbody>
-          {usersToRender.map((user, index) => (
+          {displayUsers.map((user, index) => (
             <UserRow
               key={index}
               user={user}
               index={index}
-              userCount={users.length}
+              isRemoveDisabled={users.length === 0}
               onUpdate={(user) => {
                 if (!user) return;
 
@@ -71,6 +96,15 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
                     },
                   }),
                 );
+                setShowEmptyUser(false);
+              }}
+              onRemove={() => {
+                if (index < users.length && user) {
+                  setActiveUser({ index, user });
+                  return;
+                }
+
+                setShowEmptyUser(false);
               }}
             />
           ))}
@@ -79,9 +113,9 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
       <Content>
         <Button
           variant='link'
-          onClick={onAddUserClick}
+          onClick={() => setShowEmptyUser(true)}
           icon={<AddCircleOIcon />}
-          isDisabled={!!stepValidation.disabledNext || users.length < 1}
+          isDisabled={!!stepValidation.disabledNext || shouldShowEmptyUser}
         >
           Add user
         </Button>
