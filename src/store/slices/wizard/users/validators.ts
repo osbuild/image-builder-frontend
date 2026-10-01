@@ -3,9 +3,12 @@ import {
   groupInputSchema,
   groupListSchema,
   groupListWarningsSchema,
+  userListSchema,
+  userSchema,
   usersSliceSchema,
+  usersSliceWarningSchema,
 } from './schemas';
-import type { Group, GroupInput, UsersSlice } from './types';
+import type { Group, GroupInput, User, UsersSlice } from './types';
 
 import type { ValidationResult } from '../types';
 import { validateList, validateSchema } from '../validators';
@@ -37,6 +40,32 @@ export const validateGroupList = (
 ): ValidationResult<Group[]> => {
   const { data, issues: errors } = validateList(groupListSchema, groups);
   const { issues: warnings } = validateList(groupListWarningsSchema, groups);
+
+  return {
+    data,
+    errors,
+    warnings,
+  };
+};
+
+export const validateUserInput = (user: User): ValidationResult<User> => {
+  const result = validateSchema(userSchema, user);
+
+  return {
+    data: result.data,
+    errors: result.issues,
+  };
+};
+
+export const validateUserList = (
+  users: User[],
+  groups: Group[],
+): ValidationResult<User[]> => {
+  const { data, issues: errors } = validateList(userListSchema, users);
+  const { issues: warnings } = validateSchema(usersSliceWarningSchema, {
+    users,
+    groups,
+  });
 
   return {
     data,
