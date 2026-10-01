@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
@@ -6,9 +6,10 @@ import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addUser, selectUsers } from '@/store/slices/wizard';
+import { removeUser, selectUsers } from '@/store/slices/wizard';
 
 import UserRow from './UserRow';
+import RemoveUserModal from './RemoveUserModal';
 
 type UserInfoProps = {
   attemptedNext?: boolean | undefined;
@@ -17,26 +18,16 @@ type UserInfoProps = {
 const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
-  const usersToRender =
-    users.length === 0
-      ? [
-          {
-            name: '',
-            password: '',
-            ssh_key: '',
-            groups: [],
-            hasPassword: false,
-          },
-        ]
-      : users;
+  const [showEmptyUser, setShowEmptyUser] = useState(false);
+  const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
+
+  const shouldShowEmptyUser = showEmptyUser || users.length === 0;
+  const displayUsers = shouldShowEmptyUser ? [...users, undefined] : users;
 
   const stepValidation = useUsersValidation();
   const hasErrors = !!stepValidation.disabledNext;
   const showAlert = attemptedNext && hasErrors;
 
-  const onAddUserClick = () => {
-    dispatch(addUser());
-  };
   return (
     <>
       {showAlert && (
@@ -59,22 +50,52 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           </Tr>
         </Thead>
         <Tbody>
-          {usersToRender.map((user, index) => (
-            <UserRow
-              key={index}
-              user={user}
-              index={index}
-              userCount={users.length}
-            />
+          {displayUsers.map((user, index) => (
+            <>
+              <RemoveUserModal
+                isOpen={showRemoveUserModal}
+                userName={user?.name ?? ''}
+                onClose={() => setShowRemoveUserModal(false)}
+                onRemove={() => {
+                  dispatch(removeUser(index));
+                  setShowRemoveUserModal(false);
+                }}
+              />
+              <UserRow
+                key={index}
+                user={user}
+                index={index}
+                isRemoveDisabled={users.length === 0}
+                onUpdate={(user) => {
+                  if (!user) return;
+                }}
+                onRemove={() => {
+                  if (!user) {
+                    return;
+                  }
+
+                  if (index === users.length) {
+                    setShowEmptyUser(false);
+                    return;
+                  }
+
+                  if (user.name === '') {
+                    dispatch(removeUser(index));
+                  }
+
+                  setShowEmptyUser(false);
+                }}
+              />
+            </>
           ))}
         </Tbody>
       </Table>
       <Content>
         <Button
           variant='link'
-          onClick={onAddUserClick}
+          onClick={() => setShowEmptyUser(true)}
           icon={<AddCircleOIcon />}
-          isDisabled={!!stepValidation.disabledNext || users.length < 1}
+          isDisabled={!!stepValidation.disabledNext || showEmptyUser}
         >
           Add user
         </Button>

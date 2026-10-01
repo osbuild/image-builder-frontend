@@ -433,7 +433,7 @@ const CreateImageWizard = () => {
   };
 
   const REVIEW_STEP_INDEX = 4;
-  const startIndex = mode === 'edit' ? REVIEW_STEP_INDEX : 1;
+  const startIndex = mode === 'edit' ? REVIEW_STEP_INDEX : 3;
 
   if (mode === 'edit' && !isSuccess) {
     return (

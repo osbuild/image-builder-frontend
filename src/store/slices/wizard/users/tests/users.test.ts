@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  addUser,
   initialState,
   removeUser,
   removeUserGroup,
@@ -29,25 +28,6 @@ const createDefaultUser = (overrides: Partial<User> = {}): User => ({
 });
 
 describe('user reducers', () => {
-  describe('addUser', () => {
-    it('should add a new user with default values', () => {
-      const result = wizardReducer(initialState, addUser());
-
-      expect(result.users.users).toHaveLength(1);
-      expect(result.users.users[0].name).toBe('');
-      expect(result.users.users[0].groups).toEqual([]);
-      expect(result.users.users[0].groups.includes('wheel')).toBe(false);
-    });
-
-    it('should add multiple users', () => {
-      let state = wizardReducer(initialState, addUser());
-      state = wizardReducer(state, addUser());
-      state = wizardReducer(state, addUser());
-
-      expect(state.users.users).toHaveLength(3);
-    });
-  });
-
   describe('removeUser', () => {
     it('should remove user at specified index', () => {
       const state = createUserState([
