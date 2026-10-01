@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode } from 'jwt-decode';
 
 import {
@@ -155,17 +154,9 @@ export function useIsBlueprintValid(): boolean {
 
 type PasswordValidationResult = {
   isValid: boolean;
-  strength: {
-    variant: HelperTextVariant;
-    icon: JSX.Element | null;
-    text: string;
+  validationState: {
+    ruleLength: HelperTextVariant;
   };
-  validationState: ValidationState;
-};
-
-type ValidationState = {
-  ruleLength: HelperTextVariant;
-  ruleCharacters: HelperTextVariant;
 };
 
 export function useRegistrationValidation(): StepValidation {
@@ -557,7 +548,6 @@ const validateSshKey = (userSshKey: string): string => {
 };
 
 export function useUsersValidation(): UsersStepValidation {
-  const environments = useAppSelector(selectImageTypes);
   const users = useAppSelector(selectUsers);
   const userGroups = useAppSelector(selectUserGroups);
   const errors: { [key: string]: { [key: string]: string } } = {};
@@ -600,7 +590,6 @@ export function useUsersValidation(): UsersStepValidation {
 
     const isPasswordValid = checkPasswordValidity(
       users[index].password,
-      environments.includes('azure'),
     ).isValid;
     if (users[index].password && !isPasswordValid) {
       userErrors.userPassword = 'Invalid password';
@@ -686,15 +675,12 @@ export function useUsersValidation(): UsersStepValidation {
 
 export const checkPasswordValidity = (
   password: string,
-  isAzure: boolean,
 ): PasswordValidationResult => {
   if (!password) {
     return {
       isValid: false,
-      strength: getStrength(0, 0, false),
       validationState: {
         ruleLength: 'indeterminate',
-        ruleCharacters: 'indeterminate',
       },
     };
   }
@@ -702,57 +688,21 @@ export const checkPasswordValidity = (
   if (isEncrypted) {
     return {
       isValid: true,
-      strength: getStrength(0, 0, false),
       validationState: {
         ruleLength: 'success',
-        ruleCharacters: 'success',
       },
     };
   }
 
   const trimmedValue = password.trim();
   const isLengthValid = trimmedValue.length >= 6 && trimmedValue.length <= 128;
-  const { rulesCount, strCount } = countCharacterTypes(password);
-  const AZURE_MIN_CHAR_TYPES = 3;
-  const meetsAzureCharRules = !isAzure || rulesCount >= AZURE_MIN_CHAR_TYPES;
-
-  const validationState: ValidationState = {
-    ruleLength: isLengthValid ? 'success' : 'error',
-    ruleCharacters: rulesCount >= AZURE_MIN_CHAR_TYPES ? 'success' : 'error',
-  };
 
   return {
-    isValid: isLengthValid && meetsAzureCharRules,
-    strength: getStrength(strCount, rulesCount, isAzure),
-    validationState: validationState,
+    isValid: isLengthValid,
+    validationState: {
+      ruleLength: isLengthValid ? 'success' : 'error',
+    },
   };
-};
-
-const getStrength = (
-  strCount: number,
-  rulesCount: number,
-  isAzure: boolean,
-): PasswordValidationResult['strength'] => {
-  return isAzure && strCount >= 6 && rulesCount >= 3
-    ? { variant: 'success', icon: <CheckCircleIcon />, text: 'Strong' }
-    : { variant: 'default', icon: null, text: '' };
-};
-
-const countCharacterTypes = (value: string) => {
-  const lowercaseCount = (value.match(/[a-z]/g) || []).length;
-  const uppercaseCount = (value.match(/[A-Z]/g) || []).length;
-  const digitsCount = (value.match(/\d/g) || []).length;
-  const specialCount = (value.match(/\W/g) || []).length;
-
-  const rulesCount = [
-    lowercaseCount,
-    uppercaseCount,
-    digitsCount,
-    specialCount,
-  ].filter((count) => count > 0).length;
-  const strCount = lowercaseCount + uppercaseCount + digitsCount + specialCount;
-
-  return { rulesCount, strCount };
 };
 
 export function useDetailsValidation(): StepValidation {
