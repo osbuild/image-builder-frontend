@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   Button,
@@ -134,7 +134,7 @@ const Repositories = () => {
       availableForVersion: version,
       ...excludeEUSReposFilter,
       contentType: 'rpm',
-      limit: 100,
+      limit: selected.size + requiredRedHatRepoUUIDs.length,
       offset: 0,
       uuid: [...selected, ...requiredRedHatRepoUUIDs].join(','),
     },
@@ -209,26 +209,26 @@ const Repositories = () => {
     removeSelected(repo);
   };
 
+  const foundUnavailableRepos = useRef(false);
+  const [unavailableRepoCount, setUnavailableRepoCount] = useState(0);
+
   useEffect(() => {
-    if (isFetching || initialSelectedState.size === 0) return;
+    if (isFetching || isError || initialSelectedState.size === 0) return;
+    if (foundUnavailableRepos.current) return;
+
+    foundUnavailableRepos.current = true;
 
     const contentUuids = new Set(contentList.map(({ uuid }) => uuid));
     const missingUuids = [...initialSelectedState].filter(
       (uuid) => !contentUuids.has(uuid),
     );
 
+    setUnavailableRepoCount(missingUuids.length);
     if (missingUuids.length > 0) {
       dispatch(removeRepositoriesById(missingUuids));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetching, contentList, initialSelectedState]);
-
-  const unavailableRepoCount =
-    !isLoading && initialSelectedState.size > 0
-      ? [...initialSelectedState].filter(
-          (uuid) => !contentList.some((repo) => repo.uuid === uuid),
-        ).length
-      : 0;
+  }, [isFetching, isError, contentList, initialSelectedState]);
 
   const {
     data: selectedTemplateData,
@@ -249,7 +249,7 @@ const Repositories = () => {
   } = useListRepositoriesQuery(
     {
       contentType: 'rpm',
-      limit: 100,
+      limit: selectedTemplateData?.repository_uuids?.length || 100,
       offset: 0,
       uuid:
         selectedTemplateData && selectedTemplateData.repository_uuids
