@@ -15,7 +15,6 @@ const parseUsers = ({ users }: Customizations): UsersSlice['users'] => {
     password: '', // The image-builder API does not return the password.
     ssh_key: user.ssh_key || '',
     groups: user.groups || [],
-    isAdministrator: user.groups?.includes('wheel') || false,
     hasPassword: user.hasPassword || false,
   }));
 };

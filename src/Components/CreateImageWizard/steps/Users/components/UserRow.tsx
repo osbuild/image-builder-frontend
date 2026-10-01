@@ -15,7 +15,6 @@ import {
   addUser,
   removeGroupFromUserByIndex,
   removeUser,
-  setUserAdministratorByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
@@ -44,12 +43,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
   };
 
   const onRemove = () => {
-    if (
-      user.name === '' &&
-      user.password === '' &&
-      user.ssh_key === '' &&
-      !user.isAdministrator
-    ) {
+    if (user.name === '' && user.password === '' && user.ssh_key === '') {
       dispatch(removeUser(index));
     } else {
       setShowRemoveUserModal(true);
@@ -93,9 +87,13 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
     if (userCount === 0) {
       dispatch(addUser());
     }
-    dispatch(
-      setUserAdministratorByIndex({ index: index, isAdministrator: value }),
-    );
+
+    if (value) {
+      dispatch(addGroupToUserByUserIndex({ index: index, group: 'wheel' }));
+      return;
+    }
+
+    dispatch(removeGroupFromUserByIndex({ index: index, group: 'wheel' }));
   };
 
   return (
@@ -154,7 +152,7 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
         </Td>
         <Td>
           <Checkbox
-            isChecked={user.isAdministrator || user.groups.includes('wheel')}
+            isChecked={user.groups.includes('wheel')}
             onChange={(_e, value) => handleCheckboxChange(_e, value)}
             aria-label='Administrator'
             id={`${user.name}-${index}`}

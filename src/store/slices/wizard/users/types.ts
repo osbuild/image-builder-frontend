@@ -10,7 +10,6 @@ export type GroupInput = z.input<typeof groupInputSchema>;
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
 } & {
-  isAdministrator: boolean;
   hasPassword: boolean;
 };
 
@@ -27,11 +26,6 @@ export type UserPasswordPayload = {
 export type UserSshKeyPayload = {
   index: number;
   sshKey: string;
-};
-
-export type UserAdministratorPayload = {
-  index: number;
-  isAdministrator: boolean;
 };
 
 export type UserGroupPayload = {

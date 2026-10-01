@@ -25,7 +25,6 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
             password: '',
             ssh_key: '',
             groups: [],
-            isAdministrator: false,
             hasPassword: false,
           },
         ]
