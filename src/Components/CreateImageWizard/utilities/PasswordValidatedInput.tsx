@@ -10,9 +10,6 @@ import {
   TextInputProps,
 } from '@patternfly/react-core';
 
-import { useAppSelector } from '@/store/hooks';
-import { selectImageTypes } from '@/store/slices/wizard';
-
 import { checkPasswordValidity } from './useValidation';
 
 type ValidatedPasswordInput = TextInputProps & {
@@ -30,14 +27,11 @@ export const PasswordValidatedInput = ({
   onChange,
   hasPassword,
 }: ValidatedPasswordInput) => {
-  const environments = useAppSelector(selectImageTypes);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const { validationState } = checkPasswordValidity(
-    value,
-    environments.includes('azure'),
-  );
-  const { ruleLength, ruleCharacters } = validationState;
+  const {
+    validationState: { ruleLength },
+  } = checkPasswordValidity(value);
 
   return (
     <>
@@ -60,12 +54,6 @@ export const PasswordValidatedInput = ({
           <HelperTextItem variant={ruleLength} component='li'>
             Password must be at least 6 characters long
           </HelperTextItem>
-          {environments.includes('azure') && (
-            <HelperTextItem variant={ruleCharacters} component='li'>
-              Must include at least 3 of the following: lowercase letters,
-              uppercase letters, numbers, symbols
-            </HelperTextItem>
-          )}
         </HelperText>
       </FormHelperText>
     </>
