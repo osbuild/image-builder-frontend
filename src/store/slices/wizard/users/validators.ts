@@ -1,5 +1,3 @@
-import z from 'zod';
-
 import {
   groupGidInputSchema,
   groupInputSchema,
@@ -7,7 +5,7 @@ import {
   groupListWarningsSchema,
   usersSliceSchema,
 } from './schemas';
-import type { Group, GroupInput } from './types';
+import type { Group, GroupInput, UsersSlice } from './types';
 
 import type { ValidationResult } from '../types';
 import { validateList, validateSchema } from '../validators';
@@ -48,9 +46,9 @@ export const validateGroupList = (
 };
 
 export const validateUsersSlice = (
-  slice: z.infer<typeof usersSliceSchema>,
+  slice: UsersSlice,
   shouldHide: boolean = false,
-): ValidationResult<z.infer<typeof usersSliceSchema>> => {
+): ValidationResult<UsersSlice> => {
   if (shouldHide) {
     return {
       errors: [],
