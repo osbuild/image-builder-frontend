@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core/dist/esm';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
-import type { ValidationResult } from '@/store/slices/wizard/types';
+import type { ValidationResult } from '@/store/slices/wizard';
 import type { MergedListItem } from '@/Utilities/mergeListItems';
 
 import { ValidatedInputHelperText } from './ValidatedInputHelperText';

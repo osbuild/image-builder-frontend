@@ -9,8 +9,8 @@ import {
   Group,
   validateGroupGidInput,
   validateGroupInput,
+  type ValidationResult,
 } from '@/store/slices/wizard';
-import { ValidationResult } from '@/store/slices/wizard/types';
 
 type GroupRowProps = {
   index: number;

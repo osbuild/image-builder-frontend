@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
-import type { ValidationResult } from '@/store/slices/wizard/types';
+import type { ValidationResult } from '@/store/slices/wizard';
 
 import { ValidatedInputHelperText } from './ValidatedInputHelperText';
 
