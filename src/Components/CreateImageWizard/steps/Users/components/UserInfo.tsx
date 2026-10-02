@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Alert, Button, Content } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   removeUser,
+  selectUserGroups,
   selectUsers,
   upsertUser,
   User,
+  validateUserList,
 } from '@/store/slices/wizard';
 
-import { emptyUser } from './constants';
 import RemoveUserModal from './RemoveUserModal';
 import UserRow from './UserRow';
 
@@ -29,6 +29,7 @@ type ActiveUser = {
 const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
+  const groups = useAppSelector(selectUserGroups);
   const [showEmptyUser, setShowEmptyUser] = useState(false);
   const [activeUser, setActiveUser] = useState<ActiveUser | undefined>(
     undefined,
@@ -37,9 +38,21 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
   const shouldShowEmptyUser = showEmptyUser || users.length === 0;
   const displayUsers = shouldShowEmptyUser ? [...users, undefined] : users;
 
-  const stepValidation = useUsersValidation();
-  const hasErrors = !!stepValidation.disabledNext;
-  const showAlert = attemptedNext && hasErrors;
+  const { errors } = validateUserList(users, groups);
+  const showAlert = attemptedNext && errors.length > 0;
+
+  const handleUserValidation = useCallback(
+    (index: number, candidate: User) => {
+      if (index < users.length) {
+        const updatedUsers = [...users];
+        updatedUsers[index] = candidate;
+        return validateUserList(updatedUsers, groups);
+      }
+
+      return validateUserList([...users, candidate], groups);
+    },
+    [users, groups],
+  );
 
   return (
     <>
@@ -80,6 +93,7 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
               user={user}
               index={index}
               isRemoveDisabled={users.length === 0}
+              validator={(candidate) => handleUserValidation(index, candidate)}
               onUpdate={(user) => {
                 if (!user) return;
 
@@ -88,11 +102,18 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
                   return;
                 }
 
+                if (typeof user.name !== 'string' || !user.name.trim()) {
+                  return;
+                }
+
                 dispatch(
                   upsertUser({
                     user: {
-                      ...emptyUser,
-                      ...user,
+                      name: user.name,
+                      ...(user.password && { password: user.password }),
+                      ...(user.ssh_key && { ssh_key: user.ssh_key }),
+                      groups: user.groups ?? [],
+                      hasPassword: user.hasPassword ?? false,
                     },
                   }),
                 );
@@ -115,7 +136,7 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
           variant='link'
           onClick={() => setShowEmptyUser(true)}
           icon={<AddCircleOIcon />}
-          isDisabled={!!stepValidation.disabledNext || shouldShowEmptyUser}
+          isDisabled={errors.length > 0 || shouldShowEmptyUser}
         >
           Add user
         </Button>
