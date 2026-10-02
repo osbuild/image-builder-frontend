@@ -58,6 +58,27 @@ describe('ValidatedTextInput', () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
+  it('masks password inputs except while focused', () => {
+    renderComponent({ value: 'secret', kind: 'password' });
+
+    const input = screen.getByLabelText('Name');
+
+    expect(input).toHaveAttribute('type', 'password');
+    fireEvent.focus(input);
+    expect(input).toHaveAttribute('type', 'text');
+    fireEvent.blur(input);
+    expect(input).toHaveAttribute('type', 'password');
+  });
+
+  it('calls the supplied onFocus handler', () => {
+    const onFocus = vi.fn();
+    renderComponent({ onFocus });
+
+    fireEvent.focus(screen.getByLabelText('Name'));
+
+    expect(onFocus).toHaveBeenCalledTimes(1);
+  });
+
   it('commits validated data on blur', () => {
     renderComponent({ value: 'valid-name' });
 
