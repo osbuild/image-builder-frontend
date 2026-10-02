@@ -21,6 +21,8 @@ type ValidatedTextInputProps<T> = Omit<
   ariaLabel: string;
   validator: (value: string) => ValidationResult<T>;
   onCommit: (data: T | undefined) => void;
+  // Keep stable while mounted; visibility state initializes from this value.
+  kind?: 'text' | 'password';
   helperText?: React.ReactNode;
   showErrors?: boolean;
   handleClear?: () => void;
@@ -31,6 +33,7 @@ type ValidatedTextInputProps<T> = Omit<
 export const ValidatedTextInput = <T,>({
   value,
   ariaLabel,
+  kind = 'text',
   validator,
   onCommit,
   helperText,
@@ -38,11 +41,13 @@ export const ValidatedTextInput = <T,>({
   handleClear,
   clearButtonAriaLabel = 'Clear input',
   isDisabled = false,
+  onFocus,
   inputProps,
   ...props
 }: ValidatedTextInputProps<T>) => {
   const helperTextId = useId();
   const [isPristine, setIsPristine] = useState(value === '');
+  const [hideText, setHideText] = useState(kind === 'password');
   const { errors, warnings = [] } = validator(value);
 
   const showValidationErrors = !isPristine || showErrors;
@@ -76,8 +81,15 @@ export const ValidatedTextInput = <T,>({
           {...props}
           value={value}
           aria-label={ariaLabel}
-          type='text'
-          onBlur={handleBlur}
+          type={kind === 'password' && hideText ? 'password' : 'text'}
+          onFocus={(event) => {
+            setHideText(false);
+            onFocus?.(event);
+          }}
+          onBlur={() => {
+            setHideText(kind === 'password');
+            handleBlur();
+          }}
           inputProps={{
             ...inputProps,
             'aria-describedby': helperTextId,
