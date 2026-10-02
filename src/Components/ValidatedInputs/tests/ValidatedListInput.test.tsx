@@ -1,6 +1,6 @@
 import React, { type ComponentProps } from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import type { ValidationIssue, ValidationResult } from '@/store/slices/wizard';
 import {
@@ -9,6 +9,10 @@ import {
   keyboardWithWait,
   typeWithWait,
 } from '@/test/testUtils';
+import {
+  renderWithRedux,
+  type WizardStateOverrides,
+} from '@/test/testUtils/renderUtils';
 
 import { ValidatedListInput } from '../ValidatedListInput';
 
@@ -28,11 +32,16 @@ const validator = (values: string[]): ValidationResult => {
   return { errors };
 };
 
+const forceShowErrors: WizardStateOverrides = {
+  validation: { forceShowErrors: true, pendingInputs: [] },
+};
+
 const onAdd = vi.fn();
 const onRemove = vi.fn();
 
 const renderComponent = (
   props: Partial<ComponentProps<typeof ValidatedListInput>> = {},
+  wizardState: WizardStateOverrides = {},
 ) => {
   const defaultProps: ComponentProps<typeof ValidatedListInput> = {
     ariaLabel: 'Add kernel argument',
@@ -43,7 +52,10 @@ const renderComponent = (
     onRemove,
   };
 
-  return render(<ValidatedListInput {...defaultProps} {...props} />);
+  return renderWithRedux(
+    <ValidatedListInput {...defaultProps} {...props} />,
+    wizardState,
+  );
 };
 
 describe('ValidatedListInput', () => {
@@ -176,5 +188,75 @@ describe('ValidatedListInput', () => {
     expect(
       screen.getByPlaceholderText('Add kernel argument'),
     ).toHaveAccessibleDescription('Press Enter or click Add.');
+  });
+
+  test('does not show pending warning without forceShowErrors', async () => {
+    renderComponent({ hasPendingInput: true });
+    const user = createUser();
+
+    await typeWithWait(
+      user,
+      screen.getByPlaceholderText('Add kernel argument'),
+      'quiet',
+    );
+
+    expect(
+      screen.queryByText('Input contains a value that has not been added.'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('shows pending warning when forceShowErrors is true and input has a value', async () => {
+    renderComponent({ hasPendingInput: true }, forceShowErrors);
+    const user = createUser();
+
+    await typeWithWait(
+      user,
+      screen.getByPlaceholderText('Add kernel argument'),
+      'quiet',
+    );
+
+    expect(
+      screen.getByText('Input contains a value that has not been added.'),
+    ).toBeInTheDocument();
+  });
+
+  test('does not show pending warning when input is empty', () => {
+    renderComponent({ hasPendingInput: true }, forceShowErrors);
+
+    expect(
+      screen.queryByText('Input contains a value that has not been added.'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('shows errors instead of pending warning when both exist', async () => {
+    renderComponent({ hasPendingInput: true }, forceShowErrors);
+    const user = createUser();
+
+    await typeWithWait(
+      user,
+      screen.getByPlaceholderText('Add kernel argument'),
+      'BAD',
+    );
+    await clickWithWait(user, screen.getByRole('button', { name: 'Add' }));
+
+    expect(screen.getByText('Invalid value')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Input contains a value that has not been added.'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('does not show pending warning without hasPendingInput', async () => {
+    renderComponent({}, forceShowErrors);
+    const user = createUser();
+
+    await typeWithWait(
+      user,
+      screen.getByPlaceholderText('Add kernel argument'),
+      'quiet',
+    );
+
+    expect(
+      screen.queryByText('Input contains a value that has not been added.'),
+    ).not.toBeInTheDocument();
   });
 });

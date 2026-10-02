@@ -48,6 +48,7 @@ const ServicesInput = () => {
           onRemove={(value) => dispatch(removeEnabledService(value))}
           maxVisibleItems={8}
           helperText='These services are currently active and set to start automatically at boot.'
+          hasPendingInput
         />
       </FormGroup>
       <FormGroup isRequired={false} label='Disabled services'>
@@ -60,6 +61,7 @@ const ServicesInput = () => {
           onRemove={(value) => dispatch(removeDisabledService(value))}
           maxVisibleItems={8}
           helperText='These services are installed but will not start automatically at boot.'
+          hasPendingInput
         />
       </FormGroup>
       <FormGroup isRequired={false} label='Masked services'>
@@ -72,6 +74,7 @@ const ServicesInput = () => {
           onRemove={(value) => dispatch(removeMaskedService(value))}
           maxVisibleItems={8}
           helperText='These services are completely blocked from being started manually or automatically.'
+          hasPendingInput
         />
       </FormGroup>
     </>

@@ -28,6 +28,7 @@ const NtpServersInput = () => {
         onAdd={(value) => dispatch(addNtpServer(value))}
         onRemove={(value) => dispatch(removeNtpServer(value))}
         helperText='Specify NTP servers by hostname or IP address. Examples: server.example.com, 172.16.254.1.'
+        hasPendingInput
       />
     </FormGroup>
   );

@@ -1,4 +1,4 @@
-import React, { useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -12,7 +12,13 @@ import {
 } from '@patternfly/react-core/dist/esm';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
-import type { ValidationResult } from '@/store/slices/wizard';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addPendingInput,
+  removePendingInput,
+  selectForceShowErrors,
+  ValidationResult,
+} from '@/store/slices/wizard';
 import type { MergedListItem } from '@/Utilities/mergeListItems';
 
 import { ValidatedInputHelperText } from './ValidatedInputHelperText';
@@ -33,6 +39,7 @@ type ValidatedListInputProps = {
   hideAddLabel?: boolean;
   helperText?: string;
   addButtonAriaLabel?: string;
+  hasPendingInput?: boolean;
 };
 
 export const ValidatedListInput = ({
@@ -48,12 +55,26 @@ export const ValidatedListInput = ({
   hideAddLabel = false,
   helperText,
   addButtonAriaLabel = 'Add',
+  hasPendingInput = false,
 }: ValidatedListInputProps) => {
+  const dispatch = useAppDispatch();
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
+
   const [inputValue, setInputValue] = useState('');
   // The value from the last rejected add attempt. Errors are derived from it
   // against the current items, so removing a conflicting chip clears them.
   const [attemptedValue, setAttemptedValue] = useState<string | null>(null);
   const helperTextId = useId();
+
+  const hasPendingValue = !!inputValue.trim();
+
+  useEffect(() => {
+    if (!hasPendingInput || !hasPendingValue) return;
+    dispatch(addPendingInput(helperTextId));
+    return () => {
+      dispatch(removePendingInput(helperTextId));
+    };
+  }, [hasPendingInput, helperTextId, hasPendingValue, dispatch]);
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -113,16 +134,37 @@ export const ValidatedListInput = ({
 
   const allErrors = [...attemptErrors, ...storeIssues];
 
+  const showPendingWarning =
+    hasPendingInput &&
+    forceShowErrors &&
+    hasPendingValue &&
+    allErrors.length === 0;
+
+  const issues = showPendingWarning
+    ? [{ message: 'Input contains a value that has not been added.' }]
+    : allErrors;
+
   return (
-    <Flex flexWrap={{ default: 'nowrap' }}>
+    <Flex
+      flexWrap={{ default: 'nowrap' }}
+      data-pending-warning={showPendingWarning || undefined}
+    >
       <FlexItem grow={{ default: 'grow' }}>
-        <TextInputGroup validated={allErrors.length > 0 ? 'error' : 'default'}>
+        <TextInputGroup
+          validated={
+            allErrors.length > 0
+              ? 'error'
+              : showPendingWarning
+                ? 'warning'
+                : 'default'
+          }
+        >
           <TextInputGroupMain
             aria-label={ariaLabel}
             placeholder={placeholder}
             onChange={onTextInputChange}
             value={inputValue}
-            onKeyDown={(e) => handleKeyDown(e, inputValue)}
+            onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(e, inputValue)}
             inputProps={{
               'aria-describedby': helperTextId,
               'aria-invalid': allErrors.length > 0 || undefined,
@@ -163,8 +205,9 @@ export const ValidatedListInput = ({
           </TextInputGroupMain>
         </TextInputGroup>
         <ValidatedInputHelperText
-          errors={allErrors}
+          errors={issues}
           id={helperTextId}
+          variant={showPendingWarning ? 'warning' : 'error'}
           helperText={
             <>
               {helperText && `${helperText} `}
