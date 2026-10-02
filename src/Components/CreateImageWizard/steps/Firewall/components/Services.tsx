@@ -32,6 +32,7 @@ const Services = () => {
           }))}
           onAdd={(value) => dispatch(addEnabledFirewallService(value))}
           onRemove={(value) => dispatch(removeEnabledFirewallService(value))}
+          hasPendingInput
         />
       </FormGroup>
       <FormGroup label='Disabled services'>
@@ -45,6 +46,7 @@ const Services = () => {
           }))}
           onAdd={(value) => dispatch(addDisabledFirewallService(value))}
           onRemove={(value) => dispatch(removeDisabledFirewallService(value))}
+          hasPendingInput
         />
       </FormGroup>
     </>

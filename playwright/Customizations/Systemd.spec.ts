@@ -256,6 +256,10 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(
       frame.getByText('Service name must contain at least one letter'),
     ).toHaveCount(3);
+
+    await frame.getByPlaceholder('Add disabled service').clear();
+    await frame.getByPlaceholder('Add enabled service').clear();
+    await frame.getByPlaceholder('Add masked service').clear();
   });
 
   await test.step('Navigate to review', async () => {

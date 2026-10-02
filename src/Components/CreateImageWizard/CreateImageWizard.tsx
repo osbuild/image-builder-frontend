@@ -44,6 +44,7 @@ import {
   loadWizardState,
   parseStateFromRequest,
   selectDistribution,
+  selectHasPendingInputs,
   selectImageSource,
   selectImageSourceType,
   selectImageTypes,
@@ -155,6 +156,8 @@ const CreateImageWizard = () => {
   const usersValidation = useUsersValidation();
   const imagePullValidation = useImagePullValidation();
 
+  const hasPendingInputs = useAppSelector(selectHasPendingInputs);
+
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
@@ -190,6 +193,7 @@ const CreateImageWizard = () => {
   const advancedSettingsHasErrors =
     filesystemValidation.disabledNext ||
     systemErrors.length > 0 ||
+    hasPendingInputs ||
     (!restrictions.users.shouldHide && usersValidation.disabledNext) ||
     userErrors.length > 0;
 

@@ -36,6 +36,7 @@ const KernelArguments = () => {
         onAdd={(value) => dispatch(addKernelArg(value))}
         onRemove={(value) => dispatch(removeKernelArg(value))}
         helperText='Enter additional kernel boot parameters. Examples: nomodeset or console=ttyS0.'
+        hasPendingInput
       />
     </FormGroup>
   );

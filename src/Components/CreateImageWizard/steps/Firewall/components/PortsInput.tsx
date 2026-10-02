@@ -25,6 +25,7 @@ const PortsInput = () => {
         onAdd={(value) => dispatch(addPort(value))}
         onRemove={(value) => dispatch(removePort(value))}
         helperText='Examples: 8080:tcp, 443:udp.'
+        hasPendingInput
       />
     </FormGroup>
   );
