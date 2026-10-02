@@ -20,6 +20,8 @@ vi.mock('../getBlueprintSplits', () => ({ getBlueprintSplits: vi.fn() }));
 const root = '/state/cockpit-image-builder';
 const migrationMarker = '.single-target-migration-complete';
 const migrationMarkerPath = `${root}/${migrationMarker}`;
+const migrationLock = '.single-target-migration.lock';
+const migrationLockPath = `${root}/${migrationLock}`;
 const backupPath = '/state/cockpit-image-builder-backup-12345678';
 const backupTemplate = '/state/cockpit-image-builder-backup-XXXXXXXX';
 const sourceRequest = { image_type: 'aws', architecture: 'x86_64' };
@@ -42,6 +44,8 @@ const setup = () => {
   const operations: string[] = [];
   const writes = new Map<string, string>();
   let migrationComplete = false;
+  let migrationLockExists = false;
+  let lockReleaseFails = false;
   let markerWriteFails = false;
   vi.clearAllMocks();
   vi.mocked(getBlueprintsPath).mockResolvedValue(root);
@@ -93,13 +97,33 @@ const setup = () => {
   vi.mocked(cockpit.file).mockImplementation(
     (filePath: string) =>
       ({
-        replace: vi.fn(async (contents: string) => {
-          operations.push(`replace ${filePath}`);
-          if (filePath === migrationMarkerPath && markerWriteFails)
-            throw new Error('marker write failed');
-          writes.set(filePath, contents);
-          if (filePath === migrationMarkerPath) migrationComplete = true;
-        }),
+        replace: vi.fn(
+          async (contents: string | null, expectedTag?: string) => {
+            if (filePath === migrationLockPath && expectedTag === '-') {
+              operations.push(`lock ${filePath}`);
+              if (migrationLockExists)
+                throw Object.assign(new Error('change-conflict'), {
+                  problem: 'change-conflict',
+                });
+              migrationLockExists = true;
+              return 'lock-tag';
+            }
+            if (filePath === migrationLockPath && contents === null) {
+              operations.push(`unlock ${filePath}`);
+              if (lockReleaseFails) throw new Error('unlock failed');
+              migrationLockExists = false;
+              return '-';
+            }
+
+            operations.push(`replace ${filePath}`);
+            if (filePath === migrationMarkerPath && markerWriteFails)
+              throw new Error('marker write failed');
+            if (contents === null) writes.delete(filePath);
+            else writes.set(filePath, contents);
+            if (filePath === migrationMarkerPath) migrationComplete = true;
+            return 'tag';
+          },
+        ),
       }) as never,
   );
 
@@ -108,6 +132,12 @@ const setup = () => {
     writes,
     setMigrationComplete: () => {
       migrationComplete = true;
+    },
+    setMigrationLockExists: () => {
+      migrationLockExists = true;
+    },
+    failLockRelease: () => {
+      lockReleaseFails = true;
     },
     failMarkerWrites: () => {
       markerWriteFails = true;
@@ -130,6 +160,20 @@ describe('applyBlueprintSplits', () => {
     expect(cockpit.spawn).not.toHaveBeenCalled();
   });
 
+  it('does not run when another tab holds the migration lock', async () => {
+    const { operations, setMigrationLockExists } = setup();
+    setMigrationLockExists();
+
+    await expect(applyBlueprintSplits()).rejects.toMatchObject({
+      message: `A migration lock exists at ${migrationLockPath}. Wait for any other Cockpit tab to finish; if none is active, follow the recovery instructions before removing it.`,
+      stage: 'locked',
+    });
+
+    expect(operations).toEqual([`fsinfo ${root}`, `lock ${migrationLockPath}`]);
+    expect(getBlueprintSplits).not.toHaveBeenCalled();
+    expect(cockpit.spawn).not.toHaveBeenCalled();
+  });
+
   it('writes the marker when there are no blueprints to migrate', async () => {
     const { operations, writes } = setup();
     vi.mocked(getBlueprintSplits).mockImplementation(async () => {
@@ -141,8 +185,11 @@ describe('applyBlueprintSplits', () => {
 
     expect(operations).toEqual([
       `fsinfo ${root}`,
+      `lock ${migrationLockPath}`,
+      `fsinfo ${root}`,
       'plan',
       `replace ${migrationMarkerPath}`,
+      `unlock ${migrationLockPath}`,
     ]);
     expect(writes.get(migrationMarkerPath)).toBe('');
     expect(cockpit.spawn).not.toHaveBeenCalled();
@@ -159,12 +206,54 @@ describe('applyBlueprintSplits', () => {
     expect(writes.has(migrationMarkerPath)).toBe(false);
   });
 
+  it('ignores lock cleanup failure after writing the completion marker', async () => {
+    const { failLockRelease } = setup();
+    vi.mocked(getBlueprintSplits).mockResolvedValue({ splits: [] });
+    failLockRelease();
+
+    await expect(applyBlueprintSplits()).resolves.toBeUndefined();
+  });
+
+  it('reports lock cleanup failure when the completion marker is absent', async () => {
+    const { failLockRelease, failMarkerWrites } = setup();
+    vi.mocked(getBlueprintSplits).mockResolvedValue({ splits: [] });
+    failLockRelease();
+    failMarkerWrites();
+
+    await expect(applyBlueprintSplits()).rejects.toMatchObject({
+      stage: 'locked',
+      message: expect.stringContaining(
+        `Could not remove migration lock at ${migrationLockPath}`,
+      ),
+    });
+  });
+
+  it('preserves migration recovery details when lock cleanup also fails', async () => {
+    const { failLockRelease } = setup();
+    failLockRelease();
+    vi.mocked(cockpit.spawn).mockImplementation((args) => {
+      if (args[0] === 'cp')
+        return Promise.reject(new Error('backup failed')) as never;
+      return Promise.resolve(args[0] === 'mktemp' ? backupPath : '') as never;
+    });
+
+    await expect(applyBlueprintSplits()).rejects.toMatchObject({
+      stage: 'backup',
+      backupPath,
+      message: expect.stringContaining(
+        `Could not remove migration lock at ${migrationLockPath}`,
+      ),
+    });
+  });
+
   it('backs up affected directories after planning and before migration writes', async () => {
     const { operations, writes } = setup();
 
     await applyBlueprintSplits();
 
     expect(operations).toEqual([
+      `fsinfo ${root}`,
+      `lock ${migrationLockPath}`,
       `fsinfo ${root}`,
       'plan',
       `mktemp -d ${backupTemplate}`,
@@ -176,6 +265,7 @@ describe('applyBlueprintSplits', () => {
       `rm -f ${sourceComposePath}`,
       `replace ${migrationMarkerPath}`,
       `rm -rf -- ${backupPath}`,
+      `unlock ${migrationLockPath}`,
     ]);
     expect(writes.get(migrationMarkerPath)).toBe('');
     expect(JSON.parse(writes.get(childComposePath)!)).toEqual(composeRequest);
@@ -217,9 +307,12 @@ describe('applyBlueprintSplits', () => {
     expect(failure).toHaveProperty('backupPath', backupPath);
     expect(operations).toEqual([
       `fsinfo ${root}`,
+      `lock ${migrationLockPath}`,
+      `fsinfo ${root}`,
       'plan',
       `mktemp -d ${backupTemplate}`,
       `cp -a -- ${root}/source ${backupPath}`,
+      `unlock ${migrationLockPath}`,
     ]);
   });
 
@@ -239,8 +332,11 @@ describe('applyBlueprintSplits', () => {
     expect(failure).not.toHaveProperty('backupPath');
     expect(operations).toEqual([
       `fsinfo ${root}`,
+      `lock ${migrationLockPath}`,
+      `fsinfo ${root}`,
       'plan',
       `mktemp -d ${backupTemplate}`,
+      `unlock ${migrationLockPath}`,
     ]);
   });
 
@@ -254,7 +350,10 @@ describe('applyBlueprintSplits', () => {
     });
 
     await expect(applyBlueprintSplits()).resolves.toBeUndefined();
-    expect(operations[operations.length - 1]).toBe(`rm -rf -- ${backupPath}`);
+    expect(operations).toContain(`rm -rf -- ${backupPath}`);
+    expect(operations[operations.length - 1]).toBe(
+      `unlock ${migrationLockPath}`,
+    );
   });
 
   it('leaves source files untouched when staging a child compose fails', async () => {

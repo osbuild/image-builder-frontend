@@ -37,9 +37,31 @@ const SingleTargetMigrationGate = ({ children }: Props) => {
         role='alert'
         isFullHeight
         status='danger'
-        titleText='Blueprint migration failed'
+        titleText={
+          error.stage === 'locked'
+            ? 'Blueprint migration blocked'
+            : 'Blueprint migration failed'
+        }
       >
         <EmptyStateBody>
+          {error.stage === 'locked' && (
+            <>
+              <p>
+                A migration lock exists. Wait for any other Cockpit tab to
+                finish; if none is active, follow the recovery instructions
+                before removing it.
+              </p>
+              <p>
+                <a
+                  href='single-target-migration-recovery.md'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  Read the local recovery instructions
+                </a>
+              </p>
+            </>
+          )}
           {error.stage === 'planning' && (
             <p>
               Migration writes have not started. Correct the issue below, then

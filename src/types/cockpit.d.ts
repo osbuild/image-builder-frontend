@@ -12,7 +12,7 @@ declare module 'cockpit' {
   type FileHandle = {
     read(): Promise<string>;
     close(): void;
-    replace(contents: string): Promise<void>;
+    replace(contents: string | null, expectedTag?: string): Promise<string>;
     modify(callback: (contents: string) => string): Promise<string>;
   };
 
