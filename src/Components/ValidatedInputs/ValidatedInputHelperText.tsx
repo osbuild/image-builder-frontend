@@ -6,6 +6,7 @@ import type { ValidationIssue } from '@/store/slices/wizard';
 
 type ValidatedInputHelperTextProps = {
   errors: ValidationIssue[];
+  warnings?: ValidationIssue[];
   id?: string;
   helperText?: React.ReactNode;
   variant?: 'error' | 'warning' | 'default';
@@ -13,28 +14,50 @@ type ValidatedInputHelperTextProps = {
 
 export const ValidatedInputHelperText = ({
   errors,
+  warnings = [],
   id,
   helperText,
   variant = 'error',
 }: ValidatedInputHelperTextProps) => {
-  if (errors.length === 0 && !helperText) {
+  if (errors.length === 0 && warnings.length === 0 && !helperText) {
     return null;
   }
 
-  return (
-    <HelperText {...(id !== undefined ? { id } : {})}>
-      {errors.length > 0 ? (
-        errors.map((issue, index) => (
+  const helperId = id !== undefined ? { id } : {};
+
+  if (errors.length > 0) {
+    return (
+      <HelperText {...helperId}>
+        {errors.map((issue, index) => (
           <HelperTextItem
             key={`${issue.value ?? ''}-${issue.message}-${index}`}
             variant={variant}
           >
             {issue.message}
           </HelperTextItem>
-        ))
-      ) : (
-        <HelperTextItem>{helperText}</HelperTextItem>
-      )}
+        ))}
+      </HelperText>
+    );
+  }
+
+  if (warnings.length > 0) {
+    return (
+      <HelperText {...helperId}>
+        {warnings.map((issue, index) => (
+          <HelperTextItem
+            key={`${issue.value ?? ''}-${issue.message}-${index}`}
+            variant={'warning'}
+          >
+            {issue.message}
+          </HelperTextItem>
+        ))}
+      </HelperText>
+    );
+  }
+
+  return (
+    <HelperText {...helperId}>
+      <HelperTextItem>{helperText}</HelperTextItem>
     </HelperText>
   );
 };

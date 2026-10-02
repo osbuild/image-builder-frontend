@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -61,7 +61,9 @@ export const ValidatedListInput = ({
   const [inputValue, setInputValue] = useState('');
   // The value from the last rejected add attempt. Errors are derived from it
   // against the current items, so removing a conflicting chip clears them.
-  const [attemptedValue, setAttemptedValue] = useState<string | null>(null);
+  const [attemptedValue, setAttemptedValue] = useState<string | undefined>(
+    undefined,
+  );
   const helperTextId = useId();
 
   const hasPendingValue = !!inputValue.trim();
@@ -79,10 +81,44 @@ export const ValidatedListInput = ({
     value: string,
   ) => {
     setInputValue(value);
-    setAttemptedValue(null);
+    setAttemptedValue(undefined);
   };
 
-  const allValues = useMemo(() => items.map((item) => item.value), [items]);
+  const validate = useCallback(
+    (attempt?: string | undefined) => {
+      const values = items.map((item) => item.value);
+      if (attempt) {
+        values.push(attempt);
+      }
+
+      return validator(values);
+    },
+    [items, validator],
+  );
+
+  const { errors, warnings, pending } = useMemo(() => {
+    const result = validate(attemptedValue);
+    const warnings = result.warnings ?? [];
+
+    if (forceShowErrors && hasPendingValue && result.errors.length === 0) {
+      return {
+        errors: [],
+        warnings: [
+          ...warnings,
+          {
+            message: 'Input contains a value that has not been added.',
+          },
+        ],
+        pending: true,
+      };
+    }
+
+    return {
+      errors: result.errors,
+      warnings,
+      pending: false,
+    };
+  }, [validate, attemptedValue, hasPendingValue, forceShowErrors]);
 
   const addItem = (value: string) => {
     const trimmed = value.trim();
@@ -93,7 +129,7 @@ export const ValidatedListInput = ({
     // Only block the add when the new value itself is the problem (bad
     // format or a duplicate). Pre-existing invalid items in the store must
     // not prevent the user from adding otherwise-valid input.
-    const newValueIssues = validator([...allValues, trimmed]).errors.filter(
+    const newValueIssues = validate(trimmed).errors.filter(
       (issue) => issue.value === trimmed,
     );
     if (newValueIssues.length > 0) {
@@ -103,7 +139,7 @@ export const ValidatedListInput = ({
 
     onAdd(trimmed);
     setInputValue('');
-    setAttemptedValue(null);
+    setAttemptedValue(undefined);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
@@ -113,47 +149,22 @@ export const ValidatedListInput = ({
     }
   };
 
-  // Errors attributable to the last rejected add attempt only.
-  const attemptErrors = useMemo(
-    () =>
-      attemptedValue !== null
-        ? validator([...allValues, attemptedValue]).errors.filter(
-            (issue) => issue.value === attemptedValue,
-          )
-        : [],
-    [attemptedValue, allValues, validator],
-  );
+  let validated: 'default' | 'warning' | 'error' = 'default';
+  if (warnings.length > 0) {
+    validated = 'warning';
+  }
 
-  // Validate items already in the store (e.g. loaded from a blueprint).
-  const storeIssues = useMemo(
-    () => (allValues.length > 0 ? validator(allValues).errors : []),
-    [allValues, validator],
-  );
-
-  const allErrors = [...attemptErrors, ...storeIssues];
-
-  const showPendingWarning =
-    forceShowErrors && hasPendingValue && allErrors.length === 0;
-
-  const issues = showPendingWarning
-    ? [{ message: 'Input contains a value that has not been added.' }]
-    : allErrors;
+  if (errors.length > 0) {
+    validated = 'error';
+  }
 
   return (
     <Flex
       flexWrap={{ default: 'nowrap' }}
-      data-pending-warning={showPendingWarning || undefined}
+      data-pending-warning={pending || undefined}
     >
       <FlexItem grow={{ default: 'grow' }}>
-        <TextInputGroup
-          validated={
-            allErrors.length > 0
-              ? 'error'
-              : showPendingWarning
-                ? 'warning'
-                : 'default'
-          }
-        >
+        <TextInputGroup validated={validated}>
           <TextInputGroupMain
             aria-label={ariaLabel}
             placeholder={placeholder}
@@ -162,7 +173,7 @@ export const ValidatedListInput = ({
             onKeyDown={(e: React.KeyboardEvent) => handleKeyDown(e, inputValue)}
             inputProps={{
               'aria-describedby': helperTextId,
-              'aria-invalid': allErrors.length > 0 || undefined,
+              'aria-invalid': errors.length > 0 || undefined,
             }}
           >
             {items.length > 0 && (
@@ -200,9 +211,10 @@ export const ValidatedListInput = ({
           </TextInputGroupMain>
         </TextInputGroup>
         <ValidatedInputHelperText
-          errors={issues}
+          errors={errors}
+          warnings={warnings}
           id={helperTextId}
-          variant={showPendingWarning ? 'warning' : 'error'}
+          variant={validated}
           helperText={
             <>
               {helperText && `${helperText} `}
