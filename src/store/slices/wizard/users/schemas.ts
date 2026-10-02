@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { MAX_REGULAR_GID, MIN_REGULAR_GID } from './constants';
+import { MAX_REGULAR_GID, MIN_REGULAR_GID, SYSTEM_GROUPS } from './constants';
 
 import { uniqueArray, uniqueBy } from '../utilities';
 
@@ -143,6 +143,46 @@ export const userSchema = z
 export const userListSchema = z
   .array(userSchema)
   .superRefine(uniqueBy('user names', 'name', (user) => user.name));
+
+export const userWarningSchema = z.object({
+  name: z.string().optional(),
+  password: z.string().optional(),
+  sshKey: z.string().optional(),
+  hasPassword: z.boolean(),
+  groups: z.array(z.string()),
+});
+
+// This is a cross-slice schema so we can validate
+// user groups on the user field level against the
+// list of known groups in the store + `wheel`
+export const usersSliceWarningSchema = z
+  .object({
+    users: z.array(userWarningSchema),
+    groups: groupListWarningsSchema,
+  })
+  .superRefine((slice, ctx) => {
+    const knownGroups = [
+      ...SYSTEM_GROUPS,
+      ...slice.groups.map((group) => group.name),
+    ];
+
+    for (const [index, user] of slice.users.entries()) {
+      const unknownGroups = user.groups.filter(
+        (group) => !knownGroups.includes(group),
+      );
+
+      if (unknownGroups.length > 0) {
+        ctx.addIssue({
+          code: 'custom',
+          // NOTE: we are just returning the user index here to make
+          // essentially, this is a user validation but we are checking
+          // the user group lists against the list of known groups
+          path: [index, 'groups'],
+          message: `User assigned to undefined group(s): ${unknownGroups.join(', ')}. Ensure these groups exist on the system through a package or define them in the 'Groups' section above.`,
+        });
+      }
+    }
+  });
 
 export const usersSliceSchema = z.object({
   users: userListSchema,
