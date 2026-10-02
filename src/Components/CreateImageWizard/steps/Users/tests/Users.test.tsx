@@ -148,6 +148,39 @@ describe('Users Component', () => {
     });
   });
 
+  describe('Validation', () => {
+    test('shows duplicate-name and password errors together', () => {
+      renderWithRedux(<UsersStep />, {
+        users: {
+          ...initialState.users,
+          users: [
+            {
+              name: 'sameuser',
+              password: '',
+              ssh_key: '',
+              groups: [],
+              hasPassword: false,
+            },
+            {
+              name: 'sameuser',
+              password: 'short',
+              ssh_key: '',
+              groups: [],
+              hasPassword: false,
+            },
+          ],
+        },
+      });
+
+      expect(
+        screen.getByText('Duplicate user names: sameuser'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Password must contain at least 6 characters'),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe('Password guidance', () => {
     test('shows plain text warning and openssl hint on-prem', async () => {
       renderWithRedux(

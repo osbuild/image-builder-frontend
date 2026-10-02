@@ -4,18 +4,22 @@ import { Button, Checkbox } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import LabelInput from '@/Components/CreateImageWizard/LabelInput';
-import { PasswordValidatedInput } from '@/Components/CreateImageWizard/utilities/PasswordValidatedInput';
-import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
-import { upsertUser, User } from '@/store/slices/wizard';
+import {
+  ValidatedListInput,
+  ValidatedTextInput,
+} from '@/Components/ValidatedInputs';
+import {
+  User,
+  validateUserInput,
+  ValidationResult,
+} from '@/store/slices/wizard';
 
 import { emptyUser } from './constants';
 
 type UserRowProps = {
   user: User | undefined;
   index: number;
+  validator: (candidate: User) => ValidationResult<User[]>;
   onUpdate: (user?: Partial<User> | undefined) => void;
   onRemove: () => void;
   isRemoveDisabled: boolean;
@@ -40,20 +44,12 @@ const createDraft = (user?: User): UserDraft => ({
 const UserRow = ({
   user,
   index,
+  validator,
   onUpdate,
   onRemove,
   isRemoveDisabled,
 }: UserRowProps) => {
   const [draft, setDraft] = useState<UserDraft>(() => createDraft(user));
-  const stepValidation = useUsersValidation();
-  const getValidationByIndex = (idx: number) => {
-    const errors =
-      idx in stepValidation.errors ? stepValidation.errors[idx] : {};
-    return {
-      errors,
-      disabledNext: stepValidation.disabledNext,
-    };
-  };
 
   useEffect(() => {
     // Reset local drafts when the committed user changes externally.
@@ -77,74 +73,87 @@ const UserRow = ({
     onUpdate({ groups });
   };
 
+  const validateUser = (
+    field: 'name' | 'password' | 'ssh_key' | 'groups',
+    groups: string[] = draft.groups,
+  ) => {
+    const candidate = { ...draft, groups };
+    const parsed = validateUserInput(candidate);
+    const { errors, warnings } = validator(candidate);
+
+    return {
+      data: parsed.data,
+      errors: errors.filter(
+        (issue) => issue.path?.[0] === index && issue.path[1] === field,
+      ),
+      warnings: (warnings ?? []).filter(
+        (issue) => issue.path?.[0] === index && issue.path[1] === field,
+      ),
+    };
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.currentTarget.blur();
+    }
+  };
+
   return (
     <>
       <Tr resetOffset>
         <Td>
-          <ValidatedInputAndTextArea
+          <ValidatedTextInput
             ariaLabel='blueprint user name'
             value={draft.name}
             placeholder='Set username'
-            onChange={(_, name) => {
-              setDraft({ ...draft, name });
-              onUpdate({ name });
-            }}
-            stepValidation={getValidationByIndex(index)}
-            fieldName='userName'
-            forceErrorDisplay={true}
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, name) => setDraft({ ...draft, name })}
+            validator={() => validateUser('name')}
+            onCommit={(candidate) => onUpdate(candidate)}
           />
         </Td>
         <Td>
-          <PasswordValidatedInput
+          <ValidatedTextInput
             value={draft.password}
             ariaLabel='blueprint user password'
-            placeholder='Set password'
-            onChange={(_, password) => {
-              setDraft({ ...draft, password });
-              onUpdate({ password });
-            }}
-            hasPassword={draft.hasPassword}
+            placeholder={draft.hasPassword ? '●'.repeat(8) : 'Set password'}
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, password) => setDraft({ ...draft, password })}
+            validator={() => validateUser('password')}
+            onCommit={(candidate) => onUpdate(candidate)}
+            kind='password'
           />
         </Td>
         <Td>
-          <ValidatedInputAndTextArea
+          <ValidatedTextInput
             ariaLabel='public SSH key'
             value={draft.ssh_key}
-            type={'text'}
-            onChange={(_, ssh_key) => {
-              setDraft({ ...draft, ssh_key });
-              onUpdate({ ssh_key });
-            }}
             placeholder='Paste SSH key here'
-            stepValidation={getValidationByIndex(index)}
-            fieldName='userSshKey'
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, ssh_key) => setDraft({ ...draft, ssh_key })}
+            validator={() => validateUser('ssh_key')}
+            onCommit={(candidate) => onUpdate(candidate)}
           />
         </Td>
         <Td>
-          <LabelInput
+          <ValidatedListInput
             ariaLabel='Add user group'
             placeholder='Add user group'
-            validator={isUserGroupValid}
-            list={draft.groups}
-            item='Group'
-            addAction={(value) => {
+            items={draft.groups.map((value) => ({ required: false, value }))}
+            validator={(candidate) => validateUser('groups', candidate)}
+            onAdd={(value) => {
               const groups = [...draft.groups, value];
               setDraft({ ...draft, groups });
-              return upsertUser({
-                index,
-                user: { ...draft, groups },
-              });
+              onUpdate({ groups });
             }}
-            removeAction={(value) => {
+            onRemove={(value) => {
               const groups = draft.groups.filter((group) => group !== value);
               setDraft({ ...draft, groups });
-              return upsertUser({
-                index,
-                user: { ...draft, groups },
+              onUpdate({
+                groups,
               });
             }}
-            stepValidation={getValidationByIndex(index)}
-            fieldName='groups'
             truncateLength={12}
             isCompact
             hideAddLabel
@@ -153,7 +162,7 @@ const UserRow = ({
         <Td>
           <Checkbox
             isChecked={draft.groups.includes('wheel')}
-            onChange={(_e, value) => handleCheckboxChange(_e, value)}
+            onChange={handleCheckboxChange}
             aria-label='Administrator'
             id={`${draft.name}-${index}`}
             name='user Administrator'
