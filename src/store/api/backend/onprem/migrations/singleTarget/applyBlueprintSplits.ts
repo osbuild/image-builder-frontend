@@ -9,6 +9,22 @@ import { getBlueprintSplits } from './getBlueprintSplits';
 import type { BlueprintMigrationError, BlueprintMigrationStage } from './types';
 
 const migrationMarker = '.single-target-migration-complete';
+const migrationLock = '.single-target-migration.lock';
+
+const hasMigrationMarker = async (blueprintsDir: string) => {
+  const directory = await fsinfo(blueprintsDir, ['entries', 'type']);
+  if (!directory.entries) throw new Error('Could not list blueprints');
+  return (
+    migrationMarker in directory.entries &&
+    directory.entries[migrationMarker].type === 'reg'
+  );
+};
+
+const isChangeConflict = (reason: unknown) =>
+  typeof reason === 'object' &&
+  reason !== null &&
+  'problem' in reason &&
+  reason.problem === 'change-conflict';
 
 const asMigrationError = (
   reason: unknown,
@@ -28,21 +44,7 @@ const markMigrationComplete = async (blueprintsDir: string) => {
   }
 };
 
-export const applyBlueprintSplits = async () => {
-  let blueprintsDir: string;
-  try {
-    blueprintsDir = await getBlueprintsPath();
-    const directory = await fsinfo(blueprintsDir, ['entries', 'type']);
-    if (!directory.entries) throw new Error('Could not list blueprints');
-    if (
-      migrationMarker in directory.entries &&
-      directory.entries[migrationMarker].type === 'reg'
-    )
-      return;
-  } catch (reason) {
-    throw asMigrationError(reason, 'planning');
-  }
-
+const migrateBlueprintSplits = async (blueprintsDir: string) => {
   let result: Awaited<ReturnType<typeof getBlueprintSplits>>;
   try {
     result = await getBlueprintSplits();
@@ -137,5 +139,46 @@ export const applyBlueprintSplits = async () => {
     }
   } catch (reason) {
     throw asMigrationError(reason, 'migration', backupPath);
+  }
+};
+
+export const applyBlueprintSplits = async () => {
+  let blueprintsDir: string;
+  try {
+    blueprintsDir = await getBlueprintsPath();
+    if (await hasMigrationMarker(blueprintsDir)) return;
+  } catch (reason) {
+    throw asMigrationError(reason, 'planning');
+  }
+
+  const lockFile = cockpit.file(path.join(blueprintsDir, migrationLock));
+  try {
+    await lockFile.replace('', '-');
+  } catch (reason) {
+    if (isChangeConflict(reason)) {
+      throw asMigrationError(
+        new Error(
+          'A blueprint migration is already running in another Cockpit tab. Wait for it to finish, then reload Cockpit.',
+        ),
+        'locked',
+      );
+    }
+    throw asMigrationError(reason, 'planning');
+  }
+
+  try {
+    try {
+      if (await hasMigrationMarker(blueprintsDir)) return;
+    } catch (reason) {
+      throw asMigrationError(reason, 'planning');
+    }
+
+    await migrateBlueprintSplits(blueprintsDir);
+  } finally {
+    try {
+      await lockFile.replace(null);
+    } catch {
+      // ponytail: a crash can leave a stale lock; remove it manually after recovery.
+    }
   }
 };

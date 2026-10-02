@@ -37,9 +37,19 @@ const SingleTargetMigrationGate = ({ children }: Props) => {
         role='alert'
         isFullHeight
         status='danger'
-        titleText='Blueprint migration failed'
+        titleText={
+          error.stage === 'locked'
+            ? 'Blueprint migration already running'
+            : 'Blueprint migration failed'
+        }
       >
         <EmptyStateBody>
+          {error.stage === 'locked' && (
+            <p>
+              Another Cockpit tab is migrating blueprints. Wait for it to
+              finish, then reload Cockpit.
+            </p>
+          )}
           {error.stage === 'planning' && (
             <p>
               Migration writes have not started. Correct the issue below, then

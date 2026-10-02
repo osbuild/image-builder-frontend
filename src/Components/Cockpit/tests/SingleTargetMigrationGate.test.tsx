@@ -44,6 +44,30 @@ describe('SingleTargetMigrationGate', () => {
     expect(screen.getByText('Blueprint list')).toBeInTheDocument();
   });
 
+  it('blocks the app while another tab is migrating', async () => {
+    vi.mocked(applyBlueprintSplits).mockRejectedValue(
+      Object.assign(new Error('Migration already running'), {
+        stage: 'locked',
+      }),
+    );
+
+    render(
+      <SingleTargetMigrationGate>
+        <div>Blueprint list</div>
+      </SingleTargetMigrationGate>,
+    );
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Blueprint migration already running',
+    );
+    expect(
+      screen.getByText(
+        'Another Cockpit tab is migrating blueprints. Wait for it to finish, then reload Cockpit.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Blueprint list')).not.toBeInTheDocument();
+  });
+
   it('explains that planning failures happen before migration writes', async () => {
     vi.mocked(applyBlueprintSplits).mockRejectedValue(
       Object.assign(new Error('duplicate-target'), { stage: 'planning' }),
