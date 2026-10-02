@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 import {
-  SYSTEM_GROUPS,
   UNDEFINED_GROUPS_WARNING_KEY,
   UNIQUE_VALIDATION_DELAY,
 } from '@/constants';
@@ -59,6 +58,7 @@ import {
   selectUserGroups,
   selectUsers,
   selectUsersSlice,
+  SYSTEM_GROUPS,
   User,
   validateSystemSlice,
   validateUsersSlice,
