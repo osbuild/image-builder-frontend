@@ -109,6 +109,7 @@ test('Create a blueprint with Firewall customization', async ({
         'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
       ),
     ).toBeVisible();
+    await frame.getByPlaceholder('Enter port').clear();
   });
 
   await test.step('Select and incorrectly fill the enabled services in Firewall step', async () => {
@@ -117,6 +118,7 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(
       frame.getByText('Service name must contain at least one letter'),
     ).toBeVisible();
+    await frame.getByLabel('Add enabled firewall service').clear();
   });
 
   await test.step('Select and incorrectly fill the disabled services in Firewall step', async () => {
@@ -127,6 +129,7 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(
       frame.getByText('Service name must not contain consecutive hyphens'),
     ).toBeVisible();
+    await frame.getByLabel('Add disabled firewall service').clear();
   });
 
   await test.step('Create BP and verify firewall payload', async () => {

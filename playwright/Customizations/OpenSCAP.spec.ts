@@ -125,6 +125,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(frame.getByText('autofs')).toBeVisible();
     await expect(frame.getByText('bluetooth')).toBeVisible();
     await expect(frame.getByText('nftables').last()).toBeVisible();
+    await frame.getByPlaceholder('Add masked service').clear();
     await frame.getByRole('button', { name: 'Review image' }).click();
   });
 
@@ -189,6 +190,7 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await expect(frame.getByText('autofs')).toBeVisible();
     await expect(frame.getByText('bluetooth')).toBeVisible();
     await expect(frame.getByText('nftables').last()).toBeVisible();
+    await frame.getByPlaceholder('Add masked service').clear();
     await frame.getByRole('button', { name: 'Review image' }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })

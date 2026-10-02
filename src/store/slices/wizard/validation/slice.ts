@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { initialState } from './state';
 
@@ -14,6 +14,17 @@ export const validationSlice = createSlice({
     resetForceShowErrors: (state) => {
       state.forceShowErrors = false;
     },
+    addPendingInput: (state, action: PayloadAction<string>) => {
+      if (!state.pendingInputs.includes(action.payload)) {
+        state.pendingInputs.push(action.payload);
+      }
+    },
+    removePendingInput: (state, action: PayloadAction<string>) => {
+      const index = state.pendingInputs.indexOf(action.payload);
+      if (index !== -1) {
+        state.pendingInputs.splice(index, 1);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -27,5 +38,9 @@ export const validationSlice = createSlice({
   },
 });
 
-export const { setForceShowErrors, resetForceShowErrors } =
-  validationSlice.actions;
+export const {
+  setForceShowErrors,
+  resetForceShowErrors,
+  addPendingInput,
+  removePendingInput,
+} = validationSlice.actions;
