@@ -32,10 +32,7 @@ import {
   selectForceShowErrors,
   selectImageTypes,
   selectIsImageMode,
-  selectIsOnlyNetworkInstallerSelected,
   selectIsoPayloadReference,
-  selectIsOtherEnvironmentSelected,
-  selectUseSingleTarget,
 } from '@/store/slices/wizard';
 
 import Aws from './Aws';
@@ -79,13 +76,6 @@ const TargetEnvironment = () => {
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
   const isImageMode = useAppSelector(selectIsImageMode);
-  const isOnlyNetworkInstallerSelected = useAppSelector(
-    selectIsOnlyNetworkInstallerSelected,
-  );
-  const isOtherEnvironmentSelected = useAppSelector(
-    selectIsOtherEnvironmentSelected,
-  );
-  const useSingleTarget = useAppSelector(selectUseSingleTarget);
   const forceShowErrors = useAppSelector(selectForceShowErrors);
 
   const { restrictions } = useCustomizationRestrictions({
@@ -211,16 +201,12 @@ const TargetEnvironment = () => {
       label={<span className='pf-v6-u-font-size-md'>Target environments</span>}
       fieldId='target-environments'
     >
-      <Content component='small'>
-        {isImageMode || useSingleTarget
-          ? 'Select a target environment.'
-          : 'Select one or more target environments.'}
-      </Content>
+      <Content component='small'>Select a target environment.</Content>
       {forceShowErrors && environments.length === 0 && (
         <FormHelperText>
           <HelperText>
             <HelperTextItem variant='error'>
-              Select at least one target environment.
+              Select a target environment.
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
@@ -239,7 +225,6 @@ const TargetEnvironment = () => {
               environment='aws'
               label='Amazon Web Services'
               ariaLabel='Amazon Web Services'
-              isDisabled={isOnlyNetworkInstallerSelected}
               body={<Aws />}
             />
           )}
@@ -248,7 +233,6 @@ const TargetEnvironment = () => {
               environment='gcp'
               label='Google Cloud'
               ariaLabel='Google Cloud'
-              isDisabled={isOnlyNetworkInstallerSelected}
               body={<Gcp />}
             />
           )}
@@ -257,7 +241,6 @@ const TargetEnvironment = () => {
               environment='azure'
               label='Microsoft Azure'
               ariaLabel='Microsoft Azure'
-              isDisabled={isOnlyNetworkInstallerSelected}
               body={<Azure />}
             />
           )}
@@ -266,7 +249,6 @@ const TargetEnvironment = () => {
               environment='oci'
               label='Oracle Cloud Infrastructure'
               ariaLabel='Oracle Cloud Infrastructure'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
         </FormGroup>
@@ -289,7 +271,6 @@ const TargetEnvironment = () => {
                 'An OVA file is a virtual appliance used by virtualization platforms such as VMware vSphere. It is a package that contains files used to describe a virtual machine, which includes a VMDK image, OVF descriptor file and a manifest file.',
               )}
               ariaLabel='VMware vSphere OVA'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
           {privateClouds.includes('vsphere') && (
@@ -301,7 +282,6 @@ const TargetEnvironment = () => {
                 'A VMDK file is a virtual disk that stores the contents of a virtual machine. This disk has to be imported into vSphere using govc import.vmdk, use the OVA version when using the vSphere UI.',
               )}
               ariaLabel='VMware vSphere VMDK'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
         </FormGroup>
@@ -328,7 +308,6 @@ const TargetEnvironment = () => {
                 'A deployment-ready virtual disk format used by Openshift Virtualization and libvirt. It allows for efficient storage usage by only writing the changes made to the disk image rather than the entire image, ensuring the file only consumes physical storage as data is written.',
               )}
               ariaLabel='Virtualization guest image'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
           {miscFormats.includes('image-installer') && (
@@ -340,7 +319,6 @@ const TargetEnvironment = () => {
                 'This is a standard bootable image used to install RHEL directly onto physical hardware or "bare metal" servers. It contains the necessary installer and kernel to initialize a system from scratch, ensuring the OS is configured correctly for your specific hardware environment.',
               )}
               ariaLabel='Bare metal installer'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
           {miscFormats.includes('bootable-container-iso') && isImageMode && (
@@ -356,12 +334,9 @@ const TargetEnvironment = () => {
               label={createLabelWithTooltip(
                 'Network',
                 'Installer (.iso)',
-                isOtherEnvironmentSelected
-                  ? 'Network installer cannot be combined with other image types'
-                  : 'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
+                'This is a lightweight image that differs from a standard "full" ISO by requiring an active network connection to pull the latest software directly from package repositories, as no OS packages are stored locally on the image.',
               )}
               ariaLabel='Network installer'
-              isDisabled={isOtherEnvironmentSelected}
             />
           )}
           {miscFormats.includes('pxe-tar-xz') && (
@@ -373,7 +348,6 @@ const TargetEnvironment = () => {
                 'A PXE boot image is a compressed archive containing the kernel, initramfs, and root filesystem needed to boot a system over the network using the Preboot Execution Environment (PXE) protocol.',
               )}
               ariaLabel='PXE boot image'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
           {miscFormats.includes('wsl') && (
@@ -385,13 +359,12 @@ const TargetEnvironment = () => {
                 "RHEL on Microsoft's Windows Subsystem for Linux (WSL) can be used for development and learning use cases. WSL is supported by Red Hat under the Validated Software Pattern and Third Party Component Support Policy, which does not include production use cases.",
               )}
               ariaLabel='Windows Subsystem for Linux'
-              isDisabled={isOnlyNetworkInstallerSelected}
             />
           )}
         </FormGroup>
       )}
 
-      {isOnlyNetworkInstallerSelected && !useSingleTarget && !isImageMode && (
+      {environments.includes('network-installer') && !isImageMode && (
         <Alert
           variant='info'
           className='pf-v6-u-mt-lg'
@@ -402,9 +375,6 @@ const TargetEnvironment = () => {
           <Content>
             This image type requires specific, minimal configuration for remote
             installation, so most customization options are restricted.
-          </Content>
-          <Content>
-            To select a different target, first deselect network installer.
           </Content>
         </Alert>
       )}
