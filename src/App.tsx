@@ -10,15 +10,10 @@ import { useAppDispatch } from './store/hooks';
 import { changeOrgId } from './store/slices/wizard';
 
 const AppContent = () => {
-  const { auth, hideGlobalFilter, updateDocumentTitle } = useChrome();
+  const { auth } = useChrome();
   const dispatch = useAppDispatch();
   const addNotification = useAddNotification();
   const getUser = auth.getUser;
-
-  useEffect(() => {
-    updateDocumentTitle('Images');
-    hideGlobalFilter(true);
-  }, [hideGlobalFilter, updateDocumentTitle]);
 
   useEffect(() => {
     // the org id never changes, let's just get
