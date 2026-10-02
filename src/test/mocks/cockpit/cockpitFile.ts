@@ -44,12 +44,13 @@ export const cockpitFile = (filepath: string, _options?: object) => {
       return readCompose(file.name);
     },
     close: () => {},
-    replace: (contents: string) => {
+    replace: async (contents: string | null, _expectedTag?: string) => {
       const file = path.parse(filepath);
       const dir = path.parse(file.dir);
-      if (file.name === dir.name) {
+      if (contents !== null && file.name === dir.name) {
         lastRequest.blueprints.push(contents);
       }
+      return '';
     },
     modify: (callback: (contents: string) => string): Promise<string> => {
       return new Promise((resolve) => {

@@ -3,7 +3,8 @@ import type {
   ComposerCreateBlueprintRequest,
 } from '../../types';
 
-export type BlueprintMigrationStage = 'planning' | 'backup' | 'migration';
+export type BlueprintMigrationStage =
+  'planning' | 'backup' | 'migration' | 'locked';
 
 export type BlueprintMigrationError = Error & {
   stage: BlueprintMigrationStage;
