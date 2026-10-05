@@ -1,8 +1,7 @@
 import test, { expect, Page } from '@playwright/test';
-
-import { getAuthHeaders } from '../../helpers/apiHelpers';
-import { closePopupsIfExist, sleep } from '../../helpers/helpers';
-import { retry } from '../../helpers/navHelpers';
+import { getAuthHeaders } from '@pw/helpers/apiHelpers';
+import { closePopupsIfExist, sleep } from '@pw/helpers/helpers';
+import { retry } from '@pw/helpers/navHelpers';
 
 /**
  * Delete the repository with the given name

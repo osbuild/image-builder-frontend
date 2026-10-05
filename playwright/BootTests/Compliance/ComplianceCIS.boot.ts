@@ -1,21 +1,21 @@
 import { expect } from '@playwright/test';
-
-import { deleteCompliancePolicy, navigateToCompliance } from './helpers';
-
-import { test } from '../../fixtures/customizations';
-import { isHosted } from '../../helpers/helpers';
-import { login } from '../../helpers/login';
+import { test } from '@pw/fixtures/customizations';
+import { isHosted } from '@pw/helpers/helpers';
+import { login } from '@pw/helpers/login';
 import {
   fillInImageOutput,
   ibFrame,
   navigateToLandingPage,
-} from '../../helpers/navHelpers';
+} from '@pw/helpers/navHelpers';
 import {
   createBlueprint,
   deleteBlueprint,
   fillInDetails,
   openWizard,
-} from '../../helpers/wizardHelpers';
+} from '@pw/helpers/wizardHelpers';
+
+import { deleteCompliancePolicy, navigateToCompliance } from './helpers';
+
 import { AwsWrapper } from '../helpers/AwsWrapper';
 import { buildImage } from '../helpers/imageBuilding';
 

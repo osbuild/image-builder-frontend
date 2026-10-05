@@ -3,7 +3,8 @@ import * as path from 'path';
 
 import { expect } from '@playwright/test';
 
-import { isRhel } from '../../src/store/slices/wizard';
+import { isRhel } from '@/store/slices/wizard';
+
 import { test } from '../fixtures/customizations';
 import {
   getHostDistroKey,

@@ -2,7 +2,7 @@ import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { expect } from '@playwright/test';
-import { exportedPackagesBP } from 'playwright/fixtures/data/exportBlueprintContents';
+import { exportedPackagesBP } from '@pw/fixtures/data/exportBlueprintContents';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
