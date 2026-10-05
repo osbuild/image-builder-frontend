@@ -90,36 +90,6 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
-export const isUserNameValid = (userName: string) => {
-  const isLengthValid = userName.length <= 32;
-  const isNotNumericOnly = !/^\d+$/.test(userName);
-  const isPatternValid = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9_$]$/.test(
-    userName,
-  );
-
-  return isLengthValid && isNotNumericOnly && isPatternValid;
-};
-
-export const isUserGroupValid = (group: string) => {
-  // see `man groupadd` for the exact specification
-  return (
-    group.length <= 32 &&
-    /^[a-zA-Z0-9_][a-zA-Z0-9_-]*(\$)?$/.test(group) &&
-    /[a-zA-Z]+/.test(group) // contains at least one letter
-  );
-};
-
-export const isSshKeyValid = (sshKey: string) => {
-  // 1. Key types: ssh-rsa, ssh-dss, ssh-ed25519, or ecdsa-sha2-nistp(256|384|521).
-  // 2. Base64-encoded key material.
-  // 3. Optional comment at the end.
-  const isPatternValid =
-    /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+/=]+(\s+\S.*)?$/.test(
-      sshKey,
-    );
-  return isPatternValid;
-};
-
 export const getDuplicateMountPoints = (
   partitions: FilesystemPartition[] | DiskPartition[],
 ): string[] => {
