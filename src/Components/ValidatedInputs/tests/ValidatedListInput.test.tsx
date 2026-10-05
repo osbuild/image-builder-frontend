@@ -191,7 +191,7 @@ describe('ValidatedListInput', () => {
   });
 
   test('does not show pending warning without forceShowErrors', async () => {
-    renderComponent({ hasPendingInput: true });
+    renderComponent({});
     const user = createUser();
 
     await typeWithWait(
@@ -206,7 +206,7 @@ describe('ValidatedListInput', () => {
   });
 
   test('shows pending warning when forceShowErrors is true and input has a value', async () => {
-    renderComponent({ hasPendingInput: true }, forceShowErrors);
+    renderComponent({}, forceShowErrors);
     const user = createUser();
 
     await typeWithWait(
@@ -221,7 +221,7 @@ describe('ValidatedListInput', () => {
   });
 
   test('does not show pending warning when input is empty', () => {
-    renderComponent({ hasPendingInput: true }, forceShowErrors);
+    renderComponent({}, forceShowErrors);
 
     expect(
       screen.queryByText('Input contains a value that has not been added.'),
@@ -229,7 +229,7 @@ describe('ValidatedListInput', () => {
   });
 
   test('shows errors instead of pending warning when both exist', async () => {
-    renderComponent({ hasPendingInput: true }, forceShowErrors);
+    renderComponent({}, forceShowErrors);
     const user = createUser();
 
     await typeWithWait(
@@ -240,21 +240,6 @@ describe('ValidatedListInput', () => {
     await clickWithWait(user, screen.getByRole('button', { name: 'Add' }));
 
     expect(screen.getByText('Invalid value')).toBeInTheDocument();
-    expect(
-      screen.queryByText('Input contains a value that has not been added.'),
-    ).not.toBeInTheDocument();
-  });
-
-  test('does not show pending warning without hasPendingInput', async () => {
-    renderComponent({}, forceShowErrors);
-    const user = createUser();
-
-    await typeWithWait(
-      user,
-      screen.getByPlaceholderText('Add kernel argument'),
-      'quiet',
-    );
-
     expect(
       screen.queryByText('Input contains a value that has not been added.'),
     ).not.toBeInTheDocument();
