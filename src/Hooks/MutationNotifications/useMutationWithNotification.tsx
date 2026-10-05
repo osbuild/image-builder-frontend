@@ -2,7 +2,7 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import {
   BaseQueryFn,
   TypedMutationTrigger,
-} from '@reduxjs/toolkit/dist/query/react';
+} from '@reduxjs/toolkit/query/react';
 
 import { errorMessage } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
