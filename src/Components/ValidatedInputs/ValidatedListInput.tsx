@@ -39,7 +39,6 @@ type ValidatedListInputProps = {
   hideAddLabel?: boolean;
   helperText?: string;
   addButtonAriaLabel?: string;
-  hasPendingInput?: boolean;
 };
 
 export const ValidatedListInput = ({
@@ -55,7 +54,6 @@ export const ValidatedListInput = ({
   hideAddLabel = false,
   helperText,
   addButtonAriaLabel = 'Add',
-  hasPendingInput = false,
 }: ValidatedListInputProps) => {
   const dispatch = useAppDispatch();
   const forceShowErrors = useAppSelector(selectForceShowErrors);
@@ -69,12 +67,12 @@ export const ValidatedListInput = ({
   const hasPendingValue = !!inputValue.trim();
 
   useEffect(() => {
-    if (!hasPendingInput || !hasPendingValue) return;
+    if (!hasPendingValue) return;
     dispatch(addPendingInput(helperTextId));
     return () => {
       dispatch(removePendingInput(helperTextId));
     };
-  }, [hasPendingInput, helperTextId, hasPendingValue, dispatch]);
+  }, [helperTextId, hasPendingValue, dispatch]);
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -135,10 +133,7 @@ export const ValidatedListInput = ({
   const allErrors = [...attemptErrors, ...storeIssues];
 
   const showPendingWarning =
-    hasPendingInput &&
-    forceShowErrors &&
-    hasPendingValue &&
-    allErrors.length === 0;
+    forceShowErrors && hasPendingValue && allErrors.length === 0;
 
   const issues = showPendingWarning
     ? [{ message: 'Input contains a value that has not been added.' }]
