@@ -1,17 +1,16 @@
 import { expect } from '@playwright/test';
-import { selectTarget } from 'playwright/helpers/targetChooser';
-
-import { test } from '../../fixtures/customizations';
-import { isHosted } from '../../helpers/helpers';
-import { ensureAuthenticated } from '../../helpers/login';
-import { ibFrame, navigateToLandingPage } from '../../helpers/navHelpers';
+import { test } from '@pw/fixtures/customizations';
+import { isHosted } from '@pw/helpers/helpers';
+import { ensureAuthenticated } from '@pw/helpers/login';
+import { ibFrame, navigateToLandingPage } from '@pw/helpers/navHelpers';
+import { selectTarget } from '@pw/helpers/targetChooser';
 import {
   createBlueprint,
   deleteBlueprint,
   fillInDetails,
   openWizard,
   registerLater,
-} from '../../helpers/wizardHelpers';
+} from '@pw/helpers/wizardHelpers';
 
 const TENANT_GUID = 'b8f86d22-4371-46ce-95e7-65c415f3b1e2';
 const SUBSCRIPTION_ID = '60631143-a7dc-4d15-988b-ba83f3c99711';

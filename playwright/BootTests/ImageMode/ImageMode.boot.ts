@@ -1,14 +1,14 @@
 import { expect } from '@playwright/test';
-
-import { test } from '../../fixtures/customizations';
-import { isHosted } from '../../helpers/helpers';
-import { ensureAuthenticated } from '../../helpers/login';
-import { ibFrame, navigateToLandingPage } from '../../helpers/navHelpers';
+import { test } from '@pw/fixtures/customizations';
+import { isHosted } from '@pw/helpers/helpers';
+import { ensureAuthenticated } from '@pw/helpers/login';
+import { ibFrame, navigateToLandingPage } from '@pw/helpers/navHelpers';
 import {
   createBlueprint,
   deleteBlueprint,
   openWizard,
-} from '../../helpers/wizardHelpers';
+} from '@pw/helpers/wizardHelpers';
+
 import { AwsWrapper } from '../helpers/AwsWrapper';
 import { buildImage } from '../helpers/imageBuilding';
 

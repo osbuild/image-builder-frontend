@@ -1,7 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
-
-import { closePopupsIfExist } from '../../helpers/helpers';
-import { retry } from '../../helpers/navHelpers';
+import { closePopupsIfExist } from '@pw/helpers/helpers';
+import { retry } from '@pw/helpers/navHelpers';
 
 /**
  * Navigate to compliance policies page, search for a policy, and optionally click on it

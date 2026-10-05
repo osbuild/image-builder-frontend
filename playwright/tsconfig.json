@@ -2,7 +2,11 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "types": ["node", "@playwright/test"],
-    "rootDir": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../src/*"],
+      "@pw/*": ["./*"]
+    }
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules"]

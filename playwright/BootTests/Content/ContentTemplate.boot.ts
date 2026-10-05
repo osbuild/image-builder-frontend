@@ -1,4 +1,19 @@
 import { expect } from '@playwright/test';
+import { test } from '@pw/fixtures/customizations';
+import { isHosted, sleep } from '@pw/helpers/helpers';
+import { ensureAuthenticated } from '@pw/helpers/login';
+import {
+  fillInImageOutput,
+  ibFrame,
+  navigateToLandingPage,
+} from '@pw/helpers/navHelpers';
+import {
+  createBlueprint,
+  deleteBlueprint,
+  fillInDetails,
+  openWizard,
+  registerAutomatically,
+} from '@pw/helpers/wizardHelpers';
 
 import {
   deleteRepository,
@@ -9,21 +24,6 @@ import {
   pollForSystemTemplateAttachment,
 } from './helpers';
 
-import { test } from '../../fixtures/customizations';
-import { isHosted, sleep } from '../../helpers/helpers';
-import { ensureAuthenticated } from '../../helpers/login';
-import {
-  fillInImageOutput,
-  ibFrame,
-  navigateToLandingPage,
-} from '../../helpers/navHelpers';
-import {
-  createBlueprint,
-  deleteBlueprint,
-  fillInDetails,
-  openWizard,
-  registerAutomatically,
-} from '../../helpers/wizardHelpers';
 import { AwsWrapper } from '../helpers/AwsWrapper';
 import { buildImage } from '../helpers/imageBuilding';
 

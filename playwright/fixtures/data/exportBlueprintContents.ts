@@ -1,4 +1,4 @@
-import { getDefaultTimezone } from '../../helpers/helpers';
+import { getDefaultTimezone } from '@pw/helpers/helpers';
 
 const tz = getDefaultTimezone();
 
