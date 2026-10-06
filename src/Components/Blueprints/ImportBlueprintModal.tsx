@@ -34,6 +34,7 @@ import {
   useBulkImportRepositoriesMutation,
   useLazyListRepositoriesQuery,
 } from '@/store/api/contentSources';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   isSupportedArchitecture,
@@ -43,9 +44,7 @@ import {
   WizardState,
 } from '@/store/slices/wizard';
 import { openWizardModal } from '@/store/slices/wizardModal';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getErrorMessage } from '../../Utilities/getErrorMessage';
+import { getErrorMessage } from '@/Utilities/getErrorMessage';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;

@@ -11,11 +11,10 @@ import {
 } from '@patternfly/react-core';
 
 import { useGetBlueprintQuery } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 
 import { BuildImagesButton } from './BuildImagesButton';
-
-import { useAppSelector } from '../../store/hooks';
 
 type blueprintDiffProps = {
   // baseVersion is the version of the blueprint to compare the latest version against

@@ -1,10 +1,13 @@
 import React from 'react';
 
+import {
+  LabelMapper,
+  ReviewGroup,
+  ReviewSection,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectNtpServers, selectTimezone } from '@/store/slices';
-
-import { LabelMapper, ReviewGroup, ReviewSection } from '../../shared';
-import { Hideable } from '../../types';
 
 export const Timezone = ({ shouldHide }: Hideable) => {
   const timezone = useAppSelector(selectTimezone);

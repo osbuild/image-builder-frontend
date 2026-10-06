@@ -2,15 +2,14 @@ import React from 'react';
 
 import { Label, LabelGroup } from '@patternfly/react-core';
 
+import { ReviewGroup } from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { ContentOrigin } from '@/constants';
 import { useListRepositoriesQuery } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import { selectAllRepositoryIds } from '@/store/slices';
 
 import { RepositoryLabel } from './RepositoryLabel';
-
-import { ReviewGroup } from '../../shared';
-import { Hideable } from '../../types';
 
 export const RepositoryDetails = ({ shouldHide }: Hideable) => {
   const repositories = useAppSelector(selectAllRepositoryIds);

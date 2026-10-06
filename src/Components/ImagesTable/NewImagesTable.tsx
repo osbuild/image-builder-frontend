@@ -15,6 +15,8 @@ import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { SEARCH_INPUT } from '@/constants';
+import { useEffectiveBlueprintId, useGetUser } from '@/Hooks';
 import {
   BlueprintItem,
   GetBlueprintComposesApiArg,
@@ -23,6 +25,7 @@ import {
   useGetBlueprintsQuery,
   useGetComposesQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
@@ -34,10 +37,6 @@ import ImagesEmptyState from './components/EmptyState';
 import NewImagesTableToolbar from './components/NewImagesTableToolbar';
 import { ImagesTableRow } from './components/Row';
 import BlueprintTableRow from './components/Row/components/BlueprintTableRow';
-
-import { SEARCH_INPUT } from '../../constants';
-import { useEffectiveBlueprintId, useGetUser } from '../../Hooks';
-import { useAppSelector } from '../../store/hooks';
 
 const NewImagesTable = () => {
   const [page, setPage] = useState(1);

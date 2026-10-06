@@ -1,14 +1,13 @@
 import React from 'react';
 
+import { AwsS3Details } from '@/Components/ImagesTable/components/ImageDetails';
+import { AwsS3Instance } from '@/Components/ImagesTable/components/Instance';
+import { ExpiringStatus } from '@/Components/ImagesTable/components/Status';
 import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '@/constants';
 import { ComposesResponseItem } from '@/store/api/backend';
 import { computeHoursToExpiration } from '@/Utilities/time';
 
 import Row from './Row';
-
-import { AwsS3Details } from '../../ImageDetails';
-import { AwsS3Instance } from '../../Instance';
-import { ExpiringStatus } from '../../Status';
 
 type AwsS3RowPropTypes = {
   compose: ComposesResponseItem;

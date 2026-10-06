@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 
+import { sortOpenscapItems } from '@/Components/CreateImageWizard/steps/Review/components/helpers';
+import {
+  LabelMapper,
+  ReviewGroup,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectPackages } from '@/store/slices';
-
-import { sortOpenscapItems } from '../../helpers';
-import { LabelMapper, ReviewGroup } from '../../shared';
-import { Hideable } from '../../types';
 
 type PackageDetailProps = Hideable & {
   oscapPackages?: string[];

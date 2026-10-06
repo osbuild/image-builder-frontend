@@ -15,10 +15,10 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { UnknownAction } from '@reduxjs/toolkit';
 
-import { StepValidation } from './utilities/useValidation';
+import { UNDEFINED_GROUPS_WARNING_KEY } from '@/constants';
+import { useAppDispatch } from '@/store/hooks';
 
-import { UNDEFINED_GROUPS_WARNING_KEY } from '../../constants';
-import { useAppDispatch } from '../../store/hooks';
+import { StepValidation } from './utilities/useValidation';
 
 const DEFAULT_TRUNCATE_LENGTH = 20;
 const DEFAULT_CHIP_COLLAPSE_THRESHOLD = 4;

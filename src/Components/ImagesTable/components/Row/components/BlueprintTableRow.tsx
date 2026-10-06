@@ -17,13 +17,12 @@ import {
   Tr,
 } from '@patternfly/react-table';
 
+import Status from '@/Components/ImagesTable/components/Status/components/Status';
 import { BlueprintItem } from '@/store/api/backend';
 import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '@/Utilities/time';
-
-import Status from '../../Status/components/Status';
 
 type BlueprintTableRowProps = {
   blueprint: BlueprintItem;

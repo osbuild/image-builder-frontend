@@ -2,11 +2,14 @@ import React, { useMemo } from 'react';
 
 import { Flex } from '@patternfly/react-core';
 
+import {
+  FlexColumn,
+  ReviewGroup,
+  ReviewSection,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectFirewall, selectFirewallEnabled } from '@/store/slices';
-
-import { FlexColumn, ReviewGroup, ReviewSection } from '../../shared';
-import { Hideable } from '../../types';
 
 const padArray = (arr: string[], length: number): string[] => {
   return [...arr, ...Array(length - arr.length).fill('--')];

@@ -1,12 +1,11 @@
 import React from 'react';
 
+import { GcpDetails } from '@/Components/ImagesTable/components/ImageDetails';
+import { CloudStatus } from '@/Components/ImagesTable/components/Status';
 import { GcpLaunchModal } from '@/Components/Launch/GcpLaunchModal';
 import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
-
-import { GcpDetails } from '../../ImageDetails';
-import { CloudStatus } from '../../Status';
 
 type GcpRowPropTypes = {
   compose: ComposesResponseItem;

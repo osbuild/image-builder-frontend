@@ -1,10 +1,12 @@
 import React from 'react';
 
+import {
+  LabelMapper,
+  ReviewGroup,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectPackageGroups } from '@/store/slices';
-
-import { LabelMapper, ReviewGroup } from '../../shared';
-import { Hideable } from '../../types';
 
 export const PackageGroupDetails = ({ shouldHide }: Hideable) => {
   const groups = useAppSelector(selectPackageGroups);

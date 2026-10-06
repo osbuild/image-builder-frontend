@@ -1,7 +1,10 @@
 import React from 'react';
 
-import { ReviewGroup, StatusItem } from '../../shared';
-import { Hideable } from '../../types';
+import {
+  ReviewGroup,
+  StatusItem,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 
 export const FIPSDetails = ({ shouldHide }: Hideable) => {
   if (shouldHide) {

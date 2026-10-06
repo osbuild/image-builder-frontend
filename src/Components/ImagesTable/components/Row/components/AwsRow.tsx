@@ -1,13 +1,12 @@
 import React from 'react';
 
+import { AwsDetails } from '@/Components/ImagesTable/components/ImageDetails';
+import { CloudStatus } from '@/Components/ImagesTable/components/Status';
+import { AwsTarget } from '@/Components/ImagesTable/components/Target';
 import { AWSLaunchModal } from '@/Components/Launch/AWSLaunchModal';
 import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
-
-import { AwsDetails } from '../../ImageDetails';
-import { CloudStatus } from '../../Status';
-import { AwsTarget } from '../../Target';
 
 type AwsRowPropTypes = {
   compose: ComposesResponseItem;

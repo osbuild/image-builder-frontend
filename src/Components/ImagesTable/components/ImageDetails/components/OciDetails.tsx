@@ -12,8 +12,7 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
-import { isOciUploadStatus } from '../../../../../store/typeGuards';
+import { isOciUploadStatus } from '@/store/typeGuards';
 
 type OciDetailsPropTypes = {
   compose: ComposesResponseItem;

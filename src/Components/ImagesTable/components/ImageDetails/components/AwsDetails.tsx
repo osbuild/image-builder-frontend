@@ -12,16 +12,15 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { AMPLITUDE_MODULE_NAME } from '@/constants';
+import { useGetUser } from '@/Hooks';
 import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
-import { useGetUser } from '../../../../../Hooks';
-import { useAppSelector } from '../../../../../store/hooks';
-import { isAwsUploadRequestOptions } from '../../../../../store/typeGuards';
+import { isAwsUploadRequestOptions } from '@/store/typeGuards';
 
 type AwsDetailsPropTypes = {
   compose: ComposesResponseItem;

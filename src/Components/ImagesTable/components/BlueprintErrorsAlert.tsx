@@ -8,9 +8,8 @@ import {
   ListItem,
 } from '@patternfly/react-core';
 
+import { useFixupBPWithNotification as useFixupBlueprintMutation } from '@/Hooks';
 import { BlueprintResponse } from '@/store/api/backend';
-
-import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../../Hooks';
 
 type BlueprintErrorsAlertProps = {
   selectedBlueprintId: string | undefined;

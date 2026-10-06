@@ -6,11 +6,13 @@ import {
   ExpandableSection,
 } from '@patternfly/react-core';
 
+import {
+  ReviewGroup,
+  ReviewSection,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectFirstBootScript } from '@/store/slices';
-
-import { ReviewGroup, ReviewSection } from '../../shared';
-import { Hideable } from '../../types';
 
 const MAX_LINES = 8;
 

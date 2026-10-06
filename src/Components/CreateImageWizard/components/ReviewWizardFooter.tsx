@@ -10,14 +10,14 @@ import {
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 
-import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
-import { selectWizardModalMode } from '@/store/slices/wizardModal';
-
 import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
-} from '../../../Hooks';
-import { useAppSelector } from '../../../store/hooks';
+} from '@/Hooks';
+import { useAppSelector } from '@/store/hooks';
+import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
+import { selectWizardModalMode } from '@/store/slices/wizardModal';
+
 import {
   CreateSaveAndBuildBtn,
   CreateSaveButton,

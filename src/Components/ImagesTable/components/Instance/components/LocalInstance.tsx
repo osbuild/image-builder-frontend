@@ -5,19 +5,18 @@ import path from 'path';
 import { Button, Skeleton } from '@patternfly/react-core';
 import cockpit from 'cockpit';
 
+import { useCockpitMachinesAvailable } from '@/Hooks';
 import {
   ComposesResponseItem,
   ImageTypes,
   LocalUploadStatus,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
-import { useCockpitMachinesAvailable } from '../../../../../Hooks';
-import { hasBootcRequest } from '../../../../../store/typeGuards';
+import { hasBootcRequest } from '@/store/typeGuards';
 import {
   bootcReferenceToOSShortId,
   distributionToOSShortId,
-} from '../../../../../Utilities/distributionToOSShortId';
+} from '@/Utilities/distributionToOSShortId';
 
 // Image types that can be imported into cockpit-machines as VM disk images
 const VM_IMPORTABLE_IMAGE_TYPES: ImageTypes[] = ['guest-image'];

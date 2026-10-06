@@ -9,13 +9,12 @@ import {
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import { FilterIcon } from '@patternfly/react-icons';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectBlueprintVersionFilter,
   setBlueprintVersionFilter,
   VersionFilterType,
 } from '@/store/slices/blueprint';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface blueprintVersionFilterProps {
   onFilterChange?: () => void;

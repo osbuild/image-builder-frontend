@@ -2,9 +2,8 @@ import React from 'react';
 
 import { Content } from '@patternfly/react-core';
 
+import { ReviewGroup } from '@/Components/CreateImageWizard/steps/Review/components/shared';
 import type { PrivateCloudType } from '@/store/slices/wizard';
-
-import { ReviewGroup } from '../../shared';
 
 const PRIVATE_CLOUDS: Record<PrivateCloudType, string> = {
   vsphere: 'VMware vSphere (.vmdk)',

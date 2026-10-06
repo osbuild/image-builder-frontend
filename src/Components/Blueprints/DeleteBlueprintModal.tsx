@@ -11,10 +11,20 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import {
+  AMPLITUDE_MODULE_NAME,
+  PAGINATION_LIMIT,
+  PAGINATION_OFFSET,
+} from '@/constants';
+import {
+  useDeleteBPWithNotification as useDeleteBlueprintMutation,
+  useGetUser,
+} from '@/Hooks';
+import {
   backendApi,
   GetBlueprintsApiArg,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -23,17 +33,6 @@ import {
   setBlueprintId,
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import {
-  AMPLITUDE_MODULE_NAME,
-  PAGINATION_LIMIT,
-  PAGINATION_OFFSET,
-} from '../../constants';
-import {
-  useDeleteBPWithNotification as useDeleteBlueprintMutation,
-  useGetUser,
-} from '../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface DeleteBlueprintModalProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;

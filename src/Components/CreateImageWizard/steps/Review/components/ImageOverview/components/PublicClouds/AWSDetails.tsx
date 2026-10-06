@@ -2,11 +2,10 @@ import React from 'react';
 
 import { Content } from '@patternfly/react-core';
 
+import { DetailsStack } from '@/Components/CreateImageWizard/steps/Review/components/shared';
 import { useAppSelector } from '@/store/hooks';
 import { selectAwsAccountId, selectAwsRegion } from '@/store/slices';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { DetailsStack } from '../../../shared';
 
 export const AWSDetails = () => {
   const awsAccountId = useAppSelector(selectAwsAccountId);

@@ -14,13 +14,13 @@ import {
   RhUiRedoIcon,
 } from '@patternfly/react-icons';
 
+import { DeleteBlueprintModal } from '@/Components/Blueprints/DeleteBlueprintModal';
+import { useAppDispatch } from '@/store/hooks';
 import { setBlueprintSearchInput } from '@/store/slices/blueprint';
+import useDebounce from '@/Utilities/useDebounce';
 
 import ImagesFilter from './ImagesFilter';
 
-import { useAppDispatch } from '../../../store/hooks';
-import useDebounce from '../../../Utilities/useDebounce';
-import { DeleteBlueprintModal } from '../../Blueprints/DeleteBlueprintModal';
 import { filterOptions } from '../constants';
 
 type NewImagesTableToolbarProps = {

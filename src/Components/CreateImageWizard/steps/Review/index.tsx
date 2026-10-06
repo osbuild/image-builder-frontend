@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useIsBlueprintValid } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { useSecuritySummary } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppSelector } from '@/store/hooks';
@@ -15,8 +16,6 @@ import {
   RepeatableBuild,
   Security,
 } from './components';
-
-import { useIsBlueprintValid } from '../../utilities/useValidation';
 
 const FormHeader = () => {
   const isValid = useIsBlueprintValid();

@@ -1,14 +1,13 @@
 import React from 'react';
 
+import { OciDetails } from '@/Components/ImagesTable/components/ImageDetails';
+import { ExpiringStatus } from '@/Components/ImagesTable/components/Status';
 import { OciLaunchModal } from '@/Components/Launch/OciLaunchModal';
 import { OCI_STORAGE_EXPIRATION_TIME_IN_DAYS } from '@/constants';
 import { ComposesResponseItem } from '@/store/api/backend';
 import { computeHoursToExpiration } from '@/Utilities/time';
 
 import Row from './Row';
-
-import { OciDetails } from '../../ImageDetails';
-import { ExpiringStatus } from '../../Status';
 
 type OciRowPropTypes = {
   compose: ComposesResponseItem;

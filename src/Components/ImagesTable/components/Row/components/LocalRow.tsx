@@ -1,12 +1,11 @@
 import React from 'react';
 
+import { LocalDetails } from '@/Components/ImagesTable/components/ImageDetails';
+import { LocalInstance } from '@/Components/ImagesTable/components/Instance';
+import { LocalStatus } from '@/Components/ImagesTable/components/Status';
 import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
-
-import { LocalDetails } from '../../ImageDetails';
-import { LocalInstance } from '../../Instance';
-import { LocalStatus } from '../../Status';
 
 type LocalRowPropTypes = {
   compose: ComposesResponseItem;

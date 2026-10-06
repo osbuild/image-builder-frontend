@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ReviewGroup } from '../../shared';
-import { Hideable } from '../../types';
+import { ReviewGroup } from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 
 export const RegisterLater = ({ shouldHide }: Hideable) => {
   if (shouldHide) {
