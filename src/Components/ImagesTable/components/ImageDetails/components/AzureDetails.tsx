@@ -12,11 +12,10 @@ import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
 import {
   isAzureUploadRequestOptions,
   isAzureUploadStatus,
-} from '../../../../../store/typeGuards';
+} from '@/store/typeGuards';
 
 type AzureDetailsPropTypes = {
   compose: ComposesResponseItem;

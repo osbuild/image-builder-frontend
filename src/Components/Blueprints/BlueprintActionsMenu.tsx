@@ -16,10 +16,9 @@ import {
   useLazyExportBlueprintCockpitQuery,
   useLazyExportBlueprintQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { useAppSelector } from '../../store/hooks';
 
 interface BlueprintActionsMenuProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;

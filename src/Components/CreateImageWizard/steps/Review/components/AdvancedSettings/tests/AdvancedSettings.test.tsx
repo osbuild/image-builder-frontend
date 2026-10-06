@@ -5,6 +5,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { createDefaultRestrictions } from '@/Components/CreateImageWizard/steps/Review/components/tests/helpers';
 import { initialState } from '@/store/slices/wizard';
 import {
   advancedPartitions,
@@ -14,7 +15,6 @@ import { renderWithRedux } from '@/test/testUtils';
 
 import { adminUser, developerUser, guestUser, userGroups } from './mocks';
 
-import { createDefaultRestrictions } from '../../tests/helpers';
 import AdvancedSettingsOverview from '../index';
 
 describe('AdvancedSettingsOverview', () => {

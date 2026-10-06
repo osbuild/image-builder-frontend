@@ -2,6 +2,12 @@ import React from 'react';
 
 import { Flex } from '@patternfly/react-core';
 
+import {
+  FlexColumn,
+  ReviewGroup,
+  ReviewSection,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectDiskMinsize,
@@ -12,9 +18,6 @@ import {
   selectPlainPartitions,
   selectVolumeGroups,
 } from '@/store/slices';
-
-import { FlexColumn, ReviewGroup, ReviewSection } from '../../shared';
-import { Hideable } from '../../types';
 
 export const Filesystem = ({ shouldHide }: Hideable) => {
   const mode = useAppSelector(selectFscMode);

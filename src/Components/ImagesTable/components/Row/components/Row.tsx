@@ -11,6 +11,8 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
+import Release from '@/Components/ImagesTable/components/Release';
+import { Target } from '@/Components/ImagesTable/components/Target';
 import { useCockpitMachinesAvailable, useGetUser } from '@/Hooks';
 import {
   BlueprintItem,
@@ -32,8 +34,6 @@ import {
 } from '@/Utilities/time';
 import { useFlag } from '@/Utilities/useGetEnvironment';
 
-import Release from '../../Release';
-import { Target } from '../../Target';
 import { defaultActions } from '../defaultActions';
 
 type RowPropTypes = {

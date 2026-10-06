@@ -18,16 +18,15 @@ import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/Me
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-import { ImageTypes, useGetBlueprintQuery } from '@/store/api/backend';
-import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
-import { selectIsOnPremise } from '@/store/slices/env';
-
-import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
+import { AMPLITUDE_MODULE_NAME, targetOptions } from '@/constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useGetUser,
-} from '../../Hooks';
-import { useAppSelector } from '../../store/hooks';
+} from '@/Hooks';
+import { ImageTypes, useGetBlueprintQuery } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
+import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
+import { selectIsOnPremise } from '@/store/slices/env';
 
 type BuildImagesButtonPropTypes = {
   // default children is 'Build images'

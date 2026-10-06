@@ -16,9 +16,9 @@ import {
   SearchIcon,
 } from '@patternfly/react-icons';
 
-import { MANAGING_WITH_DNF_URL } from '../../../constants';
-import { useGetDocumentationUrl } from '../../../Hooks';
-import { BuildImagesButtonEmptyState } from '../../Blueprints/BuildImagesButton';
+import { BuildImagesButtonEmptyState } from '@/Components/Blueprints/BuildImagesButton';
+import { MANAGING_WITH_DNF_URL } from '@/constants';
+import { useGetDocumentationUrl } from '@/Hooks';
 
 type ImagesEmptyStateProps = {
   selectedBlueprint?: string;

@@ -8,6 +8,12 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 
+import { BlueprintActionsMenu } from '@/Components/Blueprints/BlueprintActionsMenu';
+import BlueprintDiffModal from '@/Components/Blueprints/BlueprintDiffModal';
+import BlueprintVersionFilter from '@/Components/Blueprints/BlueprintVersionFilter';
+import { BuildImagesButton } from '@/Components/Blueprints/BuildImagesButton';
+import { DeleteBlueprintModal } from '@/Components/Blueprints/DeleteBlueprintModal';
+import { EditBlueprintButton } from '@/Components/Blueprints/EditBlueprintButton';
 import {
   BlueprintItem,
   Distributions,
@@ -16,6 +22,7 @@ import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilterAPI,
@@ -27,14 +34,6 @@ import BlueprintErrorsAlert from './BlueprintErrorsAlert';
 import BlueprintVersionAlert from './BlueprintVersionAlert';
 import BlueprintWarningAlert from './BlueprintWarningAlert';
 import CentOSStream8Alert from './CentOSStream8Alert';
-
-import { useAppSelector } from '../../../store/hooks';
-import { BlueprintActionsMenu } from '../../Blueprints/BlueprintActionsMenu';
-import BlueprintDiffModal from '../../Blueprints/BlueprintDiffModal';
-import BlueprintVersionFilter from '../../Blueprints/BlueprintVersionFilter';
-import { BuildImagesButton } from '../../Blueprints/BuildImagesButton';
-import { DeleteBlueprintModal } from '../../Blueprints/DeleteBlueprintModal';
-import { EditBlueprintButton } from '../../Blueprints/EditBlueprintButton';
 
 type ImagesTableToolbarProps = {
   itemCount: number;

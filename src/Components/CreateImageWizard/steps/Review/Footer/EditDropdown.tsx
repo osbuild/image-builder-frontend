@@ -10,6 +10,12 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { AMPLITUDE_MODULE_NAME } from '@/constants';
+import {
+  useComposeBPWithNotification as useComposeBlueprintMutation,
+  useGetUser,
+  useUpdateBPWithNotification as useUpdateBlueprintMutation,
+} from '@/Hooks';
 import { CreateBlueprintRequest } from '@/store/api/backend';
 import {
   useAppSelector,
@@ -19,14 +25,7 @@ import {
 } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { mapStateToRequest, selectPackages } from '@/store/slices/wizard';
-
-import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
-import {
-  useComposeBPWithNotification as useComposeBlueprintMutation,
-  useGetUser,
-  useUpdateBPWithNotification as useUpdateBlueprintMutation,
-} from '../../../../../Hooks';
-import { createAnalytics } from '../../../../../Utilities/analytics';
+import { createAnalytics } from '@/Utilities/analytics';
 
 type EditDropdownProps = {
   setIsOpen: (isOpen: boolean) => void;

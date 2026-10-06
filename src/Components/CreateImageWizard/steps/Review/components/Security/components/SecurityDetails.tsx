@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Label, LabelGroup } from '@patternfly/react-core';
 
+import { ReviewGroup } from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import type { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectComplianceType } from '@/store/slices';
 
-import { ReviewGroup } from '../../shared';
-import type { Hideable } from '../../types';
 import { isSecurityConfigured, SecuritySummary } from '../types';
 
 type SecurityDetailProps = Hideable & {

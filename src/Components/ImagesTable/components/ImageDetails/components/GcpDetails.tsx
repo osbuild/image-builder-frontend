@@ -13,11 +13,10 @@ import {
   GcpUploadRequestOptions,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
-
 import {
   isGcpUploadRequestOptions,
   isGcpUploadStatus,
-} from '../../../../../store/typeGuards';
+} from '@/store/typeGuards';
 
 export const parseGcpSharedWith = (
   sharedWith: GcpUploadRequestOptions['share_with_accounts'],

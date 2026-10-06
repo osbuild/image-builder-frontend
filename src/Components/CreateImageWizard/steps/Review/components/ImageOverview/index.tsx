@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Card, CardBody, Content, Title } from '@patternfly/react-core';
 
+import { MajorReleasesLifecyclesChart } from '@/Components/CreateImageWizard/steps/ImageOutput/components/ReleaseLifecycle';
 import { ON_PREM_RELEASES, RELEASES, RHEL_8, RHEL_9 } from '@/constants';
 import { useTargetEnvironmentCategories } from '@/Hooks';
 import { useAppSelector } from '@/store/hooks';
@@ -18,7 +19,6 @@ import {
 
 import { MiscFormats, PrivateClouds, PublicClouds } from './components';
 
-import { MajorReleasesLifecyclesChart } from '../../../ImageOutput/components/ReleaseLifecycle';
 import { ReviewCardHeader, ReviewGroup, ReviewList } from '../shared';
 
 const ImageOverview = () => {

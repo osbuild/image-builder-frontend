@@ -2,11 +2,13 @@ import React from 'react';
 
 import { Content } from '@patternfly/react-core';
 
+import {
+  ReviewGroup,
+  ReviewSection,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectKeyboard, selectLanguages } from '@/store/slices';
-
-import { ReviewGroup, ReviewSection } from '../../shared';
-import { Hideable } from '../../types';
 
 export const Locale = ({ shouldHide }: Hideable) => {
   const languages = useAppSelector(selectLanguages);

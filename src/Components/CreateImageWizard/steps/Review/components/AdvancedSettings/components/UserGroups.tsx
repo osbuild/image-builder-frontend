@@ -2,11 +2,13 @@ import React from 'react';
 
 import { Flex } from '@patternfly/react-core';
 
+import {
+  FlexColumn,
+  ReviewGroup,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectNonEmptyUserGroups } from '@/store/slices/wizard';
-
-import { FlexColumn, ReviewGroup } from '../../shared';
-import { Hideable } from '../../types';
 
 export const UserGroups = ({ shouldHide }: Partial<Hideable>) => {
   const userGroups = useAppSelector(selectNonEmptyUserGroups);

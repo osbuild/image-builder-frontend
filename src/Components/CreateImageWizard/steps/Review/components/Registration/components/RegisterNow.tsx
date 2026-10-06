@@ -2,6 +2,11 @@ import React from 'react';
 
 import { Content } from '@patternfly/react-core';
 
+import {
+  ReviewGroup,
+  StatusItem,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import {
   isRegisterNowType,
@@ -10,8 +15,6 @@ import {
   selectOrgId,
 } from '@/store/slices/wizard';
 
-import { ReviewGroup, StatusItem } from '../../shared';
-import { Hideable } from '../../types';
 import { REGISTER_NOW_FEATURES } from '../constants';
 
 type RegisterNowProps = Hideable & {

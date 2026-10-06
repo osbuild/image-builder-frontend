@@ -1,14 +1,16 @@
 import React from 'react';
 
+import {
+  ReviewGroup,
+  StatusItem,
+} from '@/Components/CreateImageWizard/steps/Review/components/shared';
+import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsConfigured,
 } from '@/store/slices';
-
-import { ReviewGroup, StatusItem } from '../../shared';
-import { Hideable } from '../../types';
 
 export const RegisterAAP = ({ shouldHide }: Hideable) => {
   const callbackUrl = useAppSelector(selectAapCallbackUrl);

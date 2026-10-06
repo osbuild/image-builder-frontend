@@ -1,12 +1,11 @@
 import React from 'react';
 
+import { AzureDetails } from '@/Components/ImagesTable/components/ImageDetails';
+import { CloudStatus } from '@/Components/ImagesTable/components/Status';
 import { AzureLaunchModal } from '@/Components/Launch/AzureLaunchModal';
 import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
-
-import { AzureDetails } from '../../ImageDetails';
-import { CloudStatus } from '../../Status';
 
 type AzureRowPropTypes = {
   compose: ComposesResponseItem;

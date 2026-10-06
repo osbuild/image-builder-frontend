@@ -18,6 +18,16 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import {
+  AARCH64,
+  AMPLITUDE_MODULE_NAME,
+  CDN_PROD_URL,
+  CDN_STAGE_URL,
+  DEFAULT_TIMEZONE,
+  RHEL_10,
+  RHEL_8,
+  RHEL_9,
+} from '@/constants';
 import { useGetUser } from '@/Hooks';
 import {
   getHostArch,
@@ -25,6 +35,7 @@ import {
   useGetBlueprintQuery,
 } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectSelectedBlueprintId,
   setBlueprintId,
@@ -63,22 +74,11 @@ import {
   selectIsWizardModalOpen,
   selectWizardModalMode,
 } from '@/store/slices/wizardModal';
+import { useGetEnvironment } from '@/Utilities/useGetEnvironment';
 
 import CustomWizardFooter from './components/CustomWizardFooter';
 import ReviewWizardFooter from './components/ReviewWizardFooter';
 
-import {
-  AARCH64,
-  AMPLITUDE_MODULE_NAME,
-  CDN_PROD_URL,
-  CDN_STAGE_URL,
-  DEFAULT_TIMEZONE,
-  RHEL_10,
-  RHEL_8,
-  RHEL_9,
-} from '../../constants';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import DetailsStep from '../CreateImageWizard/steps/Details';
 import FileSystemStep from '../CreateImageWizard/steps/FileSystem';
 import FirewallStep from '../CreateImageWizard/steps/Firewall';

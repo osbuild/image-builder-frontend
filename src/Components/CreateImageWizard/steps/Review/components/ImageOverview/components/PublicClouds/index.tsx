@@ -2,14 +2,13 @@ import React from 'react';
 
 import { Flex, FlexItem } from '@patternfly/react-core';
 
+import { ReviewGroup } from '@/Components/CreateImageWizard/steps/Review/components/shared';
 import type { PublicCloudType } from '@/store/slices/wizard';
 
 import { AWSDetails } from './AWSDetails';
 import { AzureDetails } from './AzureDetails';
 import { GCPDetails } from './GCPDetails';
 import { OCIDetails } from './OCIDetails';
-
-import { ReviewGroup } from '../../../shared';
 
 type CloudComponentLookup = Partial<
   Record<PublicCloudType, React.ComponentType>

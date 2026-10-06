@@ -3,16 +3,15 @@ import React from 'react';
 import { Button, Skeleton } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { AMPLITUDE_MODULE_NAME } from '@/constants';
 import {
   ComposesResponseItem,
   ImageTypes,
   useGetComposeStatusQuery,
 } from '@/store/api/backend';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-
-import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
-import { useAppSelector } from '../../../../../store/hooks';
-import { isAwss3UploadStatus } from '../../../../../store/typeGuards';
+import { isAwss3UploadStatus } from '@/store/typeGuards';
 
 type AwsS3InstancePropTypes = {
   compose: ComposesResponseItem;

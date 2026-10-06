@@ -2,10 +2,10 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { createDefaultRestrictions } from '@/Components/CreateImageWizard/steps/Review/components/tests/helpers';
 import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
-import { createDefaultRestrictions } from '../../tests/helpers';
 import RepeatableBuild from '../index';
 
 describe('RepeatableBuild', () => {

@@ -2,11 +2,14 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import {
+  adminUser,
+  userGroups,
+} from '@/Components/CreateImageWizard/steps/Review/components/AdvancedSettings/tests/mocks';
 import { RHEL_10, X86_64 } from '@/constants';
 import { initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
-import { adminUser, userGroups } from '../../AdvancedSettings/tests/mocks';
 import ImageOverview from '../index';
 
 describe('ImageOverview', () => {

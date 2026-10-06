@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 
 import { Content } from '@patternfly/react-core';
 
+import { DetailsStack } from '@/Components/CreateImageWizard/steps/Review/components/shared';
 import { useAppSelector } from '@/store/hooks';
 import { selectGcpAccountType, selectGcpEmail } from '@/store/slices';
-
-import { DetailsStack } from '../../../shared';
 
 export const GCPDetails = () => {
   const principal = useAppSelector(selectGcpEmail);

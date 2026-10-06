@@ -2,10 +2,9 @@ import React from 'react';
 
 import { Button } from '@patternfly/react-core';
 
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { openWizardModal } from '@/store/slices/wizardModal';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 export const EditBlueprintButton = () => {
   const dispatch = useAppDispatch();

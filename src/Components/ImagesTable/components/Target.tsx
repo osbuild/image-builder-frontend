@@ -1,8 +1,7 @@
 import React from 'react';
 
+import { targetOptions } from '@/constants';
 import { ComposesResponseItem } from '@/store/api/backend';
-
-import { targetOptions } from '../../../constants';
 
 type TargetPropTypes = {
   compose: ComposesResponseItem;

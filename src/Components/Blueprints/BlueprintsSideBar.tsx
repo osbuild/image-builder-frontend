@@ -18,12 +18,15 @@ import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '@/constants';
+import { useGetUser } from '@/Hooks';
 import {
   BlueprintItem,
   GetBlueprintsApiArg,
   imageBuilderApi,
   useGetBlueprintsQuery,
 } from '@/store/api/backend';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -35,14 +38,10 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { openWizardModal } from '@/store/slices/wizardModal';
+import useDebounce from '@/Utilities/useDebounce';
 
 import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
-
-import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
-import { useGetUser } from '../../Hooks';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import useDebounce from '../../Utilities/useDebounce';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
