@@ -98,7 +98,7 @@ export const Filesystem = () => {
               <FlexColumn
                 heading='Minimum'
                 labelKey='adv-partition-size'
-                items={plainPartitions.map((p) => p.min_size ?? '--')}
+                items={plainPartitions.map((p) => p.min_size)}
               />
               <FlexColumn
                 heading='Unit'
@@ -149,9 +149,7 @@ export const Filesystem = () => {
                     <FlexColumn
                       heading='Minimum'
                       labelKey={`lv-size-${vgIndex}`}
-                      items={vg.logical_volumes.map(
-                        (lv) => lv.min_size ?? '--',
-                      )}
+                      items={vg.logical_volumes.map((lv) => lv.min_size)}
                     />
                     <FlexColumn
                       heading='Unit'
