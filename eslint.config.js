@@ -111,20 +111,15 @@ module.exports = defineConfig([
         },
       ],
       'no-duplicate-imports': 'error',
-      // NOTE: we can enable this after the revamp and after summit. We can live with
-      // the mixture of alias imports and relative imports. We can then enable the warning
-      // or maybe errors (after summit). We can slowly migrate during the revamp, but adding
-      // warnings now adds too much noise.
-      // 'no-restricted-imports': ['warn', {
-      //   patterns: [{
-      //     group: ['../../*'],
-      //     message: 'Avoid deep relative imports (../../ or deeper). Use @/ alias instead.',
-      //   }],
-      // }],
       'no-restricted-imports': [
         'error',
         {
           patterns: [
+            {
+              group: ['../../*'],
+              message:
+                'Avoid deep relative imports (../../ or deeper). Use @/ alias instead.',
+            },
             {
               group: [
                 '@/store/slices/wizard/cloud/*',
