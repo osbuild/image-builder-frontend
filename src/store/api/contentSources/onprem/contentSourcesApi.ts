@@ -1,15 +1,14 @@
+import { parseJsonUnsafe } from '@/store/api/backend/onprem/composerApi/helpers';
+import type {
+  ListSnapshotsByDateApiArg,
+  ListSnapshotsByDateApiResponse,
+  SearchRpmApiResponse,
+} from '@/store/api/contentSources/hosted/contentSourcesApi';
 import { onPremQueryHandler } from '@/store/api/shared';
 
 import { emptyContentSourcesApi } from './emptyContentSourcesApi';
 import { listPackages, transformPackageResponse } from './helpers';
 import type { Package, SearchRpmApiArg } from './types';
-
-import { parseJsonUnsafe } from '../../backend/onprem/composerApi/helpers';
-import type {
-  ListSnapshotsByDateApiArg,
-  ListSnapshotsByDateApiResponse,
-  SearchRpmApiResponse,
-} from '../hosted/contentSourcesApi';
 
 export const contentSourcesApi = emptyContentSourcesApi.injectEndpoints({
   endpoints: (builder) => ({

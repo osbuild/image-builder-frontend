@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { describe, expect, it } from 'vitest';
 
 import { initialState, wizardReducer } from '@/store/slices/wizard';
+import { createMockState } from '@/store/slices/wizard/tests/mockWizardState';
 
 import {
   changeComplianceType,
@@ -14,7 +15,6 @@ import {
   setCompliancePolicy,
   setOscapProfile,
 } from '..';
-import { createMockState } from '../../tests/mockWizardState';
 
 const createStore = (overrides: Partial<typeof initialState> = {}) =>
   configureStore({

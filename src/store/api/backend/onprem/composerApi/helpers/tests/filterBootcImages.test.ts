@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { PodmanImageInfo } from '../../../types';
+import { PodmanImageInfo } from '@/store/api/backend/onprem/types';
+
 import { filterBootcImages, normalizeArch } from '../podman';
 
 const defaultLabels = {

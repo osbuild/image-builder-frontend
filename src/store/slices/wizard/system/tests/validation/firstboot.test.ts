@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateScript } from '../../validators';
+import { validateScript } from '@/store/slices/wizard';
 
 const isFirstBootScriptValid = (script: string) => {
   const { errors } = validateScript(script);

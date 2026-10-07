@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { changeRegistrationType, initialState } from '@/store/slices/wizard';
+import { registerLater } from '@/store/slices/wizard/listeners';
 import {
   createListenerApi,
   createMockState,
 } from '@/store/slices/wizard/tests/mockWizardState';
-
-import { registerLater } from '../../listeners';
 
 const ORIGINAL_ENV = process.env;
 

@@ -1,7 +1,7 @@
-import { safeReadJsonFile } from './safeReadJsonFile';
+import type { UploadStatus } from '@/store/api/backend/hosted';
+import { assertUploadStatus } from '@/store/api/backend/onprem/typeguards';
 
-import type { UploadStatus } from '../../../hosted';
-import { assertUploadStatus } from '../../typeguards';
+import { safeReadJsonFile } from './safeReadJsonFile';
 
 export type UploadResult = {
   provider: string;

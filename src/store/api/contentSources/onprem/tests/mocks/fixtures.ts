@@ -1,4 +1,7 @@
-import type { Package, SearchRpmApiArg } from '../../types';
+import type {
+  Package,
+  SearchRpmApiArg,
+} from '@/store/api/contentSources/onprem/types';
 
 export const createMockPackage = (overrides?: Partial<Package>): Package => ({
   name: 'test-package',

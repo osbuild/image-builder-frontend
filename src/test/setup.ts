@@ -53,7 +53,7 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-vi.mock(import('../../src/constants'), async (importOriginal) => {
+vi.mock(import('@/constants'), async (importOriginal) => {
   const mod = await importOriginal(); // type is inferred
   return {
     ...mod,

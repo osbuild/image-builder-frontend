@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { initialState, wizardReducer } from '@/store/slices/wizard';
+import { createMockState } from '@/store/slices/wizard/tests/mockWizardState';
 
 import {
   changeBlueprintDescription,
@@ -15,7 +16,6 @@ import {
   selectWizardMode,
   setIsCustomName,
 } from '..';
-import { createMockState } from '../../tests/mockWizardState';
 
 describe('details submodule', () => {
   describe('reducers', () => {

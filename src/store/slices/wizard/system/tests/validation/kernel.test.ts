@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateKernelArgs } from '../../validators';
+import { validateKernelArgs } from '@/store/slices/wizard';
 
 const isValid = (arg: string) => validateKernelArgs([arg]).errors.length === 0;
 
