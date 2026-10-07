@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { ValidatedPodmanImage } from '../../../types';
+import { ValidatedPodmanImage } from '@/store/api/backend/onprem/types';
+
 import { toBootcDistro } from '../podman';
 
 const makeImage = (

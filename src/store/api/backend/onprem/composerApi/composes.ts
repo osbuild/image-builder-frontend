@@ -3,6 +3,20 @@ import path from 'path';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 
+import {
+  ComposeBlueprintApiArg,
+  ComposeBlueprintApiResponse,
+  ComposeRequest,
+  ComposeResponse,
+  ComposesResponseItem,
+  CreateBlueprintRequest,
+  GetBlueprintComposesApiArg,
+  GetBlueprintComposesApiResponse,
+  GetComposesApiArg,
+  GetComposesApiResponse,
+  GetComposeStatusApiArg,
+  GetComposeStatusApiResponse,
+} from '@/store/api/backend/hosted';
 import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import {
@@ -22,20 +36,6 @@ import {
   uploadStatusFromFile,
 } from './helpers';
 
-import {
-  ComposeBlueprintApiArg,
-  ComposeBlueprintApiResponse,
-  ComposeRequest,
-  ComposeResponse,
-  ComposesResponseItem,
-  CreateBlueprintRequest,
-  GetBlueprintComposesApiArg,
-  GetBlueprintComposesApiResponse,
-  GetComposesApiArg,
-  GetComposesApiResponse,
-  GetComposeStatusApiArg,
-  GetComposeStatusApiResponse,
-} from '../../hosted';
 import { type ComposerCreateBlueprintRequest } from '../types';
 
 export const composeEndpoints = (builder: OnPremBuilder) => ({

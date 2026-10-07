@@ -1,3 +1,9 @@
+import {
+  GetArchitecturesApiArg,
+  GetArchitecturesApiResponse,
+  GetDistributionsApiArg,
+  GetDistributionsApiResponse,
+} from '@/store/api/backend/hosted';
 import { type OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
 
 import {
@@ -9,12 +15,6 @@ import {
 } from './helpers';
 import { normalizeArch, podmanInspect } from './helpers/podman';
 
-import {
-  GetArchitecturesApiArg,
-  GetArchitecturesApiResponse,
-  GetDistributionsApiArg,
-  GetDistributionsApiResponse,
-} from '../../hosted';
 import { PodmanImageInfo } from '../types';
 
 export const architectureEndpoints = (builder: OnPremBuilder) => ({

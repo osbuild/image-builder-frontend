@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { MAX_REGULAR_GID, MIN_REGULAR_GID } from '../../constants';
-import { validateGroupList } from '../../validators';
+import {
+  MAX_REGULAR_GID,
+  MIN_REGULAR_GID,
+  validateGroupList,
+} from '@/store/slices/wizard';
 
 const getGroupValidation = (gid?: number) =>
   validateGroupList([

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { createMockState } from '../../tests/mockWizardState';
+import { createMockState } from '@/store/slices/wizard/tests/mockWizardState';
+
 import { mapFirstbootFiles, mapSystemCustomizations } from '../mappers';
 import { initialState } from '../state';
 import type { SystemSlice } from '../types';

@@ -1,7 +1,7 @@
+import type { ImageStatus } from '@/store/api/backend/hosted';
+
 import { getJournal } from './getJournal';
 import { safeReadJsonFile } from './safeReadJsonFile';
-
-import type { ImageStatus } from '../../../hosted';
 
 type ValidationError = {
   message: string;

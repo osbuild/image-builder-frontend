@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { createMockState } from '../../tests/mockWizardState';
+import { createMockState } from '@/store/slices/wizard/tests/mockWizardState';
+
 import { mapContentCustomizations } from '../mappers';
 import { initialState } from '../state';
 import type { ContentSlice } from '../types';

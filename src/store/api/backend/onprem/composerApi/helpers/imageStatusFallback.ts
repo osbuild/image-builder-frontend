@@ -2,8 +2,8 @@ import path from 'path';
 
 import { fsinfo } from 'cockpit/fsinfo';
 
-import type { ImageStatus } from '../../../hosted';
-import { assertImageStatus } from '../../typeguards';
+import type { ImageStatus } from '@/store/api/backend/hosted';
+import { assertImageStatus } from '@/store/api/backend/onprem/typeguards';
 
 export const imageStatusFallback = async (
   composeID: string,

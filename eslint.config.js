@@ -116,7 +116,7 @@ module.exports = defineConfig([
         {
           patterns: [
             {
-              group: ['../../*'],
+              group: ['../../*', '../../**/*'],
               message:
                 'Avoid deep relative imports (../../ or deeper). Use @/ alias instead.',
             },

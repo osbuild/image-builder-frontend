@@ -4,7 +4,7 @@ import {
   validateFirewallDisabledServices,
   validateFirewallEnabledServices,
   validateFirewallPorts,
-} from '../../validators';
+} from '@/store/slices/wizard';
 
 const isPortValid = (port: string) =>
   validateFirewallPorts([port]).errors.length === 0;

@@ -4,7 +4,7 @@ import {
   validateDisabledServices,
   validateEnabledServices,
   validateMaskedServices,
-} from '../../validators';
+} from '@/store/slices/wizard';
 
 // All three service categories (enabled, disabled, masked) share the same
 // `serviceSchema`, so the format rules are exercised once through

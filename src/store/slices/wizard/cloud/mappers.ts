@@ -1,5 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
+import { selectIsOnPremise } from '@/store/slices/env';
+
 import {
   selectAwsAccountId,
   selectAwsRegion,
@@ -10,8 +12,6 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
 } from './selectors';
-
-import { selectIsOnPremise } from '../../env';
 
 export const mapAwsImageOptions = createSelector(
   [selectIsOnPremise, selectAwsAccountId, selectAwsRegion],

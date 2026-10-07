@@ -1,11 +1,6 @@
 import cockpit from 'cockpit';
 import TOML from 'smol-toml';
 
-import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
-
-import { lookupDatastreamDistro } from './helpers';
-import { mapOnPremToHosted } from './helpers/blueprintMapper';
-
 import {
   BlueprintItem,
   DistributionProfileItem,
@@ -13,7 +8,11 @@ import {
   GetOscapCustomizationsApiResponse,
   GetOscapProfilesApiArg,
   GetOscapProfilesApiResponse,
-} from '../../hosted';
+} from '@/store/api/backend/hosted';
+import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
+
+import { lookupDatastreamDistro } from './helpers';
+import { mapOnPremToHosted } from './helpers/blueprintMapper';
 
 export const oscapEndpoints = (builder: OnPremBuilder) => ({
   getOscapProfiles: builder.query<

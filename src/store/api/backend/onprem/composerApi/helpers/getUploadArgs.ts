@@ -1,9 +1,9 @@
 import path from 'path';
 
+import type { UploadConfigFile } from '@/store/api/backend/onprem';
+
 import { getBlueprintsPath } from './getBlueprintsPath';
 import { safeReadJsonFile } from './safeReadJsonFile';
-
-import type { UploadConfigFile } from '../../../onprem';
 
 export const getUploadArgs = async (
   type: string,

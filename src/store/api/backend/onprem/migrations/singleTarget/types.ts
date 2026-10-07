@@ -1,7 +1,7 @@
 import type {
   ComposerComposesResponseItem,
   ComposerCreateBlueprintRequest,
-} from '../../types';
+} from '@/store/api/backend/onprem/types';
 
 export type BlueprintMigrationStage =
   'planning' | 'backup' | 'migration' | 'locked';

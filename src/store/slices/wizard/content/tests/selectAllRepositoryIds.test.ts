@@ -5,8 +5,10 @@ import {
   type PayloadRepositoryWithFlag,
   selectAllRepositoryIds,
 } from '@/store/slices/wizard';
-
-import { createMockState, mockRootState } from '../../tests/mockWizardState';
+import {
+  createMockState,
+  mockRootState,
+} from '@/store/slices/wizard/tests/mockWizardState';
 
 const customRepo = (
   id: string,

@@ -3,11 +3,6 @@ import path from 'path';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 
-import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
-
-import { getBlueprintsPath } from './helpers';
-import { mapHostedToOnPrem } from './helpers/blueprintMapper';
-
 import {
   BlueprintItem,
   CreateBlueprintApiResponse,
@@ -20,7 +15,12 @@ import {
   GetBlueprintsApiArg,
   GetBlueprintsApiResponse,
   UpdateBlueprintApiResponse,
-} from '../../hosted';
+} from '@/store/api/backend/hosted';
+import { OnPremBuilder, onPremQueryHandler } from '@/store/api/shared';
+
+import { getBlueprintsPath } from './helpers';
+import { mapHostedToOnPrem } from './helpers/blueprintMapper';
+
 import {
   type ComposerBlueprint as Blueprint,
   ComposerCreateBlueprintApiArg,
