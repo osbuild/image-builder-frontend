@@ -79,7 +79,7 @@ describe('wizardSlice core reducers', () => {
         ...initialState,
         filesystem: {
           ...initialState.filesystem,
-          fileSystem: {
+          filesystem: {
             partitions: [
               { id: '1', mountpoint: '/', min_size: '10', unit: 'GiB' },
             ],
@@ -104,7 +104,7 @@ describe('wizardSlice core reducers', () => {
 
       const result = wizardReducer(stateWithPartitions, initializeWizard());
 
-      expect(result.filesystem.fileSystem.partitions).toEqual([]);
+      expect(result.filesystem.filesystem.partitions).toEqual([]);
       expect(result.filesystem.disk.partitions).toEqual([]);
     });
   });

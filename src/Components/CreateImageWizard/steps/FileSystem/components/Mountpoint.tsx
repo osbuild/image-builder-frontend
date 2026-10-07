@@ -33,7 +33,7 @@ const Mountpoint = ({
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
   const hasOneRoot =
-    customization === 'fileSystem' &&
+    customization === 'filesystem' &&
     partition.mountpoint === '/' &&
     filesystemPartitions.filter((p) => p.mountpoint === '/').length === 1;
 

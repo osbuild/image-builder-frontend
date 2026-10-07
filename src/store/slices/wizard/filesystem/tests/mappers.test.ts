@@ -21,7 +21,7 @@ describe('mapFilesystemCustomizations', () => {
     it('returns filesystem partitions with converted sizes', () => {
       const state = createState({
         mode: 'basic',
-        fileSystem: {
+        filesystem: {
           partitions: [
             { id: '1', mountpoint: '/', min_size: '10', unit: 'GiB' },
             { id: '2', mountpoint: '/home', min_size: '5', unit: 'GiB' },
@@ -38,7 +38,7 @@ describe('mapFilesystemCustomizations', () => {
     it('omits disk key in basic mode', () => {
       const state = createState({
         mode: 'basic',
-        fileSystem: {
+        filesystem: {
           partitions: [
             { id: '1', mountpoint: '/', min_size: '10', unit: 'GiB' },
           ],

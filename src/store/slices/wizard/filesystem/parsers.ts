@@ -44,9 +44,9 @@ const parseDisk = ({ disk }: Customizations): FilesystemSlice['disk'] => {
 
 const parseFilesystem = ({
   filesystem,
-}: Customizations): FilesystemSlice['fileSystem'] => {
+}: Customizations): FilesystemSlice['filesystem'] => {
   if (!filesystem) {
-    return initialState.fileSystem;
+    return initialState.filesystem;
   }
 
   return {
@@ -69,6 +69,6 @@ export const parseFilesystemFromRequest = ({
 }: RequestLike): FilesystemSlice => ({
   mode: parseMode(customizations),
   disk: parseDisk(customizations),
-  fileSystem: parseFilesystem(customizations),
+  filesystem: parseFilesystem(customizations),
   partitioningMode: parsePartitioningMode(customizations),
 });

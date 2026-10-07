@@ -52,7 +52,7 @@ describe('AdvancedSettingsOverview', () => {
                 partitions: [],
                 type: undefined,
               },
-              fileSystem: { partitions: [] },
+              filesystem: { partitions: [] },
               partitioningMode: undefined,
             },
           },
@@ -79,7 +79,7 @@ describe('AdvancedSettingsOverview', () => {
                 partitions: [],
                 type: undefined,
               },
-              fileSystem: { partitions: [] },
+              filesystem: { partitions: [] },
               partitioningMode: undefined,
             },
           },
@@ -111,7 +111,7 @@ describe('AdvancedSettingsOverview', () => {
                 partitions: [],
                 type: undefined,
               },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.singleRoot,
               },
               partitioningMode: undefined,
@@ -140,7 +140,7 @@ describe('AdvancedSettingsOverview', () => {
                 partitions: [],
                 type: undefined,
               },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.rootAndHome,
               },
               partitioningMode: undefined,
@@ -171,7 +171,7 @@ describe('AdvancedSettingsOverview', () => {
                 partitions: [],
                 type: undefined,
               },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.rootAndHome,
               },
               partitioningMode: undefined,
@@ -203,7 +203,7 @@ describe('AdvancedSettingsOverview', () => {
                 type: 'gpt',
                 partitions: advancedPartitions.singlePlain,
               },
-              fileSystem: { partitions: [] },
+              filesystem: { partitions: [] },
               partitioningMode: undefined,
             },
           },
@@ -232,7 +232,7 @@ describe('AdvancedSettingsOverview', () => {
                 type: 'gpt',
                 partitions: advancedPartitions.singlePlain,
               },
-              fileSystem: { partitions: [] },
+              filesystem: { partitions: [] },
               partitioningMode: undefined,
             },
           },
@@ -261,7 +261,7 @@ describe('AdvancedSettingsOverview', () => {
                 type: 'gpt',
                 partitions: advancedPartitions.withLvm,
               },
-              fileSystem: { partitions: [] },
+              filesystem: { partitions: [] },
               partitioningMode: undefined,
             },
           },
@@ -294,7 +294,7 @@ describe('AdvancedSettingsOverview', () => {
                 partitions: [],
                 type: undefined,
               },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.smallPartition,
               },
               partitioningMode: undefined,

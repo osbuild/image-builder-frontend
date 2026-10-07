@@ -27,7 +27,7 @@ export const selectDiskPartitions = (state: RootState) => {
 };
 
 export const selectFilesystemPartitions = (state: RootState) => {
-  return state.wizard.filesystem.fileSystem.partitions;
+  return state.wizard.filesystem.filesystem.partitions;
 };
 
 export const selectPartitioningMode = (state: RootState) => {
