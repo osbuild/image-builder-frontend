@@ -40,7 +40,7 @@ const Row = ({
     dispatch(removePartition(id));
   };
 
-  const customization = 'fileSystem';
+  const customization = 'filesystem';
 
   const removeButton = (
     <Button

@@ -24,7 +24,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<FilesystemPartition[]>,
     ) => {
-      state.fileSystem.partitions = action.payload;
+      state.filesystem.partitions = action.payload;
     },
     changeFscMode: (state, action: PayloadAction<FilesystemMode>) => {
       const currentMode = state.mode;
@@ -34,10 +34,10 @@ export const filesystemSlice = createSlice({
         state.mode = action.payload;
         switch (action.payload) {
           case 'automatic':
-            state.fileSystem.partitions = [];
+            state.filesystem.partitions = [];
             break;
           case 'basic':
-            state.fileSystem.partitions = [
+            state.filesystem.partitions = [
               {
                 id: crypto.randomUUID(),
                 mountpoint: '/',
@@ -65,7 +65,7 @@ export const filesystemSlice = createSlice({
       const currentMode = state.mode;
 
       if (currentMode === 'basic') {
-        state.fileSystem.partitions = [
+        state.filesystem.partitions = [
           {
             id: crypto.randomUUID(),
             mountpoint: '/',
@@ -77,28 +77,28 @@ export const filesystemSlice = createSlice({
     },
     addPartition: (state, action: PayloadAction<FilesystemPartition>) => {
       // Duplicate partitions are allowed temporarily, the wizard is responsible for final validation
-      state.fileSystem.partitions.push(action.payload);
+      state.filesystem.partitions.push(action.payload);
     },
     removePartition: (
       state,
       action: PayloadAction<FilesystemPartition['id']>,
     ) => {
-      const index = state.fileSystem.partitions.findIndex(
+      const index = state.filesystem.partitions.findIndex(
         (partition) => partition.id === action.payload,
       );
       if (index !== -1) {
-        state.fileSystem.partitions.splice(index, 1);
+        state.filesystem.partitions.splice(index, 1);
       }
     },
     removePartitionByMountpoint: (
       state,
       action: PayloadAction<FilesystemPartition['mountpoint']>,
     ) => {
-      const index = state.fileSystem.partitions.findIndex(
+      const index = state.filesystem.partitions.findIndex(
         (partition) => partition.mountpoint === action.payload,
       );
       if (index !== -1) {
-        state.fileSystem.partitions.splice(index, 1);
+        state.filesystem.partitions.splice(index, 1);
       }
     },
     changePartitionMountpoint: (

@@ -8,7 +8,7 @@ export const initialState: FilesystemSlice = {
     partitions: [],
     type: undefined,
   },
-  fileSystem: {
+  filesystem: {
     partitions: [],
   },
   partitioningMode: undefined,

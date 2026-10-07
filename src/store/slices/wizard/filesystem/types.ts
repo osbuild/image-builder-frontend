@@ -5,7 +5,7 @@ import {
   Minsize,
 } from '@/store/api/backend';
 
-export type PartitioningCustomization = 'disk' | 'fileSystem';
+export type PartitioningCustomization = 'disk' | 'filesystem';
 
 export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
 
@@ -63,7 +63,7 @@ export type MountpointPoliciesType = {
 export type FilesystemSlice = {
   mode: FilesystemMode;
   disk: FscDisk;
-  fileSystem: {
+  filesystem: {
     partitions: FilesystemPartition[];
   };
   partitioningMode: PartitioningModeType;

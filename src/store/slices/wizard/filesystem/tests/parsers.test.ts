@@ -100,7 +100,7 @@ describe('parseFilesystemFromRequest', () => {
     it('returns empty disk and filesystem partitions', () => {
       const result = parseFilesystemFromRequest(withCustomizations({}));
       expect(result.disk.partitions).toEqual([]);
-      expect(result.fileSystem.partitions).toEqual([]);
+      expect(result.filesystem.partitions).toEqual([]);
     });
   });
 
@@ -112,8 +112,8 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(1);
-      const partition = result.fileSystem.partitions[0];
+      expect(result.filesystem.partitions).toHaveLength(1);
+      const partition = result.filesystem.partitions[0];
       expect(partition.mountpoint).toBe('/');
       expect(partition.min_size).toBe('10');
       expect(partition.unit).toBe('GiB');
@@ -131,18 +131,18 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      expect(result.fileSystem.partitions).toHaveLength(3);
-      expect(result.fileSystem.partitions[0].mountpoint).toBe('/');
-      expect(result.fileSystem.partitions[0].min_size).toBe('10');
-      expect(result.fileSystem.partitions[0].unit).toBe('GiB');
+      expect(result.filesystem.partitions).toHaveLength(3);
+      expect(result.filesystem.partitions[0].mountpoint).toBe('/');
+      expect(result.filesystem.partitions[0].min_size).toBe('10');
+      expect(result.filesystem.partitions[0].unit).toBe('GiB');
 
-      expect(result.fileSystem.partitions[1].mountpoint).toBe('/home');
-      expect(result.fileSystem.partitions[1].min_size).toBe('20');
-      expect(result.fileSystem.partitions[1].unit).toBe('GiB');
+      expect(result.filesystem.partitions[1].mountpoint).toBe('/home');
+      expect(result.filesystem.partitions[1].min_size).toBe('20');
+      expect(result.filesystem.partitions[1].unit).toBe('GiB');
 
-      expect(result.fileSystem.partitions[2].mountpoint).toBe('/var');
-      expect(result.fileSystem.partitions[2].min_size).toBe('512');
-      expect(result.fileSystem.partitions[2].unit).toBe('MiB');
+      expect(result.filesystem.partitions[2].mountpoint).toBe('/var');
+      expect(result.filesystem.partitions[2].min_size).toBe('512');
+      expect(result.filesystem.partitions[2].unit).toBe('MiB');
     });
 
     it('assigns unique IDs to each partition', () => {
@@ -155,7 +155,7 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      const ids = result.fileSystem.partitions.map((p) => p.id);
+      const ids = result.filesystem.partitions.map((p) => p.id);
       expect(new Set(ids).size).toBe(ids.length);
     });
 
@@ -166,8 +166,8 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      expect(result.fileSystem.partitions[0].min_size).toBe('500000');
-      expect(result.fileSystem.partitions[0].unit).toBe('B');
+      expect(result.filesystem.partitions[0].min_size).toBe('500000');
+      expect(result.filesystem.partitions[0].unit).toBe('B');
     });
 
     it('keeps disk partitions empty in basic mode', () => {
@@ -543,7 +543,7 @@ describe('parseFilesystemFromRequest', () => {
           },
         }),
       );
-      expect(result.fileSystem.partitions).toEqual([]);
+      expect(result.filesystem.partitions).toEqual([]);
     });
   });
 
