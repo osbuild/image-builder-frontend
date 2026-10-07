@@ -166,7 +166,7 @@ export const convertDiskToFscDisk = (
   disk: FilesystemTyped | VolumeGroup | BtrfsVolume,
 ): DiskPartition => {
   const id = crypto.randomUUID();
-  let size;
+  let size = '';
   let unit;
 
   if (disk.minsize) {
@@ -208,7 +208,7 @@ export const convertDiskToFscDisk = (
 
 export const convertLogicalVolume = (volume: LogicalVolume) => {
   const id = crypto.randomUUID();
-  let size;
+  let size = '';
   let unit;
 
   if (volume.minsize) {

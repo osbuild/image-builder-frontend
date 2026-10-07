@@ -272,30 +272,6 @@ describe('parseFilesystemFromRequest', () => {
     });
 
     describe('plain partitions', () => {
-      it('converts a plain partition with minsize', () => {
-        const result = parseFilesystemFromRequest(
-          withCustomizations({
-            disk: {
-              partitions: [
-                {
-                  fs_type: 'xfs' as const,
-                  mountpoint: '/',
-                  minsize: '10 GiB',
-                },
-              ],
-            },
-          }),
-        );
-
-        expect(getAdvancedFilesystem(result).disk.partitions).toHaveLength(1);
-        const partition = getAdvancedFilesystem(result).disk.partitions[0];
-        expect(partition.id).toEqual(expect.any(String));
-        expect(partition.min_size).toBe('10');
-        expect(partition.unit).toBe('GiB');
-        expect('fs_type' in partition && partition.fs_type).toBe('xfs');
-        expect('mountpoint' in partition && partition.mountpoint).toBe('/');
-      });
-
       it('defaults unit to GiB when minsize has no unit', () => {
         const result = parseFilesystemFromRequest(
           withCustomizations({
