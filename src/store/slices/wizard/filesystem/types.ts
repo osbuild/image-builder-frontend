@@ -21,8 +21,8 @@ export type Units = 'B' | 'MiB' | 'GiB';
 
 export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
 
-export type FscDisk = {
-  minsize: string;
+export type Disk = {
+  minsize?: string | undefined;
   unit: Units;
   partitions: DiskPartition[];
   type?: 'gpt' | 'dos' | undefined;
@@ -62,7 +62,7 @@ export type MountpointPoliciesType = {
 
 export type FilesystemSlice = {
   mode: FilesystemMode;
-  disk: FscDisk;
+  disk: Disk;
   filesystem: {
     partitions: FilesystemPartition[];
   };
