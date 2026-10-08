@@ -12,21 +12,19 @@ import { useAppDispatch } from '@/store/hooks';
 import {
   changePartitionMinSize,
   changePartitionUnit,
+  DiskPartition,
   FilesystemPartition,
-  LogicalVolumeWithBase,
-  Units,
-  VolumeGroupWithExtendedLV,
+  type Units,
 } from '@/store/slices/wizard';
 
 const units = ['GiB', 'MiB'];
 
-type SizeUnitPropTypes = {
-  partition:
-    FilesystemPartition | LogicalVolumeWithBase | VolumeGroupWithExtendedLV;
+type SizeUnitProps = {
+  partition: FilesystemPartition | DiskPartition;
   isOscapRequired?: boolean;
 };
 
-const SizeUnit = ({ partition, isOscapRequired }: SizeUnitPropTypes) => {
+const SizeUnit = ({ partition, isOscapRequired }: SizeUnitProps) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 

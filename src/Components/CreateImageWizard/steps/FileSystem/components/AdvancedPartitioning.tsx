@@ -138,7 +138,9 @@ const AdvancedPartitioning = () => {
         </Button>
       </Content>
       <VolumeGroups
-        volumeGroups={diskPartitions.filter((p) => p.type === 'lvm')}
+        volumeGroup={diskPartitions.find(
+          (partition) => partition.type === 'lvm',
+        )}
       />
     </>
   );

@@ -23,11 +23,11 @@ import {
 
 const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
-type PartitionTypePropTypes = {
+type PartitionTypeProps = {
   partition: LogicalVolumeWithBase;
 };
 
-const PartitionType = ({ partition }: PartitionTypePropTypes) => {
+const PartitionType = ({ partition }: PartitionTypeProps) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);

@@ -9,15 +9,13 @@ import { selectComplianceType } from '@/store/slices';
 import {
   changePartitionMountpoint,
   FilesystemPartition,
-  LogicalVolumeWithBase,
-  PlainPartitionWithBase,
+  MountpointDiskPartition,
   selectFilesystemPartitions,
   selectFscMode,
 } from '@/store/slices/wizard';
 
 type MountpointProps = {
-  partition:
-    FilesystemPartition | PlainPartitionWithBase | LogicalVolumeWithBase;
+  partition: FilesystemPartition | MountpointDiskPartition;
   isOscapRequired?: boolean;
 };
 

@@ -20,7 +20,7 @@ import SizeUnit from './SizeUnit';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
-type RowPropTypes = {
+type RowProps = {
   partition: FilesystemPartition;
   isRemovingDisabled: boolean;
   isOscapRequired: boolean;
@@ -32,7 +32,7 @@ const Row = ({
   isRemovingDisabled,
   isOscapRequired,
   oscapMinSizeLabel,
-}: RowPropTypes) => {
+}: RowProps) => {
   const dispatch = useAppDispatch();
   const complianceType = useAppSelector(selectComplianceType);
 
