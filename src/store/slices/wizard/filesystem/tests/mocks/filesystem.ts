@@ -1,9 +1,9 @@
 import type {
   FilesystemPartition,
-  LogicalVolumeWithBase,
-  PlainPartitionWithBase,
-  VolumeGroupWithExtendedLV,
-} from '@/store/slices/wizard/filesystem/types';
+  LogicalVolume,
+  PlainPartition,
+  VolumeGroup,
+} from '@/store/slices/wizard';
 
 // Basic filesystem partition factory
 export const createBasicPartition = (
@@ -18,8 +18,8 @@ export const createBasicPartition = (
 
 // Advanced disk partition factory
 export const createPlainPartition = (
-  overrides: Partial<PlainPartitionWithBase> = {},
-): PlainPartitionWithBase => ({
+  overrides: Partial<PlainPartition> = {},
+): PlainPartition => ({
   id: `partition-${Math.random().toString(36).slice(2, 11)}`,
   mountpoint: '/boot',
   min_size: '1',
@@ -31,8 +31,8 @@ export const createPlainPartition = (
 
 // Logical volume factory
 export const createLogicalVolume = (
-  overrides: Partial<LogicalVolumeWithBase> = {},
-): LogicalVolumeWithBase => ({
+  overrides: Partial<LogicalVolume> = {},
+): LogicalVolume => ({
   id: `lv-${Math.random().toString(36).slice(2, 11)}`,
   mountpoint: '/',
   min_size: '10',
@@ -44,9 +44,9 @@ export const createLogicalVolume = (
 
 // Volume group factory
 export const createVolumeGroup = (
-  logicalVolumes: LogicalVolumeWithBase[] = [],
-  overrides: Partial<VolumeGroupWithExtendedLV> = {},
-): VolumeGroupWithExtendedLV => ({
+  logicalVolumes: LogicalVolume[] = [],
+  overrides: Partial<VolumeGroup> = {},
+): VolumeGroup => ({
   id: `vg-${Math.random().toString(36).slice(2, 11)}`,
   type: 'lvm',
   name: 'vg0',

@@ -5,8 +5,8 @@ import {
   DiskPartition,
   FilesystemMode,
   FilesystemPartition,
-  FSType,
-  LogicalVolumeWithBase,
+  FilesystemType,
+  LogicalVolume,
   PartitioningMode,
   Units,
 } from './types';
@@ -239,7 +239,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{
         id: string;
-        fs_type: FSType;
+        fs_type: FilesystemType;
       }>,
     ) => {
       if (state.mode === 'automatic') return;
@@ -406,7 +406,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{
         vgId: string;
-        logicalVolume: LogicalVolumeWithBase;
+        logicalVolume: LogicalVolume;
       }>,
     ) => {
       if (state.mode !== 'advanced') return;
