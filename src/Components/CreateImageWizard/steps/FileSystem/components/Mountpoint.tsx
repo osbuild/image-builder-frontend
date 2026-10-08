@@ -10,30 +10,26 @@ import {
   changePartitionMountpoint,
   FilesystemPartition,
   LogicalVolumeWithBase,
-  PartitioningCustomization,
   PlainPartitionWithBase,
   selectFilesystemPartitions,
+  selectFscMode,
 } from '@/store/slices/wizard';
 
 type MountpointProps = {
   partition:
     FilesystemPartition | PlainPartitionWithBase | LogicalVolumeWithBase;
-  customization: PartitioningCustomization;
   isOscapRequired?: boolean;
 };
 
-const Mountpoint = ({
-  partition,
-  customization,
-  isOscapRequired,
-}: MountpointProps) => {
+const Mountpoint = ({ partition, isOscapRequired }: MountpointProps) => {
   const dispatch = useAppDispatch();
+  const mode = useAppSelector(selectFscMode);
   const complianceType = useAppSelector(selectComplianceType);
   const stepValidation = useFilesystemValidation();
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
   const hasOneRoot =
-    customization === 'filesystem' &&
+    mode === 'basic' &&
     partition.mountpoint === '/' &&
     filesystemPartitions.filter((p) => p.mountpoint === '/').length === 1;
 
@@ -54,12 +50,11 @@ const Mountpoint = ({
       placeholder='Define mount point'
       value={partition.mountpoint || ''}
       isDisabled={isDisabled}
-      onChange={(event, mountpoint) => {
+      onChange={(_, mountpoint) => {
         dispatch(
           changePartitionMountpoint({
             id: partition.id,
             mountpoint: mountpoint,
-            customization: customization,
           }),
         );
       }}

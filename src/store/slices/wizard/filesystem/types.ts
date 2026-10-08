@@ -5,8 +5,6 @@ import {
   Minsize,
 } from '@/store/api/backend';
 
-export type PartitioningCustomization = 'disk' | 'filesystem';
-
 export type PartitioningMode = 'raw' | 'lvm' | 'auto-lvm';
 
 export type FilesystemMode = 'automatic' | 'basic' | 'advanced';

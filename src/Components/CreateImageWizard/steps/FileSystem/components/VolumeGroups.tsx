@@ -135,10 +135,10 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
               <FormGroup label='Minimum volume group size'>
                 <Flex>
                   <FlexItem spacer={{ default: 'spacerXs' }}>
-                    <MinimumSize partition={vg} customization='disk' />
+                    <MinimumSize partition={vg} />
                   </FlexItem>
                   <FlexItem>
-                    <SizeUnit partition={vg} customization='disk' />
+                    <SizeUnit partition={vg} />
                   </FlexItem>
                 </Flex>
               </FormGroup>

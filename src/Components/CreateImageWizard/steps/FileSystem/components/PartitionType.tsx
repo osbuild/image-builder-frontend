@@ -16,7 +16,6 @@ import {
   getNextAvailableMountpoint,
   isPartitionTypeAvailable,
   LogicalVolumeWithBase,
-  PartitioningCustomization,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
@@ -26,19 +25,15 @@ const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
 
 type PartitionTypePropTypes = {
   partition: LogicalVolumeWithBase;
-  customization: PartitioningCustomization;
 };
 
-const PartitionType = ({
-  partition,
-  customization,
-}: PartitionTypePropTypes) => {
+const PartitionType = ({ partition }: PartitionTypePropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const isImageMode = useAppSelector(selectIsImageMode);
-  const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
+  const onSelect = (_?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
 
     if (selection === 'swap') {
@@ -46,7 +41,6 @@ const PartitionType = ({
         changePartitionMountpoint({
           id: partition.id,
           mountpoint: '',
-          customization: customization,
         }),
       );
     }
@@ -61,7 +55,6 @@ const PartitionType = ({
         changePartitionMountpoint({
           id: partition.id,
           mountpoint,
-          customization: customization,
         }),
       );
     }
@@ -70,7 +63,6 @@ const PartitionType = ({
       changePartitionType({
         id: partition.id,
         fs_type: selection as FSType,
-        customization: customization,
       }),
     );
     setIsOpen(false);

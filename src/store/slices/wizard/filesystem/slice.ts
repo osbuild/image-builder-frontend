@@ -9,7 +9,6 @@ import {
   FilesystemMode,
   FilesystemPartition,
   FSType,
-  PartitioningCustomization,
   PartitioningMode,
   Units,
 } from './types';
@@ -114,7 +113,6 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         mountpoint: string;
-        customization: PartitioningCustomization;
       }>,
     ) => {
       if (state.mode === 'automatic') return;
@@ -163,7 +161,6 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         unit: Units;
-        customization: PartitioningCustomization;
       }>,
     ) => {
       if (state.mode === 'automatic') return;
@@ -205,7 +202,6 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         min_size: string;
-        customization: PartitioningCustomization;
       }>,
     ) => {
       if (state.mode === 'automatic') return;
@@ -246,7 +242,6 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         fs_type: FSType;
-        customization: PartitioningCustomization;
       }>,
     ) => {
       if (state.mode === 'automatic') return;
@@ -294,7 +289,6 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         name: string;
-        customization: PartitioningCustomization;
       }>,
     ) => {
       if (state.mode === 'automatic') return;

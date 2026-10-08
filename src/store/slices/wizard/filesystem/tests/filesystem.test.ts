@@ -345,7 +345,6 @@ describe('filesystem reducers', () => {
         changePartitionMountpoint({
           id: 'p1',
           mountpoint: '/home',
-          customization: 'filesystem',
         }),
       );
 
@@ -372,7 +371,6 @@ describe('filesystem reducers', () => {
         changePartitionUnit({
           id: 'p1',
           unit: 'MiB',
-          customization: 'filesystem',
         }),
       );
 
@@ -399,7 +397,6 @@ describe('filesystem reducers', () => {
         changePartitionMinSize({
           id: 'p1',
           min_size: '50',
-          customization: 'filesystem',
         }),
       );
 
