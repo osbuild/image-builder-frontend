@@ -17,11 +17,11 @@ import PartitionName from './PartitionName';
 import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
 
-type DiskRowPropTypes = {
+type DiskRowProps = {
   partition: DiskPartition;
 };
 
-const DiskRow = ({ partition }: DiskRowPropTypes) => {
+const DiskRow = ({ partition }: DiskRowProps) => {
   const dispatch = useAppDispatch();
   const diskPartitions = useAppSelector(selectDiskPartitions);
 

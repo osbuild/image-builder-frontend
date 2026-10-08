@@ -9,14 +9,12 @@ import { selectComplianceType } from '@/store/slices';
 import {
   changePartitionMinSize,
   changePartitionUnit,
+  DiskPartitionBase,
   FilesystemPartition,
-  LogicalVolumeWithBase,
-  VolumeGroupWithExtendedLV,
 } from '@/store/slices/wizard';
 
-type MinimumSizePropTypes = {
-  partition:
-    FilesystemPartition | LogicalVolumeWithBase | VolumeGroupWithExtendedLV;
+type MinimumSizeProps = {
+  partition: FilesystemPartition | DiskPartitionBase;
   isOscapRequired?: boolean;
   oscapMinSizeLabel?: string;
 };
@@ -25,7 +23,7 @@ const MinimumSize = ({
   partition,
   isOscapRequired,
   oscapMinSizeLabel,
-}: MinimumSizePropTypes) => {
+}: MinimumSizeProps) => {
   const dispatch = useAppDispatch();
   const complianceType = useAppSelector(selectComplianceType);
   const stepValidation = useFilesystemValidation();

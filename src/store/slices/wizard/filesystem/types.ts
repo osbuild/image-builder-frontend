@@ -36,6 +36,9 @@ export type PlainPartitionWithBase = FilesystemTyped & DiskPartitionBase;
 
 export type LogicalVolumeWithBase = LogicalVolume & DiskPartitionBase;
 
+export type MountpointDiskPartition =
+  PlainPartitionWithBase | LogicalVolumeWithBase;
+
 export type VolumeGroupWithExtendedLV = DiskPartitionBase & {
   type: 'lvm';
   part_type?: string | undefined;
