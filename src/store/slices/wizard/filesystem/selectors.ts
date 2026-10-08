@@ -7,7 +7,7 @@ import type {
   DiskPartition,
   FilesystemPartition,
   Units,
-  VolumeGroupWithExtendedLV,
+  VolumeGroup,
 } from './types';
 import { getConversionFactor } from './utilities';
 
@@ -64,8 +64,7 @@ export const selectPlainPartitions = createSelector(
 
 export const selectVolumeGroups = createSelector(
   [selectDiskPartitions],
-  (partitions) =>
-    partitions.filter((p) => p.type === 'lvm') as VolumeGroupWithExtendedLV[],
+  (partitions) => partitions.filter((p) => p.type === 'lvm') as VolumeGroup[],
 );
 
 export const selectBasicPartitionCount = createSelector(

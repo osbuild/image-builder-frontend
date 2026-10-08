@@ -1,5 +1,5 @@
 export type Units = 'B' | 'MiB' | 'GiB';
-export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
+export type FilesystemType = 'ext4' | 'xfs' | 'vfat' | 'swap';
 export type PartitioningMode = 'raw' | 'lvm' | 'auto-lvm';
 export type FilesystemMode = 'automatic' | 'basic' | 'advanced';
 
@@ -14,35 +14,35 @@ export type Filesystem = {
   partitions: FilesystemPartition[];
 };
 
-export type DiskPartitionBase = {
+type DiskPartitionFields = {
   id: string;
   min_size: string | undefined;
   unit: Units | undefined;
 };
 
-export type PlainPartitionWithBase = DiskPartitionBase & {
+export type PlainPartition = DiskPartitionFields & {
   type?: 'plain' | undefined;
   part_type?: string | undefined;
   minsize?: string | undefined;
   mountpoint?: string | undefined;
   label?: string | undefined;
-  fs_type: FSType;
+  fs_type: FilesystemType;
 };
 
-export type LogicalVolumeWithBase = DiskPartitionBase & {
+export type LogicalVolume = DiskPartitionFields & {
   name?: string | undefined;
   minsize?: string | undefined;
   mountpoint?: string | undefined;
   label?: string | undefined;
-  fs_type: FSType;
+  fs_type: FilesystemType;
 };
 
-export type VolumeGroupWithExtendedLV = DiskPartitionBase & {
+export type VolumeGroup = DiskPartitionFields & {
   type: 'lvm';
   part_type?: string | undefined;
   name?: string | undefined;
   minsize?: string | undefined;
-  logical_volumes: LogicalVolumeWithBase[];
+  logical_volumes: LogicalVolume[];
 };
 
 type BtrfsSubvolume = {
@@ -50,18 +50,15 @@ type BtrfsSubvolume = {
   mountpoint: string;
 };
 
-export type BtrfsVolume = DiskPartitionBase & {
+export type BtrfsVolume = DiskPartitionFields & {
   type: 'btrfs';
   part_type?: string | undefined;
   minsize?: string | undefined;
   subvolumes: BtrfsSubvolume[];
 };
 
-export type MountpointDiskPartition =
-  PlainPartitionWithBase | LogicalVolumeWithBase;
-
-export type DiskPartition =
-  PlainPartitionWithBase | VolumeGroupWithExtendedLV | BtrfsVolume;
+export type MountpointDiskPartition = PlainPartition | LogicalVolume;
+export type DiskPartition = PlainPartition | VolumeGroup | BtrfsVolume;
 
 export type Disk = {
   minsize?: string | undefined;

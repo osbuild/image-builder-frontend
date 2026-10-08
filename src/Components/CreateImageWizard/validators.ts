@@ -3,7 +3,7 @@ import {
   FilesystemPartition,
   ImageModeMountpointPolicies,
   MountpointPolicies,
-  VolumeGroupWithExtendedLV,
+  VolumeGroup,
 } from '@/store/slices/wizard';
 
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
@@ -147,7 +147,7 @@ export const getDuplicateMountPoints = (
   return duplicates;
 };
 
-export const getDuplicateNames = (vg: VolumeGroupWithExtendedLV): string[] => {
+export const getDuplicateNames = (vg: VolumeGroup): string[] => {
   const nameSet: Set<string> = new Set();
   const duplicates: string[] = [];
 

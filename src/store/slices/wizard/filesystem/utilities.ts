@@ -7,7 +7,12 @@ import {
   VolumeGroup,
 } from '@/store/api/backend';
 
-import { DiskPartition, FilesystemPartition, FSType, Units } from './types';
+import {
+  DiskPartition,
+  FilesystemPartition,
+  FilesystemType,
+  Units,
+} from './types';
 
 const defaultMountpointPreferences = [
   '/home',
@@ -57,7 +62,7 @@ export const parseSizeUnit = (bytesize: string): [string, Units] => {
 };
 
 export const isPartitionTypeAvailable = (
-  type: FSType,
+  type: FilesystemType,
   partition: FilesystemPartition | DiskPartition,
 ) => {
   if ('type' in partition && partition.type === 'plain') {

@@ -22,7 +22,7 @@ import {
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
-  type VolumeGroupWithExtendedLV,
+  type VolumeGroup,
 } from '@/store/slices/wizard';
 
 import FileSystemTable from './FileSystemTable';
@@ -30,7 +30,7 @@ import MinimumSize from './MinimumSize';
 import SizeUnit from './SizeUnit';
 
 type VolumeGroupsProps = {
-  volumeGroup: VolumeGroupWithExtendedLV | undefined;
+  volumeGroup: VolumeGroup | undefined;
 };
 
 const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {

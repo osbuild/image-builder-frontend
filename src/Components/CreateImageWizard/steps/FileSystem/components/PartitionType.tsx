@@ -12,19 +12,18 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changePartitionMountpoint,
   changePartitionType,
-  FSType,
+  FILESYSTEM_TYPES,
+  FilesystemType,
   getNextAvailableMountpoint,
   isPartitionTypeAvailable,
-  LogicalVolumeWithBase,
+  LogicalVolume,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
-const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
-
 type PartitionTypeProps = {
-  partition: LogicalVolumeWithBase;
+  partition: LogicalVolume;
 };
 
 const PartitionType = ({ partition }: PartitionTypeProps) => {
@@ -62,7 +61,7 @@ const PartitionType = ({ partition }: PartitionTypeProps) => {
     dispatch(
       changePartitionType({
         id: partition.id,
-        fs_type: selection as FSType,
+        fs_type: selection as FilesystemType,
       }),
     );
     setIsOpen(false);
@@ -93,13 +92,13 @@ const PartitionType = ({ partition }: PartitionTypeProps) => {
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {fs_types
-          .filter((type) => isPartitionTypeAvailable(type, partition))
-          .map((type, index) => (
-            <SelectOption key={index} value={type}>
-              {type}
-            </SelectOption>
-          ))}
+        {FILESYSTEM_TYPES.filter((type) =>
+          isPartitionTypeAvailable(type, partition),
+        ).map((type, index) => (
+          <SelectOption key={index} value={type}>
+            {type}
+          </SelectOption>
+        ))}
       </SelectList>
     </Select>
   );

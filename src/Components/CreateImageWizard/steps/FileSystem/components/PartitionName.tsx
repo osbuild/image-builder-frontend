@@ -3,13 +3,10 @@ import React from 'react';
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
-import {
-  changePartitionName,
-  type LogicalVolumeWithBase,
-} from '@/store/slices/wizard';
+import { changePartitionName, type LogicalVolume } from '@/store/slices/wizard';
 
 type PartitionNameProps = {
-  partition: LogicalVolumeWithBase;
+  partition: Pick<LogicalVolume, 'id' | 'name'>;
 };
 
 const PartitionName = ({ partition }: PartitionNameProps) => {
