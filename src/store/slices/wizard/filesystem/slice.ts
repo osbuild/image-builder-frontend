@@ -10,7 +10,7 @@ import {
   FilesystemPartition,
   FSType,
   PartitioningCustomization,
-  PartitioningModeType,
+  PartitioningMode,
   Units,
 } from './types';
 
@@ -345,7 +345,7 @@ export const filesystemSlice = createSlice({
     },
     changePartitioningMode: (
       state,
-      action: PayloadAction<PartitioningModeType>,
+      action: PayloadAction<PartitioningMode | undefined>,
     ) => {
       state.partitioningMode = action.payload;
     },

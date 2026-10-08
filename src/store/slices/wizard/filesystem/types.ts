@@ -7,7 +7,7 @@ import {
 
 export type PartitioningCustomization = 'disk' | 'filesystem';
 
-export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
+export type PartitioningMode = 'raw' | 'lvm' | 'auto-lvm';
 
 export type FilesystemMode = 'automatic' | 'basic' | 'advanced';
 export type FilesystemPartition = {
@@ -66,5 +66,5 @@ export type FilesystemSlice = {
   filesystem: {
     partitions: FilesystemPartition[];
   };
-  partitioningMode: PartitioningModeType;
+  partitioningMode?: PartitioningMode | undefined;
 };
