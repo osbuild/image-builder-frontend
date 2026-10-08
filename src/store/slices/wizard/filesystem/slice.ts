@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { LogicalVolume } from '@/store/api/backend';
-
 import { emptyDisk, initialState } from './state';
 import {
   DiskPartition,
-  DiskPartitionBase,
   FilesystemMode,
   FilesystemPartition,
   FSType,
+  LogicalVolumeWithBase,
   PartitioningMode,
   Units,
 } from './types';
@@ -408,7 +406,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{
         vgId: string;
-        logicalVolume: LogicalVolume & DiskPartitionBase;
+        logicalVolume: LogicalVolumeWithBase;
       }>,
     ) => {
       if (state.mode !== 'advanced') return;
