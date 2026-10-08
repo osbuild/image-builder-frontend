@@ -1,4 +1,4 @@
-import { MountpointPoliciesType } from '@/store/slices/wizard';
+import { MountpointPoliciesType } from './types';
 
 // Policies according to https://github.com/osbuild/images/blob/main/pkg/policies/policies.go
 export const MountpointPolicies: MountpointPoliciesType = {
