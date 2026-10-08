@@ -1,13 +1,8 @@
-import {
-  BtrfsVolume,
-  FilesystemTyped,
-  LogicalVolume,
-  Minsize,
-} from '@/store/api/backend';
-
+export type Units = 'B' | 'MiB' | 'GiB';
+export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
 export type PartitioningMode = 'raw' | 'lvm' | 'auto-lvm';
-
 export type FilesystemMode = 'automatic' | 'basic' | 'advanced';
+
 export type FilesystemPartition = {
   id: string;
   mountpoint: string;
@@ -15,15 +10,8 @@ export type FilesystemPartition = {
   unit: Units;
 };
 
-export type Units = 'B' | 'MiB' | 'GiB';
-
-export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
-
-export type Disk = {
-  minsize?: string | undefined;
-  unit: Units;
-  partitions: DiskPartition[];
-  type?: 'gpt' | 'dos' | undefined;
+export type Filesystem = {
+  partitions: FilesystemPartition[];
 };
 
 export type DiskPartitionBase = {
@@ -32,33 +20,59 @@ export type DiskPartitionBase = {
   unit: Units | undefined;
 };
 
-export type PlainPartitionWithBase = FilesystemTyped & DiskPartitionBase;
+export type PlainPartitionWithBase = DiskPartitionBase & {
+  type?: 'plain' | undefined;
+  part_type?: string | undefined;
+  minsize?: string | undefined;
+  mountpoint?: string | undefined;
+  label?: string | undefined;
+  fs_type: FSType;
+};
 
-export type LogicalVolumeWithBase = LogicalVolume & DiskPartitionBase;
-
-export type MountpointDiskPartition =
-  PlainPartitionWithBase | LogicalVolumeWithBase;
+export type LogicalVolumeWithBase = DiskPartitionBase & {
+  name?: string | undefined;
+  minsize?: string | undefined;
+  mountpoint?: string | undefined;
+  label?: string | undefined;
+  fs_type: FSType;
+};
 
 export type VolumeGroupWithExtendedLV = DiskPartitionBase & {
   type: 'lvm';
   part_type?: string | undefined;
   name?: string | undefined;
-  minsize?: Minsize | undefined;
+  minsize?: string | undefined;
   logical_volumes: LogicalVolumeWithBase[];
 };
 
+type BtrfsSubvolume = {
+  name: string;
+  mountpoint: string;
+};
+
+export type BtrfsVolume = DiskPartitionBase & {
+  type: 'btrfs';
+  part_type?: string | undefined;
+  minsize?: string | undefined;
+  subvolumes: BtrfsSubvolume[];
+};
+
+export type MountpointDiskPartition =
+  PlainPartitionWithBase | LogicalVolumeWithBase;
+
 export type DiskPartition =
-  | PlainPartitionWithBase
-  | VolumeGroupWithExtendedLV
-  | (BtrfsVolume & DiskPartitionBase);
+  PlainPartitionWithBase | VolumeGroupWithExtendedLV | BtrfsVolume;
+
+export type Disk = {
+  minsize?: string | undefined;
+  unit: Units;
+  partitions: DiskPartition[];
+  type?: 'gpt' | 'dos' | undefined;
+};
 
 export type MountpointPolicy = {
   Deny?: boolean;
   Exact?: boolean;
-};
-
-export type Filesystem = {
-  partitions: FilesystemPartition[];
 };
 
 export type AutomaticFS = {
