@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
 import { clickWithWait, createUser, renderWithRedux } from '@/test/testUtils';
@@ -135,6 +135,41 @@ describe('Oscap Component', () => {
           name: /Use a default OpenSCAP profile/i,
         }),
       ).not.toBeChecked();
+    });
+  });
+
+  describe('Profile details popover', () => {
+    test('shows profile customizations', async () => {
+      renderWithRedux(<OscapStep />, {
+        output: {
+          ...initialState.output,
+          imageTypes: ['guest-image'],
+        },
+        compliance: {
+          type: 'openscap',
+          profileID: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          policyID: undefined,
+          policyTitle: undefined,
+          fips: { enabled: false },
+        },
+      });
+      const user = createUser();
+
+      const viewDetailsButton = await screen.findByRole('button', {
+        name: /View details/i,
+      });
+      await clickWithWait(user, viewDetailsButton);
+
+      const popover = await screen.findByRole('dialog');
+
+      expect(within(popover).getByText('Added packages')).toBeInTheDocument();
+      expect(
+        within(popover).getByText('Included partitioning'),
+      ).toBeInTheDocument();
+      expect(within(popover).getByText('Kernel arguments')).toBeInTheDocument();
+      expect(within(popover).getByText('Systemd services')).toBeInTheDocument();
+      expect(within(popover).getByText('Enabled services')).toBeInTheDocument();
+      expect(within(popover).getByText('Masked services')).toBeInTheDocument();
     });
   });
 });

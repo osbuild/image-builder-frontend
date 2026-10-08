@@ -238,7 +238,7 @@ const OscapContent = () => {
                                 <Popover
                                   headerContent='Details'
                                   bodyContent={<PolicyDetails />}
-                                  minWidth='30'
+                                  minWidth='30rem'
                                 >
                                   <Button
                                     variant='secondary'
@@ -293,7 +293,7 @@ const OscapContent = () => {
                             <Popover
                               headerContent='Details'
                               bodyContent={<OpenScapProfileDetails />}
-                              minWidth='30'
+                              minWidth='30rem'
                             >
                               <Button
                                 variant='secondary'
