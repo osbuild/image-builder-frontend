@@ -8,18 +8,13 @@ import {
   changePartitionName,
   DiskPartitionBase,
   LogicalVolumeWithBase,
-  PartitioningCustomization,
 } from '@/store/slices/wizard';
 
 type PartitionNamePropTypes = {
   partition: (VolumeGroup & DiskPartitionBase) | LogicalVolumeWithBase;
-  customization: PartitioningCustomization;
 };
 
-const PartitionName = ({
-  partition,
-  customization,
-}: PartitionNamePropTypes) => {
+const PartitionName = ({ partition }: PartitionNamePropTypes) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
 
@@ -27,12 +22,11 @@ const PartitionName = ({
     <ValidatedInputAndTextArea
       ariaLabel='Partition name input'
       value={partition.name || ''}
-      onChange={(event, name) => {
+      onChange={(_, name) => {
         dispatch(
           changePartitionName({
             id: partition.id,
             name: name,
-            customization: customization,
           }),
         );
       }}

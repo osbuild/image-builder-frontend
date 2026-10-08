@@ -40,8 +40,6 @@ const Row = ({
     dispatch(removePartition(id));
   };
 
-  const customization = 'filesystem';
-
   const removeButton = (
     <Button
       isDisabled={isOscapRequired || isRemovingDisabled}
@@ -61,11 +59,7 @@ const Row = ({
   return (
     <Tr id={partition.id}>
       <Td width={40}>
-        <Mountpoint
-          partition={partition}
-          customization={customization}
-          isOscapRequired={isOscapRequired}
-        />
+        <Mountpoint partition={partition} isOscapRequired={isOscapRequired} />
       </Td>
       <Td width={20}>
         <TextInput
@@ -80,17 +74,12 @@ const Row = ({
           <SplitItem isFilled>
             <MinimumSize
               partition={partition}
-              customization={customization}
               isOscapRequired={isOscapRequired}
               oscapMinSizeLabel={oscapMinSizeLabel}
             />
           </SplitItem>
           <SplitItem>
-            <SizeUnit
-              partition={partition}
-              customization={customization}
-              isOscapRequired={isOscapRequired}
-            />
+            <SizeUnit partition={partition} isOscapRequired={isOscapRequired} />
           </SplitItem>
         </Split>
       </Td>

@@ -14,7 +14,6 @@ import {
   changePartitionUnit,
   FilesystemPartition,
   LogicalVolumeWithBase,
-  PartitioningCustomization,
   Units,
   VolumeGroupWithExtendedLV,
 } from '@/store/slices/wizard';
@@ -24,28 +23,22 @@ const units = ['GiB', 'MiB'];
 type SizeUnitPropTypes = {
   partition:
     FilesystemPartition | LogicalVolumeWithBase | VolumeGroupWithExtendedLV;
-  customization: PartitioningCustomization;
   isOscapRequired?: boolean;
 };
 
-const SizeUnit = ({
-  partition,
-  customization,
-  isOscapRequired,
-}: SizeUnitPropTypes) => {
+const SizeUnit = ({ partition, isOscapRequired }: SizeUnitPropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
   const [initialValue] = useState(partition);
 
-  const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
+  const onSelect = (_?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
     if (initialValue.unit === 'B' && selection === ('B' as Units)) {
       dispatch(
         changePartitionMinSize({
           id: partition.id,
           min_size: initialValue.min_size || '0',
-          customization: customization,
         }),
       );
     }
@@ -53,7 +46,6 @@ const SizeUnit = ({
       changePartitionUnit({
         id: partition.id,
         unit: selection as Units,
-        customization: customization,
       }),
     );
     setIsOpen(false);
