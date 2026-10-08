@@ -1,7 +1,13 @@
 import { Customizations } from '@/store/api/backend';
 
-import { initialState } from './state';
-import { FilesystemSlice, Units } from './types';
+import { emptyDisk, emptyFilesystem } from './state';
+import {
+  Disk,
+  Filesystem,
+  FilesystemSlice,
+  PartitioningMode,
+  Units,
+} from './types';
 import {
   convertDiskToFscDisk,
   convertFilesystemToPartition,
@@ -24,8 +30,8 @@ const parseMode = ({
   return 'automatic';
 };
 
-const parseDisk = ({ disk }: Customizations): FilesystemSlice['disk'] => {
-  const defaults = initialState.disk;
+const parseDisk = ({ disk }: Customizations): Disk => {
+  const defaults = emptyDisk.disk;
   if (!disk) {
     return defaults;
   }
@@ -42,11 +48,9 @@ const parseDisk = ({ disk }: Customizations): FilesystemSlice['disk'] => {
   };
 };
 
-const parseFilesystem = ({
-  filesystem,
-}: Customizations): FilesystemSlice['filesystem'] => {
+const parseFilesystem = ({ filesystem }: Customizations): Filesystem => {
   if (!filesystem) {
-    return initialState.filesystem;
+    return emptyFilesystem.filesystem;
   }
 
   return {
@@ -56,9 +60,9 @@ const parseFilesystem = ({
 
 const parsePartitioningMode = ({
   partitioning_mode,
-}: Customizations): FilesystemSlice['partitioningMode'] => {
+}: Customizations): PartitioningMode | undefined => {
   if (!partitioning_mode) {
-    return initialState.partitioningMode;
+    return emptyFilesystem.partitioningMode;
   }
 
   return partitioning_mode;
@@ -66,9 +70,23 @@ const parsePartitioningMode = ({
 
 export const parseFilesystemFromRequest = ({
   customizations,
-}: RequestLike): FilesystemSlice => ({
-  mode: parseMode(customizations),
-  disk: parseDisk(customizations),
-  filesystem: parseFilesystem(customizations),
-  partitioningMode: parsePartitioningMode(customizations),
-});
+}: RequestLike): FilesystemSlice => {
+  const mode = parseMode(customizations);
+
+  if (mode === 'automatic') {
+    return { mode };
+  }
+
+  if (mode === 'basic') {
+    return {
+      mode,
+      filesystem: parseFilesystem(customizations),
+      partitioningMode: parsePartitioningMode(customizations),
+    };
+  }
+
+  return {
+    mode,
+    disk: parseDisk(customizations),
+  };
+};

@@ -6,10 +6,8 @@ import { mapFilesystemCustomizations } from '../mappers';
 import { initialState } from '../state';
 import type { FilesystemSlice } from '../types';
 
-const createState = (overrides: Partial<FilesystemSlice> = {}) =>
-  createMockState({
-    filesystem: { ...initialState, ...overrides },
-  });
+const createState = (filesystem: FilesystemSlice = initialState) =>
+  createMockState({ filesystem });
 
 describe('mapFilesystemCustomizations', () => {
   it('returns empty object for automatic mode', () => {
@@ -185,7 +183,11 @@ describe('mapFilesystemCustomizations', () => {
 
   describe('partitioning mode', () => {
     it('includes partitioning_mode when set', () => {
-      const state = createState({ partitioningMode: 'auto-lvm' });
+      const state = createState({
+        mode: 'basic',
+        filesystem: { partitions: [] },
+        partitioningMode: 'auto-lvm',
+      });
       expect(mapFilesystemCustomizations(state)).toEqual(
         expect.objectContaining({
           partitioning_mode: 'auto-lvm',
@@ -194,7 +196,11 @@ describe('mapFilesystemCustomizations', () => {
     });
 
     it('omits partitioning_mode when undefined', () => {
-      const state = createState({ partitioningMode: undefined });
+      const state = createState({
+        mode: 'basic',
+        filesystem: { partitions: [] },
+        partitioningMode: undefined,
+      });
       expect(mapFilesystemCustomizations(state)).not.toHaveProperty(
         'partitioning_mode',
       );

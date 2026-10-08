@@ -60,11 +60,23 @@ export type MountpointPoliciesType = {
   [mountpoint: string]: MountpointPolicyType;
 };
 
-export type FilesystemSlice = {
-  mode: FilesystemMode;
-  disk: Disk;
-  filesystem: {
-    partitions: FilesystemPartition[];
-  };
+export type Filesystem = {
+  partitions: FilesystemPartition[];
+};
+
+export type AutomaticFS = {
+  mode: 'automatic';
+};
+
+export type BasicFS = {
+  mode: 'basic';
+  filesystem: Filesystem;
   partitioningMode?: PartitioningMode | undefined;
 };
+
+export type AdvancedFS = {
+  mode: 'advanced';
+  disk: Disk;
+};
+
+export type FilesystemSlice = AutomaticFS | BasicFS | AdvancedFS;

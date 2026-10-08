@@ -74,16 +74,11 @@ describe('wizardSlice core reducers', () => {
       expect(result.users.users).toEqual([]);
     });
 
-    it('should reset partitions to empty arrays', () => {
+    it('should reset filesystem mode to automatic', () => {
       const stateWithPartitions: WizardState = {
         ...initialState,
         filesystem: {
-          ...initialState.filesystem,
-          filesystem: {
-            partitions: [
-              { id: '1', mountpoint: '/', min_size: '10', unit: 'GiB' },
-            ],
-          },
+          mode: 'advanced',
           disk: {
             minsize: '50',
             unit: 'GiB',
@@ -104,8 +99,7 @@ describe('wizardSlice core reducers', () => {
 
       const result = wizardReducer(stateWithPartitions, initializeWizard());
 
-      expect(result.filesystem.filesystem.partitions).toEqual([]);
-      expect(result.filesystem.disk.partitions).toEqual([]);
+      expect(result.filesystem).toEqual({ mode: 'automatic' });
     });
   });
 
@@ -123,12 +117,11 @@ describe('wizardSlice core reducers', () => {
           hostname: 'loaded-hostname',
         },
         filesystem: {
-          ...initialState.filesystem,
           mode: 'advanced',
           disk: {
-            ...initialState.filesystem.disk,
             minsize: '20',
             unit: 'GiB',
+            partitions: [],
           },
         },
         compliance: {
@@ -154,8 +147,10 @@ describe('wizardSlice core reducers', () => {
       expect(result.output.distribution).toBe('rhel-9');
       expect(result.output.architecture).toBe('aarch64');
       expect(result.system.hostname).toBe('loaded-hostname');
-      expect(result.filesystem.mode).toBe('advanced');
-      expect(result.filesystem.disk.minsize).toBe('20');
+      expect(result.filesystem).toMatchObject({
+        mode: 'advanced',
+        disk: { minsize: '20' },
+      });
       expect(result.compliance.type).toBe('openscap');
       expect(result.compliance.profileID).toBe(
         'xccdf_org.ssgproject.content_profile_cis',

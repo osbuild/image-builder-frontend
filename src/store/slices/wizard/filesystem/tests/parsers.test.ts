@@ -8,7 +8,7 @@ import {
 } from '@/store/api/backend';
 
 import { parseFilesystemFromRequest } from '../parsers';
-import { initialState } from '../state';
+import type { AdvancedFS, BasicFS, FilesystemSlice } from '../types';
 
 const createMinimalBlueprint = (
   overrides: Partial<BlueprintResponse> = {},
@@ -31,6 +31,20 @@ const createMinimalBlueprint = (
 
 const withCustomizations = (customizations: Customizations) =>
   createMinimalBlueprint({ customizations });
+
+const getBasicFilesystem = (state: FilesystemSlice): BasicFS => {
+  if (state.mode !== 'basic') {
+    throw new Error('Expected basic filesystem mode');
+  }
+  return state;
+};
+
+const getAdvancedFilesystem = (state: FilesystemSlice): AdvancedFS => {
+  if (state.mode !== 'advanced') {
+    throw new Error('Expected advanced filesystem mode');
+  }
+  return state;
+};
 
 describe('parseFilesystemFromRequest', () => {
   describe('mode', () => {
@@ -92,15 +106,9 @@ describe('parseFilesystemFromRequest', () => {
   });
 
   describe('automatic mode (no customizations)', () => {
-    it('returns initial state for empty customizations', () => {
+    it('returns automatic mode for empty customizations', () => {
       const result = parseFilesystemFromRequest(withCustomizations({}));
-      expect(result).toEqual(initialState);
-    });
-
-    it('returns empty disk and filesystem partitions', () => {
-      const result = parseFilesystemFromRequest(withCustomizations({}));
-      expect(result.disk.partitions).toEqual([]);
-      expect(result.filesystem.partitions).toEqual([]);
+      expect(result).toEqual({ mode: 'automatic' });
     });
   });
 
@@ -112,8 +120,8 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      expect(result.filesystem.partitions).toHaveLength(1);
-      const partition = result.filesystem.partitions[0];
+      expect(getBasicFilesystem(result).filesystem.partitions).toHaveLength(1);
+      const partition = getBasicFilesystem(result).filesystem.partitions[0];
       expect(partition.mountpoint).toBe('/');
       expect(partition.min_size).toBe('10');
       expect(partition.unit).toBe('GiB');
@@ -131,18 +139,36 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      expect(result.filesystem.partitions).toHaveLength(3);
-      expect(result.filesystem.partitions[0].mountpoint).toBe('/');
-      expect(result.filesystem.partitions[0].min_size).toBe('10');
-      expect(result.filesystem.partitions[0].unit).toBe('GiB');
+      expect(getBasicFilesystem(result).filesystem.partitions).toHaveLength(3);
+      expect(
+        getBasicFilesystem(result).filesystem.partitions[0].mountpoint,
+      ).toBe('/');
+      expect(getBasicFilesystem(result).filesystem.partitions[0].min_size).toBe(
+        '10',
+      );
+      expect(getBasicFilesystem(result).filesystem.partitions[0].unit).toBe(
+        'GiB',
+      );
 
-      expect(result.filesystem.partitions[1].mountpoint).toBe('/home');
-      expect(result.filesystem.partitions[1].min_size).toBe('20');
-      expect(result.filesystem.partitions[1].unit).toBe('GiB');
+      expect(
+        getBasicFilesystem(result).filesystem.partitions[1].mountpoint,
+      ).toBe('/home');
+      expect(getBasicFilesystem(result).filesystem.partitions[1].min_size).toBe(
+        '20',
+      );
+      expect(getBasicFilesystem(result).filesystem.partitions[1].unit).toBe(
+        'GiB',
+      );
 
-      expect(result.filesystem.partitions[2].mountpoint).toBe('/var');
-      expect(result.filesystem.partitions[2].min_size).toBe('512');
-      expect(result.filesystem.partitions[2].unit).toBe('MiB');
+      expect(
+        getBasicFilesystem(result).filesystem.partitions[2].mountpoint,
+      ).toBe('/var');
+      expect(getBasicFilesystem(result).filesystem.partitions[2].min_size).toBe(
+        '512',
+      );
+      expect(getBasicFilesystem(result).filesystem.partitions[2].unit).toBe(
+        'MiB',
+      );
     });
 
     it('assigns unique IDs to each partition', () => {
@@ -155,7 +181,9 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      const ids = result.filesystem.partitions.map((p) => p.id);
+      const ids = getBasicFilesystem(result).filesystem.partitions.map(
+        (p) => p.id,
+      );
       expect(new Set(ids).size).toBe(ids.length);
     });
 
@@ -166,17 +194,12 @@ describe('parseFilesystemFromRequest', () => {
         }),
       );
 
-      expect(result.filesystem.partitions[0].min_size).toBe('500000');
-      expect(result.filesystem.partitions[0].unit).toBe('B');
-    });
-
-    it('keeps disk partitions empty in basic mode', () => {
-      const result = parseFilesystemFromRequest(
-        withCustomizations({
-          filesystem: [{ mountpoint: '/', min_size: UNIT_GIB * 10 }],
-        }),
+      expect(getBasicFilesystem(result).filesystem.partitions[0].min_size).toBe(
+        '500000',
       );
-      expect(result.disk.partitions).toEqual([]);
+      expect(getBasicFilesystem(result).filesystem.partitions[0].unit).toBe(
+        'B',
+      );
     });
   });
 
@@ -192,8 +215,8 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.minsize).toBe('50');
-        expect(result.disk.unit).toBe('GiB');
+        expect(getAdvancedFilesystem(result).disk.minsize).toBe('50');
+        expect(getAdvancedFilesystem(result).disk.unit).toBe('GiB');
       });
 
       it('defaults disk unit to GiB when not specified in minsize', () => {
@@ -205,8 +228,8 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.minsize).toBe('');
-        expect(result.disk.unit).toBe('GiB');
+        expect(getAdvancedFilesystem(result).disk.minsize).toBe('');
+        expect(getAdvancedFilesystem(result).disk.unit).toBe('GiB');
       });
 
       it('parses disk type (gpt)', () => {
@@ -219,7 +242,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.type).toBe('gpt');
+        expect(getAdvancedFilesystem(result).disk.type).toBe('gpt');
       });
 
       it('parses disk type (dos)', () => {
@@ -232,7 +255,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.type).toBe('dos');
+        expect(getAdvancedFilesystem(result).disk.type).toBe('dos');
       });
 
       it('defaults disk type to undefined when not set', () => {
@@ -244,7 +267,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.type).toBeUndefined();
+        expect(getAdvancedFilesystem(result).disk.type).toBeUndefined();
       });
     });
 
@@ -264,8 +287,8 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.partitions).toHaveLength(1);
-        const partition = result.disk.partitions[0];
+        expect(getAdvancedFilesystem(result).disk.partitions).toHaveLength(1);
+        const partition = getAdvancedFilesystem(result).disk.partitions[0];
         expect(partition.id).toEqual(expect.any(String));
         expect(partition.min_size).toBe('10');
         expect(partition.unit).toBe('GiB');
@@ -287,7 +310,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        const partition = result.disk.partitions[0];
+        const partition = getAdvancedFilesystem(result).disk.partitions[0];
         expect(partition.unit).toBe('GiB');
       });
 
@@ -316,7 +339,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.partitions).toHaveLength(3);
+        expect(getAdvancedFilesystem(result).disk.partitions).toHaveLength(3);
       });
     });
 
@@ -350,8 +373,8 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.partitions).toHaveLength(1);
-        const vg = result.disk.partitions[0];
+        expect(getAdvancedFilesystem(result).disk.partitions).toHaveLength(1);
+        const vg = getAdvancedFilesystem(result).disk.partitions[0];
         expect(vg.id).toEqual(expect.any(String));
         expect(vg.min_size).toBe('50');
         expect(vg.unit).toBe('GiB');
@@ -403,7 +426,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        const vg = result.disk.partitions[0];
+        const vg = getAdvancedFilesystem(result).disk.partitions[0];
         expect('logical_volumes' in vg).toBe(true);
         if ('logical_volumes' in vg) {
           const allIds = [vg.id, ...vg.logical_volumes.map((lv) => lv.id)];
@@ -432,7 +455,7 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        const vg = result.disk.partitions[0];
+        const vg = getAdvancedFilesystem(result).disk.partitions[0];
         if ('logical_volumes' in vg) {
           expect(vg.logical_volumes[0].unit).toBe('GiB');
         }
@@ -458,8 +481,8 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.partitions).toHaveLength(1);
-        const btrfs = result.disk.partitions[0];
+        expect(getAdvancedFilesystem(result).disk.partitions).toHaveLength(1);
+        const btrfs = getAdvancedFilesystem(result).disk.partitions[0];
         expect(btrfs.id).toEqual(expect.any(String));
         expect(btrfs.min_size).toBe('40');
         expect(btrfs.unit).toBe('GiB');
@@ -510,68 +533,53 @@ describe('parseFilesystemFromRequest', () => {
           }),
         );
 
-        expect(result.disk.partitions).toHaveLength(3);
-        expect(result.disk.type).toBe('gpt');
-        expect(result.disk.minsize).toBe('100');
-        expect(result.disk.unit).toBe('GiB');
+        expect(getAdvancedFilesystem(result).disk.partitions).toHaveLength(3);
+        expect(getAdvancedFilesystem(result).disk.type).toBe('gpt');
+        expect(getAdvancedFilesystem(result).disk.minsize).toBe('100');
+        expect(getAdvancedFilesystem(result).disk.unit).toBe('GiB');
 
         // Plain partition
-        const plain = result.disk.partitions[0];
+        const plain = getAdvancedFilesystem(result).disk.partitions[0];
         expect('fs_type' in plain && plain.fs_type).toBe('vfat');
 
         // LVM
-        const lvm = result.disk.partitions[1];
+        const lvm = getAdvancedFilesystem(result).disk.partitions[1];
         expect('logical_volumes' in lvm).toBe(true);
 
         // Btrfs
-        const btrfs = result.disk.partitions[2];
+        const btrfs = getAdvancedFilesystem(result).disk.partitions[2];
         expect('subvolumes' in btrfs).toBe(true);
       });
-    });
-
-    it('keeps filesystem partitions empty in advanced mode', () => {
-      const result = parseFilesystemFromRequest(
-        withCustomizations({
-          disk: {
-            partitions: [
-              {
-                fs_type: 'xfs' as const,
-                mountpoint: '/',
-                minsize: '10 GiB',
-              },
-            ],
-          },
-        }),
-      );
-      expect(result.filesystem.partitions).toEqual([]);
     });
   });
 
   describe('partitioningMode', () => {
     it('passes through raw partitioning mode', () => {
       const result = parseFilesystemFromRequest(
-        withCustomizations({ partitioning_mode: 'raw' }),
+        withCustomizations({ filesystem: [], partitioning_mode: 'raw' }),
       );
-      expect(result.partitioningMode).toBe('raw');
+      expect(getBasicFilesystem(result).partitioningMode).toBe('raw');
     });
 
     it('passes through lvm partitioning mode', () => {
       const result = parseFilesystemFromRequest(
-        withCustomizations({ partitioning_mode: 'lvm' }),
+        withCustomizations({ filesystem: [], partitioning_mode: 'lvm' }),
       );
-      expect(result.partitioningMode).toBe('lvm');
+      expect(getBasicFilesystem(result).partitioningMode).toBe('lvm');
     });
 
     it('passes through auto-lvm partitioning mode', () => {
       const result = parseFilesystemFromRequest(
-        withCustomizations({ partitioning_mode: 'auto-lvm' }),
+        withCustomizations({ filesystem: [], partitioning_mode: 'auto-lvm' }),
       );
-      expect(result.partitioningMode).toBe('auto-lvm');
+      expect(getBasicFilesystem(result).partitioningMode).toBe('auto-lvm');
     });
 
     it('defaults to undefined when not provided', () => {
-      const result = parseFilesystemFromRequest(withCustomizations({}));
-      expect(result.partitioningMode).toBeUndefined();
+      const result = parseFilesystemFromRequest(
+        withCustomizations({ filesystem: [] }),
+      );
+      expect(getBasicFilesystem(result).partitioningMode).toBeUndefined();
     });
   });
 });
