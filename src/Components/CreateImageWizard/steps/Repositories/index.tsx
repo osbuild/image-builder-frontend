@@ -7,16 +7,21 @@ import { useAppSelector } from '@/store/hooks';
 import {
   selectPackages,
   selectRecommendedRepositories,
+  selectTemplate,
   selectWizardMode,
 } from '@/store/slices/wizard';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './components/Repositories';
+import TemplateRepositories from './components/TemplateRepositories';
 
 const RepositoriesStep = () => {
   const wizardMode = useAppSelector(selectWizardMode);
   const packages = useAppSelector(selectPackages);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
+  const templateUuid = useAppSelector(selectTemplate);
+
+  const isTemplateSelected = templateUuid !== '';
 
   return (
     <>
@@ -51,7 +56,7 @@ const RepositoriesStep = () => {
       ) : (
         ''
       )}
-      <Repositories />
+      {isTemplateSelected ? <TemplateRepositories /> : <Repositories />}
     </>
   );
 };

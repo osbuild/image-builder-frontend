@@ -18,7 +18,6 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { CONTENT_URL, ContentOrigin } from '@/constants';
 import {
   ApiRepositoryResponseRead,
-  useGetTemplateQuery,
   useListRepositoriesQuery,
   useListRepositoryParametersQuery,
   useListSnapshotsByDateMutation,
@@ -26,17 +25,13 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addRepository,
-  changeRedHatRepositories,
-  convertSchemaToIBPayloadRepo,
   removeRepositoriesById,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
   selectPayloadRepositories,
   selectSnapshotDate,
-  selectTemplate,
   selectUseLatest,
-  setRepositoriesFromContentSources,
 } from '@/store/slices/wizard';
 import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { requiredRedHatRepos } from '@/Utilities/requiredRedHatRepos';
@@ -50,7 +45,6 @@ import Error from './Error';
 import Loading from './Loading';
 import RemoveRepositoryButton from './RemoveRepositoryButton';
 import RemoveRepositoryModal from './RemoveRepositoryModal';
-import RepositoriesAddedAlert from './RepositoriesAddedAlert';
 import RepositoryColumns from './RepositoryColumns';
 import RepositoryLabel from './RepositoryLabel';
 import RepositorySearch from './RepositorySearch';
@@ -71,15 +65,12 @@ const Repositories = () => {
   const useLatestContent = useAppSelector(selectUseLatest);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
-  const templateUuid = useAppSelector(selectTemplate);
-
   const version = releaseToVersion(distribution);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [reposToRemove, setReposToRemove] = useState<string[]>([]);
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
-
-  const isTemplateSelected = templateUuid !== '';
+  const [unavailableRepoCount, setUnavailableRepoCount] = useState(0);
 
   const { data: repositoryParameters } = useListRepositoryParametersQuery();
 
@@ -94,8 +85,8 @@ const Repositories = () => {
     [customRepositories, payloadRepositories],
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const initialSelectedState = useMemo(() => new Set([...selected]), []);
+  const initialSelectedRef = useRef(new Set([...selected]));
+  const foundUnavailableRepos = useRef(false);
 
   const requiredUrls = useMemo(
     () => requiredRedHatRepos(arch, version) || [],
@@ -108,7 +99,7 @@ const Repositories = () => {
         url: requiredUrls.join(','),
         limit: requiredUrls.length,
       },
-      { skip: requiredUrls.length === 0 || isTemplateSelected },
+      { skip: requiredUrls.length === 0 },
     );
 
   const requiredRedHatRepoUUIDs = useMemo(
@@ -140,7 +131,7 @@ const Repositories = () => {
     },
     {
       refetchOnMountOrArgChange: 60,
-      skip: isTemplateSelected || !hasReposToShow,
+      skip: !hasReposToShow,
       pollingInterval: isStatusPollingEnabled ? 8000 : 0,
     },
   );
@@ -152,7 +143,7 @@ const Repositories = () => {
   );
 
   useEffect(() => {
-    if (initialSelectedState.size > 0) {
+    if (initialSelectedRef.current.size > 0) {
       refetchMain();
     }
     // Force refetch on mount when there are preselected repos
@@ -160,6 +151,8 @@ const Repositories = () => {
   }, []);
 
   useEffect(() => {
+    // contentList and pollingInterval depend on each other, so we can't replace this with a useMemo
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsStatusPollingEnabled(
       contentList.some((repo) => repo.status === 'Pending'),
     );
@@ -168,14 +161,14 @@ const Repositories = () => {
   // Auto-swap custom EPEL repos, due to their deletion, to their community counterparts on initial load
   // REF: HMS-5853
   useEffect(() => {
-    if (isLoading || isTemplateSelected) return;
+    if (isLoading) return;
 
     const customEpel = customRepositories.find(
       (repo) => repo.baseurl?.length && isEPELUrl(repo.baseurl[0]) && repo.id,
     );
     if (!customEpel) return;
 
-    const communityEpel = [...contentList].find(
+    const communityEpel = contentList.find(
       (repo) => repo.origin === ContentOrigin.COMMUNITY && isEPELUrl(repo.url!),
     );
     if (!communityEpel?.uuid || customEpel.id === communityEpel.uuid) return;
@@ -186,10 +179,6 @@ const Repositories = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const addSelected = (repo: ApiRepositoryResponseRead) => {
-    dispatch(addRepository({ repo }));
-  };
-
   const removeSelected = (repo: ApiRepositoryResponseRead) => {
     if (repo.uuid) {
       dispatch(removeRepositoriesById([repo.uuid]));
@@ -198,7 +187,7 @@ const Repositories = () => {
 
   const handleRemove = (repo: ApiRepositoryResponseRead) => {
     const isInitiallySelected =
-      repo.uuid && initialSelectedState.has(repo.uuid);
+      repo.uuid && initialSelectedRef.current.has(repo.uuid);
 
     if (isInitiallySelected) {
       setModalOpen(true);
@@ -209,17 +198,14 @@ const Repositories = () => {
     removeSelected(repo);
   };
 
-  const foundUnavailableRepos = useRef(false);
-  const [unavailableRepoCount, setUnavailableRepoCount] = useState(0);
-
   useEffect(() => {
-    if (isFetching || isError || initialSelectedState.size === 0) return;
+    if (isFetching || isError || initialSelectedRef.current.size === 0) return;
     if (foundUnavailableRepos.current) return;
 
     foundUnavailableRepos.current = true;
 
     const contentUuids = new Set(contentList.map(({ uuid }) => uuid));
-    const missingUuids = [...initialSelectedState].filter(
+    const missingUuids = [...initialSelectedRef.current].filter(
       (uuid) => !contentUuids.has(uuid),
     );
 
@@ -227,37 +213,7 @@ const Repositories = () => {
     if (missingUuids.length > 0) {
       dispatch(removeRepositoriesById(missingUuids));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetching, isError, contentList, initialSelectedState]);
-
-  const {
-    data: selectedTemplateData,
-    isError: isTemplateError,
-    isLoading: isTemplateLoading,
-  } = useGetTemplateQuery(
-    {
-      uuid: templateUuid,
-    },
-    { refetchOnMountOrArgChange: true, skip: templateUuid === '' },
-  );
-
-  const {
-    data: { data: reposInTemplate = [] } = {},
-    isError: isReposInTemplateError,
-    isLoading: isReposInTemplateLoading,
-    isFetching: isReposInTemplateFetching,
-  } = useListRepositoriesQuery(
-    {
-      contentType: 'rpm',
-      limit: selectedTemplateData?.repository_uuids?.length || 100,
-      offset: 0,
-      uuid:
-        selectedTemplateData && selectedTemplateData.repository_uuids
-          ? selectedTemplateData.repository_uuids.join(',')
-          : '',
-    },
-    { refetchOnMountOrArgChange: true, skip: !isTemplateSelected },
-  );
+  }, [dispatch, isFetching, isError, contentList]);
 
   const [
     listSnapshotsByDate,
@@ -269,12 +225,7 @@ const Repositories = () => {
   ] = useListSnapshotsByDateMutation();
 
   useEffect(() => {
-    if (
-      !snapshotDate ||
-      useLatestContent ||
-      isTemplateSelected ||
-      !contentList.length
-    ) {
+    if (!snapshotDate || useLatestContent || !contentList.length) {
       return;
     }
 
@@ -286,235 +237,159 @@ const Repositories = () => {
         date: new Date(convertStringToDate(snapshotDate)).toISOString(),
       },
     });
-  }, [
-    contentList,
-    listSnapshotsByDate,
-    snapshotDate,
-    useLatestContent,
-    isTemplateSelected,
-  ]);
+  }, [contentList, listSnapshotsByDate, snapshotDate, useLatestContent]);
 
-  useEffect(() => {
-    if (isTemplateSelected && reposInTemplate.length > 0) {
-      const customReposInTemplate = reposInTemplate.filter(
-        (repo) => repo.origin !== ContentOrigin.REDHAT,
-      );
-      const redHatReposInTemplate = reposInTemplate.filter(
-        (repo) => repo.origin === ContentOrigin.REDHAT,
-      );
-
-      dispatch(setRepositoriesFromContentSources(customReposInTemplate));
-
-      dispatch(
-        changeRedHatRepositories(
-          redHatReposInTemplate.map((repo) =>
-            convertSchemaToIBPayloadRepo(repo!),
-          ),
-        ),
-      );
-    }
-  }, [templateUuid, reposInTemplate]);
-
-  if (
-    isError ||
-    isTemplateError ||
-    isReposInTemplateError ||
-    isSnapshotsError
-  ) {
+  if (isError || isSnapshotsError) {
     return <Error />;
   }
 
-  if (
-    isTemplateLoading ||
-    isReposInTemplateLoading ||
-    isReposInTemplateFetching
-  ) {
-    return <Loading />;
-  }
-
-  if (!isTemplateSelected) {
-    return (
-      <Grid>
-        <RemoveRepositoryModal
-          modalOpen={modalOpen}
-          setModalOpen={setModalOpen}
-          reposToRemove={reposToRemove}
-          setReposToRemove={setReposToRemove}
-        />
-        {unavailableRepoCount > 0 && (
-          <RepositoryUnavailable quantity={unavailableRepoCount} />
-        )}
-        <FormGroup label='Add repositories'>
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem style={{ width: '50%' }}>
-                <RepositorySearch
-                  onSelectRepository={(repo) => addSelected(repo)}
-                  onRemoveRepository={(repo) => removeSelected(repo)}
-                  selectedRepoIds={selected}
-                />
-              </ToolbarItem>
-              <ToolbarItem>
-                <Button
-                  variant='secondary'
-                  isInline
-                  onClick={() => refetchMain()}
-                  isLoading={isFetching && !isStatusPollingEnabled}
-                >
-                  {isFetching && !isStatusPollingEnabled
-                    ? 'Refreshing repositories'
-                    : 'Refresh repositories'}
-                </Button>
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-        </FormGroup>
-        <Panel>
-          <PanelMain>
-            {isLoading ? (
-              <Loading />
-            ) : (
-              <>
-                {!hasReposToShow || contentList.length === 0 ? (
-                  <Empty />
-                ) : (
-                  <Table>
-                    <Thead>
-                      <Tr>
-                        <Th width={45}>Name</Th>
-                        {!snapshotDate ? (
-                          <>
-                            <Th>Version</Th>
-                            <Th width={15}>Architecture</Th>
-                            <Th width={10}>Packages</Th>
-                            <Th>Status</Th>
-                          </>
-                        ) : (
-                          <>
-                            <Th width={30}>Snapshot date</Th>
-                            <Th>Packages</Th>
-                          </>
-                        )}
-                        <Th aria-label='Remove repository' />
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {contentList.map((repo, rowIndex) => {
-                        const { uuid = '', url = '', name, origin = '' } = repo;
-
-                        const [isDisabled, disabledReason] =
-                          checkRepoDisabled(repo);
-
-                        const snapshot = snapshotsByDate?.data?.find(
-                          (s) => s.repository_uuid === uuid,
-                        );
-                        const snapshotPackages =
-                          snapshot?.match?.content_counts?.['rpm.package'];
-
-                        return (
-                          <Tr key={`${uuid}-${rowIndex}`}>
-                            <Td dataLabel={'Name'}>
-                              {name}{' '}
-                              {requiredRedHatRepoUUIDs.includes(uuid) && (
-                                <Label isCompact>Required</Label>
-                              )}
-                              <RepositoryLabel origin={origin} url={url} />
-                            </Td>
-                            {!snapshotDate ? (
-                              <RepositoryColumns
-                                repo={repo}
-                                repositoryParameters={repositoryParameters}
-                              />
-                            ) : (
-                              <>
-                                <Td dataLabel={'Snapshot date'}>
-                                  {!isSnapshotsLoading ? (
-                                    timestampToDisplayStringDetailed(
-                                      snapshot?.match?.created_at ?? '',
-                                      'UTC',
-                                    ) || '-'
-                                  ) : (
-                                    <Spinner size='sm' />
-                                  )}
-                                </Td>
-                                <Td dataLabel={'Packages'}>
-                                  {!isSnapshotsLoading ? (
-                                    snapshotPackages && snapshot.match?.uuid ? (
-                                      <Button
-                                        component='a'
-                                        target='_blank'
-                                        variant='link'
-                                        icon={<ExternalLinkAltIcon />}
-                                        iconPosition='right'
-                                        isInline
-                                        href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
-                                      >
-                                        {snapshotPackages}
-                                      </Button>
-                                    ) : (
-                                      '-'
-                                    )
-                                  ) : (
-                                    <Spinner size='sm' />
-                                  )}
-                                </Td>
-                              </>
-                            )}
-                            <Td>
-                              <RemoveRepositoryButton
-                                repo={repo}
-                                isDisabled={isDisabled}
-                                disabledReason={disabledReason}
-                                onRemove={handleRemove}
-                              />
-                            </Td>
-                          </Tr>
-                        );
-                      })}
-                    </Tbody>
-                  </Table>
-                )}
-              </>
-            )}
-          </PanelMain>
-        </Panel>
-      </Grid>
-    );
-  } else {
-    return (
-      <>
-        <RepositoriesAddedAlert templateUuid={templateUuid} />
-        <Grid>
-          <Panel>
-            <PanelMain>
-              <Table>
-                <Thead>
-                  <Tr>
-                    <Th width={45}>Name</Th>
-                    <Th>Version</Th>
-                    <Th width={15}>Architecture</Th>
-                    <Th width={10}>Packages</Th>
-                    <Th>Status</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {reposInTemplate.map((repo, rowIndex) => (
-                    <Tr key={`${repo.uuid || ''}-${rowIndex}`}>
-                      <Td dataLabel={'Name'}>{repo.name}</Td>
-                      <RepositoryColumns
-                        repo={repo}
-                        repositoryParameters={repositoryParameters}
-                      />
+  return (
+    <Grid>
+      <RemoveRepositoryModal
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        reposToRemove={reposToRemove}
+        setReposToRemove={setReposToRemove}
+      />
+      {unavailableRepoCount > 0 && (
+        <RepositoryUnavailable quantity={unavailableRepoCount} />
+      )}
+      <FormGroup label='Add repositories'>
+        <Toolbar>
+          <ToolbarContent>
+            <ToolbarItem style={{ width: '50%' }}>
+              <RepositorySearch
+                onSelectRepository={(repo) => dispatch(addRepository({ repo }))}
+                onRemoveRepository={(repo) => removeSelected(repo)}
+                selectedRepoIds={selected}
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button
+                variant='secondary'
+                isInline
+                onClick={() => refetchMain()}
+                isLoading={isFetching && !isStatusPollingEnabled}
+              >
+                {isFetching && !isStatusPollingEnabled
+                  ? 'Refreshing repositories'
+                  : 'Refresh repositories'}
+              </Button>
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+      </FormGroup>
+      <Panel>
+        <PanelMain>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <>
+              {!hasReposToShow || contentList.length === 0 ? (
+                <Empty />
+              ) : (
+                <Table>
+                  <Thead>
+                    <Tr>
+                      <Th width={45}>Name</Th>
+                      {!snapshotDate ? (
+                        <>
+                          <Th>Version</Th>
+                          <Th width={15}>Architecture</Th>
+                          <Th width={10}>Packages</Th>
+                          <Th>Status</Th>
+                        </>
+                      ) : (
+                        <>
+                          <Th width={30}>Snapshot date</Th>
+                          <Th>Packages</Th>
+                        </>
+                      )}
+                      <Th aria-label='Remove repository' />
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </PanelMain>
-          </Panel>
-        </Grid>
-      </>
-    );
-  }
+                  </Thead>
+                  <Tbody>
+                    {contentList.map((repo, rowIndex) => {
+                      const { uuid = '', url = '', name, origin = '' } = repo;
+
+                      const [isDisabled, disabledReason] =
+                        checkRepoDisabled(repo);
+
+                      const snapshot = snapshotsByDate?.data?.find(
+                        (s) => s.repository_uuid === uuid,
+                      );
+                      const snapshotPackages =
+                        snapshot?.match?.content_counts?.['rpm.package'];
+
+                      return (
+                        <Tr key={`${uuid}-${rowIndex}`}>
+                          <Td dataLabel={'Name'}>
+                            {name}{' '}
+                            {requiredRedHatRepoUUIDs.includes(uuid) && (
+                              <Label isCompact>Required</Label>
+                            )}
+                            <RepositoryLabel origin={origin} url={url} />
+                          </Td>
+                          {!snapshotDate ? (
+                            <RepositoryColumns
+                              repo={repo}
+                              repositoryParameters={repositoryParameters}
+                            />
+                          ) : (
+                            <>
+                              <Td dataLabel={'Snapshot date'}>
+                                {!isSnapshotsLoading ? (
+                                  timestampToDisplayStringDetailed(
+                                    snapshot?.match?.created_at ?? '',
+                                    'UTC',
+                                  ) || '-'
+                                ) : (
+                                  <Spinner size='sm' />
+                                )}
+                              </Td>
+                              <Td dataLabel={'Packages'}>
+                                {!isSnapshotsLoading ? (
+                                  snapshotPackages && snapshot.match?.uuid ? (
+                                    <Button
+                                      component='a'
+                                      target='_blank'
+                                      variant='link'
+                                      icon={<ExternalLinkAltIcon />}
+                                      iconPosition='right'
+                                      isInline
+                                      href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
+                                    >
+                                      {snapshotPackages}
+                                    </Button>
+                                  ) : (
+                                    '-'
+                                  )
+                                ) : (
+                                  <Spinner size='sm' />
+                                )}
+                              </Td>
+                            </>
+                          )}
+                          <Td>
+                            <RemoveRepositoryButton
+                              repo={repo}
+                              isDisabled={isDisabled}
+                              disabledReason={disabledReason}
+                              onRemove={handleRemove}
+                            />
+                          </Td>
+                        </Tr>
+                      );
+                    })}
+                  </Tbody>
+                </Table>
+              )}
+            </>
+          )}
+        </PanelMain>
+      </Panel>
+    </Grid>
+  );
 };
 
 export default Repositories;
