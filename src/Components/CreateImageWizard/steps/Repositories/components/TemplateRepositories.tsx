@@ -36,7 +36,7 @@ const TemplateRepositories = () => {
     {
       uuid: templateUuid,
     },
-    { refetchOnMountOrArgChange: true, skip: templateUuid === '' },
+    { refetchOnMountOrArgChange: true },
   );
 
   const {
@@ -49,12 +49,12 @@ const TemplateRepositories = () => {
       contentType: 'rpm',
       limit: selectedTemplateData?.repository_uuids?.length || 100,
       offset: 0,
-      uuid:
-        selectedTemplateData && selectedTemplateData.repository_uuids
-          ? selectedTemplateData.repository_uuids.join(',')
-          : '',
+      uuid: selectedTemplateData?.repository_uuids?.join(',') ?? '',
     },
-    { refetchOnMountOrArgChange: true, skip: templateUuid === '' },
+    {
+      refetchOnMountOrArgChange: true,
+      skip: !selectedTemplateData?.repository_uuids,
+    },
   );
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const TemplateRepositories = () => {
         ),
       );
     }
-  }, [templateUuid, reposInTemplate]);
+  }, [dispatch, templateUuid, reposInTemplate]);
 
   if (isTemplateError || isReposInTemplateError) {
     return <Error />;
@@ -107,8 +107,8 @@ const TemplateRepositories = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {reposInTemplate.map((repo, rowIndex) => (
-                  <Tr key={`${repo.uuid || ''}-${rowIndex}`}>
+                {reposInTemplate.map((repo) => (
+                  <Tr key={repo.uuid}>
                     <Td dataLabel={'Name'}>{repo.name}</Td>
                     <RepositoryColumns
                       repo={repo}
