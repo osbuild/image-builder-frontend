@@ -11,7 +11,6 @@ import {
   Tr,
 } from '@patternfly/react-table';
 
-import { useSecuritySummary } from '@/store/api/backend';
 import { useAppSelector } from '@/store/hooks';
 import {
   GroupWithRepositoryInfo,
@@ -24,16 +23,15 @@ import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
-import { useRemovePackageContent } from '../packagesUtilities';
+import {
+  useRemovePackageContent,
+  useRequiredPackages,
+} from '../packagesUtilities';
 
 const PackagesTable = () => {
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
-  const { packages: requiredPkgNames } = useSecuritySummary();
-  const requiredSet = useMemo(
-    () => new Set(requiredPkgNames),
-    [requiredPkgNames],
-  );
+  const requiredSet = useRequiredPackages();
 
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
 

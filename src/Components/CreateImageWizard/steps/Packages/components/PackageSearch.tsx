@@ -35,7 +35,6 @@ import {
   Module,
   useGetArchitecturesQuery,
   useRecommendPackageMutation,
-  useSecuritySummary,
 } from '@/store/api/backend';
 import {
   useGetTemplateQuery,
@@ -74,6 +73,7 @@ import {
   isSelectDisabled,
   useEpelRepo,
   useRemovePackageContent,
+  useRequiredPackages,
 } from '../packagesUtilities';
 
 type PackageSearchProps = {
@@ -113,11 +113,7 @@ const PackageSearch = ({
   const { isSuccess: isSuccessEpelRepo } = useEpelRepo();
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
 
-  const { packages: requiredPackages } = useSecuritySummary();
-  const requiredSet = useMemo(
-    () => new Set(requiredPackages),
-    [requiredPackages],
-  );
+  const requiredSet = useRequiredPackages();
 
   const isRequiredAndSelected = (pkg: IBPackageWithRepositoryInfo) =>
     requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);

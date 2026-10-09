@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
+
 import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '@/constants';
-import { Module } from '@/store/api/backend';
+import { Module, useSecuritySummary } from '@/store/api/backend';
 import {
   ApiRepositoryCollectionResponseRead,
   useListRepositoriesQuery,
@@ -92,6 +94,11 @@ export const shouldRemoveEpelRepo = (
     groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
     packages.filter((pkg) => pkg.repository === 'recommended').length === 0
   );
+};
+
+export const useRequiredPackages = () => {
+  const { packages: requiredPackages } = useSecuritySummary();
+  return useMemo(() => new Set(requiredPackages), [requiredPackages]);
 };
 
 export const useEpelRepo = () => {
