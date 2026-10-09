@@ -54,10 +54,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   ItemWithSources,
-  removeModule,
-  removePackage,
-  removePackageGroup,
-  removeRecommendedRepositoriesById,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
@@ -77,7 +73,7 @@ import useDebounce from '@/Utilities/useDebounce';
 import {
   getPackageDescription,
   isSelectDisabled,
-  shouldRemoveEpelRepo,
+  useRemovePackageContent,
 } from '../packagesUtilities';
 
 type PackageSearchProps = {
@@ -117,6 +113,11 @@ const PackageSearch = ({
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const wizardMode = useAppSelector(selectWizardMode);
+
+  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent(
+    isSuccessEpelRepo,
+    epelRepo,
+  );
 
   const { packages: requiredPackages } = useSecuritySummary();
   const requiredSet = useMemo(
@@ -796,7 +797,6 @@ const PackageSearch = ({
   const isPackageSelectDisabled = (pkg: IBPackageWithRepositoryInfo) =>
     isSelectDisabled(pkg, packages, modules, requiredSet);
 
-
   const packageTypeLabel =
     packageType === 'packages' ? 'packages' : 'package groups';
 
@@ -902,21 +902,7 @@ const PackageSearch = ({
           }
         }
       } else if (!isRequiredAndSelected(pkg)) {
-        dispatch(removePackage(pkg.name));
-        if (pkg.type === 'module' && pkg.module_name) {
-          dispatch(removeModule(pkg.module_name));
-        }
-        if (
-          shouldRemoveEpelRepo(
-            isSuccessEpelRepo,
-            epelRepo,
-            packages,
-            groups,
-            'package',
-          )
-        ) {
-          dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
-        }
+        handleRemovePackage(pkg);
       }
     } else {
       const grp = transformedGroups.find((g) => g.name === value);
@@ -938,18 +924,7 @@ const PackageSearch = ({
           dispatch(addPackageGroup(grp));
         }
       } else {
-        dispatch(removePackageGroup(grp.name));
-        if (
-          shouldRemoveEpelRepo(
-            isSuccessEpelRepo,
-            epelRepo,
-            packages,
-            groups,
-            'group',
-          )
-        ) {
-          dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
-        }
+        handleRemoveGroup(grp);
       }
     }
   };

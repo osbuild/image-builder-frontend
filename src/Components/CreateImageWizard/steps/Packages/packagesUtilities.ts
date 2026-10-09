@@ -1,8 +1,15 @@
 import { Module } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
+  removeModule,
+  removePackage,
+  removePackageGroup,
+  removeRecommendedRepositoriesById,
+  selectPackageGroups,
+  selectPackages,
 } from '@/store/slices/wizard';
 
 export const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
@@ -79,4 +86,48 @@ export const shouldRemoveEpelRepo = (
     groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
     packages.filter((pkg) => pkg.repository === 'recommended').length === 0
   );
+};
+
+export const useRemovePackageContent = (
+  isSuccessEpelRepo: boolean,
+  epelRepo: ApiRepositoryCollectionResponseRead | undefined,
+) => {
+  const dispatch = useAppDispatch();
+  const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectPackageGroups);
+
+  const handleRemovePackage = (pkg: IBPackageWithRepositoryInfo) => {
+    dispatch(removePackage(pkg.name));
+    if (pkg.type === 'module' && pkg.module_name) {
+      dispatch(removeModule(pkg.module_name));
+    }
+    if (
+      shouldRemoveEpelRepo(
+        isSuccessEpelRepo,
+        epelRepo,
+        packages,
+        groups,
+        'package',
+      )
+    ) {
+      dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
+    }
+  };
+
+  const handleRemoveGroup = (grp: GroupWithRepositoryInfo) => {
+    dispatch(removePackageGroup(grp.name));
+    if (
+      shouldRemoveEpelRepo(
+        isSuccessEpelRepo,
+        epelRepo,
+        packages,
+        groups,
+        'group',
+      )
+    ) {
+      dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
+    }
+  };
+
+  return { handleRemovePackage, handleRemoveGroup };
 };
