@@ -13,6 +13,7 @@ describe('Security', () => {
     const mockSecuritySummary = {
       title: undefined,
       fipsRequired: false,
+      complianceError: undefined,
       packages: [],
       services: { enabled: [], disabled: [], masked: [], total: 0 },
       kernel: { append: [] },
@@ -84,6 +85,7 @@ describe('Security', () => {
       const mockSummaryWithCIS = {
         title: 'CIS Red Hat Enterprise Linux 9 Benchmark',
         fipsRequired: false,
+        complianceError: undefined,
         packages: [],
         services: { enabled: [], disabled: [], masked: [], total: 0 },
         kernel: { append: [] },
@@ -120,6 +122,7 @@ describe('Security', () => {
       const mockComplianceSummary = {
         title: 'My Compliance Policy',
         fipsRequired: false,
+        complianceError: undefined,
         packages: [],
         services: { enabled: [], disabled: [], masked: [], total: 0 },
         kernel: { append: [] },
