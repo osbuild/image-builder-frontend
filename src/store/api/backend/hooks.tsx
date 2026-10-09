@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useAppSelector } from '@/store/hooks';
 import {
+  removeBetaFromRelease,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
   selectComplianceProfileID,
@@ -25,7 +26,9 @@ export const useSecuritySummary = () => {
   const profileId = useAppSelector(selectComplianceProfileID);
   const policyId = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
-  const distribution = useAppSelector(selectDistribution);
+  const distribution = removeBetaFromRelease(
+    useAppSelector(selectDistribution),
+  );
   const isImageMode = useAppSelector(selectIsImageMode);
 
   // `isOnPremise` is derived from `process.env.IS_ON_PREMISE`, which is
@@ -43,7 +46,7 @@ export const useSecuritySummary = () => {
     { skip: isImageMode || !profileId },
   );
 
-  const { data: complianceData } =
+  const { data: complianceData, error: complianceError } =
     imageBuilderApi.endpoints.getOscapCustomizationsForPolicy.useQuery(
       {
         // @ts-expect-error we skip this if it's not defined
@@ -88,6 +91,7 @@ export const useSecuritySummary = () => {
     () => ({
       title,
       fipsRequired,
+      complianceError,
       packages: data?.packages ?? [],
       services: {
         enabled,
@@ -100,6 +104,15 @@ export const useSecuritySummary = () => {
       },
       filesystem,
     }),
-    [data, title, fipsRequired, enabled, disabled, masked, filesystem],
+    [
+      data,
+      title,
+      fipsRequired,
+      complianceError,
+      enabled,
+      disabled,
+      masked,
+      filesystem,
+    ],
   );
 };

@@ -41,7 +41,8 @@ const PolicyDetails = (): JSX.Element => {
 
   const policy = policyInfo?.data as PolicyRead | undefined;
 
-  const { packages, services, kernel, filesystem } = useSecuritySummary();
+  const { packages, services, kernel, filesystem, complianceError } =
+    useSecuritySummary();
 
   return (
     <>
@@ -151,9 +152,11 @@ const PolicyDetails = (): JSX.Element => {
           )}
         </DescriptionList>
       )}
-      {hasCriticalError && (
+      {(hasCriticalError || !!complianceError) && (
         <Content component={ContentVariants.p} className='pf-v6-u-color-200'>
-          Unable to load compliance information. Please try again.
+          {hasCriticalError
+            ? 'Unable to load policy details. Please try again.'
+            : 'Unable to load policy customizations. Please try again.'}
         </Content>
       )}
     </>
