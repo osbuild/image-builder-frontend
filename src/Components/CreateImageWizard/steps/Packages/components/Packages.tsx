@@ -13,21 +13,14 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import {
-  AMPLITUDE_MODULE_NAME,
-  ContentOrigin,
-  EPEL_10_REPO_DEFINITION,
-} from '@/constants';
-import { useListRepositoriesQuery } from '@/store/api/contentSources';
+import { AMPLITUDE_MODULE_NAME } from '@/constants';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-  selectDistribution,
   selectWizardMode,
 } from '@/store/slices/wizard';
-import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
 import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
@@ -37,16 +30,6 @@ const Packages = () => {
   const { analytics, isBeta } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const wizardMode = useAppSelector(selectWizardMode);
-  const distribution = useAppSelector(selectDistribution);
-
-  const epelRepoUrlByDistribution =
-    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
-
-  const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
-    useListRepositoriesQuery({
-      url: epelRepoUrlByDistribution,
-      origin: ContentOrigin.COMMUNITY,
-    });
 
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
   const [isSelectingPackage, setIsSelectingPackage] = useState<
@@ -85,7 +68,6 @@ const Packages = () => {
         isSelectingPackage={isSelectingPackage}
         setIsSelectingPackage={setIsSelectingPackage}
         isSelectingGroup={isSelectingGroup}
-        epelRepo={epelRepo}
       />
       <Toolbar>
         <ToolbarContent>
@@ -126,8 +108,6 @@ const Packages = () => {
           <ToolbarItem style={{ flex: 1 }}>
             <PackageSearch
               packageType={packageType}
-              isSuccessEpelRepo={isSuccessEpelRepo}
-              epelRepo={epelRepo}
               setIsRepoModalOpen={setIsRepoModalOpen}
               setIsSelectingPackage={setIsSelectingPackage}
               setIsSelectingGroup={setIsSelectingGroup}
@@ -137,10 +117,7 @@ const Packages = () => {
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-      <PackagesTable
-        isSuccessEpelRepo={isSuccessEpelRepo}
-        epelRepo={epelRepo}
-      />
+      <PackagesTable />
     </>
   );
 };

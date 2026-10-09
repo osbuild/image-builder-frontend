@@ -12,7 +12,6 @@ import {
 } from '@patternfly/react-table';
 
 import { useSecuritySummary } from '@/store/api/backend';
-import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import { useAppSelector } from '@/store/hooks';
 import {
   GroupWithRepositoryInfo,
@@ -27,12 +26,7 @@ import RetirementDate from './RetirementDate';
 
 import { useRemovePackageContent } from '../packagesUtilities';
 
-type PackagesTableProps = {
-  isSuccessEpelRepo: boolean;
-  epelRepo: ApiRepositoryCollectionResponseRead | undefined;
-};
-
-const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
+const PackagesTable = () => {
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
   const { packages: requiredPkgNames } = useSecuritySummary();
@@ -41,10 +35,7 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
     [requiredPkgNames],
   );
 
-  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent(
-    isSuccessEpelRepo,
-    epelRepo,
-  );
+  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 

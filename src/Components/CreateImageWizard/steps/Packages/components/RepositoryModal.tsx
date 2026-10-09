@@ -12,7 +12,6 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { CONTENT_URL, EPEL_10_REPO_DEFINITION } from '@/constants';
 import {
-  ApiRepositoryCollectionResponseRead,
   ApiRepositoryResponseRead,
   useCreateRepositoryMutation,
 } from '@/store/api/contentSources';
@@ -30,6 +29,8 @@ import {
   getEpelVersionForDistribution,
 } from '@/Utilities/epel';
 
+import { useEpelRepo } from '../packagesUtilities';
+
 type RepositoryModalProps = {
   isRepoModalOpen: boolean;
   setIsRepoModalOpen: (value: boolean) => void;
@@ -38,7 +39,6 @@ type RepositoryModalProps = {
     value: IBPackageWithRepositoryInfo | undefined,
   ) => void;
   isSelectingGroup: GroupWithRepositoryInfo | undefined;
-  epelRepo: ApiRepositoryCollectionResponseRead | undefined;
 };
 
 const RepositoryModal = ({
@@ -47,10 +47,10 @@ const RepositoryModal = ({
   isSelectingPackage,
   setIsSelectingPackage,
   isSelectingGroup,
-  epelRepo,
 }: RepositoryModalProps) => {
   const dispatch = useAppDispatch();
   const distribution = useAppSelector(selectDistribution);
+  const { data: epelRepo } = useEpelRepo();
 
   const [createRepository, { isLoading: createLoading }] =
     useCreateRepositoryMutation();
@@ -83,10 +83,10 @@ const RepositoryModal = ({
       dispatch(addRepository({ repo: epelRepo.data[0], isRecommended: true }));
     }
     if (isSelectingPackage) {
-      dispatch(addPackage(isSelectingPackage!));
+      dispatch(addPackage(isSelectingPackage));
     }
     if (isSelectingGroup) {
-      dispatch(addPackageGroup(isSelectingGroup!));
+      dispatch(addPackageGroup(isSelectingGroup));
     }
     setIsRepoModalOpen(!isRepoModalOpen);
   };
