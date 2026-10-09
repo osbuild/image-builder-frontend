@@ -25,9 +25,12 @@ import {
   selectPackages,
 } from '@/store/slices/wizard';
 
+
 import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
+
+import { shouldRemoveEpelRepo } from '../packagesUtilities';
 
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;
@@ -64,26 +67,30 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
       dispatch(removeModule(pkg.module_name));
     }
     if (
-      isSuccessEpelRepo &&
-      epelRepo &&
-      epelRepo.data &&
-      packages.filter((p) => p.repository === 'recommended').length === 1 &&
-      groups.filter((grp) => grp.repository === 'recommended').length === 0
+      shouldRemoveEpelRepo(
+        isSuccessEpelRepo,
+        epelRepo,
+        packages,
+        groups,
+        'package',
+      )
     ) {
-      dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
+      dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
     }
   };
 
   const handleRemoveGroup = (grp: GroupWithRepositoryInfo) => {
     dispatch(removePackageGroup(grp.name));
     if (
-      isSuccessEpelRepo &&
-      epelRepo &&
-      epelRepo.data &&
-      groups.filter((g) => g.repository === 'recommended').length === 1 &&
-      packages.filter((pkg) => pkg.repository === 'recommended').length === 0
+      shouldRemoveEpelRepo(
+        isSuccessEpelRepo,
+        epelRepo,
+        packages,
+        groups,
+        'group',
+      )
     ) {
-      dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
+      dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
     }
   };
 

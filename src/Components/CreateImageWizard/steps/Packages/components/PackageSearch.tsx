@@ -74,6 +74,12 @@ import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
 
+import {
+  getPackageDescription,
+  isSelectDisabled,
+  shouldRemoveEpelRepo,
+} from '../packagesUtilities';
+
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';
   isSuccessEpelRepo: boolean;
@@ -787,51 +793,9 @@ const PackageSearch = ({
     isLoadingRecommendations,
   ]);
 
-  const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
-    const isModuleDisabledByPackage =
-      pkg.type === 'module' &&
-      packages.some(
-        (p) => (!p.type || p.type === 'package') && p.name === pkg.module_name,
-      );
+  const isPackageSelectDisabled = (pkg: IBPackageWithRepositoryInfo) =>
+    isSelectDisabled(pkg, packages, modules, requiredSet);
 
-    const isPackageDisabledByModule =
-      (!pkg.type || pkg.type === 'package') &&
-      modules.some((module: Module) => module.name === pkg.name);
-
-    const isModuleStreamConflict =
-      pkg.type === 'module' &&
-      modules.some((module: Module) => module.name === pkg.module_name) &&
-      !modules.some((m: Module) => m.stream === pkg.stream);
-
-    const isRequired = isRequiredAndSelected(pkg);
-
-    return (
-      isModuleDisabledByPackage ||
-      isPackageDisabledByModule ||
-      isModuleStreamConflict ||
-      isRequired
-    );
-  };
-
-  const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
-    const parts = [];
-
-    if (pkg.stream) {
-      parts.push(pkg.stream);
-    }
-    if (pkg.end_date) {
-      const retirementDate = new Date(pkg.end_date);
-      const formattedDate =
-        retirementDate.toLocaleString('en-US', { month: 'short' }) +
-        ' ' +
-        retirementDate.getFullYear();
-      parts.push(formattedDate);
-    }
-    if (pkg.summary) {
-      parts.push(pkg.summary);
-    }
-    return parts.length === 0 ? '--' : parts.join(', ');
-  };
 
   const packageTypeLabel =
     packageType === 'packages' ? 'packages' : 'package groups';
@@ -943,14 +907,15 @@ const PackageSearch = ({
           dispatch(removeModule(pkg.module_name));
         }
         if (
-          isSuccessEpelRepo &&
-          epelRepo &&
-          epelRepo.data &&
-          packages.filter((pkg) => pkg.repository === 'recommended').length ===
-            1 &&
-          groups.filter((grp) => grp.repository === 'recommended').length === 0
+          shouldRemoveEpelRepo(
+            isSuccessEpelRepo,
+            epelRepo,
+            packages,
+            groups,
+            'package',
+          )
         ) {
-          dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
+          dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
         }
       }
     } else {
@@ -975,15 +940,15 @@ const PackageSearch = ({
       } else {
         dispatch(removePackageGroup(grp.name));
         if (
-          isSuccessEpelRepo &&
-          epelRepo &&
-          epelRepo.data &&
-          groups.filter((grp) => grp.repository === 'recommended').length ===
-            1 &&
-          packages.filter((pkg) => pkg.repository === 'recommended').length ===
-            0
+          shouldRemoveEpelRepo(
+            isSuccessEpelRepo,
+            epelRepo,
+            packages,
+            groups,
+            'group',
+          )
         ) {
-          dispatch(removeRecommendedRepositoriesById([epelRepo.data[0].uuid!]));
+          dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
         }
       }
     }
@@ -1065,7 +1030,7 @@ const PackageSearch = ({
                       ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
                       : getPackageDescription(pkg)
                   }
-                  isDisabled={isSelectDisabled(pkg)}
+                  isDisabled={isPackageSelectDisabled(pkg)}
                 >
                   {pkg.isRecommendation && (
                     <>
