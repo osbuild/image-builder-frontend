@@ -70,6 +70,7 @@ const Repositories = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [reposToRemove, setReposToRemove] = useState<string[]>([]);
   const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
+  const [unavailableRepoCount, setUnavailableRepoCount] = useState(0);
 
   const { data: repositoryParameters } = useListRepositoryParametersQuery();
 
@@ -84,8 +85,8 @@ const Repositories = () => {
     [customRepositories, payloadRepositories],
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const initialSelectedState = useMemo(() => new Set([...selected]), []);
+  const initialSelectedRef = useRef(new Set([...selected]));
+  const foundUnavailableRepos = useRef(false);
 
   const requiredUrls = useMemo(
     () => requiredRedHatRepos(arch, version) || [],
@@ -142,7 +143,7 @@ const Repositories = () => {
   );
 
   useEffect(() => {
-    if (initialSelectedState.size > 0) {
+    if (initialSelectedRef.current.size > 0) {
       refetchMain();
     }
     // Force refetch on mount when there are preselected repos
@@ -150,6 +151,8 @@ const Repositories = () => {
   }, []);
 
   useEffect(() => {
+    // contentList and pollingInterval depend on each other, so we can't replace this with a useMemo
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsStatusPollingEnabled(
       contentList.some((repo) => repo.status === 'Pending'),
     );
@@ -165,7 +168,7 @@ const Repositories = () => {
     );
     if (!customEpel) return;
 
-    const communityEpel = [...contentList].find(
+    const communityEpel = contentList.find(
       (repo) => repo.origin === ContentOrigin.COMMUNITY && isEPELUrl(repo.url!),
     );
     if (!communityEpel?.uuid || customEpel.id === communityEpel.uuid) return;
@@ -176,10 +179,6 @@ const Repositories = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  const addSelected = (repo: ApiRepositoryResponseRead) => {
-    dispatch(addRepository({ repo }));
-  };
-
   const removeSelected = (repo: ApiRepositoryResponseRead) => {
     if (repo.uuid) {
       dispatch(removeRepositoriesById([repo.uuid]));
@@ -188,7 +187,7 @@ const Repositories = () => {
 
   const handleRemove = (repo: ApiRepositoryResponseRead) => {
     const isInitiallySelected =
-      repo.uuid && initialSelectedState.has(repo.uuid);
+      repo.uuid && initialSelectedRef.current.has(repo.uuid);
 
     if (isInitiallySelected) {
       setModalOpen(true);
@@ -199,17 +198,14 @@ const Repositories = () => {
     removeSelected(repo);
   };
 
-  const foundUnavailableRepos = useRef(false);
-  const [unavailableRepoCount, setUnavailableRepoCount] = useState(0);
-
   useEffect(() => {
-    if (isFetching || isError || initialSelectedState.size === 0) return;
+    if (isFetching || isError || initialSelectedRef.current.size === 0) return;
     if (foundUnavailableRepos.current) return;
 
     foundUnavailableRepos.current = true;
 
     const contentUuids = new Set(contentList.map(({ uuid }) => uuid));
-    const missingUuids = [...initialSelectedState].filter(
+    const missingUuids = [...initialSelectedRef.current].filter(
       (uuid) => !contentUuids.has(uuid),
     );
 
@@ -217,8 +213,7 @@ const Repositories = () => {
     if (missingUuids.length > 0) {
       dispatch(removeRepositoriesById(missingUuids));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetching, isError, contentList, initialSelectedState]);
+  }, [dispatch, isFetching, isError, contentList]);
 
   const [
     listSnapshotsByDate,
@@ -264,7 +259,7 @@ const Repositories = () => {
           <ToolbarContent>
             <ToolbarItem style={{ width: '50%' }}>
               <RepositorySearch
-                onSelectRepository={(repo) => addSelected(repo)}
+                onSelectRepository={(repo) => dispatch(addRepository({ repo }))}
                 onRemoveRepository={(repo) => removeSelected(repo)}
                 selectedRepoIds={selected}
               />
