@@ -12,33 +12,27 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changePartitionMountpoint,
   changePartitionType,
-  FSType,
+  FILESYSTEM_TYPES,
+  FilesystemType,
   getNextAvailableMountpoint,
   isPartitionTypeAvailable,
-  LogicalVolumeWithBase,
-  PartitioningCustomization,
+  LogicalVolume,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
-const fs_types: FSType[] = ['ext4', 'xfs', 'vfat', 'swap'];
-
-type PartitionTypePropTypes = {
-  partition: LogicalVolumeWithBase;
-  customization: PartitioningCustomization;
+type PartitionTypeProps = {
+  partition: LogicalVolume;
 };
 
-const PartitionType = ({
-  partition,
-  customization,
-}: PartitionTypePropTypes) => {
+const PartitionType = ({ partition }: PartitionTypeProps) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const isImageMode = useAppSelector(selectIsImageMode);
-  const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
+  const onSelect = (_?: React.MouseEvent, selection?: string | number) => {
     if (selection === undefined) return;
 
     if (selection === 'swap') {
@@ -46,7 +40,6 @@ const PartitionType = ({
         changePartitionMountpoint({
           id: partition.id,
           mountpoint: '',
-          customization: customization,
         }),
       );
     }
@@ -61,7 +54,6 @@ const PartitionType = ({
         changePartitionMountpoint({
           id: partition.id,
           mountpoint,
-          customization: customization,
         }),
       );
     }
@@ -69,8 +61,7 @@ const PartitionType = ({
     dispatch(
       changePartitionType({
         id: partition.id,
-        fs_type: selection as FSType,
-        customization: customization,
+        fs_type: selection as FilesystemType,
       }),
     );
     setIsOpen(false);
@@ -101,13 +92,13 @@ const PartitionType = ({
       shouldFocusToggleOnSelect
     >
       <SelectList>
-        {fs_types
-          .filter((type) => isPartitionTypeAvailable(type, partition))
-          .map((type, index) => (
-            <SelectOption key={index} value={type}>
-              {type}
-            </SelectOption>
-          ))}
+        {FILESYSTEM_TYPES.filter((type) =>
+          isPartitionTypeAvailable(type, partition),
+        ).map((type, index) => (
+          <SelectOption key={index} value={type}>
+            {type}
+          </SelectOption>
+        ))}
       </SelectList>
     </Select>
   );

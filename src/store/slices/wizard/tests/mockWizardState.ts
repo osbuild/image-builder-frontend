@@ -1,7 +1,11 @@
 import { vi } from 'vitest';
 
 import type { RootState } from '@/store';
-import { initialState, type WizardState } from '@/store/slices/wizard';
+import {
+  type FilesystemPartition,
+  initialState,
+  type WizardState,
+} from '@/store/slices/wizard';
 
 // Minimal mock state that satisfies RootState for wizard tests
 // We only need the slices that selectors might access
@@ -65,14 +69,12 @@ export const createStateWithUser = (
 
 // Helper to create a state with partitions for filesystem tests
 export const createStateWithPartitions = (
-  partitions: WizardState['filesystem']['fileSystem']['partitions'],
+  partitions: FilesystemPartition[],
 ): RootState =>
   createMockState({
     filesystem: {
-      ...initialState.filesystem,
-      fileSystem: {
-        partitions,
-      },
+      mode: 'basic',
+      filesystem: { partitions },
     },
   });
 

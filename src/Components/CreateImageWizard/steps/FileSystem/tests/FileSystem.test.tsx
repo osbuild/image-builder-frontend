@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 
 import { RHEL_9 } from '@/constants';
-import { initialState } from '@/store/slices/wizard';
+import { type FilesystemSlice, initialState } from '@/store/slices/wizard';
 import {
   clearWithWait,
   clickWithWait,
@@ -15,6 +15,16 @@ import {
   fetchMock,
   mockOscapProfile,
 } from './mocks';
+
+const getBasicFilesystem = (filesystem: FilesystemSlice) => {
+  if (filesystem.mode !== 'basic') {
+    throw new Error('Expected basic filesystem mode');
+  }
+  return filesystem;
+};
+
+const getBasicPartitions = (filesystem: FilesystemSlice) =>
+  getBasicFilesystem(filesystem).filesystem.partitions;
 
 fetchMock.enableMocks();
 
@@ -54,8 +64,8 @@ describe('FileSystem Component', () => {
     test('displays basic filesystem partitioning when mode is basic', async () => {
       renderFileSystemStep({
         filesystem: {
-          ...initialState.filesystem,
           mode: 'basic',
+          filesystem: { partitions: [] },
         },
       });
 
@@ -69,8 +79,8 @@ describe('FileSystem Component', () => {
     test('displays advanced disk partitioning when mode is advanced', async () => {
       renderFileSystemStep({
         filesystem: {
-          ...initialState.filesystem,
           mode: 'advanced',
+          disk: { unit: 'GiB', partitions: [] },
         },
       });
 
@@ -126,8 +136,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -179,8 +188,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -234,8 +242,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -267,8 +274,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -291,7 +297,7 @@ describe('FileSystem Component', () => {
       await typeWithWait(user, minSizeInput, '15');
 
       expect(
-        store.getState().wizard.filesystem.fileSystem.partitions[0].min_size,
+        getBasicPartitions(store.getState().wizard.filesystem)[0].min_size,
       ).toBe('15');
     });
 
@@ -300,8 +306,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -322,7 +327,7 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, mibOption);
 
       expect(
-        store.getState().wizard.filesystem.fileSystem.partitions[0].unit,
+        getBasicPartitions(store.getState().wizard.filesystem)[0].unit,
       ).toBe('MiB');
     });
 
@@ -331,8 +336,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -361,7 +365,7 @@ describe('FileSystem Component', () => {
       await typeWithWait(user, mountpointInputs[1], '/home/cakerecipes');
 
       expect(
-        store.getState().wizard.filesystem.fileSystem.partitions[1].mountpoint,
+        getBasicPartitions(store.getState().wizard.filesystem)[1].mountpoint,
       ).toBe('/home/cakerecipes');
     });
   });
@@ -372,8 +376,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -387,8 +390,9 @@ describe('FileSystem Component', () => {
         },
       });
 
-      const initialLength =
-        store.getState().wizard.filesystem.fileSystem.partitions.length;
+      const initialLength = getBasicPartitions(
+        store.getState().wizard.filesystem,
+      ).length;
       expect(initialLength).toBe(1);
 
       const addButton = await screen.findByRole('button', {
@@ -396,8 +400,9 @@ describe('FileSystem Component', () => {
       });
       await clickWithWait(user, addButton);
 
-      const newLength =
-        store.getState().wizard.filesystem.fileSystem.partitions.length;
+      const newLength = getBasicPartitions(
+        store.getState().wizard.filesystem,
+      ).length;
       expect(newLength).toBe(2);
     });
 
@@ -406,8 +411,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -427,8 +431,9 @@ describe('FileSystem Component', () => {
         },
       });
 
-      const initialLength =
-        store.getState().wizard.filesystem.fileSystem.partitions.length;
+      const initialLength = getBasicPartitions(
+        store.getState().wizard.filesystem,
+      ).length;
       expect(initialLength).toBe(2);
 
       const removeButtons = await screen.findAllByRole('button', {
@@ -436,11 +441,12 @@ describe('FileSystem Component', () => {
       });
       await clickWithWait(user, removeButtons[1]);
 
-      const newLength =
-        store.getState().wizard.filesystem.fileSystem.partitions.length;
+      const newLength = getBasicPartitions(
+        store.getState().wizard.filesystem,
+      ).length;
       expect(newLength).toBe(1);
       expect(
-        store.getState().wizard.filesystem.fileSystem.partitions[0].mountpoint,
+        getBasicPartitions(store.getState().wizard.filesystem)[0].mountpoint,
       ).toBe('/');
     });
 
@@ -448,8 +454,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -474,8 +479,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -494,8 +498,7 @@ describe('FileSystem Component', () => {
       });
       await clickWithWait(user, addButton);
 
-      const partitions =
-        store.getState().wizard.filesystem.fileSystem.partitions;
+      const partitions = getBasicPartitions(store.getState().wizard.filesystem);
       const newPartition = partitions[partitions.length - 1];
 
       expect(newPartition.mountpoint).toBe('/home');
@@ -508,8 +511,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -534,8 +536,7 @@ describe('FileSystem Component', () => {
       });
       await clickWithWait(user, addButton);
 
-      const partitions =
-        store.getState().wizard.filesystem.fileSystem.partitions;
+      const partitions = getBasicPartitions(store.getState().wizard.filesystem);
       expect(partitions[2].mountpoint).toBe('/var');
     });
   });
@@ -545,8 +546,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -586,10 +586,6 @@ describe('FileSystem Component', () => {
             ],
             type: undefined,
           },
-          fileSystem: {
-            partitions: [],
-          },
-          partitioningMode: undefined,
         },
       });
 
@@ -609,8 +605,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -625,7 +620,7 @@ describe('FileSystem Component', () => {
       });
 
       expect(
-        store.getState().wizard.filesystem.partitioningMode,
+        getBasicFilesystem(store.getState().wizard.filesystem).partitioningMode,
       ).toBeUndefined();
 
       const modeSelector = await screen.findByRole('button', {
@@ -638,9 +633,9 @@ describe('FileSystem Component', () => {
       });
       await clickWithWait(user, autoLvmOption);
 
-      expect(store.getState().wizard.filesystem.partitioningMode).toBe(
-        'auto-lvm',
-      );
+      expect(
+        getBasicFilesystem(store.getState().wizard.filesystem).partitioningMode,
+      ).toBe('auto-lvm');
     });
   });
 
@@ -649,8 +644,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -678,8 +672,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -702,11 +695,6 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'automatic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
-            partitions: [],
-          },
-          partitioningMode: undefined,
         },
       });
 
@@ -723,8 +711,7 @@ describe('FileSystem Component', () => {
       renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -760,8 +747,7 @@ describe('FileSystem Component', () => {
         },
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -933,8 +919,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '642a10c4-4ffc-471b-803d-44405ae4abf4',
@@ -962,7 +947,7 @@ describe('FileSystem Component', () => {
 
       expect(mountpointInputs[1]).toBeInTheDocument();
       expect(
-        store.getState().wizard.filesystem.fileSystem.partitions[1].mountpoint,
+        getBasicPartitions(store.getState().wizard.filesystem)[1].mountpoint,
       ).toBe('/var');
     });
 
@@ -970,8 +955,7 @@ describe('FileSystem Component', () => {
       const { store } = renderFileSystemStep({
         filesystem: {
           mode: 'basic',
-          disk: { minsize: '', unit: 'GiB', partitions: [], type: undefined },
-          fileSystem: {
+          filesystem: {
             partitions: [
               {
                 id: '1',
@@ -993,7 +977,7 @@ describe('FileSystem Component', () => {
 
       expect(minSizeInput).toBeInTheDocument();
       expect(
-        store.getState().wizard.filesystem.fileSystem.partitions[0].min_size,
+        getBasicPartitions(store.getState().wizard.filesystem)[0].min_size,
       ).toBe('20');
     });
   });

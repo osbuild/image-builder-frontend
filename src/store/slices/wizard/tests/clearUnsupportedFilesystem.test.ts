@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   changeFscMode,
   type FilesystemMode,
+  type FilesystemSlice,
   initialState,
 } from '@/store/slices/wizard';
 import {
@@ -12,13 +13,24 @@ import {
 
 import { clearUnsupportedFilesystem } from '../listeners';
 
+const getFilesystemState = (mode: FilesystemMode): FilesystemSlice => {
+  switch (mode) {
+    case 'automatic':
+      return { mode };
+    case 'basic':
+      return { mode, filesystem: { partitions: [] } };
+    case 'advanced':
+      return { mode, disk: { unit: 'GiB', partitions: [] } };
+  }
+};
+
 const createState = (mode: 'image' | 'package', fscMode: FilesystemMode) =>
   createMockState({
     details: {
       ...initialState.details,
       blueprint: { ...initialState.details.blueprint, mode },
     },
-    filesystem: { ...initialState.filesystem, mode: fscMode },
+    filesystem: getFilesystemState(fscMode),
   });
 
 describe('clearUnsupportedFilesystem', () => {

@@ -17,15 +17,13 @@ import PartitionName from './PartitionName';
 import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
 
-type DiskRowPropTypes = {
+type DiskRowProps = {
   partition: DiskPartition;
 };
 
-const DiskRow = ({ partition }: DiskRowPropTypes) => {
+const DiskRow = ({ partition }: DiskRowProps) => {
   const dispatch = useAppDispatch();
   const diskPartitions = useAppSelector(selectDiskPartitions);
-
-  const customization = 'disk';
 
   const handleRemovePartition = (id: string) => {
     dispatch(removeDiskPartition(id));
@@ -39,22 +37,22 @@ const DiskRow = ({ partition }: DiskRowPropTypes) => {
     <Tr id={partition.id}>
       {partition.type !== 'plain' && (
         <Td width={30}>
-          <PartitionName partition={partition} customization={customization} />
+          <PartitionName partition={partition} />
         </Td>
       )}
       <Td width={30}>
-        <Mountpoint partition={partition} customization={customization} />
+        <Mountpoint partition={partition} />
       </Td>
       <Td width={10}>
-        <PartitionType partition={partition} customization={customization} />
+        <PartitionType partition={partition} />
       </Td>
       <Td width={30}>
         <Split hasGutter>
           <SplitItem isFilled>
-            <MinimumSize partition={partition} customization={customization} />
+            <MinimumSize partition={partition} />
           </SplitItem>
           <SplitItem>
-            <SizeUnit partition={partition} customization={customization} />
+            <SizeUnit partition={partition} />
           </SplitItem>
         </Split>
       </Td>

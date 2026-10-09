@@ -12,7 +12,7 @@ import {
 import DiskRow from './DiskRow';
 import Row from './Row';
 
-type FileSystemTableTypes =
+type FileSystemTableProps =
   | {
       partitions: FilesystemPartition[];
       mode: 'filesystem';
@@ -22,7 +22,7 @@ type FileSystemTableTypes =
       mode: 'disk-plain' | 'disk-lvm';
     };
 
-const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
+const FileSystemTable = ({ partitions, mode }: FileSystemTableProps) => {
   const { filesystem: requiredFilesystem } = useSecuritySummary();
 
   const getSecurityPartitionInfo = (mountpoint: string) => {

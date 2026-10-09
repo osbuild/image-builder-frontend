@@ -12,33 +12,28 @@ import { AddCircleOIcon } from '@patternfly/react-icons';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
-import { VolumeGroup } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addDiskPartition,
   addLogicalVolumeToVolumeGroup,
   changeDiskPartitionName,
-  DiskPartition,
-  DiskPartitionBase,
   getNextAvailableMountpoint,
   removeDiskPartition,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
+  type VolumeGroup,
 } from '@/store/slices/wizard';
 
 import FileSystemTable from './FileSystemTable';
 import MinimumSize from './MinimumSize';
 import SizeUnit from './SizeUnit';
 
-type VolumeGroupType =
-  Extract<DiskPartition, VolumeGroup & DiskPartitionBase> | undefined;
-
-type VolumeGroupsType = {
-  volumeGroups: VolumeGroupType[];
+type VolumeGroupsProps = {
+  volumeGroup: VolumeGroup | undefined;
 };
 
-const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
+const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
@@ -46,7 +41,6 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
   const inImageMode = useAppSelector(selectIsImageMode);
 
   // Only one volume group is supported
-  const vg = volumeGroups[0];
   const [isExpanded, setIsExpanded] = useState(!!vg);
 
   const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
@@ -135,10 +129,10 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
               <FormGroup label='Minimum volume group size'>
                 <Flex>
                   <FlexItem spacer={{ default: 'spacerXs' }}>
-                    <MinimumSize partition={vg} customization='disk' />
+                    <MinimumSize partition={vg} />
                   </FlexItem>
                   <FlexItem>
-                    <SizeUnit partition={vg} customization='disk' />
+                    <SizeUnit partition={vg} />
                   </FlexItem>
                 </Flex>
               </FormGroup>

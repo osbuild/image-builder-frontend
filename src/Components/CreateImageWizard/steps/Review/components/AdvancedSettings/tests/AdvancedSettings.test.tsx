@@ -46,14 +46,6 @@ describe('AdvancedSettingsOverview', () => {
             },
             filesystem: {
               mode: 'automatic',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                partitions: [],
-                type: undefined,
-              },
-              fileSystem: { partitions: [] },
-              partitioningMode: undefined,
             },
           },
         );
@@ -73,14 +65,6 @@ describe('AdvancedSettingsOverview', () => {
             },
             filesystem: {
               mode: 'automatic',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                partitions: [],
-                type: undefined,
-              },
-              fileSystem: { partitions: [] },
-              partitioningMode: undefined,
             },
           },
         );
@@ -105,16 +89,9 @@ describe('AdvancedSettingsOverview', () => {
             },
             filesystem: {
               mode: 'basic',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                partitions: [],
-                type: undefined,
-              },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.singleRoot,
               },
-              partitioningMode: undefined,
             },
           },
         );
@@ -134,16 +111,9 @@ describe('AdvancedSettingsOverview', () => {
             },
             filesystem: {
               mode: 'basic',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                partitions: [],
-                type: undefined,
-              },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.rootAndHome,
               },
-              partitioningMode: undefined,
             },
           },
         );
@@ -165,16 +135,9 @@ describe('AdvancedSettingsOverview', () => {
             },
             filesystem: {
               mode: 'basic',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                partitions: [],
-                type: undefined,
-              },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.rootAndHome,
               },
-              partitioningMode: undefined,
             },
           },
         );
@@ -203,8 +166,6 @@ describe('AdvancedSettingsOverview', () => {
                 type: 'gpt',
                 partitions: advancedPartitions.singlePlain,
               },
-              fileSystem: { partitions: [] },
-              partitioningMode: undefined,
             },
           },
         );
@@ -232,8 +193,6 @@ describe('AdvancedSettingsOverview', () => {
                 type: 'gpt',
                 partitions: advancedPartitions.singlePlain,
               },
-              fileSystem: { partitions: [] },
-              partitioningMode: undefined,
             },
           },
         );
@@ -261,8 +220,6 @@ describe('AdvancedSettingsOverview', () => {
                 type: 'gpt',
                 partitions: advancedPartitions.withLvm,
               },
-              fileSystem: { partitions: [] },
-              partitioningMode: undefined,
             },
           },
         );
@@ -288,16 +245,9 @@ describe('AdvancedSettingsOverview', () => {
             },
             filesystem: {
               mode: 'basic',
-              disk: {
-                minsize: '',
-                unit: 'GiB',
-                partitions: [],
-                type: undefined,
-              },
-              fileSystem: {
+              filesystem: {
                 partitions: basicPartitions.smallPartition,
               },
-              partitioningMode: undefined,
             },
           },
         );

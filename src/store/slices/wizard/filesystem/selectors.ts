@@ -3,35 +3,58 @@ import { createSelector } from '@reduxjs/toolkit';
 import { UNIT_GIB } from '@/constants';
 import { RootState } from '@/store';
 
-import { Units, VolumeGroupWithExtendedLV } from './types';
+import type {
+  DiskPartition,
+  FilesystemPartition,
+  Units,
+  VolumeGroup,
+} from './types';
 import { getConversionFactor } from './utilities';
+
+const EMPTY_DISK_PARTITIONS: DiskPartition[] = [];
+const EMPTY_FILESYSTEM_PARTITIONS: FilesystemPartition[] = [];
 
 export const selectFscMode = (state: RootState) => {
   return state.wizard.filesystem.mode;
 };
 
 export const selectDiskType = (state: RootState) => {
-  return state.wizard.filesystem.disk.type;
+  if (state.wizard.filesystem.mode === 'advanced') {
+    return state.wizard.filesystem.disk.type;
+  }
 };
 
 export const selectDiskMinsize = (state: RootState) => {
-  return state.wizard.filesystem.disk.minsize;
+  if (state.wizard.filesystem.mode === 'advanced') {
+    return state.wizard.filesystem.disk.minsize;
+  }
 };
 
 export const selectDiskUnit = (state: RootState) => {
-  return state.wizard.filesystem.disk.unit;
+  if (state.wizard.filesystem.mode === 'advanced') {
+    return state.wizard.filesystem.disk.unit;
+  }
+  // TODO: maybe return default for typesafety
 };
 
 export const selectDiskPartitions = (state: RootState) => {
-  return state.wizard.filesystem.disk.partitions;
+  if (state.wizard.filesystem.mode === 'advanced') {
+    return state.wizard.filesystem.disk.partitions;
+  }
+  return EMPTY_DISK_PARTITIONS;
 };
 
 export const selectFilesystemPartitions = (state: RootState) => {
-  return state.wizard.filesystem.fileSystem.partitions;
+  if (state.wizard.filesystem.mode === 'basic') {
+    return state.wizard.filesystem.filesystem.partitions;
+  }
+  return EMPTY_FILESYSTEM_PARTITIONS;
 };
 
 export const selectPartitioningMode = (state: RootState) => {
-  return state.wizard.filesystem.partitioningMode;
+  if (state.wizard.filesystem.mode === 'basic') {
+    return state.wizard.filesystem.partitioningMode;
+  }
 };
 
 export const selectPlainPartitions = createSelector(
@@ -41,8 +64,7 @@ export const selectPlainPartitions = createSelector(
 
 export const selectVolumeGroups = createSelector(
   [selectDiskPartitions],
-  (partitions) =>
-    partitions.filter((p) => p.type === 'lvm') as VolumeGroupWithExtendedLV[],
+  (partitions) => partitions.filter((p) => p.type === 'lvm') as VolumeGroup[],
 );
 
 export const selectBasicPartitionCount = createSelector(

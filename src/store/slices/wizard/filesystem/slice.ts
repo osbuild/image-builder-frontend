@@ -1,16 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { LogicalVolume } from '@/store/api/backend';
-
-import { initialState } from './state';
+import { emptyDisk, initialState } from './state';
 import {
   DiskPartition,
-  DiskPartitionBase,
   FilesystemMode,
   FilesystemPartition,
-  FSType,
-  PartitioningCustomization,
-  PartitioningModeType,
+  FilesystemType,
+  LogicalVolume,
+  PartitioningMode,
   Units,
 } from './types';
 
@@ -24,48 +21,53 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<FilesystemPartition[]>,
     ) => {
-      state.fileSystem.partitions = action.payload;
+      if (state.mode !== 'basic') return;
+      state.filesystem.partitions = action.payload;
     },
     changeFscMode: (state, action: PayloadAction<FilesystemMode>) => {
-      const currentMode = state.mode;
+      if (state.mode === action.payload) return;
 
-      // Only trigger if mode is being *changed*
-      if (currentMode !== action.payload) {
-        state.mode = action.payload;
-        switch (action.payload) {
-          case 'automatic':
-            state.fileSystem.partitions = [];
-            break;
-          case 'basic':
-            state.fileSystem.partitions = [
-              {
-                id: crypto.randomUUID(),
-                mountpoint: '/',
-                min_size: '10',
-                unit: 'GiB',
-              },
-            ];
-            break;
-          case 'advanced':
-            state.disk.partitions = [
-              {
-                id: crypto.randomUUID(),
-                mountpoint: '/',
-                fs_type: 'xfs',
-                min_size: '10',
-                unit: 'GiB',
-                type: 'plain',
-              },
-            ];
-            break;
-        }
+      switch (action.payload) {
+        case 'automatic':
+          return { mode: 'automatic' };
+        case 'basic':
+          return {
+            mode: 'basic',
+            filesystem: {
+              partitions: [
+                {
+                  id: crypto.randomUUID(),
+                  mountpoint: '/',
+                  min_size: '10',
+                  unit: 'GiB',
+                },
+              ],
+            },
+          };
+        case 'advanced':
+          return {
+            mode: 'advanced',
+            disk: {
+              ...emptyDisk.disk,
+              partitions: [
+                {
+                  id: crypto.randomUUID(),
+                  mountpoint: '/',
+                  fs_type: 'xfs',
+                  min_size: '10',
+                  unit: 'GiB',
+                  type: 'plain',
+                },
+              ],
+            },
+          };
       }
     },
     clearPartitions: (state) => {
       const currentMode = state.mode;
 
       if (currentMode === 'basic') {
-        state.fileSystem.partitions = [
+        state.filesystem.partitions = [
           {
             id: crypto.randomUUID(),
             mountpoint: '/',
@@ -76,29 +78,32 @@ export const filesystemSlice = createSlice({
       }
     },
     addPartition: (state, action: PayloadAction<FilesystemPartition>) => {
+      if (state.mode !== 'basic') return;
       // Duplicate partitions are allowed temporarily, the wizard is responsible for final validation
-      state.fileSystem.partitions.push(action.payload);
+      state.filesystem.partitions.push(action.payload);
     },
     removePartition: (
       state,
       action: PayloadAction<FilesystemPartition['id']>,
     ) => {
-      const index = state.fileSystem.partitions.findIndex(
+      if (state.mode !== 'basic') return;
+      const index = state.filesystem.partitions.findIndex(
         (partition) => partition.id === action.payload,
       );
       if (index !== -1) {
-        state.fileSystem.partitions.splice(index, 1);
+        state.filesystem.partitions.splice(index, 1);
       }
     },
     removePartitionByMountpoint: (
       state,
       action: PayloadAction<FilesystemPartition['mountpoint']>,
     ) => {
-      const index = state.fileSystem.partitions.findIndex(
+      if (state.mode !== 'basic') return;
+      const index = state.filesystem.partitions.findIndex(
         (partition) => partition.mountpoint === action.payload,
       );
       if (index !== -1) {
-        state.fileSystem.partitions.splice(index, 1);
+        state.filesystem.partitions.splice(index, 1);
       }
     },
     changePartitionMountpoint: (
@@ -106,18 +111,32 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         mountpoint: string;
-        customization: PartitioningCustomization;
       }>,
     ) => {
-      const { id, mountpoint, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
+      if (state.mode === 'automatic') return;
+      const { id, mountpoint } = action.payload;
+
+      if (state.mode === 'basic') {
+        const partitionIndex = state.filesystem.partitions.findIndex(
+          (partition) => partition.id === id,
+        );
+
+        if (partitionIndex !== -1) {
+          if ('mountpoint' in state.filesystem.partitions[partitionIndex]) {
+            state.filesystem.partitions[partitionIndex].mountpoint = mountpoint;
+            return;
+          }
+        }
+        return;
+      }
+
+      const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
       );
 
       if (partitionIndex !== -1) {
-        if ('mountpoint' in state[customization].partitions[partitionIndex]) {
-          state[customization].partitions[partitionIndex].mountpoint =
-            mountpoint;
+        if ('mountpoint' in state.disk.partitions[partitionIndex]) {
+          state.disk.partitions[partitionIndex].mountpoint = mountpoint;
           return;
         }
       }
@@ -140,15 +159,27 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         unit: Units;
-        customization: PartitioningCustomization;
       }>,
     ) => {
-      const { id, unit, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
+      if (state.mode === 'automatic') return;
+      const { id, unit } = action.payload;
+
+      if (state.mode === 'basic') {
+        const partitionIndex = state.filesystem.partitions.findIndex(
+          (partition) => partition.id === id,
+        );
+        if (partitionIndex !== -1) {
+          state.filesystem.partitions[partitionIndex].unit = unit;
+          return;
+        }
+        return;
+      }
+
+      const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
       );
       if (partitionIndex !== -1) {
-        state[customization].partitions[partitionIndex].unit = unit;
+        state.disk.partitions[partitionIndex].unit = unit;
         return;
       }
 
@@ -169,18 +200,29 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         min_size: string;
-        customization: PartitioningCustomization;
       }>,
     ) => {
-      const { id, min_size, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
-        (partition) => partition.id === id,
-      );
-      if (partitionIndex !== -1) {
-        state[customization].partitions[partitionIndex].min_size = min_size;
+      if (state.mode === 'automatic') return;
+      const { id, min_size } = action.payload;
+
+      if (state.mode === 'basic') {
+        const partitionIndex = state.filesystem.partitions.findIndex(
+          (partition) => partition.id === id,
+        );
+        if (partitionIndex !== -1) {
+          state.filesystem.partitions[partitionIndex].min_size = min_size;
+          return;
+        }
         return;
       }
 
+      const partitionIndex = state.disk.partitions.findIndex(
+        (partition) => partition.id === id,
+      );
+      if (partitionIndex !== -1) {
+        state.disk.partitions[partitionIndex].min_size = min_size;
+        return;
+      }
       for (const partition of state.disk.partitions) {
         if (partition.type === 'lvm') {
           const logicalVolumeIndex = partition.logical_volumes.findIndex(
@@ -197,19 +239,34 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{
         id: string;
-        fs_type: FSType;
-        customization: PartitioningCustomization;
+        fs_type: FilesystemType;
       }>,
     ) => {
-      const { id, fs_type, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
+      if (state.mode === 'automatic') return;
+      const { id, fs_type } = action.payload;
+
+      if (state.mode === 'basic') {
+        const partitionIndex = state.filesystem.partitions.findIndex(
+          (partition) => partition.id === id,
+        );
+        if (
+          partitionIndex !== -1 &&
+          'fs_type' in state.filesystem.partitions[partitionIndex]
+        ) {
+          state.filesystem.partitions[partitionIndex].fs_type = fs_type;
+          return;
+        }
+        return;
+      }
+
+      const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
       );
       if (
         partitionIndex !== -1 &&
-        'fs_type' in state[customization].partitions[partitionIndex]
+        'fs_type' in state.disk.partitions[partitionIndex]
       ) {
-        state[customization].partitions[partitionIndex].fs_type = fs_type;
+        state.disk.partitions[partitionIndex].fs_type = fs_type;
         return;
       }
 
@@ -230,18 +287,33 @@ export const filesystemSlice = createSlice({
       action: PayloadAction<{
         id: string;
         name: string;
-        customization: PartitioningCustomization;
       }>,
     ) => {
-      const { id, name, customization } = action.payload;
-      const partitionIndex = state[customization].partitions.findIndex(
+      if (state.mode === 'automatic') return;
+      const { id, name } = action.payload;
+
+      if (state.mode === 'basic') {
+        const partitionIndex = state.filesystem.partitions.findIndex(
+          (partition) => partition.id === id,
+        );
+        if (
+          partitionIndex !== -1 &&
+          'name' in state.filesystem.partitions[partitionIndex]
+        ) {
+          state.filesystem.partitions[partitionIndex].name = name;
+          return;
+        }
+        return;
+      }
+
+      const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
       );
       if (
         partitionIndex !== -1 &&
-        'name' in state[customization].partitions[partitionIndex]
+        'name' in state.disk.partitions[partitionIndex]
       ) {
-        state[customization].partitions[partitionIndex].name = name;
+        state.disk.partitions[partitionIndex].name = name;
         return;
       }
 
@@ -258,24 +330,29 @@ export const filesystemSlice = createSlice({
       }
     },
     changeDiskMinsize: (state, action: PayloadAction<string>) => {
+      if (state.mode !== 'advanced') return;
       state.disk.minsize = action.payload;
     },
     changeDiskUnit: (state, action: PayloadAction<Units>) => {
+      if (state.mode !== 'advanced') return;
       state.disk.unit = action.payload;
     },
     changeDiskType: (
       state,
       action: PayloadAction<'gpt' | 'dos' | undefined>,
     ) => {
+      if (state.mode !== 'advanced') return;
       state.disk.type = action.payload;
     },
     addDiskPartition: (state, action: PayloadAction<DiskPartition>) => {
+      if (state.mode !== 'advanced') return;
       state.disk.partitions.push(action.payload);
     },
     removeDiskPartition: (
       state,
       action: PayloadAction<DiskPartition['id']>,
     ) => {
+      if (state.mode !== 'advanced') return;
       const index = state.disk.partitions.findIndex(
         (partition) => partition.id === action.payload,
       );
@@ -300,6 +377,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{ id: string; min_size: string }>,
     ) => {
+      if (state.mode !== 'advanced') return;
       const { id, min_size } = action.payload;
       const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
@@ -312,6 +390,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{ id: string; name: string }>,
     ) => {
+      if (state.mode !== 'advanced') return;
       const { id, name } = action.payload;
       const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
@@ -327,9 +406,10 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{
         vgId: string;
-        logicalVolume: LogicalVolume & DiskPartitionBase;
+        logicalVolume: LogicalVolume;
       }>,
     ) => {
+      if (state.mode !== 'advanced') return;
       const { vgId, logicalVolume } = action.payload;
       const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === vgId,
@@ -345,8 +425,9 @@ export const filesystemSlice = createSlice({
     },
     changePartitioningMode: (
       state,
-      action: PayloadAction<PartitioningModeType>,
+      action: PayloadAction<PartitioningMode | undefined>,
     ) => {
+      if (state.mode !== 'basic') return;
       state.partitioningMode = action.payload;
     },
   },

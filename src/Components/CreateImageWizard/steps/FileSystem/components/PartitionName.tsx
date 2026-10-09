@@ -2,24 +2,14 @@ import React from 'react';
 
 import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
-import { VolumeGroup } from '@/store/api/backend';
 import { useAppDispatch } from '@/store/hooks';
-import {
-  changePartitionName,
-  DiskPartitionBase,
-  LogicalVolumeWithBase,
-  PartitioningCustomization,
-} from '@/store/slices/wizard';
+import { changePartitionName, type LogicalVolume } from '@/store/slices/wizard';
 
-type PartitionNamePropTypes = {
-  partition: (VolumeGroup & DiskPartitionBase) | LogicalVolumeWithBase;
-  customization: PartitioningCustomization;
+type PartitionNameProps = {
+  partition: Pick<LogicalVolume, 'id' | 'name'>;
 };
 
-const PartitionName = ({
-  partition,
-  customization,
-}: PartitionNamePropTypes) => {
+const PartitionName = ({ partition }: PartitionNameProps) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
 
@@ -27,12 +17,11 @@ const PartitionName = ({
     <ValidatedInputAndTextArea
       ariaLabel='Partition name input'
       value={partition.name || ''}
-      onChange={(event, name) => {
+      onChange={(_, name) => {
         dispatch(
           changePartitionName({
             id: partition.id,
             name: name,
-            customization: customization,
           }),
         );
       }}
