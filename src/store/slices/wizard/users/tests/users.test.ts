@@ -1,22 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  addGroupToUserByUserIndex,
-  addUser,
   initialState,
-  removeGroupFromUserByIndex,
   removeUser,
   removeUserGroup,
-  setUserNameByIndex,
-  setUserPasswordByIndex,
-  setUserSshKeyByIndex,
   upsertUserGroup,
-  type UserWithAdditionalInfo,
+  type User,
   wizardReducer,
   type WizardState,
 } from '@/store/slices/wizard';
 
-const createUserState = (users: UserWithAdditionalInfo[]): WizardState => ({
+const createUserState = (users: User[]): WizardState => ({
   ...initialState,
   users: {
     ...initialState.users,
@@ -24,9 +18,7 @@ const createUserState = (users: UserWithAdditionalInfo[]): WizardState => ({
   },
 });
 
-const createDefaultUser = (
-  overrides: Partial<UserWithAdditionalInfo> = {},
-): UserWithAdditionalInfo => ({
+const createDefaultUser = (overrides: Partial<User> = {}): User => ({
   name: 'testuser',
   password: '',
   ssh_key: '',
@@ -36,25 +28,6 @@ const createDefaultUser = (
 });
 
 describe('user reducers', () => {
-  describe('addUser', () => {
-    it('should add a new user with default values', () => {
-      const result = wizardReducer(initialState, addUser());
-
-      expect(result.users.users).toHaveLength(1);
-      expect(result.users.users[0].name).toBe('');
-      expect(result.users.users[0].groups).toEqual([]);
-      expect(result.users.users[0].groups.includes('wheel')).toBe(false);
-    });
-
-    it('should add multiple users', () => {
-      let state = wizardReducer(initialState, addUser());
-      state = wizardReducer(state, addUser());
-      state = wizardReducer(state, addUser());
-
-      expect(state.users.users).toHaveLength(3);
-    });
-  });
-
   describe('removeUser', () => {
     it('should remove user at specified index', () => {
       const state = createUserState([
@@ -76,100 +49,6 @@ describe('user reducers', () => {
       const result = wizardReducer(state, removeUser(0));
 
       expect(result.users.users).toHaveLength(0);
-    });
-  });
-
-  describe('setUserNameByIndex', () => {
-    it('should update user name at index', () => {
-      const state = createUserState([createDefaultUser()]);
-
-      const result = wizardReducer(
-        state,
-        setUserNameByIndex({ index: 0, name: 'newname' }),
-      );
-
-      expect(result.users.users[0].name).toBe('newname');
-    });
-  });
-
-  describe('setUserPasswordByIndex', () => {
-    it('should update user password at index', () => {
-      const state = createUserState([createDefaultUser()]);
-      const FAKE_PASSWORD = 'secretpass'; // notsecret
-
-      const result = wizardReducer(
-        state,
-        setUserPasswordByIndex({ index: 0, password: FAKE_PASSWORD }),
-      );
-
-      expect(result.users.users[0].password).toBe(FAKE_PASSWORD);
-    });
-  });
-
-  describe('setUserSshKeyByIndex', () => {
-    it('should update user SSH key at index', () => {
-      const state = createUserState([createDefaultUser()]);
-
-      const result = wizardReducer(
-        state,
-        setUserSshKeyByIndex({ index: 0, sshKey: 'ssh-rsa AAAAB...' }),
-      );
-
-      expect(result.users.users[0].ssh_key).toBe('ssh-rsa AAAAB...');
-    });
-  });
-
-  describe('addGroupToUserByUserIndex', () => {
-    it('should add a group to user', () => {
-      const state = createUserState([createDefaultUser()]);
-
-      const result = wizardReducer(
-        state,
-        addGroupToUserByUserIndex({ index: 0, group: 'developers' }),
-      );
-
-      expect(result.users.users[0].groups).toContain('developers');
-    });
-
-    it('should not add duplicate groups', () => {
-      const state = createUserState([
-        createDefaultUser({ groups: ['developers'] }),
-      ]);
-
-      const result = wizardReducer(
-        state,
-        addGroupToUserByUserIndex({ index: 0, group: 'developers' }),
-      );
-
-      expect(result.users.users[0].groups).toEqual(['developers']);
-    });
-  });
-
-  describe('removeGroupFromUserByIndex', () => {
-    it('should remove a group from user', () => {
-      const state = createUserState([
-        createDefaultUser({ groups: ['developers', 'docker'] }),
-      ]);
-
-      const result = wizardReducer(
-        state,
-        removeGroupFromUserByIndex({ index: 0, group: 'developers' }),
-      );
-
-      expect(result.users.users[0].groups).toEqual(['docker']);
-    });
-
-    it('should do nothing when removing non-existent group', () => {
-      const state = createUserState([
-        createDefaultUser({ groups: ['developers'] }),
-      ]);
-
-      const result = wizardReducer(
-        state,
-        removeGroupFromUserByIndex({ index: 0, group: 'nonexistent' }),
-      );
-
-      expect(result.users.users[0].groups).toEqual(['developers']);
     });
   });
 });

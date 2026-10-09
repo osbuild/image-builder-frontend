@@ -149,13 +149,6 @@ test('Create a blueprint with Users customization', async ({
       frame.getByRole('checkbox', { name: 'Administrator' }),
     ).toBeChecked();
 
-    // Verify password validation passes
-    await expect(
-      frame.getByText(
-        'Password must be at least 6 characters long: success status;',
-      ),
-    ).toBeVisible();
-
     // Add second user with SSH key and custom group
     await frame.getByRole('button', { name: 'Add user', exact: true }).click();
 
@@ -190,13 +183,20 @@ test('Create a blueprint with Users customization', async ({
     // 1. We test there are no error of specific type
     // 2. We add a value that is invalid
     // 3. We test that the error is visible
-    await frame.getByRole('button', { name: 'Add user', exact: true }).click();
-    await frame.getByRole('button', { name: 'Add user', exact: true }).click();
-    await frame.getByRole('button', { name: 'Add user', exact: true }).click();
-
     const usernameInputs = frame.getByRole('textbox', {
       name: 'blueprint user name',
     });
+
+    await frame.getByRole('button', { name: 'Add user', exact: true }).click();
+    await usernameInputs.nth(2).fill('testuser1');
+    await usernameInputs.nth(2).press('Tab');
+    await frame.getByRole('button', { name: 'Add user', exact: true }).click();
+    await usernameInputs.nth(3).fill('testuser2');
+    await usernameInputs.nth(3).press('Tab');
+    await frame.getByRole('button', { name: 'Add user', exact: true }).click();
+    await usernameInputs.nth(4).fill('testuser3');
+    await usernameInputs.nth(4).press('Tab');
+
     const passwordInputs = frame.getByRole('textbox', {
       name: 'blueprint user password',
     });
@@ -204,31 +204,28 @@ test('Create a blueprint with Users customization', async ({
     const groupInputs = frame.getByPlaceholder('Add user group');
 
     // Test 1: Short password error
-    await expect(
-      frame.getByText(
-        'Password must be at least 6 characters long: error status;',
-      ),
-    ).toBeHidden();
     await usernameInputs.nth(2).fill('testuser1');
-    await passwordInputs.nth(2).fill('short');
+    const shortPasswordInput = passwordInputs.nth(2);
+    await shortPasswordInput.fill('short');
+    await shortPasswordInput.press('Tab');
+    await expect(shortPasswordInput).toHaveAttribute('aria-invalid', 'true');
     await expect(
-      frame
-        .getByText('Password must be at least 6 characters long: error status;')
-        .first(),
+      frame.getByText('Password must contain at least 6 characters'),
     ).toBeVisible();
 
     // Test 2: Invalid SSH key error
-    await expect(frame.getByText('Invalid SSH key;')).toBeHidden();
+    await expect(frame.getByText('Unsupported SSH key type')).toBeHidden();
     await sshInputs.nth(2).fill('invalid-ssh-key');
-    await expect(frame.getByText('Invalid SSH key')).toBeVisible();
+    await sshInputs.nth(2).press('Tab');
+    await expect(frame.getByText('Unsupported SSH key type')).toBeVisible();
 
     // Test 3: Duplicate username error
     await expect(
-      frame.getByText('Username already exists').first(),
+      frame.getByText('Duplicate user names: admin1').first(),
     ).toBeHidden();
     await usernameInputs.nth(3).fill('admin1');
     await expect(
-      frame.getByText('Username already exists').first(),
+      frame.getByText('Duplicate user names: admin1').first(),
     ).toBeVisible();
 
     // Test 4: Empty username with password filled
@@ -242,31 +239,38 @@ test('Create a blueprint with Users customization', async ({
 
     // Test 5: Invalid group name with spaces
     await expect(
-      frame.getByText('Expected format: <group-name>. Example: admin'),
+      frame.getByText('Group name contains invalid characters'),
     ).toBeHidden();
     await groupInputs.nth(4).fill('invalid group name with spaces');
     await groupInputs.nth(4).press('Enter');
     await expect(
-      frame.getByText('Expected format: <group-name>. Example: admin'),
+      frame.getByText('Group name contains invalid characters'),
     ).toBeVisible();
 
     // Test 6: Duplicate group within same user
     await groupInputs.nth(4).fill('testgroup');
     await groupInputs.nth(4).press('Enter');
-    await expect(frame.getByText('Group already exists.')).toBeHidden();
+    await expect(
+      frame.getByText('Duplicate user groups: testgroup'),
+    ).toBeHidden();
     await groupInputs.nth(4).fill('testgroup');
     await groupInputs.nth(4).press('Enter');
-    await expect(frame.getByText('Group already exists.')).toBeVisible();
+    await expect(
+      frame.getByText('Duplicate user groups: testgroup'),
+    ).toBeVisible();
 
     // Test 7: Various invalid SSH key formats
-    await expect(frame.getByText('Invalid SSH key')).toHaveCount(1);
+    await expect(frame.getByText('Unsupported SSH key type')).toHaveCount(1);
     await sshInputs.nth(4).fill('not-an-ssh-key');
-    await expect(frame.getByText('Invalid SSH key').nth(1)).toBeVisible();
-    await expect(frame.getByText('Invalid SSH key')).toHaveCount(2);
+    await sshInputs.nth(4).press('Tab');
+    await expect(
+      frame.getByText('Unsupported SSH key type').nth(1),
+    ).toBeVisible();
+    await expect(frame.getByText('Unsupported SSH key type')).toHaveCount(2);
     await sshInputs
       .nth(4)
       .fill('invalid-type AAAAB3NzaC1yc2EAAAADAQABAAABAQCtest');
-    const invalidSshKey2 = frame.getByText('Invalid SSH key');
+    const invalidSshKey2 = frame.getByText('Unsupported SSH key type');
     await expect(invalidSshKey2).toHaveCount(2);
   });
 
@@ -412,15 +416,6 @@ test('Create a blueprint with Users customization', async ({
       .nth(2)
       .isChecked();
     await expect(frame.getByText('wheel').nth(1)).toBeVisible(); // Group was added
-    // Verify password validation passes
-    await expect(
-      frame
-        .getByText(
-          'Password must be at least 6 characters long: success status;',
-        )
-        .nth(1),
-    ).toBeVisible();
-
     await frame.getByRole('button', { name: 'Review image' }).click();
 
     const advancedSettingsCard = frame

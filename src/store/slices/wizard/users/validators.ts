@@ -1,13 +1,14 @@
-import z from 'zod';
-
 import {
   groupGidInputSchema,
   groupInputSchema,
   groupListSchema,
   groupListWarningsSchema,
+  userListSchema,
+  userSchema,
   usersSliceSchema,
+  usersSliceWarningSchema,
 } from './schemas';
-import type { Group, GroupInput } from './types';
+import type { Group, GroupInput, User, UsersSlice } from './types';
 
 import type { ValidationResult } from '../types';
 import { validateList, validateSchema } from '../validators';
@@ -47,10 +48,36 @@ export const validateGroupList = (
   };
 };
 
+export const validateUserInput = (user: User): ValidationResult<User> => {
+  const result = validateSchema(userSchema, user);
+
+  return {
+    data: result.data,
+    errors: result.issues,
+  };
+};
+
+export const validateUserList = (
+  users: User[],
+  groups: Group[],
+): ValidationResult<User[]> => {
+  const { data, issues: errors } = validateList(userListSchema, users);
+  const { issues: warnings } = validateSchema(usersSliceWarningSchema, {
+    users,
+    groups,
+  });
+
+  return {
+    data,
+    errors,
+    warnings,
+  };
+};
+
 export const validateUsersSlice = (
-  slice: z.infer<typeof usersSliceSchema>,
+  slice: UsersSlice,
   shouldHide: boolean = false,
-): ValidationResult<z.infer<typeof usersSliceSchema>> => {
+): ValidationResult<UsersSlice> => {
   if (shouldHide) {
     return {
       errors: [],

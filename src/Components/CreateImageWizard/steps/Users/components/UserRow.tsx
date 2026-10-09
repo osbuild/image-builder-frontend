@@ -1,150 +1,159 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button, Checkbox } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
-import LabelInput from '@/Components/CreateImageWizard/LabelInput';
-import { PasswordValidatedInput } from '@/Components/CreateImageWizard/utilities/PasswordValidatedInput';
-import { useUsersValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { isUserGroupValid } from '@/Components/CreateImageWizard/validators';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
-import { useAppDispatch } from '@/store/hooks';
 import {
-  addGroupToUserByUserIndex,
-  addUser,
-  removeGroupFromUserByIndex,
-  removeUser,
-  setUserNameByIndex,
-  setUserPasswordByIndex,
-  setUserSshKeyByIndex,
-  UserWithAdditionalInfo,
+  ValidatedListInput,
+  ValidatedTextInput,
+} from '@/Components/ValidatedInputs';
+import {
+  User,
+  validateUserInput,
+  ValidationResult,
 } from '@/store/slices/wizard';
 
-import RemoveUserModal from './RemoveUserModal';
+import { emptyUser } from './constants';
 
 type UserRowProps = {
-  user: UserWithAdditionalInfo;
+  user: User | undefined;
   index: number;
-  userCount: number;
+  validator: (candidate: User) => ValidationResult<User[]>;
+  onUpdate: (user?: Partial<User> | undefined) => void;
+  onRemove: () => void;
+  isRemoveDisabled: boolean;
 };
 
-const UserRow = ({ user, index, userCount }: UserRowProps) => {
-  const dispatch = useAppDispatch();
-  const stepValidation = useUsersValidation();
-  const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
-  const getValidationByIndex = (idx: number) => {
-    const errors =
-      idx in stepValidation.errors ? stepValidation.errors[idx] : {};
-    return {
-      errors,
-      disabledNext: stepValidation.disabledNext,
-    };
-  };
+type UserDraft = {
+  name: string;
+  password: string;
+  ssh_key: string;
+  groups: string[];
+  hasPassword: boolean;
+};
 
-  const onRemove = () => {
-    if (user.name === '' && user.password === '' && user.ssh_key === '') {
-      dispatch(removeUser(index));
-    } else {
-      setShowRemoveUserModal(true);
-    }
-  };
+const createDraft = (user?: User): UserDraft => ({
+  name: user?.name ?? emptyUser.name,
+  password: user?.password ?? emptyUser.password,
+  ssh_key: user?.ssh_key ?? emptyUser.ssh_key,
+  groups: user?.groups ?? emptyUser.groups,
+  hasPassword: user?.hasPassword || emptyUser.hasPassword,
+});
 
-  const handleNameChange = (
-    _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string,
-  ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserNameByIndex({ index: index, name: value }));
-  };
+const UserRow = ({
+  user,
+  index,
+  validator,
+  onUpdate,
+  onRemove,
+  isRemoveDisabled,
+}: UserRowProps) => {
+  const [draft, setDraft] = useState<UserDraft>(() => createDraft(user));
 
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserPasswordByIndex({ index: index, password: value }));
-  };
-
-  const handleSshKeyChange = (
-    _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string,
-  ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-    dispatch(setUserSshKeyByIndex({ index: index, sshKey: value }));
-  };
+  useEffect(() => {
+    // Reset local drafts when the committed user changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft(createDraft(user));
+  }, [user]);
 
   const handleCheckboxChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: boolean,
+    isAdmin: boolean,
   ) => {
-    if (userCount === 0) {
-      dispatch(addUser());
-    }
-
-    if (value) {
-      dispatch(addGroupToUserByUserIndex({ index: index, group: 'wheel' }));
+    if (isAdmin) {
+      const groups = Array.from(new Set([...draft.groups, 'wheel']));
+      setDraft({ ...draft, groups });
+      onUpdate({ groups });
       return;
     }
 
-    dispatch(removeGroupFromUserByIndex({ index: index, group: 'wheel' }));
+    const groups = draft.groups.filter((group) => group !== 'wheel');
+    setDraft({ ...draft, groups });
+    onUpdate({ groups });
+  };
+
+  const validateUser = (
+    field: 'name' | 'password' | 'ssh_key' | 'groups',
+    groups: string[] = draft.groups,
+  ) => {
+    const candidate = { ...draft, groups };
+    const parsed = validateUserInput(candidate);
+    const { errors, warnings } = validator(candidate);
+
+    return {
+      data: parsed.data,
+      errors: errors.filter(
+        (issue) => issue.path?.[0] === index && issue.path[1] === field,
+      ),
+      warnings: (warnings ?? []).filter(
+        (issue) => issue.path?.[0] === index && issue.path[1] === field,
+      ),
+    };
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.currentTarget.blur();
+    }
   };
 
   return (
     <>
       <Tr resetOffset>
         <Td>
-          <ValidatedInputAndTextArea
+          <ValidatedTextInput
             ariaLabel='blueprint user name'
-            value={user.name || ''}
+            value={draft.name}
             placeholder='Set username'
-            onChange={(_e, value) => handleNameChange(_e, value)}
-            stepValidation={getValidationByIndex(index)}
-            fieldName='userName'
-            forceErrorDisplay={true}
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, name) => setDraft({ ...draft, name })}
+            validator={() => validateUser('name')}
+            onCommit={(candidate) => onUpdate(candidate)}
           />
         </Td>
         <Td>
-          <PasswordValidatedInput
-            value={user.password || ''}
+          <ValidatedTextInput
+            value={draft.password}
             ariaLabel='blueprint user password'
-            placeholder='Set password'
-            onChange={(_e, value) => handlePasswordChange(_e, value)}
-            hasPassword={user.hasPassword}
+            placeholder={draft.hasPassword ? '●'.repeat(8) : 'Set password'}
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, password) => setDraft({ ...draft, password })}
+            validator={() => validateUser('password')}
+            onCommit={(candidate) => onUpdate(candidate)}
+            kind='password'
           />
         </Td>
         <Td>
-          <ValidatedInputAndTextArea
+          <ValidatedTextInput
             ariaLabel='public SSH key'
-            value={user.ssh_key || ''}
-            type={'text'}
-            onChange={(_e, value) => handleSshKeyChange(_e, value)}
+            value={draft.ssh_key}
             placeholder='Paste SSH key here'
-            stepValidation={getValidationByIndex(index)}
-            fieldName='userSshKey'
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, ssh_key) => setDraft({ ...draft, ssh_key })}
+            validator={() => validateUser('ssh_key')}
+            onCommit={(candidate) => onUpdate(candidate)}
           />
         </Td>
         <Td>
-          <LabelInput
+          <ValidatedListInput
             ariaLabel='Add user group'
             placeholder='Add user group'
-            validator={isUserGroupValid}
-            list={user.groups}
-            item='Group'
-            addAction={(value) =>
-              addGroupToUserByUserIndex({ index: index, group: value })
-            }
-            removeAction={(value) =>
-              removeGroupFromUserByIndex({ index: index, group: value })
-            }
-            stepValidation={getValidationByIndex(index)}
-            fieldName='groups'
+            items={draft.groups.map((value) => ({ required: false, value }))}
+            validator={(candidate) => validateUser('groups', candidate)}
+            onAdd={(value) => {
+              const groups = [...draft.groups, value];
+              setDraft({ ...draft, groups });
+              onUpdate({ groups });
+            }}
+            onRemove={(value) => {
+              const groups = draft.groups.filter((group) => group !== value);
+              setDraft({ ...draft, groups });
+              onUpdate({
+                groups,
+              });
+            }}
             truncateLength={12}
             isCompact
             hideAddLabel
@@ -152,16 +161,16 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
         </Td>
         <Td>
           <Checkbox
-            isChecked={user.groups.includes('wheel')}
-            onChange={(_e, value) => handleCheckboxChange(_e, value)}
+            isChecked={draft.groups.includes('wheel')}
+            onChange={handleCheckboxChange}
             aria-label='Administrator'
-            id={`${user.name}-${index}`}
+            id={`${draft.name}-${index}`}
             name='user Administrator'
           />
         </Td>
         <Td>
           <Button
-            isDisabled={userCount <= 1}
+            isDisabled={isRemoveDisabled}
             variant='plain'
             icon={<MinusCircleIcon />}
             onClick={() => onRemove()}
@@ -169,12 +178,6 @@ const UserRow = ({ user, index, userCount }: UserRowProps) => {
           />
         </Td>
       </Tr>
-      <RemoveUserModal
-        setShowRemoveUserModal={setShowRemoveUserModal}
-        index={index}
-        isOpen={showRemoveUserModal}
-        userName={user.name || ''}
-      />
     </>
   );
 };

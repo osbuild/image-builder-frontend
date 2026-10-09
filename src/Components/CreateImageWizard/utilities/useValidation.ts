@@ -2,11 +2,7 @@ import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
 
-import {
-  SYSTEM_GROUPS,
-  UNDEFINED_GROUPS_WARNING_KEY,
-  UNIQUE_VALIDATION_DELAY,
-} from '@/constants';
+import { UNIQUE_VALIDATION_DELAY } from '@/constants';
 import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
@@ -56,16 +52,11 @@ import {
   selectSystem,
   selectTemplate,
   selectUseLatest,
-  selectUserGroups,
-  selectUsers,
   selectUsersSlice,
-  UserWithAdditionalInfo,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
 import useDebounce from '@/Utilities/useDebounce';
-
-import { getListOfDuplicates } from './getListOfDuplicates';
 
 import {
   getDuplicateMountPoints,
@@ -82,15 +73,9 @@ import {
   isMountpointMinSizeValid,
   isPartitionNameValid,
   isSnapshotValid,
-  isSshKeyValid,
-  isUserGroupValid,
-  isUserNameValid,
   isValidUrl,
   validateMultipleCertificates,
 } from '../validators';
-
-type HelperTextVariant =
-  'default' | 'indeterminate' | 'warning' | 'success' | 'error';
 
 export type StepValidation = {
   errors: {
@@ -118,7 +103,6 @@ export function useIsBlueprintValid(): boolean {
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
-  const users = useUsersValidation();
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const awsTarget = useAwsValidation();
@@ -144,20 +128,12 @@ export function useIsBlueprintValid(): boolean {
     systemErrors.length === 0 &&
     !details.disabledNext &&
     !details.isPending &&
-    (restrictions.users.shouldHide || !users.disabledNext) &&
     usersErrors.length === 0 &&
     !azureTarget.disabledNext &&
     !gcpTarget.disabledNext &&
     !awsTarget.disabledNext
   );
 }
-
-type PasswordValidationResult = {
-  isValid: boolean;
-  validationState: {
-    ruleLength: HelperTextVariant;
-  };
-};
 
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
@@ -517,193 +493,6 @@ export function useSnapshotValidation(): StepValidation {
   }
   return { errors: {}, disabledNext: false };
 }
-
-const validateUserName = (
-  users: UserWithAdditionalInfo[],
-  userName: string,
-  currentIndex: number,
-): string => {
-  if (!userName) {
-    return 'Required value';
-  }
-  if (!isUserNameValid(userName)) {
-    return 'Invalid user name';
-  }
-
-  // check for duplicate names
-  const count = users.filter(
-    (user, index) => user.name === userName && index !== currentIndex,
-  ).length;
-  if (count > 0) {
-    return 'Username already exists';
-  }
-  return '';
-};
-
-const validateSshKey = (userSshKey: string): string => {
-  if (userSshKey && !isSshKeyValid(userSshKey)) {
-    return 'Invalid SSH key';
-  }
-  return '';
-};
-
-export function useUsersValidation(): UsersStepValidation {
-  const users = useAppSelector(selectUsers);
-  const userGroups = useAppSelector(selectUserGroups);
-  const errors: { [key: string]: { [key: string]: string } } = {};
-
-  const isEmptyUser = (user: UserWithAdditionalInfo) =>
-    (user.name || '').trim() === '' &&
-    !user.password &&
-    !user.ssh_key &&
-    user.groups.length === 0;
-
-  if (users.length === 0 || (users.length === 1 && isEmptyUser(users[0]))) {
-    return {
-      errors: {},
-      warnings: {},
-      disabledNext: false,
-    };
-  }
-
-  const definedGroupNames = userGroups.map((group) => group.name);
-
-  for (let index = 0; index < users.length; index++) {
-    const userErrors: { [key: string]: string } = {};
-    const isUserDefined =
-      !!users[index].password ||
-      !!users[index].ssh_key ||
-      users[index].groups.length > 0;
-    if (users[index].name || isUserDefined) {
-      const userNameError = validateUserName(users, users[index].name, index);
-      if (userNameError) {
-        userErrors.userName = userNameError;
-      }
-
-      if (
-        users[index].name &&
-        userGroups.find((group) => group.name === users[index].name)
-      ) {
-        userErrors.userName = 'Username cannot match an existing group name';
-      }
-    }
-
-    const isPasswordValid = checkPasswordValidity(
-      users[index].password,
-    ).isValid;
-    if (users[index].password && !isPasswordValid) {
-      userErrors.userPassword = 'Invalid password';
-    }
-
-    const sshKeyError = validateSshKey(users[index].ssh_key);
-    if (sshKeyError) {
-      userErrors.userSshKey = sshKeyError;
-    }
-
-    const invalidGroups = [];
-    if (users[index].groups.length > 0) {
-      for (const g of users[index].groups) {
-        if (!isUserGroupValid(g)) {
-          invalidGroups.push(g);
-        }
-      }
-    }
-
-    const duplicateGroups = getListOfDuplicates(users[index].groups);
-    const groupMatchingUsername =
-      users[index].name && users[index].groups.includes(users[index].name)
-        ? users[index].name
-        : '';
-
-    const undefinedGroups = users[index].groups.filter(
-      (groupName) =>
-        !definedGroupNames.includes(groupName) &&
-        !SYSTEM_GROUPS.includes(groupName) &&
-        isUserGroupValid(groupName),
-    );
-    if (
-      invalidGroups.length > 0 ||
-      duplicateGroups.length > 0 ||
-      groupMatchingUsername
-    ) {
-      const groupsErrors = [];
-      if (invalidGroups.length > 0) {
-        groupsErrors.push(`Invalid user groups: ${invalidGroups.join(', ')}`);
-      }
-      if (duplicateGroups.length > 0) {
-        groupsErrors.push(
-          `Includes duplicate groups: ${duplicateGroups.join(', ')}`,
-        );
-      }
-      if (groupMatchingUsername) {
-        groupsErrors.push(
-          `Group cannot match username: ${groupMatchingUsername}`,
-        );
-      }
-      userErrors.groups = groupsErrors.join(' | ');
-    }
-
-    if (undefinedGroups.length > 0) {
-      userErrors[UNDEFINED_GROUPS_WARNING_KEY] =
-        `User assigned to undefined group(s): ${undefinedGroups.join(', ')}. Ensure these groups exist on the system through a package or define them in the 'Groups' section above.`;
-    }
-
-    if (Object.keys(userErrors).length > 0) {
-      errors[index] = userErrors;
-    }
-  }
-
-  // Count only blocking errors (exclude warnings)
-  const hasBlockingErrors = Object.values(errors).some((userErrors) => {
-    return Object.keys(userErrors).some(
-      (key) => key !== UNDEFINED_GROUPS_WARNING_KEY,
-    );
-  });
-
-  const canProceed =
-    // Case 1: there is no users
-    users.length === 0 ||
-    // Case 2: all users are valid (no blocking errors)
-    !hasBlockingErrors;
-
-  return {
-    errors,
-    warnings: {},
-    disabledNext: !canProceed,
-  };
-}
-
-export const checkPasswordValidity = (
-  password: string,
-): PasswordValidationResult => {
-  if (!password) {
-    return {
-      isValid: false,
-      validationState: {
-        ruleLength: 'indeterminate',
-      },
-    };
-  }
-  const isEncrypted = /^\$([^$]+)\$/.test(password);
-  if (isEncrypted) {
-    return {
-      isValid: true,
-      validationState: {
-        ruleLength: 'success',
-      },
-    };
-  }
-
-  const trimmedValue = password.trim();
-  const isLengthValid = trimmedValue.length >= 6 && trimmedValue.length <= 128;
-
-  return {
-    isValid: isLengthValid,
-    validationState: {
-      ruleLength: isLengthValid ? 'success' : 'error',
-    },
-  };
-};
 
 export function useDetailsValidation(): StepValidation {
   const name = useAppSelector(selectBlueprintName);
