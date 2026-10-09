@@ -192,6 +192,7 @@ const loginConsole = async (page: Page, user: string, password: string) => {
   // Cookie consent dismissal can reset the SSO form state.
   // Wait if that will be the case
   while (!(await page.getByText('Red Hat login is required').isVisible())) {
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1000);
     if (await page.getByText('Password', { exact: true }).isVisible()) {
       // Password input is visible, we can continue

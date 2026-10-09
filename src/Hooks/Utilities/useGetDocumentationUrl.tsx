@@ -22,7 +22,7 @@ export const useGetDocumentationUrl = () => {
       setHostDistro(detected);
     }
     runDetection();
-  }, []);
+  }, [isOnPremise]);
 
   // Hosted service (console) -> Lightspeed docs
   if (!isOnPremise) return IB_HOSTED_LIGHTSPEED_DOCUMENTATION_URL;

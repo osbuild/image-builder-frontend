@@ -98,7 +98,7 @@ const ImagesTableRow = ({
         lastTrackedStatusRef.current = currentStatus;
       }
     }
-  }, [analytics, userData, compose, composeStatus]);
+  }, [analytics, userData, compose, composeStatus, isOnPremise]);
 
   const type = compose.request.image_requests[0]?.upload_request?.type;
 

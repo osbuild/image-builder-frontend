@@ -12,7 +12,6 @@ import {
   changeImageSource,
   generateDefaultName,
   selectArchitecture,
-  selectBlueprintName,
   selectDistribution,
   selectImageSource,
   selectIsCustomName,
@@ -30,7 +29,6 @@ import TargetEnvironment from './components/TargetEnvironment';
 const ImageOutputStep = () => {
   const dispatch = useAppDispatch();
   const isImageMode = useAppSelector(selectIsImageMode);
-  const blueprintName = useAppSelector(selectBlueprintName);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const isCustomName = useAppSelector(selectIsCustomName);
@@ -40,9 +38,8 @@ const ImageOutputStep = () => {
   const isHostedImageMode = isImageMode && !isOnPremise;
 
   useEffect(() => {
-    const defaultName = generateDefaultName(distribution, arch);
-    if (!isCustomName && blueprintName !== defaultName) {
-      dispatch(changeBlueprintName(defaultName));
+    if (!isCustomName) {
+      dispatch(changeBlueprintName(generateDefaultName(distribution, arch)));
     }
   }, [dispatch, distribution, arch, isCustomName]);
 
