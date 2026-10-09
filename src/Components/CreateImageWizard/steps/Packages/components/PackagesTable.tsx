@@ -13,24 +13,19 @@ import {
 
 import { useSecuritySummary } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-  removeModule,
-  removePackage,
-  removePackageGroup,
-  removeRecommendedRepositoriesById,
   selectPackageGroups,
   selectPackages,
 } from '@/store/slices/wizard';
-
 
 import EmptySearch from './EmptySearch';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
-import { shouldRemoveEpelRepo } from '../packagesUtilities';
+import { useRemovePackageContent } from '../packagesUtilities';
 
 type PackagesTableProps = {
   isSuccessEpelRepo: boolean;
@@ -38,13 +33,17 @@ type PackagesTableProps = {
 };
 
 const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
-  const dispatch = useAppDispatch();
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
   const { packages: requiredPkgNames } = useSecuritySummary();
   const requiredSet = useMemo(
     () => new Set(requiredPkgNames),
     [requiredPkgNames],
+  );
+
+  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent(
+    isSuccessEpelRepo,
+    epelRepo,
   );
 
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -59,39 +58,6 @@ const PackagesTable = ({ isSuccessEpelRepo, epelRepo }: PackagesTableProps) => {
       newSet.delete(name);
     }
     setExpandedGroups(newSet);
-  };
-
-  const handleRemovePackage = (pkg: IBPackageWithRepositoryInfo) => {
-    dispatch(removePackage(pkg.name));
-    if (pkg.type === 'module' && pkg.module_name) {
-      dispatch(removeModule(pkg.module_name));
-    }
-    if (
-      shouldRemoveEpelRepo(
-        isSuccessEpelRepo,
-        epelRepo,
-        packages,
-        groups,
-        'package',
-      )
-    ) {
-      dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
-    }
-  };
-
-  const handleRemoveGroup = (grp: GroupWithRepositoryInfo) => {
-    dispatch(removePackageGroup(grp.name));
-    if (
-      shouldRemoveEpelRepo(
-        isSuccessEpelRepo,
-        epelRepo,
-        packages,
-        groups,
-        'group',
-      )
-    ) {
-      dispatch(removeRecommendedRepositoriesById([epelRepo!.data![0].uuid!]));
-    }
   };
 
   const composePkgTable = () => {
