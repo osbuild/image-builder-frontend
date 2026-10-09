@@ -38,7 +38,6 @@ import {
   useSecuritySummary,
 } from '@/store/api/backend';
 import {
-  ApiRepositoryCollectionResponseRead,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
@@ -73,13 +72,12 @@ import useDebounce from '@/Utilities/useDebounce';
 import {
   getPackageDescription,
   isSelectDisabled,
+  useEpelRepo,
   useRemovePackageContent,
 } from '../packagesUtilities';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';
-  isSuccessEpelRepo: boolean;
-  epelRepo: ApiRepositoryCollectionResponseRead | undefined;
   setIsRepoModalOpen: (value: boolean) => void;
   setIsSelectingPackage: (
     value: IBPackageWithRepositoryInfo | undefined,
@@ -91,8 +89,6 @@ type PackageSearchProps = {
 
 const PackageSearch = ({
   packageType,
-  isSuccessEpelRepo,
-  epelRepo,
   setIsRepoModalOpen,
   setIsSelectingPackage,
   setIsSelectingGroup,
@@ -114,10 +110,8 @@ const PackageSearch = ({
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const wizardMode = useAppSelector(selectWizardMode);
 
-  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent(
-    isSuccessEpelRepo,
-    epelRepo,
-  );
+  const { isSuccess: isSuccessEpelRepo } = useEpelRepo();
+  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
 
   const { packages: requiredPackages } = useSecuritySummary();
   const requiredSet = useMemo(
@@ -868,8 +862,6 @@ const PackageSearch = ({
       if (!isSelected) {
         if (
           isSuccessEpelRepo &&
-          epelRepo &&
-          epelRepo.data &&
           pkg.repository === 'recommended' &&
           !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
         ) {
@@ -913,8 +905,6 @@ const PackageSearch = ({
       if (!isSelected) {
         if (
           isSuccessEpelRepo &&
-          epelRepo &&
-          epelRepo.data &&
           grp.repository === 'recommended' &&
           !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
         ) {

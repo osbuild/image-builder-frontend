@@ -1,5 +1,9 @@
+import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '@/constants';
 import { Module } from '@/store/api/backend';
-import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
+import {
+  ApiRepositoryCollectionResponseRead,
+  useListRepositoriesQuery,
+} from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   GroupWithRepositoryInfo,
@@ -8,9 +12,11 @@ import {
   removePackage,
   removePackageGroup,
   removeRecommendedRepositoriesById,
+  selectDistribution,
   selectPackageGroups,
   selectPackages,
 } from '@/store/slices/wizard';
+import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
 export const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
   const parts = [];
@@ -88,13 +94,22 @@ export const shouldRemoveEpelRepo = (
   );
 };
 
-export const useRemovePackageContent = (
-  isSuccessEpelRepo: boolean,
-  epelRepo: ApiRepositoryCollectionResponseRead | undefined,
-) => {
+export const useEpelRepo = () => {
+  const distribution = useAppSelector(selectDistribution);
+  const epelRepoUrlByDistribution =
+    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
+
+  return useListRepositoriesQuery({
+    url: epelRepoUrlByDistribution,
+    origin: ContentOrigin.COMMUNITY,
+  });
+};
+
+export const useRemovePackageContent = () => {
   const dispatch = useAppDispatch();
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
+  const { data: epelRepo, isSuccess: isSuccessEpelRepo } = useEpelRepo();
 
   const handleRemovePackage = (pkg: IBPackageWithRepositoryInfo) => {
     dispatch(removePackage(pkg.name));
