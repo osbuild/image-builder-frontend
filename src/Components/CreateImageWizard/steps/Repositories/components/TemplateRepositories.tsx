@@ -5,6 +5,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { ContentOrigin } from '@/constants';
 import {
+  type ApiRepositoryResponseRead,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useListRepositoryParametersQuery,
@@ -22,6 +23,8 @@ import Loading from './Loading';
 import RepositoriesAddedAlert from './RepositoriesAddedAlert';
 import RepositoryColumns from './RepositoryColumns';
 
+const EMPTY_REPOS: ApiRepositoryResponseRead[] = [];
+
 const TemplateRepositories = () => {
   const dispatch = useAppDispatch();
   const templateUuid = useAppSelector(selectTemplate);
@@ -36,11 +39,14 @@ const TemplateRepositories = () => {
     {
       uuid: templateUuid,
     },
-    { refetchOnMountOrArgChange: true, skip: templateUuid === '' },
+    { refetchOnMountOrArgChange: true },
   );
 
+  const hasRepositoryUuids =
+    (selectedTemplateData?.repository_uuids?.length ?? 0) > 0;
+
   const {
-    data: { data: reposInTemplate = [] } = {},
+    data: { data: fetchedRepos = EMPTY_REPOS } = {},
     isError: isReposInTemplateError,
     isLoading: isReposInTemplateLoading,
     isFetching: isReposInTemplateFetching,
@@ -49,13 +55,15 @@ const TemplateRepositories = () => {
       contentType: 'rpm',
       limit: selectedTemplateData?.repository_uuids?.length || 100,
       offset: 0,
-      uuid:
-        selectedTemplateData && selectedTemplateData.repository_uuids
-          ? selectedTemplateData.repository_uuids.join(',')
-          : '',
+      uuid: selectedTemplateData?.repository_uuids?.join(',') ?? '',
     },
-    { refetchOnMountOrArgChange: true, skip: templateUuid === '' },
+    {
+      refetchOnMountOrArgChange: true,
+      skip: !hasRepositoryUuids,
+    },
   );
+
+  const reposInTemplate = hasRepositoryUuids ? fetchedRepos : EMPTY_REPOS;
 
   useEffect(() => {
     if (reposInTemplate.length > 0) {
@@ -75,8 +83,17 @@ const TemplateRepositories = () => {
           ),
         ),
       );
+    } else if (selectedTemplateData && !hasRepositoryUuids) {
+      dispatch(setRepositoriesFromContentSources([]));
+      dispatch(changeRedHatRepositories([]));
     }
-  }, [templateUuid, reposInTemplate]);
+  }, [
+    dispatch,
+    templateUuid,
+    reposInTemplate,
+    selectedTemplateData,
+    hasRepositoryUuids,
+  ]);
 
   if (isTemplateError || isReposInTemplateError) {
     return <Error />;
@@ -107,8 +124,8 @@ const TemplateRepositories = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {reposInTemplate.map((repo, rowIndex) => (
-                  <Tr key={`${repo.uuid || ''}-${rowIndex}`}>
+                {reposInTemplate.map((repo) => (
+                  <Tr key={repo.uuid}>
                     <Td dataLabel={'Name'}>{repo.name}</Td>
                     <RepositoryColumns
                       repo={repo}
