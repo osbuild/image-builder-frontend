@@ -1,7 +1,7 @@
-import { MountpointPoliciesType } from './types';
+import { MountpointPolicy } from './types';
 
 // Policies according to https://github.com/osbuild/images/blob/main/pkg/policies/policies.go
-export const MountpointPolicies: MountpointPoliciesType = {
+export const MountpointPolicies: Record<string, MountpointPolicy> = {
   '/': {},
   '/etc': { Deny: true },
   '/usr': { Exact: true },
@@ -20,7 +20,7 @@ export const MountpointPolicies: MountpointPoliciesType = {
 };
 
 // Policies according to https://github.com/osbuild/images/blob/main/pkg/distro/bootc/partition.go
-export const ImageModeMountpointPolicies: MountpointPoliciesType = {
+export const ImageModeMountpointPolicies: Record<string, MountpointPolicy> = {
   '/': {},
   '/boot': { Deny: false, Exact: true },
   '/var': { Deny: true, Exact: true },
