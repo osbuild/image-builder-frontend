@@ -38,6 +38,8 @@ import NewImagesTableToolbar from './components/NewImagesTableToolbar';
 import { ImagesTableRow } from './components/Row';
 import BlueprintTableRow from './components/Row/components/BlueprintTableRow';
 
+const EMPTY_BLUEPRINTS: BlueprintItem[] = [];
+
 const NewImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -140,7 +142,7 @@ const NewImagesTable = () => {
     isLoadingBlueprints ||
     (effectiveBlueprintId && isLoadingBlueprintsCompose);
 
-  const blueprints = blueprintsData?.data || [];
+  const blueprints = blueprintsData?.data ?? EMPTY_BLUEPRINTS;
 
   let composes = data?.data;
   if (effectiveBlueprintId && blueprintVersionFilter === 'latest') {
