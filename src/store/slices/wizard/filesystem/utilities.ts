@@ -224,10 +224,3 @@ export const convertLogicalVolume = (volume: LogicalVolume) => {
     mountpoint: volume.mountpoint,
   };
 };
-
-export const findPartition = (
-  id: string,
-  partitions: FilesystemPartition[] | DiskPartition[],
-) => {
-  return partitions.findIndex((partition) => partition.id === id);
-};
