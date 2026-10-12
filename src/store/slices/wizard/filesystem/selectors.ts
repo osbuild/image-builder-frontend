@@ -148,3 +148,8 @@ export const selectImageMinSize = createSelector(
     return undefined;
   },
 );
+
+// export the whole subslice. this is quite useful for validating
+// against a zod schema
+export const selectFilesystemSlice = (state: RootState) =>
+  state.wizard.filesystem;
