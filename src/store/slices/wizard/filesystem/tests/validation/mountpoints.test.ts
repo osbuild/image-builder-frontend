@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  getDuplicateMountPoints,
-  getInvalidMountpoints,
-  isMountpointValid,
-} from '@/Components/CreateImageWizard/validators';
+import { validateFilesystemSlice } from '@/store/slices/wizard';
 
 import {
   createBasicPartition,
@@ -13,87 +9,202 @@ import {
   createVolumeGroup,
 } from '../mocks/filesystem';
 
+const validateBasicMountpoint = (
+  mountpoint: string,
+  mode: 'package' | 'image',
+) =>
+  validateFilesystemSlice(
+    {
+      mode: 'basic',
+      filesystem: {
+        partitions: [createBasicPartition({ mountpoint })],
+      },
+    },
+    mode,
+  );
+
+const getIssueDetails = (
+  errors: ReturnType<typeof validateFilesystemSlice>['errors'],
+) => errors.map(({ message, path }) => ({ message, path }));
+
 describe('filesystem mountpoint validation', () => {
   describe('mountpoint policies', () => {
     it('allows package mountpoints except denied paths', () => {
+      expect(validateBasicMountpoint('/home', 'package').errors).toEqual([]);
       expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/home' }),
-          'package',
+        getIssueDetails(
+          validateBasicMountpoint('/etc/passwd', 'package').errors,
         ),
-      ).toBe(true);
+      ).toEqual([
+        {
+          message:
+            '/etc/passwd is a reserved mountpoint or a subdirectory of one',
+          path: ['filesystem', 'partitions', 0, 'mountpoint'],
+        },
+      ]);
       expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/etc/passwd' }),
-          'package',
+        getIssueDetails(
+          validateBasicMountpoint('/usr/local', 'package').errors,
         ),
-      ).toBe(false);
-      expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/usr/local' }),
-          'package',
-        ),
-      ).toBe(false);
+      ).toEqual([
+        {
+          message: 'Only /usr can be mounted; its subdirectories cannot',
+          path: ['filesystem', 'partitions', 0, 'mountpoint'],
+        },
+      ]);
     });
 
     it('allows image-mode mountpoints under permitted paths', () => {
+      expect(validateBasicMountpoint('/boot/', 'image').errors).toEqual([]);
+      expect(validateBasicMountpoint('/var/log', 'image').errors).toEqual([]);
       expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/boot/' }),
-          'image',
-        ),
-      ).toBe(true);
+        getIssueDetails(validateBasicMountpoint('/boot/efi', 'image').errors),
+      ).toEqual([
+        {
+          message: 'Subdirectories of /boot cannot be mounted separately',
+          path: ['filesystem', 'partitions', 0, 'mountpoint'],
+        },
+      ]);
       expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/var/log' }),
-          'image',
-        ),
-      ).toBe(true);
+        getIssueDetails(validateBasicMountpoint('/var/home', 'image').errors),
+      ).toEqual([
+        {
+          message:
+            '/var/home is a reserved mountpoint or a subdirectory of one',
+          path: ['filesystem', 'partitions', 0, 'mountpoint'],
+        },
+      ]);
       expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/boot/efi' }),
-          'image',
-        ),
-      ).toBe(false);
-      expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/var/home' }),
-          'image',
-        ),
-      ).toBe(false);
-      expect(
-        isMountpointValid(
-          createBasicPartition({ mountpoint: '/home' }),
-          'image',
-        ),
-      ).toBe(false);
+        getIssueDetails(validateBasicMountpoint('/home', 'image').errors),
+      ).toEqual([
+        {
+          message: '/home is not allowed in image mode',
+          path: ['filesystem', 'partitions', 0, 'mountpoint'],
+        },
+      ]);
     });
   });
 
   it('finds duplicate mountpoints across disk partitions and logical volumes', () => {
-    const partitions = [
-      createPlainPartition({ mountpoint: '/data' }),
-      createVolumeGroup([
-        createLogicalVolume({ mountpoint: '/data' }),
-        createLogicalVolume({ mountpoint: '/data' }),
-      ]),
-    ];
+    const result = validateFilesystemSlice(
+      {
+        mode: 'advanced',
+        disk: {
+          unit: 'GiB',
+          partitions: [
+            createPlainPartition({ id: 'boot', mountpoint: '/' }),
+            createVolumeGroup(
+              [
+                createLogicalVolume({
+                  id: 'root-lv',
+                  name: 'root-lv',
+                  mountpoint: '/',
+                }),
+                createLogicalVolume({
+                  id: 'home-lv',
+                  name: 'home-lv',
+                  mountpoint: '/',
+                }),
+              ],
+              { id: 'vg-main' },
+            ),
+          ],
+        },
+      },
+      'image',
+    );
 
-    expect(getDuplicateMountPoints(partitions)).toEqual(['/data', '/data']);
+    expect(getIssueDetails(result.errors)).toEqual([
+      {
+        message: 'Duplicate mountpoint',
+        path: ['disk', 'partitions', 'vg-main', 'logical_volumes', 'root-lv'],
+      },
+      {
+        message: 'Duplicate mountpoint',
+        path: ['disk', 'partitions', 'vg-main', 'logical_volumes', 'home-lv'],
+      },
+    ]);
   });
 
   it('collects invalid mountpoints from disk partitions and logical volumes', () => {
-    const partitions = [
-      createPlainPartition({ mountpoint: '/proc' }),
-      createVolumeGroup([
-        createLogicalVolume({ mountpoint: '/sys' }),
-        createLogicalVolume({ mountpoint: '/home' }),
-      ]),
-    ];
+    const result = validateFilesystemSlice(
+      {
+        mode: 'advanced',
+        disk: {
+          unit: 'GiB',
+          partitions: [
+            createPlainPartition({ mountpoint: '/proc' }),
+            createVolumeGroup([
+              createLogicalVolume({ name: 'system-lv', mountpoint: '/sys' }),
+              createLogicalVolume({ name: 'home-lv', mountpoint: '/home' }),
+            ]),
+          ],
+        },
+      },
+      'package',
+    );
 
-    expect(getInvalidMountpoints(partitions, 'package')).toEqual([
-      '/proc',
-      '/sys',
+    expect(getIssueDetails(result.errors)).toEqual([
+      {
+        message: '/proc is a reserved mountpoint or a subdirectory of one',
+        path: ['disk', 'partitions', 0, 'mountpoint'],
+      },
+      {
+        message: '/sys is a reserved mountpoint or a subdirectory of one',
+        path: ['disk', 'partitions', 1, 'logical_volumes', 0, 'mountpoint'],
+      },
+    ]);
+  });
+
+  it('requires mountpoints for non-swap partitions and logical volumes', () => {
+    const result = validateFilesystemSlice(
+      {
+        mode: 'advanced',
+        disk: {
+          unit: 'GiB',
+          partitions: [
+            createPlainPartition({
+              id: 'plain-missing-mountpoint',
+              mountpoint: undefined,
+              fs_type: 'xfs',
+            }),
+            createPlainPartition({
+              id: 'plain-swap',
+              mountpoint: undefined,
+              fs_type: 'swap',
+            }),
+            createVolumeGroup(
+              [
+                createLogicalVolume({
+                  id: 'lv-missing-mountpoint',
+                  name: 'lv-missing-mountpoint',
+                  mountpoint: undefined,
+                  fs_type: 'xfs',
+                }),
+                createLogicalVolume({
+                  id: 'lv-swap',
+                  name: 'lv-swap',
+                  mountpoint: undefined,
+                  fs_type: 'swap',
+                }),
+              ],
+              { id: 'vg-main' },
+            ),
+          ],
+        },
+      },
+      'image',
+    );
+
+    expect(getIssueDetails(result.errors)).toEqual([
+      {
+        message: 'Non-swap filesystems require a mountpoint',
+        path: ['disk', 'partitions', 0, 'mountpoint'],
+      },
+      {
+        message: 'Non-swap filesystems require a mountpoint',
+        path: ['disk', 'partitions', 2, 'logical_volumes', 0, 'mountpoint'],
+      },
     ]);
   });
 });
