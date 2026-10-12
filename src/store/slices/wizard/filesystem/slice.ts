@@ -242,22 +242,8 @@ export const filesystemSlice = createSlice({
         fs_type: FilesystemType;
       }>,
     ) => {
-      if (state.mode === 'automatic') return;
+      if (state.mode !== 'advanced') return;
       const { id, fs_type } = action.payload;
-
-      if (state.mode === 'basic') {
-        const partitionIndex = state.filesystem.partitions.findIndex(
-          (partition) => partition.id === id,
-        );
-        if (
-          partitionIndex !== -1 &&
-          'fs_type' in state.filesystem.partitions[partitionIndex]
-        ) {
-          state.filesystem.partitions[partitionIndex].fs_type = fs_type;
-          return;
-        }
-        return;
-      }
 
       const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
@@ -289,22 +275,8 @@ export const filesystemSlice = createSlice({
         name: string;
       }>,
     ) => {
-      if (state.mode === 'automatic') return;
+      if (state.mode !== 'advanced') return;
       const { id, name } = action.payload;
-
-      if (state.mode === 'basic') {
-        const partitionIndex = state.filesystem.partitions.findIndex(
-          (partition) => partition.id === id,
-        );
-        if (
-          partitionIndex !== -1 &&
-          'name' in state.filesystem.partitions[partitionIndex]
-        ) {
-          state.filesystem.partitions[partitionIndex].name = name;
-          return;
-        }
-        return;
-      }
 
       const partitionIndex = state.disk.partitions.findIndex(
         (partition) => partition.id === id,
