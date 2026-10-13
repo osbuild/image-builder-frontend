@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from 'react';
+import React from 'react';
 
 import { Table, Th, Thead, Tr } from '@patternfly/react-table';
 
@@ -21,65 +21,10 @@ const PackagesTable = () => {
 
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
 
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-
-  const isGroupExpanded = (name: string) => expandedGroups.has(name);
-
-  const setGroupsExpanded = (name: string, isExpanding: boolean) => {
-    const newSet = new Set(expandedGroups);
-    if (isExpanding) {
-      newSet.add(name);
-    } else {
-      newSet.delete(name);
-    }
-    setExpandedGroups(newSet);
-  };
-
-  const composePkgTable = () => {
-    let rows: ReactElement[] = [];
-
-    rows = rows.concat(
-      groups.map((grp, rowIndex) => (
-        <GroupRow
-          key={`${grp.name}-${grp.repository || 'default'}`}
-          group={grp}
-          rowIndex={rowIndex}
-          isExpanded={isGroupExpanded(grp.name)}
-          onToggle={() =>
-            setGroupsExpanded(grp.name, !isGroupExpanded(grp.name))
-          }
-          onRemove={handleRemoveGroup}
-        />
-      )),
-    );
-
-    // Render required (oscap) packages first, then user-added packages
-    const orderedPackages = [
-      ...packages.filter((pkg) => requiredSet.has(pkg.name)),
-      ...packages.filter((pkg) => !requiredSet.has(pkg.name)),
-    ];
-
-    rows = rows.concat(
-      orderedPackages.map((pkg) => (
-        <PackageRow
-          key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
-          pkg={pkg}
-          isRequired={requiredSet.has(pkg.name)}
-          onRemove={handleRemovePackage}
-        />
-      )),
-    );
-    return rows;
-  };
-
-  const bodyContent = useMemo(() => {
-    if (packages.length === 0 && groups.length === 0) {
-      return <EmptySearch />;
-    }
-    return composePkgTable();
-    // Would need significant rewrite to fix this
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packages, groups, expandedGroups, requiredSet]);
+  const orderedPackages = [
+    ...packages.filter((pkg) => requiredSet.has(pkg.name)),
+    ...packages.filter((pkg) => !requiredSet.has(pkg.name)),
+  ];
 
   return (
     <Table data-testid='packages-table' style={{ tableLayout: 'fixed' }}>
@@ -92,7 +37,28 @@ const PackagesTable = () => {
           <Th aria-label='Remove package' />
         </Tr>
       </Thead>
-      {bodyContent}
+      {packages.length === 0 && groups.length === 0 ? (
+        <EmptySearch />
+      ) : (
+        <>
+          {groups.map((group, index) => (
+            <GroupRow
+              key={`${group.name}-${group.repository || 'default'}`}
+              group={group}
+              rowIndex={index}
+              onRemove={handleRemoveGroup}
+            />
+          ))}
+          {orderedPackages.map((pkg) => (
+            <PackageRow
+              key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
+              pkg={pkg}
+              isRequired={requiredSet.has(pkg.name)}
+              onRemove={handleRemovePackage}
+            />
+          ))}
+        </>
+      )}
     </Table>
   );
 };
