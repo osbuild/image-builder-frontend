@@ -182,8 +182,8 @@ export const usePackageRecommendations = (
   const version = releaseToVersion(distribution);
 
   const {
-    data: distroRepositoriesForRecommendations,
-    isSuccess: isSuccessDistroRepositoriesForRecommendations,
+    data: distroRepos,
+    isSuccess: isSuccessDistroRepos,
   } = useListRepositoriesQuery({
     availableForArch: arch,
     availableForVersion: version,
@@ -256,14 +256,14 @@ export const usePackageRecommendations = (
 
   useEffect(() => {
     if (
-      isSuccessDistroRepositoriesForRecommendations &&
+      isSuccessDistroRepos &&
       // there is a mismatch between API type and real data
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      distroRepositoriesForRecommendations?.data &&
+      distroRepos?.data &&
       recommendationsData?.packages &&
       recommendationsData.packages.length > 0
     ) {
-      const distroRepoUrls = distroRepositoriesForRecommendations.data.map(
+      const distroRepoUrls = distroRepos.data.map(
         (repo) => repo.url || '',
       );
 
@@ -275,41 +275,35 @@ export const usePackageRecommendations = (
       });
     }
   }, [
-    isSuccessDistroRepositoriesForRecommendations,
-    distroRepositoriesForRecommendations,
+    isSuccessDistroRepos,
+    distroRepos,
     recommendationsData,
     fetchRecommendationDescriptions,
   ]);
 
-  const recommendationsWithDescriptions = useMemo(() => {
-    if (!isSuccessDescriptions || !recommendationsData?.packages) {
-      return [];
-    }
-    return recommendationsData.packages.map((pkgName) => {
-      const description = dataDescriptions.find(
-        (p) => p.package_name === pkgName,
-      );
-      return {
-        name: pkgName,
-        summary: description?.summary || '',
-      };
-    });
-  }, [isSuccessDescriptions, recommendationsData, dataDescriptions]);
-
   const transformedRecommendations = useMemo(() => {
-    if (packageType === 'groups' || !recommendationsWithDescriptions.length) {
+    if (
+      packageType === 'groups' ||
+      !isSuccessDescriptions ||
+      !recommendationsData?.packages
+    ) {
       return [];
     }
 
-    return recommendationsWithDescriptions.map(
-      (rec): IBPackageWithRepositoryInfo => ({
-        name: rec.name,
-        summary: rec.summary,
-        repository: 'distro',
-        isRecommendation: true,
-      }),
+    return recommendationsData.packages.map(
+      (pkgName): IBPackageWithRepositoryInfo => {
+        const match = dataDescriptions.find(
+          (p) => p.package_name === pkgName,
+        );
+        return {
+          name: pkgName,
+          summary: match?.summary || '',
+          repository: 'distro',
+          isRecommendation: true,
+        };
+      },
     );
-  }, [recommendationsWithDescriptions, packageType]);
+  }, [packageType, isSuccessDescriptions, recommendationsData, dataDescriptions]);
 
   return {
     transformedRecommendations,
