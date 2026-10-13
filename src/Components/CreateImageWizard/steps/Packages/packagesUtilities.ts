@@ -1,12 +1,25 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { ContentOrigin, EPEL_10_REPO_DEFINITION } from '@/constants';
-import { Module, useSecuritySummary } from '@/store/api/backend';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+
+import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/repositoriesUtilities';
+import {
+  AMPLITUDE_MODULE_NAME,
+  ContentOrigin,
+  EPEL_10_REPO_DEFINITION,
+} from '@/constants';
+import {
+  Module,
+  useRecommendPackageMutation,
+  useSecuritySummary,
+} from '@/store/api/backend';
 import {
   ApiRepositoryCollectionResponseRead,
   useListRepositoriesQuery,
+  useSearchRpmMutation,
 } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices/env';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
@@ -14,11 +27,13 @@ import {
   removePackage,
   removePackageGroup,
   removeRecommendedRepositoriesById,
+  selectArchitecture,
   selectDistribution,
   selectPackageGroups,
   selectPackages,
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
+import { releaseToVersion } from '@/Utilities/releaseToVersion';
 
 export const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
   const parts = [];
@@ -152,4 +167,154 @@ export const useRemovePackageContent = () => {
   };
 
   return { handleRemovePackage, handleRemoveGroup };
+};
+
+export const usePackageRecommendations = (
+  packageType: 'packages' | 'groups',
+) => {
+  const { analytics, isBeta } = useChrome();
+
+  const isOnPremise = useAppSelector(selectIsOnPremise);
+  const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const packages = useAppSelector(selectPackages);
+
+  const version = releaseToVersion(distribution);
+
+  const {
+    data: distroRepositoriesForRecommendations,
+    isSuccess: isSuccessDistroRepositoriesForRecommendations,
+  } = useListRepositoriesQuery({
+    availableForArch: arch,
+    availableForVersion: version,
+    ...excludeEUSReposFilter,
+    contentType: 'rpm',
+    origin: ContentOrigin.REDHAT,
+    limit: 100,
+    offset: 0,
+  });
+
+  const [
+    fetchRecommendedPackages,
+    {
+      data: recommendationsData,
+      isLoading: isLoadingRecommendations,
+      isError: isErrorRecommendations,
+      reset: resetRecommendations,
+    },
+  ] = useRecommendPackageMutation();
+
+  const [
+    fetchRecommendationDescriptions,
+    { data: dataDescriptions, isSuccess: isSuccessDescriptions },
+  ] = useSearchRpmMutation();
+
+  useEffect(() => {
+    resetRecommendations();
+
+    if (isOnPremise || packages.length === 0) {
+      return;
+    }
+
+    const packageNames = packages.map((pkg) => pkg.name);
+    const noDashDistro = distribution.replace('-', '');
+
+    (async () => {
+      try {
+        const response = await fetchRecommendedPackages({
+          recommendPackageRequest: {
+            packages: packageNames,
+            recommendedPackages: 5,
+            distribution: noDashDistro,
+          },
+        });
+
+        // there is a mismatch between API type and real data
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (response?.data?.packages && response.data.packages.length > 0) {
+          analytics.track(
+            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
+            {
+              module: AMPLITUDE_MODULE_NAME,
+              isPreview: isBeta(),
+              foundRecommendations: response.data.packages,
+              selectedPackages: packageNames,
+              distribution: noDashDistro,
+              modelVersion: response.data.modelVersion,
+            },
+          );
+        }
+      } catch {
+        // error state handled by isErrorRecommendations
+      }
+    })();
+    // fetchRecommendedPackages, resetRecommendations, analytics, and isBeta
+    // are unstable dependencies that were causing an infinite loop when
+    // included in the dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [packages, distribution, isOnPremise]);
+
+  useEffect(() => {
+    if (
+      isSuccessDistroRepositoriesForRecommendations &&
+      // there is a mismatch between API type and real data
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      distroRepositoriesForRecommendations?.data &&
+      recommendationsData?.packages &&
+      recommendationsData.packages.length > 0
+    ) {
+      const distroRepoUrls = distroRepositoriesForRecommendations.data.map(
+        (repo) => repo.url || '',
+      );
+
+      fetchRecommendationDescriptions({
+        apiContentUnitSearchRequest: {
+          exact_names: recommendationsData.packages,
+          urls: distroRepoUrls,
+        },
+      });
+    }
+  }, [
+    isSuccessDistroRepositoriesForRecommendations,
+    distroRepositoriesForRecommendations,
+    recommendationsData,
+    fetchRecommendationDescriptions,
+  ]);
+
+  const recommendationsWithDescriptions = useMemo(() => {
+    if (!isSuccessDescriptions || !recommendationsData?.packages) {
+      return [];
+    }
+    return recommendationsData.packages.map((pkgName) => {
+      const description = dataDescriptions.find(
+        (p) => p.package_name === pkgName,
+      );
+      return {
+        name: pkgName,
+        summary: description?.summary || '',
+      };
+    });
+  }, [isSuccessDescriptions, recommendationsData, dataDescriptions]);
+
+  const transformedRecommendations = useMemo(() => {
+    if (packageType === 'groups' || !recommendationsWithDescriptions.length) {
+      return [];
+    }
+
+    return recommendationsWithDescriptions.map(
+      (rec): IBPackageWithRepositoryInfo => ({
+        name: rec.name,
+        summary: rec.summary,
+        repository: 'distro',
+        isRecommendation: true,
+      }),
+    );
+  }, [recommendationsWithDescriptions, packageType]);
+
+  return {
+    transformedRecommendations,
+    isLoadingRecommendations,
+    isErrorRecommendations,
+    recommendationsData,
+  };
 };

@@ -25,17 +25,8 @@ import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ManageRepositoriesButton from '@/Components/CreateImageWizard/steps/Repositories/components/ManageRepositoriesButton';
-import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/repositoriesUtilities';
-import {
-  AMPLITUDE_MODULE_NAME,
-  ContentOrigin,
-  EPEL_10_REPO_DEFINITION,
-} from '@/constants';
-import {
-  Module,
-  useGetArchitecturesQuery,
-  useRecommendPackageMutation,
-} from '@/store/api/backend';
+import { AMPLITUDE_MODULE_NAME, EPEL_10_REPO_DEFINITION } from '@/constants';
+import { Module, useGetArchitecturesQuery } from '@/store/api/backend';
 import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
@@ -64,7 +55,6 @@ import {
   selectWizardMode,
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
-import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
 
@@ -72,6 +62,7 @@ import {
   getPackageDescription,
   isSelectDisabled,
   useEpelRepo,
+  usePackageRecommendations,
   useRemovePackageContent,
   useRequiredPackages,
 } from '../packagesUtilities';
@@ -118,30 +109,12 @@ const PackageSearch = ({
   const isRequiredAndSelected = (pkg: IBPackageWithRepositoryInfo) =>
     requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);
 
-  const version = releaseToVersion(distribution);
-
   const {
-    data: distroRepositoriesForRecommendations,
-    isSuccess: isSuccessDistroRepositoriesForRecommendations,
-  } = useListRepositoriesQuery({
-    availableForArch: arch,
-    availableForVersion: version,
-    ...excludeEUSReposFilter,
-    contentType: 'rpm',
-    origin: ContentOrigin.REDHAT,
-    limit: 100,
-    offset: 0,
-  });
-
-  const [
-    fetchRecommendedPackages,
-    {
-      data: recommendationsData,
-      isLoading: isLoadingRecommendations,
-      isError: isErrorRecommendations,
-      reset: resetRecommendations,
-    },
-  ] = useRecommendPackageMutation();
+    transformedRecommendations,
+    isLoadingRecommendations,
+    isErrorRecommendations,
+    recommendationsData,
+  } = usePackageRecommendations(packageType);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
@@ -425,98 +398,6 @@ const PackageSearch = ({
     });
   }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
 
-  const [
-    fetchRecommendationDescriptions,
-    { data: dataDescriptions, isSuccess: isSuccessDescriptions },
-  ] = useSearchRpmMutation();
-
-  useEffect(() => {
-    resetRecommendations();
-
-    if (isOnPremise || packages.length === 0) {
-      return;
-    }
-
-    const packageNames = packages.map((pkg) => pkg.name);
-    const noDashDistro = distribution.replace('-', '');
-
-    (async () => {
-      try {
-        const response = await fetchRecommendedPackages({
-          recommendPackageRequest: {
-            packages: packageNames,
-            recommendedPackages: 5,
-            distribution: noDashDistro,
-          },
-        });
-
-        // there is a mismatch between API type and real data
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (response?.data?.packages && response.data.packages.length > 0) {
-          analytics.track(
-            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
-            {
-              module: AMPLITUDE_MODULE_NAME,
-              isPreview: isBeta(),
-              foundRecommendations: response.data.packages,
-              selectedPackages: packageNames,
-              distribution: noDashDistro,
-              modelVersion: response.data.modelVersion,
-            },
-          );
-        }
-      } catch {
-        // error state handled by isErrorRecommendations
-      }
-    })();
-    // fetchRecommendedPackages, resetRecommendations, analytics, and isBeta
-    // are unstable dependencies that were causing an infinite loop when
-    // included in the dependency array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packages, distribution, isOnPremise]);
-
-  useEffect(() => {
-    if (
-      isSuccessDistroRepositoriesForRecommendations &&
-      // there is a mismatch between API type and real data
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      distroRepositoriesForRecommendations?.data &&
-      recommendationsData?.packages &&
-      recommendationsData.packages.length > 0
-    ) {
-      const distroRepoUrls = distroRepositoriesForRecommendations.data.map(
-        (repo) => repo.url || '',
-      );
-
-      fetchRecommendationDescriptions({
-        apiContentUnitSearchRequest: {
-          exact_names: recommendationsData.packages,
-          urls: distroRepoUrls,
-        },
-      });
-    }
-  }, [
-    isSuccessDistroRepositoriesForRecommendations,
-    distroRepositoriesForRecommendations,
-    recommendationsData,
-    fetchRecommendationDescriptions,
-  ]);
-
-  const recommendationsWithDescriptions = useMemo(() => {
-    if (!isSuccessDescriptions || !recommendationsData?.packages) {
-      return [];
-    }
-    return recommendationsData.packages.map((pkgName) => {
-      const description = dataDescriptions.find(
-        (p) => p.package_name === pkgName,
-      );
-      return {
-        name: pkgName,
-        summary: description?.summary || '',
-      };
-    });
-  }, [isSuccessDescriptions, recommendationsData, dataDescriptions]);
-
   const transformedPackages = useMemo(() => {
     let transformedDistroData: ItemWithSources[] = [];
     let transformedCustomData: ItemWithSources[] = [];
@@ -652,21 +533,6 @@ const PackageSearch = ({
     isSuccessRecommendedGroups,
     isSearchingOtherRepos,
   ]);
-
-  const transformedRecommendations = useMemo(() => {
-    if (packageType === 'groups' || !recommendationsWithDescriptions.length) {
-      return [];
-    }
-
-    return recommendationsWithDescriptions.map(
-      (rec): IBPackageWithRepositoryInfo => ({
-        name: rec.name,
-        summary: rec.summary,
-        repository: 'distro',
-        isRecommendation: true,
-      }),
-    );
-  }, [recommendationsWithDescriptions, packageType]);
 
   useEffect(() => {
     if (!isOpen || packageType !== 'packages' || isOnPremise) {
