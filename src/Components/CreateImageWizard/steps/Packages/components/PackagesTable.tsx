@@ -1,27 +1,13 @@
 import React, { ReactElement, useMemo, useState } from 'react';
 
-import { Content, Label } from '@patternfly/react-core';
-import {
-  ExpandableRowContent,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useAppSelector } from '@/store/hooks';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  selectPackageGroups,
-  selectPackages,
-} from '@/store/slices/wizard';
+import { selectPackageGroups, selectPackages } from '@/store/slices/wizard';
 
 import EmptySearch from './EmptySearch';
-import RemovePackageButton from './RemovePackageButton';
-import RetirementDate from './RetirementDate';
+import GroupRow from './GroupRow';
+import PackageRow from './PackageRow';
 
 import {
   useRemovePackageContent,
@@ -54,63 +40,16 @@ const PackagesTable = () => {
 
     rows = rows.concat(
       groups.map((grp, rowIndex) => (
-        <Tbody
+        <GroupRow
           key={`${grp.name}-${grp.repository || 'default'}`}
+          group={grp}
+          rowIndex={rowIndex}
           isExpanded={isGroupExpanded(grp.name)}
-        >
-          <Tr data-testid='package-row'>
-            <Td
-              expand={{
-                rowIndex: rowIndex,
-                isExpanded: isGroupExpanded(grp.name),
-                onToggle: () =>
-                  setGroupsExpanded(grp.name, !isGroupExpanded(grp.name)),
-                expandId: `${grp.name}-expandable`,
-              }}
-            />
-            <Td>@{grp.name}</Td>
-            <Td>N/A</Td>
-            <Td>N/A</Td>
-            <Td>
-              <RemovePackageButton
-                item={grp}
-                onRemove={(item) =>
-                  handleRemoveGroup(item as GroupWithRepositoryInfo)
-                }
-              />
-            </Td>
-          </Tr>
-          <Tr isExpanded={isGroupExpanded(grp.name)}>
-            <Td colSpan={5}>
-              <ExpandableRowContent>
-                <div
-                  style={
-                    grp.package_list?.length
-                      ? { maxHeight: '40em', overflow: 'scroll' }
-                      : {}
-                  }
-                >
-                  {grp.package_list?.length ? (
-                    <Table
-                      variant='compact'
-                      data-testid='group-included-packages-table'
-                    >
-                      <Tbody>
-                        {grp.package_list.map((pkg: string) => (
-                          <Tr key={`details-${pkg}`}>
-                            <Td>{pkg}</Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  ) : (
-                    <Content>This group has no packages</Content>
-                  )}
-                </div>
-              </ExpandableRowContent>
-            </Td>
-          </Tr>
-        </Tbody>
+          onToggle={() =>
+            setGroupsExpanded(grp.name, !isGroupExpanded(grp.name))
+          }
+          onRemove={handleRemoveGroup}
+        />
       )),
     );
 
@@ -121,36 +60,14 @@ const PackagesTable = () => {
     ];
 
     rows = rows.concat(
-      orderedPackages.map((pkg) => {
-        const isRequired = requiredSet.has(pkg.name);
-        return (
-          <Tbody
-            key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
-          >
-            <Tr
-              data-testid={isRequired ? 'required-package-row' : 'package-row'}
-            >
-              <Td>&nbsp;</Td>
-              <Td>
-                {pkg.name} {isRequired && <Label isCompact>Required</Label>}
-              </Td>
-              <Td>{pkg.stream ? pkg.stream : '--'}</Td>
-              <Td>
-                <RetirementDate date={pkg.end_date} />
-              </Td>
-              <Td>
-                <RemovePackageButton
-                  item={pkg}
-                  isRequired={isRequired}
-                  onRemove={(item) =>
-                    handleRemovePackage(item as IBPackageWithRepositoryInfo)
-                  }
-                />
-              </Td>
-            </Tr>
-          </Tbody>
-        );
-      }),
+      orderedPackages.map((pkg) => (
+        <PackageRow
+          key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
+          pkg={pkg}
+          isRequired={requiredSet.has(pkg.name)}
+          onRemove={handleRemovePackage}
+        />
+      )),
     );
     return rows;
   };
