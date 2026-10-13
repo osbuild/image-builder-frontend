@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch } from '@/store/hooks';
-import { changePartitionName, type LogicalVolume } from '@/store/slices/wizard';
+import {
+  changePartitionName,
+  type LogicalVolume,
+  validatePartitionName,
+} from '@/store/slices/wizard';
 
 type PartitionNameProps = {
   partition: Pick<LogicalVolume, 'id' | 'name'>;
@@ -11,22 +14,29 @@ type PartitionNameProps = {
 
 const PartitionName = ({ partition }: PartitionNameProps) => {
   const dispatch = useAppDispatch();
-  const stepValidation = useFilesystemValidation();
+  const [name, setName] = useState(partition.name ?? '');
+
+  useEffect(() => {
+    // Reset the name when the partition changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setName(partition.name ?? '');
+  }, [partition.name]);
 
   return (
-    <ValidatedInputAndTextArea
+    <ValidatedTextInput
+      id={`name-${partition.id}`}
       ariaLabel='Partition name input'
-      value={partition.name || ''}
-      onChange={(_, name) => {
+      value={name}
+      onChange={(_, value) => setName(value)}
+      validator={(value) => validatePartitionName(value)}
+      onCommit={(candidate) => {
         dispatch(
           changePartitionName({
             id: partition.id,
-            name: name,
+            name: candidate,
           }),
         );
       }}
-      stepValidation={stepValidation}
-      fieldName={`name-${partition.id}`}
     />
   );
 };
