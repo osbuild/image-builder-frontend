@@ -272,7 +272,7 @@ export const filesystemSlice = createSlice({
       state,
       action: PayloadAction<{
         id: string;
-        name: string;
+        name?: string | undefined;
       }>,
     ) => {
       if (state.mode !== 'advanced') return;
