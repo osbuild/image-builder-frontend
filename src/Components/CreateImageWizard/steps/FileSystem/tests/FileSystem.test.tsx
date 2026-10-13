@@ -6,6 +6,7 @@ import {
   clearWithWait,
   clickWithWait,
   createUser,
+  tabWithWait,
   typeWithWait,
 } from '@/test/testUtils';
 
@@ -263,7 +264,7 @@ describe('FileSystem Component', () => {
       });
 
       expect(
-        await screen.findByText(/must be larger than 0/i),
+        await screen.findByText(/should be a positive integer/i),
       ).toBeInTheDocument();
     });
   });
@@ -295,10 +296,38 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, minSizeInput);
       await clearWithWait(user, minSizeInput);
       await typeWithWait(user, minSizeInput, '15');
+      await tabWithWait(user);
 
       expect(
         getBasicPartitions(store.getState().wizard.filesystem)[0].min_size,
       ).toBe('15');
+    });
+
+    test('clears disk minimum size in store', async () => {
+      const user = createUser();
+      const { store } = renderFileSystemStep({
+        filesystem: {
+          mode: 'advanced',
+          disk: {
+            minsize: '20',
+            unit: 'GiB',
+            partitions: [],
+          },
+        },
+      });
+
+      const minSizeInput = await screen.findByRole('textbox', {
+        name: /minimum disk size input/i,
+      });
+
+      await clickWithWait(user, minSizeInput);
+      await clearWithWait(user, minSizeInput);
+      await tabWithWait(user);
+
+      expect(store.getState().wizard.filesystem).toMatchObject({
+        mode: 'advanced',
+        disk: { minsize: '' },
+      });
     });
 
     test('updates partition unit in store', async () => {
@@ -887,7 +916,7 @@ describe('FileSystem Component', () => {
       await typeWithWait(user, sizeInput, '1');
 
       expect(
-        await screen.findByText(/required by OpenSCAP profile/i),
+        await screen.findByText('Minimum size must be at least 5 GiB'),
       ).toBeInTheDocument();
     });
 
@@ -909,7 +938,7 @@ describe('FileSystem Component', () => {
       );
 
       expect(
-        screen.queryByText(/required by OpenSCAP profile/i),
+        screen.queryByText(/Minimum size must be at least/i),
       ).not.toBeInTheDocument();
     });
   });

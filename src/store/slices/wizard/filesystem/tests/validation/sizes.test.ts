@@ -77,9 +77,9 @@ describe('filesystem size validation', () => {
 
     it.each([
       ['0', 'Minsize should be positive and non-zero'],
-      ['-1', 'Minsize should be a numeric value only'],
-      ['1.5', 'Minsize should be a numeric value only'],
-      [' 1', 'Minsize should be a numeric value only'],
+      ['-1', 'Minsize should be a positive integer'],
+      ['1.5', 'Minsize should be a positive integer'],
+      [' 1', 'Minsize should be a positive integer'],
     ])('rejects invalid size %s', (size, message) => {
       expect(getIssueDetails(validateBasicMinSize(size).errors)).toEqual([
         {
@@ -158,7 +158,7 @@ describe('filesystem size validation', () => {
     it.each(['-1', '1.5', ' 1'])('rejects invalid size %s', (size) => {
       expect(getIssueDetails(validateDiskMinSize(size).errors)).toEqual([
         {
-          message: 'Minsize should be a numeric value only',
+          message: 'Minsize should be a positive integer',
           path: ['disk', 'minsize'],
         },
       ]);

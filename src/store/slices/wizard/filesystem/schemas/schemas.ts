@@ -43,7 +43,7 @@ export const partitionNameEntryListSchema = z
 const minsizeSchema = z
   .string()
   .refine((value) => value === '' || /^\d+$/.test(value), {
-    error: 'Minsize should be a numeric value only',
+    error: 'Minsize should be a positive integer',
     abort: true,
   });
 
