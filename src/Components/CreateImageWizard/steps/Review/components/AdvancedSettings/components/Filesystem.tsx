@@ -7,7 +7,6 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import {
   selectDiskMinsize,
@@ -19,7 +18,7 @@ import {
   selectVolumeGroups,
 } from '@/store/slices';
 
-export const Filesystem = ({ shouldHide }: Hideable) => {
+export const Filesystem = () => {
   const mode = useAppSelector(selectFscMode);
   const minSize = useAppSelector(selectImageMinSize);
   const diskMinsize = useAppSelector(selectDiskMinsize);
@@ -36,7 +35,7 @@ export const Filesystem = ({ shouldHide }: Hideable) => {
         : 'Manual partitioning';
 
   return (
-    <ReviewSection title='File system configurations' shouldHide={shouldHide}>
+    <ReviewSection title='File system configurations'>
       <ReviewGroup
         heading='Partitioning type'
         description={partitioningLabel}

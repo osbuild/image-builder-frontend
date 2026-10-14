@@ -6,14 +6,13 @@ import {
   FlexColumn,
   ReviewGroup,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectNonEmptyUserGroups } from '@/store/slices/wizard';
 
-export const UserGroups = ({ shouldHide }: Partial<Hideable>) => {
+export const UserGroups = () => {
   const userGroups = useAppSelector(selectNonEmptyUserGroups);
 
-  if (shouldHide || userGroups.length === 0) {
+  if (userGroups.length === 0) {
     return null;
   }
 

@@ -1,9 +1,19 @@
 import React from 'react';
 
-import { Card, CardBody } from '@patternfly/react-core';
+import { Card, CardBody, Divider } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
-import { selectHasUserGroups, selectHasUsers } from '@/store/slices/wizard';
+import {
+  selectFirewallEnabled,
+  selectFirstBootScript,
+  selectHasUserGroups,
+  selectHasUsers,
+  selectHostname,
+  selectKernel,
+  selectKeyboard,
+  selectLanguages,
+  selectServices,
+} from '@/store/slices';
 
 import {
   Filesystem,
@@ -40,6 +50,24 @@ const AdvancedSettingsOverview = ({
   const usersHidden = restrictions.users.shouldHide;
   const hasUsers = useAppSelector(selectHasUsers);
   const hasUserGroups = useAppSelector(selectHasUserGroups);
+  const hostname = useAppSelector(selectHostname);
+  const keyboard = useAppSelector(selectKeyboard);
+  const languages = useAppSelector(selectLanguages);
+  const kernel = useAppSelector(selectKernel);
+  const services = useAppSelector(selectServices);
+  const firewallEnabled = useAppSelector(selectFirewallEnabled);
+  const firstBootScript = useAppSelector(selectFirstBootScript);
+
+  const hasKernelConfig =
+    kernel.name || kernel.append.length > 0 || oscapKernelArgs.length > 0;
+  const hasServicesConfig =
+    services.enabled.length > 0 ||
+    services.disabled.length > 0 ||
+    services.masked.length > 0 ||
+    (oscapServices?.enabled.length ?? 0) > 0 ||
+    (oscapServices?.disabled.length ?? 0) > 0 ||
+    (oscapServices?.masked.length ?? 0) > 0;
+  const hasLocaleConfig = keyboard || (languages && languages.length > 0);
 
   return (
     <Card>
@@ -48,29 +76,52 @@ const AdvancedSettingsOverview = ({
         stepId='advanced-settings-step'
       />
       <CardBody>
-        <Filesystem shouldHide={restrictions.filesystem.shouldHide} />
-        <Timezone shouldHide={restrictions.timezone.shouldHide} />
-        <Locale shouldHide={restrictions.locale.shouldHide} />
-        <Hostname shouldHide={restrictions.hostname.shouldHide} />
-        <Kernel
-          shouldHide={restrictions.kernel.shouldHide}
-          oscapKernelArgs={oscapKernelArgs}
-        />
-        <Services
-          shouldHide={restrictions.services.shouldHide}
-          oscapServices={oscapServices}
-        />
-        <Firewall shouldHide={restrictions.firewall.shouldHide} />
-        <ReviewSection title='Users' shouldHide={usersHidden || !hasUsers}>
-          <Users />
-        </ReviewSection>
-        <ReviewSection
-          title='Groups'
-          shouldHide={usersHidden || !hasUserGroups}
-        >
-          <UserGroups />
-        </ReviewSection>
-        <Firstboot shouldHide={restrictions.firstboot.shouldHide} />
+        {[
+          !restrictions.filesystem.shouldHide && (
+            <Filesystem key='filesystem' />
+          ),
+          !restrictions.timezone.shouldHide && <Timezone key='timezone' />,
+          !restrictions.locale.shouldHide && hasLocaleConfig && (
+            <Locale key='locale' />
+          ),
+          !restrictions.hostname.shouldHide && hostname && (
+            <Hostname key='hostname' />
+          ),
+          !restrictions.kernel.shouldHide && hasKernelConfig && (
+            <Kernel key='kernel' oscapKernelArgs={oscapKernelArgs} />
+          ),
+          !restrictions.services.shouldHide && hasServicesConfig && (
+            <Services key='services' oscapServices={oscapServices} />
+          ),
+          !restrictions.firewall.shouldHide && firewallEnabled && (
+            <Firewall key='firewall' />
+          ),
+          !usersHidden && hasUsers && (
+            <ReviewSection key='users' title='Users'>
+              <Users />
+            </ReviewSection>
+          ),
+          !usersHidden && hasUserGroups && (
+            <ReviewSection key='groups' title='Groups'>
+              <UserGroups />
+            </ReviewSection>
+          ),
+          !restrictions.firstboot.shouldHide && firstBootScript && (
+            <Firstboot key='firstboot' />
+          ),
+        ]
+          .filter(Boolean)
+          .flatMap((component, index, array) =>
+            index < array.length - 1
+              ? [
+                  component,
+                  <Divider
+                    key={`divider-${index}`}
+                    className='pf-v6-u-mt-lg pf-v6-u-mb-md'
+                  />,
+                ]
+              : [component],
+          )}
       </CardBody>
     </Card>
   );

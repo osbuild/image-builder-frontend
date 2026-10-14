@@ -4,15 +4,14 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectHostname } from '@/store/slices';
 
-export const Hostname = ({ shouldHide }: Hideable) => {
+export const Hostname = () => {
   const hostname = useAppSelector(selectHostname);
 
   return (
-    <ReviewSection title='Hostname' shouldHide={shouldHide || !hostname}>
+    <ReviewSection title='Hostname'>
       <ReviewGroup heading='Name' description={hostname} />
     </ReviewSection>
   );

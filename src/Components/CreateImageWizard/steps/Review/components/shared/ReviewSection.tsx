@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 
-import { Divider, Title } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
 
 import { ReviewList } from './ReviewList';
 
@@ -26,7 +26,6 @@ export const ReviewSection = ({
       <div className='pf-v6-u-pl-lg'>
         <ReviewList>{children}</ReviewList>
       </div>
-      <Divider className='pf-v6-u-mt-lg pf-v6-u-mb-md' />
     </>
   );
 };

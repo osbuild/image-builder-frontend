@@ -7,14 +7,13 @@ import {
   ReviewGroup,
   StatusItem,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectNonEmptyUsers } from '@/store/slices/wizard';
 
-export const Users = ({ shouldHide }: Partial<Hideable>) => {
+export const Users = () => {
   const users = useAppSelector(selectNonEmptyUsers);
 
-  if (shouldHide || users.length === 0) {
+  if (users.length === 0) {
     return null;
   }
 

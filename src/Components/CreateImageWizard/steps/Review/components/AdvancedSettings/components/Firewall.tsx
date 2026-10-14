@@ -7,17 +7,15 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
-import { selectFirewall, selectFirewallEnabled } from '@/store/slices';
+import { selectFirewall } from '@/store/slices';
 
 const padArray = (arr: string[], length: number): string[] => {
   return [...arr, ...Array(length - arr.length).fill('--')];
 };
 
-export const Firewall = ({ shouldHide }: Hideable) => {
+export const Firewall = () => {
   const firewall = useAppSelector(selectFirewall);
-  const isEnabled = useAppSelector(selectFirewallEnabled);
 
   const { ports, enabled, disabled } = useMemo(() => {
     const maxLength = Math.max(
@@ -34,7 +32,7 @@ export const Firewall = ({ shouldHide }: Hideable) => {
   }, [firewall]);
 
   return (
-    <ReviewSection title='Firewall' shouldHide={shouldHide || !isEnabled}>
+    <ReviewSection title='Firewall'>
       <ReviewGroup
         heading='Firewall designations'
         description={

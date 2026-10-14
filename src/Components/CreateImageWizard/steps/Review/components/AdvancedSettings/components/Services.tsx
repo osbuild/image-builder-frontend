@@ -6,7 +6,6 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectServices } from '@/store/slices';
 
@@ -22,12 +21,11 @@ const emptyOscapServices: OscapServices = {
   masked: [],
 };
 
-type ServicesProps = Hideable & {
+type ServicesProps = {
   oscapServices?: OscapServices | undefined;
 };
 
 export const Services = ({
-  shouldHide,
   oscapServices = emptyOscapServices,
 }: ServicesProps) => {
   const services = useAppSelector(selectServices);
@@ -41,14 +39,8 @@ export const Services = ({
     [services, oscapServices],
   );
 
-  const isCustomized =
-    enabled.length > 0 || disabled.length > 0 || masked.length > 0;
-
   return (
-    <ReviewSection
-      title='Systemd services'
-      shouldHide={shouldHide || !isCustomized}
-    >
+    <ReviewSection title='Systemd services'>
       <ReviewGroup
         heading='Enabled systemd services'
         description={
