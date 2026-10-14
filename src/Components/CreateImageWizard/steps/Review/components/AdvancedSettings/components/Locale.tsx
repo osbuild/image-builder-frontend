@@ -6,21 +6,15 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectKeyboard, selectLanguages } from '@/store/slices';
 
-export const Locale = ({ shouldHide }: Hideable) => {
+export const Locale = () => {
   const languages = useAppSelector(selectLanguages);
   const keyboard = useAppSelector(selectKeyboard);
 
   return (
-    <ReviewSection
-      title='Locale'
-      shouldHide={
-        shouldHide || (!keyboard && (!languages || languages.length === 0))
-      }
-    >
+    <ReviewSection title='Locale'>
       {languages && languages.length > 0 && (
         <ReviewGroup
           heading={languages.length > 1 ? 'Languages' : 'Language'}

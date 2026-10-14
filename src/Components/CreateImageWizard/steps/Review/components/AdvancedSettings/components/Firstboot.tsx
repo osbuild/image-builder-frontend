@@ -10,13 +10,12 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectFirstBootScript } from '@/store/slices';
 
 const MAX_LINES = 8;
 
-export const Firstboot = ({ shouldHide }: Hideable) => {
+export const Firstboot = () => {
   const script = useAppSelector(selectFirstBootScript) ?? '';
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -27,10 +26,7 @@ export const Firstboot = ({ shouldHide }: Hideable) => {
     : script;
 
   return (
-    <ReviewSection
-      title='First boot configuration'
-      shouldHide={shouldHide || !script}
-    >
+    <ReviewSection title='First boot configuration'>
       <ReviewGroup
         heading='Custom script'
         description={

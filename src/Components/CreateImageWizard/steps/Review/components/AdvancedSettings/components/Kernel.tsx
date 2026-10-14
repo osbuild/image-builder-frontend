@@ -6,15 +6,14 @@ import {
   ReviewGroup,
   ReviewSection,
 } from '@/Components/CreateImageWizard/steps/Review/components/shared';
-import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import { selectKernel } from '@/store/slices';
 
-type KernelProps = Hideable & {
+type KernelProps = {
   oscapKernelArgs?: string[];
 };
 
-export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
+export const Kernel = ({ oscapKernelArgs = [] }: KernelProps) => {
   const { name, append } = useAppSelector(selectKernel);
 
   const args = useMemo(
@@ -23,10 +22,7 @@ export const Kernel = ({ shouldHide, oscapKernelArgs = [] }: KernelProps) => {
   );
 
   return (
-    <ReviewSection
-      title='Kernel'
-      shouldHide={shouldHide || !(name || args.length > 0)}
-    >
+    <ReviewSection title='Kernel'>
       {name !== '' && (
         <ReviewGroup heading='Kernel package' description={name} />
       )}
