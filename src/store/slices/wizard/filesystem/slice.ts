@@ -360,7 +360,10 @@ export const filesystemSlice = createSlice({
     },
     changeDiskPartitionName: (
       state,
-      action: PayloadAction<{ id: string; name: string }>,
+      action: PayloadAction<{
+        id: string;
+        name?: string | undefined;
+      }>,
     ) => {
       if (state.mode !== 'advanced') return;
       const { id, name } = action.payload;
