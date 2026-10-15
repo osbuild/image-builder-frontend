@@ -65,6 +65,7 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
             {
               id: lvId,
               name: '',
+              type: 'lv',
               mountpoint,
               min_size: '1',
               unit: 'GiB',
@@ -91,6 +92,7 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
         logicalVolume: {
           id,
           name: '',
+          type: 'lv',
           mountpoint,
           min_size: '1',
           unit: 'GiB',

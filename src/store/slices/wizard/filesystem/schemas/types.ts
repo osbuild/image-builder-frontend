@@ -35,6 +35,7 @@ export type Disk = z.infer<Schemas['diskSchema']>;
 export type DiskPartition = z.infer<Schemas['diskPartitionSchema']>;
 
 export type MountpointDiskPartition = PlainPartition | LogicalVolume;
+export type Partition = FilesystemPartition | DiskPartition | LogicalVolume;
 
 export type BasicFS = z.infer<Schemas['basicSchema']>;
 export type AdvancedFS = z.infer<Schemas['advancedSchema']>;

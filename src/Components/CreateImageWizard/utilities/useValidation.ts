@@ -18,9 +18,8 @@ import { selectComplianceType } from '@/store/slices';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   convertToBytes,
-  DiskPartition,
-  FilesystemPartition,
   parseSizeUnit,
+  Partition,
   selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
@@ -311,7 +310,7 @@ export function useAAPValidation(): StepValidation {
 }
 
 const validatePartitionSize = (
-  partition: FilesystemPartition | DiskPartition,
+  partition: Partition,
   errors: { [key: string]: string },
 ) => {
   if (!partition.min_size || partition.min_size === '') {
@@ -326,7 +325,7 @@ const validatePartitionSize = (
 };
 
 const validatePartitionMountpoint = (
-  partition: FilesystemPartition | DiskPartition,
+  partition: Partition,
   errors: { [key: string]: string },
   mountpointDuplicates: string[],
   invalidMountpoints: string[],
@@ -354,7 +353,7 @@ const validatePartitionMountpoint = (
 };
 
 const validatePartitionName = (
-  partition: FilesystemPartition | DiskPartition,
+  partition: Partition,
   errors: { [key: string]: string },
   nameDuplicates: string[],
 ) => {
