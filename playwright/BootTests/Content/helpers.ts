@@ -205,8 +205,11 @@ export const pollForSystemTemplateAttachment = async (
       );
 
       if (response.status() !== 200) {
+        const responseBody = (await response.text()).slice(0, 1000);
         console.log(
-          `API request failed with status ${response.status()}, attempt ${attempt}/${maxAttempts}`,
+          `Patch attachment attempt=${attempt}/${maxAttempts}: ` +
+            `status=${response.status()}, inventoryId=${inventoryId}, ` +
+            `outcome=request-failed, body=${responseBody}`,
         );
       } else {
         const body = await response.json();
@@ -217,24 +220,40 @@ export const pollForSystemTemplateAttachment = async (
           body.data.id !== inventoryId
         ) {
           console.log(
-            `Invalid response format, attempt ${attempt}/${maxAttempts}`,
+            `Patch attachment attempt=${attempt}/${maxAttempts}: ` +
+              `status=200, inventoryId=${inventoryId}, ` +
+              `responseId=${body.data?.id}, outcome=invalid-response, ` +
+              `body=${JSON.stringify(body).slice(0, 2000)}`,
           );
         } else {
           const system: PatchSystem = body.data;
           if (!system.attributes.template_uuid) {
             console.log(
-              `Patch reports no template UUID for system '${inventoryId}', attempt ${attempt}/${maxAttempts}`,
+              `Patch attachment attempt=${attempt}/${maxAttempts}: ` +
+                `status=200, inventoryId=${inventoryId}, ` +
+                `templateUuid=missing, templateName=${system.attributes.template_name}, ` +
+                `expectedTemplateName=${expectedTemplateName}, ` +
+                `outcome=not-attached`,
             );
           } else if (
             expectedTemplateName &&
             system.attributes.template_name !== expectedTemplateName
           ) {
             console.log(
-              `System '${inventoryId}' is attached to template '${system.attributes.template_name}' but expected '${expectedTemplateName}', attempt ${attempt}/${maxAttempts}`,
+              `Patch attachment attempt=${attempt}/${maxAttempts}: ` +
+                `status=200, inventoryId=${inventoryId}, ` +
+                `templateUuid=${system.attributes.template_uuid}, ` +
+                `templateName=${system.attributes.template_name}, ` +
+                `expectedTemplateName=${expectedTemplateName}, ` +
+                `outcome=wrong-template`,
             );
           } else {
             console.log(
-              `System '${inventoryId}' is attached to template: ${system.attributes.template_name}`,
+              `Patch attachment attempt=${attempt}/${maxAttempts}: ` +
+                `status=200, inventoryId=${inventoryId}, ` +
+                `templateUuid=${system.attributes.template_uuid}, ` +
+                `templateName=${system.attributes.template_name}, ` +
+                `outcome=attached`,
             );
             return true;
           }
@@ -282,19 +301,26 @@ export const pollForSystemInInventory = async (
       });
 
       if (response.status() !== 200) {
+        const responseBody = (await response.text()).slice(0, 1000);
         console.log(
-          `Inventory API request failed with status ${response.status()}, attempt ${attempts}/${maxAttempts}`,
+          `Inventory attempt=${attempts}/${maxAttempts}: ` +
+            `status=${response.status()}, instanceId=${instanceId}, ` +
+            `outcome=request-failed, body=${responseBody}`,
         );
       } else {
         const body = await response.json();
 
         if (!body.results || !Array.isArray(body.results)) {
           console.log(
-            `Invalid Inventory response format, attempt ${attempts}/${maxAttempts}`,
+            `Inventory attempt=${attempts}/${maxAttempts}: ` +
+              `status=200, instanceId=${instanceId}, ` +
+              `outcome=invalid-response, body=${JSON.stringify(body).slice(0, 2000)}`,
           );
         } else if (body.results.length === 0) {
           console.log(
-            `System '${instanceId}' not found in Inventory, attempt ${attempts}/${maxAttempts}`,
+            `Inventory attempt=${attempts}/${maxAttempts}: ` +
+              `status=200, instanceId=${instanceId}, resultCount=0, ` +
+              `outcome=not-found`,
           );
         } else {
           const system = body.results.find(
@@ -304,12 +330,22 @@ export const pollForSystemInInventory = async (
 
           if (system) {
             console.log(
-              `System '${instanceId}' found in Inventory with ID: ${system.id}`,
+              `Inventory attempt=${attempts}/${maxAttempts}: ` +
+                `status=200, instanceId=${instanceId}, inventoryId=${system.id}, ` +
+                `resultCount=${body.results.length}, outcome=found`,
             );
             return { found: true, inventoryId: system.id };
           } else {
             console.log(
-              `System '${instanceId}' not found in Inventory results, attempt ${attempts}/${maxAttempts}`,
+              `Inventory attempt=${attempts}/${maxAttempts}: ` +
+                `status=200, instanceId=${instanceId}, ` +
+                `resultCount=${body.results.length}, ` +
+                `resultIds=${body.results
+                  .map(
+                    (result: InventorySystem) =>
+                      `${result.id}(${result.provider_type}:${result.provider_id})`,
+                  )
+                  .join(',')}, outcome=not-found`,
             );
           }
         }
