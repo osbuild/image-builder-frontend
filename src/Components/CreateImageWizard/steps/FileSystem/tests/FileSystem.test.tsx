@@ -267,6 +267,60 @@ describe('FileSystem Component', () => {
         await screen.findByText(/should be a positive integer/i),
       ).toBeInTheDocument();
     });
+
+    test('shows a duplicate name error for a new logical volume', async () => {
+      const user = createUser();
+      renderFileSystemStep({
+        filesystem: {
+          mode: 'advanced',
+          disk: {
+            unit: 'GiB',
+            partitions: [
+              {
+                id: 'vg0',
+                name: 'vg0',
+                type: 'lvm',
+                min_size: '11',
+                unit: 'GiB',
+                logical_volumes: [
+                  {
+                    id: 'existing-lv',
+                    name: 'root',
+                    type: 'lv',
+                    mountpoint: '/',
+                    min_size: '10',
+                    unit: 'GiB',
+                    fs_type: 'xfs',
+                  },
+                  {
+                    id: 'new-lv',
+                    name: undefined,
+                    type: 'lv',
+                    mountpoint: '/home',
+                    min_size: '1',
+                    unit: 'GiB',
+                    fs_type: 'xfs',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      });
+
+      const nameInputs = await screen.findAllByRole('textbox', {
+        name: /partition name input/i,
+      });
+      await typeWithWait(user, nameInputs[1], 'root');
+      await tabWithWait(user);
+
+      await waitFor(() =>
+        expect(nameInputs[1]).toHaveAccessibleDescription(
+          /Duplicate partition name: root/,
+        ),
+      );
+      expect(nameInputs[1]).toHaveAttribute('aria-invalid', 'true');
+    });
   });
 
   describe('State management', () => {
