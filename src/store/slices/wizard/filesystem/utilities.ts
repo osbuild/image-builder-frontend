@@ -11,6 +11,7 @@ import {
   DiskPartition,
   FilesystemPartition,
   FilesystemType,
+  Partition,
   Units,
 } from './types';
 
@@ -63,7 +64,7 @@ export const parseSizeUnit = (bytesize: string): [string, Units] => {
 
 export const isPartitionTypeAvailable = (
   type: FilesystemType,
-  partition: FilesystemPartition | DiskPartition,
+  partition: Partition,
 ) => {
   if ('type' in partition && partition.type === 'plain') {
     // 'swap' is not allowed for plain partitions
@@ -202,7 +203,7 @@ export const convertDiskToFscDisk = (
     mountpoint: disk.mountpoint,
     min_size: size,
     unit: (unit || 'GiB') as Units,
-    type: disk.type,
+    type: disk.type ?? 'plain',
   };
 };
 
@@ -220,6 +221,7 @@ export const convertLogicalVolume = (volume: LogicalVolume) => {
     min_size: size,
     unit: (unit || 'GiB') as Units,
     name: volume.name,
+    type: 'lv' as const,
     fs_type: volume.fs_type,
     mountpoint: volume.mountpoint,
   };

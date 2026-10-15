@@ -108,7 +108,7 @@ const filesystemSchemaBuilder = (
 
   const plainPartitionSchema = diskPartitionFieldSchema
     .extend({
-      type: z.literal('plain').optional(),
+      type: z.literal('plain'),
       label: z.string().optional(),
       part_type: z.string().optional(),
       mountpoint: mountpointSchema.optional(),
@@ -127,6 +127,7 @@ const filesystemSchemaBuilder = (
   const logicalVolumeSchema = diskPartitionFieldSchema
     .extend({
       name: nameSchema.optional(),
+      type: z.literal('lv'),
       minsize: optionalMinsizeSchema.optional(),
       mountpoint: mountpointSchema.optional(),
       label: z.string().optional(),

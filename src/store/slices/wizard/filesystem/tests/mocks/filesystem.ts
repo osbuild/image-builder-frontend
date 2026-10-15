@@ -38,6 +38,7 @@ export const createLogicalVolume = (
   min_size: '10',
   unit: 'GiB',
   name: 'root',
+  type: 'lv',
   fs_type: 'xfs',
   ...overrides,
 });
