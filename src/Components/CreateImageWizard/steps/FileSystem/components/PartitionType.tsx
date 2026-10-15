@@ -16,14 +16,14 @@ import {
   FilesystemType,
   getNextAvailableMountpoint,
   isPartitionTypeAvailable,
-  LogicalVolume,
+  MountpointDiskPartition,
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
 } from '@/store/slices/wizard';
 
 type PartitionTypeProps = {
-  partition: LogicalVolume;
+  partition: MountpointDiskPartition;
 };
 
 const PartitionType = ({ partition }: PartitionTypeProps) => {

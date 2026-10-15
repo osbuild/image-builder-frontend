@@ -7,6 +7,7 @@ import { Td, Tr } from '@patternfly/react-table';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   DiskPartition,
+  LogicalVolume,
   removeDiskPartition,
   selectDiskPartitions,
 } from '@/store/slices/wizard';
@@ -18,7 +19,7 @@ import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
 
 type DiskRowProps = {
-  partition: DiskPartition;
+  partition: DiskPartition | LogicalVolume;
 };
 
 const DiskRow = ({ partition }: DiskRowProps) => {
@@ -35,7 +36,7 @@ const DiskRow = ({ partition }: DiskRowProps) => {
 
   return (
     <Tr id={partition.id}>
-      {partition.type !== 'plain' && (
+      {partition.type === 'lv' && (
         <Td width={30}>
           <PartitionName partition={partition} />
         </Td>

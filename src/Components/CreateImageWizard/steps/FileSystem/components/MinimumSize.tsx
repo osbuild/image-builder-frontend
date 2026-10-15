@@ -9,12 +9,11 @@ import { selectComplianceType } from '@/store/slices';
 import {
   changePartitionMinSize,
   changePartitionUnit,
-  DiskPartition,
-  FilesystemPartition,
+  type Partition,
 } from '@/store/slices/wizard';
 
 type MinimumSizeProps = {
-  partition: FilesystemPartition | DiskPartition;
+  partition: Partition;
   isOscapRequired?: boolean;
   oscapMinSizeLabel?: string;
 };

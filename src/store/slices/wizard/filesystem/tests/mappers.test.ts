@@ -101,6 +101,7 @@ describe('mapFilesystemCustomizations', () => {
                   min_size: '10',
                   unit: 'GiB',
                   name: 'root',
+                  type: 'lv',
                   fs_type: 'ext4',
                   mountpoint: '/',
                 },

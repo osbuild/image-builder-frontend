@@ -53,7 +53,7 @@ const mapDisk = createSelector(
         minsize: partition.min_size + ' ' + partition.unit,
         fs_type: partition.fs_type,
         mountpoint: partition.mountpoint,
-        type: partition.type,
+        type: 'plain' as const,
       };
     });
 
