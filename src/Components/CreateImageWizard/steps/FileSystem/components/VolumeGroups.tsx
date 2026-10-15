@@ -63,14 +63,14 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
       dispatch(
         addDiskPartition({
           id: vgId,
-          name: '',
+          name: undefined,
           min_size: '1',
           unit: 'GiB',
           type: 'lvm',
           logical_volumes: [
             {
               id: lvId,
-              name: '',
+              name: undefined,
               type: 'lv',
               mountpoint,
               min_size: '1',
@@ -97,7 +97,7 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
         vgId: vgId,
         logicalVolume: {
           id,
-          name: '',
+          name: undefined,
           type: 'lv',
           mountpoint,
           min_size: '1',
