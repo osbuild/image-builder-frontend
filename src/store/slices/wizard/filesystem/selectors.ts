@@ -6,6 +6,9 @@ import { RootState } from '@/store';
 import type {
   DiskPartition,
   FilesystemPartition,
+  LogicalVolume,
+  MountpointEntry,
+  PartitionNameEntry,
   Units,
   VolumeGroup,
 } from './types';
@@ -13,6 +16,9 @@ import { getConversionFactor } from './utilities';
 
 const EMPTY_DISK_PARTITIONS: DiskPartition[] = [];
 const EMPTY_FILESYSTEM_PARTITIONS: FilesystemPartition[] = [];
+const EMPTY_LOGICAL_VOLUMES: LogicalVolume[] = [];
+const EMPTY_MOUNTPOINTS: MountpointEntry[] = [];
+const EMPTY_PARTITION_NAMES: PartitionNameEntry[] = [];
 
 export const selectFscMode = (state: RootState) => {
   return state.wizard.filesystem.mode;
@@ -62,9 +68,77 @@ export const selectPlainPartitions = createSelector(
   (partitions) => partitions.filter((p) => p.type !== 'lvm'),
 );
 
+export const selectVolumeGroup = createSelector(
+  [selectDiskPartitions],
+  (partitions) => partitions.find((p) => p.type === 'lvm') as VolumeGroup,
+);
+
 export const selectVolumeGroups = createSelector(
   [selectDiskPartitions],
   (partitions) => partitions.filter((p) => p.type === 'lvm') as VolumeGroup[],
+);
+
+export const selectLogicalVolumes = createSelector(
+  [selectDiskPartitions],
+  (partitions) => {
+    const vg = partitions.find((p) => p.type === 'lvm');
+    if (!vg) return EMPTY_LOGICAL_VOLUMES;
+
+    return vg.logical_volumes;
+  },
+);
+
+export const selectPartitionNames = createSelector(
+  [selectDiskPartitions],
+  (partitions) => {
+    return partitions
+      .flatMap((partition) => {
+        if (partition.type !== 'lvm') {
+          return EMPTY_PARTITION_NAMES;
+        }
+
+        const logicalVolumeNames = partition.logical_volumes.map(
+          ({ id, name }) => ({
+            id,
+            name,
+          }),
+        );
+
+        return [
+          { id: partition.id, name: partition.name },
+          ...logicalVolumeNames,
+        ];
+      })
+      .filter((entry): entry is PartitionNameEntry => Boolean(entry.name));
+  },
+);
+
+export const selectMountpoints = createSelector(
+  [selectFilesystemPartitions, selectDiskPartitions],
+  (fsPartitions, diskPartitions) => {
+    if (fsPartitions.length > 0) {
+      return fsPartitions
+        .map(({ id, mountpoint }) => ({ id, mountpoint }))
+        .filter(({ mountpoint }) => Boolean(mountpoint));
+    }
+
+    if (diskPartitions.length > 0) {
+      return diskPartitions
+        .flatMap((p) => {
+          if (p.type === 'plain')
+            return [{ id: p.id, mountpoint: p.mountpoint }];
+          if (p.type === 'lvm')
+            return p.logical_volumes.map(({ id, mountpoint }) => ({
+              id,
+              mountpoint,
+            }));
+          return EMPTY_MOUNTPOINTS;
+        })
+        .filter((entry): entry is MountpointEntry => Boolean(entry.mountpoint));
+    }
+
+    return EMPTY_MOUNTPOINTS;
+  },
 );
 
 export const selectBasicPartitionCount = createSelector(
