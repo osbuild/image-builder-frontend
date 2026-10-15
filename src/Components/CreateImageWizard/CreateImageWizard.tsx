@@ -16,6 +16,7 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
+import { flushSync } from 'react-dom';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import {
@@ -54,6 +55,7 @@ import {
   initializeWizard,
   loadWizardState,
   parseStateFromRequest,
+  resetForceShowErrors,
   selectDistribution,
   selectHasPendingInputs,
   selectImageSource,
@@ -63,6 +65,7 @@ import {
   selectSystem,
   selectTimezone,
   selectUsersSlice,
+  setForceShowErrors,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
@@ -78,6 +81,7 @@ import { useGetEnvironment } from '@/Utilities/useGetEnvironment';
 
 import CustomWizardFooter from './components/CustomWizardFooter';
 import ReviewWizardFooter from './components/ReviewWizardFooter';
+import { scrollToFirstError } from './utilities/scrollToFirstError';
 
 import DetailsStep from '../CreateImageWizard/steps/Details';
 import FileSystemStep from '../CreateImageWizard/steps/FileSystem';
@@ -430,7 +434,17 @@ const CreateImageWizard = () => {
         isDisabled={step.isDisabled || !canNavigate}
         isVisited={step.isVisited || false}
         stepIndex={step.index}
-        onClick={() => goToStepByIndex(step.index)}
+        onClick={() => {
+          if (step.index > activeStep.index && hasPendingInputs) {
+            flushSync(() => {
+              dispatch(setForceShowErrors());
+            });
+            scrollToFirstError();
+            return;
+          }
+          dispatch(resetForceShowErrors());
+          goToStepByIndex(step.index);
+        }}
         status={status}
       />
     );

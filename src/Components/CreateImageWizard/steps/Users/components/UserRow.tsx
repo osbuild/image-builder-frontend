@@ -41,6 +41,13 @@ const createDraft = (user?: User): UserDraft => ({
   hasPassword: user?.hasPassword || emptyUser.hasPassword,
 });
 
+const isEmptyUser = (user: User, groups: string[]): boolean =>
+  !user.name &&
+  !user.password &&
+  !user.ssh_key &&
+  groups.length === 0 &&
+  !user.hasPassword;
+
 const UserRow = ({
   user,
   index,
@@ -77,6 +84,10 @@ const UserRow = ({
     field: 'name' | 'password' | 'ssh_key' | 'groups',
     groups: string[] = draft.groups,
   ) => {
+    if (!user && isEmptyUser(draft, groups)) {
+      return { errors: [] };
+    }
+
     const candidate = { ...draft, groups };
     const parsed = validateUserInput(candidate);
     const { errors, warnings } = validator(candidate);

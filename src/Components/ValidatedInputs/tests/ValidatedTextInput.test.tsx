@@ -1,8 +1,13 @@
 import React, { type ComponentProps } from 'react';
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
 
 import type { ValidationIssue, ValidationResult } from '@/store/slices/wizard';
+import {
+  renderWithRedux,
+  type WizardStateOverrides,
+} from '@/test/testUtils/renderUtils';
 
 import { ValidatedTextInput } from '../ValidatedTextInput';
 
@@ -22,6 +27,7 @@ const onCommit = vi.fn();
 
 const renderComponent = (
   props: Partial<ComponentProps<typeof ValidatedTextInput>> = {},
+  wizardState: WizardStateOverrides = {},
 ) => {
   const defaultProps: ComponentProps<typeof ValidatedTextInput> = {
     ariaLabel: 'Name',
@@ -31,7 +37,20 @@ const renderComponent = (
     onCommit,
   };
 
-  return render(<ValidatedTextInput {...defaultProps} {...props} />);
+  const view = renderWithRedux(
+    <ValidatedTextInput {...defaultProps} {...props} />,
+    wizardState,
+  );
+
+  return {
+    ...view,
+    rerender: (nextProps: Partial<ComponentProps<typeof ValidatedTextInput>>) =>
+      view.rerender(
+        <Provider store={view.store}>
+          <ValidatedTextInput {...defaultProps} {...props} {...nextProps} />
+        </Provider>,
+      ),
+  };
 };
 
 describe('ValidatedTextInput', () => {
@@ -58,6 +77,83 @@ describe('ValidatedTextInput', () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
+  it('registers invalid input and clears the blocker when corrected', () => {
+    const { store, rerender } = renderComponent();
+
+    expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+
+    rerender({ value: 'valid-name' });
+
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it('does not block navigation while disabled', () => {
+    const { store, rerender } = renderComponent({ isDisabled: true });
+
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+
+    rerender({ isDisabled: false });
+    expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+
+    rerender({ isDisabled: true });
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+  });
+
+  it('removes only its own blocker when an input unmounts', () => {
+    const first = (
+      <ValidatedTextInput
+        key='first'
+        ariaLabel='First'
+        value=''
+        validator={requiredValidator}
+        onCommit={onCommit}
+      />
+    );
+    const second = (
+      <ValidatedTextInput
+        key='second'
+        ariaLabel='Second'
+        value=''
+        validator={requiredValidator}
+        onCommit={onCommit}
+      />
+    );
+    const { store, rerender, unmount } = renderWithRedux(
+      <>
+        {first}
+        {second}
+      </>,
+    );
+    const pending = store.getState().wizard.validation.pendingInputs;
+    expect(pending).toHaveLength(2);
+
+    rerender(
+      <Provider store={store}>
+        <>{second}</>
+      </Provider>,
+    );
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([
+      pending[1],
+    ]);
+
+    unmount();
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+  });
+
+  it('reveals pristine errors when the wizard requests them', () => {
+    renderComponent(
+      {},
+      { validation: { forceShowErrors: true, pendingInputs: [] } },
+    );
+
+    expect(screen.getByText('Required')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    );
+  });
+
   it('masks password inputs except while focused', () => {
     renderComponent({ value: 'secret', kind: 'password' });
 
@@ -80,11 +176,12 @@ describe('ValidatedTextInput', () => {
   });
 
   it('commits validated data on blur', () => {
-    renderComponent({ value: 'valid-name' });
+    const { store } = renderComponent({ value: 'valid-name' });
 
     fireEvent.blur(screen.getByRole('textbox', { name: 'Name' }));
 
     expect(onCommit).toHaveBeenCalledWith('valid-name');
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
   });
 
   it('shows validation errors when showErrors is true', () => {
@@ -103,7 +200,7 @@ describe('ValidatedTextInput', () => {
   });
 
   it('renders warnings returned by the validator', () => {
-    renderComponent({
+    const { store } = renderComponent({
       validator: () => ({ errors: [], warnings: [warning] }),
     });
 
@@ -113,6 +210,7 @@ describe('ValidatedTextInput', () => {
     expect(screen.getByText(/warning status/)).toBeInTheDocument();
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(input).toHaveAccessibleDescription(/Potential issue/);
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
   });
 
   it('renders helper text when warnings is an empty array', () => {

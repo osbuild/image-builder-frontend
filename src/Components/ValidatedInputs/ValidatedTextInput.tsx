@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 
 import {
   Button,
@@ -9,7 +9,13 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
-import type { ValidationResult } from '@/store/slices/wizard';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addPendingInput,
+  removePendingInput,
+  selectForceShowErrors,
+  type ValidationResult,
+} from '@/store/slices/wizard';
 
 import { ValidatedInputHelperText } from './ValidatedInputHelperText';
 
@@ -45,12 +51,23 @@ export const ValidatedTextInput = <T,>({
   inputProps,
   ...props
 }: ValidatedTextInputProps<T>) => {
+  const dispatch = useAppDispatch();
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
   const helperTextId = useId();
   const [isPristine, setIsPristine] = useState(value === '');
   const [hideText, setHideText] = useState(kind === 'password');
   const { errors, warnings = [] } = validator(value);
+  const hasBlockingErrors = !isDisabled && errors.length > 0;
 
-  const showValidationErrors = !isPristine || showErrors;
+  useEffect(() => {
+    if (!hasBlockingErrors) return;
+    dispatch(addPendingInput(helperTextId));
+    return () => {
+      dispatch(removePendingInput(helperTextId));
+    };
+  }, [helperTextId, hasBlockingErrors, dispatch]);
+
+  const showValidationErrors = !isPristine || showErrors || forceShowErrors;
   const displayedErrors = showValidationErrors ? errors : [];
 
   const handleBlur = () => {

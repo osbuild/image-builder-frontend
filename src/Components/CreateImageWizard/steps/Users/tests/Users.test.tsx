@@ -4,6 +4,7 @@ import { screen, within } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
 import {
+  clearWithWait,
   clickWithWait,
   createUser,
   renderWithRedux,
@@ -149,6 +150,41 @@ describe('Users Component', () => {
   });
 
   describe('Validation', () => {
+    test('only blocks an empty editor after the user starts filling it in', async () => {
+      const { store } = renderWithRedux(<UsersStep />);
+      const user = createUser();
+      const passwordInput = screen.getByLabelText('blueprint user password');
+
+      expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+
+      await typeWithWait(user, passwordInput, 'SecurePass123');
+
+      expect(store.getState().wizard.users.users).toEqual([]);
+      expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+
+      await clearWithWait(user, passwordInput);
+
+      expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+    });
+
+    test('blocks navigation when an existing username is cleared', async () => {
+      const { store } = renderWithRedux(<UsersStep />, {
+        users: {
+          ...initialState.users,
+          users: [{ name: 'testuser', groups: [], hasPassword: false }],
+        },
+      });
+      const user = createUser();
+
+      await clearWithWait(
+        user,
+        screen.getByRole('textbox', { name: 'blueprint user name' }),
+      );
+
+      expect(store.getState().wizard.users.users[0].name).toBe('testuser');
+      expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+    });
+
     test('shows duplicate-name and password errors together', () => {
       renderWithRedux(<UsersStep />, {
         users: {
