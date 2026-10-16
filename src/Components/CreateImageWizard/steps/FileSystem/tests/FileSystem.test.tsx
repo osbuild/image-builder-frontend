@@ -184,6 +184,54 @@ describe('FileSystem Component', () => {
       expect(mountPointAlerts.length).toBeGreaterThanOrEqual(1);
     });
 
+    test('shows duplicate mountpoint error on an empty edited partition', async () => {
+      const user = createUser();
+      renderFileSystemStep({
+        filesystem: {
+          mode: 'basic',
+          filesystem: {
+            partitions: [
+              {
+                id: 'empty',
+                mountpoint: '',
+                min_size: '3',
+                unit: 'GiB',
+              },
+              {
+                id: 'home',
+                mountpoint: '/home',
+                min_size: '5',
+                unit: 'GiB',
+              },
+              {
+                id: 'root',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+              },
+            ],
+          },
+          partitioningMode: undefined,
+        },
+      });
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const firstRow = within(table).getAllByRole('row')[1];
+      const mountpointInput = within(firstRow).getByRole('textbox', {
+        name: /mount point input/i,
+      });
+
+      await clickWithWait(user, mountpointInput);
+      await typeWithWait(user, mountpointInput, '/home');
+      await tabWithWait(user);
+
+      expect(
+        await within(firstRow).findByText(/duplicate mount points/i),
+      ).toBeInTheDocument();
+    });
+
     test('clears duplicate mount point error when resolved', async () => {
       const user = createUser();
       renderFileSystemStep({
@@ -230,13 +278,13 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, thirdRowMountpoint);
       await clearWithWait(user, thirdRowMountpoint);
       await typeWithWait(user, thirdRowMountpoint, '/var');
+      await tabWithWait(user);
 
-      await screen.findByRole('heading', {
-        name: /File system configuration/i,
-      });
-
-      const alertsAfter = screen.queryAllByText(/duplicate mount points/i);
-      expect(alertsAfter).toHaveLength(0);
+      await waitFor(() =>
+        expect(screen.queryAllByText(/duplicate mount points/i)).toHaveLength(
+          0,
+        ),
+      );
     });
 
     test('shows validation error for invalid partition size', async () => {
@@ -446,6 +494,7 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, mountpointInputs[1]);
       await clearWithWait(user, mountpointInputs[1]);
       await typeWithWait(user, mountpointInputs[1], '/home/cakerecipes');
+      await tabWithWait(user);
 
       expect(
         getBasicPartitions(store.getState().wizard.filesystem)[1].mountpoint,

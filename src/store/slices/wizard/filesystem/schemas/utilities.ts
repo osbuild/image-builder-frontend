@@ -14,7 +14,7 @@ export const uniqueMountpoints = () => {
           ctx.addIssue({
             code: 'custom',
             path: [partition.id],
-            message: 'Duplicate mountpoint',
+            message: 'Duplicate mount points',
             params: { type: 'duplicate', value: partition.mountpoint },
           });
           continue;
@@ -32,7 +32,7 @@ export const uniqueMountpoints = () => {
           ctx.addIssue({
             code: 'custom',
             path: [partition.id, 'logical_volumes', volume.id],
-            message: 'Duplicate mountpoint',
+            message: 'Duplicate mount points',
             params: { type: 'duplicate', value: volume.mountpoint },
           });
           continue;

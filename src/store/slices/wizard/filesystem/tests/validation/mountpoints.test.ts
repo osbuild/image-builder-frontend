@@ -116,11 +116,11 @@ describe('filesystem mountpoint validation', () => {
 
     expect(getIssueDetails(result.errors)).toEqual([
       {
-        message: 'Duplicate mountpoint',
+        message: 'Duplicate mount points',
         path: ['disk', 'partitions', 'vg-main', 'logical_volumes', 'root-lv'],
       },
       {
-        message: 'Duplicate mountpoint',
+        message: 'Duplicate mount points',
         path: ['disk', 'partitions', 'vg-main', 'logical_volumes', 'home-lv'],
       },
     ]);
