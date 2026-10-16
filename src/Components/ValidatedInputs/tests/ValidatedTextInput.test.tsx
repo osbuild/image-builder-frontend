@@ -17,6 +17,12 @@ const warning: ValidationIssue = {
   value: 'warning-value',
 };
 
+const duplicate: ValidationIssue = {
+  message: 'Duplicate name',
+  kind: 'duplicate',
+  value: 'taken-name',
+};
+
 const onChange = vi.fn();
 const onCommit = vi.fn();
 
@@ -85,6 +91,45 @@ describe('ValidatedTextInput', () => {
     fireEvent.blur(screen.getByRole('textbox', { name: 'Name' }));
 
     expect(onCommit).toHaveBeenCalledWith('valid-name');
+  });
+
+  it('commits duplicates so either side of the conflict can resolve it', () => {
+    renderComponent({
+      value: 'taken-name',
+      validator: (value) => ({ data: value, errors: [duplicate] }),
+    });
+
+    const input = screen.getByRole('textbox', { name: 'Name' });
+    fireEvent.blur(input);
+
+    expect(onCommit).toHaveBeenCalledWith('taken-name');
+    expect(screen.getByText('Duplicate name')).toBeInTheDocument();
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('does not commit when a duplicate accompanies a format error', () => {
+    renderComponent({
+      value: 'taken name',
+      validator: (value) => ({
+        data: value,
+        errors: [duplicate, { message: 'Invalid name', kind: 'format', value }],
+      }),
+    });
+
+    fireEvent.blur(screen.getByRole('textbox', { name: 'Name' }));
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it('does not commit errors that are not marked as duplicates', () => {
+    renderComponent({
+      value: 'some-name',
+      validator: (value) => ({ data: value, errors: [{ message: 'Unknown' }] }),
+    });
+
+    fireEvent.blur(screen.getByRole('textbox', { name: 'Name' }));
+
+    expect(onCommit).not.toHaveBeenCalled();
   });
 
   it('shows validation errors when showErrors is true', () => {
