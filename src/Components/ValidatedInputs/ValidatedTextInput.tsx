@@ -57,7 +57,12 @@ export const ValidatedTextInput = <T,>({
     setIsPristine(false);
 
     const result = validator(value);
-    if (result.errors.length === 0) {
+    // NOTE: A duplicate is a conflict between committed values, not a bad value.
+    // Commit it so slice validation can report it and either row can resolve it.
+    const blocking = result.errors.filter(
+      (issue) => issue.kind !== 'duplicate',
+    );
+    if (blocking.length === 0 && result.data) {
       onCommit(result.data);
     }
   };
