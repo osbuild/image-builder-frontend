@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Wizard, WizardStep } from '@patternfly/react-core';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { renderWithRedux } from '@/test/testUtils';
 
@@ -38,5 +38,32 @@ describe('CustomWizardFooter', () => {
 
     expect(await screen.findByRole('button', { name: 'Next' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Review image' })).toBeDisabled();
+  });
+
+  test('Back clears pending inputs', async () => {
+    const { store } = renderWithRedux(
+      <Wizard startIndex={2}>
+        <WizardStep name='Previous step' id='previous-step'>
+          Previous step
+        </WizardStep>
+        <WizardStep
+          name='Current step'
+          id='current-step'
+          footer={<CustomWizardFooter hasErrors={false} isOnPremise />}
+        >
+          Current step
+        </WizardStep>
+      </Wizard>,
+      {
+        validation: {
+          forceShowErrors: false,
+          pendingInputs: ['hostname'],
+        },
+      },
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Back' }));
+
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
   });
 });

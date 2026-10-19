@@ -12,6 +12,7 @@ import { flushSync } from 'react-dom';
 import { AMPLITUDE_MODULE_NAME } from '@/constants';
 import { useAppDispatch } from '@/store/hooks';
 import {
+  clearPendingInputs,
   resetForceShowErrors,
   setForceShowErrors,
 } from '@/store/slices/wizard';
@@ -94,6 +95,7 @@ export const CustomWizardFooter = ({
           variant='secondary'
           onClick={() => {
             dispatch(resetForceShowErrors());
+            dispatch(clearPendingInputs());
             goToPrevStep();
           }}
           isDisabled={disableBack || false}

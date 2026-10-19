@@ -25,6 +25,9 @@ export const validationSlice = createSlice({
         state.pendingInputs.splice(index, 1);
       }
     },
+    clearPendingInputs: (state) => {
+      state.pendingInputs = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -43,4 +46,5 @@ export const {
   resetForceShowErrors,
   addPendingInput,
   removePendingInput,
+  clearPendingInputs,
 } = validationSlice.actions;
