@@ -65,6 +65,7 @@ import {
   usePackageRecommendations,
   useRemovePackageContent,
   useRequiredPackages,
+  useSearchAnalytics,
 } from '../packagesUtilities';
 
 type PackageSearchProps = {
@@ -119,9 +120,12 @@ const PackageSearch = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
-  const [hasTrackedRecommendations, setHasTrackedRecommendations] =
-    useState(false);
+  useSearchAnalytics(
+    isOpen,
+    packageType,
+    transformedRecommendations,
+    recommendationsData,
+  );
 
   const epelRepoUrlByDistribution =
     getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
@@ -532,50 +536,6 @@ const PackageSearch = ({
     isSuccessCustomGroups,
     isSuccessRecommendedGroups,
     isSearchingOtherRepos,
-  ]);
-
-  useEffect(() => {
-    if (!isOpen || packageType !== 'packages' || isOnPremise) {
-      if (!isOpen) {
-        setHasTrackedOpen(false);
-        setHasTrackedRecommendations(false);
-      }
-      return;
-    }
-
-    if (!hasTrackedOpen) {
-      analytics.track(
-        `${AMPLITUDE_MODULE_NAME} - Package Search Dropdown Opened`,
-        {
-          module: AMPLITUDE_MODULE_NAME,
-          isPreview: isBeta(),
-          selectedPackages: packages.map((pkg) => pkg.name),
-          recommendationsShown: transformedRecommendations.length > 0,
-        },
-      );
-      setHasTrackedOpen(true);
-    }
-
-    if (transformedRecommendations.length > 0 && !hasTrackedRecommendations) {
-      analytics.track(
-        `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
-        {
-          module: AMPLITUDE_MODULE_NAME,
-          isPreview: isBeta(),
-          shownRecommendations: recommendationsData?.packages || [],
-          selectedPackages: packages.map((pkg) => pkg.name),
-          distribution: distribution.replace('-', ''),
-          modelVersion: recommendationsData?.modelVersion,
-        },
-      );
-      setHasTrackedRecommendations(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isOpen,
-    hasTrackedOpen,
-    hasTrackedRecommendations,
-    transformedRecommendations,
   ]);
 
   const sortedPackages = useMemo(() => {
