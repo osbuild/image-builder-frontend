@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 
 import {
   Button,
@@ -9,7 +9,12 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 
-import type { ValidationResult } from '@/store/slices/wizard';
+import { useAppDispatch } from '@/store/hooks';
+import {
+  addPendingInput,
+  removePendingInput,
+  type ValidationResult,
+} from '@/store/slices/wizard';
 
 import { ValidatedInputHelperText } from './ValidatedInputHelperText';
 
@@ -41,12 +46,20 @@ export const ValidatedTextInput = <T,>({
   handleClear,
   clearButtonAriaLabel = 'Clear input',
   isDisabled = false,
+  onChange,
   onFocus,
   inputProps,
   ...props
 }: ValidatedTextInputProps<T>) => {
   const helperTextId = useId();
+  const dispatch = useAppDispatch();
   const [isPristine, setIsPristine] = useState(value === '');
+
+  useEffect(() => {
+    return () => {
+      dispatch(removePendingInput(helperTextId));
+    };
+  }, [dispatch, helperTextId]);
   const [hideText, setHideText] = useState(kind === 'password');
   const { errors, warnings = [] } = validator(value);
 
@@ -62,8 +75,9 @@ export const ValidatedTextInput = <T,>({
     const blocking = result.errors.filter(
       (issue) => issue.kind !== 'duplicate',
     );
-    if (blocking.length === 0 && result.data) {
+    if (blocking.length === 0) {
       onCommit(result.data);
+      dispatch(removePendingInput(helperTextId));
     }
   };
 
@@ -91,6 +105,12 @@ export const ValidatedTextInput = <T,>({
             setHideText(false);
             onFocus?.(event);
           }}
+          onChange={(event, nextValue) => {
+            if (nextValue !== value) {
+              dispatch(addPendingInput(helperTextId));
+            }
+            onChange?.(event, nextValue);
+          }}
           onBlur={() => {
             setHideText(kind === 'password');
             handleBlur();
@@ -105,7 +125,10 @@ export const ValidatedTextInput = <T,>({
           <TextInputGroupUtilities>
             <Button
               variant='plain'
-              onClick={handleClear}
+              onClick={() => {
+                handleClear();
+                dispatch(removePendingInput(helperTextId));
+              }}
               aria-label={clearButtonAriaLabel}
               icon={<TimesIcon />}
               tabIndex={-1}
