@@ -14,8 +14,9 @@ import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '@/Hooks';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
+import { clearPendingInputs } from '@/store/slices/wizard';
 import { selectWizardModalMode } from '@/store/slices/wizardModal';
 
 import {
@@ -30,6 +31,7 @@ import { useIsBlueprintValid } from '../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
   const { goToPrevStep, close } = useWizardContext();
+  const dispatch = useAppDispatch();
   const { isSuccess: isCreateSuccess, reset: resetCreate } =
     useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
 
@@ -59,7 +61,13 @@ const ReviewWizardFooter = () => {
         columnGap={{ default: 'columnGapSm' }}
         justifyContent={{ default: 'justifyContentFlexEnd' }}
       >
-        <Button variant='secondary' onClick={goToPrevStep}>
+        <Button
+          variant='secondary'
+          onClick={() => {
+            dispatch(clearPendingInputs());
+            goToPrevStep();
+          }}
+        >
           Back
         </Button>
         <Dropdown
