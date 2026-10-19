@@ -1,8 +1,9 @@
 import React, { type ComponentProps } from 'react';
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import type { ValidationIssue, ValidationResult } from '@/store/slices/wizard';
+import { renderWithRedux } from '@/test/testUtils';
 
 import { ValidatedTextInput } from '../ValidatedTextInput';
 
@@ -37,7 +38,7 @@ const renderComponent = (
     onCommit,
   };
 
-  return render(<ValidatedTextInput {...defaultProps} {...props} />);
+  return renderWithRedux(<ValidatedTextInput {...defaultProps} {...props} />);
 };
 
 describe('ValidatedTextInput', () => {
@@ -83,6 +84,31 @@ describe('ValidatedTextInput', () => {
     fireEvent.focus(screen.getByLabelText('Name'));
 
     expect(onFocus).toHaveBeenCalledTimes(1);
+  });
+
+  it('tracks pending input after a value change, not on focus', () => {
+    const { store } = renderComponent({ value: 'valid-name' });
+    const input = screen.getByRole('textbox', { name: 'Name' });
+
+    fireEvent.focus(input);
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
+
+    fireEvent.change(input, { target: { value: 'updated-name' } });
+
+    expect(onChange).toHaveBeenCalledWith(expect.anything(), 'updated-name');
+    expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+  });
+
+  it('removes pending input when unmounted', () => {
+    const { store, unmount } = renderComponent({ value: 'valid-name' });
+    const input = screen.getByRole('textbox', { name: 'Name' });
+
+    fireEvent.change(input, { target: { value: 'updated-name' } });
+    expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+
+    unmount();
+
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
   });
 
   it('commits validated data on blur', () => {
@@ -184,16 +210,24 @@ describe('ValidatedTextInput', () => {
     expect(screen.queryByText(/warning status/)).not.toBeInTheDocument();
   });
 
-  it('calls handleClear from the clear button', () => {
+  it('clears pending input when the clear button is clicked', () => {
     const handleClear = vi.fn();
-    renderComponent({
+    const { store } = renderComponent({
       value: 'existing-name',
-      validator: () => ({ errors: [] }),
+      validator: () => ({
+        errors: [{ message: 'Invalid', kind: 'format' }],
+      }),
       handleClear,
     });
+    const input = screen.getByRole('textbox', { name: 'Name' });
+
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'invalid-draft' } });
+    expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear input' }));
 
     expect(handleClear).toHaveBeenCalledTimes(1);
+    expect(store.getState().wizard.validation.pendingInputs).toEqual([]);
   });
 });
