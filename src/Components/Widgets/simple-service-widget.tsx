@@ -21,9 +21,7 @@ type SimpleServiceWidgetProps = {
   isExternal?: boolean;
 };
 
-export const SimpleServiceWidget: React.FunctionComponent<
-  SimpleServiceWidgetProps
-> = (props) => {
+export const SimpleServiceWidget = (props: SimpleServiceWidgetProps) => {
   return (
     <Card isPlain>
       <>

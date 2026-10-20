@@ -49,7 +49,7 @@ type ImagesTableToolbarProps = {
   ) => void;
 };
 
-const ImagesTableToolbar: React.FC<ImagesTableToolbarProps> = ({
+const ImagesTableToolbar = ({
   itemCount,
   perPage,
   page,

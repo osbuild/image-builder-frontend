@@ -39,9 +39,10 @@ type DeleteBlueprintModalProps = {
   isOpen: boolean;
 };
 
-export const DeleteBlueprintModal: React.FunctionComponent<
-  DeleteBlueprintModalProps
-> = ({ setShowDeleteModal, isOpen }: DeleteBlueprintModalProps) => {
+export const DeleteBlueprintModal = ({
+  setShowDeleteModal,
+  isOpen,
+}: DeleteBlueprintModalProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
