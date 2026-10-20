@@ -20,9 +20,9 @@ import { useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-interface BlueprintActionsMenuProps {
+type BlueprintActionsMenuProps = {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 export const BlueprintActionsMenu: React.FunctionComponent<
   BlueprintActionsMenuProps

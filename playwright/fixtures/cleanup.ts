@@ -4,11 +4,11 @@ type WithCleanup = {
   cleanup: Cleanup;
 };
 
-export interface Cleanup {
+type Cleanup = {
   add: (cleanupFn: () => Promise<unknown>) => symbol;
   runAndAdd: (cleanupFn: () => Promise<unknown>) => Promise<symbol>;
   remove: (key: symbol) => void;
-}
+};
 
 export const test = oldTest.extend<WithCleanup>({
   cleanup: async ({}, use) => {

@@ -46,10 +46,10 @@ import {
 import { openWizardModal } from '@/store/slices/wizardModal';
 import { getErrorMessage } from '@/Utilities/getErrorMessage';
 
-interface ImportBlueprintModalProps {
+type ImportBlueprintModalProps = {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
-}
+};
 
 export const ImportBlueprintModal: React.FunctionComponent<
   ImportBlueprintModalProps

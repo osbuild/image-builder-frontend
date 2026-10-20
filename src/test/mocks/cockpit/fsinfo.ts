@@ -13,9 +13,9 @@ type fileinfo = {
   type?: string;
 };
 
-interface FSInfoMap {
+type FSInfoMap = {
   [id: string]: fileinfo;
-}
+};
 
 export const listBlueprints = (): Promise<fileinfo> => {
   const result: FSInfoMap = {};

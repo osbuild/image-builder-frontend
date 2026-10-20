@@ -16,13 +16,13 @@ import {
   VersionFilterType,
 } from '@/store/slices/blueprint';
 
-interface blueprintVersionFilterProps {
+type BlueprintVersionFilterProps = {
   onFilterChange?: () => void;
-}
+};
 
-const BlueprintVersionFilter: React.FC<blueprintVersionFilterProps> = ({
+const BlueprintVersionFilter: React.FC<BlueprintVersionFilterProps> = ({
   onFilterChange,
-}: blueprintVersionFilterProps) => {
+}: BlueprintVersionFilterProps) => {
   const dispatch = useAppDispatch();
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
   const [isOpen, setIsOpen] = React.useState(false);

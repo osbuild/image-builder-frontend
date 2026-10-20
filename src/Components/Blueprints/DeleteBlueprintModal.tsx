@@ -34,10 +34,10 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-interface DeleteBlueprintModalProps {
+type DeleteBlueprintModalProps = {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
-}
+};
 
 export const DeleteBlueprintModal: React.FunctionComponent<
   DeleteBlueprintModalProps

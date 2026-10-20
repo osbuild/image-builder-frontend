@@ -2,9 +2,9 @@ import { test as base } from '@playwright/test';
 
 import { closePopupsIfExist } from '../helpers/helpers';
 
-export interface PopupHandlerFixture {
+type PopupHandlerFixture = {
   popupHandler: void;
-}
+};
 
 // This fixture will close any popups that might get opened during the test execution
 export const test = base.extend<PopupHandlerFixture>({
