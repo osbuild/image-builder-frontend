@@ -40,8 +40,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled.then(() => {
           dispatch(
-            // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-            imageBuilderApi.util.invalidateTags(['Blueprints', 'Blueprint']),
+            enhancedApi.util.invalidateTags(['Blueprints', 'Blueprint']),
           );
         });
       },
@@ -49,8 +48,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
     createBlueprint: {
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled.then(() => {
-          // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-          dispatch(imageBuilderApi.util.invalidateTags(['Blueprints']));
+          dispatch(enhancedApi.util.invalidateTags(['Blueprints']));
         });
       },
     },
@@ -60,10 +58,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
     composeImage: {
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled.then(() => {
-          dispatch(
-            // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-            imageBuilderApi.util.invalidateTags(['Blueprints', 'Compose']),
-          );
+          dispatch(enhancedApi.util.invalidateTags(['Blueprints', 'Compose']));
         });
       },
     },
