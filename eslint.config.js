@@ -157,6 +157,7 @@ module.exports = defineConfig([
         },
       ],
       '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unsafe-function-type': 'error',
       'no-unused-vars': 'off', // disable js rule in favor of @typescript-eslint's rule
