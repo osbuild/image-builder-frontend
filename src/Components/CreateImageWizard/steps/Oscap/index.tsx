@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { CustomizationLabels } from '@/Components/sharedComponents/CustomizationLabels';
@@ -29,6 +30,7 @@ import {
 } from '@/constants';
 import { useGetUser } from '@/Hooks';
 import {
+  DistributionProfileItem,
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
@@ -100,12 +102,12 @@ const OscapContent = () => {
   );
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-ignore if openScapProfile is undefined the query is going to get skipped
-      profile: profileID,
-    },
-    { skip: !profileID || restrictions.openscap.shouldHide },
+    profileID && !restrictions.openscap.shouldHide
+      ? {
+          distribution: release,
+          profile: profileID as DistributionProfileItem,
+        }
+      : skipToken,
   );
 
   useEffect(() => {
