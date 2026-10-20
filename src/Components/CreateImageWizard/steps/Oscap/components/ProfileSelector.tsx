@@ -9,6 +9,7 @@ import {
   SelectOption,
   Spinner,
 } from '@patternfly/react-core';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 import {
   DistributionProfileItem,
@@ -75,12 +76,12 @@ const ProfileSelector = ({
   } = useSelectorHandlers();
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-ignore if openScapProfile is undefined the query is going to get skipped
-      profile: profileID,
-    },
-    { skip: !profileID },
+    profileID
+      ? {
+          distribution: release,
+          profile: profileID as DistributionProfileItem,
+        }
+      : skipToken,
   );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();

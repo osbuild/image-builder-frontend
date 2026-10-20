@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { skipToken } from '@reduxjs/toolkit/query';
+
 import { useAppSelector } from '@/store/hooks';
 import {
   removeBetaFromRelease,
@@ -14,6 +16,7 @@ import {
 import { splitKernelArgs } from '@/Utilities/splitKernelArgs';
 
 import {
+  DistributionProfileItem,
   Distributions,
   imageBuilderApi,
   OpenScapProfile,
@@ -38,24 +41,22 @@ export const useSecuritySummary = () => {
   // We also access `.endpoints` directly to avoid circular dependencies.
   const { endpoints } = isOnPremise ? composerApi : imageBuilderApi;
   const { data: oscapData } = endpoints.getOscapCustomizations.useQuery(
-    {
-      // @ts-expect-error we skip this if it's not defined
-      profile: profileId,
-      distribution: distribution as Distributions,
-    },
-    { skip: isImageMode || !profileId },
+    !isImageMode && profileId
+      ? {
+          profile: profileId as DistributionProfileItem,
+          distribution: distribution as Distributions,
+        }
+      : skipToken,
   );
 
   const { data: complianceData, error: complianceError } =
     imageBuilderApi.endpoints.getOscapCustomizationsForPolicy.useQuery(
-      {
-        // @ts-expect-error we skip this if it's not defined
-        policy: policyId,
-        distribution: distribution as Distributions,
-      },
-      {
-        skip: isImageMode || isOnPremise || !policyId,
-      },
+      !isImageMode && !isOnPremise && policyId
+        ? {
+            policy: policyId,
+            distribution: distribution as Distributions,
+          }
+        : skipToken,
     );
 
   const data = complianceType === 'compliance' ? complianceData : oscapData;
