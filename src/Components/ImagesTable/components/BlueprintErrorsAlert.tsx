@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Alert,
@@ -22,7 +22,7 @@ const BlueprintErrorsAlert = ({
 }: BlueprintErrorsAlertProps) => {
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
 
-  const [isLintExp, setIsLintExp] = React.useState(true);
+  const [isLintExp, setIsLintExp] = useState(true);
   const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsLintExp(isExpanded);
   };
