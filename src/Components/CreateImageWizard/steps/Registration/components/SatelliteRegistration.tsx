@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Content,
@@ -25,7 +25,7 @@ import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 const SatelliteRegistration = () => {
   const dispatch = useAppDispatch();
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
-  const [isRejected, setIsRejected] = React.useState(false);
+  const [isRejected, setIsRejected] = useState(false);
   const stepValidation = useRegistrationValidation();
 
   const validated =

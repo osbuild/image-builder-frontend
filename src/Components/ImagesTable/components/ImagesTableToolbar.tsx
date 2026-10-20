@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   Pagination,
@@ -71,7 +71,7 @@ const ImagesTableToolbar = ({
     { skip: !selectedBlueprintId },
   );
 
-  const lintWarnings = React.useMemo(
+  const lintWarnings = useMemo(
     // there is a mismatch between API type and real data
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     () => blueprintDetails?.lint?.warnings ?? [],

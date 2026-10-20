@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Dropdown,
@@ -25,7 +25,7 @@ const BlueprintVersionFilter = ({
 }: BlueprintVersionFilterProps) => {
   const dispatch = useAppDispatch();
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);

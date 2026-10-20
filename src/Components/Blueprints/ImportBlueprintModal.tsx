@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -65,15 +65,14 @@ export const ImportBlueprintModal = ({
   };
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const [fileContent, setFileContent] = React.useState('');
-  const [importedBlueprint, setImportedBlueprint] =
-    React.useState<WizardState>();
-  const [isInvalidFormat, setIsInvalidFormat] = React.useState(false);
-  const [filename, setFilename] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isRejected, setIsRejected] = React.useState(false);
-  const [isOnPremBlueprint, setIsOnPremBlueprint] = React.useState(false);
-  const [isCheckedImportRepos, setIsCheckedImportRepos] = React.useState(true);
+  const [fileContent, setFileContent] = useState('');
+  const [importedBlueprint, setImportedBlueprint] = useState<WizardState>();
+  const [isInvalidFormat, setIsInvalidFormat] = useState(false);
+  const [filename, setFilename] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRejected, setIsRejected] = useState(false);
+  const [isOnPremBlueprint, setIsOnPremBlueprint] = useState(false);
+  const [isCheckedImportRepos, setIsCheckedImportRepos] = useState(true);
   const addNotification = useAddNotification();
   const [importRepositories] = useBulkImportRepositoriesMutation();
   const [listRepositories] = useLazyListRepositoriesQuery();
@@ -186,7 +185,7 @@ export const ImportBlueprintModal = ({
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (filename && fileContent) {
       const parseAndImport = async () => {
         try {

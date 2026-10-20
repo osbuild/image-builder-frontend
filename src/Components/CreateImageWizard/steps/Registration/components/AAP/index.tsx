@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Checkbox,
@@ -36,7 +36,7 @@ const AAPRegistration = () => {
     selectAapTlsCertificateAuthority,
   );
   const tlsConfirmation = useAppSelector(selectAapTlsConfirmation);
-  const [isRejected, setIsRejected] = React.useState(false);
+  const [isRejected, setIsRejected] = useState(false);
   const stepValidation = useAAPValidation();
 
   const isHttpsUrl = callbackUrl?.toLowerCase().startsWith('https://') || false;
