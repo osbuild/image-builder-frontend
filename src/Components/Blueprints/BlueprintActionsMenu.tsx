@@ -24,9 +24,9 @@ type BlueprintActionsMenuProps = {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const BlueprintActionsMenu: React.FunctionComponent<
-  BlueprintActionsMenuProps
-> = ({ setShowDeleteModal }: BlueprintActionsMenuProps) => {
+export const BlueprintActionsMenu = ({
+  setShowDeleteModal,
+}: BlueprintActionsMenuProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const [showBlueprintActionsMenu, setShowBlueprintActionsMenu] =
     useState(false);

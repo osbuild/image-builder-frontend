@@ -20,7 +20,7 @@ type BlueprintVersionFilterProps = {
   onFilterChange?: () => void;
 };
 
-const BlueprintVersionFilter: React.FC<BlueprintVersionFilterProps> = ({
+const BlueprintVersionFilter = ({
   onFilterChange,
 }: BlueprintVersionFilterProps) => {
   const dispatch = useAppDispatch();

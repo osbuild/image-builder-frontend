@@ -2,7 +2,7 @@ import React from 'react';
 
 import { SimpleServiceWidget } from './simple-service-widget';
 
-const ImageBuilderWidget: React.FunctionComponent = () => {
+const ImageBuilderWidget = () => {
   return (
     <>
       <SimpleServiceWidget

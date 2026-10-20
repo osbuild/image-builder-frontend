@@ -51,9 +51,10 @@ type ImportBlueprintModalProps = {
   isOpen: boolean;
 };
 
-export const ImportBlueprintModal: React.FunctionComponent<
-  ImportBlueprintModalProps
-> = ({ setShowImportModal, isOpen }: ImportBlueprintModalProps) => {
+export const ImportBlueprintModal = ({
+  setShowImportModal,
+  isOpen,
+}: ImportBlueprintModalProps) => {
   const onImportClose = () => {
     setShowImportModal(false);
     setFilename('');
