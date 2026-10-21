@@ -22,7 +22,7 @@ import { useFlag } from '@/Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
 
-type ImageBuilderHeaderPropTypes = {
+type ImageBuilderHeaderProps = {
   inWizard?: boolean;
 };
 
@@ -69,9 +69,7 @@ const AboutImageBuilderPopover = () => {
   );
 };
 
-export const ImageBuilderHeader = ({
-  inWizard,
-}: ImageBuilderHeaderPropTypes) => {
+export const ImageBuilderHeader = ({ inWizard }: ImageBuilderHeaderProps) => {
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 

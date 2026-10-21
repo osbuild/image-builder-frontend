@@ -13,11 +13,11 @@ import Status from './Status';
 
 import { statuses } from '../statusConfig';
 
-type CloudStatusPropTypes = {
+type CloudStatusProps = {
   compose: ComposesResponseItem;
 };
 
-const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
+const CloudStatus = ({ compose }: CloudStatusProps) => {
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

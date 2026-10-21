@@ -36,7 +36,7 @@ import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { defaultActions } from '../defaultActions';
 
-type RowPropTypes = {
+type RowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   status: JSX.Element;
@@ -58,7 +58,7 @@ const Row = ({
   instance,
   onSelect,
   isSelected,
-}: RowPropTypes) => {
+}: RowProps) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   const isOnPremise = useAppSelector(selectIsOnPremise);

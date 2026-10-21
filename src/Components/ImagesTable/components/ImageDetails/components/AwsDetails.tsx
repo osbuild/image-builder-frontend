@@ -22,11 +22,11 @@ import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { isAwsUploadRequestOptions } from '@/store/typeGuards';
 
-type AwsDetailsPropTypes = {
+type AwsDetailsProps = {
   compose: ComposesResponseItem;
 };
 
-const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
+const AwsDetails = ({ compose }: AwsDetailsProps) => {
   const options = compose.request.image_requests[0].upload_request.options;
 
   const { analytics, auth } = useChrome();

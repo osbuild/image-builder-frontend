@@ -3,11 +3,11 @@ import React from 'react';
 import { targetOptions } from '@/constants';
 import { ComposesResponseItem } from '@/store/api/backend';
 
-type TargetPropTypes = {
+type TargetProps = {
   compose: ComposesResponseItem;
 };
 
-export const Target = ({ compose }: TargetPropTypes) => {
+export const Target = ({ compose }: TargetProps) => {
   return <p>{targetOptions[compose.request.image_requests[0].image_type]}</p>;
 };
 

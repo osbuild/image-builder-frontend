@@ -14,11 +14,11 @@ import {
 } from '@/store/api/backend';
 import { isOciUploadStatus } from '@/store/typeGuards';
 
-type OciDetailsPropTypes = {
+type OciDetailsProps = {
   compose: ComposesResponseItem;
 };
 
-const OciDetails = ({ compose }: OciDetailsPropTypes) => {
+const OciDetails = ({ compose }: OciDetailsProps) => {
   const { data: composeStatus } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

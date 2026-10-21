@@ -28,11 +28,11 @@ const VM_INSTALLABLE_IMAGE_TYPES: ImageTypes[] = [
   'network-installer',
 ];
 
-type LocalInstancePropTypes = {
+type LocalInstanceProps = {
   compose: ComposesResponseItem;
 };
 
-const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
+const LocalInstance = ({ compose }: LocalInstanceProps) => {
   const isMachinesAvailable = useCockpitMachinesAvailable();
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,

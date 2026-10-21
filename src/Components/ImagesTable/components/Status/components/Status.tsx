@@ -2,12 +2,12 @@ import React from 'react';
 
 import { Flex } from '@patternfly/react-core';
 
-type StatusPropTypes = {
+type StatusProps = {
   icon: JSX.Element;
   text: JSX.Element;
 };
 
-const Status = ({ icon, text }: StatusPropTypes) => {
+const Status = ({ icon, text }: StatusProps) => {
   return (
     <Flex className='pf-v6-u-align-items-baseline pf-m-nowrap'>
       <div className='pf-v6-u-mr-sm'>{icon}</div>

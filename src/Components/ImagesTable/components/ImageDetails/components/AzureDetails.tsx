@@ -17,11 +17,11 @@ import {
   isAzureUploadStatus,
 } from '@/store/typeGuards';
 
-type AzureDetailsPropTypes = {
+type AzureDetailsProps = {
   compose: ComposesResponseItem;
 };
 
-const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
+const AzureDetails = ({ compose }: AzureDetailsProps) => {
   const { data: composeStatus } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

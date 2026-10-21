@@ -7,19 +7,14 @@ import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
 
-type GcpRowPropTypes = {
+type GcpRowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (id: string) => void;
   isSelected?: boolean;
 };
 
-const GcpRow = ({
-  compose,
-  rowIndex,
-  onSelect,
-  isSelected,
-}: GcpRowPropTypes) => {
+const GcpRow = ({ compose, rowIndex, onSelect, isSelected }: GcpRowProps) => {
   const details = <GcpDetails compose={compose} />;
   const instance = <GcpLaunchModal compose={compose} />;
   const status = <CloudStatus compose={compose} />;

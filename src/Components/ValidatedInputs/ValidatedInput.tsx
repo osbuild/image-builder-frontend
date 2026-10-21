@@ -18,7 +18,7 @@ import type { StepValidation } from '@/Components/CreateImageWizard/utilities/us
 import { useAppSelector } from '@/store/hooks';
 import { selectForceShowErrors } from '@/store/slices/wizard';
 
-type ValidatedTextInputPropTypes = Omit<
+type ValidatedTextInputProps = Omit<
   TextInputGroupMainProps,
   'value' | 'type' | 'onBlur' | 'ref'
 > & {
@@ -174,7 +174,7 @@ export const ValidatedInput = ({
   value,
   handleClear,
   ...props
-}: ValidatedTextInputPropTypes) => {
+}: ValidatedTextInputProps) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
   const forceShowErrors = useAppSelector(selectForceShowErrors);
   const ariaLabel = props['aria-label'];
