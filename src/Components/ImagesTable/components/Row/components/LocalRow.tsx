@@ -7,7 +7,7 @@ import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
 
-type LocalRowPropTypes = {
+type LocalRowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (id: string) => void;
@@ -19,7 +19,7 @@ const LocalRow = ({
   rowIndex,
   onSelect,
   isSelected,
-}: LocalRowPropTypes) => {
+}: LocalRowProps) => {
   const details = <LocalDetails compose={compose} />;
   const instance = <LocalInstance compose={compose} />;
   const status = <LocalStatus compose={compose} />;

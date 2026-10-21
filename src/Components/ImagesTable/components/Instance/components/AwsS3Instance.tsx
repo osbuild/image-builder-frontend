@@ -13,12 +13,12 @@ import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import { isAwss3UploadStatus } from '@/store/typeGuards';
 
-type AwsS3InstancePropTypes = {
+type AwsS3InstanceProps = {
   compose: ComposesResponseItem;
   isExpired: boolean;
 };
 
-const AwsS3Instance = ({ compose, isExpired }: AwsS3InstancePropTypes) => {
+const AwsS3Instance = ({ compose, isExpired }: AwsS3InstanceProps) => {
   const { analytics } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
 

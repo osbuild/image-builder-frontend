@@ -7,7 +7,7 @@ import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
 
-type AzureRowPropTypes = {
+type AzureRowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (id: string) => void;
@@ -19,7 +19,7 @@ const AzureRow = ({
   rowIndex,
   onSelect,
   isSelected,
-}: AzureRowPropTypes) => {
+}: AzureRowProps) => {
   const details = <AzureDetails compose={compose} />;
   const instance = <AzureLaunchModal compose={compose} />;
   const status = <CloudStatus compose={compose} />;

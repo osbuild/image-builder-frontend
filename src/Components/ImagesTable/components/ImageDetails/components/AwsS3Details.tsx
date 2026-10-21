@@ -10,11 +10,11 @@ import {
 
 import { ComposesResponseItem } from '@/store/api/backend';
 
-type AwsS3DetailsPropTypes = {
+type AwsS3DetailsProps = {
   compose: ComposesResponseItem;
 };
 
-const AwsS3Details = ({ compose }: AwsS3DetailsPropTypes) => {
+const AwsS3Details = ({ compose }: AwsS3DetailsProps) => {
   return (
     <>
       <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>

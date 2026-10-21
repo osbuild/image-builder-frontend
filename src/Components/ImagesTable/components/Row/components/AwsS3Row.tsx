@@ -9,7 +9,7 @@ import { computeHoursToExpiration } from '@/Utilities/time';
 
 import Row from './Row';
 
-type AwsS3RowPropTypes = {
+type AwsS3RowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (id: string) => void;
@@ -21,7 +21,7 @@ const AwsS3Row = ({
   rowIndex,
   onSelect,
   isSelected,
-}: AwsS3RowPropTypes) => {
+}: AwsS3RowProps) => {
   const hoursToExpiration = computeHoursToExpiration(compose.created_at);
   const awsS3ExpirationTime = AWS_S3_EXPIRATION_TIME_IN_HOURS;
   const isExpired = hoursToExpiration >= awsS3ExpirationTime;

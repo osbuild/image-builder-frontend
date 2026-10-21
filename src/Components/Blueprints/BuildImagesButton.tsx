@@ -28,12 +28,12 @@ import { useAppSelector } from '@/store/hooks';
 import { selectSelectedBlueprintId } from '@/store/slices/blueprint';
 import { selectIsOnPremise } from '@/store/slices/env';
 
-type BuildImagesButtonPropTypes = {
+type BuildImagesButtonProps = {
   // default children is 'Build images'
   children?: React.ReactNode;
 };
 
-export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
+export const BuildImagesButton = ({ children }: BuildImagesButtonProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [deselectedTargets, setDeselectedTargets] = useState<ImageTypes[]>([]);
   const { trigger: buildBlueprint, isLoading: imageBuildLoading } =
@@ -158,7 +158,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   );
 };
 
-type BuildImagesButtonEmptyStatePropTypes = {
+type BuildImagesButtonEmptyStateProps = {
   variant?: ButtonProps['variant'];
   children?: React.ReactNode;
 };
@@ -166,7 +166,7 @@ type BuildImagesButtonEmptyStatePropTypes = {
 export const BuildImagesButtonEmptyState = ({
   variant,
   children,
-}: BuildImagesButtonEmptyStatePropTypes) => {
+}: BuildImagesButtonEmptyStateProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const { trigger: buildBlueprint, isLoading: imageBuildLoading } =
     useComposeBlueprintMutation();

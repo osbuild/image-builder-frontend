@@ -10,11 +10,11 @@ import {
 
 import { ComposesResponseItem } from '@/store/api/backend';
 
-type LocalDetailsPropTypes = {
+type LocalDetailsProps = {
   compose: ComposesResponseItem;
 };
 
-const LocalDetails = ({ compose }: LocalDetailsPropTypes) => {
+const LocalDetails = ({ compose }: LocalDetailsProps) => {
   return (
     <>
       <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>

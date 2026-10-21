@@ -18,7 +18,7 @@ import GcpRow from './GcpRow';
 import LocalRow from './LocalRow';
 import OciRow from './OciRow';
 
-type ImagesTableRowPropTypes = {
+type ImagesTableRowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (blueprintId: string) => void;
@@ -30,7 +30,7 @@ const ImagesTableRow = ({
   rowIndex,
   onSelect,
   isSelected,
-}: ImagesTableRowPropTypes) => {
+}: ImagesTableRowProps) => {
   const [pollingInterval, setPollingInterval] = useState(
     STATUS_POLLING_INTERVAL,
   );

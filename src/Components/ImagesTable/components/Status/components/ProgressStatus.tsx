@@ -6,11 +6,11 @@ import { ComposeStatus } from '@/store/api/backend';
 
 import { statuses } from '../statusConfig';
 
-type ProgressStatusPropTypes = {
+type ProgressStatusProps = {
   status: ComposeStatus;
 };
 
-const ProgressStatus = ({ status }: ProgressStatusPropTypes) => {
+const ProgressStatus = ({ status }: ProgressStatusProps) => {
   const icon = statuses[status.image_status.status].icon;
   const text = statuses[status.image_status.status].text;
   const progress = status.image_status.progress;

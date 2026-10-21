@@ -17,13 +17,13 @@ import { ComposeStatusError } from '@/store/api/backend';
 
 import './../../ImageBuildStatus.scss';
 
-type ErrorStatusPropTypes = {
+type ErrorStatusProps = {
   icon: JSX.Element;
   text: JSX.Element;
   error: ComposeStatusError | string;
 };
 
-const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
+const ErrorStatus = ({ icon, text, error }: ErrorStatusProps) => {
   let reason = '';
   const detailsArray: string[] = [];
   if (typeof error === 'string') {

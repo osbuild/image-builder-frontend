@@ -9,19 +9,14 @@ import { computeHoursToExpiration } from '@/Utilities/time';
 
 import Row from './Row';
 
-type OciRowPropTypes = {
+type OciRowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (id: string) => void;
   isSelected?: boolean;
 };
 
-const OciRow = ({
-  compose,
-  rowIndex,
-  onSelect,
-  isSelected,
-}: OciRowPropTypes) => {
+const OciRow = ({ compose, rowIndex, onSelect, isSelected }: OciRowProps) => {
   const daysToExpiration = Math.floor(
     computeHoursToExpiration(compose.created_at) / 24,
   );

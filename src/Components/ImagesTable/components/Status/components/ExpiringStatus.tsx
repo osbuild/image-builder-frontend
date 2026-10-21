@@ -17,7 +17,7 @@ import Status from './Status';
 
 import { statuses } from '../statusConfig';
 
-type ExpiringStatusPropTypes = {
+type ExpiringStatusProps = {
   compose: ComposesResponseItem;
   isExpired: boolean;
   timeToExpiration: number;
@@ -27,7 +27,7 @@ const ExpiringStatus = ({
   compose,
   isExpired,
   timeToExpiration,
-}: ExpiringStatusPropTypes) => {
+}: ExpiringStatusProps) => {
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

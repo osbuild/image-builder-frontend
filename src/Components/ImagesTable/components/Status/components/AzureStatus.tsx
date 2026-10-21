@@ -8,11 +8,11 @@ import Status from './Status';
 
 import { statuses } from '../statusConfig';
 
-type AzureStatusPropTypes = {
+type AzureStatusProps = {
   status: ComposeStatus;
 };
 
-const AzureStatus = ({ status }: AzureStatusPropTypes) => {
+const AzureStatus = ({ status }: AzureStatusProps) => {
   switch (status.image_status.status) {
     case 'failure': {
       return (

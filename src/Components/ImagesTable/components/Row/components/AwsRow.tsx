@@ -8,19 +8,14 @@ import { ComposesResponseItem } from '@/store/api/backend';
 
 import Row from './Row';
 
-type AwsRowPropTypes = {
+type AwsRowProps = {
   compose: ComposesResponseItem;
   rowIndex: number;
   onSelect?: (id: string) => void;
   isSelected?: boolean;
 };
 
-const AwsRow = ({
-  compose,
-  rowIndex,
-  onSelect,
-  isSelected,
-}: AwsRowPropTypes) => {
+const AwsRow = ({ compose, rowIndex, onSelect, isSelected }: AwsRowProps) => {
   const target = <AwsTarget />;
   const status = <CloudStatus compose={compose} />;
   const instance = <AWSLaunchModal compose={compose} />;

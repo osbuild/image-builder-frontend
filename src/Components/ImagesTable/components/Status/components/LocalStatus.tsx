@@ -13,11 +13,11 @@ import Status from './Status';
 
 import { statuses } from '../statusConfig';
 
-type LocalStatusPropTypes = {
+type LocalStatusProps = {
   compose: ComposesResponseItem;
 };
 
-const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
+const LocalStatus = ({ compose }: LocalStatusProps) => {
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });

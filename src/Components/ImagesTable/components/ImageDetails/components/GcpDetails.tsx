@@ -27,11 +27,11 @@ export const parseGcpSharedWith = (
   }
 };
 
-type GcpDetailsPropTypes = {
+type GcpDetailsProps = {
   compose: ComposesResponseItem;
 };
 
-const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
+const GcpDetails = ({ compose }: GcpDetailsProps) => {
   const { data: composeStatus } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
