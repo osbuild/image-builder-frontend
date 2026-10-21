@@ -177,6 +177,29 @@ module.exports = defineConfig([
           message:
             'useAppStore exposes the raw store — only use it for store.getState() inside event handlers, never during render. Add an eslint-disable with justification if this usage is intentional.',
         },
+        {
+          selector:
+            "TSTypeReference > TSQualifiedName[left.name='React'][right.name='FC'], TSTypeReference > Identifier[name='FC']",
+          message:
+            "Don't use React.FC. Prefer function declarations with typed props: function MyComponent(props: Props) { ... }",
+        },
+        {
+          selector:
+            "TSTypeReference > TSQualifiedName[left.name='React'][right.name='FunctionComponent'], TSTypeReference > Identifier[name='FunctionComponent']",
+          message:
+            "Don't use React.FunctionComponent. Prefer function declarations with typed props: function MyComponent(props: Props) { ... }",
+        },
+        {
+          selector:
+            "MemberExpression[object.name='React'][property.name=/^use/]",
+          message:
+            "Use direct imports instead of namespace access: import { useState } from 'react', not React.useState.",
+        },
+        {
+          selector: 'TSTypeAliasDeclaration[id.name=/PropTypes$/]',
+          message:
+            "Use 'Props' suffix instead of 'PropTypes' for component prop types.",
+        },
       ],
     },
     settings: {
