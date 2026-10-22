@@ -27,6 +27,7 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   ItemWithSources,
+  PackageRepository,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -418,66 +419,60 @@ export const useTransformedSearchResults = ({
   isLoadingRecommendations,
 }: UseTransformedSearchResultsArgs) => {
   const transformedPackages = useMemo(() => {
-    let transformedDistroData: ItemWithSources[] = [];
-    let transformedCustomData: ItemWithSources[] = [];
-    let transformedRecommendedData: ItemWithSources[] = [];
-
-    if (isSuccessDistroPackages && !isSearchingOtherRepos) {
-      transformedDistroData = dataDistroPackages!.map((values) => ({
+    const mapRpms = (
+      data: ApiSearchRpmResponse[],
+      repository: PackageRepository,
+    ): ItemWithSources[] =>
+      data.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
-        repository: 'distro',
+        repository,
         sources: values.package_sources,
       }));
-    }
 
-    if (isSuccessCustomPackages && !isSearchingOtherRepos) {
-      transformedCustomData = dataCustomPackages!.map((values) => ({
-        name: values.package_name!,
-        summary: values.summary!,
-        repository: 'custom',
-        sources: values.package_sources,
-      }));
-    }
+    const transformedDistroData =
+      isSuccessDistroPackages && !isSearchingOtherRepos
+        ? mapRpms(dataDistroPackages!, 'distro')
+        : [];
 
-    if (isSuccessRecommendedPackages && isSearchingOtherRepos) {
-      transformedRecommendedData = dataRecommendedPackages!.map((values) => ({
-        name: values.package_name!,
-        summary: values.summary!,
-        repository: 'recommended',
-        sources: values.package_sources,
-      }));
-    }
+    const transformedCustomData =
+      isSuccessCustomPackages && !isSearchingOtherRepos
+        ? mapRpms(dataCustomPackages!, 'custom')
+        : [];
 
-    const combinedPackageData = transformedDistroData
-      .concat(transformedCustomData)
-      .concat(transformedRecommendedData);
+    const transformedRecommendedData =
+      isSuccessRecommendedPackages && isSearchingOtherRepos
+        ? mapRpms(dataRecommendedPackages!, 'recommended')
+        : [];
 
-    let unpackedData: IBPackageWithRepositoryInfo[] =
-      combinedPackageData.flatMap((item) => {
-        // Spread modules into separate rows by application stream
-        if (item.sources) {
-          return item.sources.map((source) => ({
-            name: item.name,
-            summary: item.summary,
-            repository: item.repository,
-            type: source.type,
-            module_name: source.name,
-            stream: source.stream,
-            end_date: source.end_date,
-          }));
-        }
-        return [
-          {
-            name: item.name,
-            summary: item.summary,
-            repository: item.repository,
-          },
-        ];
-      });
+    // Spread modules into separate rows by application stream
+    const unpackedData: IBPackageWithRepositoryInfo[] = [
+      ...transformedDistroData,
+      ...transformedCustomData,
+      ...transformedRecommendedData,
+    ].flatMap((item) => {
+      if (item.sources) {
+        return item.sources.map((source) => ({
+          name: item.name,
+          summary: item.summary,
+          repository: item.repository,
+          type: source.type,
+          module_name: source.name,
+          stream: source.stream,
+          end_date: source.end_date,
+        }));
+      }
+      return [
+        {
+          name: item.name,
+          summary: item.summary,
+          repository: item.repository,
+        },
+      ];
+    });
 
     // group by name, but sort by application stream in descending order
-    unpackedData = [...unpackedData].sort((a, b) => {
+    unpackedData.sort((a, b) => {
       // By name (asc)
       if (a.name !== b.name) return a.name.localeCompare(b.name);
 
@@ -509,40 +504,33 @@ export const useTransformedSearchResults = ({
   ]);
 
   const transformedGroups = useMemo(() => {
-    let combinedGroupData: GroupWithRepositoryInfo[] = [];
+    const mapGroups = (
+      data: ApiSearchPackageGroupResponse[],
+      repository: PackageRepository,
+    ): GroupWithRepositoryInfo[] =>
+      data.map((values) => ({
+        name: values.id!,
+        description: values.description!,
+        repository,
+        package_list: values.package_list!,
+      }));
 
-    if (isSuccessDistroGroups && !isSearchingOtherRepos) {
-      combinedGroupData = combinedGroupData.concat(
-        dataDistroGroups!.map((values) => ({
-          name: values.id!,
-          description: values.description!,
-          repository: 'distro',
-          package_list: values.package_list!,
-        })),
-      );
-    }
-    if (isSuccessCustomGroups && !isSearchingOtherRepos) {
-      combinedGroupData = combinedGroupData.concat(
-        dataCustomGroups!.map((values) => ({
-          name: values.id!,
-          description: values.description!,
-          repository: 'custom',
-          package_list: values.package_list!,
-        })),
-      );
-    }
-    if (isSuccessRecommendedGroups && isSearchingOtherRepos) {
-      combinedGroupData = combinedGroupData.concat(
-        dataRecommendedGroups!.map((values) => ({
-          name: values.id!,
-          description: values.description!,
-          repository: 'recommended',
-          package_list: values.package_list!,
-        })),
-      );
-    }
+    const distroGroups =
+      isSuccessDistroGroups && !isSearchingOtherRepos
+        ? mapGroups(dataDistroGroups!, 'distro')
+        : [];
 
-    return combinedGroupData;
+    const customGroups =
+      isSuccessCustomGroups && !isSearchingOtherRepos
+        ? mapGroups(dataCustomGroups!, 'custom')
+        : [];
+
+    const recommendedGroups =
+      isSuccessRecommendedGroups && isSearchingOtherRepos
+        ? mapGroups(dataRecommendedGroups!, 'recommended')
+        : [];
+
+    return [...distroGroups, ...customGroups, ...recommendedGroups];
   }, [
     dataDistroGroups,
     dataCustomGroups,
@@ -558,7 +546,7 @@ export const useTransformedSearchResults = ({
       return isLoadingRecommendations ? [] : transformedRecommendations;
     }
 
-    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
+    if (transformedPackages.length === 0) {
       return isLoadingRecommendations ? [] : transformedRecommendations;
     }
 
