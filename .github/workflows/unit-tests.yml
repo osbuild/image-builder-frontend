@@ -2,9 +2,9 @@ name: Unit Tests
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "image-builder-cli", "rhel-10.2", "rhel-10.3" ]
   push:
-    branches: [ "main" ]
+    branches: [ "main", "image-builder-cli", "rhel-10.2", "rhel-10.3" ]
   merge_group:
 
 # this prevents multiple jobs from the same pr
