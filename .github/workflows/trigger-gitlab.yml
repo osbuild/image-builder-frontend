@@ -5,6 +5,7 @@ name: Trigger GitLab CI
 on:
   workflow_run:
     workflows: ["Development checks"]
+    branches: [ "main" ]
     types: [completed]
 
 jobs:
