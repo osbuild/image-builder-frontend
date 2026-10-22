@@ -16,6 +16,8 @@ import {
 } from '@/store/api/backend';
 import {
   ApiRepositoryCollectionResponseRead,
+  ApiSearchPackageGroupResponse,
+  ApiSearchRpmResponse,
   useListRepositoriesQuery,
   useSearchRpmMutation,
 } from '@/store/api/contentSources';
@@ -24,6 +26,7 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
+  ItemWithSources,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -373,4 +376,254 @@ export const useSearchAnalytics = (
     hasTrackedRecommendations,
     transformedRecommendations,
   ]);
+};
+
+type UseTransformedSearchResultsArgs = {
+  dataDistroPackages: ApiSearchRpmResponse[] | undefined;
+  dataCustomPackages: ApiSearchRpmResponse[] | undefined;
+  dataRecommendedPackages: ApiSearchRpmResponse[] | undefined;
+  isSuccessDistroPackages: boolean;
+  isSuccessCustomPackages: boolean;
+  isSuccessRecommendedPackages: boolean;
+  dataDistroGroups: ApiSearchPackageGroupResponse[] | undefined;
+  dataCustomGroups: ApiSearchPackageGroupResponse[] | undefined;
+  dataRecommendedGroups: ApiSearchPackageGroupResponse[] | undefined;
+  isSuccessDistroGroups: boolean;
+  isSuccessCustomGroups: boolean;
+  isSuccessRecommendedGroups: boolean;
+  isSearchingOtherRepos: boolean;
+  debouncedSearchTerm: string;
+  activeStream: string;
+  transformedRecommendations: IBPackageWithRepositoryInfo[];
+  isLoadingRecommendations: boolean;
+};
+
+export const useTransformedSearchResults = ({
+  dataDistroPackages,
+  dataCustomPackages,
+  dataRecommendedPackages,
+  isSuccessDistroPackages,
+  isSuccessCustomPackages,
+  isSuccessRecommendedPackages,
+  dataDistroGroups,
+  dataCustomGroups,
+  dataRecommendedGroups,
+  isSuccessDistroGroups,
+  isSuccessCustomGroups,
+  isSuccessRecommendedGroups,
+  isSearchingOtherRepos,
+  debouncedSearchTerm,
+  activeStream,
+  transformedRecommendations,
+  isLoadingRecommendations,
+}: UseTransformedSearchResultsArgs) => {
+  const transformedPackages = useMemo(() => {
+    let transformedDistroData: ItemWithSources[] = [];
+    let transformedCustomData: ItemWithSources[] = [];
+    let transformedRecommendedData: ItemWithSources[] = [];
+
+    if (isSuccessDistroPackages && !isSearchingOtherRepos) {
+      transformedDistroData = dataDistroPackages!.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'distro',
+        sources: values.package_sources,
+      }));
+    }
+
+    if (isSuccessCustomPackages && !isSearchingOtherRepos) {
+      transformedCustomData = dataCustomPackages!.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'custom',
+        sources: values.package_sources,
+      }));
+    }
+
+    if (isSuccessRecommendedPackages && isSearchingOtherRepos) {
+      transformedRecommendedData = dataRecommendedPackages!.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'recommended',
+        sources: values.package_sources,
+      }));
+    }
+
+    const combinedPackageData = transformedDistroData
+      .concat(transformedCustomData)
+      .concat(transformedRecommendedData);
+
+    let unpackedData: IBPackageWithRepositoryInfo[] =
+      combinedPackageData.flatMap((item) => {
+        // Spread modules into separate rows by application stream
+        if (item.sources) {
+          return item.sources.map((source) => ({
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+            type: source.type,
+            module_name: source.name,
+            stream: source.stream,
+            end_date: source.end_date,
+          }));
+        }
+        return [
+          {
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+          },
+        ];
+      });
+
+    // group by name, but sort by application stream in descending order
+    unpackedData = [...unpackedData].sort((a, b) => {
+      // By name (asc)
+      if (a.name !== b.name) return a.name.localeCompare(b.name);
+
+      // By stream (desc)
+      const aStream = a.stream || '';
+      const bStream = b.stream || '';
+      if (aStream !== bStream) return bStream.localeCompare(aStream);
+
+      // By repository (asc)
+      const aRepo = a.repository || '';
+      const bRepo = b.repository || '';
+      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
+
+      // By module_name (asc)
+      const aModule = a.module_name || '';
+      const bModule = b.module_name || '';
+      return aModule.localeCompare(bModule);
+    });
+
+    return unpackedData;
+  }, [
+    dataCustomPackages,
+    dataDistroPackages,
+    dataRecommendedPackages,
+    isSuccessCustomPackages,
+    isSuccessDistroPackages,
+    isSuccessRecommendedPackages,
+    isSearchingOtherRepos,
+  ]);
+
+  const transformedGroups = useMemo(() => {
+    let combinedGroupData: GroupWithRepositoryInfo[] = [];
+
+    if (isSuccessDistroGroups && !isSearchingOtherRepos) {
+      combinedGroupData = combinedGroupData.concat(
+        dataDistroGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'distro',
+          package_list: values.package_list!,
+        })),
+      );
+    }
+    if (isSuccessCustomGroups && !isSearchingOtherRepos) {
+      combinedGroupData = combinedGroupData.concat(
+        dataCustomGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'custom',
+          package_list: values.package_list!,
+        })),
+      );
+    }
+    if (isSuccessRecommendedGroups && isSearchingOtherRepos) {
+      combinedGroupData = combinedGroupData.concat(
+        dataRecommendedGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'recommended',
+          package_list: values.package_list!,
+        })),
+      );
+    }
+
+    return combinedGroupData;
+  }, [
+    dataDistroGroups,
+    dataCustomGroups,
+    dataRecommendedGroups,
+    isSuccessDistroGroups,
+    isSuccessCustomGroups,
+    isSuccessRecommendedGroups,
+    isSearchingOtherRepos,
+  ]);
+
+  const sortedPackages = useMemo(() => {
+    if (!debouncedSearchTerm) {
+      return isLoadingRecommendations ? [] : transformedRecommendations;
+    }
+
+    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
+      return isLoadingRecommendations ? [] : transformedRecommendations;
+    }
+
+    const regularPackages = [...transformedPackages].sort((a, b) => {
+      // Active stream packages first (if activeStream is set)
+      const aIsActive = activeStream && a.stream === activeStream ? 0 : 1;
+      const bIsActive = activeStream && b.stream === activeStream ? 0 : 1;
+      if (aIsActive !== bIsActive) return aIsActive - bIsActive;
+
+      // Then by name (asc)
+      if (a.name !== b.name) return a.name.localeCompare(b.name);
+
+      // Then by stream version (desc)
+      const aStream = a.stream || '';
+      const bStream = b.stream || '';
+      if (aStream !== bStream) {
+        if (!aStream) return 1;
+        if (!bStream) return -1;
+        const aParts = aStream
+          .split('.')
+          .map((part) => parseInt(part, 10) || 0);
+        const bParts = bStream
+          .split('.')
+          .map((part) => parseInt(part, 10) || 0);
+        const aVersion = aParts
+          .map((p) => p.toString().padStart(10, '0'))
+          .join('.');
+        const bVersion = bParts
+          .map((p) => p.toString().padStart(10, '0'))
+          .join('.');
+        return bVersion.localeCompare(aVersion); // descending
+      }
+
+      // Then by end date (asc, nulls last)
+      const aEndDate = a.end_date || '9999-12-31';
+      const bEndDate = b.end_date || '9999-12-31';
+      if (aEndDate !== bEndDate) return aEndDate.localeCompare(bEndDate);
+
+      // Then by repository (asc)
+      const aRepo = a.repository || '';
+      const bRepo = b.repository || '';
+      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
+
+      // Finally by module name (asc)
+      const aModule = a.module_name || '';
+      const bModule = b.module_name || '';
+      return aModule.localeCompare(bModule);
+    });
+
+    const hasModules = regularPackages.some((pkg) => pkg.type === 'module');
+    const filteredRecommendations =
+      isLoadingRecommendations || hasModules
+        ? []
+        : transformedRecommendations.filter(
+            (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
+          );
+
+    return [...regularPackages, ...filteredRecommendations];
+  }, [
+    debouncedSearchTerm,
+    transformedPackages,
+    activeStream,
+    transformedRecommendations,
+    isLoadingRecommendations,
+  ]);
+
+  return { transformedPackages, transformedGroups, sortedPackages };
 };
