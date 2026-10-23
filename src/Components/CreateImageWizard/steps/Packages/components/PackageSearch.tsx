@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   Button,
@@ -25,15 +25,8 @@ import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ManageRepositoriesButton from '@/Components/CreateImageWizard/steps/Repositories/components/ManageRepositoriesButton';
-import { AMPLITUDE_MODULE_NAME, EPEL_10_REPO_DEFINITION } from '@/constants';
-import { Module, useGetArchitecturesQuery } from '@/store/api/backend';
-import {
-  useGetTemplateQuery,
-  useListRepositoriesQuery,
-  useSearchPackageGroupMutation,
-  useSearchRepositoryModuleStreamsMutation,
-  useSearchRpmMutation,
-} from '@/store/api/contentSources';
+import { AMPLITUDE_MODULE_NAME } from '@/constants';
+import { Module } from '@/store/api/backend';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -42,30 +35,22 @@ import {
   addPackageGroup,
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-  selectArchitecture,
-  selectCustomRepositories,
   selectDistribution,
   selectModules,
   selectPackageGroups,
   selectPackages,
   selectRecommendedRepositories,
-  selectSnapshotDate,
-  selectTemplate,
-  selectWizardMode,
 } from '@/store/slices/wizard';
-import { getEpelUrlForDistribution } from '@/Utilities/epel';
-import { convertStringToDate } from '@/Utilities/time';
-import useDebounce from '@/Utilities/useDebounce';
 
 import {
   getPackageDescription,
   isSelectDisabled,
   useEpelRepo,
   usePackageRecommendations,
+  usePackageSearchQueries,
   useRemovePackageContent,
   useRequiredPackages,
   useSearchAnalytics,
-  useTransformedSearchResults,
 } from '../packagesUtilities';
 
 type PackageSearchProps = {
@@ -92,15 +77,10 @@ const PackageSearch = ({
 
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const distribution = useAppSelector(selectDistribution);
-  const arch = useAppSelector(selectArchitecture);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
   const modules = useAppSelector(selectModules);
-  const customRepositories = useAppSelector(selectCustomRepositories);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
-  const template = useAppSelector(selectTemplate);
-  const snapshotDate = useAppSelector(selectSnapshotDate);
-  const wizardMode = useAppSelector(selectWizardMode);
 
   const { isSuccess: isSuccessEpelRepo } = useEpelRepo();
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
@@ -127,301 +107,24 @@ const PackageSearch = ({
     recommendationsData,
   );
 
-  const epelRepoUrlByDistribution =
-    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
-
-  const { data: templateData } = useGetTemplateQuery({
-    uuid: template,
+  const {
+    sortedPackages,
+    transformedGroups,
+    debouncedSearchTerm,
+    isLoadingDistroPackages,
+    isLoadingCustomPackages,
+    isLoadingRecommendedPackages,
+    isLoadingDistroGroups,
+    isLoadingCustomGroups,
+    isLoadingRecommendedGroups,
+  } = usePackageSearchQueries({
+    packageType,
+    searchTerm,
+    isSearchingOtherRepos,
+    activeStream,
+    transformedRecommendations,
+    isLoadingRecommendations,
   });
-
-  const EMPTY_ARRAY: never[] = useMemo(() => [], []);
-  const { data: { data: reposInTemplate = EMPTY_ARRAY } = {} } =
-    useListRepositoriesQuery({
-      contentType: 'rpm',
-      limit: 100,
-      offset: 0,
-      uuid:
-        templateData && templateData.repository_uuids
-          ? templateData.repository_uuids.join(',')
-          : '',
-    });
-
-  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
-    useGetArchitecturesQuery({
-      distribution: distribution,
-    });
-
-  const distroUrls = useMemo(() => {
-    const urls = distroRepositories
-      ?.find((archItem) => archItem.arch === arch)
-      ?.repositories.filter((repo) => !!repo.baseurl)
-      .map((repo) => repo.baseurl!);
-    return urls ?? EMPTY_ARRAY;
-  }, [distroRepositories, arch]);
-
-  const [
-    searchCustomRpms,
-    {
-      data: dataCustomPackages,
-      isSuccess: isSuccessCustomPackages,
-      isLoading: isLoadingCustomPackages,
-    },
-  ] = useSearchRpmMutation();
-
-  const debouncedSearchTerm = useDebounce(searchTerm.trim());
-
-  const [
-    searchRecommendedRpms,
-    {
-      data: dataRecommendedPackages,
-      isSuccess: isSuccessRecommendedPackages,
-      isLoading: isLoadingRecommendedPackages,
-    },
-  ] = useSearchRpmMutation();
-
-  const [
-    searchDistroRpms,
-    {
-      data: dataDistroPackages,
-      isSuccess: isSuccessDistroPackages,
-      isLoading: isLoadingDistroPackages,
-    },
-  ] = useSearchRpmMutation();
-
-  const [
-    searchDistroGroups,
-    {
-      data: dataDistroGroups,
-      isSuccess: isSuccessDistroGroups,
-      isLoading: isLoadingDistroGroups,
-    },
-  ] = useSearchPackageGroupMutation();
-
-  const [
-    searchCustomGroups,
-    {
-      data: dataCustomGroups,
-      isSuccess: isSuccessCustomGroups,
-      isLoading: isLoadingCustomGroups,
-    },
-  ] = useSearchPackageGroupMutation();
-
-  const [
-    searchRecommendedGroups,
-    {
-      data: dataRecommendedGroups,
-      isSuccess: isSuccessRecommendedGroups,
-      isLoading: isLoadingRecommendedGroups,
-    },
-  ] = useSearchPackageGroupMutation();
-
-  const [
-    searchModulesInfo,
-    { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
-  ] = useSearchRepositoryModuleStreamsMutation();
-
-  useEffect(() => {
-    if (packageType === 'groups') {
-      return;
-    }
-    if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
-      if (isOnPremise) {
-        searchDistroRpms({
-          apiContentUnitSearchRequest: {
-            packages: [debouncedSearchTerm],
-            architecture: arch,
-            distribution,
-          },
-        });
-      } else {
-        searchDistroRpms({
-          apiContentUnitSearchRequest: {
-            search: debouncedSearchTerm,
-            urls:
-              template === ''
-                ? distroUrls
-                : reposInTemplate
-                    .filter((r) => r.org_id === '-1' && !!r.url)
-                    .flatMap((r) =>
-                      r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!,
-                    ),
-            limit: 500,
-            include_package_sources: true,
-            date: snapshotDate
-              ? new Date(convertStringToDate(snapshotDate)).toISOString()
-              : undefined,
-          },
-        });
-      }
-    }
-    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
-      searchCustomRpms({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          uuids: customRepositories.flatMap((repo) => {
-            return repo.id;
-          }),
-          limit: 500,
-          include_package_sources: true,
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-    if (
-      debouncedSearchTerm.length > 2 &&
-      isSearchingOtherRepos &&
-      !isOnPremise
-    ) {
-      searchRecommendedRpms({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: [epelRepoUrlByDistribution],
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-  }, [
-    customRepositories,
-    searchCustomRpms,
-    searchDistroRpms,
-    searchRecommendedRpms,
-    debouncedSearchTerm,
-    isSuccessDistroRepositories,
-    arch,
-    template,
-    distribution,
-    packageType,
-    snapshotDate,
-    distroUrls,
-    isOnPremise,
-    reposInTemplate,
-    isSearchingOtherRepos,
-    epelRepoUrlByDistribution,
-  ]);
-
-  useEffect(() => {
-    if (packageType === 'packages') {
-      return;
-    }
-    if (isSuccessDistroRepositories) {
-      searchDistroGroups({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: distroUrls,
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-    if (customRepositories.length > 0) {
-      searchCustomGroups({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          uuids: customRepositories.flatMap((repo) => {
-            return repo.id;
-          }),
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-    if (isSearchingOtherRepos && !isOnPremise) {
-      searchRecommendedGroups({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: [epelRepoUrlByDistribution],
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-  }, [
-    customRepositories,
-    searchDistroGroups,
-    searchCustomGroups,
-    searchRecommendedGroups,
-    debouncedSearchTerm,
-    packageType,
-    arch,
-    distroRepositories,
-    isSuccessDistroRepositories,
-    snapshotDate,
-    distroUrls,
-    isSearchingOtherRepos,
-    isOnPremise,
-    epelRepoUrlByDistribution,
-  ]);
-
-  useEffect(() => {
-    if (
-      wizardMode !== 'create' &&
-      isSuccessDistroRepositories &&
-      modules.length > 0
-    ) {
-      searchModulesInfo({
-        apiSearchModuleStreamsRequest: {
-          rpm_names: modules.map((module) => module.name),
-          urls: [...distroUrls, epelRepoUrlByDistribution],
-          uuids: [],
-        },
-      });
-    }
-  }, [isSuccessDistroRepositories, modules, distroUrls]);
-
-  useEffect(() => {
-    if (!isSuccessModulesInfo) return;
-
-    dataModulesInfo.forEach((module) => {
-      const enabledModule = modules.find((m) => m.name === module.module_name);
-
-      module.streams
-        ?.find((stream) => stream.stream === enabledModule?.stream)
-        ?.package_names?.forEach((packageName) => {
-          const existingPackage = packages.find(
-            (pkg) => pkg.name === packageName,
-          );
-
-          if (existingPackage && module.module_name && enabledModule) {
-            dispatch(
-              addPackage({
-                ...existingPackage,
-                type: 'module',
-                module_name: module.module_name,
-                stream: enabledModule.stream,
-              }),
-            );
-          }
-        });
-    });
-  }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
-
-  const { transformedGroups, sortedPackages } =
-    useTransformedSearchResults({
-      dataDistroPackages,
-      dataCustomPackages,
-      dataRecommendedPackages,
-      isSuccessDistroPackages,
-      isSuccessCustomPackages,
-      isSuccessRecommendedPackages,
-      dataDistroGroups,
-      dataCustomGroups,
-      dataRecommendedGroups,
-      isSuccessDistroGroups,
-      isSuccessCustomGroups,
-      isSuccessRecommendedGroups,
-      isSearchingOtherRepos,
-      debouncedSearchTerm,
-      activeStream,
-      transformedRecommendations,
-      isLoadingRecommendations,
-    });
 
   const isPackageSelectDisabled = (pkg: IBPackageWithRepositoryInfo) =>
     isSelectDisabled(pkg, packages, modules, requiredSet);
