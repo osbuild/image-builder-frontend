@@ -52,6 +52,8 @@ import { releaseToVersion } from '@/Utilities/releaseToVersion';
 import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
 
+const EMPTY_ARRAY: never[] = [];
+
 export const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
   const parts = [];
 
@@ -663,7 +665,6 @@ export const usePackageSearchQueries = ({
     uuid: template,
   });
 
-  const EMPTY_ARRAY: never[] = useMemo(() => [], []);
   const { data: { data: reposInTemplate = EMPTY_ARRAY } = {} } =
     useListRepositoriesQuery({
       contentType: 'rpm',
@@ -951,15 +952,18 @@ export const usePackageSearchQueries = ({
     isLoadingRecommendations,
   });
 
+  const isLoading =
+    isLoadingDistroPackages ||
+    isLoadingCustomPackages ||
+    isLoadingRecommendedPackages ||
+    isLoadingDistroGroups ||
+    isLoadingCustomGroups ||
+    isLoadingRecommendedGroups;
+
   return {
     sortedPackages,
     transformedGroups,
     debouncedSearchTerm,
-    isLoadingDistroPackages,
-    isLoadingCustomPackages,
-    isLoadingRecommendedPackages,
-    isLoadingDistroGroups,
-    isLoadingCustomGroups,
-    isLoadingRecommendedGroups,
+    isLoading,
   };
 };

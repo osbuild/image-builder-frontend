@@ -107,24 +107,15 @@ const PackageSearch = ({
     recommendationsData,
   );
 
-  const {
-    sortedPackages,
-    transformedGroups,
-    debouncedSearchTerm,
-    isLoadingDistroPackages,
-    isLoadingCustomPackages,
-    isLoadingRecommendedPackages,
-    isLoadingDistroGroups,
-    isLoadingCustomGroups,
-    isLoadingRecommendedGroups,
-  } = usePackageSearchQueries({
-    packageType,
-    searchTerm,
-    isSearchingOtherRepos,
-    activeStream,
-    transformedRecommendations,
-    isLoadingRecommendations,
-  });
+  const { sortedPackages, transformedGroups, debouncedSearchTerm, isLoading } =
+    usePackageSearchQueries({
+      packageType,
+      searchTerm,
+      isSearchingOtherRepos,
+      activeStream,
+      transformedRecommendations,
+      isLoadingRecommendations,
+    });
 
   const isPackageSelectDisabled = (pkg: IBPackageWithRepositoryInfo) =>
     isSelectDisabled(pkg, packages, modules, requiredSet);
@@ -313,12 +304,7 @@ const PackageSearch = ({
                 The search value must be greater than 1 character
               </EmptyStateBody>
             </EmptyState>
-          ) : isLoadingDistroPackages ||
-            isLoadingCustomPackages ||
-            isLoadingRecommendedPackages ||
-            isLoadingDistroGroups ||
-            isLoadingCustomGroups ||
-            isLoadingRecommendedGroups ? (
+          ) : isLoading ? (
             <SelectOption isDisabled>
               Searching {packageTypeLabel}...
             </SelectOption>
