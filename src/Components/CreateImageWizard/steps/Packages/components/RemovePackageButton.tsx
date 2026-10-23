@@ -10,21 +10,21 @@ import {
   IBPackageWithRepositoryInfo,
 } from '@/store/slices/wizard';
 
+import { useRemovePackageContent } from '../packagesUtilities';
+
 type RemovePackageButtonProps = {
   item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo;
   isRequired?: boolean;
-  onRemove: (
-    item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo,
-  ) => void;
 };
 
 const RemovePackageButton = ({
   item,
   isRequired,
-  onRemove,
 }: RemovePackageButtonProps) => {
   const complianceType = useAppSelector(selectComplianceType);
-  const packageType = 'package_list' in item ? 'package group' : 'package';
+  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
+  const isGroup = 'package_list' in item;
+  const packageType = isGroup ? 'package group' : 'package';
 
   const button = (
     <Button
@@ -36,7 +36,11 @@ const RemovePackageButton = ({
           ? `Required ${packageType}, cannot be removed`
           : `Remove ${packageType}`
       }
-      onClick={() => onRemove(item)}
+      onClick={() =>
+        isGroup
+          ? handleRemoveGroup(item as GroupWithRepositoryInfo)
+          : handleRemovePackage(item as IBPackageWithRepositoryInfo)
+      }
       isInline
       hasNoPadding
     />

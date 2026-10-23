@@ -11,10 +11,9 @@ import RetirementDate from './RetirementDate';
 type PackageRowProps = {
   pkg: IBPackageWithRepositoryInfo;
   isRequired: boolean;
-  onRemove: (pkg: IBPackageWithRepositoryInfo) => void;
 };
 
-const PackageRow = ({ pkg, isRequired, onRemove }: PackageRowProps) => (
+const PackageRow = ({ pkg, isRequired }: PackageRowProps) => (
   <Tbody>
     <Tr data-testid={isRequired ? 'required-package-row' : 'package-row'}>
       <Td>&nbsp;</Td>
@@ -26,11 +25,7 @@ const PackageRow = ({ pkg, isRequired, onRemove }: PackageRowProps) => (
         <RetirementDate date={pkg.end_date} />
       </Td>
       <Td>
-        <RemovePackageButton
-          item={pkg}
-          isRequired={isRequired}
-          onRemove={(item) => onRemove(item as IBPackageWithRepositoryInfo)}
-        />
+        <RemovePackageButton item={pkg} isRequired={isRequired} />
       </Td>
     </Tr>
   </Tbody>
