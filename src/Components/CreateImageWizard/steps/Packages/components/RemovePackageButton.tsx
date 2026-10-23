@@ -10,20 +10,21 @@ import {
   IBPackageWithRepositoryInfo,
 } from '@/store/slices/wizard';
 
-import { useRemovePackageContent } from '../packagesUtilities';
+import {
+  useRemovePackageContent,
+  useRequiredPackages,
+} from '../packagesUtilities';
 
 type RemovePackageButtonProps = {
   item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo;
-  isRequired?: boolean;
 };
 
-const RemovePackageButton = ({
-  item,
-  isRequired,
-}: RemovePackageButtonProps) => {
+const RemovePackageButton = ({ item }: RemovePackageButtonProps) => {
   const complianceType = useAppSelector(selectComplianceType);
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
+  const requiredSet = useRequiredPackages();
   const isGroup = 'package_list' in item;
+  const isRequired = !isGroup && requiredSet.has(item.name);
   const packageType = isGroup ? 'package group' : 'package';
 
   const button = (
