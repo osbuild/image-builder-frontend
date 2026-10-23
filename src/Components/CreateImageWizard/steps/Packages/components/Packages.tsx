@@ -31,7 +31,6 @@ const Packages = () => {
   );
   const [isPackageTypeDropdownOpen, setIsPackageTypeDropdownOpen] =
     useState(false);
-  const [activeStream, setActiveStream] = useState<string>('');
 
   useEffect(() => {
     if (!isOnPremise && wizardMode === 'edit') {
@@ -87,11 +86,7 @@ const Packages = () => {
             </FormGroup>
           </ToolbarItem>
           <ToolbarItem style={{ flex: 1 }}>
-            <PackageSearch
-              packageType={packageType}
-              activeStream={activeStream}
-              setActiveStream={setActiveStream}
-            />
+            <PackageSearch packageType={packageType} />
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
