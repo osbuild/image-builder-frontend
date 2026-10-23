@@ -51,12 +51,8 @@ export const usePackageSelection = ({
   const modules = useAppSelector(selectModules);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
 
-  const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
-  const [isSelectingPackage, setIsSelectingPackage] = useState<
-    IBPackageWithRepositoryInfo | undefined
-  >();
-  const [isSelectingGroup, setIsSelectingGroup] = useState<
-    GroupWithRepositoryInfo | undefined
+  const [pendingRepoRec, setPendingRepoRec] = useState<
+    IBPackageWithRepositoryInfo | GroupWithRepositoryInfo | undefined
   >();
 
   const { isSuccess: isSuccessEpelRepo } = useEpelRepo();
@@ -114,8 +110,7 @@ export const usePackageSelection = ({
           pkg.repository === 'recommended' &&
           !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
         ) {
-          setIsRepoModalOpen(true);
-          setIsSelectingPackage(pkg);
+          setPendingRepoRec(pkg);
         } else {
           dispatch(addPackage(pkg));
           if (pkg.isRecommendation && !isOnPremise) {
@@ -157,8 +152,7 @@ export const usePackageSelection = ({
           grp.repository === 'recommended' &&
           !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
         ) {
-          setIsRepoModalOpen(true);
-          setIsSelectingGroup(grp);
+          setPendingRepoRec(grp);
         } else {
           dispatch(addPackageGroup(grp));
         }
@@ -171,11 +165,8 @@ export const usePackageSelection = ({
   return {
     onSelect,
     isPackageSelectDisabled,
-    isRepoModalOpen,
-    setIsRepoModalOpen,
-    isSelectingPackage,
-    setIsSelectingPackage,
-    isSelectingGroup,
+    pendingRepoRec,
+    setPendingRepoRec,
     selectedPackageKeys,
     selectedGroupNames,
   };

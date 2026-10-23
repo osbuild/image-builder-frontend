@@ -21,6 +21,7 @@ import {
   createDefaultFetchHandler,
   createFetchHandler,
   fetchMock,
+  mockEpelRepo,
   mockEpelSearch,
   mockGroupSearchResults,
   mockModuleSearchResults,
@@ -288,6 +289,54 @@ describe('Packages Component', () => {
           screen.queryByRole('cell', { name: /test-lib/ }),
         ).not.toBeInTheDocument(),
       );
+    });
+
+    test('selecting a package from EPEL shows repository confirmation modal', async () => {
+      fetchMock.mockResponse(
+        createFetchHandler({ repositories: [mockEpelRepo] }),
+      );
+      renderPackagesStep();
+      const user = createUser();
+
+      const searchInput = await screen.findByRole('textbox', {
+        name: /search packages/i,
+      });
+
+      await clearWithWait(user, searchInput);
+      await typeWithWait(user, searchInput, 'asdf');
+
+      await screen.findByText(
+        /no results for "asdf" in selected repositories/i,
+      );
+
+      const searchOutsideButton = await screen.findByRole('button', {
+        name: /search repositories outside of this image/i,
+      });
+
+      fetchMock.mockResponse(
+        createFetchHandler({
+          rpms: mockEpelSearch,
+          repositories: [mockEpelRepo],
+        }),
+      );
+
+      await clickWithWait(user, searchOutsideButton);
+
+      const option = await screen.findByRole('option', { name: /asdf/ });
+      await clickWithWait(user, option);
+
+      expect(
+        await screen.findByText(
+          /custom repositories will be added to your image/i,
+        ),
+      ).toBeInTheDocument();
+
+      const addReposButton = await screen.findByRole('button', {
+        name: /add listed repositories/i,
+      });
+      await clickWithWait(user, addReposButton);
+
+      expect(await screen.findByRole('cell', { name: /asdf/ })).toBeVisible();
     });
   });
 
