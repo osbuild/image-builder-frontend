@@ -47,7 +47,6 @@ const PackagesTable = () => {
             <PackageRow
               key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
               pkg={pkg}
-              isRequired={requiredSet.has(pkg.name)}
             />
           ))}
         </>
