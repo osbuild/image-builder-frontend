@@ -75,11 +75,8 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
   const {
     onSelect,
     isPackageSelectDisabled,
-    isRepoModalOpen,
-    setIsRepoModalOpen,
-    isSelectingPackage,
-    setIsSelectingPackage,
-    isSelectingGroup,
+    pendingRepoRec,
+    setPendingRepoRec,
     selectedPackageKeys,
     selectedGroupNames,
   } = usePackageSelection({
@@ -154,11 +151,8 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
   return (
     <>
       <RepositoryModal
-        isRepoModalOpen={isRepoModalOpen}
-        setIsRepoModalOpen={setIsRepoModalOpen}
-        isSelectingPackage={isSelectingPackage}
-        setIsSelectingPackage={setIsSelectingPackage}
-        isSelectingGroup={isSelectingGroup}
+        pendingRepoRec={pendingRepoRec}
+        setPendingRepoRec={setPendingRepoRec}
       />
       <FormGroup label='Add packages' style={{ width: '100%' }}>
         <Select

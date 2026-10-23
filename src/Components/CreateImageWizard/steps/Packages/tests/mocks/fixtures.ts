@@ -3,6 +3,7 @@ import type {
   GetOscapCustomizationsApiResponse,
 } from '@/store/api/backend';
 import type {
+  ApiRepositoryResponseRead,
   ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
 } from '@/store/api/contentSources';
@@ -87,3 +88,11 @@ export const mockRecommendations: string[] = [
   'recommendedPackage2',
   'recommendedPackage3',
 ];
+
+export const mockEpelRepo: ApiRepositoryResponseRead = {
+  uuid: 'epel-10-uuid',
+  name: 'EPEL 10 Everything x86_64',
+  url: 'https://dl.fedoraproject.org/pub/epel/10/Everything/x86_64/',
+  distribution_arch: 'x86_64',
+  distribution_versions: ['10'],
+};

@@ -32,22 +32,18 @@ import {
 import { useEpelRepo } from '../packagesUtilities';
 
 type RepositoryModalProps = {
-  isRepoModalOpen: boolean;
-  setIsRepoModalOpen: (value: boolean) => void;
-  isSelectingPackage: IBPackageWithRepositoryInfo | undefined;
-  setIsSelectingPackage: (
-    value: IBPackageWithRepositoryInfo | undefined,
+  pendingRepoRec:
+    IBPackageWithRepositoryInfo | GroupWithRepositoryInfo | undefined;
+  setPendingRepoRec: (
+    value: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo | undefined,
   ) => void;
-  isSelectingGroup: GroupWithRepositoryInfo | undefined;
 };
 
 const RepositoryModal = ({
-  isRepoModalOpen,
-  setIsRepoModalOpen,
-  isSelectingPackage,
-  setIsSelectingPackage,
-  isSelectingGroup,
+  pendingRepoRec,
+  setPendingRepoRec,
 }: RepositoryModalProps) => {
+  const isGroup = pendingRepoRec && 'package_list' in pendingRepoRec;
   const dispatch = useAppDispatch();
   const distribution = useAppSelector(selectDistribution);
   const { data: epelRepo } = useEpelRepo();
@@ -56,8 +52,7 @@ const RepositoryModal = ({
     useCreateRepositoryMutation();
 
   const handleCloseModalToggle = () => {
-    setIsRepoModalOpen(!isRepoModalOpen);
-    setIsSelectingPackage(undefined);
+    setPendingRepoRec(undefined);
   };
 
   const handleConfirmModalToggle = async () => {
@@ -82,18 +77,19 @@ const RepositoryModal = ({
     } else {
       dispatch(addRepository({ repo: epelRepo.data[0], isRecommended: true }));
     }
-    if (isSelectingPackage) {
-      dispatch(addPackage(isSelectingPackage));
+    if (pendingRepoRec) {
+      if (isGroup) {
+        dispatch(addPackageGroup(pendingRepoRec as GroupWithRepositoryInfo));
+      } else {
+        dispatch(addPackage(pendingRepoRec as IBPackageWithRepositoryInfo));
+      }
     }
-    if (isSelectingGroup) {
-      dispatch(addPackageGroup(isSelectingGroup));
-    }
-    setIsRepoModalOpen(!isRepoModalOpen);
+    setPendingRepoRec(undefined);
   };
 
   return (
     <Modal
-      isOpen={isRepoModalOpen}
+      isOpen={!!pendingRepoRec}
       onClose={handleCloseModalToggle}
       width='50%'
     >
@@ -124,17 +120,13 @@ const RepositoryModal = ({
         <Table variant='compact'>
           <Thead>
             <Tr>
-              {isSelectingPackage ? <Th>Packages</Th> : <Th>Package groups</Th>}
+              {isGroup ? <Th>Package groups</Th> : <Th>Packages</Th>}
               <Th>Repositories</Th>
             </Tr>
           </Thead>
           <Tbody>
             <Tr>
-              {isSelectingPackage ? (
-                <Td>{isSelectingPackage.name}</Td>
-              ) : (
-                <Td>{isSelectingGroup?.name}</Td>
-              )}
+              <Td>{pendingRepoRec?.name}</Td>
               <Td>
                 EPEL {getEpelVersionForDistribution(distribution)} Everything
                 x86_64
