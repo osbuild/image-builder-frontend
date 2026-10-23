@@ -16,28 +16,16 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { AMPLITUDE_MODULE_NAME } from '@/constants';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  selectWizardMode,
-} from '@/store/slices/wizard';
+import { selectWizardMode } from '@/store/slices/wizard';
 
 import PackageSearch from './PackageSearch';
 import PackagesTable from './PackagesTable';
-import RepositoryModal from './RepositoryModal';
 
 const Packages = () => {
   const { analytics, isBeta } = useChrome();
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const wizardMode = useAppSelector(selectWizardMode);
 
-  const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
-  const [isSelectingPackage, setIsSelectingPackage] = useState<
-    IBPackageWithRepositoryInfo | undefined
-  >();
-  const [isSelectingGroup, setIsSelectingGroup] = useState<
-    GroupWithRepositoryInfo | undefined
-  >();
   const [packageType, setPackageType] = useState<'packages' | 'groups'>(
     'packages',
   );
@@ -62,13 +50,6 @@ const Packages = () => {
 
   return (
     <>
-      <RepositoryModal
-        isRepoModalOpen={isRepoModalOpen}
-        setIsRepoModalOpen={setIsRepoModalOpen}
-        isSelectingPackage={isSelectingPackage}
-        setIsSelectingPackage={setIsSelectingPackage}
-        isSelectingGroup={isSelectingGroup}
-      />
       <Toolbar>
         <ToolbarContent>
           <ToolbarItem>
@@ -108,9 +89,6 @@ const Packages = () => {
           <ToolbarItem style={{ flex: 1 }}>
             <PackageSearch
               packageType={packageType}
-              setIsRepoModalOpen={setIsRepoModalOpen}
-              setIsSelectingPackage={setIsSelectingPackage}
-              setIsSelectingGroup={setIsSelectingGroup}
               activeStream={activeStream}
               setActiveStream={setActiveStream}
             />
