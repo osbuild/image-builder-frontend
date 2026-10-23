@@ -39,15 +39,9 @@ import { usePackageSelection } from '../usePackageSelection';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';
-  activeStream: string;
-  setActiveStream: (value: string) => void;
 };
 
-const PackageSearch = ({
-  packageType,
-  activeStream,
-  setActiveStream,
-}: PackageSearchProps) => {
+const PackageSearch = ({ packageType }: PackageSearchProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const {
@@ -58,6 +52,7 @@ const PackageSearch = ({
   } = usePackageRecommendations(packageType);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeStream, setActiveStream] = useState('');
   const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   useSearchAnalytics(
