@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -10,8 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 
-import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addDiskPartition,
@@ -22,6 +21,7 @@ import {
   selectDiskPartitions,
   selectFilesystemPartitions,
   selectIsImageMode,
+  validatePartitionName,
   type VolumeGroup,
 } from '@/store/slices/wizard';
 
@@ -35,10 +35,16 @@ type VolumeGroupsProps = {
 
 const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
   const dispatch = useAppDispatch();
-  const stepValidation = useFilesystemValidation();
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const inImageMode = useAppSelector(selectIsImageMode);
+  const [partitionName, setPartitionName] = useState(vg?.name ?? '');
+
+  useEffect(() => {
+    // Reset the partition name when the vg changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPartitionName(vg?.name ?? '');
+  }, [vg?.name]);
 
   // Only one volume group is supported
   const [isExpanded, setIsExpanded] = useState(!!vg);
@@ -57,14 +63,15 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
       dispatch(
         addDiskPartition({
           id: vgId,
-          name: '',
+          name: undefined,
           min_size: '1',
           unit: 'GiB',
           type: 'lvm',
           logical_volumes: [
             {
               id: lvId,
-              name: '',
+              name: undefined,
+              type: 'lv',
               mountpoint,
               min_size: '1',
               unit: 'GiB',
@@ -90,7 +97,8 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
         vgId: vgId,
         logicalVolume: {
           id,
-          name: '',
+          name: undefined,
+          type: 'lv',
           mountpoint,
           min_size: '1',
           unit: 'GiB',
@@ -100,6 +108,18 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
     );
   };
 
+  if (!vg) {
+    return (
+      <ExpandableSection
+        toggleText='Volume Group Manager'
+        onToggle={onToggle}
+        isExpanded={isExpanded}
+        displaySize='lg'
+        className='pf-v6-u-mt-lg'
+      />
+    );
+  }
+
   return (
     <ExpandableSection
       toggleText='Volume Group Manager'
@@ -108,51 +128,53 @@ const VolumeGroups = ({ volumeGroup: vg }: VolumeGroupsProps) => {
       displaySize='lg'
       className='pf-v6-u-mt-lg'
     >
-      {vg ? (
-        <>
-          <Flex gap={{ default: 'gapXl' }} className='pf-v6-u-pb-md'>
-            <FlexItem>
-              <FormGroup label='Volume group name'>
-                <ValidatedInputAndTextArea
-                  ariaLabel='Volume group name input'
-                  value={vg.name || ''}
-                  onChange={(_event, name) =>
-                    dispatch(changeDiskPartitionName({ id: vg.id, name: name }))
-                  }
-                  placeholder='Add volume group name'
-                  stepValidation={stepValidation}
-                  fieldName={`name-${vg.id}`}
-                />
-              </FormGroup>
-            </FlexItem>
-            <FlexItem>
-              <FormGroup label='Minimum volume group size'>
-                <Flex>
-                  <FlexItem spacer={{ default: 'spacerXs' }}>
-                    <MinimumSize partition={vg} />
-                  </FlexItem>
-                  <FlexItem>
-                    <SizeUnit partition={vg} />
-                  </FlexItem>
-                </Flex>
-              </FormGroup>
-            </FlexItem>
-          </Flex>
-          {vg.logical_volumes.length > 0 && (
-            <FileSystemTable partitions={vg.logical_volumes} mode='disk-lvm' />
-          )}
-          <Content>
-            <Button
-              className='pf-v6-u-text-align-left'
-              variant='link'
-              icon={<AddCircleOIcon />}
-              onClick={() => handleAddLogicalVolume(vg.id)}
-            >
-              Add logical volume
-            </Button>
-          </Content>
-        </>
-      ) : null}
+      <Flex gap={{ default: 'gapXl' }} className='pf-v6-u-pb-md'>
+        <FlexItem>
+          <FormGroup label='Volume group name'>
+            <ValidatedTextInput
+              id={`name-${vg.id}`}
+              ariaLabel='Volume group name input'
+              value={partitionName}
+              onChange={(_, name) => setPartitionName(name)}
+              placeholder='Add volume group name'
+              validator={(value) => validatePartitionName(value)}
+              onCommit={(candidate) => {
+                dispatch(
+                  changeDiskPartitionName({
+                    id: vg.id,
+                    name: candidate,
+                  }),
+                );
+              }}
+            />
+          </FormGroup>
+        </FlexItem>
+        <FlexItem>
+          <FormGroup label='Minimum volume group size'>
+            <Flex>
+              <FlexItem spacer={{ default: 'spacerXs' }}>
+                <MinimumSize partition={vg} />
+              </FlexItem>
+              <FlexItem>
+                <SizeUnit partition={vg} />
+              </FlexItem>
+            </Flex>
+          </FormGroup>
+        </FlexItem>
+      </Flex>
+      {vg.logical_volumes.length > 0 && (
+        <FileSystemTable partitions={vg.logical_volumes} mode='disk-lvm' />
+      )}
+      <Content>
+        <Button
+          className='pf-v6-u-text-align-left'
+          variant='link'
+          icon={<AddCircleOIcon />}
+          onClick={() => handleAddLogicalVolume(vg.id)}
+        >
+          Add logical volume
+        </Button>
+      </Content>
     </ExpandableSection>
   );
 };

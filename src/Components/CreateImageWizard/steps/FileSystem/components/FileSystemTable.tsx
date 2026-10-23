@@ -6,6 +6,7 @@ import { useSecuritySummary } from '@/store/api/backend';
 import {
   DiskPartition,
   FilesystemPartition,
+  LogicalVolume,
   parseSizeUnit,
 } from '@/store/slices/wizard';
 
@@ -18,7 +19,7 @@ type FileSystemTableProps =
       mode: 'filesystem';
     }
   | {
-      partitions: DiskPartition[];
+      partitions: DiskPartition[] | LogicalVolume[];
       mode: 'disk-plain' | 'disk-lvm';
     };
 
@@ -38,7 +39,7 @@ const FileSystemTable = ({ partitions, mode }: FileSystemTableProps) => {
   };
 
   const isFilesystemPartition = (
-    p: FilesystemPartition | DiskPartition,
+    p: FilesystemPartition | DiskPartition | LogicalVolume,
   ): p is FilesystemPartition => !('type' in p);
 
   const rootPartitionsCount = useMemo(

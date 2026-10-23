@@ -1,8 +1,7 @@
 import {
-  DiskPartition,
-  FilesystemPartition,
   ImageModeMountpointPolicies,
   MountpointPolicies,
+  Partition,
   VolumeGroup,
 } from '@/store/slices/wizard';
 
@@ -87,9 +86,7 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
-export const getDuplicateMountPoints = (
-  partitions: FilesystemPartition[] | DiskPartition[],
-): string[] => {
+export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
   for (const partition of partitions) {
@@ -150,7 +147,7 @@ const normalizeMountpoint = (mountpoint: string): string => {
 };
 
 export const isMountpointValid = (
-  partition: FilesystemPartition | DiskPartition,
+  partition: Partition,
   blueprintMode: string,
 ) => {
   const policies =
@@ -190,7 +187,7 @@ export const isMountpointValid = (
 };
 
 export const getInvalidMountpoints = (
-  partitions: DiskPartition[] | FilesystemPartition[],
+  partitions: Partition[],
   blueprintMode: string,
 ) => {
   const invalidMountpoints = [];

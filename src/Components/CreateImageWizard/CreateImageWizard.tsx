@@ -33,6 +33,7 @@ import {
   getHostArch,
   getHostDistro,
   useGetBlueprintQuery,
+  useSecuritySummary,
 } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -54,7 +55,9 @@ import {
   initializeWizard,
   loadWizardState,
   parseStateFromRequest,
+  selectBlueprintMode,
   selectDistribution,
+  selectFilesystemSlice,
   selectHasPendingInputs,
   selectImageSource,
   selectImageSourceType,
@@ -63,6 +66,7 @@ import {
   selectSystem,
   selectTimezone,
   selectUsersSlice,
+  validateFilesystemSlice,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
@@ -102,7 +106,6 @@ import {
   useAwsValidation,
   useAzureValidation,
   useDetailsValidation,
-  useFilesystemValidation,
   useGcpValidation,
   useImagePullValidation,
   useRegistrationValidation,
@@ -119,6 +122,7 @@ const CreateImageWizard = () => {
   const blueprintId = useAppSelector(selectSelectedBlueprintId);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
+  const blueprintMode = useAppSelector(selectBlueprintMode);
   const imageSource = useAppSelector(selectImageSource);
   const imageSourceType = useAppSelector(selectImageSourceType);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -151,7 +155,6 @@ const CreateImageWizard = () => {
   const detailsValidation = useDetailsValidation();
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
-  const filesystemValidation = useFilesystemValidation();
   const imagePullValidation = useImagePullValidation();
 
   const hasPendingInputs = useAppSelector(selectHasPendingInputs);
@@ -159,6 +162,15 @@ const CreateImageWizard = () => {
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
+
+  const filesystem = useAppSelector(selectFilesystemSlice);
+  const { filesystem: requiredFilesystem } = useSecuritySummary();
+  const { errors: filesystemErrors } = validateFilesystemSlice(
+    filesystem,
+    blueprintMode,
+    requiredFilesystem,
+    restrictions.filesystem.shouldHide,
+  );
 
   const system = useAppSelector(selectSystem);
   const { errors: systemErrors } = validateSystemSlice(system);
@@ -189,7 +201,7 @@ const CreateImageWizard = () => {
   const baseSettingsIsPending = !!detailsValidation.isPending;
 
   const advancedSettingsHasErrors =
-    filesystemValidation.disabledNext ||
+    filesystemErrors.length > 0 ||
     systemErrors.length > 0 ||
     userErrors.length > 0 ||
     hasPendingInputs;

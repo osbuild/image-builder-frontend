@@ -6,6 +6,7 @@ import {
   clearWithWait,
   clickWithWait,
   createUser,
+  tabWithWait,
   typeWithWait,
 } from '@/test/testUtils';
 
@@ -183,6 +184,54 @@ describe('FileSystem Component', () => {
       expect(mountPointAlerts.length).toBeGreaterThanOrEqual(1);
     });
 
+    test('shows duplicate mountpoint error on an empty edited partition', async () => {
+      const user = createUser();
+      renderFileSystemStep({
+        filesystem: {
+          mode: 'basic',
+          filesystem: {
+            partitions: [
+              {
+                id: 'empty',
+                mountpoint: '',
+                min_size: '3',
+                unit: 'GiB',
+              },
+              {
+                id: 'home',
+                mountpoint: '/home',
+                min_size: '5',
+                unit: 'GiB',
+              },
+              {
+                id: 'root',
+                mountpoint: '/',
+                min_size: '10',
+                unit: 'GiB',
+              },
+            ],
+          },
+          partitioningMode: undefined,
+        },
+      });
+
+      const table = await screen.findByRole('grid', {
+        name: /file system table/i,
+      });
+      const firstRow = within(table).getAllByRole('row')[1];
+      const mountpointInput = within(firstRow).getByRole('textbox', {
+        name: /mount point input/i,
+      });
+
+      await clickWithWait(user, mountpointInput);
+      await typeWithWait(user, mountpointInput, '/home');
+      await tabWithWait(user);
+
+      expect(
+        await within(firstRow).findByText(/duplicate mount points/i),
+      ).toBeInTheDocument();
+    });
+
     test('clears duplicate mount point error when resolved', async () => {
       const user = createUser();
       renderFileSystemStep({
@@ -229,13 +278,13 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, thirdRowMountpoint);
       await clearWithWait(user, thirdRowMountpoint);
       await typeWithWait(user, thirdRowMountpoint, '/var');
+      await tabWithWait(user);
 
-      await screen.findByRole('heading', {
-        name: /File system configuration/i,
-      });
-
-      const alertsAfter = screen.queryAllByText(/duplicate mount points/i);
-      expect(alertsAfter).toHaveLength(0);
+      await waitFor(() =>
+        expect(screen.queryAllByText(/duplicate mount points/i)).toHaveLength(
+          0,
+        ),
+      );
     });
 
     test('shows validation error for invalid partition size', async () => {
@@ -263,8 +312,62 @@ describe('FileSystem Component', () => {
       });
 
       expect(
-        await screen.findByText(/must be larger than 0/i),
+        await screen.findByText(/should be a positive integer/i),
       ).toBeInTheDocument();
+    });
+
+    test('shows a duplicate name error for a new logical volume', async () => {
+      const user = createUser();
+      renderFileSystemStep({
+        filesystem: {
+          mode: 'advanced',
+          disk: {
+            unit: 'GiB',
+            partitions: [
+              {
+                id: 'vg0',
+                name: 'vg0',
+                type: 'lvm',
+                min_size: '11',
+                unit: 'GiB',
+                logical_volumes: [
+                  {
+                    id: 'existing-lv',
+                    name: 'root',
+                    type: 'lv',
+                    mountpoint: '/',
+                    min_size: '10',
+                    unit: 'GiB',
+                    fs_type: 'xfs',
+                  },
+                  {
+                    id: 'new-lv',
+                    name: undefined,
+                    type: 'lv',
+                    mountpoint: '/home',
+                    min_size: '1',
+                    unit: 'GiB',
+                    fs_type: 'xfs',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      });
+
+      const nameInputs = await screen.findAllByRole('textbox', {
+        name: /partition name input/i,
+      });
+      await typeWithWait(user, nameInputs[1], 'root');
+      await tabWithWait(user);
+
+      await waitFor(() =>
+        expect(nameInputs[1]).toHaveAccessibleDescription(
+          /Duplicate partition name: root/,
+        ),
+      );
+      expect(nameInputs[1]).toHaveAttribute('aria-invalid', 'true');
     });
   });
 
@@ -295,10 +398,38 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, minSizeInput);
       await clearWithWait(user, minSizeInput);
       await typeWithWait(user, minSizeInput, '15');
+      await tabWithWait(user);
 
       expect(
         getBasicPartitions(store.getState().wizard.filesystem)[0].min_size,
       ).toBe('15');
+    });
+
+    test('clears disk minimum size in store', async () => {
+      const user = createUser();
+      const { store } = renderFileSystemStep({
+        filesystem: {
+          mode: 'advanced',
+          disk: {
+            minsize: '20',
+            unit: 'GiB',
+            partitions: [],
+          },
+        },
+      });
+
+      const minSizeInput = await screen.findByRole('textbox', {
+        name: /minimum disk size input/i,
+      });
+
+      await clickWithWait(user, minSizeInput);
+      await clearWithWait(user, minSizeInput);
+      await tabWithWait(user);
+
+      expect(store.getState().wizard.filesystem).toMatchObject({
+        mode: 'advanced',
+        disk: { minsize: '' },
+      });
     });
 
     test('updates partition unit in store', async () => {
@@ -363,6 +494,7 @@ describe('FileSystem Component', () => {
       await clickWithWait(user, mountpointInputs[1]);
       await clearWithWait(user, mountpointInputs[1]);
       await typeWithWait(user, mountpointInputs[1], '/home/cakerecipes');
+      await tabWithWait(user);
 
       expect(
         getBasicPartitions(store.getState().wizard.filesystem)[1].mountpoint,
@@ -887,7 +1019,7 @@ describe('FileSystem Component', () => {
       await typeWithWait(user, sizeInput, '1');
 
       expect(
-        await screen.findByText(/required by OpenSCAP profile/i),
+        await screen.findByText('Minimum size must be at least 5 GiB'),
       ).toBeInTheDocument();
     });
 
@@ -909,7 +1041,7 @@ describe('FileSystem Component', () => {
       );
 
       expect(
-        screen.queryByText(/required by OpenSCAP profile/i),
+        screen.queryByText(/Minimum size must be at least/i),
       ).not.toBeInTheDocument();
     });
   });

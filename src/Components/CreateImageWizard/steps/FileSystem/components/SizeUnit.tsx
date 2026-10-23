@@ -12,15 +12,14 @@ import { useAppDispatch } from '@/store/hooks';
 import {
   changePartitionMinSize,
   changePartitionUnit,
-  DiskPartition,
-  FilesystemPartition,
+  type Partition,
   type Units,
 } from '@/store/slices/wizard';
 
 const units = ['GiB', 'MiB'];
 
 type SizeUnitProps = {
-  partition: FilesystemPartition | DiskPartition;
+  partition: Partition;
   isOscapRequired?: boolean;
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -14,8 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 
-import { useFilesystemValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addDiskPartition,
@@ -28,6 +27,7 @@ import {
   selectFilesystemPartitions,
   selectIsImageMode,
   Units,
+  validateOptionalMinsize,
 } from '@/store/slices/wizard';
 
 import FileSystemTable from './FileSystemTable';
@@ -42,8 +42,13 @@ const AdvancedPartitioning = () => {
   const diskPartitions = useAppSelector(selectDiskPartitions);
   const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   const inImageMode = useAppSelector(selectIsImageMode);
-  const stepValidation = useFilesystemValidation();
   const [isOpen, setIsOpen] = useState(false);
+  const [diskSize, setDiskSize] = useState(minsize ?? '');
+
+  useEffect(() => {
+    setDiskSize(minsize ?? '');
+  }, [minsize]);
+
   const handleAddPartition = () => {
     const id = crypto.randomUUID();
     const mountpoint = getNextAvailableMountpoint(
@@ -61,10 +66,6 @@ const AdvancedPartitioning = () => {
         mountpoint,
       }),
     );
-  };
-
-  const handleDiskMinsizeChange = (_e: React.FormEvent, value: string) => {
-    dispatch(changeDiskMinsize(value));
   };
 
   const onUnitSelect = (
@@ -91,14 +92,18 @@ const AdvancedPartitioning = () => {
       <FormGroup label='Minimum disk size'>
         <Flex gap={{ default: 'gapSm' }}>
           <FlexItem style={{ width: '50%' }}>
-            <ValidatedInputAndTextArea
+            <ValidatedTextInput
+              id='disk-min-size'
               ariaLabel='Minimum disk size input'
-              value={minsize || ''}
-              type='text'
+              value={diskSize}
               placeholder='Define minimum size'
-              stepValidation={stepValidation}
-              fieldName='disk-min-size'
-              onChange={handleDiskMinsizeChange}
+              validator={(value) => validateOptionalMinsize(value)}
+              onChange={(_, value) => setDiskSize(value)}
+              onCommit={(candidate) => {
+                if (candidate === undefined) return;
+
+                dispatch(changeDiskMinsize(candidate));
+              }}
             />
           </FlexItem>
           <FlexItem>

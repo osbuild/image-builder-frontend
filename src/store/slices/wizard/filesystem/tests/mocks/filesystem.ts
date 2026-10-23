@@ -38,6 +38,7 @@ export const createLogicalVolume = (
   min_size: '10',
   unit: 'GiB',
   name: 'root',
+  type: 'lv',
   fs_type: 'xfs',
   ...overrides,
 });
@@ -50,7 +51,7 @@ export const createVolumeGroup = (
   id: `vg-${Math.random().toString(36).slice(2, 11)}`,
   type: 'lvm',
   name: 'vg0',
-  min_size: undefined,
+  min_size: '1',
   unit: undefined,
   logical_volumes: logicalVolumes,
   ...overrides,
