@@ -2,7 +2,7 @@ name: Dependency Review
 
 on:
   pull_request:
-    branches: [ "main", "image-builder-cli", "rhel-10.2", "rhel-10.3" ]
+    branches: [ "main", "rhel-10.2", "rhel-10.3" ]
   merge_group:
 
 # Cancel in-progress jobs for the same workflow and ref
