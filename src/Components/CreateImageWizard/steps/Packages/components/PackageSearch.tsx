@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -22,779 +22,76 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import { OptimizeIcon, SearchIcon, TimesIcon } from '@patternfly/react-icons';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ManageRepositoriesButton from '@/Components/CreateImageWizard/steps/Repositories/components/ManageRepositoriesButton';
-import { excludeEUSReposFilter } from '@/Components/CreateImageWizard/steps/Repositories/repositoriesUtilities';
-import {
-  AMPLITUDE_MODULE_NAME,
-  ContentOrigin,
-  EPEL_10_REPO_DEFINITION,
-} from '@/constants';
-import {
-  Module,
-  useGetArchitecturesQuery,
-  useRecommendPackageMutation,
-} from '@/store/api/backend';
-import {
-  useGetTemplateQuery,
-  useListRepositoriesQuery,
-  useSearchPackageGroupMutation,
-  useSearchRepositoryModuleStreamsMutation,
-  useSearchRpmMutation,
-} from '@/store/api/contentSources';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import {
-  addModule,
-  addPackage,
-  addPackageGroup,
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  ItemWithSources,
-  selectArchitecture,
-  selectCustomRepositories,
-  selectDistribution,
-  selectModules,
-  selectPackageGroups,
-  selectPackages,
-  selectRecommendedRepositories,
-  selectSnapshotDate,
-  selectTemplate,
-  selectWizardMode,
-} from '@/store/slices/wizard';
-import { getEpelUrlForDistribution } from '@/Utilities/epel';
-import { releaseToVersion } from '@/Utilities/releaseToVersion';
-import { convertStringToDate } from '@/Utilities/time';
-import useDebounce from '@/Utilities/useDebounce';
 
+import RepositoryModal from './RepositoryModal';
+
+import { getPackageDescription } from '../packagesUtilities';
 import {
-  getPackageDescription,
-  isSelectDisabled,
-  useEpelRepo,
-  useRemovePackageContent,
-  useRequiredPackages,
-} from '../packagesUtilities';
+  usePackageRecommendations,
+  useSearchAnalytics,
+} from '../usePackageRecommendations';
+import { usePackageSearchQueries } from '../usePackageSearchQueries';
+import { usePackageSelection } from '../usePackageSelection';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';
-  setIsRepoModalOpen: (value: boolean) => void;
-  setIsSelectingPackage: (
-    value: IBPackageWithRepositoryInfo | undefined,
-  ) => void;
-  setIsSelectingGroup: (value: GroupWithRepositoryInfo | undefined) => void;
-  activeStream: string;
-  setActiveStream: (value: string) => void;
 };
 
-const PackageSearch = ({
-  packageType,
-  setIsRepoModalOpen,
-  setIsSelectingPackage,
-  setIsSelectingGroup,
-  activeStream,
-  setActiveStream,
-}: PackageSearchProps) => {
-  const dispatch = useAppDispatch();
-  const { analytics, isBeta } = useChrome();
-
+const PackageSearch = ({ packageType }: PackageSearchProps) => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const distribution = useAppSelector(selectDistribution);
-  const arch = useAppSelector(selectArchitecture);
-  const packages = useAppSelector(selectPackages);
-  const groups = useAppSelector(selectPackageGroups);
-  const modules = useAppSelector(selectModules);
-  const customRepositories = useAppSelector(selectCustomRepositories);
-  const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
-  const template = useAppSelector(selectTemplate);
-  const snapshotDate = useAppSelector(selectSnapshotDate);
-  const wizardMode = useAppSelector(selectWizardMode);
-
-  const { isSuccess: isSuccessEpelRepo } = useEpelRepo();
-  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
-
-  const requiredSet = useRequiredPackages();
-
-  const isRequiredAndSelected = (pkg: IBPackageWithRepositoryInfo) =>
-    requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);
-
-  const version = releaseToVersion(distribution);
 
   const {
-    data: distroRepositoriesForRecommendations,
-    isSuccess: isSuccessDistroRepositoriesForRecommendations,
-  } = useListRepositoriesQuery({
-    availableForArch: arch,
-    availableForVersion: version,
-    ...excludeEUSReposFilter,
-    contentType: 'rpm',
-    origin: ContentOrigin.REDHAT,
-    limit: 100,
-    offset: 0,
-  });
-
-  const [
-    fetchRecommendedPackages,
-    {
-      data: recommendationsData,
-      isLoading: isLoadingRecommendations,
-      isError: isErrorRecommendations,
-      reset: resetRecommendations,
-    },
-  ] = useRecommendPackageMutation();
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
-  const [hasTrackedRecommendations, setHasTrackedRecommendations] =
-    useState(false);
-
-  const epelRepoUrlByDistribution =
-    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
-
-  const { data: templateData } = useGetTemplateQuery({
-    uuid: template,
-  });
-
-  const EMPTY_ARRAY: never[] = useMemo(() => [], []);
-  const { data: { data: reposInTemplate = EMPTY_ARRAY } = {} } =
-    useListRepositoriesQuery({
-      contentType: 'rpm',
-      limit: 100,
-      offset: 0,
-      uuid:
-        templateData && templateData.repository_uuids
-          ? templateData.repository_uuids.join(',')
-          : '',
-    });
-
-  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
-    useGetArchitecturesQuery({
-      distribution: distribution,
-    });
-
-  const distroUrls = useMemo(() => {
-    const urls = distroRepositories
-      ?.find((archItem) => archItem.arch === arch)
-      ?.repositories.filter((repo) => !!repo.baseurl)
-      .map((repo) => repo.baseurl!);
-    return urls ?? EMPTY_ARRAY;
-  }, [distroRepositories, arch]);
-
-  const [
-    searchCustomRpms,
-    {
-      data: dataCustomPackages,
-      isSuccess: isSuccessCustomPackages,
-      isLoading: isLoadingCustomPackages,
-    },
-  ] = useSearchRpmMutation();
-
-  const debouncedSearchTerm = useDebounce(searchTerm.trim());
-
-  const [
-    searchRecommendedRpms,
-    {
-      data: dataRecommendedPackages,
-      isSuccess: isSuccessRecommendedPackages,
-      isLoading: isLoadingRecommendedPackages,
-    },
-  ] = useSearchRpmMutation();
-
-  const [
-    searchDistroRpms,
-    {
-      data: dataDistroPackages,
-      isSuccess: isSuccessDistroPackages,
-      isLoading: isLoadingDistroPackages,
-    },
-  ] = useSearchRpmMutation();
-
-  const [
-    searchDistroGroups,
-    {
-      data: dataDistroGroups,
-      isSuccess: isSuccessDistroGroups,
-      isLoading: isLoadingDistroGroups,
-    },
-  ] = useSearchPackageGroupMutation();
-
-  const [
-    searchCustomGroups,
-    {
-      data: dataCustomGroups,
-      isSuccess: isSuccessCustomGroups,
-      isLoading: isLoadingCustomGroups,
-    },
-  ] = useSearchPackageGroupMutation();
-
-  const [
-    searchRecommendedGroups,
-    {
-      data: dataRecommendedGroups,
-      isSuccess: isSuccessRecommendedGroups,
-      isLoading: isLoadingRecommendedGroups,
-    },
-  ] = useSearchPackageGroupMutation();
-
-  const [
-    searchModulesInfo,
-    { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
-  ] = useSearchRepositoryModuleStreamsMutation();
-
-  useEffect(() => {
-    if (packageType === 'groups') {
-      return;
-    }
-    if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
-      if (isOnPremise) {
-        searchDistroRpms({
-          apiContentUnitSearchRequest: {
-            packages: [debouncedSearchTerm],
-            architecture: arch,
-            distribution,
-          },
-        });
-      } else {
-        searchDistroRpms({
-          apiContentUnitSearchRequest: {
-            search: debouncedSearchTerm,
-            urls:
-              template === ''
-                ? distroUrls
-                : reposInTemplate
-                    .filter((r) => r.org_id === '-1' && !!r.url)
-                    .flatMap((r) =>
-                      r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!,
-                    ),
-            limit: 500,
-            include_package_sources: true,
-            date: snapshotDate
-              ? new Date(convertStringToDate(snapshotDate)).toISOString()
-              : undefined,
-          },
-        });
-      }
-    }
-    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
-      searchCustomRpms({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          uuids: customRepositories.flatMap((repo) => {
-            return repo.id;
-          }),
-          limit: 500,
-          include_package_sources: true,
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-    if (
-      debouncedSearchTerm.length > 2 &&
-      isSearchingOtherRepos &&
-      !isOnPremise
-    ) {
-      searchRecommendedRpms({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: [epelRepoUrlByDistribution],
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-  }, [
-    customRepositories,
-    searchCustomRpms,
-    searchDistroRpms,
-    searchRecommendedRpms,
-    debouncedSearchTerm,
-    isSuccessDistroRepositories,
-    arch,
-    template,
-    distribution,
-    packageType,
-    snapshotDate,
-    distroUrls,
-    isOnPremise,
-    reposInTemplate,
-    isSearchingOtherRepos,
-    epelRepoUrlByDistribution,
-  ]);
-
-  useEffect(() => {
-    if (packageType === 'packages') {
-      return;
-    }
-    if (isSuccessDistroRepositories) {
-      searchDistroGroups({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: distroUrls,
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-    if (customRepositories.length > 0) {
-      searchCustomGroups({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          uuids: customRepositories.flatMap((repo) => {
-            return repo.id;
-          }),
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-    if (isSearchingOtherRepos && !isOnPremise) {
-      searchRecommendedGroups({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: [epelRepoUrlByDistribution],
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
-        },
-      });
-    }
-  }, [
-    customRepositories,
-    searchDistroGroups,
-    searchCustomGroups,
-    searchRecommendedGroups,
-    debouncedSearchTerm,
-    packageType,
-    arch,
-    distroRepositories,
-    isSuccessDistroRepositories,
-    snapshotDate,
-    distroUrls,
-    isSearchingOtherRepos,
-    isOnPremise,
-    epelRepoUrlByDistribution,
-  ]);
-
-  useEffect(() => {
-    if (
-      wizardMode !== 'create' &&
-      isSuccessDistroRepositories &&
-      modules.length > 0
-    ) {
-      searchModulesInfo({
-        apiSearchModuleStreamsRequest: {
-          rpm_names: modules.map((module) => module.name),
-          urls: [...distroUrls, epelRepoUrlByDistribution],
-          uuids: [],
-        },
-      });
-    }
-  }, [isSuccessDistroRepositories, modules, distroUrls]);
-
-  useEffect(() => {
-    if (!isSuccessModulesInfo) return;
-
-    dataModulesInfo.forEach((module) => {
-      const enabledModule = modules.find((m) => m.name === module.module_name);
-
-      module.streams
-        ?.find((stream) => stream.stream === enabledModule?.stream)
-        ?.package_names?.forEach((packageName) => {
-          const existingPackage = packages.find(
-            (pkg) => pkg.name === packageName,
-          );
-
-          if (existingPackage && module.module_name && enabledModule) {
-            dispatch(
-              addPackage({
-                ...existingPackage,
-                type: 'module',
-                module_name: module.module_name,
-                stream: enabledModule.stream,
-              }),
-            );
-          }
-        });
-    });
-  }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
-
-  const [
-    fetchRecommendationDescriptions,
-    { data: dataDescriptions, isSuccess: isSuccessDescriptions },
-  ] = useSearchRpmMutation();
-
-  useEffect(() => {
-    resetRecommendations();
-
-    if (isOnPremise || packages.length === 0) {
-      return;
-    }
-
-    const packageNames = packages.map((pkg) => pkg.name);
-    const noDashDistro = distribution.replace('-', '');
-
-    (async () => {
-      try {
-        const response = await fetchRecommendedPackages({
-          recommendPackageRequest: {
-            packages: packageNames,
-            recommendedPackages: 5,
-            distribution: noDashDistro,
-          },
-        });
-
-        // there is a mismatch between API type and real data
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (response?.data?.packages && response.data.packages.length > 0) {
-          analytics.track(
-            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Found`,
-            {
-              module: AMPLITUDE_MODULE_NAME,
-              isPreview: isBeta(),
-              foundRecommendations: response.data.packages,
-              selectedPackages: packageNames,
-              distribution: noDashDistro,
-              modelVersion: response.data.modelVersion,
-            },
-          );
-        }
-      } catch {
-        // error state handled by isErrorRecommendations
-      }
-    })();
-    // fetchRecommendedPackages, resetRecommendations, analytics, and isBeta
-    // are unstable dependencies that were causing an infinite loop when
-    // included in the dependency array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packages, distribution, isOnPremise]);
-
-  useEffect(() => {
-    if (
-      isSuccessDistroRepositoriesForRecommendations &&
-      // there is a mismatch between API type and real data
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      distroRepositoriesForRecommendations?.data &&
-      recommendationsData?.packages &&
-      recommendationsData.packages.length > 0
-    ) {
-      const distroRepoUrls = distroRepositoriesForRecommendations.data.map(
-        (repo) => repo.url || '',
-      );
-
-      fetchRecommendationDescriptions({
-        apiContentUnitSearchRequest: {
-          exact_names: recommendationsData.packages,
-          urls: distroRepoUrls,
-        },
-      });
-    }
-  }, [
-    isSuccessDistroRepositoriesForRecommendations,
-    distroRepositoriesForRecommendations,
-    recommendationsData,
-    fetchRecommendationDescriptions,
-  ]);
-
-  const recommendationsWithDescriptions = useMemo(() => {
-    if (!isSuccessDescriptions || !recommendationsData?.packages) {
-      return [];
-    }
-    return recommendationsData.packages.map((pkgName) => {
-      const description = dataDescriptions.find(
-        (p) => p.package_name === pkgName,
-      );
-      return {
-        name: pkgName,
-        summary: description?.summary || '',
-      };
-    });
-  }, [isSuccessDescriptions, recommendationsData, dataDescriptions]);
-
-  const transformedPackages = useMemo(() => {
-    let transformedDistroData: ItemWithSources[] = [];
-    let transformedCustomData: ItemWithSources[] = [];
-    let transformedRecommendedData: ItemWithSources[] = [];
-
-    if (isSuccessDistroPackages && !isSearchingOtherRepos) {
-      transformedDistroData = dataDistroPackages.map((values) => ({
-        name: values.package_name!,
-        summary: values.summary!,
-        repository: 'distro',
-        sources: values.package_sources,
-      }));
-    }
-
-    if (isSuccessCustomPackages && !isSearchingOtherRepos) {
-      transformedCustomData = dataCustomPackages.map((values) => ({
-        name: values.package_name!,
-        summary: values.summary!,
-        repository: 'custom',
-        sources: values.package_sources,
-      }));
-    }
-
-    if (isSuccessRecommendedPackages && isSearchingOtherRepos) {
-      transformedRecommendedData = dataRecommendedPackages.map((values) => ({
-        name: values.package_name!,
-        summary: values.summary!,
-        repository: 'recommended',
-        sources: values.package_sources,
-      }));
-    }
-
-    const combinedPackageData = transformedDistroData
-      .concat(transformedCustomData)
-      .concat(transformedRecommendedData);
-
-    let unpackedData: IBPackageWithRepositoryInfo[] =
-      combinedPackageData.flatMap((item) => {
-        // Spread modules into separate rows by application stream
-        if (item.sources) {
-          return item.sources.map((source) => ({
-            name: item.name,
-            summary: item.summary,
-            repository: item.repository,
-            type: source.type,
-            module_name: source.name,
-            stream: source.stream,
-            end_date: source.end_date,
-          }));
-        }
-        return [
-          {
-            name: item.name,
-            summary: item.summary,
-            repository: item.repository,
-          },
-        ];
-      });
-
-    // group by name, but sort by application stream in descending order
-    unpackedData = [...unpackedData].sort((a, b) => {
-      // By name (asc)
-      if (a.name !== b.name) return a.name.localeCompare(b.name);
-
-      // By stream (desc)
-      const aStream = a.stream || '';
-      const bStream = b.stream || '';
-      if (aStream !== bStream) return bStream.localeCompare(aStream);
-
-      // By repository (asc)
-      const aRepo = a.repository || '';
-      const bRepo = b.repository || '';
-      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
-
-      // By module_name (asc)
-      const aModule = a.module_name || '';
-      const bModule = b.module_name || '';
-      return aModule.localeCompare(bModule);
-    });
-
-    return unpackedData;
-  }, [
-    dataCustomPackages,
-    dataDistroPackages,
-    dataRecommendedPackages,
-    isSuccessCustomPackages,
-    isSuccessDistroPackages,
-    isSuccessRecommendedPackages,
-    isSearchingOtherRepos,
-  ]);
-
-  const transformedGroups = useMemo(() => {
-    let combinedGroupData: GroupWithRepositoryInfo[] = [];
-
-    if (isSuccessDistroGroups && !isSearchingOtherRepos) {
-      combinedGroupData = combinedGroupData.concat(
-        dataDistroGroups!.map((values) => ({
-          name: values.id!,
-          description: values.description!,
-          repository: 'distro',
-          package_list: values.package_list!,
-        })),
-      );
-    }
-    if (isSuccessCustomGroups && !isSearchingOtherRepos) {
-      combinedGroupData = combinedGroupData.concat(
-        dataCustomGroups!.map((values) => ({
-          name: values.id!,
-          description: values.description!,
-          repository: 'custom',
-          package_list: values.package_list!,
-        })),
-      );
-    }
-    if (isSuccessRecommendedGroups && isSearchingOtherRepos) {
-      combinedGroupData = combinedGroupData.concat(
-        dataRecommendedGroups!.map((values) => ({
-          name: values.id!,
-          description: values.description!,
-          repository: 'recommended',
-          package_list: values.package_list!,
-        })),
-      );
-    }
-
-    return combinedGroupData;
-  }, [
-    dataDistroGroups,
-    dataCustomGroups,
-    dataRecommendedGroups,
-    isSuccessDistroGroups,
-    isSuccessCustomGroups,
-    isSuccessRecommendedGroups,
-    isSearchingOtherRepos,
-  ]);
-
-  const transformedRecommendations = useMemo(() => {
-    if (packageType === 'groups' || !recommendationsWithDescriptions.length) {
-      return [];
-    }
-
-    return recommendationsWithDescriptions.map(
-      (rec): IBPackageWithRepositoryInfo => ({
-        name: rec.name,
-        summary: rec.summary,
-        repository: 'distro',
-        isRecommendation: true,
-      }),
-    );
-  }, [recommendationsWithDescriptions, packageType]);
-
-  useEffect(() => {
-    if (!isOpen || packageType !== 'packages' || isOnPremise) {
-      if (!isOpen) {
-        setHasTrackedOpen(false);
-        setHasTrackedRecommendations(false);
-      }
-      return;
-    }
-
-    if (!hasTrackedOpen) {
-      analytics.track(
-        `${AMPLITUDE_MODULE_NAME} - Package Search Dropdown Opened`,
-        {
-          module: AMPLITUDE_MODULE_NAME,
-          isPreview: isBeta(),
-          selectedPackages: packages.map((pkg) => pkg.name),
-          recommendationsShown: transformedRecommendations.length > 0,
-        },
-      );
-      setHasTrackedOpen(true);
-    }
-
-    if (transformedRecommendations.length > 0 && !hasTrackedRecommendations) {
-      analytics.track(
-        `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
-        {
-          module: AMPLITUDE_MODULE_NAME,
-          isPreview: isBeta(),
-          shownRecommendations: recommendationsData?.packages || [],
-          selectedPackages: packages.map((pkg) => pkg.name),
-          distribution: distribution.replace('-', ''),
-          modelVersion: recommendationsData?.modelVersion,
-        },
-      );
-      setHasTrackedRecommendations(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isOpen,
-    hasTrackedOpen,
-    hasTrackedRecommendations,
-    transformedRecommendations,
-  ]);
-
-  const sortedPackages = useMemo(() => {
-    if (!debouncedSearchTerm) {
-      return isLoadingRecommendations ? [] : transformedRecommendations;
-    }
-
-    if (transformedPackages.length < 1 || !Array.isArray(transformedPackages)) {
-      return isLoadingRecommendations ? [] : transformedRecommendations;
-    }
-
-    const regularPackages = [...transformedPackages].sort((a, b) => {
-      // Active stream packages first (if activeStream is set)
-      const aIsActive = activeStream && a.stream === activeStream ? 0 : 1;
-      const bIsActive = activeStream && b.stream === activeStream ? 0 : 1;
-      if (aIsActive !== bIsActive) return aIsActive - bIsActive;
-
-      // Then by name (asc)
-      if (a.name !== b.name) return a.name.localeCompare(b.name);
-
-      // Then by stream version (desc)
-      const aStream = a.stream || '';
-      const bStream = b.stream || '';
-      if (aStream !== bStream) {
-        if (!aStream) return 1;
-        if (!bStream) return -1;
-        const aParts = aStream
-          .split('.')
-          .map((part) => parseInt(part, 10) || 0);
-        const bParts = bStream
-          .split('.')
-          .map((part) => parseInt(part, 10) || 0);
-        const aVersion = aParts
-          .map((p) => p.toString().padStart(10, '0'))
-          .join('.');
-        const bVersion = bParts
-          .map((p) => p.toString().padStart(10, '0'))
-          .join('.');
-        return bVersion.localeCompare(aVersion); // descending
-      }
-
-      // Then by end date (asc, nulls last)
-      const aEndDate = a.end_date || '9999-12-31';
-      const bEndDate = b.end_date || '9999-12-31';
-      if (aEndDate !== bEndDate) return aEndDate.localeCompare(bEndDate);
-
-      // Then by repository (asc)
-      const aRepo = a.repository || '';
-      const bRepo = b.repository || '';
-      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
-
-      // Finally by module name (asc)
-      const aModule = a.module_name || '';
-      const bModule = b.module_name || '';
-      return aModule.localeCompare(bModule);
-    });
-
-    const hasModules = regularPackages.some((pkg) => pkg.type === 'module');
-    const filteredRecommendations =
-      isLoadingRecommendations || hasModules
-        ? []
-        : transformedRecommendations.filter(
-            (rec) => !regularPackages.some((pkg) => pkg.name === rec.name),
-          );
-
-    return [...regularPackages, ...filteredRecommendations];
-  }, [
-    debouncedSearchTerm,
-    transformedPackages,
-    activeStream,
     transformedRecommendations,
     isLoadingRecommendations,
-  ]);
+    isErrorRecommendations,
+    recommendationsData,
+  } = usePackageRecommendations(packageType);
 
-  const isPackageSelectDisabled = (pkg: IBPackageWithRepositoryInfo) =>
-    isSelectDisabled(pkg, packages, modules, requiredSet);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeStream, setActiveStream] = useState('');
+  const [isSearchingOtherRepos, setIsSearchingOtherRepos] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  useSearchAnalytics(
+    isOpen,
+    packageType,
+    transformedRecommendations,
+    recommendationsData,
+  );
+
+  const { sortedPackages, transformedGroups, debouncedSearchTerm, isLoading } =
+    usePackageSearchQueries({
+      packageType,
+      searchTerm,
+      isSearchingOtherRepos,
+      activeStream,
+      transformedRecommendations,
+      isLoadingRecommendations,
+    });
+
+  const {
+    onSelect,
+    isPackageSelectDisabled,
+    isRepoModalOpen,
+    setIsRepoModalOpen,
+    isSelectingPackage,
+    setIsSelectingPackage,
+    isSelectingGroup,
+    selectedPackageKeys,
+    selectedGroupNames,
+  } = usePackageSelection({
+    packageType,
+    sortedPackages,
+    transformedGroups,
+    recommendationsData,
+    setActiveStream,
+  });
 
   const packageTypeLabel =
     packageType === 'packages' ? 'packages' : 'package groups';
-
-  const selectedPackageKeys = useMemo(
-    () => packages.map((p) => `${p.name}|||${p.stream || ''}`),
-    [packages],
-  );
-  const selectedGroupNames = useMemo(() => groups.map((g) => g.name), [groups]);
 
   const onInputClick = () => {
     if (!isOpen && (searchTerm || transformedRecommendations.length > 0)) {
@@ -820,99 +117,6 @@ const PackageSearch = ({
     setIsOpen(false);
     setActiveStream('');
     setIsSearchingOtherRepos(false);
-  };
-
-  const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
-    if (!value || typeof value !== 'string') return;
-
-    if (packageType === 'packages') {
-      const [name, stream] = value.split('|||');
-      const pkg = sortedPackages.find(
-        (p) => p.name === name && (p.stream || '') === stream,
-      );
-      if (!pkg) return;
-
-      let isSelected = false;
-
-      if (!pkg.type || pkg.type === 'package') {
-        const isModuleWithSameName = modules.some(
-          (module: Module) => module.name === pkg.name,
-        );
-        isSelected =
-          packages.some(
-            (p) => p.name === pkg.name && p.stream === pkg.stream,
-          ) && !isModuleWithSameName;
-      }
-
-      if (pkg.type === 'module') {
-        isSelected =
-          packages.some(
-            (p) => p.name === pkg.name && p.stream === pkg.stream,
-          ) &&
-          modules.some(
-            (m: Module) =>
-              m.name === pkg.module_name && m.stream === pkg.stream,
-          );
-      }
-
-      if (!isSelected) {
-        if (
-          isSuccessEpelRepo &&
-          pkg.repository === 'recommended' &&
-          !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-        ) {
-          setIsRepoModalOpen(true);
-          setIsSelectingPackage(pkg);
-        } else {
-          dispatch(addPackage(pkg));
-          if (pkg.isRecommendation && !isOnPremise) {
-            analytics.track(
-              `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
-              {
-                module: AMPLITUDE_MODULE_NAME,
-                isPreview: isBeta(),
-                packageName: pkg.name,
-                selectedPackages: packages.map((p) => p.name),
-                shownRecommendations: recommendationsData?.packages || [],
-                distribution: distribution.replace('-', ''),
-                modelVersion: recommendationsData?.modelVersion,
-              },
-            );
-          }
-          if (pkg.type === 'module') {
-            setActiveStream(pkg.stream || '');
-            dispatch(
-              addModule({
-                name: pkg.module_name || '',
-                stream: pkg.stream || '',
-              }),
-            );
-          }
-        }
-      } else if (!isRequiredAndSelected(pkg)) {
-        handleRemovePackage(pkg);
-      }
-    } else {
-      const grp = transformedGroups.find((g) => g.name === value);
-      if (!grp) return;
-
-      const isSelected = groups.some((g) => g.name === grp.name);
-
-      if (!isSelected) {
-        if (
-          isSuccessEpelRepo &&
-          grp.repository === 'recommended' &&
-          !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-        ) {
-          setIsRepoModalOpen(true);
-          setIsSelectingGroup(grp);
-        } else {
-          dispatch(addPackageGroup(grp));
-        }
-      } else {
-        handleRemoveGroup(grp);
-      }
-    }
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
@@ -948,137 +152,145 @@ const PackageSearch = ({
   );
 
   return (
-    <FormGroup label='Add packages' style={{ width: '100%' }}>
-      <Select
-        isScrollable
-        isOpen={isOpen}
-        selected={
-          packageType === 'packages' ? selectedPackageKeys : selectedGroupNames
-        }
-        onSelect={onSelect}
-        onOpenChange={setIsOpen}
-        toggle={toggle}
-        shouldFocusFirstItemOnOpen={false}
-      >
-        <SelectList>
-          {!debouncedSearchTerm && sortedPackages.length === 0 ? (
-            <SelectOption isDisabled>
-              Start typing to search {packageTypeLabel}
-            </SelectOption>
-          ) : packageType === 'packages' && debouncedSearchTerm.length === 1 ? (
-            <EmptyState variant='sm'>
-              <EmptyStateBody>
-                The search value must be greater than 1 character
-              </EmptyStateBody>
-            </EmptyState>
-          ) : isLoadingDistroPackages ||
-            isLoadingCustomPackages ||
-            isLoadingRecommendedPackages ||
-            isLoadingDistroGroups ||
-            isLoadingCustomGroups ||
-            isLoadingRecommendedGroups ? (
-            <SelectOption isDisabled>
-              Searching {packageTypeLabel}...
-            </SelectOption>
-          ) : packageType === 'packages' && sortedPackages.length > 0 ? (
-            <>
-              {sortedPackages.slice(0, 50).map((pkg) => (
-                <SelectOption
-                  key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
-                  value={`${pkg.name}|||${pkg.stream || ''}`}
-                  description={
-                    pkg.isRecommendation
-                      ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
-                      : getPackageDescription(pkg)
-                  }
-                  isDisabled={isPackageSelectDisabled(pkg)}
-                >
-                  {pkg.isRecommendation && (
-                    <>
-                      <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
-                    </>
-                  )}
-                  {pkg.isRecommendation && pkg.summary
-                    ? `${pkg.name} - ${pkg.summary}`
-                    : pkg.name}
-                </SelectOption>
-              ))}
-              {isLoadingRecommendations && (
-                <SelectOption isDisabled>
-                  Getting package recommendations...
-                </SelectOption>
-              )}
-            </>
-          ) : packageType === 'groups' && transformedGroups.length > 0 ? (
-            transformedGroups.slice(0, 50).map((group) => (
-              <SelectOption
-                key={`${group.name}-${group.repository}`}
-                value={group.name}
-                description={group.description}
-              >
-                {group.name}
+    <>
+      <RepositoryModal
+        isRepoModalOpen={isRepoModalOpen}
+        setIsRepoModalOpen={setIsRepoModalOpen}
+        isSelectingPackage={isSelectingPackage}
+        setIsSelectingPackage={setIsSelectingPackage}
+        isSelectingGroup={isSelectingGroup}
+      />
+      <FormGroup label='Add packages' style={{ width: '100%' }}>
+        <Select
+          isScrollable
+          isOpen={isOpen}
+          selected={
+            packageType === 'packages'
+              ? selectedPackageKeys
+              : selectedGroupNames
+          }
+          onSelect={onSelect}
+          onOpenChange={setIsOpen}
+          toggle={toggle}
+          shouldFocusFirstItemOnOpen={false}
+        >
+          <SelectList>
+            {!debouncedSearchTerm && sortedPackages.length === 0 ? (
+              <SelectOption isDisabled>
+                Start typing to search {packageTypeLabel}
               </SelectOption>
-            ))
-          ) : isLoadingRecommendations &&
-            packageType === 'packages' &&
-            !sortedPackages.length ? (
-            <SelectOption isDisabled>
-              Getting package recommendations...
-            </SelectOption>
-          ) : !isSearchingOtherRepos && !isOnPremise ? (
-            <EmptyState variant='sm'>
-              <EmptyStateBody>
-                No results for &quot;{debouncedSearchTerm}&quot; in selected
-                repositories. If you know the name of your repository, make sure
-                it&apos;s included on the{' '}
-                <ManageRepositoriesButton
-                  label='Repositories page'
-                  icon={true}
-                />
-              </EmptyStateBody>
-              <EmptyStateFooter>
-                <EmptyStateActions>
-                  <Button
-                    variant='secondary'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsSearchingOtherRepos(true);
-                    }}
+            ) : packageType === 'packages' &&
+              debouncedSearchTerm.length === 1 ? (
+              <EmptyState variant='sm'>
+                <EmptyStateBody>
+                  The search value must be greater than 1 character
+                </EmptyStateBody>
+              </EmptyState>
+            ) : isLoading ? (
+              <SelectOption isDisabled>
+                Searching {packageTypeLabel}...
+              </SelectOption>
+            ) : packageType === 'packages' && sortedPackages.length > 0 ? (
+              <>
+                {sortedPackages.slice(0, 50).map((pkg) => (
+                  <SelectOption
+                    key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
+                    value={`${pkg.name}|||${pkg.stream || ''}`}
+                    description={
+                      pkg.isRecommendation
+                        ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
+                        : getPackageDescription(pkg)
+                    }
+                    isDisabled={isPackageSelectDisabled(pkg)}
                   >
-                    Search repositories outside of this image
-                  </Button>
-                </EmptyStateActions>
-              </EmptyStateFooter>
-            </EmptyState>
-          ) : (
-            <SelectOption isDisabled>
-              No {packageTypeLabel} found for &quot;{debouncedSearchTerm}&quot;
-            </SelectOption>
-          )}
-        </SelectList>
-        {isSearchingOtherRepos &&
-          (sortedPackages.length > 0 || transformedGroups.length > 0) && (
-            <>
-              <Divider />
-              <Content style={{ padding: '8px 16px' }}>
-                <Content component='small'>
-                  Showing results from other repositories (EPEL)
+                    {pkg.isRecommendation && (
+                      <>
+                        <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
+                      </>
+                    )}
+                    {pkg.isRecommendation && pkg.summary
+                      ? `${pkg.name} - ${pkg.summary}`
+                      : pkg.name}
+                  </SelectOption>
+                ))}
+                {isLoadingRecommendations && (
+                  <SelectOption isDisabled>
+                    Getting package recommendations...
+                  </SelectOption>
+                )}
+              </>
+            ) : packageType === 'groups' && transformedGroups.length > 0 ? (
+              transformedGroups.slice(0, 50).map((group) => (
+                <SelectOption
+                  key={`${group.name}-${group.repository}`}
+                  value={group.name}
+                  description={group.description}
+                >
+                  {group.name}
+                </SelectOption>
+              ))
+            ) : isLoadingRecommendations &&
+              packageType === 'packages' &&
+              !sortedPackages.length ? (
+              <SelectOption isDisabled>
+                Getting package recommendations...
+              </SelectOption>
+            ) : !isSearchingOtherRepos && !isOnPremise ? (
+              <EmptyState variant='sm'>
+                <EmptyStateBody>
+                  No results for &quot;{debouncedSearchTerm}&quot; in selected
+                  repositories. If you know the name of your repository, make
+                  sure it&apos;s included on the{' '}
+                  <ManageRepositoriesButton
+                    label='Repositories page'
+                    icon={true}
+                  />
+                </EmptyStateBody>
+                <EmptyStateFooter>
+                  <EmptyStateActions>
+                    <Button
+                      variant='secondary'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsSearchingOtherRepos(true);
+                      }}
+                    >
+                      Search repositories outside of this image
+                    </Button>
+                  </EmptyStateActions>
+                </EmptyStateFooter>
+              </EmptyState>
+            ) : (
+              <SelectOption isDisabled>
+                No {packageTypeLabel} found for &quot;{debouncedSearchTerm}
+                &quot;
+              </SelectOption>
+            )}
+          </SelectList>
+          {isSearchingOtherRepos &&
+            (sortedPackages.length > 0 || transformedGroups.length > 0) && (
+              <>
+                <Divider />
+                <Content style={{ padding: '8px 16px' }}>
+                  <Content component='small'>
+                    Showing results from other repositories (EPEL)
+                  </Content>
                 </Content>
-              </Content>
-            </>
-          )}
-      </Select>
-      {isErrorRecommendations && packageType === 'packages' && (
-        <FormHelperText>
-          <HelperText>
-            <HelperTextItem variant='error'>
-              Recommendations couldn&apos;t be fetched. Try again by changing
-              your selected packages.
-            </HelperTextItem>
-          </HelperText>
-        </FormHelperText>
-      )}
-    </FormGroup>
+              </>
+            )}
+        </Select>
+        {isErrorRecommendations && packageType === 'packages' && (
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem variant='error'>
+                Recommendations couldn&apos;t be fetched. Try again by changing
+                your selected packages.
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        )}
+      </FormGroup>
+    </>
   );
 };
 

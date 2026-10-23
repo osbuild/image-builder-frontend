@@ -9,17 +9,12 @@ import EmptySearch from './EmptySearch';
 import GroupRow from './GroupRow';
 import PackageRow from './PackageRow';
 
-import {
-  useRemovePackageContent,
-  useRequiredPackages,
-} from '../packagesUtilities';
+import { useRequiredPackages } from '../packagesUtilities';
 
 const PackagesTable = () => {
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectPackageGroups);
   const requiredSet = useRequiredPackages();
-
-  const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
 
   const orderedPackages = [
     ...packages.filter((pkg) => requiredSet.has(pkg.name)),
@@ -46,15 +41,12 @@ const PackagesTable = () => {
               key={`${group.name}-${group.repository || 'default'}`}
               group={group}
               rowIndex={index}
-              onRemove={handleRemoveGroup}
             />
           ))}
           {orderedPackages.map((pkg) => (
             <PackageRow
               key={`${pkg.name}-${pkg.stream || 'default'}-${pkg.module_name || pkg.name}`}
               pkg={pkg}
-              isRequired={requiredSet.has(pkg.name)}
-              onRemove={handleRemovePackage}
             />
           ))}
         </>

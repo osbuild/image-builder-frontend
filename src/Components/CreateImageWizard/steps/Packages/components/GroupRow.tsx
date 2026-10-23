@@ -16,10 +16,9 @@ import RemovePackageButton from './RemovePackageButton';
 type GroupRowProps = {
   group: GroupWithRepositoryInfo;
   rowIndex: number;
-  onRemove: (group: GroupWithRepositoryInfo) => void;
 };
 
-const GroupRow = ({ group, rowIndex, onRemove }: GroupRowProps) => {
+const GroupRow = ({ group, rowIndex }: GroupRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -37,10 +36,7 @@ const GroupRow = ({ group, rowIndex, onRemove }: GroupRowProps) => {
         <Td>N/A</Td>
         <Td>N/A</Td>
         <Td>
-          <RemovePackageButton
-            item={group}
-            onRemove={(item) => onRemove(item as GroupWithRepositoryInfo)}
-          />
+          <RemovePackageButton item={group} />
         </Td>
       </Tr>
       <Tr isExpanded={isExpanded}>
