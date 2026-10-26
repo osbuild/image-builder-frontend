@@ -3,7 +3,7 @@ import React from 'react';
 import { Label } from '@patternfly/react-core';
 import { Tbody, Td, Tr } from '@patternfly/react-table';
 
-import { IBPackageWithRepositoryInfo } from '@/store/slices/wizard';
+import { IBPackage } from '@/store/slices/wizard';
 
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
@@ -11,7 +11,7 @@ import RetirementDate from './RetirementDate';
 import { useRequiredPackages } from '../packagesUtilities';
 
 type PackageRowProps = {
-  pkg: IBPackageWithRepositoryInfo;
+  pkg: IBPackage;
 };
 
 const PackageRow = ({ pkg }: PackageRowProps) => {

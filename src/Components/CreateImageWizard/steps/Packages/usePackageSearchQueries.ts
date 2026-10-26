@@ -15,9 +15,9 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   addPackage,
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-  ItemWithSources,
+  IBPackage,
+  IBPackageGroup,
+  IBPackageWithSources,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
@@ -38,7 +38,7 @@ type UsePackageSearchQueriesArgs = {
   searchTerm: string;
   isSearchingOtherRepos: boolean;
   activeStream: string;
-  transformedRecommendations: IBPackageWithRepositoryInfo[];
+  transformedRecommendations: IBPackage[];
   isLoadingRecommendations: boolean;
 };
 
@@ -340,7 +340,7 @@ export const usePackageSearchQueries = ({
     const mapRpms = (
       data: ApiSearchRpmResponse[],
       isRecommendedRepository?: boolean,
-    ): ItemWithSources[] =>
+    ): IBPackageWithSources[] =>
       data.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
@@ -364,7 +364,7 @@ export const usePackageSearchQueries = ({
         : [];
 
     // Spread modules into separate rows by application stream
-    const unpackedData: IBPackageWithRepositoryInfo[] = [
+    const unpackedData: IBPackage[] = [
       ...transformedDistroData,
       ...transformedCustomData,
       ...transformedRecommendedData,
@@ -424,7 +424,7 @@ export const usePackageSearchQueries = ({
     const mapGroups = (
       data: ApiSearchPackageGroupResponse[],
       isRecommendedRepository?: boolean,
-    ): GroupWithRepositoryInfo[] =>
+    ): IBPackageGroup[] =>
       data.map((values) => ({
         name: values.id!,
         description: values.description!,

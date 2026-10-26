@@ -14,14 +14,14 @@ export type PayloadRepositoryWithFlag = Repository & {
   isRecommended?: boolean;
 };
 
-export type ItemWithSources = {
+export type IBPackageWithSources = {
   name: Package['name'];
   summary: Package['summary'];
   isRecommendedRepository?: boolean;
   sources?: ApiSearchRpmResponse['package_sources'];
 };
 
-export type IBPackageWithRepositoryInfo = {
+export type IBPackage = {
   name: Package['name'];
   summary: Package['summary'];
   isRecommendedRepository?: boolean;
@@ -32,7 +32,7 @@ export type IBPackageWithRepositoryInfo = {
   isRecommendation?: boolean;
 };
 
-export type GroupWithRepositoryInfo = {
+export type IBPackageGroup = {
   name: string;
   description: string;
   isRecommendedRepository?: boolean;
@@ -50,9 +50,9 @@ export type ContentSlice = {
     payloadRepositories: PayloadRepositoryWithFlag[];
     redHatRepositories: Repository[];
   };
-  packages: IBPackageWithRepositoryInfo[];
+  packages: IBPackage[];
   enabledModules: Module[];
-  groups: GroupWithRepositoryInfo[];
+  groups: IBPackageGroup[];
   snapshotting: {
     useLatest: boolean;
     snapshotDate: string;

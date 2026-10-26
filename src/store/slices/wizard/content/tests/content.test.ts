@@ -5,8 +5,8 @@ import {
   addModule,
   addPackage,
   addPackageGroup,
-  type GroupWithRepositoryInfo,
-  type IBPackageWithRepositoryInfo,
+  type IBPackage,
+  type IBPackageGroup,
   initialState,
   removeModule,
   removePackage,
@@ -17,8 +17,8 @@ import {
 
 const createPackage = (
   name: string,
-  overrides: Partial<IBPackageWithRepositoryInfo> = {},
-): IBPackageWithRepositoryInfo => ({
+  overrides: Partial<IBPackage> = {},
+): IBPackage => ({
   name,
   summary: `${name} package`,
   ...overrides,
@@ -26,8 +26,8 @@ const createPackage = (
 
 const createGroup = (
   name: string,
-  overrides: Partial<GroupWithRepositoryInfo> = {},
-): GroupWithRepositoryInfo => ({
+  overrides: Partial<IBPackageGroup> = {},
+): IBPackageGroup => ({
   name,
   description: `${name} group`,
   package_list: [],

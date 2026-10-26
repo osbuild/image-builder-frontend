@@ -10,8 +10,8 @@ import {
   addModule,
   addPackage,
   addPackageGroup,
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
+  IBPackage,
+  IBPackageGroup,
   selectDistribution,
   selectModules,
   selectPackageGroups,
@@ -28,8 +28,8 @@ import {
 
 type UsePackageSelectionArgs = {
   packageType: 'packages' | 'groups';
-  sortedPackages: IBPackageWithRepositoryInfo[];
-  transformedGroups: GroupWithRepositoryInfo[];
+  sortedPackages: IBPackage[];
+  transformedGroups: IBPackageGroup[];
   recommendationsData: RecommendationsResponse | undefined;
   setActiveStream: (value: string) => void;
 };
@@ -52,17 +52,17 @@ export const usePackageSelection = ({
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
 
   const [pendingRepoRec, setPendingRepoRec] = useState<
-    IBPackageWithRepositoryInfo | GroupWithRepositoryInfo | undefined
+    IBPackage | IBPackageGroup | undefined
   >();
 
   const { isSuccess: isSuccessEpelRepo } = useEpelRepo();
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
   const requiredSet = useRequiredPackages();
 
-  const isRequiredAndSelected = (pkg: IBPackageWithRepositoryInfo) =>
+  const isRequiredAndSelected = (pkg: IBPackage) =>
     requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);
 
-  const isPackageSelectDisabled = (pkg: IBPackageWithRepositoryInfo) =>
+  const isPackageSelectDisabled = (pkg: IBPackage) =>
     isSelectDisabled(pkg, packages, modules, requiredSet);
 
   const selectedPackageKeys = useMemo(

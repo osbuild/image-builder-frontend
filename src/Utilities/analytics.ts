@@ -1,10 +1,10 @@
 import { AMPLITUDE_MODULE_NAME } from '../constants';
 import { CreateBlueprintRequest } from '../store/api/backend';
-import { IBPackageWithRepositoryInfo } from '../store/slices/wizard';
+import { IBPackage } from '../store/slices/wizard';
 
 export const createAnalytics = (
   requestBody: CreateBlueprintRequest,
-  packages: IBPackageWithRepositoryInfo[],
+  packages: IBPackage[],
   isBeta: () => boolean,
 ) => {
   const analyticsData = {

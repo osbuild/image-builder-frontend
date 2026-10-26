@@ -20,8 +20,8 @@ import {
   addPackage,
   addPackageGroup,
   addRepository,
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
+  IBPackage,
+  IBPackageGroup,
   selectDistribution,
 } from '@/store/slices/wizard';
 import {
@@ -32,11 +32,8 @@ import {
 import { useEpelRepo } from '../packagesUtilities';
 
 type RepositoryModalProps = {
-  pendingRepoRec:
-    IBPackageWithRepositoryInfo | GroupWithRepositoryInfo | undefined;
-  setPendingRepoRec: (
-    value: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo | undefined,
-  ) => void;
+  pendingRepoRec: IBPackage | IBPackageGroup | undefined;
+  setPendingRepoRec: (value: IBPackage | IBPackageGroup | undefined) => void;
 };
 
 const RepositoryModal = ({
@@ -79,9 +76,9 @@ const RepositoryModal = ({
     }
     if (pendingRepoRec) {
       if (isGroup) {
-        dispatch(addPackageGroup(pendingRepoRec as GroupWithRepositoryInfo));
+        dispatch(addPackageGroup(pendingRepoRec as IBPackageGroup));
       } else {
-        dispatch(addPackage(pendingRepoRec as IBPackageWithRepositoryInfo));
+        dispatch(addPackage(pendingRepoRec as IBPackage));
       }
     }
     setPendingRepoRec(undefined);

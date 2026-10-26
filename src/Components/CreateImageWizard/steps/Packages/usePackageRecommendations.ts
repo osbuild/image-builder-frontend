@@ -15,7 +15,7 @@ import {
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
-  IBPackageWithRepositoryInfo,
+  IBPackage,
   selectArchitecture,
   selectDistribution,
   selectPackages,
@@ -139,16 +139,14 @@ export const usePackageRecommendations = (
       return [];
     }
 
-    return recommendationsData.packages.map(
-      (pkgName): IBPackageWithRepositoryInfo => {
-        const match = dataDescriptions.find((p) => p.package_name === pkgName);
-        return {
-          name: pkgName,
-          summary: match?.summary || '',
-          isRecommendation: true,
-        };
-      },
-    );
+    return recommendationsData.packages.map((pkgName): IBPackage => {
+      const match = dataDescriptions.find((p) => p.package_name === pkgName);
+      return {
+        name: pkgName,
+        summary: match?.summary || '',
+        isRecommendation: true,
+      };
+    });
   }, [
     packageType,
     isSuccessDescriptions,
@@ -167,7 +165,7 @@ export const usePackageRecommendations = (
 export const useSearchAnalytics = (
   isOpen: boolean,
   packageType: 'packages' | 'groups',
-  transformedRecommendations: IBPackageWithRepositoryInfo[],
+  transformedRecommendations: IBPackage[],
   recommendationsData: RecommendationsResponse | undefined,
 ) => {
   const { analytics, isBeta } = useChrome();
