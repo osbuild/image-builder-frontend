@@ -101,7 +101,7 @@ export const isRepoDisabled = (
   selected: Set<string>,
   hasRecommendedRepos: boolean,
   packages: { name: string; summary: string }[],
-  groups: { name: string; description: string; package_list?: string[] }[],
+  groups: { name: string; description: string; package_list: string[] }[],
   useLatestContent: boolean,
   arch: string,
   version: string,

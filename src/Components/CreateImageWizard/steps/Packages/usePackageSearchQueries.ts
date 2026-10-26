@@ -431,7 +431,7 @@ export const usePackageSearchQueries = ({
         name: values.id!,
         description: values.description!,
         repository,
-        package_list: values.package_list!,
+        package_list: values.package_list ?? [],
       }));
 
     const distroGroups =
