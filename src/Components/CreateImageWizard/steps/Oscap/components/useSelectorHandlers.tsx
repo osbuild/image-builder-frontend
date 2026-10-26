@@ -52,7 +52,6 @@ export const useSelectorHandlers = () => {
         addPackage({
           name: pkg,
           summary: reason,
-          repository: 'distro',
         }),
       );
     }

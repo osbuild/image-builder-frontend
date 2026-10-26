@@ -188,7 +188,7 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
               <>
                 {sortedPackages.slice(0, 50).map((pkg) => (
                   <SelectOption
-                    key={`${pkg.name}-${pkg.repository}-${pkg.stream || ''}`}
+                    key={`${pkg.name}-${pkg.stream || ''}`}
                     value={`${pkg.name}|||${pkg.stream || ''}`}
                     description={
                       pkg.isRecommendation
@@ -216,7 +216,7 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
             ) : packageType === 'groups' && transformedGroups.length > 0 ? (
               transformedGroups.slice(0, 50).map((group) => (
                 <SelectOption
-                  key={`${group.name}-${group.repository}`}
+                  key={group.name}
                   value={group.name}
                   description={group.description}
                 >

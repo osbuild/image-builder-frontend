@@ -85,14 +85,14 @@ export const shouldRemoveEpelRepo = (
 
   if (removingType === 'package') {
     return (
-      packages.filter((pkg) => pkg.repository === 'recommended').length === 1 &&
-      groups.filter((grp) => grp.repository === 'recommended').length === 0
+      packages.filter((pkg) => pkg.isRecommendedRepository).length === 1 &&
+      groups.filter((grp) => grp.isRecommendedRepository).length === 0
     );
   }
 
   return (
-    groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
-    packages.filter((pkg) => pkg.repository === 'recommended').length === 0
+    groups.filter((grp) => grp.isRecommendedRepository).length === 1 &&
+    packages.filter((pkg) => pkg.isRecommendedRepository).length === 0
   );
 };
 

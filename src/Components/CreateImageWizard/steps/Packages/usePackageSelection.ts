@@ -107,7 +107,7 @@ export const usePackageSelection = ({
       if (!isSelected) {
         if (
           isSuccessEpelRepo &&
-          pkg.repository === 'recommended' &&
+          pkg.isRecommendedRepository &&
           !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
         ) {
           setPendingRepoRec(pkg);
@@ -149,7 +149,7 @@ export const usePackageSelection = ({
       if (!isSelected) {
         if (
           isSuccessEpelRepo &&
-          grp.repository === 'recommended' &&
+          grp.isRecommendedRepository &&
           !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
         ) {
           setPendingRepoRec(grp);

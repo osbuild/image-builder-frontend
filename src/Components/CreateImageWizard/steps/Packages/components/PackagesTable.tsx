@@ -37,11 +37,7 @@ const PackagesTable = () => {
       ) : (
         <>
           {groups.map((group, index) => (
-            <GroupRow
-              key={`${group.name}-${group.repository || 'default'}`}
-              group={group}
-              rowIndex={index}
-            />
+            <GroupRow key={group.name} group={group} rowIndex={index} />
           ))}
           {orderedPackages.map((pkg) => (
             <PackageRow

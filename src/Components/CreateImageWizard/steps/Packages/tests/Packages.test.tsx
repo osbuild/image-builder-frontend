@@ -582,12 +582,10 @@ describe('Packages Component', () => {
             {
               name: 'preloaded-pkg',
               summary: 'A preloaded package',
-              repository: 'distro',
             },
             {
               name: 'another-pkg',
               summary: 'Another package',
-              repository: 'distro',
             },
           ],
         },
@@ -772,22 +770,18 @@ describe('Packages Component', () => {
             {
               name: 'aide',
               summary: 'Required by chosen OpenSCAP profile',
-              repository: 'distro',
             },
             {
               name: 'neovim',
               summary: 'Required by chosen OpenSCAP profile',
-              repository: 'distro',
             },
             {
               name: 'zsh',
               summary: 'User selected package',
-              repository: 'distro',
             },
             {
               name: 'curl',
               summary: 'User selected package',
-              repository: 'distro',
             },
           ],
         },
@@ -857,12 +851,10 @@ describe('Packages Component', () => {
             {
               name: 'zsh',
               summary: 'User selected package',
-              repository: 'distro',
             },
             {
               name: 'curl',
               summary: 'User selected package',
-              repository: 'distro',
             },
           ],
         },
@@ -904,7 +896,6 @@ describe('Packages Component', () => {
             {
               name: 'aide',
               summary: 'Advanced Intrusion Detection Environment',
-              repository: 'distro',
             },
           ],
         },
@@ -959,7 +950,6 @@ describe('Packages Component', () => {
             {
               name: 'aide',
               summary: 'Advanced Intrusion Detection Environment',
-              repository: 'distro',
             },
           ],
         },
@@ -996,7 +986,6 @@ describe('Packages Component', () => {
             {
               name: 'test-lib',
               summary: 'test-lib package summary',
-              repository: 'distro',
             },
           ],
         },

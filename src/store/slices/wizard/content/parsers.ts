@@ -5,7 +5,7 @@ import {
 } from '@/store/api/backend';
 
 import { initialState } from './state';
-import { ContentSlice, PackageRepository } from './types';
+import { ContentSlice } from './types';
 import { normalizeSnapshotDate } from './utilities';
 
 import { RequestLike } from '../types';
@@ -32,7 +32,6 @@ const parsePackages = ({
     .map((pkg) => ({
       name: pkg,
       summary: '',
-      repository: '' as PackageRepository,
     }));
 };
 
@@ -46,7 +45,6 @@ const parseGroups = ({ packages }: Customizations): ContentSlice['groups'] => {
     .map((group) => ({
       name: group.slice(1),
       description: '',
-      repository: '' as PackageRepository,
       package_list: [],
     }));
 };

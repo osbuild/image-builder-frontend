@@ -18,7 +18,6 @@ import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
   ItemWithSources,
-  PackageRepository,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
@@ -340,28 +339,28 @@ export const usePackageSearchQueries = ({
   const transformedPackages = useMemo(() => {
     const mapRpms = (
       data: ApiSearchRpmResponse[],
-      repository: PackageRepository,
+      isRecommendedRepository?: boolean,
     ): ItemWithSources[] =>
       data.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
-        repository,
+        ...(isRecommendedRepository && { isRecommendedRepository }),
         sources: values.package_sources,
       }));
 
     const transformedDistroData =
       isSuccessDistroPackages && !isSearchingOtherRepos
-        ? mapRpms(dataDistroPackages!, 'distro')
+        ? mapRpms(dataDistroPackages!)
         : [];
 
     const transformedCustomData =
       isSuccessCustomPackages && !isSearchingOtherRepos
-        ? mapRpms(dataCustomPackages!, 'custom')
+        ? mapRpms(dataCustomPackages!)
         : [];
 
     const transformedRecommendedData =
       isSuccessRecommendedPackages && isSearchingOtherRepos
-        ? mapRpms(dataRecommendedPackages!, 'recommended')
+        ? mapRpms(dataRecommendedPackages!, true)
         : [];
 
     // Spread modules into separate rows by application stream
@@ -374,7 +373,9 @@ export const usePackageSearchQueries = ({
         return item.sources.map((source) => ({
           name: item.name,
           summary: item.summary,
-          repository: item.repository,
+          ...(item.isRecommendedRepository && {
+            isRecommendedRepository: item.isRecommendedRepository,
+          }),
           type: source.type,
           module_name: source.name,
           stream: source.stream,
@@ -385,7 +386,9 @@ export const usePackageSearchQueries = ({
         {
           name: item.name,
           summary: item.summary,
-          repository: item.repository,
+          ...(item.isRecommendedRepository && {
+            isRecommendedRepository: item.isRecommendedRepository,
+          }),
         },
       ];
     });
@@ -399,11 +402,6 @@ export const usePackageSearchQueries = ({
       const aStream = a.stream || '';
       const bStream = b.stream || '';
       if (aStream !== bStream) return bStream.localeCompare(aStream);
-
-      // By repository (asc)
-      const aRepo = a.repository || '';
-      const bRepo = b.repository || '';
-      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
 
       // By module_name (asc)
       const aModule = a.module_name || '';
@@ -425,28 +423,28 @@ export const usePackageSearchQueries = ({
   const transformedGroups = useMemo(() => {
     const mapGroups = (
       data: ApiSearchPackageGroupResponse[],
-      repository: PackageRepository,
+      isRecommendedRepository?: boolean,
     ): GroupWithRepositoryInfo[] =>
       data.map((values) => ({
         name: values.id!,
         description: values.description!,
-        repository,
+        ...(isRecommendedRepository && { isRecommendedRepository }),
         package_list: values.package_list ?? [],
       }));
 
     const distroGroups =
       isSuccessDistroGroups && !isSearchingOtherRepos
-        ? mapGroups(dataDistroGroups!, 'distro')
+        ? mapGroups(dataDistroGroups!)
         : [];
 
     const customGroups =
       isSuccessCustomGroups && !isSearchingOtherRepos
-        ? mapGroups(dataCustomGroups!, 'custom')
+        ? mapGroups(dataCustomGroups!)
         : [];
 
     const recommendedGroups =
       isSuccessRecommendedGroups && isSearchingOtherRepos
-        ? mapGroups(dataRecommendedGroups!, 'recommended')
+        ? mapGroups(dataRecommendedGroups!, true)
         : [];
 
     return [...distroGroups, ...customGroups, ...recommendedGroups];
@@ -503,11 +501,6 @@ export const usePackageSearchQueries = ({
       const aEndDate = a.end_date || '9999-12-31';
       const bEndDate = b.end_date || '9999-12-31';
       if (aEndDate !== bEndDate) return aEndDate.localeCompare(bEndDate);
-
-      // Then by repository (asc)
-      const aRepo = a.repository || '';
-      const bRepo = b.repository || '';
-      if (aRepo !== bRepo) return aRepo.localeCompare(bRepo);
 
       // Finally by module name (asc)
       const aModule = a.module_name || '';

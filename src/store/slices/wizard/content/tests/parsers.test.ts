@@ -56,16 +56,16 @@ describe('parseContentFromRequest', () => {
     });
 
     describe('packages', () => {
-      it('maps regular packages with empty summary and repository', () => {
+      it('maps regular packages with empty summary', () => {
         const result = parseContentFromRequest(
           createMinimalBlueprint({
             customizations: { packages: ['vim', 'git', 'curl'] },
           }),
         );
         expect(result.packages).toEqual([
-          { name: 'vim', summary: '', repository: '' },
-          { name: 'git', summary: '', repository: '' },
-          { name: 'curl', summary: '', repository: '' },
+          { name: 'vim', summary: '' },
+          { name: 'git', summary: '' },
+          { name: 'curl', summary: '' },
         ]);
       });
 
@@ -78,8 +78,8 @@ describe('parseContentFromRequest', () => {
           }),
         );
         expect(result.packages).toEqual([
-          { name: 'vim', summary: '', repository: '' },
-          { name: 'git', summary: '', repository: '' },
+          { name: 'vim', summary: '' },
+          { name: 'git', summary: '' },
         ]);
       });
 
@@ -92,8 +92,8 @@ describe('parseContentFromRequest', () => {
           }),
         );
         expect(result.packages).toEqual([
-          { name: 'vim', summary: '', repository: '' },
-          { name: 'git', summary: '', repository: '' },
+          { name: 'vim', summary: '' },
+          { name: 'git', summary: '' },
         ]);
       });
 
@@ -113,8 +113,8 @@ describe('parseContentFromRequest', () => {
           }),
         );
         expect(result.packages).toEqual([
-          { name: 'vim', summary: '', repository: '' },
-          { name: 'git', summary: '', repository: '' },
+          { name: 'vim', summary: '' },
+          { name: 'git', summary: '' },
         ]);
       });
 
@@ -148,13 +148,11 @@ describe('parseContentFromRequest', () => {
           {
             name: 'development-tools',
             description: '',
-            repository: '',
             package_list: [],
           },
           {
             name: 'base',
             description: '',
-            repository: '',
             package_list: [],
           },
         ]);
@@ -408,14 +406,11 @@ describe('parseContentFromRequest', () => {
           },
         }),
       );
-      expect(result.packages).toEqual([
-        { name: 'vim', summary: '', repository: '' },
-      ]);
+      expect(result.packages).toEqual([{ name: 'vim', summary: '' }]);
       expect(result.groups).toEqual([
         {
           name: 'base',
           description: '',
-          repository: '',
           package_list: [],
         },
       ]);

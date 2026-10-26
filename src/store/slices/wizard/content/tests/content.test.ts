@@ -8,7 +8,6 @@ import {
   type GroupWithRepositoryInfo,
   type IBPackageWithRepositoryInfo,
   initialState,
-  type PackageRepository,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -22,7 +21,6 @@ const createPackage = (
 ): IBPackageWithRepositoryInfo => ({
   name,
   summary: `${name} package`,
-  repository: 'distro' as PackageRepository,
   ...overrides,
 });
 
@@ -32,7 +30,6 @@ const createGroup = (
 ): GroupWithRepositoryInfo => ({
   name,
   description: `${name} group`,
-  repository: 'distro' as PackageRepository,
   package_list: [],
   ...overrides,
 });
