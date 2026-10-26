@@ -224,11 +224,13 @@ describe('ContentOverview', () => {
                 name: 'Development Tools',
                 description: 'Dev tools',
                 repository: 'distro',
+                package_list: [],
               },
               {
                 name: 'Web Server',
                 description: 'Web server packages',
                 repository: 'distro',
+                package_list: [],
               },
             ],
           },

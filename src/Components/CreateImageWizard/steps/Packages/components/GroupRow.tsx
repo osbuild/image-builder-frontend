@@ -44,12 +44,12 @@ const GroupRow = ({ group, rowIndex }: GroupRowProps) => {
           <ExpandableRowContent>
             <div
               style={
-                group.package_list?.length
+                group.package_list.length
                   ? { maxHeight: '40em', overflow: 'scroll' }
                   : {}
               }
             >
-              {group.package_list?.length ? (
+              {group.package_list.length ? (
                 <Table
                   variant='compact'
                   data-testid='group-included-packages-table'

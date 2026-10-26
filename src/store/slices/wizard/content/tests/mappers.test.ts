@@ -36,6 +36,7 @@ describe('mapContentCustomizations', () => {
             name: 'development',
             description: 'dev tools',
             repository: 'distro',
+            package_list: [],
           },
         ],
       });

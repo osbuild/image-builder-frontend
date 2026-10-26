@@ -38,7 +38,7 @@ export type GroupWithRepositoryInfo = {
   name: string;
   description: string;
   repository: PackageRepository;
-  package_list?: string[];
+  package_list: string[];
 };
 
 export type PackageRecommendation = {

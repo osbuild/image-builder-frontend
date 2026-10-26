@@ -33,6 +33,7 @@ const createGroup = (
   name,
   description: `${name} group`,
   repository: 'distro' as PackageRepository,
+  package_list: [],
   ...overrides,
 });
 
