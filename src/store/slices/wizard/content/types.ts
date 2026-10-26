@@ -6,8 +6,6 @@ import {
 } from '@/store/api/backend';
 import { ApiSearchRpmResponse } from '@/store/api/contentSources';
 
-export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
-
 export type CustomRepositoryWithFlag = CustomRepository & {
   isRecommended?: boolean;
 };
@@ -19,14 +17,14 @@ export type PayloadRepositoryWithFlag = Repository & {
 export type ItemWithSources = {
   name: Package['name'];
   summary: Package['summary'];
-  repository: PackageRepository;
+  isRecommendedRepository?: boolean;
   sources?: ApiSearchRpmResponse['package_sources'];
 };
 
 export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
-  repository: PackageRepository;
+  isRecommendedRepository?: boolean;
   type?: string;
   module_name?: string;
   stream?: string;
@@ -37,7 +35,7 @@ export type IBPackageWithRepositoryInfo = {
 export type GroupWithRepositoryInfo = {
   name: string;
   description: string;
-  repository: PackageRepository;
+  isRecommendedRepository?: boolean;
   package_list: string[];
 };
 

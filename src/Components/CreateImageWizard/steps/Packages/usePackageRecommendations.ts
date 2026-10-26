@@ -145,7 +145,6 @@ export const usePackageRecommendations = (
         return {
           name: pkgName,
           summary: match?.summary || '',
-          repository: 'distro',
           isRecommendation: true,
         };
       },

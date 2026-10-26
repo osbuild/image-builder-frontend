@@ -80,11 +80,10 @@ describe('ContentOverview', () => {
           content: {
             ...initialState.content,
             packages: [
-              { name: 'vim', summary: 'Text editor', repository: 'distro' },
+              { name: 'vim', summary: 'Text editor' },
               {
                 name: 'htop',
                 summary: 'Process viewer',
-                repository: 'distro',
               },
             ],
           },
@@ -105,9 +104,7 @@ describe('ContentOverview', () => {
           },
           content: {
             ...initialState.content,
-            packages: [
-              { name: 'vim', summary: 'Text editor', repository: 'distro' },
-            ],
+            packages: [{ name: 'vim', summary: 'Text editor' }],
           },
         },
       );
@@ -135,7 +132,6 @@ describe('ContentOverview', () => {
               {
                 name: 'aide',
                 summary: 'Intrusion detection',
-                repository: 'distro',
               },
             ],
           },
@@ -168,9 +164,8 @@ describe('ContentOverview', () => {
               {
                 name: 'aide',
                 summary: 'Intrusion detection',
-                repository: 'distro',
               },
-              { name: 'vim', summary: 'Text editor', repository: 'distro' },
+              { name: 'vim', summary: 'Text editor' },
             ],
           },
         },
@@ -223,13 +218,11 @@ describe('ContentOverview', () => {
               {
                 name: 'Development Tools',
                 description: 'Dev tools',
-                repository: 'distro',
                 package_list: [],
               },
               {
                 name: 'Web Server',
                 description: 'Web server packages',
-                repository: 'distro',
                 package_list: [],
               },
             ],

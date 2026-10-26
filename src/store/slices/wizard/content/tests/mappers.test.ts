@@ -21,8 +21,8 @@ describe('mapContentCustomizations', () => {
     it('includes packages when present', () => {
       const state = createState({
         packages: [
-          { name: 'vim', summary: 'editor', repository: 'distro' },
-          { name: 'curl', summary: 'transfer', repository: 'distro' },
+          { name: 'vim', summary: 'editor' },
+          { name: 'curl', summary: 'transfer' },
         ],
       });
       const result = mapContentCustomizations(state);
@@ -35,7 +35,6 @@ describe('mapContentCustomizations', () => {
           {
             name: 'development',
             description: 'dev tools',
-            repository: 'distro',
             package_list: [],
           },
         ],
@@ -46,7 +45,7 @@ describe('mapContentCustomizations', () => {
 
     it('deduplicates packages and langpacks', () => {
       const state = createState({
-        packages: [{ name: 'glibc', summary: '', repository: 'distro' }],
+        packages: [{ name: 'glibc', summary: '' }],
         verifiedLocaleLangpacks: ['glibc', 'langpack-en'],
       });
       const result = mapContentCustomizations(state);
