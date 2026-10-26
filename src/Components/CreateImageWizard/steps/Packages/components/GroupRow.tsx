@@ -9,12 +9,12 @@ import {
   Tr,
 } from '@patternfly/react-table';
 
-import { GroupWithRepositoryInfo } from '@/store/slices/wizard';
+import { IBPackageGroup } from '@/store/slices/wizard';
 
 import RemovePackageButton from './RemovePackageButton';
 
 type GroupRowProps = {
-  group: GroupWithRepositoryInfo;
+  group: IBPackageGroup;
   rowIndex: number;
 };
 

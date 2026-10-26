@@ -5,10 +5,7 @@ import { LockIcon, MinusCircleIcon } from '@patternfly/react-icons';
 
 import { useAppSelector } from '@/store/hooks';
 import { selectComplianceType } from '@/store/slices';
-import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
-} from '@/store/slices/wizard';
+import { IBPackage, IBPackageGroup } from '@/store/slices/wizard';
 
 import {
   useRemovePackageContent,
@@ -16,7 +13,7 @@ import {
 } from '../packagesUtilities';
 
 type RemovePackageButtonProps = {
-  item: IBPackageWithRepositoryInfo | GroupWithRepositoryInfo;
+  item: IBPackage | IBPackageGroup;
 };
 
 const RemovePackageButton = ({ item }: RemovePackageButtonProps) => {
@@ -39,8 +36,8 @@ const RemovePackageButton = ({ item }: RemovePackageButtonProps) => {
       }
       onClick={() =>
         isGroup
-          ? handleRemoveGroup(item as GroupWithRepositoryInfo)
-          : handleRemovePackage(item as IBPackageWithRepositoryInfo)
+          ? handleRemoveGroup(item as IBPackageGroup)
+          : handleRemovePackage(item as IBPackage)
       }
       isInline
       hasNoPadding

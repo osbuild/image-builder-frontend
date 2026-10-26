@@ -8,8 +8,8 @@ import {
 } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
+  IBPackage,
+  IBPackageGroup,
   removeModule,
   removePackage,
   removePackageGroup,
@@ -20,7 +20,7 @@ import {
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
-export const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
+export const getPackageDescription = (pkg: IBPackage) => {
   const parts = [];
 
   if (pkg.stream) {
@@ -41,8 +41,8 @@ export const getPackageDescription = (pkg: IBPackageWithRepositoryInfo) => {
 };
 
 export const isSelectDisabled = (
-  pkg: IBPackageWithRepositoryInfo,
-  packages: IBPackageWithRepositoryInfo[],
+  pkg: IBPackage,
+  packages: IBPackage[],
   modules: Module[],
   requiredSet: Set<string>,
 ) => {
@@ -75,8 +75,8 @@ export const isSelectDisabled = (
 export const shouldRemoveEpelRepo = (
   isSuccessEpelRepo: boolean,
   epelRepo: ApiRepositoryCollectionResponseRead | undefined,
-  packages: IBPackageWithRepositoryInfo[],
-  groups: GroupWithRepositoryInfo[],
+  packages: IBPackage[],
+  groups: IBPackageGroup[],
   removingType: 'package' | 'group',
 ) => {
   if (!isSuccessEpelRepo || !epelRepo?.data) {
@@ -118,7 +118,7 @@ export const useRemovePackageContent = () => {
   const groups = useAppSelector(selectPackageGroups);
   const { data: epelRepo, isSuccess: isSuccessEpelRepo } = useEpelRepo();
 
-  const handleRemovePackage = (pkg: IBPackageWithRepositoryInfo) => {
+  const handleRemovePackage = (pkg: IBPackage) => {
     dispatch(removePackage(pkg.name));
     if (pkg.type === 'module' && pkg.module_name) {
       dispatch(removeModule(pkg.module_name));
@@ -136,7 +136,7 @@ export const useRemovePackageContent = () => {
     }
   };
 
-  const handleRemoveGroup = (grp: GroupWithRepositoryInfo) => {
+  const handleRemoveGroup = (grp: IBPackageGroup) => {
     dispatch(removePackageGroup(grp.name));
     if (
       shouldRemoveEpelRepo(

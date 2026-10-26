@@ -7,8 +7,8 @@ import { yyyyMMddFormat } from '@/Utilities/time';
 import { initialState } from './state';
 import {
   CustomRepositoryWithFlag,
-  GroupWithRepositoryInfo,
-  IBPackageWithRepositoryInfo,
+  IBPackage,
+  IBPackageGroup,
   PayloadRepositoryWithFlag,
 } from './types';
 import {
@@ -116,7 +116,7 @@ export const contentSlice = createSlice({
             !isRecommended || !id || !idsToRemove.has(id),
         );
     },
-    addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
+    addPackage: (state, action: PayloadAction<IBPackage>) => {
       const existingPackageIndex = state.packages.findIndex(
         (pkg) => pkg.name === action.payload.name,
       );
@@ -127,10 +127,7 @@ export const contentSlice = createSlice({
         state.packages.unshift(action.payload);
       }
     },
-    removePackage: (
-      state,
-      action: PayloadAction<IBPackageWithRepositoryInfo['name']>,
-    ) => {
+    removePackage: (state, action: PayloadAction<IBPackage['name']>) => {
       const index = state.packages.findIndex(
         (pkg) => pkg.name === action.payload,
       );
@@ -162,10 +159,7 @@ export const contentSlice = createSlice({
         state.enabledModules.splice(index, 1);
       }
     },
-    addPackageGroup: (
-      state,
-      action: PayloadAction<GroupWithRepositoryInfo>,
-    ) => {
+    addPackageGroup: (state, action: PayloadAction<IBPackageGroup>) => {
       const existingGrpIndex = state.groups.findIndex(
         (grp) => grp.name === action.payload.name,
       );
@@ -178,7 +172,7 @@ export const contentSlice = createSlice({
     },
     removePackageGroup: (
       state,
-      action: PayloadAction<GroupWithRepositoryInfo['name']>,
+      action: PayloadAction<IBPackageGroup['name']>,
     ) => {
       const index = state.groups.findIndex(
         (grp) => grp.name === action.payload,
