@@ -382,11 +382,7 @@ export const usePackageSearchQueries = ({
   ]);
 
   const sortedPackages = useMemo(() => {
-    if (!debouncedSearchTerm) {
-      return isLoadingRecommendations ? [] : transformedRecommendations;
-    }
-
-    if (transformedPackages.length === 0) {
+    if (!debouncedSearchTerm || transformedPackages.length === 0) {
       return isLoadingRecommendations ? [] : transformedRecommendations;
     }
 
