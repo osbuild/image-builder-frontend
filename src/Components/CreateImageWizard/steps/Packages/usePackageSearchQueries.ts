@@ -57,9 +57,16 @@ export const usePackageSearchQueries = ({
   const epelRepoUrlByDistribution =
     getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
 
-  const formattedSnapshotDate = snapshotDate
-    ? new Date(convertStringToDate(snapshotDate)).toISOString()
-    : undefined;
+  const formattedSnapshotDate = useMemo(() => {
+    if (!snapshotDate) {
+      return undefined;
+    }
+    const parsed = convertStringToDate(snapshotDate);
+    if (isNaN(parsed)) {
+      return undefined;
+    }
+    return new Date(parsed).toISOString();
+  }, [snapshotDate]);
 
   const customRepoUuids = useMemo(
     () => customRepositories.flatMap((repo) => repo.id),
