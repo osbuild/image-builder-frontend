@@ -39,11 +39,6 @@ export type IBPackageGroup = {
   package_list: string[];
 };
 
-export type PackageRecommendation = {
-  name: string;
-  summary: string;
-};
-
 export type ContentSlice = {
   repositories: {
     customRepositories: CustomRepositoryWithFlag[];
