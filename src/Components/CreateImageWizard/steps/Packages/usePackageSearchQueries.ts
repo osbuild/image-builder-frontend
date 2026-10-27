@@ -57,6 +57,10 @@ export const usePackageSearchQueries = ({
   const epelRepoUrlByDistribution =
     getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
 
+  const formattedSnapshotDate = snapshotDate
+    ? new Date(convertStringToDate(snapshotDate)).toISOString()
+    : undefined;
+
   const { data: templateData } = useGetTemplateQuery({
     uuid: template,
   });
@@ -170,9 +174,7 @@ export const usePackageSearchQueries = ({
                     ),
             limit: 500,
             include_package_sources: true,
-            date: snapshotDate
-              ? new Date(convertStringToDate(snapshotDate)).toISOString()
-              : undefined,
+            date: formattedSnapshotDate,
           },
         });
       }
@@ -186,9 +188,7 @@ export const usePackageSearchQueries = ({
           }),
           limit: 500,
           include_package_sources: true,
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
+          date: formattedSnapshotDate,
         },
       });
     }
@@ -201,9 +201,7 @@ export const usePackageSearchQueries = ({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
           urls: [epelRepoUrlByDistribution],
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
+          date: formattedSnapshotDate,
         },
       });
     }
@@ -218,7 +216,7 @@ export const usePackageSearchQueries = ({
     template,
     distribution,
     packageType,
-    snapshotDate,
+    formattedSnapshotDate,
     distroUrls,
     isOnPremise,
     reposInTemplate,
@@ -235,9 +233,7 @@ export const usePackageSearchQueries = ({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
           urls: distroUrls,
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
+          date: formattedSnapshotDate,
         },
       });
     }
@@ -248,9 +244,7 @@ export const usePackageSearchQueries = ({
           uuids: customRepositories.flatMap((repo) => {
             return repo.id;
           }),
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
+          date: formattedSnapshotDate,
         },
       });
     }
@@ -259,9 +253,7 @@ export const usePackageSearchQueries = ({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
           urls: [epelRepoUrlByDistribution],
-          date: snapshotDate
-            ? new Date(convertStringToDate(snapshotDate)).toISOString()
-            : undefined,
+          date: formattedSnapshotDate,
         },
       });
     }
@@ -275,7 +267,7 @@ export const usePackageSearchQueries = ({
     arch,
     distroRepositories,
     isSuccessDistroRepositories,
-    snapshotDate,
+    formattedSnapshotDate,
     distroUrls,
     isSearchingOtherRepos,
     isOnPremise,
