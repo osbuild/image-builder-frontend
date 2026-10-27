@@ -29,12 +29,10 @@ import { selectIsOnPremise } from '@/store/slices/env';
 
 import RepositoryModal from './RepositoryModal';
 
-import {
-  usePackageRecommendations,
-  useSearchAnalytics,
-} from '../hooks/usePackageRecommendations';
+import { usePackageRecommendations } from '../hooks/usePackageRecommendations';
 import { usePackageSearchQueries } from '../hooks/usePackageSearchQueries';
 import { usePackageSelection } from '../hooks/usePackageSelection';
+import { useSearchAnalytics } from '../hooks/useSearchAnalytics';
 import { getPackageDescription } from '../packagesUtilities';
 
 type PackageSearchProps = {
