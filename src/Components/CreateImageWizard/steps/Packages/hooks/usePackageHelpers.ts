@@ -17,7 +17,7 @@ import {
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
-import { shouldRemoveEpelRepo } from './packagesUtilities';
+import { shouldRemoveEpelRepo } from '../packagesUtilities';
 
 export const useRequiredPackages = () => {
   const { packages: requiredPackages } = useSecuritySummary();

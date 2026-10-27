@@ -19,12 +19,13 @@ import {
   selectRecommendedRepositories,
 } from '@/store/slices/wizard';
 
-import { isSelectDisabled } from './packagesUtilities';
 import {
   useEpelRepo,
   useRemovePackageContent,
   useRequiredPackages,
 } from './usePackageHelpers';
+
+import { isSelectDisabled } from '../packagesUtilities';
 
 type UsePackageSelectionArgs = {
   packageType: 'packages' | 'groups';

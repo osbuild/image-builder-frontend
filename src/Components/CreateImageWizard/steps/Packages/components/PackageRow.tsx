@@ -8,7 +8,7 @@ import { IBPackage } from '@/store/slices/wizard';
 import RemovePackageButton from './RemovePackageButton';
 import RetirementDate from './RetirementDate';
 
-import { useRequiredPackages } from '../usePackageHelpers';
+import { useRequiredPackages } from '../hooks/usePackageHelpers';
 
 type PackageRowProps = {
   pkg: IBPackage;
