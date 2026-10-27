@@ -10,7 +10,7 @@ import { IBPackage, IBPackageGroup } from '@/store/slices/wizard';
 import {
   useRemovePackageContent,
   useRequiredPackages,
-} from '../packagesUtilities';
+} from '../usePackageHelpers';
 
 type RemovePackageButtonProps = {
   item: IBPackage | IBPackageGroup;

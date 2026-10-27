@@ -9,7 +9,7 @@ import EmptySearch from './EmptySearch';
 import GroupRow from './GroupRow';
 import PackageRow from './PackageRow';
 
-import { useRequiredPackages } from '../packagesUtilities';
+import { useRequiredPackages } from '../usePackageHelpers';
 
 const PackagesTable = () => {
   const packages = useAppSelector(selectPackages);
