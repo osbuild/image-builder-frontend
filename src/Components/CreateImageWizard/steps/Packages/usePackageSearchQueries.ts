@@ -339,22 +339,6 @@ export const usePackageSearchQueries = ({
       ];
     });
 
-    // group by name, but sort by application stream in descending order
-    unpackedData.sort((a, b) => {
-      // By name (asc)
-      if (a.name !== b.name) return a.name.localeCompare(b.name);
-
-      // By stream (desc)
-      const aStream = a.stream || '';
-      const bStream = b.stream || '';
-      if (aStream !== bStream) return bStream.localeCompare(aStream);
-
-      // By module_name (asc)
-      const aModule = a.module_name || '';
-      const bModule = b.module_name || '';
-      return aModule.localeCompare(bModule);
-    });
-
     return unpackedData;
   }, [
     dataCustomPackages,
