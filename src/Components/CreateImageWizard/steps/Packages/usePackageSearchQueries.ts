@@ -61,6 +61,11 @@ export const usePackageSearchQueries = ({
     ? new Date(convertStringToDate(snapshotDate)).toISOString()
     : undefined;
 
+  const customRepoUuids = useMemo(
+    () => customRepositories.flatMap((repo) => repo.id),
+    [customRepositories],
+  );
+
   const { data: templateData } = useGetTemplateQuery({
     uuid: template,
   });
@@ -179,13 +184,11 @@ export const usePackageSearchQueries = ({
         });
       }
     }
-    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
+    if (debouncedSearchTerm.length > 2 && customRepoUuids.length > 0) {
       searchCustomRpms({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
-          uuids: customRepositories.flatMap((repo) => {
-            return repo.id;
-          }),
+          uuids: customRepoUuids,
           limit: 500,
           include_package_sources: true,
           date: formattedSnapshotDate,
@@ -206,7 +209,7 @@ export const usePackageSearchQueries = ({
       });
     }
   }, [
-    customRepositories,
+    customRepoUuids,
     searchCustomRpms,
     searchDistroRpms,
     searchRecommendedRpms,
@@ -237,13 +240,11 @@ export const usePackageSearchQueries = ({
         },
       });
     }
-    if (customRepositories.length > 0) {
+    if (customRepoUuids.length > 0) {
       searchCustomGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
-          uuids: customRepositories.flatMap((repo) => {
-            return repo.id;
-          }),
+          uuids: customRepoUuids,
           date: formattedSnapshotDate,
         },
       });
@@ -258,7 +259,7 @@ export const usePackageSearchQueries = ({
       });
     }
   }, [
-    customRepositories,
+    customRepoUuids,
     searchDistroGroups,
     searchCustomGroups,
     searchRecommendedGroups,
