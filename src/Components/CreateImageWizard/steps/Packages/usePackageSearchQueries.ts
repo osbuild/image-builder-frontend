@@ -8,28 +8,25 @@ import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useSearchPackageGroupMutation,
-  useSearchRepositoryModuleStreamsMutation,
   useSearchRpmMutation,
 } from '@/store/api/contentSources';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
-  addPackage,
   IBPackage,
   IBPackageGroup,
   IBPackageWithSources,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
-  selectModules,
-  selectPackages,
   selectSnapshotDate,
   selectTemplate,
-  selectWizardMode,
 } from '@/store/slices/wizard';
 import { getEpelUrlForDistribution } from '@/Utilities/epel';
 import { convertStringToDate } from '@/Utilities/time';
 import useDebounce from '@/Utilities/useDebounce';
+
+import { useRestoreModuleInEdit } from './useRestoreModuleInEdit';
 
 const EMPTY_ARRAY: never[] = [];
 
@@ -50,17 +47,12 @@ export const usePackageSearchQueries = ({
   transformedRecommendations,
   isLoadingRecommendations,
 }: UsePackageSearchQueriesArgs) => {
-  const dispatch = useAppDispatch();
-
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
-  const packages = useAppSelector(selectPackages);
-  const modules = useAppSelector(selectModules);
   const customRepositories = useAppSelector(selectCustomRepositories);
   const template = useAppSelector(selectTemplate);
   const snapshotDate = useAppSelector(selectSnapshotDate);
-  const wizardMode = useAppSelector(selectWizardMode);
 
   const epelRepoUrlByDistribution =
     getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
@@ -149,10 +141,7 @@ export const usePackageSearchQueries = ({
     },
   ] = useSearchPackageGroupMutation();
 
-  const [
-    searchModulesInfo,
-    { data: dataModulesInfo, isSuccess: isSuccessModulesInfo },
-  ] = useSearchRepositoryModuleStreamsMutation();
+  useRestoreModuleInEdit(distroUrls, isSuccessDistroRepositories);
 
   useEffect(() => {
     if (packageType === 'groups') {
@@ -292,49 +281,6 @@ export const usePackageSearchQueries = ({
     isOnPremise,
     epelRepoUrlByDistribution,
   ]);
-
-  useEffect(() => {
-    if (
-      wizardMode !== 'create' &&
-      isSuccessDistroRepositories &&
-      modules.length > 0
-    ) {
-      searchModulesInfo({
-        apiSearchModuleStreamsRequest: {
-          rpm_names: modules.map((module) => module.name),
-          urls: [...distroUrls, epelRepoUrlByDistribution],
-          uuids: [],
-        },
-      });
-    }
-  }, [isSuccessDistroRepositories, modules, distroUrls]);
-
-  useEffect(() => {
-    if (!isSuccessModulesInfo) return;
-
-    dataModulesInfo.forEach((module) => {
-      const enabledModule = modules.find((m) => m.name === module.module_name);
-
-      module.streams
-        ?.find((stream) => stream.stream === enabledModule?.stream)
-        ?.package_names?.forEach((packageName) => {
-          const existingPackage = packages.find(
-            (pkg) => pkg.name === packageName,
-          );
-
-          if (existingPackage && module.module_name && enabledModule) {
-            dispatch(
-              addPackage({
-                ...existingPackage,
-                type: 'module',
-                module_name: module.module_name,
-                stream: enabledModule.stream,
-              }),
-            );
-          }
-        });
-    });
-  }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
 
   const transformedPackages = useMemo(() => {
     const mapRpms = (
