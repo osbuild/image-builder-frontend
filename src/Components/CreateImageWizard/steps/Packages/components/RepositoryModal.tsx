@@ -29,7 +29,7 @@ import {
   getEpelVersionForDistribution,
 } from '@/Utilities/epel';
 
-import { useEpelRepo } from '../packagesUtilities';
+import { useEpelRepo } from '../usePackageHelpers';
 
 type RepositoryModalProps = {
   pendingRepoRec: IBPackage | IBPackageGroup | undefined;
