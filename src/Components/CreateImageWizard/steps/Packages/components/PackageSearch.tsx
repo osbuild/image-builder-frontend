@@ -186,9 +186,9 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
               </SelectOption>
             ) : packageType === 'packages' && sortedPackages.length > 0 ? (
               <>
-                {sortedPackages.slice(0, 50).map((pkg) => (
+                {sortedPackages.slice(0, 50).map((pkg, index) => (
                   <SelectOption
-                    key={`${pkg.name}-${pkg.stream || ''}`}
+                    key={`${pkg.name}-${pkg.stream || ''}-${index}`}
                     value={`${pkg.name}|||${pkg.stream || ''}`}
                     description={
                       pkg.isRecommendation
@@ -214,9 +214,9 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
                 )}
               </>
             ) : packageType === 'groups' && transformedGroups.length > 0 ? (
-              transformedGroups.slice(0, 50).map((group) => (
+              transformedGroups.slice(0, 50).map((group, index) => (
                 <SelectOption
-                  key={group.name}
+                  key={`${group.name}-${index}`}
                   value={group.name}
                   description={group.description}
                 >
