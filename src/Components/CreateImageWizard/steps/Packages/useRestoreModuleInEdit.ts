@@ -45,32 +45,48 @@ export const useRestoreModuleInEdit = (
         },
       });
     }
-  }, [isSuccessDistroRepositories, modules, distroUrls]);
+    // searchModulesInfo is an unstable RTK Query mutation trigger
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isSuccessDistroRepositories,
+    modules,
+    distroUrls,
+    wizardMode,
+    epelRepoUrlByDistribution,
+  ]);
 
   useEffect(() => {
     if (!isSuccessModulesInfo) return;
 
     dataModulesInfo.forEach((module) => {
-      const enabledModule = modules.find((m) => m.name === module.module_name);
+      const moduleName = module.module_name;
+      if (!moduleName) return;
 
-      module.streams
-        ?.find((stream) => stream.stream === enabledModule?.stream)
-        ?.package_names?.forEach((packageName) => {
-          const existingPackage = packages.find(
-            (pkg) => pkg.name === packageName,
-          );
+      const enabledModule = modules.find((m) => m.name === moduleName);
+      if (!enabledModule) return;
 
-          if (existingPackage && module.module_name && enabledModule) {
-            dispatch(
-              addPackage({
-                ...existingPackage,
-                type: 'module',
-                module_name: module.module_name,
-                stream: enabledModule.stream,
-              }),
-            );
-          }
-        });
+      const matchingStream = module.streams?.find(
+        (stream) => stream.stream === enabledModule.stream,
+      );
+
+      matchingStream?.package_names?.forEach((packageName) => {
+        const existingPackage = packages.find(
+          (pkg) => pkg.name === packageName,
+        );
+        if (!existingPackage) return;
+
+        dispatch(
+          addPackage({
+            ...existingPackage,
+            type: 'module',
+            module_name: moduleName,
+            stream: enabledModule.stream,
+          }),
+        );
+      });
     });
+    // packages is excluded to avoid an infinite loop — this effect
+    // dispatches addPackage which updates packages
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataModulesInfo, dispatch, isSuccessModulesInfo, modules]);
 };
