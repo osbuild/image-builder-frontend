@@ -29,13 +29,13 @@ import { selectIsOnPremise } from '@/store/slices/env';
 
 import RepositoryModal from './RepositoryModal';
 
-import { getPackageDescription } from '../packagesUtilities';
 import {
   usePackageRecommendations,
   useSearchAnalytics,
-} from '../usePackageRecommendations';
-import { usePackageSearchQueries } from '../usePackageSearchQueries';
-import { usePackageSelection } from '../usePackageSelection';
+} from '../hooks/usePackageRecommendations';
+import { usePackageSearchQueries } from '../hooks/usePackageSearchQueries';
+import { usePackageSelection } from '../hooks/usePackageSelection';
+import { getPackageDescription } from '../packagesUtilities';
 
 type PackageSearchProps = {
   packageType: 'packages' | 'groups';

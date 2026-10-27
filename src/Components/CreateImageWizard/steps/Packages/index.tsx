@@ -9,7 +9,7 @@ import { selectIsOnPremise } from '@/store/slices/env';
 import { selectComplianceType, selectPackages } from '@/store/slices/wizard';
 
 import Packages from './components/Packages';
-import { useRequiredPackages } from './usePackageHelpers';
+import { useRequiredPackages } from './hooks/usePackageHelpers';
 
 const PackagesStep = () => {
   const isOnPremise = useAppSelector(selectIsOnPremise);
