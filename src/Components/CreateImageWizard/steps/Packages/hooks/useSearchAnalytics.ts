@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
@@ -24,20 +24,19 @@ export const useSearchAnalytics = (
   const packages = useAppSelector(selectPackages);
   const distribution = useAppSelector(selectDistribution);
 
-  const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
-  const [hasTrackedRecommendations, setHasTrackedRecommendations] =
-    useState(false);
+  const hasTrackedOpen = useRef(false);
+  const hasTrackedRecommendations = useRef(false);
 
   useEffect(() => {
     if (!isOpen || packageType !== 'packages' || isOnPremise) {
       if (!isOpen) {
-        setHasTrackedOpen(false);
-        setHasTrackedRecommendations(false);
+        hasTrackedOpen.current = false;
+        hasTrackedRecommendations.current = false;
       }
       return;
     }
 
-    if (!hasTrackedOpen) {
+    if (!hasTrackedOpen.current) {
       analytics.track(
         `${AMPLITUDE_MODULE_NAME} - Package Search Dropdown Opened`,
         {
@@ -47,10 +46,13 @@ export const useSearchAnalytics = (
           recommendationsShown: transformedRecommendations.length > 0,
         },
       );
-      setHasTrackedOpen(true);
+      hasTrackedOpen.current = true;
     }
 
-    if (transformedRecommendations.length > 0 && !hasTrackedRecommendations) {
+    if (
+      transformedRecommendations.length > 0 &&
+      !hasTrackedRecommendations.current
+    ) {
       analytics.track(
         `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
         {
@@ -62,13 +64,17 @@ export const useSearchAnalytics = (
           modelVersion: recommendationsData?.modelVersion,
         },
       );
-      setHasTrackedRecommendations(true);
+      hasTrackedRecommendations.current = true;
     }
+    // analytics and isBeta are unstable dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isOpen,
-    hasTrackedOpen,
-    hasTrackedRecommendations,
     transformedRecommendations,
+    isOnPremise,
+    packageType,
+    packages,
+    distribution,
+    recommendationsData,
   ]);
 };
