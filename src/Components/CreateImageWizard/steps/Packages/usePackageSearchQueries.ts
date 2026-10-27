@@ -265,8 +265,6 @@ export const usePackageSearchQueries = ({
     searchRecommendedGroups,
     debouncedSearchTerm,
     packageType,
-    arch,
-    distroRepositories,
     isSuccessDistroRepositories,
     formattedSnapshotDate,
     distroUrls,
