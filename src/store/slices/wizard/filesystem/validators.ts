@@ -12,7 +12,6 @@ import {
   partitionNameEntryListSchema,
   requiredMinsizeSchema,
   unitsWarningSchema,
-  type VolumeGroup,
 } from './schemas';
 
 import { ValidationResult } from '../types';
@@ -123,19 +122,6 @@ export const validateMountpointList = (
 
       return entry ? { ...issue, path: [entry.id, ...rest] } : issue;
     }),
-  };
-};
-
-export const validateVolumeGroup = (
-  vg: VolumeGroup,
-  mode: 'package' | 'image',
-) => {
-  const { volumeGroupSchema } = createFilesystemSchema(mode);
-  const result = validateSchema(volumeGroupSchema, vg);
-
-  return {
-    data: result.data,
-    errors: result.issues,
   };
 };
 

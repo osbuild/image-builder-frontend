@@ -66,11 +66,6 @@ export const selectPlainPartitions = createSelector(
   (partitions) => partitions.filter((p) => p.type !== 'lvm'),
 );
 
-export const selectVolumeGroup = createSelector(
-  [selectDiskPartitions],
-  (partitions) => partitions.find((p) => p.type === 'lvm') as VolumeGroup,
-);
-
 export const selectVolumeGroups = createSelector(
   [selectDiskPartitions],
   (partitions) => partitions.filter((p) => p.type === 'lvm') as VolumeGroup[],
