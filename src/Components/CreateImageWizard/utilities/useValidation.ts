@@ -88,16 +88,6 @@ export type StepValidation = {
   isPending?: boolean;
 };
 
-export type UsersStepValidation = {
-  errors: {
-    [key: string]: { [key: string]: string };
-  };
-  warnings: {
-    [key: string]: { [key: string]: string };
-  };
-  disabledNext: boolean;
-};
-
 export function useIsBlueprintValid(): boolean {
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const aap = useAAPValidation();
