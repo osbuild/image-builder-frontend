@@ -18,8 +18,6 @@ import MinimumSize from './MinimumSize';
 import Mountpoint from './Mountpoint';
 import SizeUnit from './SizeUnit';
 
-export const FileSystemContext = React.createContext<boolean>(true);
-
 type RowProps = {
   partition: FilesystemPartition;
   isRemovingDisabled: boolean;
