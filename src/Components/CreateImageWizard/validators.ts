@@ -1,10 +1,3 @@
-import {
-  ImageModeMountpointPolicies,
-  MountpointPolicies,
-  Partition,
-  VolumeGroup,
-} from '@/store/slices/wizard';
-
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (
     awsAccountId !== undefined &&
@@ -62,18 +55,6 @@ export const isGcpDomainValid = (gcpDomain: string | undefined) => {
   );
 };
 
-export const isMountpointMinSizeValid = (minSize: string) => {
-  return /^\d+$/.test(minSize) && parseInt(minSize) > 0;
-};
-
-export const isDiskMinSizeValid = (minSize: string) => {
-  return /^\d+$/.test(minSize) && parseInt(minSize) >= 0;
-};
-
-export const isPartitionNameValid = (name: string) => {
-  return /^[a-zA-Z0-9+_.][a-zA-Z0-9+_.-]*$/.test(name);
-};
-
 export const isBlueprintNameValid = (blueprintName: string) =>
   blueprintName.length >= 2 &&
   blueprintName.length <= 100 &&
@@ -84,134 +65,6 @@ export const isSnapshotDateValid = (date: Date) => date.getTime() <= Date.now();
 export const isSnapshotValid = (dateString: string) => {
   const date = new Date(dateString);
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
-};
-
-export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
-  const mountPointSet: Set<string> = new Set();
-  const duplicates: string[] = [];
-  for (const partition of partitions) {
-    if ('mountpoint' in partition && partition.mountpoint) {
-      const mountPoint = partition.mountpoint;
-      if (mountPointSet.has(mountPoint)) {
-        duplicates.push(mountPoint);
-      } else {
-        mountPointSet.add(mountPoint);
-      }
-    }
-    if ('type' in partition && partition.type === 'lvm') {
-      for (const lv of partition.logical_volumes) {
-        if ('mountpoint' in lv && lv.mountpoint) {
-          const mountPoint = lv.mountpoint;
-          if (mountPointSet.has(mountPoint)) {
-            duplicates.push(mountPoint);
-          } else {
-            mountPointSet.add(mountPoint);
-          }
-        }
-      }
-    }
-  }
-  return duplicates;
-};
-
-export const getDuplicateNames = (vg: VolumeGroup): string[] => {
-  const nameSet: Set<string> = new Set();
-  const duplicates: string[] = [];
-
-  if (vg.name) {
-    nameSet.add(vg.name);
-  }
-
-  if (vg.logical_volumes.length < 1) {
-    return [];
-  }
-
-  for (const lv of vg.logical_volumes) {
-    if (!lv.name) {
-      continue;
-    }
-
-    if (nameSet.has(lv.name)) {
-      duplicates.push(lv.name);
-    } else {
-      nameSet.add(lv.name);
-    }
-  }
-
-  return duplicates;
-};
-
-const normalizeMountpoint = (mountpoint: string): string => {
-  if (mountpoint === '/') return mountpoint;
-  return mountpoint.replace(/\/+$/, '');
-};
-
-export const isMountpointValid = (
-  partition: Partition,
-  blueprintMode: string,
-) => {
-  const policies =
-    blueprintMode === 'package'
-      ? MountpointPolicies
-      : ImageModeMountpointPolicies;
-
-  if ('mountpoint' in partition && partition.mountpoint) {
-    const mountpoint = normalizeMountpoint(partition.mountpoint);
-
-    for (const [mountpointPath, policy] of Object.entries(policies)) {
-      if (
-        policy.Exact &&
-        !policy.Deny &&
-        mountpoint.startsWith(mountpointPath)
-      ) {
-        return mountpoint === mountpointPath;
-      }
-
-      if (
-        policy.Deny &&
-        (mountpoint === mountpointPath ||
-          (!policy.Exact && mountpoint.startsWith(`${mountpointPath}/`)))
-      ) {
-        return false;
-      }
-    }
-
-    if (blueprintMode === 'image') {
-      return Object.keys(policies).some(
-        (path) => mountpoint === path || mountpoint.startsWith(`${path}/`),
-      );
-    }
-  }
-
-  return true;
-};
-
-export const getInvalidMountpoints = (
-  partitions: Partition[],
-  blueprintMode: string,
-) => {
-  const invalidMountpoints = [];
-
-  for (const partition of partitions) {
-    if (
-      'mountpoint' in partition &&
-      partition.mountpoint &&
-      !isMountpointValid(partition, blueprintMode)
-    ) {
-      invalidMountpoints.push(partition.mountpoint);
-    }
-    if ('type' in partition && partition.type === 'lvm') {
-      for (const lv of partition.logical_volumes) {
-        if ('mountpoint' in lv && lv.mountpoint) {
-          if (!isMountpointValid(lv, blueprintMode)) {
-            invalidMountpoints.push(lv.mountpoint);
-          }
-        }
-      }
-    }
-  }
-
-  return invalidMountpoints;
 };
 
 export const isValidUrl = (url: string): boolean => {

@@ -14,12 +14,8 @@ import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
 import { useShowActivationKeyQuery } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
-import { selectComplianceType } from '@/store/slices';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
-  convertToBytes,
-  parseSizeUnit,
-  Partition,
   selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
@@ -33,11 +29,7 @@ import {
   selectBlueprintId,
   selectBlueprintMode,
   selectBlueprintName,
-  selectDiskMinsize,
-  selectDiskPartitions,
-  selectFilesystemPartitions,
   selectFilesystemSlice,
-  selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
   selectImageSource,
@@ -60,19 +52,13 @@ import {
 import useDebounce from '@/Utilities/useDebounce';
 
 import {
-  getDuplicateMountPoints,
-  getDuplicateNames,
-  getInvalidMountpoints,
   isAwsAccountIdValid,
   isAzureResourceGroupValid,
   isAzureSubscriptionIdValid,
   isAzureTenantGUIDValid,
   isBlueprintNameValid,
-  isDiskMinSizeValid,
   isGcpDomainValid,
   isGcpEmailValid,
-  isMountpointMinSizeValid,
-  isPartitionNameValid,
   isSnapshotValid,
   isValidUrl,
   validateMultipleCertificates,
@@ -308,176 +294,6 @@ export function useAAPValidation(): StepValidation {
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
-}
-
-const validatePartitionSize = (
-  partition: Partition,
-  errors: { [key: string]: string },
-) => {
-  if (!partition.min_size || partition.min_size === '') {
-    errors[`min-size-${partition.id}`] = 'Partition size is required';
-    return true;
-  }
-  if (partition.min_size && !isMountpointMinSizeValid(partition.min_size)) {
-    errors[`min-size-${partition.id}`] = 'Must be larger than 0';
-    return true;
-  }
-  return false;
-};
-
-const validatePartitionMountpoint = (
-  partition: Partition,
-  errors: { [key: string]: string },
-  mountpointDuplicates: string[],
-  invalidMountpoints: string[],
-) => {
-  if ('mountpoint' in partition) {
-    if (!partition.mountpoint) {
-      const isSwap = 'fs_type' in partition && partition.fs_type === 'swap';
-      if (!isSwap) {
-        errors[`mountpoint-${partition.id}`] = 'Undefined mount point';
-        return true;
-      }
-    }
-    if (partition.mountpoint) {
-      if (mountpointDuplicates.includes(partition.mountpoint)) {
-        errors[`mountpoint-${partition.id}`] = 'Duplicate mount points';
-        return true;
-      }
-      if (invalidMountpoints.includes(partition.mountpoint)) {
-        errors[`mountpoint-${partition.id}`] = 'Invalid mount point';
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-const validatePartitionName = (
-  partition: Partition,
-  errors: { [key: string]: string },
-  nameDuplicates: string[],
-) => {
-  if (
-    'name' in partition &&
-    partition.name &&
-    !isPartitionNameValid(partition.name)
-  ) {
-    errors[`name-${partition.id}`] = 'Name is invalid';
-    return true;
-  }
-  if (
-    'name' in partition &&
-    partition.name &&
-    nameDuplicates.includes(partition.name)
-  ) {
-    errors[`name-${partition.id}`] = 'Name is not unique';
-    return true;
-  }
-  return false;
-};
-
-export function useFilesystemValidation(): StepValidation {
-  const fscMode = useAppSelector(selectFscMode);
-  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
-  const diskPartitions = useAppSelector(selectDiskPartitions);
-  const diskMinsize = useAppSelector(selectDiskMinsize);
-  const blueprintMode = useAppSelector(selectBlueprintMode);
-  const complianceType = useAppSelector(selectComplianceType);
-  const { filesystem: requiredFilesystem } = useSecuritySummary();
-  let disabledNext = false;
-
-  const errors: { [key: string]: string } = {};
-  if (fscMode === 'automatic') {
-    return { errors, disabledNext: false };
-  }
-
-  const partitions =
-    fscMode === 'basic' ? filesystemPartitions : diskPartitions;
-
-  const mountpointDuplicates = getDuplicateMountPoints(partitions);
-  const invalidMountpoints = getInvalidMountpoints(partitions, blueprintMode);
-
-  const volumeGroups = diskPartitions.filter((p) => p.type === 'lvm');
-  const nameDuplicates = volumeGroups.flatMap((vg) => getDuplicateNames(vg));
-
-  if (fscMode === 'advanced') {
-    if (diskMinsize && !isDiskMinSizeValid(diskMinsize)) {
-      errors['disk-min-size'] = 'Must be a positive integer';
-      disabledNext = true;
-    }
-  }
-
-  for (const partition of partitions) {
-    if (validatePartitionSize(partition, errors)) {
-      disabledNext = true;
-    }
-    if (
-      validatePartitionMountpoint(
-        partition,
-        errors,
-        mountpointDuplicates,
-        invalidMountpoints,
-      )
-    ) {
-      disabledNext = true;
-    }
-
-    if ('mountpoint' in partition && partition.mountpoint) {
-      const requiredPartition = requiredFilesystem.find(
-        (fs) => fs.mountpoint === partition.mountpoint,
-      );
-      if (requiredPartition) {
-        const currentBytes = convertToBytes(
-          partition.min_size || '0',
-          partition.unit || 'GiB',
-        );
-        const requiredBytes = requiredPartition.min_size;
-        if (currentBytes < requiredBytes) {
-          const [size, unit] = parseSizeUnit(String(requiredBytes));
-          errors[`min-size-${partition.id}`] =
-            `Minimum size of ${size} ${unit} required by ${
-              complianceType === 'openscap'
-                ? 'OpenSCAP profile'
-                : 'compliance policy'
-            }`;
-          disabledNext = true;
-        }
-      }
-    }
-
-    if (fscMode === 'advanced') {
-      if (validatePartitionName(partition, errors, nameDuplicates)) {
-        disabledNext = true;
-      }
-      if (
-        'type' in partition &&
-        partition.type === 'lvm' &&
-        partition.logical_volumes.length > 0
-      ) {
-        for (const lv of partition.logical_volumes) {
-          if (validatePartitionName(lv, errors, nameDuplicates)) {
-            disabledNext = true;
-          }
-          if (validatePartitionSize(lv, errors)) {
-            disabledNext = true;
-          }
-          if (
-            validatePartitionMountpoint(
-              lv,
-              errors,
-              mountpointDuplicates,
-              invalidMountpoints,
-            )
-          ) {
-            disabledNext = true;
-          }
-        }
-      }
-    }
-  }
-
-  return { errors, disabledNext };
 }
 
 export function useSnapshotValidation(): StepValidation {
