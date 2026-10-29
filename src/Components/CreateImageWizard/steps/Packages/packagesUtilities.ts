@@ -2,6 +2,11 @@ import { Module } from '@/store/api/backend';
 import { ApiRepositoryCollectionResponseRead } from '@/store/api/contentSources';
 import { IBPackage, IBPackageGroup } from '@/store/slices/wizard';
 
+export const formatRetirementDate = (date: string): string => {
+  const d = new Date(date);
+  return `${d.toLocaleString('en-US', { month: 'short' })} ${d.getFullYear()}`;
+};
+
 export const getPackageDescription = (pkg: IBPackage) => {
   const parts = [];
 
@@ -9,12 +14,7 @@ export const getPackageDescription = (pkg: IBPackage) => {
     parts.push(pkg.stream);
   }
   if (pkg.end_date) {
-    const retirementDate = new Date(pkg.end_date);
-    const formattedDate =
-      retirementDate.toLocaleString('en-US', { month: 'short' }) +
-      ' ' +
-      retirementDate.getFullYear();
-    parts.push(formattedDate);
+    parts.push(formatRetirementDate(pkg.end_date));
   }
   if (pkg.summary) {
     parts.push(pkg.summary);

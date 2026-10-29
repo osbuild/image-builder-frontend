@@ -7,6 +7,8 @@ import {
   ExclamationTriangleIcon,
 } from '@patternfly/react-icons';
 
+import { formatRetirementDate } from '../packagesUtilities';
+
 type RetirementDateProps = {
   date: string | undefined;
 };
@@ -52,10 +54,7 @@ const RetirementDate = ({ date }: RetirementDateProps) => {
 
   return (
     <>
-      {icon}{' '}
-      {retirementDate.toLocaleString('en-US', { month: 'short' }) +
-        ' ' +
-        retirementDate.getFullYear()}
+      {icon} {formatRetirementDate(date)}
     </>
   );
 };
