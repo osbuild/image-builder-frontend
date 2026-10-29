@@ -1,30 +1,24 @@
 import { useEffect } from 'react';
 
-import { EPEL_10_REPO_DEFINITION } from '@/constants';
 import { useSearchRepositoryModuleStreamsMutation } from '@/store/api/contentSources';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   addPackage,
-  selectDistribution,
   selectModules,
   selectPackages,
   selectWizardMode,
 } from '@/store/slices/wizard';
-import { getEpelUrlForDistribution } from '@/Utilities/epel';
 
 export const useRestoreModuleInEdit = (
   distroUrls: string[],
   isSuccessDistroRepositories: boolean,
+  epelRepoUrlByDistribution: string,
 ) => {
   const dispatch = useAppDispatch();
 
   const wizardMode = useAppSelector(selectWizardMode);
   const modules = useAppSelector(selectModules);
   const packages = useAppSelector(selectPackages);
-  const distribution = useAppSelector(selectDistribution);
-
-  const epelRepoUrlByDistribution =
-    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
 
   const [
     searchModulesInfo,

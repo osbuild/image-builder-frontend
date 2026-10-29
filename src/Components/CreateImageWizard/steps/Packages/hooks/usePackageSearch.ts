@@ -66,7 +66,11 @@ export const usePackageSearch = ({
     },
   ] = useSearchRpmMutation();
 
-  useRestoreModuleInEdit(distroUrls, isSuccessDistroRepositories);
+  useRestoreModuleInEdit(
+    distroUrls,
+    isSuccessDistroRepositories,
+    epelRepoUrlByDistribution,
+  );
 
   useEffect(() => {
     if (packageType === 'groups') {
