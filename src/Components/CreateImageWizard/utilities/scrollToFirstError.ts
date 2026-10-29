@@ -1,5 +1,7 @@
 export const scrollToFirstError = (): boolean => {
-  const element = document.querySelector('.pf-m-error, [data-pending-warning]');
+  const scope =
+    document.querySelector('.pf-v6-c-wizard__main-body') ?? document;
+  const element = scope.querySelector('.pf-m-error, [data-pending-warning]');
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     const parent = element.closest('.pf-v6-c-form-group, [role="group"]');
