@@ -33,6 +33,47 @@ export const awsSchema = z.discriminatedUnion('shareMethod', [
   }),
 ]);
 
+export const azureTenantIdSchema = z
+  .string()
+  .min(1, 'Tenant ID is required')
+  .pipe(
+    z
+      .string()
+      .length(36, 'Tenant ID must be 36 characters long')
+      .regex(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        'Tenant ID must be a valid GUID',
+      ),
+  );
+
+export const azureSubscriptionIdSchema = z
+  .string()
+  .min(1, 'Subscription ID is required')
+  .pipe(
+    z
+      .string()
+      .length(36, 'Subscription ID must be 36 characters long')
+      .regex(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+        'Subscription ID must be a valid GUID',
+      ),
+  );
+
+// TODO: better encapsulate these requirements:
+// 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
+export const azureResourceGroupSchema = z
+  .string()
+  .min(1, 'Resource group is required')
+  .pipe(z.string().regex(/^[-\w._()]+[-\w_()]$/));
+
+export const azureSchema = z.object({
+  tenantId: azureTenantIdSchema.optional(),
+  subscriptionId: azureSubscriptionIdSchema.optional(),
+  resourceGroup: azureResourceGroupSchema.optional(),
+  hyperVGeneration: z.literal(['V1', 'V2']).default('V2'),
+});
+
 export const cloudSliceSchema = z.object({
   aws: awsSchema,
+  azure: azureSchema,
 });
