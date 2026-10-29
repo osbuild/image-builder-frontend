@@ -59,12 +59,15 @@ export const azureSubscriptionIdSchema = z
       ),
   );
 
-// TODO: better encapsulate these requirements:
-// 'Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
 export const azureResourceGroupSchema = z
   .string()
   .min(1, 'Resource group is required')
-  .pipe(z.string().regex(/^[-\w._()]+[-\w_()]$/));
+  .max(90, 'Resource group must be 90 characters or fewer')
+  .regex(/^[A-Za-z0-9_().-]*$/, 'Resource group contains invalid characters')
+  .refine(
+    (group) => !group.endsWith('.'),
+    'Resource group cannot end in a period',
+  );
 
 export const azureSchema = z.object({
   tenantId: azureTenantIdSchema.optional(),

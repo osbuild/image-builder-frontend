@@ -45,13 +45,19 @@ export const cloudProvidersSlice = createSlice({
     reinitializeAws: (state) => {
       state.aws = initialState.aws;
     },
-    changeAzureTenantId: (state, action: PayloadAction<string>) => {
+    changeAzureTenantId: (state, action: PayloadAction<string | undefined>) => {
       state.azure.tenantId = action.payload;
     },
-    changeAzureSubscriptionId: (state, action: PayloadAction<string>) => {
+    changeAzureSubscriptionId: (
+      state,
+      action: PayloadAction<string | undefined>,
+    ) => {
       state.azure.subscriptionId = action.payload;
     },
-    changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
+    changeAzureResourceGroup: (
+      state,
+      action: PayloadAction<string | undefined>,
+    ) => {
       state.azure.resourceGroup = action.payload;
     },
     changeAzureHyperVGeneration: (

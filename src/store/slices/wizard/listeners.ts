@@ -8,6 +8,7 @@ import {
   changeAwsRegion,
   changeAwsShareMethod,
   reinitializeAws,
+  reinitializeAzure,
 } from './cloud/slice';
 import { selectIsImageMode } from './details';
 import { changeFscMode, selectFscMode } from './filesystem';
@@ -88,6 +89,23 @@ export const syncAwsTarget: WizardListenerEffect = (_action, listenerApi) => {
 
   listenerApi.dispatch(changeAwsShareMethod('onprem'));
   listenerApi.dispatch(changeAwsRegion(selectAWSRegion(state) ?? ''));
+};
+
+export const syncAzureTarget: WizardListenerEffect = (_action, listenerApi) => {
+  const state = listenerApi.getState();
+  const wasAzureSelected = selectImageTypes(
+    listenerApi.getOriginalState(),
+  ).includes('azure');
+  const isAzureSelected = selectImageTypes(state).includes('azure');
+
+  if (wasAzureSelected === isAzureSelected) {
+    return;
+  }
+
+  if (!isAzureSelected) {
+    listenerApi.dispatch(reinitializeAzure());
+    return;
+  }
 };
 
 // This was previously a mutation inside the changeDistribution reducer.
