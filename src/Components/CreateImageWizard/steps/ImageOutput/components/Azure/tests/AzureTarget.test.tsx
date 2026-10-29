@@ -113,9 +113,11 @@ describe('Azure Component', () => {
       await fillTenantGuidValue(user, 'invalid-guid');
       await tabWithWait(user);
 
-      expect(
-        await screen.findByText(/Please enter a valid tenant ID/i),
-      ).toBeInTheDocument();
+      const tenantInput = screen.getByPlaceholderText(
+        /Enter your 36-character GUID/i,
+      );
+      expect(tenantInput).toHaveAttribute('aria-invalid', 'true');
+      expect(tenantInput).toHaveAccessibleDescription(/.+/);
       expect(
         screen.queryByText(/Tenant ID is required/i),
       ).not.toBeInTheDocument();
@@ -126,7 +128,7 @@ describe('Azure Component', () => {
       const user = createUser();
 
       await fillTenantGuidValue(user, 'valid-value');
-      await clearInputValue(user, /clear azure tenant guid input/i);
+      await clearInputValue(user);
       await checkTenantGuidValue('');
 
       expect(
@@ -163,9 +165,11 @@ describe('Azure Component', () => {
       await fillSubscriptionIdValue(user, 'invalid-id');
       await tabWithWait(user);
 
-      expect(
-        await screen.findByText(/Please enter a valid subscription ID/i),
-      ).toBeInTheDocument();
+      const subscriptionInput = screen.getByPlaceholderText(
+        /Enter your 36-character ID/i,
+      );
+      expect(subscriptionInput).toHaveAttribute('aria-invalid', 'true');
+      expect(subscriptionInput).toHaveAccessibleDescription(/.+/);
       expect(
         screen.queryByText(/Subscription ID is required/i),
       ).not.toBeInTheDocument();
@@ -176,7 +180,7 @@ describe('Azure Component', () => {
       const user = createUser();
 
       await fillSubscriptionIdValue(user, 'valid-value');
-      await clearInputValue(user, /clear subscription id input/i);
+      await clearInputValue(user);
       await checkSubscriptionIdValue('');
 
       expect(
@@ -212,11 +216,11 @@ describe('Azure Component', () => {
       await fillResourceGroupValue(user, '**invalid-group**');
       await tabWithWait(user);
 
-      expect(
-        await screen.findByText(
-          /Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period/i,
-        ),
-      ).toBeInTheDocument();
+      const resourceGroupInput = screen.getByPlaceholderText(
+        /Enter your resource group/i,
+      );
+      expect(resourceGroupInput).toHaveAttribute('aria-invalid', 'true');
+      expect(resourceGroupInput).toHaveAccessibleDescription(/.+/);
       expect(
         screen.queryByText(/Resource group is required/i),
       ).not.toBeInTheDocument();
@@ -227,7 +231,7 @@ describe('Azure Component', () => {
       const user = createUser();
 
       await fillResourceGroupValue(user, 'valid-group');
-      await clearInputValue(user, /clear resource group input/i);
+      await clearInputValue(user);
       await checkResourceGroupValue('');
 
       expect(
@@ -300,6 +304,7 @@ describe('Azure Component', () => {
       expect(store.getState().wizard.cloudProviders.azure?.tenantId).toBe('');
 
       await fillTenantGuidValue(user, 'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022');
+      await tabWithWait(user);
 
       expect(store.getState().wizard.cloudProviders.azure?.tenantId).toBe(
         'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022',
@@ -318,6 +323,7 @@ describe('Azure Component', () => {
         user,
         '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
       );
+      await tabWithWait(user);
 
       expect(store.getState().wizard.cloudProviders.azure?.subscriptionId).toBe(
         '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
@@ -333,6 +339,7 @@ describe('Azure Component', () => {
       );
 
       await fillResourceGroupValue(user, 'test-resource-group');
+      await tabWithWait(user);
 
       expect(store.getState().wizard.cloudProviders.azure?.resourceGroup).toBe(
         'test-resource-group',
@@ -522,6 +529,8 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(tenantInput).toBeInTheDocument();
+    expect(tenantInput).toHaveValue('b8f86d22-4371-46ce-95e7-65c415f3b1e2');
+    await tabWithWait(user);
     expect(store.getState().wizard.cloudProviders.azure?.tenantId).toBe(
       'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
     );
@@ -544,6 +553,10 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(subscriptionInput).toBeInTheDocument();
+    expect(subscriptionInput).toHaveValue(
+      '60631143-a7dc-4d15-988b-ba83f3c99711',
+    );
+    await tabWithWait(user);
     expect(store.getState().wizard.cloudProviders.azure?.subscriptionId).toBe(
       '60631143-a7dc-4d15-988b-ba83f3c99711',
     );
@@ -562,6 +575,8 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(resourceGroupInput).toBeInTheDocument();
+    expect(resourceGroupInput).toHaveValue('test-resource-group');
+    await tabWithWait(user);
     expect(store.getState().wizard.cloudProviders.azure?.resourceGroup).toBe(
       'test-resource-group',
     );
