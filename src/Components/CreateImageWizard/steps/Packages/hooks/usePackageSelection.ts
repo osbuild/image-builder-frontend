@@ -72,94 +72,98 @@ export const usePackageSelection = ({
   );
   const selectedGroupNames = useMemo(() => groups.map((g) => g.name), [groups]);
 
+  const onSelectPackage = (value: string) => {
+    const [name, stream] = value.split('|||');
+    const pkg = sortedPackages.find(
+      (p) => p.name === name && (p.stream || '') === stream,
+    );
+    if (!pkg) return;
+
+    let isSelected = false;
+
+    if (!pkg.type || pkg.type === 'package') {
+      const isModuleWithSameName = modules.some(
+        (module: Module) => module.name === pkg.name,
+      );
+      isSelected =
+        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
+        !isModuleWithSameName;
+    }
+
+    if (pkg.type === 'module') {
+      isSelected =
+        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
+        modules.some(
+          (m: Module) => m.name === pkg.module_name && m.stream === pkg.stream,
+        );
+    }
+
+    if (!isSelected) {
+      if (
+        isSuccessEpelRepo &&
+        pkg.isRecommendedRepository &&
+        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
+      ) {
+        setPendingRepoRec(pkg);
+      } else {
+        dispatch(addPackage(pkg));
+        if (pkg.isRecommendation && !isOnPremise) {
+          analytics.track(
+            `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
+            {
+              module: AMPLITUDE_MODULE_NAME,
+              isPreview: isBeta(),
+              packageName: pkg.name,
+              selectedPackages: packages.map((p) => p.name),
+              shownRecommendations: recommendationsData?.packages || [],
+              distribution: distribution.replace('-', ''),
+              modelVersion: recommendationsData?.modelVersion,
+            },
+          );
+        }
+        if (pkg.type === 'module') {
+          setActiveStream(pkg.stream || '');
+          dispatch(
+            addModule({
+              name: pkg.module_name || '',
+              stream: pkg.stream || '',
+            }),
+          );
+        }
+      }
+    } else if (!isRequiredAndSelected(pkg)) {
+      handleRemovePackage(pkg);
+    }
+  };
+
+  const onSelectGroup = (value: string) => {
+    const grp = transformedGroups.find((g) => g.name === value);
+    if (!grp) return;
+
+    const isSelected = groups.some((g) => g.name === grp.name);
+
+    if (!isSelected) {
+      if (
+        isSuccessEpelRepo &&
+        grp.isRecommendedRepository &&
+        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
+      ) {
+        setPendingRepoRec(grp);
+      } else {
+        dispatch(addPackageGroup(grp));
+      }
+    } else {
+      handleRemoveGroup(grp);
+    }
+  };
+
   const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
     if (!value || typeof value !== 'string') return;
 
     if (packageType === 'packages') {
-      const [name, stream] = value.split('|||');
-      const pkg = sortedPackages.find(
-        (p) => p.name === name && (p.stream || '') === stream,
-      );
-      if (!pkg) return;
-
-      let isSelected = false;
-
-      if (!pkg.type || pkg.type === 'package') {
-        const isModuleWithSameName = modules.some(
-          (module: Module) => module.name === pkg.name,
-        );
-        isSelected =
-          packages.some(
-            (p) => p.name === pkg.name && p.stream === pkg.stream,
-          ) && !isModuleWithSameName;
-      }
-
-      if (pkg.type === 'module') {
-        isSelected =
-          packages.some(
-            (p) => p.name === pkg.name && p.stream === pkg.stream,
-          ) &&
-          modules.some(
-            (m: Module) =>
-              m.name === pkg.module_name && m.stream === pkg.stream,
-          );
-      }
-
-      if (!isSelected) {
-        if (
-          isSuccessEpelRepo &&
-          pkg.isRecommendedRepository &&
-          !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-        ) {
-          setPendingRepoRec(pkg);
-        } else {
-          dispatch(addPackage(pkg));
-          if (pkg.isRecommendation && !isOnPremise) {
-            analytics.track(
-              `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
-              {
-                module: AMPLITUDE_MODULE_NAME,
-                isPreview: isBeta(),
-                packageName: pkg.name,
-                selectedPackages: packages.map((p) => p.name),
-                shownRecommendations: recommendationsData?.packages || [],
-                distribution: distribution.replace('-', ''),
-                modelVersion: recommendationsData?.modelVersion,
-              },
-            );
-          }
-          if (pkg.type === 'module') {
-            setActiveStream(pkg.stream || '');
-            dispatch(
-              addModule({
-                name: pkg.module_name || '',
-                stream: pkg.stream || '',
-              }),
-            );
-          }
-        }
-      } else if (!isRequiredAndSelected(pkg)) {
-        handleRemovePackage(pkg);
-      }
+      onSelectPackage(value);
     } else {
-      const grp = transformedGroups.find((g) => g.name === value);
-      if (!grp) return;
-
-      const isSelected = groups.some((g) => g.name === grp.name);
-
-      if (!isSelected) {
-        if (
-          isSuccessEpelRepo &&
-          grp.isRecommendedRepository &&
-          !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-        ) {
-          setPendingRepoRec(grp);
-        } else {
-          dispatch(addPackageGroup(grp));
-        }
-      } else {
-        handleRemoveGroup(grp);
-      }
+      onSelectGroup(value);
     }
   };
 
