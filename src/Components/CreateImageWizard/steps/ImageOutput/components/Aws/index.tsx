@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Flex,
@@ -10,17 +10,26 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 
-import { isAwsAccountIdValid } from '@/Components/CreateImageWizard/validators';
-import { ValidatedInput } from '@/Components/ValidatedInputs';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { changeAwsAccountId, selectAwsAccountId } from '@/store/slices/wizard';
+import {
+  changeAwsAccountId,
+  selectAwsAccountId,
+  validateAwsAccountId,
+} from '@/store/slices/wizard';
 
 const Aws = () => {
   const dispatch = useAppDispatch();
   const isOnPremise = useAppSelector(selectIsOnPremise);
-
   const shareWithAccount = useAppSelector(selectAwsAccountId);
+
+  const [draft, setDraft] = useState(shareWithAccount ?? '');
+
+  const clear = () => {
+    setDraft('');
+    dispatch(changeAwsAccountId(''));
+  };
 
   return (
     <Stack hasGutter className='pf-v6-u-pb-md'>
@@ -28,19 +37,16 @@ const Aws = () => {
         <Flex spaceItems={{ default: 'spaceItemsMd' }}>
           <FlexItem>
             <FormGroup label='AWS account ID' isRequired>
-              <ValidatedInput
-                aria-label='aws account id'
-                value={shareWithAccount || ''}
-                validator={isAwsAccountIdValid}
-                onChange={(_event, value) =>
-                  dispatch(changeAwsAccountId(value))
-                }
-                helperText={
-                  !shareWithAccount
-                    ? 'AWS account ID is required'
-                    : 'Should be 12 characters long'
-                }
-                handleClear={() => dispatch(changeAwsAccountId(''))}
+              <ValidatedTextInput
+                ariaLabel='aws account id'
+                value={draft}
+                validator={(value) => validateAwsAccountId(value)}
+                onChange={(_, value) => setDraft(value)}
+                onCommit={(accountId) => {
+                  if (!accountId) return;
+                  dispatch(changeAwsAccountId(accountId));
+                }}
+                handleClear={clear}
               />
             </FormGroup>
           </FlexItem>
