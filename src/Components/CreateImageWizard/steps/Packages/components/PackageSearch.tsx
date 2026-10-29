@@ -114,6 +114,99 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
     setIsSearchingOtherRepos(false);
   };
 
+  const composeSearchResults = () =>
+    !debouncedSearchTerm && sortedPackages.length === 0 ? (
+      <SelectOption isDisabled>
+        Start typing to search {packageTypeLabel}
+      </SelectOption>
+    ) : packageType === 'packages' &&
+      debouncedSearchTerm.length === 1 ? (
+      <EmptyState variant='sm'>
+        <EmptyStateBody>
+          The search value must be greater than 1 character
+        </EmptyStateBody>
+      </EmptyState>
+    ) : isLoading ? (
+      <SelectOption isDisabled>
+        Searching {packageTypeLabel}...
+      </SelectOption>
+    ) : packageType === 'packages' && sortedPackages.length > 0 ? (
+      <>
+        {sortedPackages.slice(0, 50).map((pkg, index) => (
+          <SelectOption
+            key={`${pkg.name}-${pkg.stream || ''}-${index}`}
+            value={`${pkg.name}|||${pkg.stream || ''}`}
+            description={
+              pkg.isRecommendation
+                ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
+                : getPackageDescription(pkg)
+            }
+            isDisabled={isPackageSelectDisabled(pkg)}
+          >
+            {pkg.isRecommendation && (
+              <>
+                <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
+              </>
+            )}
+            {pkg.isRecommendation && pkg.summary
+              ? `${pkg.name} - ${pkg.summary}`
+              : pkg.name}
+          </SelectOption>
+        ))}
+        {isLoadingRecommendations && (
+          <SelectOption isDisabled>
+            Getting package recommendations...
+          </SelectOption>
+        )}
+      </>
+    ) : packageType === 'groups' && transformedGroups.length > 0 ? (
+      transformedGroups.slice(0, 50).map((group, index) => (
+        <SelectOption
+          key={`${group.name}-${index}`}
+          value={group.name}
+          description={group.description}
+        >
+          {group.name}
+        </SelectOption>
+      ))
+    ) : isLoadingRecommendations &&
+      packageType === 'packages' &&
+      !sortedPackages.length ? (
+      <SelectOption isDisabled>
+        Getting package recommendations...
+      </SelectOption>
+    ) : !isSearchingOtherRepos && !isOnPremise ? (
+      <EmptyState variant='sm'>
+        <EmptyStateBody>
+          No results for &quot;{debouncedSearchTerm}&quot; in selected
+          repositories. If you know the name of your repository, make
+          sure it&apos;s included on the{' '}
+          <ManageRepositoriesButton
+            label='Repositories page'
+            icon={true}
+          />
+        </EmptyStateBody>
+        <EmptyStateFooter>
+          <EmptyStateActions>
+            <Button
+              variant='secondary'
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsSearchingOtherRepos(true);
+              }}
+            >
+              Search repositories outside of this image
+            </Button>
+          </EmptyStateActions>
+        </EmptyStateFooter>
+      </EmptyState>
+    ) : (
+      <SelectOption isDisabled>
+        No {packageTypeLabel} found for &quot;{debouncedSearchTerm}
+        &quot;
+      </SelectOption>
+    );
+
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
@@ -166,99 +259,7 @@ const PackageSearch = ({ packageType }: PackageSearchProps) => {
           toggle={toggle}
           shouldFocusFirstItemOnOpen={false}
         >
-          <SelectList>
-            {!debouncedSearchTerm && sortedPackages.length === 0 ? (
-              <SelectOption isDisabled>
-                Start typing to search {packageTypeLabel}
-              </SelectOption>
-            ) : packageType === 'packages' &&
-              debouncedSearchTerm.length === 1 ? (
-              <EmptyState variant='sm'>
-                <EmptyStateBody>
-                  The search value must be greater than 1 character
-                </EmptyStateBody>
-              </EmptyState>
-            ) : isLoading ? (
-              <SelectOption isDisabled>
-                Searching {packageTypeLabel}...
-              </SelectOption>
-            ) : packageType === 'packages' && sortedPackages.length > 0 ? (
-              <>
-                {sortedPackages.slice(0, 50).map((pkg, index) => (
-                  <SelectOption
-                    key={`${pkg.name}-${pkg.stream || ''}-${index}`}
-                    value={`${pkg.name}|||${pkg.stream || ''}`}
-                    description={
-                      pkg.isRecommendation
-                        ? 'Suggested based on your selections. Enabled by RHEL Lightspeed'
-                        : getPackageDescription(pkg)
-                    }
-                    isDisabled={isPackageSelectDisabled(pkg)}
-                  >
-                    {pkg.isRecommendation && (
-                      <>
-                        <OptimizeIcon color='var(--pf-t--global--icon--color--brand--default)' />{' '}
-                      </>
-                    )}
-                    {pkg.isRecommendation && pkg.summary
-                      ? `${pkg.name} - ${pkg.summary}`
-                      : pkg.name}
-                  </SelectOption>
-                ))}
-                {isLoadingRecommendations && (
-                  <SelectOption isDisabled>
-                    Getting package recommendations...
-                  </SelectOption>
-                )}
-              </>
-            ) : packageType === 'groups' && transformedGroups.length > 0 ? (
-              transformedGroups.slice(0, 50).map((group, index) => (
-                <SelectOption
-                  key={`${group.name}-${index}`}
-                  value={group.name}
-                  description={group.description}
-                >
-                  {group.name}
-                </SelectOption>
-              ))
-            ) : isLoadingRecommendations &&
-              packageType === 'packages' &&
-              !sortedPackages.length ? (
-              <SelectOption isDisabled>
-                Getting package recommendations...
-              </SelectOption>
-            ) : !isSearchingOtherRepos && !isOnPremise ? (
-              <EmptyState variant='sm'>
-                <EmptyStateBody>
-                  No results for &quot;{debouncedSearchTerm}&quot; in selected
-                  repositories. If you know the name of your repository, make
-                  sure it&apos;s included on the{' '}
-                  <ManageRepositoriesButton
-                    label='Repositories page'
-                    icon={true}
-                  />
-                </EmptyStateBody>
-                <EmptyStateFooter>
-                  <EmptyStateActions>
-                    <Button
-                      variant='secondary'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsSearchingOtherRepos(true);
-                      }}
-                    >
-                      Search repositories outside of this image
-                    </Button>
-                  </EmptyStateActions>
-                </EmptyStateFooter>
-              </EmptyState>
-            ) : (
-              <SelectOption isDisabled>
-                No {packageTypeLabel} found for &quot;{debouncedSearchTerm}
-                &quot;
-              </SelectOption>
-            )}
-          </SelectList>
+          <SelectList>{composeSearchResults()}</SelectList>
           {isSearchingOtherRepos &&
             (sortedPackages.length > 0 || transformedGroups.length > 0) && (
               <>
