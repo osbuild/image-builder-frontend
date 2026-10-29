@@ -106,7 +106,6 @@ import UserGroupsStep from '../CreateImageWizard/steps/UserGroups';
 import UsersStep from '../CreateImageWizard/steps/Users';
 import {
   useAAPValidation,
-  useAzureValidation,
   useDetailsValidation,
   useGcpValidation,
   useImagePullValidation,
@@ -152,7 +151,6 @@ const CreateImageWizard = () => {
   // Validation hooks
   const aapValidation = useAAPValidation();
   const gcpValidation = useGcpValidation();
-  const azureValidation = useAzureValidation();
   const detailsValidation = useDetailsValidation();
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
@@ -195,7 +193,6 @@ const CreateImageWizard = () => {
     (isImageMode && !imageSource) ||
     cloudErrors.length > 0 ||
     gcpValidation.disabledNext ||
-    azureValidation.disabledNext ||
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     aapValidation.disabledNext ||
