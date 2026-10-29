@@ -2,12 +2,15 @@ import React from 'react';
 
 import { Button, FormGroup } from '@patternfly/react-core';
 
-import { isAzureTenantGUIDValid } from '@/Components/CreateImageWizard/validators';
 import { useAppSelector } from '@/store/hooks';
-import { selectAzureTenantId } from '@/store/slices/wizard';
+import {
+  selectAzureTenantId,
+  validateAzureTenantId,
+} from '@/store/slices/wizard';
 
 const AzureAuthButton = () => {
   const tenantId = useAppSelector(selectAzureTenantId);
+  const { errors } = validateAzureTenantId(tenantId);
 
   return (
     <FormGroup>
@@ -15,7 +18,7 @@ const AzureAuthButton = () => {
         component='a'
         target='_blank'
         variant='secondary'
-        isDisabled={!tenantId || !isAzureTenantGUIDValid(tenantId)}
+        isDisabled={!tenantId || errors.length > 0}
         href={
           'https://login.microsoftonline.com/' +
           tenantId +
