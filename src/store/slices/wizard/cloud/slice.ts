@@ -61,9 +61,7 @@ export const cloudProvidersSlice = createSlice({
       state.azure.hyperVGeneration = action.payload;
     },
     reinitializeAzure: (state) => {
-      state.azure.tenantId = undefined;
-      state.azure.subscriptionId = undefined;
-      state.azure.resourceGroup = undefined;
+      state.azure = initialState.azure;
     },
     changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
       state.gcp.accountType = action.payload;

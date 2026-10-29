@@ -36,6 +36,51 @@ export const awsSchema = z.discriminatedUnion('shareMethod', [
   }),
 ]);
 
+export const azureTenantIdSchema = z
+  .string()
+  .refine((value) => value.length > 0, {
+    error: 'Tenant ID is required',
+    abort: true,
+  })
+  .length(36, 'Tenant ID must be 36 characters long')
+  .regex(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    'Tenant ID must be a valid GUID',
+  );
+
+export const azureSubscriptionIdSchema = z
+  .string()
+  .refine((value) => value.length > 0, {
+    error: 'Subscription ID is required',
+    abort: true,
+  })
+  .length(36, 'Subscription ID must be 36 characters long')
+  .regex(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    'Subscription ID must be a valid GUID',
+  );
+
+export const azureResourceGroupSchema = z
+  .string()
+  .refine((value) => value.length > 0, {
+    error: 'Resource group is required',
+    abort: true,
+  })
+  .max(90, 'Resource group must be 90 characters or fewer')
+  .regex(/^[A-Za-z0-9_().-]*$/, 'Resource group contains invalid characters')
+  .refine(
+    (group) => !group.endsWith('.'),
+    'Resource group cannot end in a period',
+  );
+
+export const azureSchema = z.object({
+  tenantId: azureTenantIdSchema.optional(),
+  subscriptionId: azureSubscriptionIdSchema.optional(),
+  resourceGroup: azureResourceGroupSchema.optional(),
+  hyperVGeneration: z.literal(['V1', 'V2']).default('V2'),
+});
+
 export const cloudSliceSchema = z.object({
   aws: awsSchema,
+  azure: azureSchema,
 });

@@ -25,9 +25,6 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
   selectActivationKey,
-  selectAzureResourceGroup,
-  selectAzureSubscriptionId,
-  selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintId,
   selectBlueprintMode,
@@ -59,9 +56,6 @@ import {
 import useDebounce from '@/Utilities/useDebounce';
 
 import {
-  isAzureResourceGroupValid,
-  isAzureSubscriptionIdValid,
-  isAzureTenantGUIDValid,
   isBlueprintNameValid,
   isGcpDomainValid,
   isGcpEmailValid,
@@ -91,7 +85,6 @@ export function useBlueprintValidation(): BlueprintValidation {
   const registration = useRegistrationValidation();
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
-  const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
   const imagePull = useImagePullValidation();
   const targetEnvironments = useAppSelector(selectImageTypes);
@@ -133,7 +126,6 @@ export function useBlueprintValidation(): BlueprintValidation {
     registration.disabledNext ||
     snapshot.disabledNext ||
     gcpTarget.disabledNext ||
-    azureTarget.disabledNext ||
     imagePull.disabledNext ||
     cloudErrors.length > 0 ||
     hasPendingInputs;
@@ -414,33 +406,6 @@ export function useDetailsValidation(): StepValidation {
     // so the step should wait for the answer rather than report an error.
     isPending: isUniqueName === null,
   };
-}
-
-export function useAzureValidation(): StepValidation {
-  const imageTypes = useAppSelector(selectImageTypes);
-  const errors: Record<string, string> = {};
-
-  const azureTenantId = useAppSelector(selectAzureTenantId);
-  const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
-  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
-
-  if (!imageTypes.includes('azure')) {
-    return { errors, disabledNext: false };
-  }
-
-  if (!isAzureTenantGUIDValid(azureTenantId)) {
-    errors.tenantId = 'Invalid tenant id';
-  }
-
-  if (!isAzureSubscriptionIdValid(azureSubscriptionId)) {
-    errors.subscriptionId = 'Invalid subscription id';
-  }
-
-  if (!isAzureResourceGroupValid(azureResourceGroup)) {
-    errors.resourceGroup = 'Invalid resource group';
-  }
-
-  return { errors, disabledNext: Object.keys(errors).length > 0 };
 }
 
 export function useGcpValidation(): StepValidation {
