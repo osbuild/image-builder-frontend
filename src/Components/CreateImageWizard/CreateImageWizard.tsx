@@ -57,6 +57,7 @@ import {
   loadWizardState,
   parseStateFromRequest,
   selectBlueprintMode,
+  selectCloudSlice,
   selectDistribution,
   selectFilesystemSlice,
   selectHasPendingInputs,
@@ -67,6 +68,7 @@ import {
   selectSystem,
   selectTimezone,
   selectUsersSlice,
+  validateCloudSlice,
   validateFilesystemSlice,
   validateSystemSlice,
   validateUsersSlice,
@@ -104,7 +106,6 @@ import UserGroupsStep from '../CreateImageWizard/steps/UserGroups';
 import UsersStep from '../CreateImageWizard/steps/Users';
 import {
   useAAPValidation,
-  useAwsValidation,
   useAzureValidation,
   useDetailsValidation,
   useGcpValidation,
@@ -150,7 +151,6 @@ const CreateImageWizard = () => {
 
   // Validation hooks
   const aapValidation = useAAPValidation();
-  const awsValidation = useAwsValidation();
   const gcpValidation = useGcpValidation();
   const azureValidation = useAzureValidation();
   const detailsValidation = useDetailsValidation();
@@ -163,6 +163,9 @@ const CreateImageWizard = () => {
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
+
+  const cloud = useAppSelector(selectCloudSlice);
+  const { errors: cloudErrors } = validateCloudSlice(cloud);
 
   const filesystem = useAppSelector(selectFilesystemSlice);
   const { filesystem: requiredFilesystem } = useSecuritySummary();
@@ -190,7 +193,7 @@ const CreateImageWizard = () => {
   const baseSettingsHasErrors =
     targetEnvironments.length === 0 ||
     (isImageMode && !imageSource) ||
-    awsValidation.disabledNext ||
+    cloudErrors.length > 0 ||
     gcpValidation.disabledNext ||
     azureValidation.disabledNext ||
     detailsValidation.disabledNext ||

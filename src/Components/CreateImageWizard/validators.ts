@@ -1,11 +1,3 @@
-export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
-  return (
-    awsAccountId !== undefined &&
-    /^\d+$/.test(awsAccountId) &&
-    awsAccountId.length === 12
-  );
-};
-
 export const isAzureTenantGUIDValid = (azureTenantGUID: string | undefined) => {
   return (
     azureTenantGUID !== undefined &&

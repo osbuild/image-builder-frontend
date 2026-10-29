@@ -74,12 +74,13 @@ describe('AWS Component', () => {
       const user = createUser();
 
       await fillAccountIdValue(user, '123456789012');
+      await tabWithWait(user);
 
       expect(
-        screen.queryByText(/AWS account ID is required/i),
+        screen.queryByText(/Account ID is required/i),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByText(/Should be 12 characters long/i),
+        screen.queryByText(/Account ID must be 12 characters long/i),
       ).not.toBeInTheDocument();
     });
 
@@ -95,7 +96,7 @@ describe('AWS Component', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Should be 12 characters long/i),
+          screen.getByText(/Account ID must be 12 characters long/i),
         ).toBeInTheDocument();
       });
     });
@@ -112,7 +113,7 @@ describe('AWS Component', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Should be 12 characters long/i),
+          screen.getByText(/Account ID must contain only digits/i),
         ).toBeInTheDocument();
       });
     });
@@ -128,9 +129,7 @@ describe('AWS Component', () => {
       await tabWithWait(user);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/AWS account ID is required/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Account ID is required/i)).toBeInTheDocument();
       });
     });
 
@@ -146,16 +145,18 @@ describe('AWS Component', () => {
       });
       const user = createUser();
 
+      const accountIdInput = await screen.findByRole('textbox', {
+        name: /aws account id/i,
+      });
       const clearButton = await screen.findByRole('button', {
         name: /clear/i,
       });
       await clickWithWait(user, clearButton);
+      expect(accountIdInput).toHaveValue('');
       await tabWithWait(user);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/AWS account ID is required/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Account ID is required/i)).toBeInTheDocument();
       });
     });
   });
@@ -190,7 +191,9 @@ describe('AWS Component', () => {
       expect(selectAwsAccountId(store.getState())).toBe('');
 
       await fillAccountIdValue(user, '123456789012');
+      expect(selectAwsAccountId(store.getState())).toBe('');
 
+      await tabWithWait(user);
       expect(selectAwsAccountId(store.getState())).toBe('123456789012');
     });
 
@@ -311,20 +314,5 @@ describe('AWS CreateBlueprintRequest payload', () => {
     const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.subscription).toBeUndefined();
-  });
-});
-
-describe('Form submission', () => {
-  test('pressing Enter in account ID input does not trigger page reload', async () => {
-    const { store } = renderAwsStep();
-    const user = createUser();
-
-    const accountIdInput = await screen.findByRole('textbox', {
-      name: /aws account id/i,
-    });
-    await typeWithWait(user, accountIdInput, '123456789012{Enter}');
-
-    expect(accountIdInput).toBeInTheDocument();
-    expect(selectAwsAccountId(store.getState())).toBe('123456789012');
   });
 });

@@ -25,7 +25,6 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
   selectActivationKey,
-  selectAwsAccountId,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
@@ -33,6 +32,7 @@ import {
   selectBlueprintId,
   selectBlueprintMode,
   selectBlueprintName,
+  selectCloudSlice,
   selectFilesystemSlice,
   selectGcpAccountType,
   selectGcpEmail,
@@ -51,6 +51,7 @@ import {
   selectTemplate,
   selectUseLatest,
   selectUsersSlice,
+  validateCloudSlice,
   validateFilesystemSlice,
   validateSystemSlice,
   validateUsersSlice,
@@ -58,7 +59,6 @@ import {
 import useDebounce from '@/Utilities/useDebounce';
 
 import {
-  isAwsAccountIdValid,
   isAzureResourceGroupValid,
   isAzureSubscriptionIdValid,
   isAzureTenantGUIDValid,
@@ -93,7 +93,6 @@ export function useBlueprintValidation(): BlueprintValidation {
   const details = useDetailsValidation();
   const azureTarget = useAzureValidation();
   const gcpTarget = useGcpValidation();
-  const awsTarget = useAwsValidation();
   const imagePull = useImagePullValidation();
   const targetEnvironments = useAppSelector(selectImageTypes);
   const isImageMode = useAppSelector(selectIsImageMode);
@@ -101,6 +100,9 @@ export function useBlueprintValidation(): BlueprintValidation {
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
+
+  const cloud = useAppSelector(selectCloudSlice);
+  const { errors: cloudErrors } = validateCloudSlice(cloud);
 
   const filesystem = useAppSelector(selectFilesystemSlice);
   const { filesystem: requiredFilesystem } = useSecuritySummary();
@@ -130,10 +132,11 @@ export function useBlueprintValidation(): BlueprintValidation {
     details.isPending ||
     registration.disabledNext ||
     snapshot.disabledNext ||
-    awsTarget.disabledNext ||
     gcpTarget.disabledNext ||
     azureTarget.disabledNext ||
-    imagePull.disabledNext;
+    imagePull.disabledNext ||
+    cloudErrors.length > 0 ||
+    hasPendingInputs;
 
   const advancedSettingsInvalid =
     filesystemErrors.length > 0 ||
@@ -459,24 +462,6 @@ export function useGcpValidation(): StepValidation {
     if (!isGcpEmailValid(gcpEmail)) {
       errors.email = 'Invalid email';
     }
-  }
-
-  return { errors, disabledNext: Object.keys(errors).length > 0 };
-}
-
-export function useAwsValidation(): StepValidation {
-  const imageTypes = useAppSelector(selectImageTypes);
-  const isOnPremise = useAppSelector(selectIsOnPremise);
-  const errors: Record<string, string> = {};
-
-  const awsAccountId = useAppSelector(selectAwsAccountId);
-
-  if (!imageTypes.includes('aws') || isOnPremise) {
-    return { errors, disabledNext: false };
-  }
-
-  if (!isAwsAccountIdValid(awsAccountId)) {
-    errors.accountId = 'Invalid account id';
   }
 
   return { errors, disabledNext: Object.keys(errors).length > 0 };
