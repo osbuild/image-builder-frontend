@@ -60,8 +60,32 @@ export const usePackageSelection = ({
   const { handleRemovePackage, handleRemoveGroup } = useRemovePackageContent();
   const requiredSet = useRequiredPackages();
 
-  const isRequiredAndSelected = (pkg: IBPackage) =>
+  const isRemovalBlocked = (pkg: IBPackage) =>
     requiredSet.has(pkg.name) && packages.some((p) => p.name === pkg.name);
+
+  const needsEpelPrompt = (item: IBPackage | IBPackageGroup) =>
+    isSuccessEpelRepo &&
+    item.isRecommendedRepository &&
+    !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'));
+
+  const isPackageSelected = (pkg: IBPackage) => {
+    const inPackages = packages.some(
+      (p) => p.name === pkg.name && p.stream === pkg.stream,
+    );
+
+    if (pkg.type === 'module') {
+      return (
+        inPackages &&
+        modules.some(
+          (m: Module) => m.name === pkg.module_name && m.stream === pkg.stream,
+        )
+      );
+    }
+
+    return (
+      inPackages && !modules.some((module: Module) => module.name === pkg.name)
+    );
+  };
 
   const isPackageSelectDisabled = (pkg: IBPackage) =>
     isSelectDisabled(pkg, packages, modules, requiredSet);
@@ -79,31 +103,8 @@ export const usePackageSelection = ({
     );
     if (!pkg) return;
 
-    let isSelected = false;
-
-    if (!pkg.type || pkg.type === 'package') {
-      const isModuleWithSameName = modules.some(
-        (module: Module) => module.name === pkg.name,
-      );
-      isSelected =
-        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
-        !isModuleWithSameName;
-    }
-
-    if (pkg.type === 'module') {
-      isSelected =
-        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
-        modules.some(
-          (m: Module) => m.name === pkg.module_name && m.stream === pkg.stream,
-        );
-    }
-
-    if (!isSelected) {
-      if (
-        isSuccessEpelRepo &&
-        pkg.isRecommendedRepository &&
-        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-      ) {
+    if (!isPackageSelected(pkg)) {
+      if (needsEpelPrompt(pkg)) {
         setPendingRepoRec(pkg);
       } else {
         dispatch(addPackage(pkg));
@@ -131,7 +132,7 @@ export const usePackageSelection = ({
           );
         }
       }
-    } else if (!isRequiredAndSelected(pkg)) {
+    } else if (!isRemovalBlocked(pkg)) {
       handleRemovePackage(pkg);
     }
   };
@@ -143,11 +144,7 @@ export const usePackageSelection = ({
     const isSelected = groups.some((g) => g.name === grp.name);
 
     if (!isSelected) {
-      if (
-        isSuccessEpelRepo &&
-        grp.isRecommendedRepository &&
-        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
-      ) {
+      if (needsEpelPrompt(grp)) {
         setPendingRepoRec(grp);
       } else {
         dispatch(addPackageGroup(grp));
