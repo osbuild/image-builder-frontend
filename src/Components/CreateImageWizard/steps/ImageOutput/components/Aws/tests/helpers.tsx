@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { initialState } from '@/store/slices/wizard';
 import {
   renderWithRedux,
   typeWithWait,
@@ -14,7 +15,15 @@ import Aws from '..';
 export const renderAwsStep = (
   wizardStateOverrides: WizardStateOverrides = {},
 ) => {
-  return renderWithRedux(<Aws />, wizardStateOverrides);
+  const cloudProviders = wizardStateOverrides.cloudProviders;
+  return renderWithRedux(<Aws />, {
+    ...wizardStateOverrides,
+    cloudProviders: {
+      ...initialState.cloudProviders,
+      ...cloudProviders,
+      aws: cloudProviders?.aws ?? { shareMethod: 'manual', accountId: '' },
+    },
+  });
 };
 
 export const checkAccountIdValue = async (value: string) => {

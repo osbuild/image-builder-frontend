@@ -1,11 +1,15 @@
 import { RootState } from '@/store';
 
-export const selectAwsAccountId = (state: RootState): string => {
-  return state.wizard.cloudProviders.aws.accountId;
+export const selectAwsAccountId = (state: RootState) => {
+  if (state.wizard.cloudProviders.aws.shareMethod === 'manual') {
+    return state.wizard.cloudProviders.aws.accountId;
+  }
 };
 
 export const selectAwsRegion = (state: RootState) => {
-  return state.wizard.cloudProviders.aws.region;
+  if (state.wizard.cloudProviders.aws.shareMethod === 'onprem') {
+    return state.wizard.cloudProviders.aws.region;
+  }
 };
 
 export const selectAzureTenantId = (state: RootState) => {
@@ -30,4 +34,8 @@ export const selectGcpAccountType = (state: RootState) => {
 
 export const selectGcpEmail = (state: RootState) => {
   return state.wizard.cloudProviders.gcp.email;
+};
+
+export const selectCloudSlice = (state: RootState) => {
+  return state.wizard.cloudProviders;
 };

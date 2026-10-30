@@ -12,17 +12,26 @@ import {
 import { selectIsOnPremise } from '@/store/slices/env';
 
 export const AWSDetails = () => {
-  const awsAccountId = useAppSelector(selectAwsAccountId);
+  const accountId = useAppSelector(selectAwsAccountId);
   const region = useAppSelector(selectAwsRegion);
   const isOnPremise = useAppSelector(selectIsOnPremise);
 
+  if (isOnPremise && !region) return null;
+  if (!isOnPremise && !accountId) return null;
+
   return (
     <DetailsStack heading='Amazon Web Services'>
-      {!isOnPremise && (
+      {accountId && (
         <Content component='p'>
-          Shared with account: {awsAccountId}
+          Shared with account: {accountId}
           <br />
-          Region: {region || DEFAULT_AWS_REGION}
+          Region: {DEFAULT_AWS_REGION}
+          <br />
+        </Content>
+      )}
+      {region && (
+        <Content component='p'>
+          Region: {region}
           <br />
         </Content>
       )}
