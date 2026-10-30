@@ -21,13 +21,21 @@ export type AwsUploadOptions = AwsUploadRequestOptions & {
 };
 
 export type CloudProviderSlice = {
-  aws: {
-    accountId: string;
-    shareMethod: AwsShareMethod;
-    source: V1ListSourceResponseItem | undefined;
-    sourceId?: string | undefined;
-    region?: string | undefined;
-  };
+  aws:
+    | { shareMethod: 'none' }
+    | {
+        shareMethod: 'manual';
+        accountId: string;
+      }
+    | {
+        shareMethod: 'sources';
+        source: V1ListSourceResponseItem;
+        sourceId: string;
+      }
+    | {
+        shareMethod: 'onprem';
+        region: string;
+      };
   azure: {
     tenantId: string | undefined;
     subscriptionId: string | undefined;

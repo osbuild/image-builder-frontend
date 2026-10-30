@@ -8,6 +8,7 @@ import {
 } from '@/store/api/backend';
 
 import { parseCloudProvidersFromRequest } from '../parsers';
+import { initialState } from '../state';
 
 const baseImageRequest: ImageRequest = {
   architecture: 'x86_64',
@@ -52,7 +53,7 @@ describe('parseCloudProvidersFromRequest', () => {
       const result = parseCloudProvidersFromRequest(
         withImageRequests([baseImageRequest]),
       );
-      expect(result.aws.accountId).toBe('');
+      expect(result.aws).toEqual(initialState.aws);
       expect(result.azure.tenantId).toBeUndefined();
       expect(result.azure.subscriptionId).toBeUndefined();
       expect(result.azure.resourceGroup).toBeUndefined();
@@ -62,7 +63,7 @@ describe('parseCloudProvidersFromRequest', () => {
 
     it('returns defaults for empty image requests', () => {
       const result = parseCloudProvidersFromRequest(withImageRequests([]));
-      expect(result.aws.accountId).toBe('');
+      expect(result.aws).toEqual(initialState.aws);
       expect(result.gcp.email).toBe('');
     });
 
@@ -82,7 +83,10 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.aws.accountId).toBe('123456789012');
+        expect(result.aws).toEqual({
+          shareMethod: 'manual',
+          accountId: '123456789012',
+        });
       });
 
       it('takes the first account when multiple are provided', () => {
@@ -100,10 +104,13 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.aws.accountId).toBe('111111111111');
+        expect(result.aws).toEqual({
+          shareMethod: 'manual',
+          accountId: '111111111111',
+        });
       });
 
-      it('defaults accountId to empty string when no share_with_accounts', () => {
+      it('uses manual defaults when no share_with_accounts are provided', () => {
         const result = parseCloudProvidersFromRequest(
           withImageRequests([
             {
@@ -113,7 +120,7 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.aws.accountId).toBe('');
+        expect(result.aws).toEqual(initialState.aws);
       });
 
       it('maps share_with_sources to sourceId and source', () => {
@@ -131,8 +138,11 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.aws.sourceId).toBe('source-123');
-        expect(result.aws.source).toEqual({ id: 'source-123' });
+        expect(result.aws).toEqual({
+          shareMethod: 'sources',
+          source: { id: 'source-123' },
+          sourceId: 'source-123',
+        });
       });
 
       it('sets shareMethod to manual when no share_with_sources', () => {
@@ -167,10 +177,13 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.aws.region).toBe('eu-west-1');
+        expect(result.aws).toEqual({
+          shareMethod: 'onprem',
+          region: 'eu-west-1',
+        });
       });
 
-      it('sets region to undefined when not present in options', () => {
+      it('uses the manual variant when region is absent', () => {
         const result = parseCloudProvidersFromRequest(
           withImageRequests([
             {
@@ -183,15 +196,17 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.aws.region).toBeUndefined();
+        expect(result.aws).toEqual({
+          shareMethod: 'manual',
+          accountId: '123456789012',
+        });
       });
 
       it('returns defaults when no aws image request exists', () => {
         const result = parseCloudProvidersFromRequest(
           withImageRequests([baseImageRequest]),
         );
-        expect(result.aws.accountId).toBe('');
-        expect(result.aws.sourceId).toBeUndefined();
+        expect(result.aws).toEqual(initialState.aws);
       });
     });
 
@@ -407,7 +422,7 @@ describe('parseCloudProvidersFromRequest', () => {
   describe('import mode (BlueprintExportResponse)', () => {
     it('returns all defaults when no image requests present', () => {
       const result = parseCloudProvidersFromRequest(createMinimalExport());
-      expect(result.aws.accountId).toBe('');
+      expect(result.aws).toEqual(initialState.aws);
       expect(result.azure.tenantId).toBeUndefined();
       expect(result.azure.subscriptionId).toBeUndefined();
       expect(result.azure.resourceGroup).toBeUndefined();

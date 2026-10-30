@@ -3,7 +3,9 @@ import React from 'react';
 import { Radio } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectIsOnPremise } from '@/store/slices';
 import {
+  changeAwsShareMethod,
   changeImageTypes,
   reinitializeAws,
   reinitializeAzure,
@@ -27,6 +29,7 @@ const TargetEnvironmentOption = ({
 }: TargetEnvironmentOptionProps) => {
   const dispatch = useAppDispatch();
   const environments = useAppSelector(selectImageTypes);
+  const isOnPremise = useAppSelector(selectIsOnPremise);
 
   const isChecked = environments.includes(environment);
 
@@ -49,6 +52,10 @@ const TargetEnvironmentOption = ({
       if (prev !== environment) {
         reinitializeCloudProvider(prev);
       }
+    }
+    if (environment === 'aws') {
+      const method = isOnPremise ? 'onprem' : 'manual';
+      dispatch(changeAwsShareMethod(method));
     }
     dispatch(changeImageTypes([environment]));
   };

@@ -27,49 +27,73 @@ describe('target environment reducers', () => {
           changeAwsAccountId('123456789012'),
         );
 
-        expect(result.cloudProviders.aws.accountId).toBe('123456789012');
+        expect(result.cloudProviders.aws).toMatchObject({
+          shareMethod: 'none',
+        });
       });
     });
 
     describe('changeAwsSourceId', () => {
       it('should set source ID', () => {
-        const result = wizardReducer(
-          initialState,
-          changeAwsSourceId('source-123'),
-        );
-
-        expect(result.cloudProviders.aws.sourceId).toBe('source-123');
-      });
-
-      it('should clear source ID with undefined', () => {
         const stateWithSource: WizardState = {
           ...initialState,
           cloudProviders: {
             ...initialState.cloudProviders,
             aws: {
-              ...initialState.cloudProviders.aws,
+              shareMethod: 'sources',
+              source: { id: 'existing-source' },
+              sourceId: 'existing-source',
+            },
+          },
+        };
+        const result = wizardReducer(
+          stateWithSource,
+          changeAwsSourceId('source-123'),
+        );
+
+        expect(result.cloudProviders.aws).toMatchObject({
+          shareMethod: 'sources',
+          sourceId: 'source-123',
+        });
+      });
+
+      it('should clear source ID with an empty string', () => {
+        const stateWithSource: WizardState = {
+          ...initialState,
+          cloudProviders: {
+            ...initialState.cloudProviders,
+            aws: {
+              shareMethod: 'sources',
+              source: { id: 'existing-source' },
               sourceId: 'existing-source',
             },
           },
         };
 
-        const result = wizardReducer(
-          stateWithSource,
-          changeAwsSourceId(undefined),
-        );
+        const result = wizardReducer(stateWithSource, changeAwsSourceId(''));
 
-        expect(result.cloudProviders.aws.sourceId).toBeUndefined();
+        expect(result.cloudProviders.aws).toMatchObject({
+          shareMethod: 'sources',
+          sourceId: '',
+        });
       });
     });
 
     describe('changeAwsRegion', () => {
       it('should update region', () => {
-        const result = wizardReducer(
-          initialState,
-          changeAwsRegion('eu-west-1'),
-        );
+        const onPremState: WizardState = {
+          ...initialState,
+          cloudProviders: {
+            ...initialState.cloudProviders,
+            aws: { shareMethod: 'onprem', region: 'us-east-1' },
+          },
+        };
+        const result = wizardReducer(onPremState, changeAwsRegion('eu-west-1'));
 
-        expect(result.cloudProviders.aws.region).toBe('eu-west-1');
+        expect(result.cloudProviders.aws).toMatchObject({
+          shareMethod: 'onprem',
+          region: 'eu-west-1',
+        });
       });
     });
 
@@ -80,10 +104,7 @@ describe('target environment reducers', () => {
           cloudProviders: {
             ...initialState.cloudProviders,
             aws: {
-              accountId: '123456789012',
-              shareMethod: 'manual',
-              source: { id: 'test-source', name: 'Test Source' },
-              sourceId: 'test-source',
+              shareMethod: 'onprem',
               region: 'ap-southeast-1',
             },
           },
@@ -91,10 +112,7 @@ describe('target environment reducers', () => {
 
         const result = wizardReducer(modifiedState, reinitializeAws());
 
-        expect(result.cloudProviders.aws.accountId).toBe('');
-        expect(result.cloudProviders.aws.shareMethod).toBe('manual');
-        expect(result.cloudProviders.aws.source).toBeUndefined();
-        expect(result.cloudProviders.aws.region).toBe('us-east-1');
+        expect(result.cloudProviders.aws).toBe(initialState.cloudProviders.aws);
       });
 
       it('should not affect other state', () => {
@@ -107,10 +125,7 @@ describe('target environment reducers', () => {
               tenantId: 'tenant-123',
             },
             aws: {
-              accountId: '123456789012',
-              shareMethod: 'manual',
-              source: undefined,
-              sourceId: undefined,
+              shareMethod: 'onprem',
               region: 'ap-southeast-1',
             },
           },

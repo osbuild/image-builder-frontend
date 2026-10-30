@@ -6,7 +6,7 @@ import {
   isAzureUploadOptions,
   isGcpUploadOptions,
 } from './typeguards';
-import { AwsShareMethod, CloudProviderSlice, GcpAccountType } from './types';
+import { CloudProviderSlice, GcpAccountType } from './types';
 
 import { RequestLike } from '../types';
 
@@ -20,17 +20,24 @@ const parseAws = (
   }
 
   const options = aws.upload_request.options;
+  if ('region' in options) {
+    return {
+      shareMethod: 'onprem',
+      region: options.region ?? 'us-east-1',
+    };
+  }
+
+  if ('share_with_sources' in options) {
+    return {
+      shareMethod: 'sources',
+      source: { id: options.share_with_sources?.[0] },
+      sourceId: options.share_with_sources?.[0] ?? '',
+    };
+  }
+
   return {
-    accountId: options.share_with_accounts?.[0] || defaults.accountId,
-    // NOTE: the share method was deprecated, this field
-    // stays here for backwards compatability, but we
-    // could probably now consider removing it
-    shareMethod: ('share_with_sources' in options
-      ? 'sources'
-      : 'manual') as AwsShareMethod,
-    source: { id: options.share_with_sources?.[0] },
-    sourceId: options.share_with_sources?.[0],
-    region: 'region' in options ? options.region : undefined,
+    shareMethod: 'manual',
+    accountId: options.share_with_accounts?.[0] || '',
   };
 };
 

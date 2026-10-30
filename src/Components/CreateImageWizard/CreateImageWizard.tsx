@@ -44,6 +44,7 @@ import {
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 import {
   changeArchitecture,
+  changeAwsShareMethod,
   changeBaseUrl,
   changeDistribution,
   changeImageTypes,
@@ -266,6 +267,8 @@ const CreateImageWizard = () => {
     ) {
       return;
     }
+
+    dispatch(changeAwsShareMethod('onprem'));
 
     const initializeHostDistro = async () => {
       const distro = await getHostDistro();
