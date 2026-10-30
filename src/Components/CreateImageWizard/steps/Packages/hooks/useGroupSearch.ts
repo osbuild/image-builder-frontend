@@ -21,8 +21,10 @@ export const useGroupSearch = ({
 }: UseGroupSearchArgs) => {
   const {
     isOnPremise,
+    template,
     distroUrls,
     customRepoUuids,
+    reposInTemplate,
     isSuccessDistroRepositories,
     formattedSnapshotDate,
     epelRepoUrlByDistribution,
@@ -63,7 +65,14 @@ export const useGroupSearch = ({
       searchDistroGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
-          urls: distroUrls,
+          urls:
+            template === ''
+              ? distroUrls
+              : reposInTemplate
+                  .filter((r) => r.org_id === '-1' && !!r.url)
+                  .flatMap((r) =>
+                    r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!,
+                  ),
           date: formattedSnapshotDate,
         },
       });
@@ -95,7 +104,9 @@ export const useGroupSearch = ({
     packageType,
     isSuccessDistroRepositories,
     formattedSnapshotDate,
+    template,
     distroUrls,
+    reposInTemplate,
     isSearchingOtherRepos,
     isOnPremise,
     epelRepoUrlByDistribution,
