@@ -3,7 +3,11 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { serviceMiddleware, serviceReducer } from '@/store';
 import { ImageRequest } from '@/store/api/backend';
-import { initialState, mapStateToRequest } from '@/store/slices/wizard';
+import {
+  initialState,
+  mapStateToRequest,
+  selectAwsAccountId,
+} from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,
@@ -137,7 +141,6 @@ describe('AWS Component', () => {
           aws: {
             accountId: '123456789012',
             shareMethod: 'manual',
-            source: undefined,
           },
         },
       });
@@ -171,7 +174,6 @@ describe('AWS Component', () => {
           aws: {
             accountId: '123123123123',
             shareMethod: 'manual',
-            source: undefined,
           },
         },
       });
@@ -185,13 +187,11 @@ describe('AWS Component', () => {
       const { store } = renderAwsStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe('');
+      expect(selectAwsAccountId(store.getState())).toBe('');
 
       await fillAccountIdValue(user, '123456789012');
 
-      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe(
-        '123456789012',
-      );
+      expect(selectAwsAccountId(store.getState())).toBe('123456789012');
     });
 
     test('clears account ID when clear button is clicked', async () => {
@@ -201,7 +201,6 @@ describe('AWS Component', () => {
           aws: {
             accountId: '123456789012',
             shareMethod: 'manual',
-            source: undefined,
           },
         },
       });
@@ -212,7 +211,7 @@ describe('AWS Component', () => {
       });
       await clickWithWait(user, clearButton);
 
-      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe('');
+      expect(selectAwsAccountId(store.getState())).toBe('');
     });
   });
 });
@@ -225,7 +224,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '123123123123',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -256,7 +254,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '999888777666',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -274,7 +271,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '111222333444',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -292,7 +288,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '123123123123',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -309,7 +304,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '123123123123',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -331,8 +325,6 @@ describe('Form submission', () => {
     await typeWithWait(user, accountIdInput, '123456789012{Enter}');
 
     expect(accountIdInput).toBeInTheDocument();
-    expect(store.getState().wizard.cloudProviders.aws.accountId).toBe(
-      '123456789012',
-    );
+    expect(selectAwsAccountId(store.getState())).toBe('123456789012');
   });
 });
