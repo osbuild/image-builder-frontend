@@ -17,6 +17,7 @@ import {
   filterImageTypes,
   registerLater,
   resolveOfficialImage,
+  syncAwsTarget,
 } from '../slices/wizard/listeners';
 
 export const listenerMiddleware = createListenerMiddleware();
@@ -52,6 +53,11 @@ startListening({
 startListening({
   actionCreator: changeImageTypes,
   effect: clearUnsupportedUsersAndGroups,
+});
+
+startListening({
+  actionCreator: changeImageTypes,
+  effect: syncAwsTarget,
 });
 
 startListening({

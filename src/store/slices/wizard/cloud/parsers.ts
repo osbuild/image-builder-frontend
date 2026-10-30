@@ -1,12 +1,13 @@
 import { ComposerImageRequest, ImageRequest } from '@/store/api/backend';
 
+import { DEFAULT_AWS_REGION } from './constants';
 import { initialState } from './state';
 import {
   isAwsUploadOptions,
   isAzureUploadOptions,
   isGcpUploadOptions,
 } from './typeguards';
-import { AwsShareMethod, CloudProviderSlice, GcpAccountType } from './types';
+import { CloudProviderSlice, GcpAccountType } from './types';
 
 import { RequestLike } from '../types';
 
@@ -15,22 +16,31 @@ const parseAws = (
 ): CloudProviderSlice['aws'] => {
   const defaults = initialState.aws;
   const aws = imageRequests?.find((image) => image.image_type === 'aws');
-  if (!aws || !isAwsUploadOptions(aws.upload_request.options)) {
-    return defaults;
-  }
+  if (!aws) return defaults;
 
   const options = aws.upload_request.options;
+  if (!isAwsUploadOptions(options)) {
+    return { shareMethod: 'manual', accountId: '' };
+  }
+
+  if ('region' in options) {
+    return {
+      shareMethod: 'onprem',
+      region: options.region ?? DEFAULT_AWS_REGION,
+    };
+  }
+
+  if ('share_with_sources' in options) {
+    return {
+      shareMethod: 'sources',
+      source: { id: options.share_with_sources?.[0] },
+      sourceId: options.share_with_sources?.[0] ?? '',
+    };
+  }
+
   return {
-    accountId: options.share_with_accounts?.[0] || defaults.accountId,
-    // NOTE: the share method was deprecated, this field
-    // stays here for backwards compatability, but we
-    // could probably now consider removing it
-    shareMethod: ('share_with_sources' in options
-      ? 'sources'
-      : 'manual') as AwsShareMethod,
-    source: { id: options.share_with_sources?.[0] },
-    sourceId: options.share_with_sources?.[0],
-    region: 'region' in options ? options.region : undefined,
+    shareMethod: 'manual',
+    accountId: options.share_with_accounts?.[0] || '',
   };
 };
 

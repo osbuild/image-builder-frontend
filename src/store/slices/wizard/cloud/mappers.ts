@@ -1,7 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-import { selectIsOnPremise } from '@/store/slices/env';
-
 import {
   selectAwsAccountId,
   selectAwsRegion,
@@ -14,23 +12,21 @@ import {
 } from './selectors';
 
 export const mapAwsImageOptions = createSelector(
-  [selectIsOnPremise, selectAwsAccountId, selectAwsRegion],
-  (isOnPremise, accountId, region) => {
-    // Guard: skip cloud options when the user hasn't provided credentials.
-    // The old code sent { share_with_accounts: [''] } which is invalid.
-    if (!accountId) {
-      return {};
+  [selectAwsAccountId, selectAwsRegion],
+  (accountId, region) => {
+    if (accountId) {
+      return {
+        share_with_accounts: [accountId],
+      };
     }
 
-    const share_with_accounts = [accountId];
-    if (!isOnPremise) return { share_with_accounts };
+    if (region) {
+      return {
+        region,
+      };
+    }
 
-    // TODO: we might want to update the image-builder-crc api
-    // to accept a region instead (with default us-east-1)
-    return {
-      share_with_accounts,
-      region,
-    };
+    return {};
   },
 );
 
