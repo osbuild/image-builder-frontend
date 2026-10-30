@@ -18,9 +18,9 @@ import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeGcpAccountType,
-  changeGcpEmail,
+  changeGcpPrincipal,
   selectGcpAccountType,
-  selectGcpEmail,
+  selectGcpPrincipal,
 } from '@/store/slices/wizard';
 
 export const GCP_ACCOUNT_TYPE_OPTIONS = new Map([
@@ -32,9 +32,8 @@ export const GCP_ACCOUNT_TYPE_OPTIONS = new Map([
 
 const Gcp = () => {
   const dispatch = useAppDispatch();
-
   const accountType = useAppSelector(selectGcpAccountType);
-  const gcpEmail = useAppSelector(selectGcpEmail);
+  const principal = useAppSelector(selectGcpPrincipal);
   const [isOpen, setIsOpen] = useState(false);
 
   const onToggleClick = () => {
@@ -89,13 +88,13 @@ const Gcp = () => {
       >
         <ValidatedInput
           aria-label='google principal'
-          value={gcpEmail || ''}
+          value={principal || ''}
           validator={
             accountType === 'domain' ? isGcpDomainValid : isGcpEmailValid
           }
-          onChange={(_event, value) => dispatch(changeGcpEmail(value))}
+          onChange={(_, value) => dispatch(changeGcpPrincipal(value))}
           helperText={
-            !gcpEmail
+            !principal
               ? accountType === 'domain'
                 ? 'Domain is required'
                 : 'E-mail address is required'
@@ -103,7 +102,9 @@ const Gcp = () => {
                 ? 'Please enter a valid domain'
                 : 'Please enter a valid e-mail address'
           }
-          handleClear={() => dispatch(changeGcpEmail(''))}
+          handleClear={() => {
+            dispatch(changeGcpPrincipal(''));
+          }}
         />
       </FormGroup>
     </Stack>

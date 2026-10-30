@@ -49,7 +49,7 @@ describe('GCP Component', () => {
 
       expect(
         await screen.findByRole('button', {
-          name: /Google account/i,
+          name: /Select account type/i,
         }),
       ).toBeInTheDocument();
       expect(
@@ -62,7 +62,7 @@ describe('GCP Component', () => {
       const user = createUser();
 
       const accountTypeToggle = await screen.findByRole('button', {
-        name: /Google account/i,
+        name: /Select account type/i,
       });
       await clickWithWait(user, accountTypeToggle);
 
@@ -88,7 +88,7 @@ describe('GCP Component', () => {
           ...initialState.cloudProviders,
           gcp: {
             accountType: 'domain',
-            email: '',
+            domain: '',
           },
         },
       });
@@ -103,13 +103,13 @@ describe('GCP Component', () => {
       const { store } = renderGcpStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.gcp.accountType).toBe(
-        'user',
+      expect(store.getState().wizard.cloudProviders.gcp?.accountType).toBe(
+        undefined,
       );
 
       await selectAccountType(user, 'Service account');
 
-      expect(store.getState().wizard.cloudProviders.gcp.accountType).toBe(
+      expect(store.getState().wizard.cloudProviders.gcp?.accountType).toBe(
         'serviceAccount',
       );
     });
@@ -159,6 +159,7 @@ describe('GCP Component', () => {
       renderGcpStep();
       const user = createUser();
 
+      await selectAccountType(user, 'Google account');
       await fillPrincipalValue(user, 'test@example.com');
 
       expect(
@@ -170,6 +171,7 @@ describe('GCP Component', () => {
       renderGcpStep();
       const user = createUser();
 
+      await selectAccountType(user, 'Google account');
       const principalInput = await screen.findByRole('textbox', {
         name: /google principal/i,
       });
@@ -189,7 +191,7 @@ describe('GCP Component', () => {
           ...initialState.cloudProviders,
           gcp: {
             accountType: 'domain',
-            email: '',
+            domain: '',
           },
         },
       });
@@ -209,7 +211,7 @@ describe('GCP Component', () => {
           ...initialState.cloudProviders,
           gcp: {
             accountType: 'domain',
-            email: '',
+            domain: '',
           },
         },
       });
@@ -233,7 +235,7 @@ describe('GCP Component', () => {
     test('renders without pre-populated values', async () => {
       renderGcpStep();
 
-      await checkAccountTypeValue('Google account');
+      await checkAccountTypeValue('Select account type');
       await checkPrincipalValue('');
     });
 
@@ -258,13 +260,15 @@ describe('GCP Component', () => {
       const { store } = renderGcpStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.gcp.email).toBe('');
+      expect(store.getState().wizard.cloudProviders.gcp).toBeUndefined();
 
+      await selectAccountType(user, 'Google account');
       await fillPrincipalValue(user, 'test@example.com');
 
-      expect(store.getState().wizard.cloudProviders.gcp.email).toBe(
-        'test@example.com',
-      );
+      expect(store.getState().wizard.cloudProviders.gcp).toEqual({
+        accountType: 'user',
+        email: 'test@example.com',
+      });
     });
 
     test('clears principal when clear button is clicked', async () => {
@@ -284,7 +288,10 @@ describe('GCP Component', () => {
       });
       await clickWithWait(user, clearButton);
 
-      expect(store.getState().wizard.cloudProviders.gcp.email).toBe('');
+      expect(store.getState().wizard.cloudProviders.gcp).toEqual({
+        accountType: 'user',
+        email: '',
+      });
     });
   });
 });
@@ -364,7 +371,7 @@ describe('GCP CreateBlueprintRequest payload', () => {
         ...initialState.cloudProviders,
         gcp: {
           accountType: 'domain',
-          email: 'example.com',
+          domain: 'example.com',
         },
       },
     });
@@ -432,14 +439,16 @@ describe('Form submission', () => {
     const { store } = renderGcpStep();
     const user = createUser();
 
+    await selectAccountType(user, 'Google account');
     const principalInput = await screen.findByRole('textbox', {
       name: /google principal/i,
     });
     await typeWithWait(user, principalInput, 'user@example.com{Enter}');
 
     expect(principalInput).toBeInTheDocument();
-    expect(store.getState().wizard.cloudProviders.gcp.email).toBe(
-      'user@example.com',
-    );
+    expect(store.getState().wizard.cloudProviders.gcp).toEqual({
+      accountType: 'user',
+      email: 'user@example.com',
+    });
   });
 });

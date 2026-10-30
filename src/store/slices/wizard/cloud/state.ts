@@ -1,4 +1,4 @@
-import { AzureOptions, CloudProviderSlice } from './types';
+import { AzureOptions, CloudProviderSlice, GcpOptions } from './types';
 
 export const emptyAzureState: AzureOptions = {
   tenantId: '',
@@ -7,13 +7,15 @@ export const emptyAzureState: AzureOptions = {
   hyperVGeneration: 'V2',
 };
 
+export const emptyGcpState: GcpOptions = {
+  accountType: 'user',
+  email: '',
+};
+
 export const initialState: CloudProviderSlice = {
   aws: {
     shareMethod: 'none',
   },
   azure: undefined,
-  gcp: {
-    accountType: 'user',
-    email: '',
-  },
+  gcp: undefined,
 };

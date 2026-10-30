@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { emptyAzureState, initialState } from './state';
+import { emptyAzureState, emptyGcpState, initialState } from './state';
 import { AzureHyperVGeneration, GcpAccountType } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
@@ -95,14 +95,38 @@ export const cloudProvidersSlice = createSlice({
       state.azure = initialState.azure;
     },
     changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
-      state.gcp.accountType = action.payload;
+      if (state.gcp) {
+        state.gcp.accountType = action.payload;
+        return;
+      }
+      state.gcp = {
+        accountType: action.payload,
+      };
     },
-    changeGcpEmail: (state, action: PayloadAction<string>) => {
+    changeGcpEmail: (state, action: PayloadAction<string | undefined>) => {
+      if (state.gcp === undefined || state.gcp.accountType === 'domain') {
+        return;
+      }
+
       state.gcp.email = action.payload;
     },
+    changeGcpDomain: (state, action: PayloadAction<string | undefined>) => {
+      if (state.gcp?.accountType !== 'domain') return;
+      state.gcp.domain = action.payload;
+    },
+    changeGcpPrincipal: (state, action: PayloadAction<string>) => {
+      if (!state.gcp) return;
+      if (state.gcp.accountType === 'domain') {
+        state.gcp.domain = action.payload;
+        return;
+      }
+      state.gcp.email = action.payload;
+    },
+    initializeGcp: (state) => {
+      state.gcp = emptyGcpState;
+    },
     reinitializeGcp: (state) => {
-      state.gcp.accountType = 'user';
-      state.gcp.email = '';
+      state.gcp = initialState.gcp;
     },
   },
   extraReducers: (builder) => {
@@ -135,5 +159,8 @@ export const {
   reinitializeAzure,
   changeGcpAccountType,
   changeGcpEmail,
+  changeGcpDomain,
+  changeGcpPrincipal,
+  initializeGcp,
   reinitializeGcp,
 } = cloudProvidersSlice.actions;
