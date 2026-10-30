@@ -1,9 +1,14 @@
+import z from 'zod';
+
 import {
   awsAccountIdSchema,
   azureResourceGroupSchema,
   azureSubscriptionIdSchema,
   azureTenantIdSchema,
   cloudSliceSchema,
+  gcpDomainAccountSchema,
+  gcpEmailAccountSchema,
+  gcpSchema,
 } from './schemas';
 import { CloudProviderSlice } from './types';
 
@@ -50,7 +55,46 @@ export const validateAzureResourceGroup = (group: string | undefined) => {
   };
 };
 
-export const validateCloudSlice = (slice: Omit<CloudProviderSlice, 'gcp'>) => {
+export const validateGcpDomainAccount = (
+  account: z.infer<typeof gcpDomainAccountSchema>,
+) => {
+  const { data, issues } = validateSchema(gcpDomainAccountSchema, account);
+
+  return {
+    data: data?.domain,
+    errors: issues,
+  };
+};
+
+export const validateGcpEmailAccount = (
+  account: z.infer<typeof gcpEmailAccountSchema>,
+) => {
+  const { data, issues } = validateSchema(gcpEmailAccountSchema, account);
+
+  return {
+    data: data?.email,
+    errors: issues,
+  };
+};
+
+export const validateGcpAccount = (
+  account?: z.infer<typeof gcpSchema> | undefined,
+) => {
+  if (account === undefined) {
+    return {
+      data: undefined,
+      errors: [],
+    };
+  }
+
+  if (account.accountType === 'domain') {
+    return validateGcpDomainAccount(account);
+  }
+
+  return validateGcpEmailAccount(account);
+};
+
+export const validateCloudSlice = (slice: CloudProviderSlice) => {
   const { data, issues } = validateSchema(cloudSliceSchema, slice);
 
   return {
