@@ -8,6 +8,7 @@ import {
   selectAzureSubscriptionId,
   selectAzureTenantId,
   selectGcpAccountType,
+  selectGcpDomain,
   selectGcpEmail,
 } from './selectors';
 
@@ -53,14 +54,14 @@ export const mapAzureImageOptions = createSelector(
 );
 
 export const mapGcpImageOptions = createSelector(
-  [selectGcpEmail, selectGcpAccountType],
-  (gcpEmail, accountType) => {
-    // Guard: skip cloud options when required credentials are missing.
-    if (!gcpEmail || !accountType) {
-      return {};
-    }
+  [selectGcpEmail, selectGcpDomain, selectGcpAccountType],
+  (email, domain, accountType) => {
+    if (accountType === undefined) return {};
 
-    return { share_with_accounts: [`${accountType}:${gcpEmail}`] };
+    const identifier = accountType === 'domain' ? domain : email;
+    if (!identifier) return {};
+
+    return { share_with_accounts: [`${accountType}:${identifier}`] };
   },
 );
 

@@ -8,8 +8,10 @@ import {
   changeAwsRegion,
   changeAwsShareMethod,
   initializeAzure,
+  initializeGcp,
   reinitializeAws,
   reinitializeAzure,
+  reinitializeGcp,
 } from './cloud/slice';
 import { selectIsImageMode } from './details';
 import { changeFscMode, selectFscMode } from './filesystem';
@@ -109,6 +111,25 @@ export const syncAzureTarget: WizardListenerEffect = (_action, listenerApi) => {
   }
 
   listenerApi.dispatch(initializeAzure());
+};
+
+export const syncGcpTarget: WizardListenerEffect = (_action, listenerApi) => {
+  const state = listenerApi.getState();
+  const wasGcpSelected = selectImageTypes(
+    listenerApi.getOriginalState(),
+  ).includes('gcp');
+  const isGcpSelected = selectImageTypes(state).includes('gcp');
+
+  if (wasGcpSelected === isGcpSelected) {
+    return;
+  }
+
+  if (!isGcpSelected) {
+    listenerApi.dispatch(reinitializeGcp());
+    return;
+  }
+
+  listenerApi.dispatch(initializeGcp());
 };
 
 // This was previously a mutation inside the changeDistribution reducer.

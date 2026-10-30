@@ -19,6 +19,7 @@ import {
   resolveOfficialImage,
   syncAwsTarget,
   syncAzureTarget,
+  syncGcpTarget,
 } from '../slices/wizard/listeners';
 
 export const listenerMiddleware = createListenerMiddleware();
@@ -64,6 +65,11 @@ startListening({
 startListening({
   actionCreator: changeImageTypes,
   effect: syncAzureTarget,
+});
+
+startListening({
+  actionCreator: changeImageTypes,
+  effect: syncGcpTarget,
 });
 
 startListening({

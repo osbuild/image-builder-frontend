@@ -55,14 +55,13 @@ describe('parseCloudProvidersFromRequest', () => {
       );
       expect(result.aws).toEqual(initialState.aws);
       expect(result.azure).toBeUndefined();
-      expect(result.gcp.accountType).toBeUndefined();
-      expect(result.gcp.email).toBe('');
+      expect(result.gcp).toEqual(initialState.gcp);
     });
 
     it('returns defaults for empty image requests', () => {
       const result = parseCloudProvidersFromRequest(withImageRequests([]));
       expect(result.aws).toEqual(initialState.aws);
-      expect(result.gcp.email).toBe('');
+      expect(result.gcp).toEqual(initialState.gcp);
     });
 
     describe('aws', () => {
@@ -335,8 +334,10 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.gcp.accountType).toBe('user');
-        expect(result.gcp.email).toBe('alice@example.com');
+        expect(result.gcp).toEqual({
+          accountType: 'user',
+          email: 'alice@example.com',
+        });
       });
 
       it('parses serviceAccount type', () => {
@@ -356,8 +357,10 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.gcp.accountType).toBe('serviceAccount');
-        expect(result.gcp.email).toBe('svc@project.iam.gserviceaccount.com');
+        expect(result.gcp).toEqual({
+          accountType: 'serviceAccount',
+          email: 'svc@project.iam.gserviceaccount.com',
+        });
       });
 
       it('parses group type', () => {
@@ -375,8 +378,10 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.gcp.accountType).toBe('group');
-        expect(result.gcp.email).toBe('admins@example.com');
+        expect(result.gcp).toEqual({
+          accountType: 'group',
+          email: 'admins@example.com',
+        });
       });
 
       it('parses domain type', () => {
@@ -394,8 +399,10 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.gcp.accountType).toBe('domain');
-        expect(result.gcp.email).toBe('example.com');
+        expect(result.gcp).toEqual({
+          accountType: 'domain',
+          domain: 'example.com',
+        });
       });
 
       it('returns defaults when share_with_accounts is empty', () => {
@@ -411,8 +418,7 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.gcp.accountType).toBeUndefined();
-        expect(result.gcp.email).toBe('');
+        expect(result.gcp).toEqual(initialState.gcp);
       });
 
       it('returns defaults when share_with_accounts is missing', () => {
@@ -425,16 +431,14 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.gcp.accountType).toBeUndefined();
-        expect(result.gcp.email).toBe('');
+        expect(result.gcp).toEqual(initialState.gcp);
       });
 
       it('returns defaults when no gcp image request exists', () => {
         const result = parseCloudProvidersFromRequest(
           withImageRequests([baseImageRequest]),
         );
-        expect(result.gcp.accountType).toBeUndefined();
-        expect(result.gcp.email).toBe('');
+        expect(result.gcp).toEqual(initialState.gcp);
       });
     });
   });
@@ -444,8 +448,7 @@ describe('parseCloudProvidersFromRequest', () => {
       const result = parseCloudProvidersFromRequest(createMinimalExport());
       expect(result.aws).toEqual(initialState.aws);
       expect(result.azure).toBeUndefined();
-      expect(result.gcp.accountType).toBeUndefined();
-      expect(result.gcp.email).toBe('');
+      expect(result.gcp).toEqual(initialState.gcp);
     });
   });
 });

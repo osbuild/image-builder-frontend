@@ -246,7 +246,7 @@ describe('target environment reducers', () => {
           changeGcpAccountType('user'),
         );
 
-        expect(result.cloudProviders.gcp.accountType).toBe('user');
+        expect(result.cloudProviders.gcp?.accountType).toBe('user');
       });
 
       it('should update account type to serviceAccount', () => {
@@ -255,7 +255,7 @@ describe('target environment reducers', () => {
           changeGcpAccountType('serviceAccount'),
         );
 
-        expect(result.cloudProviders.gcp.accountType).toBe('serviceAccount');
+        expect(result.cloudProviders.gcp?.accountType).toBe('serviceAccount');
       });
 
       it('should update account type to group', () => {
@@ -264,7 +264,7 @@ describe('target environment reducers', () => {
           changeGcpAccountType('group'),
         );
 
-        expect(result.cloudProviders.gcp.accountType).toBe('group');
+        expect(result.cloudProviders.gcp?.accountType).toBe('group');
       });
 
       it('should update account type to domain', () => {
@@ -273,18 +273,25 @@ describe('target environment reducers', () => {
           changeGcpAccountType('domain'),
         );
 
-        expect(result.cloudProviders.gcp.accountType).toBe('domain');
+        expect(result.cloudProviders.gcp?.accountType).toBe('domain');
       });
     });
 
     describe('changeGcpEmail', () => {
       it('should update email', () => {
-        const result = wizardReducer(
+        const selectedUserState = wizardReducer(
           initialState,
+          changeGcpAccountType('user'),
+        );
+        const result = wizardReducer(
+          selectedUserState,
           changeGcpEmail('user@example.com'),
         );
 
-        expect(result.cloudProviders.gcp.email).toBe('user@example.com');
+        expect(result.cloudProviders.gcp).toEqual({
+          accountType: 'user',
+          email: 'user@example.com',
+        });
       });
     });
 
@@ -303,8 +310,9 @@ describe('target environment reducers', () => {
 
         const result = wizardReducer(modifiedState, reinitializeGcp());
 
-        expect(result.cloudProviders.gcp.accountType).toBe('user');
-        expect(result.cloudProviders.gcp.email).toBe('');
+        expect(result.cloudProviders.gcp).toEqual(
+          initialState.cloudProviders.gcp,
+        );
       });
     });
   });

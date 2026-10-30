@@ -15,9 +15,16 @@ export type AwsUploadOptions = AwsUploadRequestOptions & {
 export type AzureOptions = z.infer<typeof azureSchema>;
 export type AzureHyperVGeneration = AzureOptions['hyperVGeneration'];
 
+export type GcpOptions =
+  | {
+      accountType: 'user' | 'serviceAccount' | 'group';
+      email?: string | undefined;
+    }
+  | {
+      accountType: 'domain';
+      domain?: string | undefined;
+    };
+
 export type CloudProviderSlice = z.infer<typeof cloudSliceSchema> & {
-  gcp: {
-    accountType: GcpAccountType | undefined;
-    email: string;
-  };
+  gcp?: GcpOptions | undefined;
 };

@@ -7,7 +7,7 @@ import {
   isAzureUploadOptions,
   isGcpUploadOptions,
 } from './typeguards';
-import { CloudProviderSlice, GcpAccountType } from './types';
+import { CloudProviderSlice } from './types';
 
 import { RequestLike } from '../types';
 
@@ -65,19 +65,24 @@ const parseAzure = (
 const parseGcp = (
   imageRequests?: ImageRequest[] | ComposerImageRequest[] | undefined,
 ): CloudProviderSlice['gcp'] => {
-  // NOTE: the defaults that the request mapper for gcp was using
-  // are different to the `initialState`, so we can't use that here
-  const defaults = { email: '', accountType: undefined };
+  const defaults = initialState.gcp;
   const gcp = imageRequests?.find((image) => image.image_type === 'gcp');
   if (!gcp || !isGcpUploadOptions(gcp.upload_request.options)) {
     return defaults;
   }
 
   const options = gcp.upload_request.options;
-  const [accountType, email] = options.share_with_accounts[0].split(':');
+  const [accountType, item] = options.share_with_accounts[0].split(':');
+  if (accountType === 'domain') {
+    return {
+      accountType,
+      domain: item,
+    };
+  }
+
   return {
-    accountType: accountType as GcpAccountType,
-    email: email || initialState.gcp.email,
+    accountType: accountType as 'user' | 'serviceAccount' | 'group',
+    email: item,
   };
 };
 
