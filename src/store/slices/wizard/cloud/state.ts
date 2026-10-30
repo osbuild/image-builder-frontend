@@ -2,10 +2,7 @@ import { CloudProviderSlice } from './types';
 
 export const initialState: CloudProviderSlice = {
   aws: {
-    accountId: '',
-    shareMethod: 'manual',
-    source: undefined,
-    region: 'us-east-1',
+    shareMethod: 'none',
   },
   azure: {
     tenantId: undefined,

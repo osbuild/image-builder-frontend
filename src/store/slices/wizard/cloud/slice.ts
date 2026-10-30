@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { initialState } from './state';
-import { AwsShareMethod, AzureHyperVGeneration, GcpAccountType } from './types';
+import { AzureHyperVGeneration, GcpAccountType } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
 
@@ -10,22 +10,38 @@ export const cloudProvidersSlice = createSlice({
   initialState,
   reducers: {
     changeAwsAccountId: (state, action: PayloadAction<string>) => {
-      state.aws.accountId = action.payload;
+      if (state.aws.shareMethod === 'manual') {
+        state.aws.accountId = action.payload;
+      }
     },
-    changeAwsShareMethod: (state, action: PayloadAction<AwsShareMethod>) => {
-      state.aws.shareMethod = action.payload;
+    changeAwsShareMethod: (
+      state,
+      action: PayloadAction<'manual' | 'onprem' | 'none'>,
+    ) => {
+      if (action.payload === 'onprem') {
+        state.aws = { shareMethod: action.payload, region: '' };
+        return;
+      }
+
+      if (action.payload === 'manual') {
+        state.aws = { shareMethod: action.payload, accountId: '' };
+        return;
+      }
+
+      state.aws = { shareMethod: action.payload };
     },
-    changeAwsSourceId: (state, action: PayloadAction<string | undefined>) => {
-      state.aws.sourceId = action.payload;
+    changeAwsSourceId: (state, action: PayloadAction<string>) => {
+      if (state.aws.shareMethod === 'sources') {
+        state.aws.sourceId = action.payload;
+      }
     },
-    changeAwsRegion: (state, action: PayloadAction<string | undefined>) => {
-      state.aws.region = action.payload;
+    changeAwsRegion: (state, action: PayloadAction<string>) => {
+      if (state.aws.shareMethod === 'onprem') {
+        state.aws.region = action.payload;
+      }
     },
     reinitializeAws: (state) => {
-      state.aws.accountId = '';
-      state.aws.shareMethod = 'manual';
-      state.aws.source = undefined;
-      state.aws.region = 'us-east-1';
+      state.aws = initialState.aws;
     },
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
       state.azure.tenantId = action.payload;
