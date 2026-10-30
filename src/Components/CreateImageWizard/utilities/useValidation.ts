@@ -31,8 +31,6 @@ import {
   selectBlueprintName,
   selectCloudSlice,
   selectFilesystemSlice,
-  selectGcpAccountType,
-  selectGcpEmail,
   selectHasPendingInputs,
   selectImageSource,
   selectImageTypes,
@@ -57,8 +55,6 @@ import useDebounce from '@/Utilities/useDebounce';
 
 import {
   isBlueprintNameValid,
-  isGcpDomainValid,
-  isGcpEmailValid,
   isSnapshotValid,
   isValidUrl,
   validateMultipleCertificates,
@@ -85,7 +81,6 @@ export function useBlueprintValidation(): BlueprintValidation {
   const registration = useRegistrationValidation();
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
-  const gcpTarget = useGcpValidation();
   const imagePull = useImagePullValidation();
   const targetEnvironments = useAppSelector(selectImageTypes);
   const isImageMode = useAppSelector(selectIsImageMode);
@@ -125,7 +120,6 @@ export function useBlueprintValidation(): BlueprintValidation {
     details.isPending ||
     registration.disabledNext ||
     snapshot.disabledNext ||
-    gcpTarget.disabledNext ||
     imagePull.disabledNext ||
     cloudErrors.length > 0 ||
     hasPendingInputs;
@@ -406,30 +400,6 @@ export function useDetailsValidation(): StepValidation {
     // so the step should wait for the answer rather than report an error.
     isPending: isUniqueName === null,
   };
-}
-
-export function useGcpValidation(): StepValidation {
-  const imageTypes = useAppSelector(selectImageTypes);
-  const errors: Record<string, string> = {};
-
-  const gcpAccountType = useAppSelector(selectGcpAccountType);
-  const gcpEmail = useAppSelector(selectGcpEmail);
-
-  if (!imageTypes.includes('gcp')) {
-    return { errors, disabledNext: false };
-  }
-
-  if (gcpAccountType === 'domain') {
-    if (!isGcpDomainValid(gcpEmail)) {
-      errors.email = 'Invalid domain';
-    }
-  } else {
-    if (!isGcpEmailValid(gcpEmail)) {
-      errors.email = 'Invalid email';
-    }
-  }
-
-  return { errors, disabledNext: Object.keys(errors).length > 0 };
 }
 
 export const useImagePullValidation = (): StepValidation => {

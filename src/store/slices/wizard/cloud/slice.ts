@@ -99,18 +99,21 @@ export const cloudProvidersSlice = createSlice({
         state.gcp.accountType = action.payload;
         return;
       }
-      state.gcp = {
-        accountType: action.payload,
-      };
+      if (action.payload === 'domain') {
+        state.gcp = { accountType: 'domain', domain: '' };
+        return;
+      }
+
+      state.gcp = { accountType: action.payload, email: '' };
     },
-    changeGcpEmail: (state, action: PayloadAction<string | undefined>) => {
+    changeGcpEmail: (state, action: PayloadAction<string>) => {
       if (state.gcp === undefined || state.gcp.accountType === 'domain') {
         return;
       }
 
       state.gcp.email = action.payload;
     },
-    changeGcpDomain: (state, action: PayloadAction<string | undefined>) => {
+    changeGcpDomain: (state, action: PayloadAction<string>) => {
       if (state.gcp?.accountType !== 'domain') return;
       state.gcp.domain = action.payload;
     },

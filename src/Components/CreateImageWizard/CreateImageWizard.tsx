@@ -108,7 +108,6 @@ import UsersStep from '../CreateImageWizard/steps/Users';
 import {
   useAAPValidation,
   useDetailsValidation,
-  useGcpValidation,
   useImagePullValidation,
   useRegistrationValidation,
   useSnapshotValidation,
@@ -151,7 +150,6 @@ const CreateImageWizard = () => {
 
   // Validation hooks
   const aapValidation = useAAPValidation();
-  const gcpValidation = useGcpValidation();
   const detailsValidation = useDetailsValidation();
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
@@ -193,7 +191,6 @@ const CreateImageWizard = () => {
     targetEnvironments.length === 0 ||
     (isImageMode && !imageSource) ||
     cloudErrors.length > 0 ||
-    gcpValidation.disabledNext ||
     detailsValidation.disabledNext ||
     registrationValidation.disabledNext ||
     aapValidation.disabledNext ||

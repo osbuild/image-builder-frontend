@@ -80,7 +80,34 @@ export const azureSchema = z.object({
   hyperVGeneration: z.literal(['V1', 'V2']).default('V2'),
 });
 
+export const gcpDomainAccountSchema = z.object({
+  accountType: z.literal('domain'),
+  domain: z
+    .string()
+    .refine((domain) => domain.length > 0, {
+      error: 'Domain is required',
+      abort: true,
+    })
+    .refine(
+      // this rejects domains like `localhost`
+      (domain) => domain.split('.').filter(Boolean).length > 1,
+      { error: 'Invalid domain', abort: true },
+    )
+    .pipe(z.hostname('Invalid domain')),
+});
+
+export const gcpEmailAccountSchema = z.object({
+  accountType: z.literal(['user', 'serviceAccount', 'group']),
+  email: z.string().min(1, 'Email is required').pipe(z.email('Invalid email')),
+});
+
+export const gcpSchema = z.discriminatedUnion('accountType', [
+  gcpDomainAccountSchema,
+  gcpEmailAccountSchema,
+]);
+
 export const cloudSliceSchema = z.object({
   aws: awsSchema,
   azure: azureSchema.optional(),
+  gcp: gcpSchema.optional(),
 });
