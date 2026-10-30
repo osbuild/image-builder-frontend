@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { configureStore } from '@reduxjs/toolkit';
 import { screen, waitFor } from '@testing-library/react';
 
@@ -7,6 +9,7 @@ import { initialState, mapStateToRequest } from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,
+  renderWithRedux,
   tabWithWait,
   typeWithWait,
 } from '@/test/testUtils';
@@ -18,6 +21,8 @@ import {
   renderGcpStep,
   selectAccountType,
 } from './helpers';
+
+import Gcp from '..';
 
 const createStoreWithGcpState = (
   overrides: Partial<typeof initialState> = {},
@@ -161,10 +166,9 @@ describe('GCP Component', () => {
 
       await selectAccountType(user, 'Google account');
       await fillPrincipalValue(user, 'test@example.com');
+      await tabWithWait(user);
 
-      expect(
-        screen.queryByText(/E-mail address is required/i),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/Invalid email/i)).not.toBeInTheDocument();
     });
 
     test('displays error for invalid email after blur', async () => {
@@ -179,11 +183,32 @@ describe('GCP Component', () => {
       await tabWithWait(user);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/Please enter a valid e-mail address/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
       });
     });
+
+    test.each([
+      ['Google account', 'Email is required'],
+      [
+        'Google Workspace domain or Cloud Identity domain',
+        'Domain is required',
+      ],
+    ] as const)(
+      'shows the required error for %s after blur',
+      async (accountTypeLabel, errorMessage) => {
+        renderGcpStep();
+        const user = createUser();
+
+        await selectAccountType(user, accountTypeLabel);
+        const principalInput = await screen.findByRole('textbox', {
+          name: /google principal/i,
+        });
+        await clickWithWait(user, principalInput);
+        await tabWithWait(user);
+
+        expect(await screen.findByText(errorMessage)).toBeInTheDocument();
+      },
+    );
 
     test('validates domain for domain account type', async () => {
       renderGcpStep({
@@ -201,8 +226,10 @@ describe('GCP Component', () => {
         name: /google principal/i,
       });
       await typeWithWait(user, principalInput, 'example.com');
+      await tabWithWait(user);
 
       expect(screen.queryByText(/Domain is required/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Invalid domain/i)).not.toBeInTheDocument();
     });
 
     test('displays domain error for invalid domain', async () => {
@@ -224,9 +251,7 @@ describe('GCP Component', () => {
       await tabWithWait(user);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/Please enter a valid domain/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Invalid domain/i)).toBeInTheDocument();
       });
     });
   });
@@ -267,11 +292,47 @@ describe('GCP Component', () => {
 
       expect(store.getState().wizard.cloudProviders.gcp).toEqual({
         accountType: 'user',
+        email: '',
+      });
+
+      await tabWithWait(user);
+
+      expect(store.getState().wizard.cloudProviders.gcp).toEqual({
+        accountType: 'user',
         email: 'test@example.com',
       });
     });
 
-    test('clears principal when clear button is clicked', async () => {
+    test('resets draft when account type changes with an unchanged principal', async () => {
+      renderGcpStep({
+        cloudProviders: {
+          ...initialState.cloudProviders,
+          gcp: {
+            accountType: 'domain',
+            domain: '',
+          },
+        },
+      });
+      const user = createUser();
+
+      await selectAccountType(user, 'Google account');
+      await fillPrincipalValue(user, 'test@example.com');
+      await tabWithWait(user);
+
+      const clearButton = await screen.findByRole('button', {
+        name: /clear/i,
+      });
+      await clickWithWait(user, clearButton);
+      await fillPrincipalValue(user, 'example.com');
+      await selectAccountType(
+        user,
+        'Google Workspace domain or Cloud Identity domain',
+      );
+
+      await checkPrincipalValue('');
+    });
+
+    test('clears principal on click and does not restore it on blur', async () => {
       const { store } = renderGcpStep({
         cloudProviders: {
           ...initialState.cloudProviders,
@@ -282,11 +343,17 @@ describe('GCP Component', () => {
         },
       });
       const user = createUser();
+      const principalInput = await screen.findByRole('textbox', {
+        name: /google principal/i,
+      });
 
       const clearButton = await screen.findByRole('button', {
         name: /clear/i,
       });
       await clickWithWait(user, clearButton);
+      await checkPrincipalValue('');
+      await clickWithWait(user, principalInput);
+      await tabWithWait(user);
 
       expect(store.getState().wizard.cloudProviders.gcp).toEqual({
         accountType: 'user',
@@ -435,17 +502,38 @@ describe('GCP CreateBlueprintRequest payload', () => {
 });
 
 describe('Form submission', () => {
-  test('pressing Enter in principal input does not trigger page reload', async () => {
-    const { store } = renderGcpStep();
+  test('pressing Enter in principal input does not cause an unhandled form submission', async () => {
+    const { store } = renderWithRedux(
+      <form onSubmit={(event) => event.preventDefault()}>
+        <Gcp />
+      </form>,
+    );
     const user = createUser();
 
     await selectAccountType(user, 'Google account');
     const principalInput = await screen.findByRole('textbox', {
       name: /google principal/i,
     });
-    await typeWithWait(user, principalInput, 'user@example.com{Enter}');
+    const submitEvents: Event[] = [];
+    const recordSubmit = (event: Event) => submitEvents.push(event);
+    window.addEventListener('submit', recordSubmit);
 
+    try {
+      await typeWithWait(user, principalInput, 'user@example.com{Enter}');
+    } finally {
+      window.removeEventListener('submit', recordSubmit);
+    }
+
+    expect(submitEvents.length).toBeGreaterThan(0);
+    expect(submitEvents.every((event) => event.defaultPrevented)).toBe(true);
     expect(principalInput).toBeInTheDocument();
+    expect(store.getState().wizard.cloudProviders.gcp).toEqual({
+      accountType: 'user',
+      email: '',
+    });
+
+    await tabWithWait(user);
+
     expect(store.getState().wizard.cloudProviders.gcp).toEqual({
       accountType: 'user',
       email: 'user@example.com',

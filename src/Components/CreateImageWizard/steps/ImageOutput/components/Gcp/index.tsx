@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   FormGroup,
@@ -10,17 +10,14 @@ import {
   Stack,
 } from '@patternfly/react-core';
 
-import {
-  isGcpDomainValid,
-  isGcpEmailValid,
-} from '@/Components/CreateImageWizard/validators';
-import { ValidatedInput } from '@/Components/ValidatedInputs';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeGcpAccountType,
   changeGcpPrincipal,
   selectGcpAccountType,
   selectGcpPrincipal,
+  validateGcpAccount,
 } from '@/store/slices/wizard';
 
 export const GCP_ACCOUNT_TYPE_OPTIONS = new Map([
@@ -34,7 +31,14 @@ const Gcp = () => {
   const dispatch = useAppDispatch();
   const accountType = useAppSelector(selectGcpAccountType);
   const principal = useAppSelector(selectGcpPrincipal);
+  const [draft, setDraft] = useState(principal ?? '');
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // Reset local drafts when the account type or committed principal changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft(principal ?? '');
+  }, [accountType, principal]);
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -57,6 +61,26 @@ const Gcp = () => {
         : 'Select account type'}
     </MenuToggle>
   );
+
+  const validator = (value: string) => {
+    if (accountType === undefined) return validateGcpAccount();
+
+    if (accountType === 'domain') {
+      return validateGcpAccount({
+        accountType,
+        domain: value,
+      });
+    }
+
+    return validateGcpAccount({
+      accountType,
+      email: value,
+    });
+  };
+
+  const clear = () => {
+    dispatch(changeGcpPrincipal(''));
+  };
 
   return (
     <Stack hasGutter className='pf-v6-u-pb-md'>
@@ -86,25 +110,17 @@ const Gcp = () => {
         isRequired
         style={{ maxWidth: '50%' }}
       >
-        <ValidatedInput
-          aria-label='google principal'
-          value={principal || ''}
-          validator={
-            accountType === 'domain' ? isGcpDomainValid : isGcpEmailValid
-          }
-          onChange={(_, value) => dispatch(changeGcpPrincipal(value))}
-          helperText={
-            !principal
-              ? accountType === 'domain'
-                ? 'Domain is required'
-                : 'E-mail address is required'
-              : accountType === 'domain'
-                ? 'Please enter a valid domain'
-                : 'Please enter a valid e-mail address'
-          }
-          handleClear={() => {
-            dispatch(changeGcpPrincipal(''));
+        <ValidatedTextInput
+          ariaLabel='google principal'
+          value={draft}
+          validator={validator}
+          onChange={(_, value) => setDraft(value)}
+          onCommit={(candidate) => {
+            if (!candidate) return;
+
+            dispatch(changeGcpPrincipal(candidate));
           }}
+          handleClear={clear}
         />
       </FormGroup>
     </Stack>
