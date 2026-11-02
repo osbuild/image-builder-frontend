@@ -64,16 +64,22 @@ export const useSearchSetup = () => {
     uuid: template,
   });
 
-  const { data: { data: reposInTemplate = EMPTY_ARRAY } = {} } =
-    useListRepositoriesQuery({
-      contentType: 'rpm',
-      limit: 100,
-      offset: 0,
-      uuid:
-        templateData && templateData.repository_uuids
-          ? templateData.repository_uuids.join(',')
-          : '',
-    });
+  const {
+    data: { data: reposInTemplate = EMPTY_ARRAY } = {},
+    isFetching: isFetchingTemplateRepos,
+  } = useListRepositoriesQuery({
+    contentType: 'rpm',
+    limit: 100,
+    offset: 0,
+    uuid:
+      templateData && templateData.repository_uuids
+        ? templateData.repository_uuids.join(',')
+        : '',
+  });
+
+  const isTemplateReposReady =
+    template === '' ||
+    (templateData?.uuid === template && !isFetchingTemplateRepos);
 
   return {
     isOnPremise,
@@ -83,6 +89,7 @@ export const useSearchSetup = () => {
     distroUrls,
     customRepoUuids,
     reposInTemplate,
+    isTemplateReposReady,
     isSuccessDistroRepositories,
     formattedSnapshotDate,
     epelRepoUrlByDistribution,

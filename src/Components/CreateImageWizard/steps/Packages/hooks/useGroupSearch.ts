@@ -25,6 +25,7 @@ export const useGroupSearch = ({
     distroUrls,
     customRepoUuids,
     reposInTemplate,
+    isTemplateReposReady,
     isSuccessDistroRepositories,
     formattedSnapshotDate,
     epelRepoUrlByDistribution,
@@ -61,7 +62,7 @@ export const useGroupSearch = ({
     if (packageType === 'packages') {
       return;
     }
-    if (isSuccessDistroRepositories) {
+    if (isSuccessDistroRepositories && isTemplateReposReady) {
       searchDistroGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
@@ -103,6 +104,7 @@ export const useGroupSearch = ({
     debouncedSearchTerm,
     packageType,
     isSuccessDistroRepositories,
+    isTemplateReposReady,
     formattedSnapshotDate,
     template,
     distroUrls,

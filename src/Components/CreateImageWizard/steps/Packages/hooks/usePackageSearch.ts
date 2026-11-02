@@ -34,6 +34,7 @@ export const usePackageSearch = ({
     distroUrls,
     customRepoUuids,
     reposInTemplate,
+    isTemplateReposReady,
     isSuccessDistroRepositories,
     formattedSnapshotDate,
     epelRepoUrlByDistribution,
@@ -76,7 +77,11 @@ export const usePackageSearch = ({
     if (packageType === 'groups') {
       return;
     }
-    if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
+    if (
+      debouncedSearchTerm.length > 1 &&
+      isSuccessDistroRepositories &&
+      isTemplateReposReady
+    ) {
       if (isOnPremise) {
         searchDistroRpms({
           apiContentUnitSearchRequest: {
@@ -135,6 +140,7 @@ export const usePackageSearch = ({
     searchRecommendedRpms,
     debouncedSearchTerm,
     isSuccessDistroRepositories,
+    isTemplateReposReady,
     arch,
     template,
     distribution,
