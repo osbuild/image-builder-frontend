@@ -308,6 +308,37 @@ describe('ImportBlueprintModal repository import', () => {
   });
 });
 
+describe('ImportBlueprintModal checkbox state', () => {
+  test('disables repository checkbox after file upload', async () => {
+    const user = userEvent.setup();
+
+    renderImportModal();
+
+    const checkbox = screen.getByRole('checkbox', {
+      name: /import custom repositories/i,
+    });
+    expect(checkbox).toBeEnabled();
+
+    await uploadBlueprintFile('blueprint.json', BLUEPRINT_JSON);
+
+    await waitFor(() => {
+      const updatedCheckbox = screen.getByRole('checkbox', {
+        name: /import custom repositories/i,
+      });
+      expect(updatedCheckbox).toBeDisabled();
+    });
+
+    const disabledCheckbox = screen.getByRole('checkbox', {
+      name: /import custom repositories/i,
+    });
+    await user.hover(disabledCheckbox);
+    const tooltip = await screen.findByRole('tooltip');
+    expect(tooltip).toHaveTextContent(
+      'This option must be set before uploading a file.',
+    );
+  });
+});
+
 describe('ImportBlueprintModal blueprint parsing', () => {
   test('shows alert on invalid JSON', async () => {
     renderImportModal();

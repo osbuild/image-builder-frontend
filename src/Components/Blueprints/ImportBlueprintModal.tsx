@@ -16,6 +16,7 @@ import {
   ModalHeader,
   ModalVariant,
   Popover,
+  Tooltip,
 } from '@patternfly/react-core';
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -82,110 +83,111 @@ export const ImportBlueprintModal = ({
     setFilename(file.name);
   };
 
-  async function handleRepositoryImport(
-    blueprintExportedResponse: BlueprintExportResponse,
-  ): Promise<CustomRepository[] | undefined> {
-    if (!isCheckedImportRepos || !blueprintExportedResponse.content_sources) {
-      return;
-    }
+  useEffect(() => {
+    async function handleRepositoryImport(
+      blueprintExportedResponse: BlueprintExportResponse,
+    ): Promise<CustomRepository[] | undefined> {
+      if (!isCheckedImportRepos || !blueprintExportedResponse.content_sources) {
+        return;
+      }
 
-    const contentSources =
-      blueprintExportedResponse.content_sources as ApiRepositoryRequest[];
-    const allUrls = contentSources
-      .map((cs) => cs.url)
-      .filter((url): url is string => !!url);
+      const contentSources =
+        blueprintExportedResponse.content_sources as ApiRepositoryRequest[];
+      const allUrls = contentSources
+        .map((cs) => cs.url)
+        .filter((url): url is string => !!url);
 
-    if (allUrls.length === 0) {
-      return;
-    }
+      if (allUrls.length === 0) {
+        return;
+      }
 
-    // Look up which repos already exist in the user's content sources
-    const existingCustomRepos: CustomRepository[] = [];
-    const existingUrls = new Set<string>();
+      // Look up which repos already exist in the user's content sources
+      const existingCustomRepos: CustomRepository[] = [];
+      const existingUrls = new Set<string>();
 
-    try {
-      const listResult = await listRepositories({
-        url: allUrls.join(','),
-        limit: allUrls.length,
-      }).unwrap();
+      try {
+        const listResult = await listRepositories({
+          url: allUrls.join(','),
+          limit: allUrls.length,
+        }).unwrap();
 
-      for (const repo of listResult.data ?? []) {
-        if (repo.url) {
-          existingUrls.add(repo.url);
+        for (const repo of listResult.data ?? []) {
+          if (repo.url) {
+            existingUrls.add(repo.url);
+          }
+          existingCustomRepos.push(...mapToCustomRepositories(repo));
         }
-        existingCustomRepos.push(...mapToCustomRepositories(repo));
-      }
 
-      if (existingUrls.size > 0) {
-        addNotification({
-          variant: 'info',
-          title: 'Custom repositories already exist',
-          description: [...existingUrls].join(', '),
-        });
-      }
-    } catch (error) {
-      // If the lookup fails, fall through and try to import all repos
-      // eslint-disable-next-line no-console
-      console.error('Failed to look up existing repositories:', error);
-    }
-
-    // Filter to only repos that don't already exist
-    const newContentSources = contentSources.filter(
-      (cs: ApiRepositoryRequest) => !cs.url || !existingUrls.has(cs.url),
-    );
-
-    if (newContentSources.length === 0) {
-      return existingCustomRepos;
-    }
-
-    // Import only the genuinely new repos
-    try {
-      const result = await importRepositories({
-        body: newContentSources,
-      }).unwrap();
-      if (Array.isArray(result)) {
-        const importedRepositoryNames: string[] = [];
-        const newCustomRepos: CustomRepository[] = [];
-        result.forEach((repository) => {
-          const contentSourcesRepo =
-            repository as ApiRepositoryImportResponseRead;
-          if (contentSourcesRepo.uuid) {
-            newCustomRepos.push(...mapToCustomRepositories(contentSourcesRepo));
-          }
-          if (repository.warnings?.length === 0 && repository.url) {
-            importedRepositoryNames.push(repository.url);
-            return;
-          }
-          addNotification({
-            variant: 'warning',
-            title: 'Failed to import custom repositories',
-            description: JSON.stringify(repository.warnings),
-          });
-        });
-
-        if (importedRepositoryNames.length !== 0) {
+        if (existingUrls.size > 0) {
           addNotification({
             variant: 'info',
-            title: 'Successfully imported custom repositories',
-            description: importedRepositoryNames.join(', '),
+            title: 'Custom repositories already exist',
+            description: [...existingUrls].join(', '),
           });
         }
-        return [...existingCustomRepos, ...newCustomRepos];
+      } catch (error) {
+        // If the lookup fails, fall through and try to import all repos
+        // eslint-disable-next-line no-console
+        console.error('Failed to look up existing repositories:', error);
       }
-    } catch {
-      addNotification({
-        variant: 'danger',
-        title: 'Custom repositories import failed',
-      });
-    }
 
-    // If bulk import failed, still return any existing repos we found
-    if (existingCustomRepos.length > 0) {
-      return existingCustomRepos;
-    }
-  }
+      // Filter to only repos that don't already exist
+      const newContentSources = contentSources.filter(
+        (cs: ApiRepositoryRequest) => !cs.url || !existingUrls.has(cs.url),
+      );
 
-  useEffect(() => {
+      if (newContentSources.length === 0) {
+        return existingCustomRepos;
+      }
+
+      // Import only the genuinely new repos
+      try {
+        const result = await importRepositories({
+          body: newContentSources,
+        }).unwrap();
+        if (Array.isArray(result)) {
+          const importedRepositoryNames: string[] = [];
+          const newCustomRepos: CustomRepository[] = [];
+          result.forEach((repository) => {
+            const contentSourcesRepo =
+              repository as ApiRepositoryImportResponseRead;
+            if (contentSourcesRepo.uuid) {
+              newCustomRepos.push(
+                ...mapToCustomRepositories(contentSourcesRepo),
+              );
+            }
+            if (repository.warnings?.length === 0 && repository.url) {
+              importedRepositoryNames.push(repository.url);
+              return;
+            }
+            addNotification({
+              variant: 'warning',
+              title: 'Failed to import custom repositories',
+              description: JSON.stringify(repository.warnings),
+            });
+          });
+
+          if (importedRepositoryNames.length !== 0) {
+            addNotification({
+              variant: 'info',
+              title: 'Successfully imported custom repositories',
+              description: importedRepositoryNames.join(', '),
+            });
+          }
+          return [...existingCustomRepos, ...newCustomRepos];
+        }
+      } catch {
+        addNotification({
+          variant: 'danger',
+          title: 'Custom repositories import failed',
+        });
+      }
+
+      // If bulk import failed, still return any existing repos we found
+      if (existingCustomRepos.length > 0) {
+        return existingCustomRepos;
+      }
+    }
     if (filename && fileContent) {
       const parseAndImport = async () => {
         try {
@@ -271,7 +273,14 @@ export const ImportBlueprintModal = ({
       };
       parseAndImport();
     }
-  }, [filename, fileContent]);
+  }, [
+    addNotification,
+    fileContent,
+    filename,
+    importRepositories,
+    isCheckedImportRepos,
+    listRepositories,
+  ]);
 
   const handleClear = () => {
     setFilename('');
@@ -314,6 +323,19 @@ export const ImportBlueprintModal = ({
         return 'default';
     }
   };
+
+  const ImportReposCheckbox = (
+    <Checkbox
+      label='Import missing custom repositories after file upload.'
+      isChecked={isCheckedImportRepos}
+      isDisabled={!!fileContent}
+      onChange={() => setIsCheckedImportRepos((prev) => !prev)}
+      aria-label='Import Custom Repositories checkbox'
+      id='checkbox-import-custom-repositories'
+      name='Import Repositories'
+    />
+  );
+
   return (
     <Modal
       variant={ModalVariant.medium}
@@ -347,14 +369,13 @@ export const ImportBlueprintModal = ({
       <ModalBody>
         <Form>
           <FormGroup fieldId='checkbox-import-custom-repositories'>
-            <Checkbox
-              label='Import missing custom repositories after file upload.'
-              isChecked={isCheckedImportRepos}
-              onChange={() => setIsCheckedImportRepos((prev) => !prev)}
-              aria-label='Import Custom Repositories checkbox'
-              id='checkbox-import-custom-repositories'
-              name='Import Repositories'
-            />
+            {fileContent ? (
+              <Tooltip content='This option must be set before uploading a file.'>
+                <span>{ImportReposCheckbox}</span>
+              </Tooltip>
+            ) : (
+              ImportReposCheckbox
+            )}
           </FormGroup>
           <FormGroup fieldId='import-blueprint-file-upload'>
             <FileUpload
