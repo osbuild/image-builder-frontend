@@ -19,6 +19,8 @@ export const useGetUser = (auth: { getUser(): Promise<void | ChromeUser> }) => {
         setOrgId(id);
       }
     })();
+    // auth is an unstable dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnPremise]);
 
   return { userData, orgId };
