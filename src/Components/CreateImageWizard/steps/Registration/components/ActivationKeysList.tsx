@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -95,11 +95,7 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
     }
   }, [dispatch, isProd]);
 
-  const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
-    activationKeys?.body ? activationKeys.body.map((key) => key.name) : [],
-  );
-
-  useEffect(() => {
+  const selectOptions = useMemo(() => {
     let filteredKeys = activationKeys?.body?.map((key) => key.name);
 
     if (filterValue) {
@@ -108,19 +104,9 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
         .filter((keyName: string) =>
           String(keyName).toLowerCase().includes(filterValue.toLowerCase()),
         );
-      if (!isOpen) {
-        setIsOpen(true);
-      }
     }
 
-    if (filteredKeys) {
-      setSelectOptions(filteredKeys.sort((a, b) => sortfn(a, b, filterValue)));
-    }
-
-    // This useEffect hook should run *only* on when the filter value
-    // or the original array of keys changes.
-    // eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return filteredKeys?.sort((a, b) => sortfn(a, b, filterValue)) ?? [];
   }, [filterValue, activationKeys?.body]);
 
   useEffect(() => {
@@ -207,6 +193,10 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
   const onTextInputChange = (_event: React.FormEvent, value: string) => {
     setInputValue(value);
     setFilterValue(value);
+
+    if (value && !isOpen) {
+      setIsOpen(true);
+    }
 
     if (value !== activationKey) {
       dispatch(changeActivationKey(''));
