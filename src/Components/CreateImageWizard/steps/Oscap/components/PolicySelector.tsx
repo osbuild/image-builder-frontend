@@ -123,7 +123,7 @@ const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
         }
       }
     }
-  }, [isSuccessPolicies]);
+  }, [isSuccessPolicies, dispatch, policies, policyID, policyTitle]);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
