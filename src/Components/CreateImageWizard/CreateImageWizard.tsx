@@ -44,6 +44,7 @@ import {
 } from '@/store/slices/blueprint';
 import { selectIsOnPremise, selectPathResolver } from '@/store/slices/env';
 import {
+  changeActivationKey,
   changeArchitecture,
   changeBaseUrl,
   changeDistribution,
@@ -222,6 +223,13 @@ const CreateImageWizard = () => {
       if (!hasInitialized) {
         dispatch(initializeWizard());
         dispatch(markWizardInitialized());
+
+        const recentActivationKey = window.localStorage.getItem(
+          'imageBuilder.recentActivationKey',
+        );
+        if (recentActivationKey) {
+          dispatch(changeActivationKey(recentActivationKey));
+        }
       }
 
       // Initialize registration URLs

@@ -164,7 +164,14 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
       ) {
         dispatch(changeActivationKey(recentActivationKey));
       } else if (activationKeys.body && activationKeys.body.length > 0) {
-        dispatch(changeActivationKey(activationKeys.body[0].name));
+        const firstKeyName = activationKeys.body[0].name;
+        if (firstKeyName) {
+          window.localStorage.setItem(
+            'imageBuilder.recentActivationKey',
+            firstKeyName,
+          );
+        }
+        dispatch(changeActivationKey(firstKeyName));
       }
     }
   }, [isSuccessActivationKeys]);
