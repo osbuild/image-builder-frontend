@@ -15,6 +15,10 @@ import {
   tabAway,
 } from './helpers';
 
+afterEach(() => {
+  window.localStorage.removeItem('imageBuilder.recentActivationKey');
+});
+
 describe('Hostname Component', () => {
   describe('Rendering', () => {
     test('displays hostname input field', async () => {
