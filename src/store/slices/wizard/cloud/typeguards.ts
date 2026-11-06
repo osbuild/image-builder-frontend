@@ -9,7 +9,9 @@ export const isAwsUploadOptions = (
     !!options &&
     typeof options === 'object' &&
     !('resource_group' in options) &&
-    ('share_with_accounts' in options || 'share_with_sources' in options)
+    ('share_with_accounts' in options ||
+      'share_with_sources' in options ||
+      'region' in options)
   );
 };
 

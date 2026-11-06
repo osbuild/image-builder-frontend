@@ -1,7 +1,13 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { composeHandlers, createArchitecturesHandler } from '@/test/testUtils';
+import {
+  clickWithWait,
+  composeHandlers,
+  createArchitecturesHandler,
+  createUser,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import { renderCreateMode, testRadio } from './helpers';
 import {
@@ -32,6 +38,32 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Repositories and packages' });
     await screen.findByRole('button', { name: 'Advanced settings' });
     await screen.findByRole('button', { name: 'Review' });
+  });
+
+  test('pressing Enter in the AWS account ID does not cause an unhandled form submission', async () => {
+    await renderCreateMode();
+    const user = createUser();
+
+    await clickWithWait(
+      user,
+      await screen.findByRole('radio', { name: /Amazon Web Services/i }),
+    );
+    const accountIdInput = await screen.findByRole('textbox', {
+      name: /aws account id/i,
+    });
+    const submitEvents: Event[] = [];
+    const recordSubmit = (event: Event) => submitEvents.push(event);
+    window.addEventListener('submit', recordSubmit);
+
+    try {
+      await typeWithWait(user, accountIdInput, '123456789012{Enter}');
+    } finally {
+      window.removeEventListener('submit', recordSubmit);
+    }
+
+    expect(accountIdInput).toBeInTheDocument();
+    expect(accountIdInput).toHaveValue('123456789012');
+    expect(submitEvents.every((event) => event.defaultPrevented)).toBe(true);
   });
 
   test('should only enable first navigation item in create mode', async () => {
