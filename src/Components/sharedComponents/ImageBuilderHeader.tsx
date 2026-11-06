@@ -21,6 +21,7 @@ import { useFlag } from '@/Utilities/useGetEnvironment';
 
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 import { CloudProviderConfig } from '../CloudProviderConfig/CloudProviderConfig';
+import { DownloadsModal } from '../Downloads/DownloadsModal';
 
 type ImageBuilderHeaderProps = {
   inWizard?: boolean;
@@ -47,6 +48,7 @@ const AboutImageBuilderPopover = () => {
             <Button
               component='a'
               target='_blank'
+              rel='noopener noreferrer'
               variant='link'
               icon={<ExternalLinkAltIcon />}
               iconPosition='right'
@@ -79,15 +81,21 @@ export const ImageBuilderHeader = ({ inWizard }: ImageBuilderHeaderProps) => {
   const isImagesTableRevampEnabled = useFlag(
     'image-builder.images-table-revamp.enabled',
   );
+  const isDownloadsEnabled = useFlag('image-builder.downloads.enabled');
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [showCloudConfigModal, setShowCloudConfigModal] = useState(false);
+  const [showDownloadsModal, setShowDownloadsModal] = useState(false);
 
   return (
     <>
       <ImportBlueprintModal
         setShowImportModal={setShowImportModal}
         isOpen={showImportModal}
+      />
+      <DownloadsModal
+        setShowDownloadsModal={setShowDownloadsModal}
+        isOpen={showDownloadsModal}
       />
       {isOnPremise && showCloudConfigModal && (
         <CloudProviderConfig
@@ -125,6 +133,14 @@ export const ImageBuilderHeader = ({ inWizard }: ImageBuilderHeaderProps) => {
                       ? 'Build new image'
                       : 'Create image blueprint'}
                   </Button>
+                  {!isOnPremise && isDownloadsEnabled && (
+                    <Button
+                      variant='secondary'
+                      onClick={() => setShowDownloadsModal(true)}
+                    >
+                      Download RHEL
+                    </Button>
+                  )}
                   <Button
                     variant='secondary'
                     onClick={() => setShowImportModal(true)}
