@@ -1,7 +1,15 @@
 import { backendApi, type Distributions } from '@/store/api/backend';
 import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
 import type { WizardListenerEffect } from '@/store/middleware/types';
+import { selectAWSRegion } from '@/store/slices/cloudConfig';
+import { selectIsOnPremise } from '@/store/slices/env';
 
+import {
+  changeAwsRegion,
+  changeAwsShareMethod,
+  reinitializeAws,
+  reinitializeAzure,
+} from './cloud/slice';
 import { selectIsImageMode } from './details';
 import { changeFscMode, selectFscMode } from './filesystem';
 import {
@@ -56,6 +64,48 @@ export const filterImageTypes: WizardListenerEffect = (
   listenerApi.dispatch(
     changeImageTypes(imageTypes.filter((t) => allowed?.includes(t))),
   );
+};
+
+export const syncAwsTarget: WizardListenerEffect = (_action, listenerApi) => {
+  const state = listenerApi.getState();
+  const wasAwsSelected = selectImageTypes(
+    listenerApi.getOriginalState(),
+  ).includes('aws');
+  const isAwsSelected = selectImageTypes(state).includes('aws');
+
+  if (wasAwsSelected === isAwsSelected) {
+    return;
+  }
+
+  if (!isAwsSelected) {
+    listenerApi.dispatch(reinitializeAws());
+    return;
+  }
+
+  if (!selectIsOnPremise(state)) {
+    listenerApi.dispatch(changeAwsShareMethod('manual'));
+    return;
+  }
+
+  listenerApi.dispatch(changeAwsShareMethod('onprem'));
+  listenerApi.dispatch(changeAwsRegion(selectAWSRegion(state) ?? ''));
+};
+
+export const syncAzureTarget: WizardListenerEffect = (_action, listenerApi) => {
+  const state = listenerApi.getState();
+  const wasAzureSelected = selectImageTypes(
+    listenerApi.getOriginalState(),
+  ).includes('azure');
+  const isAzureSelected = selectImageTypes(state).includes('azure');
+
+  if (wasAzureSelected === isAzureSelected) {
+    return;
+  }
+
+  if (!isAzureSelected) {
+    listenerApi.dispatch(reinitializeAzure());
+    return;
+  }
 };
 
 // This was previously a mutation inside the changeDistribution reducer.

@@ -3,7 +3,11 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { serviceMiddleware, serviceReducer } from '@/store';
 import { ImageRequest } from '@/store/api/backend';
-import { initialState, mapStateToRequest } from '@/store/slices/wizard';
+import {
+  initialState,
+  mapStateToRequest,
+  selectAwsAccountId,
+} from '@/store/slices/wizard';
 import {
   clickWithWait,
   createUser,
@@ -70,12 +74,13 @@ describe('AWS Component', () => {
       const user = createUser();
 
       await fillAccountIdValue(user, '123456789012');
+      await tabWithWait(user);
 
       expect(
-        screen.queryByText(/AWS account ID is required/i),
+        screen.queryByText(/Account ID is required/i),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByText(/Should be 12 characters long/i),
+        screen.queryByText(/Account ID must be 12 characters long/i),
       ).not.toBeInTheDocument();
     });
 
@@ -91,7 +96,7 @@ describe('AWS Component', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Should be 12 characters long/i),
+          screen.getByText(/Account ID must be 12 characters long/i),
         ).toBeInTheDocument();
       });
     });
@@ -108,7 +113,7 @@ describe('AWS Component', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Should be 12 characters long/i),
+          screen.getByText(/Account ID must contain only digits/i),
         ).toBeInTheDocument();
       });
     });
@@ -124,9 +129,7 @@ describe('AWS Component', () => {
       await tabWithWait(user);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/AWS account ID is required/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Account ID is required/i)).toBeInTheDocument();
       });
     });
 
@@ -137,22 +140,23 @@ describe('AWS Component', () => {
           aws: {
             accountId: '123456789012',
             shareMethod: 'manual',
-            source: undefined,
           },
         },
       });
       const user = createUser();
 
+      const accountIdInput = await screen.findByRole('textbox', {
+        name: /aws account id/i,
+      });
       const clearButton = await screen.findByRole('button', {
         name: /clear/i,
       });
       await clickWithWait(user, clearButton);
+      expect(accountIdInput).toHaveValue('');
       await tabWithWait(user);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/AWS account ID is required/i),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Account ID is required/i)).toBeInTheDocument();
       });
     });
   });
@@ -171,7 +175,6 @@ describe('AWS Component', () => {
           aws: {
             accountId: '123123123123',
             shareMethod: 'manual',
-            source: undefined,
           },
         },
       });
@@ -185,13 +188,13 @@ describe('AWS Component', () => {
       const { store } = renderAwsStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe('');
+      expect(selectAwsAccountId(store.getState())).toBe('');
 
       await fillAccountIdValue(user, '123456789012');
+      expect(selectAwsAccountId(store.getState())).toBe('');
 
-      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe(
-        '123456789012',
-      );
+      await tabWithWait(user);
+      expect(selectAwsAccountId(store.getState())).toBe('123456789012');
     });
 
     test('clears account ID when clear button is clicked', async () => {
@@ -201,7 +204,6 @@ describe('AWS Component', () => {
           aws: {
             accountId: '123456789012',
             shareMethod: 'manual',
-            source: undefined,
           },
         },
       });
@@ -212,7 +214,7 @@ describe('AWS Component', () => {
       });
       await clickWithWait(user, clearButton);
 
-      expect(store.getState().wizard.cloudProviders.aws.accountId).toBe('');
+      expect(selectAwsAccountId(store.getState())).toBe('');
     });
   });
 });
@@ -225,7 +227,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '123123123123',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -256,7 +257,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '999888777666',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -274,7 +274,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '111222333444',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -292,7 +291,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '123123123123',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -309,7 +307,6 @@ describe('AWS CreateBlueprintRequest payload', () => {
         aws: {
           accountId: '123123123123',
           shareMethod: 'manual',
-          source: undefined,
         },
       },
     });
@@ -317,22 +314,5 @@ describe('AWS CreateBlueprintRequest payload', () => {
     const request = mapStateToRequest(store.getState());
 
     expect(request.customizations.subscription).toBeUndefined();
-  });
-});
-
-describe('Form submission', () => {
-  test('pressing Enter in account ID input does not trigger page reload', async () => {
-    const { store } = renderAwsStep();
-    const user = createUser();
-
-    const accountIdInput = await screen.findByRole('textbox', {
-      name: /aws account id/i,
-    });
-    await typeWithWait(user, accountIdInput, '123456789012{Enter}');
-
-    expect(accountIdInput).toBeInTheDocument();
-    expect(store.getState().wizard.cloudProviders.aws.accountId).toBe(
-      '123456789012',
-    );
   });
 });

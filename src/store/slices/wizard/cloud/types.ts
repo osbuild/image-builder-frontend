@@ -1,18 +1,10 @@
+import z from 'zod';
+
 import { AwsUploadRequestOptions, UploadRequest } from '@/store/api/backend';
 
-export type AwsShareMethod = 'manual';
-
-export type AzureHyperVGeneration = 'V1' | 'V2';
+import { awsSchema, azureSchema } from './schemas';
 
 export type GcpAccountType = 'user' | 'serviceAccount' | 'group' | 'domain';
-
-// The Sources API only defines a V1ListSourceResponseItem[] type
-export type V1ListSourceResponseItem = {
-  id?: string | undefined;
-  name?: string;
-  source_type_id?: string;
-  uid?: string;
-};
 
 export type UploadOptions = UploadRequest['options'];
 
@@ -20,20 +12,12 @@ export type AwsUploadOptions = AwsUploadRequestOptions & {
   region?: string | undefined;
 };
 
+type AzureOptions = z.infer<typeof azureSchema>;
+export type AzureHyperVGeneration = AzureOptions['hyperVGeneration'];
+
 export type CloudProviderSlice = {
-  aws: {
-    accountId: string;
-    shareMethod: AwsShareMethod;
-    source: V1ListSourceResponseItem | undefined;
-    sourceId?: string | undefined;
-    region?: string | undefined;
-  };
-  azure: {
-    tenantId: string | undefined;
-    subscriptionId: string | undefined;
-    resourceGroup: string | undefined;
-    hyperVGeneration: AzureHyperVGeneration;
-  };
+  aws: z.infer<typeof awsSchema>;
+  azure: AzureOptions;
   gcp: {
     accountType: GcpAccountType | undefined;
     email: string;

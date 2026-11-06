@@ -17,6 +17,8 @@ import {
   filterImageTypes,
   registerLater,
   resolveOfficialImage,
+  syncAwsTarget,
+  syncAzureTarget,
 } from '../slices/wizard/listeners';
 
 export const listenerMiddleware = createListenerMiddleware();
@@ -52,6 +54,16 @@ startListening({
 startListening({
   actionCreator: changeImageTypes,
   effect: clearUnsupportedUsersAndGroups,
+});
+
+startListening({
+  actionCreator: changeImageTypes,
+  effect: syncAwsTarget,
+});
+
+startListening({
+  actionCreator: changeImageTypes,
+  effect: syncAzureTarget,
 });
 
 startListening({

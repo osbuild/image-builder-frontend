@@ -5,8 +5,6 @@ import { Radio } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeImageTypes,
-  reinitializeAws,
-  reinitializeAzure,
   reinitializeGcp,
   selectImageTypes,
   type SupportedImageTypes,
@@ -32,12 +30,6 @@ const TargetEnvironmentOption = ({
 
   const reinitializeCloudProvider = (env: SupportedImageTypes) => {
     switch (env) {
-      case 'aws':
-        dispatch(reinitializeAws());
-        break;
-      case 'azure':
-        dispatch(reinitializeAzure());
-        break;
       case 'gcp':
         dispatch(reinitializeGcp());
         break;

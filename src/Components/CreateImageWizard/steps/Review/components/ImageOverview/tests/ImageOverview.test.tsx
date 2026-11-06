@@ -135,8 +135,6 @@ describe('ImageOverview', () => {
           aws: {
             accountId: '123456789012',
             shareMethod: 'manual',
-            source: undefined,
-            region: 'us-west-2',
           },
         },
       });
@@ -146,7 +144,17 @@ describe('ImageOverview', () => {
       expect(
         screen.getByText(/Shared with account: 123456789012/),
       ).toBeInTheDocument();
-      expect(screen.getByText(/Region: us-west-2/)).toBeInTheDocument();
+      expect(screen.getByText(/Region: us-east-1/)).toBeInTheDocument();
+    });
+
+    test('does not display an undefined AWS account when no sharing mode is selected', () => {
+      renderWithRedux(<ImageOverview />, {
+        output: { ...initialState.output, imageTypes: ['aws'] },
+      });
+
+      expect(
+        screen.queryByText(/Shared with account: undefined/),
+      ).not.toBeInTheDocument();
     });
 
     test('displays GCP details when selected', () => {
