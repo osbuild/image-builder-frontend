@@ -218,24 +218,26 @@ const CreateImageWizard = () => {
       return;
     }
 
-    if (mode === 'create' && showWizardModal) {
-      if (!hasInitialized) {
-        dispatch(initializeWizard());
-        dispatch(markWizardInitialized());
-      }
+    if ((mode !== 'create' && mode !== 'import') || !showWizardModal) {
+      return;
+    }
 
-      // Initialize registration URLs
-      if (isProd()) {
-        dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
-        dispatch(changeBaseUrl(CDN_PROD_URL));
-        dispatch(changeProxy(undefined));
-      } else {
-        dispatch(changeServerUrl('subscription.rhsm.stage.redhat.com'));
-        dispatch(changeBaseUrl(CDN_STAGE_URL));
-        dispatch(changeProxy('squid.corp.redhat.com:3128'));
-      }
+    if (mode === 'create' && !hasInitialized) {
+      dispatch(initializeWizard());
+      dispatch(markWizardInitialized());
+    }
 
-      // Initialize params
+    if (isProd()) {
+      dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
+      dispatch(changeBaseUrl(CDN_PROD_URL));
+      dispatch(changeProxy(undefined));
+    } else {
+      dispatch(changeServerUrl('subscription.rhsm.stage.redhat.com'));
+      dispatch(changeBaseUrl(CDN_STAGE_URL));
+      dispatch(changeProxy('squid.corp.redhat.com:3128'));
+    }
+
+    if (mode === 'create') {
       if (searchParams.get('release') === 'rhel8') {
         dispatch(changeDistribution(RHEL_8));
       }

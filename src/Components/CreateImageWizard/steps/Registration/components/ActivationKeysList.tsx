@@ -23,7 +23,7 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ACTIVATION_KEYS_URL, CDN_PROD_URL, CDN_STAGE_URL } from '@/constants';
+import { ACTIVATION_KEYS_URL } from '@/constants';
 import {
   useCreateActivationKeysMutation,
   useListActivationKeysQuery,
@@ -31,16 +31,12 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeActivationKey,
-  changeBaseUrl,
-  changeProxy,
-  changeServerUrl,
   selectActivationKey,
   selectRegistrationType,
 } from '@/store/slices/wizard';
 import { selectForceShowErrors } from '@/store/slices/wizard/validation/selectors';
 import { getErrorMessage } from '@/Utilities/getErrorMessage';
 import sortfn from '@/Utilities/sortfn';
-import { useGetEnvironment } from '@/Utilities/useGetEnvironment';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 
@@ -57,7 +53,6 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
 
   const defaultActivationKeyName = crypto.randomUUID();
 
-  const { isProd } = useGetEnvironment();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
@@ -80,20 +75,6 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
   const recentActivationKey = window.localStorage.getItem(
     'imageBuilder.recentActivationKey',
   );
-
-  // TO DO: Can be removed once migration to the new Wizard is complete
-  // The url initialisation is handled directly in the V3 Wizard
-  useEffect(() => {
-    if (isProd()) {
-      dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
-      dispatch(changeBaseUrl(CDN_PROD_URL));
-      dispatch(changeProxy(undefined));
-    } else {
-      dispatch(changeServerUrl('subscription.rhsm.stage.redhat.com'));
-      dispatch(changeBaseUrl(CDN_STAGE_URL));
-      dispatch(changeProxy('squid.corp.redhat.com:3128'));
-    }
-  }, [dispatch, isProd]);
 
   const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
     activationKeys?.body ? activationKeys.body.map((key) => key.name) : [],
