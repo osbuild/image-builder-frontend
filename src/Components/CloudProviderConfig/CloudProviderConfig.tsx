@@ -122,6 +122,8 @@ export const CloudProviderConfig = ({
   };
 
   useEffect(() => {
+    // Syncs API response to local and redux state
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     initAWSConfig(data?.aws);
   }, [data, initAWSConfig]);
 

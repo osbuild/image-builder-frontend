@@ -51,6 +51,9 @@ const ImagesTableRow = ({
       composeStatus?.image_status.status === 'success' ||
       composeStatus?.image_status.status === 'failure'
     ) {
+      // the query needs pollingInterval before composeStatus is available
+      // can't be derived outside of the effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPollingInterval(0);
     } else {
       setPollingInterval(STATUS_POLLING_INTERVAL);

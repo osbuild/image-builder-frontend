@@ -83,6 +83,8 @@ export const ValidatedInputAndTextArea = ({
 
   useEffect(() => {
     if (errorMessage && value) {
+      // isPristine is set by both blur and prop changes, can't be purely derived
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsPristine(false);
     }
     if (isDisabled) {

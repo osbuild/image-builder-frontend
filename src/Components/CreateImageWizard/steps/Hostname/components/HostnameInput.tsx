@@ -16,6 +16,8 @@ const HostnameInput = () => {
   const [draftHostname, setDraftHostname] = useState(hostname ?? '');
 
   useEffect(() => {
+    // Syncs redux state to the local input draft
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDraftHostname(hostname ?? '');
   }, [hostname]);
 

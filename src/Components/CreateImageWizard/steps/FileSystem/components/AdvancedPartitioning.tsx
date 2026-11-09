@@ -46,6 +46,8 @@ const AdvancedPartitioning = () => {
   const [diskSize, setDiskSize] = useState(minsize ?? '');
 
   useEffect(() => {
+    // Syncs redux state to the local input draft
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDiskSize(minsize ?? '');
   }, [minsize]);
 
