@@ -16,7 +16,6 @@ export const useCockpitMachinesAvailable = (): boolean => {
 
   useEffect(() => {
     if (!isOnPremise) {
-      setIsAvailable(false);
       return;
     }
 
