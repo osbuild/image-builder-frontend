@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { DEFAULT_AWS_REGION } from './constants';
 import { initialState } from './state';
 import { AwsShareMethod, AzureHyperVGeneration, GcpAccountType } from './types';
 
@@ -25,7 +26,7 @@ export const cloudProvidersSlice = createSlice({
       state.aws.accountId = '';
       state.aws.shareMethod = 'manual';
       state.aws.source = undefined;
-      state.aws.region = 'us-east-1';
+      state.aws.region = DEFAULT_AWS_REGION;
     },
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
       state.azure.tenantId = action.payload;

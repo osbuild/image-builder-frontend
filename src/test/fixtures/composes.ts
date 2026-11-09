@@ -4,6 +4,7 @@ import {
   ComposesResponseItem,
   ComposeStatus,
 } from '@/store/api/backend';
+import { DEFAULT_AWS_REGION } from '@/store/slices';
 
 // CreateImageWizard mocks
 export const mockComposesEmpty: ComposesResponse = {
@@ -500,7 +501,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         upload_status: {
           options: {
             ami: 'ami-0217b81d9be50e44b',
-            region: 'us-east-1',
+            region: DEFAULT_AWS_REGION,
           },
           status: 'success',
           type: 'aws',
@@ -528,7 +529,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         upload_status: {
           options: {
             ami: 'ami-0217b81d9be50e44c',
-            region: 'us-east-1',
+            region: DEFAULT_AWS_REGION,
           },
           status: 'success',
           type: 'aws',
@@ -1094,7 +1095,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         upload_status: {
           options: {
             ami: 'ami-0217b81d9be50e44d',
-            region: 'us-east-1',
+            region: DEFAULT_AWS_REGION,
           },
           status: 'success',
           type: 'aws',
