@@ -145,7 +145,7 @@ module.exports = defineConfig([
       ],
       'no-console': 'error',
       eqeqeq: 'error',
-      'array-callback-return': 'warn',
+      'array-callback-return': 'error',
       '@typescript-eslint/ban-ts-comment': [
         'error',
         {
@@ -169,7 +169,11 @@ module.exports = defineConfig([
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      'react-hooks/set-state-in-effect': 'warn', // TODO address issues and enable the rule
+      // Prefer refactoring over disabling; when the pattern is intentional
+      // (e.g. syncing external state to local draft), disable with a comment
+      // explaining why.
+      'react-hooks/exhaustive-deps': 'error',
+      'react-hooks/set-state-in-effect': 'error',
       'no-restricted-syntax': [
         'error',
         {

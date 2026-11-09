@@ -69,6 +69,7 @@ Each config specifies:
 - Follow existing file naming conventions (PascalCase for components)
 - Keep components focused and reasonably sized
 - Use RTK Query hooks for data fetching, not manual fetch calls
+- **ESLint disable comments** - Prefer refactoring the code so the rule is satisfied. When the pattern is intentional and can't be refactored (e.g. syncing external state to a local input draft, or excluding unstable dependencies from a hook), disabling the rule is fine — but always add a comment on the line above explaining why. Follow the existing pattern: short explanation, then `eslint-disable-next-line`
 
 ### Imports
 
