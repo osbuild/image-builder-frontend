@@ -5,14 +5,13 @@ import cockpit from 'cockpit';
 export const useOnPremOpenSCAPAvailable = () => {
   // this can default to false in the service, since we will only render
   // a loading spinner for on-prem
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(cockpit.spawn));
   const [packagesAvailable, setPackagesAvailable] = useState(false);
 
   useEffect(() => {
     // The hook is now invoked also for hosted, just return if that's the case
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!cockpit.spawn) {
-      setIsLoading(false);
       return;
     }
 
