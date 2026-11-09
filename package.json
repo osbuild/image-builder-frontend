@@ -17,7 +17,7 @@
     "@redhat-cloud-services/frontend-components-utilities": "7.5.13",
     "@redhat-cloud-services/types": "3.7.13",
     "@reduxjs/toolkit": "2.13.0",
-    "@sentry/webpack-plugin": "5.4.1",
+    "@sentry/webpack-plugin": "11.10.0",
     "@unleash/proxy-client-react": "6.0.1",
     "chart.js": "4.6.1",
     "chartjs-adapter-date-fns": "3.0.0",
