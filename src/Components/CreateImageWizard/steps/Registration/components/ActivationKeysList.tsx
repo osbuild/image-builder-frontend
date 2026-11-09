@@ -153,6 +153,8 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
         dispatch(changeActivationKey(activationKeys.body[0].name));
       }
     }
+    // Several deps (e.g. defaultActivationKeyName) are unstable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessActivationKeys]);
 
   const setActivationKey = (selection: string) => {
