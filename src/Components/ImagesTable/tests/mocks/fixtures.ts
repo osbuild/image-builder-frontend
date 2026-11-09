@@ -5,6 +5,7 @@ import {
   ComposeStatus,
   GetBlueprintComposesApiResponse,
 } from '@/store/api/backend';
+import { DEFAULT_AWS_REGION } from '@/store/slices';
 
 const currentDate = new Date();
 const currentDateInString = currentDate.toISOString();
@@ -451,7 +452,7 @@ export const mockStatus = (composeId: string): ComposeStatus | undefined => {
         upload_status: {
           options: {
             ami: 'ami-0217b81d9be50e44b',
-            region: 'us-east-1',
+            region: DEFAULT_AWS_REGION,
           },
           status: 'success',
           type: 'aws',
@@ -829,7 +830,7 @@ export const mockStatus = (composeId: string): ComposeStatus | undefined => {
       image_status: {
         status: 'success',
         upload_status: {
-          options: { ami: 'ami-0217b81d9be50e44d', region: 'us-east-1' },
+          options: { ami: 'ami-0217b81d9be50e44d', region: DEFAULT_AWS_REGION },
           status: 'success',
           type: 'aws',
         },
@@ -877,7 +878,7 @@ export const mockStatus = (composeId: string): ComposeStatus | undefined => {
       image_status: {
         status: 'success',
         upload_status: {
-          options: { ami: 'ami-0217b81d9be50e44c', region: 'us-east-1' },
+          options: { ami: 'ami-0217b81d9be50e44c', region: DEFAULT_AWS_REGION },
           status: 'success',
           type: 'aws',
         },

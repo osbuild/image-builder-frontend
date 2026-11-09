@@ -4,7 +4,11 @@ import { Content } from '@patternfly/react-core';
 
 import { DetailsStack } from '@/Components/CreateImageWizard/steps/Review/components/shared';
 import { useAppSelector } from '@/store/hooks';
-import { selectAwsAccountId, selectAwsRegion } from '@/store/slices';
+import {
+  DEFAULT_AWS_REGION,
+  selectAwsAccountId,
+  selectAwsRegion,
+} from '@/store/slices';
 import { selectIsOnPremise } from '@/store/slices/env';
 
 export const AWSDetails = () => {
@@ -18,7 +22,7 @@ export const AWSDetails = () => {
         <Content component='p'>
           Shared with account: {awsAccountId}
           <br />
-          Region: {region || 'us-east-1'}
+          Region: {region || DEFAULT_AWS_REGION}
           <br />
         </Content>
       )}

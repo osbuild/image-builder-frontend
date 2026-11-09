@@ -1,3 +1,4 @@
+import { DEFAULT_AWS_REGION } from './constants';
 import { CloudProviderSlice } from './types';
 
 export const initialState: CloudProviderSlice = {
@@ -5,7 +6,7 @@ export const initialState: CloudProviderSlice = {
     accountId: '',
     shareMethod: 'manual',
     source: undefined,
-    region: 'us-east-1',
+    region: DEFAULT_AWS_REGION,
   },
   azure: {
     tenantId: undefined,

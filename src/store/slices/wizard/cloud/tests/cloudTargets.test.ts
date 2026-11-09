@@ -10,6 +10,7 @@ import {
   changeAzureTenantId,
   changeGcpAccountType,
   changeGcpEmail,
+  DEFAULT_AWS_REGION,
   initialState,
   reinitializeAws,
   reinitializeAzure,
@@ -94,7 +95,7 @@ describe('target environment reducers', () => {
         expect(result.cloudProviders.aws.accountId).toBe('');
         expect(result.cloudProviders.aws.shareMethod).toBe('manual');
         expect(result.cloudProviders.aws.source).toBeUndefined();
-        expect(result.cloudProviders.aws.region).toBe('us-east-1');
+        expect(result.cloudProviders.aws.region).toBe(DEFAULT_AWS_REGION);
       });
 
       it('should not affect other state', () => {

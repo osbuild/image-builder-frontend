@@ -14,7 +14,11 @@ import { isAwsAccountIdValid } from '@/Components/CreateImageWizard/validators';
 import { ValidatedInput } from '@/Components/ValidatedInputs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { changeAwsAccountId, selectAwsAccountId } from '@/store/slices/wizard';
+import {
+  changeAwsAccountId,
+  DEFAULT_AWS_REGION,
+  selectAwsAccountId,
+} from '@/store/slices/wizard';
 
 const Aws = () => {
   const dispatch = useAppDispatch();
@@ -47,7 +51,7 @@ const Aws = () => {
           <FlexItem>
             <FormGroup label='Default region' isRequired>
               <TextInput
-                value={'us-east-1'}
+                value={DEFAULT_AWS_REGION}
                 type='text'
                 aria-label='default region'
                 readOnlyVariant='default'
