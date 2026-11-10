@@ -37,6 +37,13 @@ export const tabWithWait = async (user: UserEventInstance) => {
   await waitForAction(() => user.tab());
 };
 
+export const hoverWithWait = async (
+  user: UserEventInstance,
+  element: HTMLElement,
+) => {
+  await waitForAction(() => user.hover(element));
+};
+
 export const keyboardWithWait = async (
   user: UserEventInstance,
   text: string,
