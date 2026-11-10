@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { initialState } from './state';
+import { emptyAzureState, initialState } from './state';
 import { AzureHyperVGeneration, GcpAccountType } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
@@ -46,19 +46,50 @@ export const cloudProvidersSlice = createSlice({
       state.aws = initialState.aws;
     },
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
+      if (!state.azure) {
+        state.azure = {
+          ...emptyAzureState,
+          tenantId: action.payload,
+        };
+        return;
+      }
       state.azure.tenantId = action.payload;
     },
     changeAzureSubscriptionId: (state, action: PayloadAction<string>) => {
+      if (!state.azure) {
+        state.azure = {
+          ...emptyAzureState,
+          subscriptionId: action.payload,
+        };
+        return;
+      }
       state.azure.subscriptionId = action.payload;
     },
     changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
+      if (!state.azure) {
+        state.azure = {
+          ...emptyAzureState,
+          resourceGroup: action.payload,
+        };
+        return;
+      }
       state.azure.resourceGroup = action.payload;
     },
     changeAzureHyperVGeneration: (
       state,
       action: PayloadAction<AzureHyperVGeneration>,
     ) => {
+      if (!state.azure) {
+        state.azure = {
+          ...emptyAzureState,
+          hyperVGeneration: action.payload,
+        };
+        return;
+      }
       state.azure.hyperVGeneration = action.payload;
+    },
+    initializeAzure: (state) => {
+      state.azure = emptyAzureState;
     },
     reinitializeAzure: (state) => {
       state.azure = initialState.azure;
@@ -100,6 +131,7 @@ export const {
   changeAzureSubscriptionId,
   changeAzureResourceGroup,
   changeAzureHyperVGeneration,
+  initializeAzure,
   reinitializeAzure,
   changeGcpAccountType,
   changeGcpEmail,

@@ -54,9 +54,7 @@ describe('parseCloudProvidersFromRequest', () => {
         withImageRequests([baseImageRequest]),
       );
       expect(result.aws).toEqual(initialState.aws);
-      expect(result.azure.tenantId).toBeUndefined();
-      expect(result.azure.subscriptionId).toBeUndefined();
-      expect(result.azure.resourceGroup).toBeUndefined();
+      expect(result.azure).toBeUndefined();
       expect(result.gcp.accountType).toBeUndefined();
       expect(result.gcp.email).toBe('');
     });
@@ -251,10 +249,10 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.azure.tenantId).toBe('tenant-abc');
-        expect(result.azure.subscriptionId).toBe('sub-def');
-        expect(result.azure.resourceGroup).toBe('rg-test');
-        expect(result.azure.hyperVGeneration).toBe('V2');
+        expect(result.azure?.tenantId).toBe('tenant-abc');
+        expect(result.azure?.subscriptionId).toBe('sub-def');
+        expect(result.azure?.resourceGroup).toBe('rg-test');
+        expect(result.azure?.hyperVGeneration).toBe('V2');
       });
 
       it('fills missing fields with empty string when at least one is defined', () => {
@@ -272,9 +270,9 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.azure.tenantId).toBeUndefined();
-        expect(result.azure.subscriptionId).toBeUndefined();
-        expect(result.azure.resourceGroup).toBe('rg-test');
+        expect(result.azure?.tenantId).toBe('');
+        expect(result.azure?.subscriptionId).toBe('');
+        expect(result.azure?.resourceGroup).toBe('rg-test');
       });
 
       it('sets all to undefined when none are defined', () => {
@@ -290,9 +288,9 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.azure.tenantId).toBeUndefined();
-        expect(result.azure.subscriptionId).toBeUndefined();
-        expect(result.azure.resourceGroup).toBeUndefined();
+        expect(result.azure?.tenantId).toBe('');
+        expect(result.azure?.subscriptionId).toBe('');
+        expect(result.azure?.resourceGroup).toBe('');
       });
 
       it('defaults hyper_v_generation to V1', () => {
@@ -308,16 +306,16 @@ describe('parseCloudProvidersFromRequest', () => {
             },
           ]),
         );
-        expect(result.azure.hyperVGeneration).toBe('V1');
+        expect(result.azure?.hyperVGeneration).toBe('V1');
       });
 
       it('returns defaults when no azure image request exists', () => {
         const result = parseCloudProvidersFromRequest(
           withImageRequests([baseImageRequest]),
         );
-        expect(result.azure.tenantId).toBeUndefined();
-        expect(result.azure.subscriptionId).toBeUndefined();
-        expect(result.azure.resourceGroup).toBeUndefined();
+        expect(result.azure?.tenantId).toBeUndefined();
+        expect(result.azure?.subscriptionId).toBeUndefined();
+        expect(result.azure?.resourceGroup).toBeUndefined();
       });
     });
 
@@ -445,9 +443,7 @@ describe('parseCloudProvidersFromRequest', () => {
     it('returns all defaults when no image requests present', () => {
       const result = parseCloudProvidersFromRequest(createMinimalExport());
       expect(result.aws).toEqual(initialState.aws);
-      expect(result.azure.tenantId).toBeUndefined();
-      expect(result.azure.subscriptionId).toBeUndefined();
-      expect(result.azure.resourceGroup).toBeUndefined();
+      expect(result.azure).toBeUndefined();
       expect(result.gcp.accountType).toBeUndefined();
       expect(result.gcp.email).toBe('');
     });

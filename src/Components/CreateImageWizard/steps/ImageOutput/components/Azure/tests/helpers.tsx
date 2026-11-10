@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { emptyAzureState, initialState } from '@/store/slices/wizard';
 import {
   clickWithWait,
   renderWithRedux,
@@ -15,7 +16,21 @@ import Azure from '..';
 export const renderAzureStep = (
   wizardStateOverrides: WizardStateOverrides = {},
 ) => {
-  return renderWithRedux(<Azure />, wizardStateOverrides);
+  const { cloudProviders, output, ...otherOverrides } = wizardStateOverrides;
+
+  return renderWithRedux(<Azure />, {
+    ...otherOverrides,
+    output: {
+      ...initialState.output,
+      imageTypes: ['azure'],
+      ...output,
+    },
+    cloudProviders: {
+      ...initialState.cloudProviders,
+      azure: emptyAzureState,
+      ...cloudProviders,
+    },
+  });
 };
 
 export const checkHyperVGenValue = async (value: string) => {

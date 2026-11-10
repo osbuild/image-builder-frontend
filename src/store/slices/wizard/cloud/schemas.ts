@@ -74,13 +74,13 @@ export const azureResourceGroupSchema = z
   );
 
 export const azureSchema = z.object({
-  tenantId: azureTenantIdSchema.optional(),
-  subscriptionId: azureSubscriptionIdSchema.optional(),
-  resourceGroup: azureResourceGroupSchema.optional(),
+  tenantId: azureTenantIdSchema,
+  subscriptionId: azureSubscriptionIdSchema,
+  resourceGroup: azureResourceGroupSchema,
   hyperVGeneration: z.literal(['V1', 'V2']).default('V2'),
 });
 
 export const cloudSliceSchema = z.object({
   aws: awsSchema,
-  azure: azureSchema,
+  azure: azureSchema.optional(),
 });
