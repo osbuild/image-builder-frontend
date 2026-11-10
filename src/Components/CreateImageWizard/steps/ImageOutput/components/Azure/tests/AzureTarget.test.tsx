@@ -277,7 +277,7 @@ describe('Azure Component', () => {
       const user = createUser();
 
       expect(
-        store.getState().wizard.cloudProviders.azure.hyperVGeneration,
+        store.getState().wizard.cloudProviders.azure?.hyperVGeneration,
       ).toBe('V2');
 
       await openHyperVGenerationDropdown(user);
@@ -289,7 +289,7 @@ describe('Azure Component', () => {
       );
 
       expect(
-        store.getState().wizard.cloudProviders.azure.hyperVGeneration,
+        store.getState().wizard.cloudProviders.azure?.hyperVGeneration,
       ).toBe('V1');
     });
 
@@ -297,13 +297,11 @@ describe('Azure Component', () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.azure.tenantId).toBe(
-        undefined,
-      );
+      expect(store.getState().wizard.cloudProviders.azure?.tenantId).toBe('');
 
       await fillTenantGuidValue(user, 'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022');
 
-      expect(store.getState().wizard.cloudProviders.azure.tenantId).toBe(
+      expect(store.getState().wizard.cloudProviders.azure?.tenantId).toBe(
         'fcbaf465-9c7e-49df-ac4f-9f70c0bc5022',
       );
     });
@@ -312,8 +310,8 @@ describe('Azure Component', () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.azure.subscriptionId).toBe(
-        undefined,
+      expect(store.getState().wizard.cloudProviders.azure?.subscriptionId).toBe(
+        '',
       );
 
       await fillSubscriptionIdValue(
@@ -321,7 +319,7 @@ describe('Azure Component', () => {
         '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
       );
 
-      expect(store.getState().wizard.cloudProviders.azure.subscriptionId).toBe(
+      expect(store.getState().wizard.cloudProviders.azure?.subscriptionId).toBe(
         '9023c919-2e5b-4213-a21a-c6e0ed5abb15',
       );
     });
@@ -330,13 +328,13 @@ describe('Azure Component', () => {
       const { store } = renderAzureStep();
       const user = createUser();
 
-      expect(store.getState().wizard.cloudProviders.azure.resourceGroup).toBe(
-        undefined,
+      expect(store.getState().wizard.cloudProviders.azure?.resourceGroup).toBe(
+        '',
       );
 
       await fillResourceGroupValue(user, 'test-resource-group');
 
-      expect(store.getState().wizard.cloudProviders.azure.resourceGroup).toBe(
+      expect(store.getState().wizard.cloudProviders.azure?.resourceGroup).toBe(
         'test-resource-group',
       );
     });
@@ -433,7 +431,7 @@ describe('Azure CreateBlueprintRequest payload', () => {
         azure: {
           tenantId: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
           subscriptionId: '60631143-a7dc-4d15-988b-ba83f3c99711',
-          resourceGroup: undefined,
+          resourceGroup: '',
           hyperVGeneration: 'V2',
         },
       },
@@ -524,7 +522,7 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(tenantInput).toBeInTheDocument();
-    expect(store.getState().wizard.cloudProviders.azure.tenantId).toBe(
+    expect(store.getState().wizard.cloudProviders.azure?.tenantId).toBe(
       'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
     );
   });
@@ -546,7 +544,7 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(subscriptionInput).toBeInTheDocument();
-    expect(store.getState().wizard.cloudProviders.azure.subscriptionId).toBe(
+    expect(store.getState().wizard.cloudProviders.azure?.subscriptionId).toBe(
       '60631143-a7dc-4d15-988b-ba83f3c99711',
     );
   });
@@ -564,7 +562,7 @@ describe('Form submission', () => {
       screen.getByRole('button', { name: /Generation 2 \(UEFI\)/i }),
     ).toBeInTheDocument();
     expect(resourceGroupInput).toBeInTheDocument();
-    expect(store.getState().wizard.cloudProviders.azure.resourceGroup).toBe(
+    expect(store.getState().wizard.cloudProviders.azure?.resourceGroup).toBe(
       'test-resource-group',
     );
   });

@@ -55,9 +55,9 @@ const parseAzure = (
 
   const options = azure.upload_request.options;
   return {
-    tenantId: options.tenant_id || defaults.tenantId,
-    subscriptionId: options.subscription_id || defaults.subscriptionId,
-    resourceGroup: options.resource_group || defaults.resourceGroup,
+    tenantId: options.tenant_id || '',
+    subscriptionId: options.subscription_id || '',
+    resourceGroup: options.resource_group || '',
     hyperVGeneration: options.hyper_v_generation || 'V1',
   };
 };

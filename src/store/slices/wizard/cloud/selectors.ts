@@ -13,19 +13,19 @@ export const selectAwsRegion = (state: RootState) => {
 };
 
 export const selectAzureTenantId = (state: RootState) => {
-  return state.wizard.cloudProviders.azure.tenantId;
+  return state.wizard.cloudProviders.azure?.tenantId;
 };
 
 export const selectAzureSubscriptionId = (state: RootState) => {
-  return state.wizard.cloudProviders.azure.subscriptionId;
+  return state.wizard.cloudProviders.azure?.subscriptionId;
 };
 
 export const selectAzureResourceGroup = (state: RootState) => {
-  return state.wizard.cloudProviders.azure.resourceGroup;
+  return state.wizard.cloudProviders.azure?.resourceGroup;
 };
 
 export const selectAzureHyperVGeneration = (state: RootState) => {
-  return state.wizard.cloudProviders.azure.hyperVGeneration;
+  return state.wizard.cloudProviders.azure?.hyperVGeneration;
 };
 
 export const selectGcpAccountType = (state: RootState) => {

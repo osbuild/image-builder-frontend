@@ -19,6 +19,8 @@ import {
   type WizardState,
 } from '@/store/slices/wizard';
 
+import { emptyAzureState } from '../state';
+
 describe('target environment reducers', () => {
   describe('AWS', () => {
     describe('changeAwsAccountId', () => {
@@ -139,7 +141,7 @@ describe('target environment reducers', () => {
           cloudProviders: {
             ...initialState.cloudProviders,
             azure: {
-              ...initialState.cloudProviders.azure,
+              ...emptyAzureState,
               tenantId: 'tenant-123',
             },
             aws: {
@@ -151,7 +153,7 @@ describe('target environment reducers', () => {
 
         const result = wizardReducer(modifiedState, reinitializeAws());
 
-        expect(result.cloudProviders.azure.tenantId).toBe('tenant-123');
+        expect(result.cloudProviders.azure?.tenantId).toBe('tenant-123');
       });
     });
   });
@@ -164,7 +166,7 @@ describe('target environment reducers', () => {
           changeAzureTenantId('tenant-abc-123'),
         );
 
-        expect(result.cloudProviders.azure.tenantId).toBe('tenant-abc-123');
+        expect(result.cloudProviders.azure?.tenantId).toBe('tenant-abc-123');
       });
     });
 
@@ -175,7 +177,7 @@ describe('target environment reducers', () => {
           changeAzureSubscriptionId('sub-xyz-789'),
         );
 
-        expect(result.cloudProviders.azure.subscriptionId).toBe('sub-xyz-789');
+        expect(result.cloudProviders.azure?.subscriptionId).toBe('sub-xyz-789');
       });
     });
 
@@ -186,7 +188,7 @@ describe('target environment reducers', () => {
           changeAzureResourceGroup('my-resource-group'),
         );
 
-        expect(result.cloudProviders.azure.resourceGroup).toBe(
+        expect(result.cloudProviders.azure?.resourceGroup).toBe(
           'my-resource-group',
         );
       });
@@ -199,7 +201,7 @@ describe('target environment reducers', () => {
           changeAzureHyperVGeneration('V1'),
         );
 
-        expect(result.cloudProviders.azure.hyperVGeneration).toBe('V1');
+        expect(result.cloudProviders.azure?.hyperVGeneration).toBe('V1');
       });
 
       it('should set to V2', () => {
@@ -208,7 +210,7 @@ describe('target environment reducers', () => {
           changeAzureHyperVGeneration('V2'),
         );
 
-        expect(result.cloudProviders.azure.hyperVGeneration).toBe('V2');
+        expect(result.cloudProviders.azure?.hyperVGeneration).toBe('V2');
       });
     });
 
@@ -219,7 +221,7 @@ describe('target environment reducers', () => {
           cloudProviders: {
             ...initialState.cloudProviders,
             azure: {
-              ...initialState.cloudProviders.azure,
+              ...emptyAzureState,
               tenantId: 'tenant-123',
               subscriptionId: 'sub-456',
               resourceGroup: 'rg-789',
@@ -229,28 +231,9 @@ describe('target environment reducers', () => {
 
         const result = wizardReducer(modifiedState, reinitializeAzure());
 
-        expect(result.cloudProviders.azure.tenantId).toBeUndefined();
-        expect(result.cloudProviders.azure.subscriptionId).toBeUndefined();
-        expect(result.cloudProviders.azure.resourceGroup).toBeUndefined();
-      });
-
-      it('should preserve hyperVGeneration', () => {
-        const modifiedState: WizardState = {
-          ...initialState,
-          cloudProviders: {
-            ...initialState.cloudProviders,
-            azure: {
-              ...initialState.cloudProviders.azure,
-              tenantId: 'tenant-123',
-              hyperVGeneration: 'V2',
-            },
-          },
-        };
-
-        const result = wizardReducer(modifiedState, reinitializeAzure());
-
-        // hyperVGeneration is not reset by reinitializeAzure
-        expect(result.cloudProviders.azure.hyperVGeneration).toBe('V2');
+        expect(result.cloudProviders.azure?.tenantId).toBeUndefined();
+        expect(result.cloudProviders.azure?.subscriptionId).toBeUndefined();
+        expect(result.cloudProviders.azure?.resourceGroup).toBeUndefined();
       });
     });
   });
