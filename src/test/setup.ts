@@ -89,7 +89,8 @@ configure({
 });
 
 // Fail tests on console warnings and errors
-beforeAll(() => {
+// Uses beforeEach so the spy is re-installed even after vi.restoreAllMocks() in test files
+beforeEach(() => {
   vi.spyOn(console, 'error').mockImplementation((...args) => {
     const message = args.join(' ');
     if (message.includes('Maximum update depth exceeded')) {
@@ -108,8 +109,4 @@ beforeAll(() => {
     }
     throw new Error(`Console warning:\n${message}`);
   });
-});
-
-afterAll(() => {
-  vi.restoreAllMocks();
 });
