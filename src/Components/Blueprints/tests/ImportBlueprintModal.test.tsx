@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { clickWithWait } from '@/test/testUtils';
+import { clickWithWait, hoverWithWait } from '@/test/testUtils';
 
 import {
   expectInvalidFormatError,
@@ -331,7 +331,7 @@ describe('ImportBlueprintModal checkbox state', () => {
     const disabledCheckbox = screen.getByRole('checkbox', {
       name: /import custom repositories/i,
     });
-    await user.hover(disabledCheckbox);
+    await hoverWithWait(user, disabledCheckbox);
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toHaveTextContent(
       'This option must be set before uploading a file.',
