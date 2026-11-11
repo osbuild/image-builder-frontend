@@ -19,9 +19,81 @@ beforeEach(() => {
 
 afterEach(() => {
   fetchMock.resetMocks();
+  window.localStorage.removeItem('imageBuilder.recentActivationKey');
 });
 
 describe('Activation Keys List', () => {
+  describe('Auto-selection', () => {
+    test('auto-selects first key and saves to localStorage', async () => {
+      renderRegistrationStep({
+        registration: {
+          ...initialState.registration,
+          type: 'register-now-rhc',
+        },
+      });
+
+      const selectToggle = await screen.findByPlaceholderText(
+        /select activation key/i,
+      );
+
+      await waitFor(() => {
+        expect(selectToggle).toHaveValue('activation-key-1');
+      });
+
+      expect(
+        window.localStorage.getItem('imageBuilder.recentActivationKey'),
+      ).toBe('activation-key-1');
+    });
+
+    test('falls back to first key when stored key no longer exists', async () => {
+      window.localStorage.setItem(
+        'imageBuilder.recentActivationKey',
+        'deleted-key',
+      );
+
+      renderRegistrationStep({
+        registration: {
+          ...initialState.registration,
+          type: 'register-now-rhc',
+        },
+      });
+
+      const selectToggle = await screen.findByPlaceholderText(
+        /select activation key/i,
+      );
+
+      await waitFor(() => {
+        expect(selectToggle).toHaveValue('activation-key-1');
+      });
+
+      expect(
+        window.localStorage.getItem('imageBuilder.recentActivationKey'),
+      ).toBe('activation-key-1');
+    });
+
+    test('restores recent key from localStorage', async () => {
+      window.localStorage.setItem(
+        'imageBuilder.recentActivationKey',
+        'test-key-alpha',
+      );
+
+      renderRegistrationStep({
+        registration: {
+          ...initialState.registration,
+          type: 'register-now-rhc',
+        },
+      });
+
+      const selectToggle = await screen.findByPlaceholderText(
+        /select activation key/i,
+      );
+
+      await waitFor(() => {
+        expect(selectToggle).toHaveValue('test-key-alpha');
+      });
+    });
+  });
+
   describe('Rendering', () => {
     test('displays activation key select', async () => {
       renderRegistrationStep({
