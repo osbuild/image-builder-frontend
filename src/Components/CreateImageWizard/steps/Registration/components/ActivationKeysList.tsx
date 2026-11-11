@@ -150,12 +150,53 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
       ) {
         dispatch(changeActivationKey(recentActivationKey));
       } else if (activationKeys.body && activationKeys.body.length > 0) {
-        dispatch(changeActivationKey(activationKeys.body[0].name));
+        const firstKeyName = activationKeys.body[0].name;
+        dispatch(changeActivationKey(firstKeyName || ''));
+        if (firstKeyName) {
+          window.localStorage.setItem(
+            'imageBuilder.recentActivationKey',
+            firstKeyName,
+          );
+        }
       }
     }
     // Several deps (e.g. defaultActivationKeyName) are unstable
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessActivationKeys]);
+
+  useEffect(() => {
+    if (
+      !activationKey ||
+      !isSuccessActivationKeys ||
+      isFetchingActivationKeys ||
+      isLoadingActivationKey ||
+      !activationKeys.body?.length
+    ) {
+      return;
+    }
+
+    const keyExists = activationKeys.body.some(
+      (key) => key.name === activationKey,
+    );
+
+    if (!keyExists) {
+      const firstKeyName = activationKeys.body[0].name;
+      dispatch(changeActivationKey(firstKeyName || ''));
+      if (firstKeyName) {
+        window.localStorage.setItem(
+          'imageBuilder.recentActivationKey',
+          firstKeyName,
+        );
+      }
+    }
+  }, [
+    activationKey,
+    isSuccessActivationKeys,
+    isFetchingActivationKeys,
+    isLoadingActivationKey,
+    activationKeys?.body,
+    dispatch,
+  ]);
 
   const setActivationKey = (selection: string) => {
     setIsOpen(false);
