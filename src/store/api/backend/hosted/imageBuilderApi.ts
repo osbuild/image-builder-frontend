@@ -570,6 +570,7 @@ export type Distributions =
   | 'rhel-9.6'
   | 'rhel-9.7'
   | 'rhel-9.8'
+  | 'rhel-9.9'
   | 'rhel-10'
   | 'rhel-10-nightly'
   | 'rhel-10.0-nightly'
@@ -581,6 +582,7 @@ export type Distributions =
   | 'rhel-10.0'
   | 'rhel-10.1'
   | 'rhel-10.2'
+  | 'rhel-10.3'
   | 'centos-9'
   | 'centos-10'
   | 'fedora-37'
@@ -862,6 +864,8 @@ export type Services = {
   disabled?: string[] | undefined;
   /** List of services to mask by default */
   masked?: string[] | undefined;
+  /** Default systemd target to boot into */
+  default_target?: string | undefined;
 };
 export type Kernel = {
   /** Name of the kernel to use */

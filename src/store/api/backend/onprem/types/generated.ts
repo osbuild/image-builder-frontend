@@ -146,6 +146,7 @@ export type ImageTypes =
   | 'aws'
   | 'aws-cvm'
   | 'aws-ha-rhui'
+  | 'aws-nvidia'
   | 'aws-rhui'
   | 'aws-sap-rhui'
   | 'azure'
@@ -462,6 +463,8 @@ export type Services = {
   disabled?: string[] | undefined;
   /** List of services to mask by default */
   masked?: string[] | undefined;
+  /** Default systemd target to boot into */
+  default_target?: string | undefined;
 };
 export type Kernel = {
   /** Name of the kernel to use */
