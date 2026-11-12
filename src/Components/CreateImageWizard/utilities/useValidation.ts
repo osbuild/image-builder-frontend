@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { jwtDecode } from 'jwt-decode';
-
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -58,6 +56,7 @@ import {
   isSnapshotValid,
   isValidUrl,
   validateMultipleCertificates,
+  validateSatelliteCommand,
 } from '../validators';
 
 export type StepValidation = {
@@ -211,52 +210,27 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType === 'register-satellite') {
     const errors: Record<string, string> = {};
-    const commandTrimmed =
-      typeof registrationCommand === 'string' ? registrationCommand.trim() : '';
 
     if (caCertificate === '') {
-      Object.assign(errors, {
-        certificate:
-          'Valid certificate must be present if you are registering Satellite',
-      });
+      errors.certificate =
+        'Valid certificate must be present if you are registering Satellite';
     }
 
-    if (commandTrimmed === '') {
-      Object.assign(errors, {
-        command: 'No registration command for Satellite registration',
-      });
-    } else {
-      const bearerJwtRegex = /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/;
-      const match = commandTrimmed.match(bearerJwtRegex);
-      if (!match) {
-        Object.assign(errors, { command: 'Invalid or missing token' });
-      } else {
-        try {
-          const token = match[1];
-          const decoded = jwtDecode(token);
-          if (decoded.exp) {
-            const dayInSeconds = 86400;
-            if (decoded.exp < currentTimeSeconds + dayInSeconds) {
-              const expirationDate = new Date(decoded.exp * 1000);
-              Object.assign(errors, {
-                expired:
-                  'The token is already expired or will expire by next day. Expiration date: ' +
-                  expirationDate,
-              });
-              return {
-                errors: errors,
-                disabledNext: caCertificate === undefined,
-              };
-            }
-          }
-        } catch {
-          Object.assign(errors, { command: 'Invalid or missing token' });
-        }
-      }
+    const commandValidation = validateSatelliteCommand(
+      registrationCommand,
+      currentTimeSeconds,
+    );
+    Object.assign(errors, commandValidation);
+
+    if (commandValidation.expired) {
+      return {
+        errors,
+        disabledNext: caCertificate === undefined,
+      };
     }
 
     return {
-      errors: errors,
+      errors,
       disabledNext:
         Object.keys(errors).length > 0 || caCertificate === undefined,
     };

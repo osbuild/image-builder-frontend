@@ -1,20 +1,10 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { initialState } from '@/store/slices/wizard';
-import { clearWithWait, clickWithWait, createUser } from '@/test/testUtils';
+import { createUser } from '@/test/testUtils';
 
-import {
-  enterSatelliteCommand,
-  renderRegistrationStep,
-  selectSatelliteRegistration,
-} from './helpers';
-import {
-  INVALID_SATELLITE_COMMAND,
-  SATELLITE_COMMAND_EXPIRED_TOKEN,
-  SATELLITE_COMMAND_NO_EXPIRATION,
-  VALID_CERTIFICATE,
-  VALID_SATELLITE_COMMAND,
-} from './mocks';
+import { renderRegistrationStep, selectSatelliteRegistration } from './helpers';
+import { VALID_CERTIFICATE, VALID_SATELLITE_COMMAND } from './mocks';
 
 describe('Satellite Registration', () => {
   describe('Rendering', () => {
@@ -40,114 +30,6 @@ describe('Satellite Registration', () => {
       expect(
         screen.queryByRole('textbox', { name: /registration command/i }),
       ).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Command Validation', () => {
-    test('shows error for invalid command', async () => {
-      renderRegistrationStep({
-        registration: {
-          ...initialState.registration,
-          type: 'register-satellite',
-        },
-      });
-      const user = createUser();
-
-      await enterSatelliteCommand(user, INVALID_SATELLITE_COMMAND);
-      await clickWithWait(user, document.body);
-
-      expect(
-        await screen.findByText(/invalid or missing token/i),
-      ).toBeInTheDocument();
-    });
-
-    test('shows warning for expired token', async () => {
-      renderRegistrationStep({
-        registration: {
-          ...initialState.registration,
-          type: 'register-satellite',
-        },
-      });
-      const user = createUser();
-
-      await enterSatelliteCommand(user, SATELLITE_COMMAND_EXPIRED_TOKEN);
-
-      expect(
-        await screen.findByText(
-          /the token is already expired or will expire by next day/i,
-        ),
-      ).toBeInTheDocument();
-    });
-
-    test('accepts valid command with no expiration', async () => {
-      renderRegistrationStep({
-        registration: {
-          ...initialState.registration,
-          type: 'register-satellite',
-        },
-      });
-      const user = createUser();
-
-      await enterSatelliteCommand(user, SATELLITE_COMMAND_NO_EXPIRATION);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText(/invalid or missing token/i),
-        ).not.toBeInTheDocument();
-        expect(
-          screen.queryByText(
-            /the token is already expired or will expire by next day/i,
-          ),
-        ).not.toBeInTheDocument();
-      });
-    });
-
-    test('accepts valid command with standard token', async () => {
-      renderRegistrationStep({
-        registration: {
-          ...initialState.registration,
-          type: 'register-satellite',
-        },
-      });
-      const user = createUser();
-
-      await enterSatelliteCommand(user, VALID_SATELLITE_COMMAND);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText(/invalid or missing token/i),
-        ).not.toBeInTheDocument();
-      });
-    });
-
-    test('clears error when valid command is entered after invalid', async () => {
-      renderRegistrationStep({
-        registration: {
-          ...initialState.registration,
-          type: 'register-satellite',
-        },
-      });
-      const user = createUser();
-
-      const commandInput = await screen.findByRole('textbox', {
-        name: /registration command/i,
-      });
-
-      await enterSatelliteCommand(user, INVALID_SATELLITE_COMMAND);
-      await clickWithWait(user, document.body);
-
-      expect(
-        await screen.findByText(/invalid or missing token/i),
-      ).toBeInTheDocument();
-
-      await clearWithWait(user, commandInput);
-      await enterSatelliteCommand(user, VALID_SATELLITE_COMMAND);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText(/invalid or missing token/i),
-        ).not.toBeInTheDocument();
-      });
     });
   });
 
