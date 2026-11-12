@@ -136,7 +136,6 @@ describe('AAP Component', () => {
         registration: {
           ...initialState.registration,
           aap: {
-            enabled: true,
             callbackUrl: 'https://existing.controller.com/callback/',
             hostConfigKey: '',
             tlsCertificateAuthority: '',
@@ -156,7 +155,6 @@ describe('AAP Component', () => {
         registration: {
           ...initialState.registration,
           aap: {
-            enabled: true,
             callbackUrl: '',
             hostConfigKey: 'existing-key',
             tlsCertificateAuthority: '',
@@ -176,7 +174,6 @@ describe('AAP Component', () => {
         registration: {
           ...initialState.registration,
           aap: {
-            enabled: true,
             callbackUrl: 'https://controller.example.com/callback/',
             hostConfigKey: '',
             tlsCertificateAuthority: '',
@@ -199,7 +196,7 @@ describe('AAP Component', () => {
 
       await enterCallbackUrl(user, 'https://controller.example.com/callback/');
 
-      expect(store.getState().wizard.registration.aap.callbackUrl).toBe(
+      expect(store.getState().wizard.registration.aap?.callbackUrl).toBe(
         'https://controller.example.com/callback/',
       );
     });
@@ -210,7 +207,7 @@ describe('AAP Component', () => {
 
       await enterHostConfigKey(user, 'my-host-config-key');
 
-      expect(store.getState().wizard.registration.aap.hostConfigKey).toBe(
+      expect(store.getState().wizard.registration.aap?.hostConfigKey).toBe(
         'my-host-config-key',
       );
     });
@@ -220,7 +217,6 @@ describe('AAP Component', () => {
         registration: {
           ...initialState.registration,
           aap: {
-            enabled: true,
             callbackUrl: 'https://controller.example.com/callback/',
             hostConfigKey: '',
             tlsCertificateAuthority: '',
@@ -230,15 +226,15 @@ describe('AAP Component', () => {
       });
       const user = createUser();
 
-      expect(store.getState().wizard.registration.aap.skipTlsVerification).toBe(
-        false,
-      );
+      expect(
+        store.getState().wizard.registration.aap?.skipTlsVerification,
+      ).toBe(false);
 
       await toggleInsecureCheckbox(user);
 
-      expect(store.getState().wizard.registration.aap.skipTlsVerification).toBe(
-        true,
-      );
+      expect(
+        store.getState().wizard.registration.aap?.skipTlsVerification,
+      ).toBe(true);
     });
   });
 
@@ -260,7 +256,7 @@ describe('AAP Component', () => {
         screen.getByRole('textbox', { name: /host config key/i }),
       ).toBeInTheDocument();
       expect(callbackUrlInput).toBeInTheDocument();
-      expect(store.getState().wizard.registration.aap.callbackUrl).toBe(
+      expect(store.getState().wizard.registration.aap?.callbackUrl).toBe(
         'https://controller.example.com/callback/',
       );
     });
@@ -278,7 +274,7 @@ describe('AAP Component', () => {
         screen.getByRole('textbox', { name: /ansible callback url/i }),
       ).toBeInTheDocument();
       expect(hostConfigKeyInput).toBeInTheDocument();
-      expect(store.getState().wizard.registration.aap.hostConfigKey).toBe(
+      expect(store.getState().wizard.registration.aap?.hostConfigKey).toBe(
         'test-config-key',
       );
     });

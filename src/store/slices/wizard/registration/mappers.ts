@@ -25,6 +25,7 @@ import {
   selectSatelliteRegistrationCommand,
   selectServerUrl,
 } from './selectors';
+import { emptyRegistrationState } from './state';
 
 const mapSubscription = createSelector(
   [
@@ -58,7 +59,7 @@ const mapSubscription = createSelector(
 
     // this is existing behaviour, but maybe we should return
     // undefined instead, since this is a bit of an anti-pattern
-    if (activationKey === undefined) {
+    if (activationKey === undefined || activationKey === '') {
       throw new Error(
         'Activation key unexpectedly undefined while generating subscription customization',
       );
@@ -72,8 +73,8 @@ const mapSubscription = createSelector(
       subscription: {
         'activation-key': activationKey,
         organization: Number(orgId),
-        'server-url': serverUrl,
-        'base-url': baseUrl,
+        'server-url': serverUrl ?? emptyRegistrationState.serverUrl,
+        'base-url': baseUrl ?? emptyRegistrationState.baseUrl,
         insights_client_proxy: proxy,
         rhc: rhc && !isOnPremise,
         insights,

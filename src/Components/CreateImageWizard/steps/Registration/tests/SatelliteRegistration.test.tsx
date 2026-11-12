@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { emptySatelliteState, initialState } from '@/store/slices/wizard';
 import { clearWithWait, clickWithWait, createUser } from '@/test/testUtils';
 
 import {
@@ -173,8 +173,8 @@ describe('Satellite Registration', () => {
         registration: {
           ...initialState.registration,
           type: 'register-satellite',
-          satelliteRegistration: {
-            ...initialState.registration.satelliteRegistration,
+          satellite: {
+            ...emptySatelliteState,
             caCert: VALID_CERTIFICATE,
           },
         },
@@ -195,8 +195,8 @@ describe('Satellite Registration', () => {
         registration: {
           ...initialState.registration,
           type: 'register-satellite',
-          satelliteRegistration: {
-            ...initialState.registration.satelliteRegistration,
+          satellite: {
+            ...emptySatelliteState,
             command: VALID_SATELLITE_COMMAND,
           },
         },
