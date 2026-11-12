@@ -349,41 +349,6 @@ export type ApiContentUnitSearchRequest = {
   /** List of repository UUIDs to search */
   uuids?: string[] | undefined;
 };
-export type ApiSnapshotResponse = {
-  /** Count of each content type */
-  added_counts?:
-    | {
-        [key: string]: number;
-      }
-    | undefined;
-  /** Count of each content type */
-  content_counts?:
-    | {
-        [key: string]: number;
-      }
-    | undefined;
-  /** Datetime the snapshot was created */
-  created_at?: string | undefined;
-  /** Release version of the repository (BaseOS) */
-  detected_os_version?: string | undefined;
-  /** Whether this snapshot is published for cross-org partner visibility */
-  published?: boolean | undefined;
-  /** Count of each content type */
-  removed_counts?:
-    | {
-        [key: string]: number;
-      }
-    | undefined;
-  /** Name of repository the snapshot belongs to */
-  repository_name?: string | undefined;
-  /** Path to repository snapshot contents */
-  repository_path?: string | undefined;
-  /** UUID of the repository the snapshot belongs to */
-  repository_uuid?: string | undefined;
-  /** URL to the snapshot's content */
-  url?: string | undefined;
-  uuid?: string | undefined;
-};
 export type ApiTaskInfoResponse = {
   /** Timestamp of task creation */
   created_at?: string | undefined;
@@ -408,6 +373,45 @@ export type ApiTaskInfoResponse = {
   /** Type of task */
   type?: string | undefined;
   /** UUID of the object */
+  uuid?: string | undefined;
+};
+export type ApiSnapshotResponse = {
+  /** Count of each content type */
+  added_counts?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
+  /** Count of each content type */
+  content_counts?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
+  /** Datetime the snapshot was created */
+  created_at?: string | undefined;
+  /** Release version of the repository (BaseOS) */
+  detected_os_version?: string | undefined;
+  /** UUID of the publish/unpublish task */
+  last_publish_task_uuid?: string | undefined;
+  /** Status of the publish/unpublish task */
+  publish_task?: ApiTaskInfoResponse | undefined;
+  /** Whether this snapshot is published for cross-org partner visibility */
+  published?: boolean | undefined;
+  /** Count of each content type */
+  removed_counts?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
+  /** Name of repository the snapshot belongs to */
+  repository_name?: string | undefined;
+  /** Path to repository snapshot contents */
+  repository_path?: string | undefined;
+  /** UUID of the repository the snapshot belongs to */
+  repository_uuid?: string | undefined;
+  /** URL to the snapshot's content */
+  url?: string | undefined;
   uuid?: string | undefined;
 };
 export type ApiRepositoryResponse = {
@@ -471,6 +475,16 @@ export type ApiRepositoryResponse = {
   url?: string | undefined;
   /** Number of versions last read in the repository, not applicable to all repositories */
   version_count?: number | undefined;
+};
+export type ApiSnapshotPublishState = {
+  /** At least one snapshot is published with a completed publish task */
+  published?: boolean | undefined;
+  /** At least one snapshot with published=true has a pending/running task (publish in progress) */
+  publishing?: boolean | undefined;
+  /** At least one snapshot has a failed/canceled publish task */
+  stopped?: boolean | undefined;
+  /** At least one snapshot with published=false has a pending/running task (unpublish in progress) */
+  unpublishing?: boolean | undefined;
 };
 export type ApiRepositoryResponseRead = {
   /** Account ID of the owner */
@@ -539,6 +553,8 @@ export type ApiRepositoryResponseRead = {
   security_level?: string | undefined;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean | undefined;
+  /** Aggregate publish state across all snapshots (partner repos only) */
+  snapshot_publish_state?: ApiSnapshotPublishState | undefined;
   /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
   status?: string | undefined;
   /** URL of the remote yum repository */
@@ -737,6 +753,8 @@ export type ApiRepositoryImportResponseRead = {
   security_level?: string | undefined;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean | undefined;
+  /** Aggregate publish state across all snapshots (partner repos only) */
+  snapshot_publish_state?: ApiSnapshotPublishState | undefined;
   /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
   status?: string | undefined;
   /** URL of the remote yum repository */
@@ -806,6 +824,10 @@ export type ApiExtendedReleaseStream = {
   label?: string | undefined;
   name?: string | undefined;
 };
+export type ApiFeatureProduct = {
+  label?: string | undefined;
+  name?: string | undefined;
+};
 export type ApiRepositoryParameterResponse = {
   /** Architectures available for repository creation */
   distribution_arches?: ConfigDistributionArch[] | undefined;
@@ -815,6 +837,8 @@ export type ApiRepositoryParameterResponse = {
   distribution_versions?: ConfigDistributionVersion[] | undefined;
   /** Extended release streams available */
   extended_release_streams?: ApiExtendedReleaseStream[] | undefined;
+  /** Features available (Red Hat products) */
+  feature_products?: ApiFeatureProduct[] | undefined;
 };
 export type ApiPackageSourcesResponse = {
   /** Architecture of the module */
