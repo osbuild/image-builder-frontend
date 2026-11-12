@@ -1,26 +1,31 @@
-import { ActivationKeys } from '@/store/api/rhsm';
-
 export type RegistrationType =
   'register-later' | 'register-now' | 'register-satellite' | 'register-aap';
 
-export type RegistrationSlice = {
+export type AapRegistration = {
+  callbackUrl: string;
+  hostConfigKey: string;
+  tlsCertificateAuthority?: string | undefined;
+  skipTlsVerification?: boolean | undefined;
+};
+
+export type SatelliteRegistration = {
+  command: string;
+  caCert?: string | undefined;
+};
+
+export type RegistrationOptions = {
   serverUrl: string;
   baseUrl: string;
-  proxy: string | undefined;
-  type: RegistrationType;
-  activationKey: ActivationKeys['name'];
-  orgId: string | undefined;
+  activationKey: string;
+  orgId: string;
   rhc: boolean;
   insights: boolean;
-  satelliteRegistration: {
-    command: string | undefined;
-    caCert: string | undefined;
-  };
-  aap: {
-    enabled: boolean;
-    callbackUrl: string | undefined;
-    hostConfigKey: string | undefined;
-    tlsCertificateAuthority: string | undefined;
-    skipTlsVerification: boolean | undefined;
-  };
+  proxy?: string | undefined;
+};
+
+export type RegistrationSlice = {
+  type: RegistrationType;
+  options?: RegistrationOptions | undefined;
+  satellite?: SatelliteRegistration | undefined;
+  aap?: AapRegistration | undefined;
 };

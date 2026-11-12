@@ -3,23 +3,25 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '@/store';
 
 export const selectServerUrl = (state: RootState) => {
-  return state.wizard.registration.serverUrl;
+  return state.wizard.registration.options?.serverUrl;
 };
 
 export const selectBaseUrl = (state: RootState) => {
-  return state.wizard.registration.baseUrl;
+  return state.wizard.registration.options?.baseUrl;
 };
 
 export const selectProxy = (state: RootState) => {
-  return state.wizard.registration.proxy;
+  return state.wizard.registration.options?.proxy;
 };
 
 export const selectRhc = (state: RootState) => {
-  return state.wizard.registration.rhc;
+  if (!state.wizard.registration.options) return false;
+  return state.wizard.registration.options.rhc;
 };
 
 export const selectInsights = (state: RootState) => {
-  return state.wizard.registration.insights;
+  if (!state.wizard.registration.options) return false;
+  return state.wizard.registration.options.insights;
 };
 
 export const selectRegistrationType = (state: RootState) => {
@@ -27,19 +29,19 @@ export const selectRegistrationType = (state: RootState) => {
 };
 
 export const selectActivationKey = (state: RootState) => {
-  return state.wizard.registration.activationKey;
+  return state.wizard.registration.options?.activationKey;
 };
 
 export const selectOrgId = (state: RootState) => {
-  return state.wizard.registration.orgId;
+  return state.wizard.registration.options?.orgId;
 };
 
 export const selectSatelliteRegistrationCommand = (state: RootState) => {
-  return state.wizard.registration.satelliteRegistration.command;
+  return state.wizard.registration.satellite?.command;
 };
 
 export const selectSatelliteCaCertificate = (state: RootState) => {
-  return state.wizard.registration.satelliteRegistration.caCert;
+  return state.wizard.registration.satellite?.caCert;
 };
 
 export const selectAapRegistration = (state: RootState) => {
@@ -47,23 +49,23 @@ export const selectAapRegistration = (state: RootState) => {
 };
 
 export const selectAapEnabled = (state: RootState) => {
-  return state.wizard.registration.aap.enabled;
+  return state.wizard.registration.aap !== undefined;
 };
 
 export const selectAapCallbackUrl = (state: RootState) => {
-  return state.wizard.registration.aap.callbackUrl;
+  return state.wizard.registration.aap?.callbackUrl;
 };
 
 export const selectAapHostConfigKey = (state: RootState) => {
-  return state.wizard.registration.aap.hostConfigKey;
+  return state.wizard.registration.aap?.hostConfigKey;
 };
 
 export const selectAapTlsCertificateAuthority = (state: RootState) => {
-  return state.wizard.registration.aap.tlsCertificateAuthority;
+  return state.wizard.registration.aap?.tlsCertificateAuthority;
 };
 
 export const selectAapTlsConfirmation = (state: RootState) => {
-  return state.wizard.registration.aap.skipTlsVerification;
+  return state.wizard.registration.aap?.skipTlsVerification;
 };
 
 export const selectAapTlsConfigured = createSelector(
@@ -72,3 +74,7 @@ export const selectAapTlsConfigured = createSelector(
     return !!certificate;
   },
 );
+
+export const selectRegistrationSlice = (state: RootState) => {
+  return state.wizard.registration;
+};

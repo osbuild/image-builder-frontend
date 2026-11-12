@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { emptyRegistrationState, initialState } from '@/store/slices/wizard';
 import { clearWithWait, clickWithWait, createUser } from '@/test/testUtils';
 
 import {
@@ -156,8 +156,11 @@ describe('Registration Component', () => {
         registration: {
           ...initialState.registration,
           type: 'register-now',
-          rhc: false,
-          insights: false,
+          options: {
+            ...emptyRegistrationState,
+            rhc: false,
+            insights: false,
+          },
         },
       });
       const user = createUser();
@@ -211,8 +214,11 @@ describe('Registration Component', () => {
         registration: {
           ...initialState.registration,
           type: 'register-now',
-          rhc: false,
-          insights: false,
+          options: {
+            ...emptyRegistrationState,
+            rhc: false,
+            insights: false,
+          },
         },
       });
       const user = createUser();
@@ -278,8 +284,10 @@ describe('Registration Component', () => {
           expect(store.getState().wizard.registration.type).toBe(
             'register-now',
           );
-          expect(store.getState().wizard.registration.rhc).toBe(false);
-          expect(store.getState().wizard.registration.insights).toBe(true);
+          expect(store.getState().wizard.registration.options?.rhc).toBe(false);
+          expect(store.getState().wizard.registration.options?.insights).toBe(
+            true,
+          );
         });
       },
     );
@@ -324,7 +332,10 @@ describe('Registration Component', () => {
         {
           registration: {
             ...initialState.registration,
-            orgId: 'abc123',
+            options: {
+              ...emptyRegistrationState,
+              orgId: 'abc123',
+            },
           },
         },
         { preloadedState: { env: { isOnPremise: true } } },

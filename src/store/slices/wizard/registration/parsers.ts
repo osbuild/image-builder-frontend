@@ -8,26 +8,6 @@ import { RegistrationSlice } from './types';
 import { isRhel } from '../output';
 import { RequestLike } from '../types';
 
-const parseServerUrl = (
-  customizations: Customizations,
-): RegistrationSlice['serverUrl'] => {
-  if (!hasSubscription(customizations)) {
-    return initialState.serverUrl;
-  }
-
-  return customizations.subscription['server-url'];
-};
-
-const parseBaseUrl = (
-  customizations: Customizations,
-): RegistrationSlice['baseUrl'] => {
-  if (!hasSubscription(customizations)) {
-    return initialState.baseUrl;
-  }
-
-  return customizations.subscription['base-url'];
-};
-
 const parseRegistrationType = (
   customizations: Customizations,
   distribution?: Distributions | undefined,
@@ -43,53 +23,34 @@ const parseRegistrationType = (
   return 'register-now';
 };
 
-const parseActivationKey = (
+const parseRegistrationOptions = (
   customizations: Customizations,
   distribution?: Distributions | undefined,
-): RegistrationSlice['activationKey'] => {
+) => {
   if (!isRhel(distribution) || !hasSubscription(customizations)) {
-    return initialState.activationKey;
+    return undefined;
   }
 
-  return customizations.subscription['activation-key'];
-};
-
-const parseOrgId = (
-  customizations: Customizations,
-  distribution?: Distributions | undefined,
-): RegistrationSlice['orgId'] => {
-  if (!isRhel(distribution) || !hasSubscription(customizations)) {
-    return initialState.orgId;
-  }
-
-  return String(customizations.subscription['organization']);
-};
-
-const parseRhc = (customizations: Customizations): boolean => {
-  if (!hasSubscription(customizations)) {
-    return false;
-  }
-
-  return Boolean(customizations.subscription.rhc);
-};
-
-const parseInsights = (customizations: Customizations): boolean => {
-  if (!hasSubscription(customizations)) {
-    return false;
-  }
-
-  return Boolean(
-    customizations.subscription.rhc || customizations.subscription.insights,
-  );
+  return {
+    activationKey: customizations.subscription['activation-key'],
+    serverUrl: customizations.subscription['server-url'],
+    baseUrl: customizations.subscription['base-url'],
+    orgId: String(customizations.subscription['organization']),
+    proxy: customizations.subscription['insights_client_proxy'],
+    insights: customizations.subscription['insights'] || false,
+    rhc:
+      (customizations.subscription['rhc'] && !process.env.IS_ON_PREMISE) ||
+      false,
+  };
 };
 
 const parseSatellite = ({
   files,
   cacerts,
-}: Customizations): RegistrationSlice['satelliteRegistration'] => {
+}: Customizations): RegistrationSlice['satellite'] => {
   const satelliteFile = files?.find((file) => file.path === SATELLITE_PATH);
   if (!satelliteFile || !satelliteFile.data) {
-    return initialState.satelliteRegistration;
+    return undefined;
   }
 
   return {
@@ -102,11 +63,10 @@ const parseAap = ({
   aap_registration,
 }: Customizations): RegistrationSlice['aap'] => {
   if (!aap_registration) {
-    return initialState.aap;
+    return undefined;
   }
 
   return {
-    enabled: true,
     callbackUrl: aap_registration.ansible_callback_url,
     hostConfigKey: aap_registration.host_config_key,
     tlsCertificateAuthority: aap_registration.tls_certificate_authority,
@@ -117,18 +77,23 @@ const parseAap = ({
 const parseRegistrationRequest = ({
   customizations,
   distribution,
-}: RequestLike): RegistrationSlice => ({
-  rhc: parseRhc(customizations),
-  insights: parseInsights(customizations),
-  serverUrl: parseServerUrl(customizations),
-  baseUrl: parseBaseUrl(customizations),
-  type: parseRegistrationType(customizations, distribution),
-  activationKey: parseActivationKey(customizations, distribution),
-  orgId: parseOrgId(customizations, distribution),
-  proxy: customizations.subscription?.insights_client_proxy,
-  satelliteRegistration: parseSatellite(customizations),
-  aap: parseAap(customizations),
-});
+}: RequestLike): RegistrationSlice => {
+  const defaultOptions = {
+    type: parseRegistrationType(customizations, distribution),
+    aap: parseAap(customizations),
+  };
+
+  if (defaultOptions.type === 'register-later') return defaultOptions;
+
+  if (defaultOptions.type === 'register-satellite') {
+    return { ...defaultOptions, satellite: parseSatellite(customizations) };
+  }
+
+  return {
+    ...defaultOptions,
+    options: parseRegistrationOptions(customizations, distribution),
+  };
+};
 
 const parseRegistrationBlueprint = ({
   customizations,

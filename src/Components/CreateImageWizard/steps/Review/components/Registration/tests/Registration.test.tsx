@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { createDefaultRestrictions } from '@/Components/CreateImageWizard/steps/Review/components/tests/helpers';
-import { initialState } from '@/store/slices/wizard';
+import { emptyRegistrationState, initialState } from '@/store/slices/wizard';
 import { renderWithRedux } from '@/test/testUtils';
 
 import Registration from '../index';
@@ -59,7 +59,6 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             aap: {
-              enabled: true,
               callbackUrl: 'https://aap.example.com/callback/',
               hostConfigKey: 'my-host-config-key',
               tlsCertificateAuthority: undefined,
@@ -107,12 +106,6 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             type: 'register-later',
-            activationKey: undefined,
-            orgId: undefined,
-            satelliteRegistration: {
-              command: undefined,
-              caCert: undefined,
-            },
           },
         },
       );
@@ -133,13 +126,13 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            rhc: false,
-            insights: false,
-            activationKey: 'my-key',
-            orgId: '12345',
-            satelliteRegistration: {
-              command: undefined,
-              caCert: undefined,
+            type: 'register-now',
+            options: {
+              ...emptyRegistrationState,
+              rhc: false,
+              insights: false,
+              activationKey: 'my-key',
+              orgId: '12345',
             },
           },
         },
@@ -164,12 +157,12 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            rhc: false,
-            activationKey: 'insights-key',
-            orgId: '67890',
-            satelliteRegistration: {
-              command: undefined,
-              caCert: undefined,
+            type: 'register-now',
+            options: {
+              ...emptyRegistrationState,
+              rhc: false,
+              activationKey: 'insights-key',
+              orgId: '67890',
             },
           },
         },
@@ -192,11 +185,11 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            activationKey: 'rhc-key',
-            orgId: '11111',
-            satelliteRegistration: {
-              command: undefined,
-              caCert: undefined,
+            type: 'register-now',
+            options: {
+              ...emptyRegistrationState,
+              activationKey: 'rhc-key',
+              orgId: '11111',
             },
           },
         },
@@ -227,9 +220,7 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             type: 'register-satellite',
-            activationKey: undefined,
-            orgId: undefined,
-            satelliteRegistration: {
+            satellite: {
               command: 'satellite-command',
               caCert: 'ca-cert-content',
             },
@@ -252,13 +243,6 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            aap: {
-              enabled: false,
-              callbackUrl: undefined,
-              hostConfigKey: undefined,
-              tlsCertificateAuthority: undefined,
-              skipTlsVerification: undefined,
-            },
           },
         },
       );
@@ -279,7 +263,6 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             aap: {
-              enabled: true,
               callbackUrl:
                 'https://aap.example.com/api/v2/job_templates/42/callback/',
               hostConfigKey: 'my-host-config-key',
@@ -307,7 +290,6 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             aap: {
-              enabled: true,
               callbackUrl:
                 'https://aap.example.com/api/v2/job_templates/42/callback/',
               hostConfigKey: 'my-host-config-key',
@@ -337,7 +319,6 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             aap: {
-              enabled: true,
               callbackUrl: 'https://aap.example.com/callback/',
               hostConfigKey: 'my-host-config-key',
               tlsCertificateAuthority: undefined,
@@ -362,7 +343,6 @@ describe('Registration', () => {
           registration: {
             ...initialState.registration,
             aap: {
-              enabled: true,
               callbackUrl: 'https://aap.example.com/callback/',
               hostConfigKey: 'my-host-config-key',
               tlsCertificateAuthority: undefined,
@@ -393,7 +373,6 @@ aWRnaXRzIFB0eSBMdGQwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjBF
           registration: {
             ...initialState.registration,
             aap: {
-              enabled: true,
               callbackUrl: 'https://aap.example.com/callback/',
               hostConfigKey: 'my-host-config-key',
               tlsCertificateAuthority: caCert,
@@ -417,13 +396,6 @@ aWRnaXRzIFB0eSBMdGQwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjBF
           },
           registration: {
             ...initialState.registration,
-            aap: {
-              enabled: false,
-              callbackUrl: undefined,
-              hostConfigKey: undefined,
-              tlsCertificateAuthority: undefined,
-              skipTlsVerification: undefined,
-            },
           },
         },
       );
