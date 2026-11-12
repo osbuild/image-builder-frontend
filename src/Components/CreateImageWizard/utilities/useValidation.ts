@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { jwtDecode } from 'jwt-decode';
-
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -58,6 +56,7 @@ import {
   isSnapshotValid,
   isValidUrl,
   validateMultipleCertificates,
+  validateSatelliteCommand,
 } from '../validators';
 
 export type StepValidation = {

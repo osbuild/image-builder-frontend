@@ -71,13 +71,3 @@ export const enterOrgId = async (user: UserEventInstance, orgId: string) => {
   });
   await typeWithWait(user, input, orgId);
 };
-
-export const enterSatelliteCommand = async (
-  user: UserEventInstance,
-  command: string,
-) => {
-  const input = await screen.findByRole('textbox', {
-    name: /registration command/i,
-  });
-  await typeWithWait(user, input, command);
-};
