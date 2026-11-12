@@ -73,7 +73,7 @@ test('FIPS switch toggles and persists through save', async ({
     await frame.getByTestId('profileSelect').click();
     await frame
       .getByRole('option', {
-        name: /Red Hat STIG for Red Hat Enterprise Linux 10/i,
+        name: /Australian Cyber Security Centre (ACSC) ISM Official/i,
       })
       .click();
 
