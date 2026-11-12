@@ -23,6 +23,7 @@ import {
   selectSatelliteRegistrationCommand,
   selectServerUrl,
 } from './selectors';
+import { emptyRegistrationState } from './state';
 
 const mapSubscription = createSelector(
   [
@@ -65,8 +66,8 @@ const mapSubscription = createSelector(
     const subscription = {
       'activation-key': activationKey,
       organization: Number(orgId),
-      'server-url': serverUrl,
-      'base-url': baseUrl,
+      'server-url': serverUrl ?? emptyRegistrationState.serverUrl,
+      'base-url': baseUrl ?? emptyRegistrationState.baseUrl,
       insights_client_proxy: proxy,
       insights: false,
       rhc: false,

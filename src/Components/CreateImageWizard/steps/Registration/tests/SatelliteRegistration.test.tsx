@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { emptySatelliteState, initialState } from '@/store/slices/wizard';
 import { createUser } from '@/test/testUtils';
 
 import { renderRegistrationStep, selectSatelliteRegistration } from './helpers';
@@ -55,8 +55,8 @@ describe('Satellite Registration', () => {
         registration: {
           ...initialState.registration,
           type: 'register-satellite',
-          satelliteRegistration: {
-            ...initialState.registration.satelliteRegistration,
+          satellite: {
+            ...emptySatelliteState,
             caCert: VALID_CERTIFICATE,
           },
         },
@@ -77,8 +77,8 @@ describe('Satellite Registration', () => {
         registration: {
           ...initialState.registration,
           type: 'register-satellite',
-          satelliteRegistration: {
-            ...initialState.registration.satelliteRegistration,
+          satellite: {
+            ...initialState.registration.satellite,
             command: VALID_SATELLITE_COMMAND,
           },
         },

@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { ActivationKeys } from '@/store/api/rhsm';
-
-import { initialState } from './state';
+import {
+  emptyAapState,
+  emptyRegistrationState,
+  emptySatelliteState,
+  initialState,
+} from './state';
 import { RegistrationType } from './types';
 
 import { initializeWizard, loadWizardState } from '../actions';
@@ -12,13 +15,28 @@ export const registrationSlice = createSlice({
   initialState,
   reducers: {
     changeServerUrl: (state, action: PayloadAction<string>) => {
-      state.serverUrl = action.payload;
+      if (!state.options) {
+        state.options = {
+          ...emptyRegistrationState,
+          serverUrl: action.payload,
+        };
+        return;
+      }
+      state.options.serverUrl = action.payload;
     },
     changeBaseUrl: (state, action: PayloadAction<string>) => {
-      state.baseUrl = action.payload;
+      if (!state.options) {
+        state.options = { ...emptyRegistrationState, baseUrl: action.payload };
+        return;
+      }
+      state.options.baseUrl = action.payload;
     },
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
-      state.proxy = action.payload;
+      if (!state.options) {
+        state.options = { ...emptyRegistrationState, proxy: action.payload };
+        return;
+      }
+      state.options.proxy = action.payload;
     },
     changeRegistrationType: (
       state,
@@ -30,37 +48,85 @@ export const registrationSlice = createSlice({
       state,
       action: PayloadAction<string>,
     ) => {
-      state.satelliteRegistration.command = action.payload;
+      if (!state.satellite) {
+        state.satellite = { ...emptySatelliteState, command: action.payload };
+        return;
+      }
+      state.satellite.command = action.payload;
     },
     changeSatelliteCaCertificate: (state, action: PayloadAction<string>) => {
-      state.satelliteRegistration.caCert = action.payload;
+      if (!state.satellite) {
+        state.satellite = { ...emptySatelliteState, caCert: action.payload };
+        return;
+      }
+      state.satellite.caCert = action.payload;
     },
     changeAapEnabled: (state, action: PayloadAction<boolean>) => {
-      state.aap.enabled = action.payload;
+      if (!action.payload) {
+        state.aap = undefined;
+        return;
+      }
+      state.aap = emptyAapState;
     },
     changeAapCallbackUrl: (state, action: PayloadAction<string>) => {
+      if (!state.aap) {
+        state.aap = {
+          ...emptyAapState,
+          callbackUrl: action.payload,
+        };
+        return;
+      }
       state.aap.callbackUrl = action.payload;
     },
     changeAapHostConfigKey: (state, action: PayloadAction<string>) => {
+      if (!state.aap) {
+        state.aap = {
+          ...emptyAapState,
+          hostConfigKey: action.payload,
+        };
+        return;
+      }
       state.aap.hostConfigKey = action.payload;
     },
     changeAapTlsCertificateAuthority: (
       state,
       action: PayloadAction<string>,
     ) => {
+      if (!state.aap) {
+        state.aap = {
+          ...emptyAapState,
+          tlsCertificateAuthority: action.payload,
+        };
+        return;
+      }
       state.aap.tlsCertificateAuthority = action.payload;
     },
     changeAapTlsConfirmation: (state, action: PayloadAction<boolean>) => {
+      if (!state.aap) {
+        state.aap = {
+          ...emptyAapState,
+          skipTlsVerification: action.payload,
+        };
+        return;
+      }
       state.aap.skipTlsVerification = action.payload;
     },
-    changeActivationKey: (
-      state,
-      action: PayloadAction<ActivationKeys['name']>,
-    ) => {
-      state.activationKey = action.payload;
+    changeActivationKey: (state, action: PayloadAction<string>) => {
+      if (!state.options) {
+        state.options = {
+          ...emptyRegistrationState,
+          activationKey: action.payload,
+        };
+        return;
+      }
+      state.options.activationKey = action.payload;
     },
     changeOrgId: (state, action: PayloadAction<string>) => {
-      state.orgId = action.payload;
+      if (!state.options) {
+        state.options = { ...emptyRegistrationState, orgId: action.payload };
+        return;
+      }
+      state.options.orgId = action.payload;
     },
   },
   extraReducers: (builder) => {

@@ -1,23 +1,27 @@
-import { RegistrationSlice } from './types';
+import {
+  AapRegistration,
+  RegistrationOptions,
+  RegistrationSlice,
+  SatelliteRegistration,
+} from './types';
 
-export const initialState: RegistrationSlice = {
+export const emptyAapState: AapRegistration = {
+  callbackUrl: '',
+  hostConfigKey: '',
+};
+
+export const emptySatelliteState: SatelliteRegistration = {
+  command: '',
+};
+
+export const emptyRegistrationState: RegistrationOptions = {
   serverUrl: '',
   baseUrl: '',
-  proxy: undefined,
+};
+
+export const initialState: RegistrationSlice = {
   type: process.env.IS_ON_PREMISE
     ? 'register-now-insights'
     : 'register-now-rhc',
-  activationKey: undefined,
-  orgId: undefined,
-  satelliteRegistration: {
-    command: undefined,
-    caCert: undefined,
-  },
-  aap: {
-    enabled: false,
-    callbackUrl: undefined,
-    hostConfigKey: undefined,
-    tlsCertificateAuthority: undefined,
-    skipTlsVerification: undefined,
-  },
+  options: emptyRegistrationState,
 };

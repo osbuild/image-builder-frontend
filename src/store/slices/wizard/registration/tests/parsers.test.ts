@@ -139,14 +139,14 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.serverUrl).toBe('https://sub.example.com');
-        expect(result.baseUrl).toBe('https://cdn.example.com');
+        expect(result.options?.serverUrl).toBe('https://sub.example.com');
+        expect(result.options?.baseUrl).toBe('https://cdn.example.com');
       });
 
       it('defaults server URL and base URL to empty string when missing', () => {
         const result = parseRegistrationFromRequest(createMinimalBlueprint());
-        expect(result.serverUrl).toBe('');
-        expect(result.baseUrl).toBe('');
+        expect(result.options?.serverUrl).toBe('');
+        expect(result.options?.baseUrl).toBe('');
       });
 
       it('maps proxy', () => {
@@ -164,12 +164,12 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.proxy).toBe('http://proxy.example.com:8080');
+        expect(result.options?.proxy).toBe('http://proxy.example.com:8080');
       });
 
       it('leaves proxy undefined when not provided', () => {
         const result = parseRegistrationFromRequest(createMinimalBlueprint());
-        expect(result.proxy).toBeUndefined();
+        expect(result.options?.proxy).toBeUndefined();
       });
     });
 
@@ -189,8 +189,8 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.activationKey).toBe('my-activation-key');
-        expect(result.orgId).toBe('456');
+        expect(result.options?.activationKey).toBe('my-activation-key');
+        expect(result.options?.orgId).toBe('456');
       });
 
       it('sets activation key and org ID to undefined for non-RHEL', () => {
@@ -208,8 +208,8 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.activationKey).toBeUndefined();
-        expect(result.orgId).toBeUndefined();
+        expect(result.options?.activationKey).toBeUndefined();
+        expect(result.options?.orgId).toBeUndefined();
       });
     });
 
@@ -223,14 +223,12 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satelliteRegistration.command).toBe(command);
+        expect(result.satellite?.command).toBe(command);
       });
 
       it('returns initial state when no satellite file found', () => {
         const result = parseRegistrationFromRequest(createMinimalBlueprint());
-        expect(result.satelliteRegistration).toEqual(
-          initialState.satelliteRegistration,
-        );
+        expect(result.satellite).toEqual(initialState.satellite);
       });
 
       it('returns initial state when satellite file has no data', () => {
@@ -241,9 +239,7 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satelliteRegistration).toEqual(
-          initialState.satelliteRegistration,
-        );
+        expect(result.satellite).toEqual(initialState.satellite);
       });
 
       it('finds satellite file among multiple files', () => {
@@ -258,7 +254,7 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satelliteRegistration.command).toBe(command);
+        expect(result.satellite?.command).toBe(command);
       });
 
       // NOTE: caCert is only parsed when a satellite command is present.
@@ -277,7 +273,7 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satelliteRegistration.caCert).toBe(cert);
+        expect(result.satellite?.caCert).toBe(cert);
       });
 
       it('ignores cacerts when no satellite command is present', () => {
@@ -288,12 +284,12 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satelliteRegistration.caCert).toBeUndefined();
+        expect(result.satellite?.caCert).toBeUndefined();
       });
 
       it('leaves caCert undefined when cacerts not provided', () => {
         const result = parseRegistrationFromRequest(createMinimalBlueprint());
-        expect(result.satelliteRegistration.caCert).toBeUndefined();
+        expect(result.satellite?.caCert).toBeUndefined();
       });
     });
 
@@ -312,7 +308,6 @@ describe('parseRegistrationFromRequest', () => {
           }),
         );
         expect(result.aap).toEqual({
-          enabled: true,
           callbackUrl: 'https://aap.example.com/callback',
           hostConfigKey: 'config-key-123',
           tlsCertificateAuthority: '-----BEGIN CERT-----',
@@ -322,7 +317,7 @@ describe('parseRegistrationFromRequest', () => {
 
       it('sets aap disabled when aap_registration is undefined', () => {
         const result = parseRegistrationFromRequest(createMinimalBlueprint());
-        expect(result.aap.enabled).toBe(false);
+        expect(result.aap).toBeUndefined();
       });
 
       it('maps optional AAP fields as undefined when not provided', () => {
@@ -336,8 +331,8 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.aap.tlsCertificateAuthority).toBeUndefined();
-        expect(result.aap.skipTlsVerification).toBeUndefined();
+        expect(result.aap?.tlsCertificateAuthority).toBeUndefined();
+        expect(result.aap?.skipTlsVerification).toBeUndefined();
       });
     });
   });
@@ -345,15 +340,15 @@ describe('parseRegistrationFromRequest', () => {
   describe('import mode (BlueprintExportResponse)', () => {
     it('defaults all fields to initial state except AAP', () => {
       const result = parseRegistrationFromRequest(createMinimalExport());
-      expect(result.serverUrl).toBe(initialState.serverUrl);
-      expect(result.baseUrl).toBe(initialState.baseUrl);
-      expect(result.proxy).toBe(initialState.proxy);
+      expect(result.options?.serverUrl).toBe(initialState.options?.serverUrl);
+      expect(result.options?.baseUrl).toBe(initialState.options?.baseUrl);
+      expect(result.options?.proxy).toBe(initialState.options?.proxy);
       expect(result.type).toBe(initialState.type);
-      expect(result.activationKey).toBe(initialState.activationKey);
-      expect(result.orgId).toBe(initialState.orgId);
-      expect(result.satelliteRegistration).toEqual(
-        initialState.satelliteRegistration,
+      expect(result.options?.activationKey).toBe(
+        initialState.options?.activationKey,
       );
+      expect(result.options?.orgId).toBe(initialState.options?.orgId);
+      expect(result.satellite).toEqual(initialState.satellite);
     });
 
     it('does not parse subscription even when present', () => {
@@ -372,8 +367,8 @@ describe('parseRegistrationFromRequest', () => {
         }),
       );
       expect(result.type).toBe(initialState.type);
-      expect(result.serverUrl).toBe(initialState.serverUrl);
-      expect(result.baseUrl).toBe(initialState.baseUrl);
+      expect(result.options?.serverUrl).toBe(initialState.options?.serverUrl);
+      expect(result.options?.baseUrl).toBe(initialState.options?.baseUrl);
     });
 
     it('does not parse satellite even when present', () => {
@@ -390,9 +385,7 @@ describe('parseRegistrationFromRequest', () => {
         }),
       );
       expect(result.type).toBe(initialState.type);
-      expect(result.satelliteRegistration).toEqual(
-        initialState.satelliteRegistration,
-      );
+      expect(result.satellite).toEqual(initialState.satellite);
     });
 
     it('parses AAP registration when present', () => {
@@ -409,7 +402,6 @@ describe('parseRegistrationFromRequest', () => {
         }),
       );
       expect(result.aap).toEqual({
-        enabled: true,
         callbackUrl: 'https://aap.example.com/callback',
         hostConfigKey: 'import-key',
         tlsCertificateAuthority: '-----BEGIN CERT-----',
@@ -433,9 +425,9 @@ describe('parseRegistrationFromRequest', () => {
           },
         }),
       );
-      expect(result.aap.enabled).toBe(true);
-      expect(result.aap.tlsCertificateAuthority).toBeUndefined();
-      expect(result.aap.skipTlsVerification).toBeUndefined();
+      expect(result.aap).toBeDefined();
+      expect(result.aap?.tlsCertificateAuthority).toBeUndefined();
+      expect(result.aap?.skipTlsVerification).toBeUndefined();
     });
   });
 });

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createMockState } from '@/store/slices/wizard/tests/mockWizardState';
 
 import { mapRegistrationCustomizations, mapSatelliteFiles } from '../mappers';
-import { initialState } from '../state';
+import { emptyRegistrationState, initialState } from '../state';
 import type { RegistrationSlice } from '../types';
 
 const createState = (overrides: Partial<RegistrationSlice> = {}) =>
@@ -11,20 +11,17 @@ const createState = (overrides: Partial<RegistrationSlice> = {}) =>
     registration: { ...initialState, ...overrides },
   });
 
-const createOnPremState = (overrides: Partial<RegistrationSlice> = {}) => ({
-  ...createState(overrides),
-  env: { isOnPremise: true },
-});
-
 describe('mapRegistrationCustomizations', () => {
   describe('subscription', () => {
     it('returns subscription for register-now-rhc', () => {
       const state = createState({
         type: 'register-now-rhc',
-        activationKey: 'my-key',
-        orgId: '123',
-        serverUrl: 'https://server.example.com',
-        baseUrl: 'https://base.example.com',
+        options: {
+          activationKey: 'my-key',
+          orgId: '123',
+          serverUrl: 'https://server.example.com',
+          baseUrl: 'https://base.example.com',
+        },
       });
       const result = mapRegistrationCustomizations(state);
       expect(result.subscription).toEqual(
@@ -37,26 +34,14 @@ describe('mapRegistrationCustomizations', () => {
       );
     });
 
-    it('never sets rhc on-premises', () => {
-      const state = createOnPremState({
-        type: 'register-now-rhc',
-        activationKey: 'my-key',
-        orgId: '123',
-      });
-      const result = mapRegistrationCustomizations(state);
-      expect(result.subscription).toEqual(
-        expect.objectContaining({
-          insights: true,
-          rhc: false,
-        }),
-      );
-    });
-
     it('returns subscription for register-now-insights', () => {
       const state = createState({
         type: 'register-now-insights',
-        activationKey: 'my-key',
-        orgId: '456',
+        options: {
+          ...emptyRegistrationState,
+          activationKey: 'my-key',
+          orgId: '456',
+        },
       });
       const result = mapRegistrationCustomizations(state);
       expect(result.subscription).toEqual(
@@ -70,8 +55,11 @@ describe('mapRegistrationCustomizations', () => {
     it('returns subscription for register-now', () => {
       const state = createState({
         type: 'register-now',
-        activationKey: 'my-key',
-        orgId: '789',
+        options: {
+          ...emptyRegistrationState,
+          activationKey: 'my-key',
+          orgId: '789',
+        },
       });
       const result = mapRegistrationCustomizations(state);
       expect(result.subscription).toEqual(
@@ -99,8 +87,10 @@ describe('mapRegistrationCustomizations', () => {
     it('omits subscription when orgId is missing', () => {
       const state = createState({
         type: 'register-now-rhc',
-        activationKey: 'my-key',
-        orgId: undefined,
+        options: {
+          ...emptyRegistrationState,
+          activationKey: 'my-key',
+        },
       });
       expect(mapRegistrationCustomizations(state)).not.toHaveProperty(
         'subscription',
@@ -110,8 +100,11 @@ describe('mapRegistrationCustomizations', () => {
     it('omits subscription when orgId is not numeric', () => {
       const state = createState({
         type: 'register-now-rhc',
-        activationKey: 'my-key',
-        orgId: 'not-a-number',
+        options: {
+          ...emptyRegistrationState,
+          activationKey: 'my-key',
+          orgId: 'not-a-number',
+        },
       });
       expect(mapRegistrationCustomizations(state)).not.toHaveProperty(
         'subscription',
@@ -121,8 +114,10 @@ describe('mapRegistrationCustomizations', () => {
     it('throws when activation key is undefined for register-now type', () => {
       const state = createState({
         type: 'register-now-rhc',
-        activationKey: undefined,
-        orgId: '123',
+        options: {
+          ...emptyRegistrationState,
+          orgId: '123',
+        },
       });
       expect(() => mapRegistrationCustomizations(state)).toThrow(
         'Activation key unexpectedly undefined',
@@ -135,7 +130,6 @@ describe('mapRegistrationCustomizations', () => {
       const state = createState({
         type: 'register-later',
         aap: {
-          enabled: true,
           callbackUrl: 'https://aap.example.com/callback',
           hostConfigKey: 'config-key',
           tlsCertificateAuthority: undefined,
@@ -154,7 +148,6 @@ describe('mapRegistrationCustomizations', () => {
     it('omits aap_registration when disabled', () => {
       const state = createState({
         type: 'register-later',
-        aap: { ...initialState.aap, enabled: false },
       });
       expect(mapRegistrationCustomizations(state)).not.toHaveProperty(
         'aap_registration',
@@ -165,11 +158,8 @@ describe('mapRegistrationCustomizations', () => {
       const state = createState({
         type: 'register-later',
         aap: {
-          enabled: true,
-          callbackUrl: undefined,
-          hostConfigKey: undefined,
-          tlsCertificateAuthority: undefined,
-          skipTlsVerification: undefined,
+          callbackUrl: '',
+          hostConfigKey: '',
         },
       });
       expect(mapRegistrationCustomizations(state)).not.toHaveProperty(
@@ -182,7 +172,7 @@ describe('mapRegistrationCustomizations', () => {
     it('returns cacerts for satellite registration with cert', () => {
       const state = createState({
         type: 'register-satellite',
-        satelliteRegistration: {
+        satellite: {
           command: 'sat-cmd',
           caCert: 'PEM-CERT-DATA',
         },
@@ -196,8 +186,8 @@ describe('mapRegistrationCustomizations', () => {
     it('omits cacerts when not satellite registration', () => {
       const state = createState({
         type: 'register-later',
-        satelliteRegistration: {
-          command: undefined,
+        satellite: {
+          command: '',
           caCert: 'PEM-CERT-DATA',
         },
       });
@@ -209,7 +199,7 @@ describe('mapRegistrationCustomizations', () => {
     it('omits cacerts when satellite registration has no cert', () => {
       const state = createState({
         type: 'register-satellite',
-        satelliteRegistration: {
+        satellite: {
           command: 'sat-cmd',
           caCert: undefined,
         },
@@ -225,7 +215,7 @@ describe('mapSatelliteFiles', () => {
   it('returns files for satellite registration with command', () => {
     const state = createState({
       type: 'register-satellite',
-      satelliteRegistration: {
+      satellite: {
         command: 'satellite-register --org=123',
         caCert: undefined,
       },
@@ -242,7 +232,7 @@ describe('mapSatelliteFiles', () => {
   it('returns empty array when not satellite registration', () => {
     const state = createState({
       type: 'register-now-rhc',
-      satelliteRegistration: {
+      satellite: {
         command: 'satellite-register --org=123',
         caCert: undefined,
       },
@@ -253,9 +243,8 @@ describe('mapSatelliteFiles', () => {
   it('returns empty array when no command set', () => {
     const state = createState({
       type: 'register-satellite',
-      satelliteRegistration: {
-        command: undefined,
-        caCert: undefined,
+      satellite: {
+        command: '',
       },
     });
     expect(mapSatelliteFiles(state)).toEqual([]);

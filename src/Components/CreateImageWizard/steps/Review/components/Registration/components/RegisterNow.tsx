@@ -9,7 +9,6 @@ import {
 import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import {
-  isRegisterNowType,
   RegistrationType,
   selectActivationKey,
   selectOrgId,
@@ -28,7 +27,12 @@ export const RegisterNow = ({
   const activationKey = useAppSelector(selectActivationKey);
   const orgId = useAppSelector(selectOrgId);
 
-  if (shouldHide || !isRegisterNowType(registrationType)) {
+  if (
+    shouldHide ||
+    registrationType === 'register-later' ||
+    registrationType === 'register-aap' ||
+    registrationType === 'register-satellite'
+  ) {
     return null;
   }
 

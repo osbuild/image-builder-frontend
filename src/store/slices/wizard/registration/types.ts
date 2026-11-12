@@ -1,5 +1,3 @@
-import { ActivationKeys } from '@/store/api/rhsm';
-
 import { REGISTER_NOW_TYPES } from './constants';
 
 export type RegisterNowType = (typeof REGISTER_NOW_TYPES)[number];
@@ -12,22 +10,29 @@ export type RegistrationType =
   | 'register-satellite'
   | 'register-aap';
 
-export type RegistrationSlice = {
+export type AapRegistration = {
+  callbackUrl: string;
+  hostConfigKey: string;
+  tlsCertificateAuthority?: string | undefined;
+  skipTlsVerification?: boolean | undefined;
+};
+
+export type SatelliteRegistration = {
+  command: string;
+  caCert?: string | undefined;
+};
+
+export type RegistrationOptions = {
   serverUrl: string;
   baseUrl: string;
-  proxy: string | undefined;
+  proxy?: string | undefined;
+  activationKey?: string | undefined;
+  orgId?: string | undefined;
+};
+
+export type RegistrationSlice = {
   type: RegistrationType;
-  activationKey: ActivationKeys['name'];
-  orgId: string | undefined;
-  satelliteRegistration: {
-    command: string | undefined;
-    caCert: string | undefined;
-  };
-  aap: {
-    enabled: boolean;
-    callbackUrl: string | undefined;
-    hostConfigKey: string | undefined;
-    tlsCertificateAuthority: string | undefined;
-    skipTlsVerification: boolean | undefined;
-  };
+  options?: RegistrationOptions | undefined;
+  satellite?: SatelliteRegistration | undefined;
+  aap?: AapRegistration | undefined;
 };

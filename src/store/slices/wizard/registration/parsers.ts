@@ -8,21 +8,17 @@ import { RegistrationSlice } from './types';
 import { isRhel } from '../output';
 import { RequestLike } from '../types';
 
-const parseServerUrl = (
-  customizations: Customizations,
-): RegistrationSlice['serverUrl'] => {
+const parseServerUrl = (customizations: Customizations): string => {
   if (!hasSubscription(customizations)) {
-    return initialState.serverUrl;
+    return '';
   }
 
   return customizations.subscription['server-url'];
 };
 
-const parseBaseUrl = (
-  customizations: Customizations,
-): RegistrationSlice['baseUrl'] => {
+const parseBaseUrl = (customizations: Customizations): string => {
   if (!hasSubscription(customizations)) {
-    return initialState.baseUrl;
+    return '';
   }
 
   return customizations.subscription['base-url'];
@@ -50,9 +46,9 @@ const parseRegistrationType = (
 const parseActivationKey = (
   customizations: Customizations,
   distribution?: Distributions | undefined,
-): RegistrationSlice['activationKey'] => {
+): string | undefined => {
   if (!isRhel(distribution) || !hasSubscription(customizations)) {
-    return initialState.activationKey;
+    return undefined;
   }
 
   return customizations.subscription['activation-key'];
@@ -61,9 +57,9 @@ const parseActivationKey = (
 const parseOrgId = (
   customizations: Customizations,
   distribution?: Distributions | undefined,
-): RegistrationSlice['orgId'] => {
+): string | undefined => {
   if (!isRhel(distribution) || !hasSubscription(customizations)) {
-    return initialState.orgId;
+    return undefined;
   }
 
   return String(customizations.subscription['organization']);
@@ -72,10 +68,10 @@ const parseOrgId = (
 const parseSatellite = ({
   files,
   cacerts,
-}: Customizations): RegistrationSlice['satelliteRegistration'] => {
+}: Customizations): RegistrationSlice['satellite'] => {
   const satelliteFile = files?.find((file) => file.path === SATELLITE_PATH);
   if (!satelliteFile || !satelliteFile.data) {
-    return initialState.satelliteRegistration;
+    return undefined;
   }
 
   return {
@@ -88,11 +84,10 @@ const parseAap = ({
   aap_registration,
 }: Customizations): RegistrationSlice['aap'] => {
   if (!aap_registration) {
-    return initialState.aap;
+    return undefined;
   }
 
   return {
-    enabled: true,
     callbackUrl: aap_registration.ansible_callback_url,
     hostConfigKey: aap_registration.host_config_key,
     tlsCertificateAuthority: aap_registration.tls_certificate_authority,
@@ -104,13 +99,15 @@ const parseRegistrationRequest = ({
   customizations,
   distribution,
 }: RequestLike): RegistrationSlice => ({
-  serverUrl: parseServerUrl(customizations),
-  baseUrl: parseBaseUrl(customizations),
   type: parseRegistrationType(customizations, distribution),
-  activationKey: parseActivationKey(customizations, distribution),
-  orgId: parseOrgId(customizations, distribution),
-  proxy: customizations.subscription?.insights_client_proxy,
-  satelliteRegistration: parseSatellite(customizations),
+  options: {
+    serverUrl: parseServerUrl(customizations),
+    baseUrl: parseBaseUrl(customizations),
+    activationKey: parseActivationKey(customizations, distribution),
+    orgId: parseOrgId(customizations, distribution),
+    proxy: customizations.subscription?.insights_client_proxy,
+  },
+  satellite: parseSatellite(customizations),
   aap: parseAap(customizations),
 });
 
