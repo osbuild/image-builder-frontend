@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -37,8 +35,6 @@ import {
   selectIsoPayloadReference,
   selectRegistrationSlice,
   selectRegistrationType,
-  selectSatelliteCaCertificate,
-  selectSatelliteRegistrationCommand,
   selectSnapshotDate,
   selectSystem,
   selectTemplate,
@@ -57,7 +53,6 @@ import {
   isSnapshotValid,
   isValidUrl,
   validateMultipleCertificates,
-  validateSatelliteCommand,
 } from '../validators';
 
 export type StepValidation = {
@@ -157,11 +152,6 @@ export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand,
-  );
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
-  const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
   const { isError: isErrorKeyInfo } = useShowActivationKeyQuery(
     { name: activationKey! },
@@ -170,36 +160,11 @@ export function useRegistrationValidation(): StepValidation {
     },
   );
 
-  if (registrationType === 'register-later') {
+  if (
+    registrationType === 'register-later' ||
+    registrationType === 'register-satellite'
+  ) {
     return { errors: {}, disabledNext: false };
-  }
-
-  if (registrationType === 'register-satellite') {
-    const errors: Record<string, string> = {};
-
-    if (caCertificate === '') {
-      errors.certificate =
-        'Valid certificate must be present if you are registering Satellite';
-    }
-
-    const commandValidation = validateSatelliteCommand(
-      registrationCommand,
-      currentTimeSeconds,
-    );
-    Object.assign(errors, commandValidation);
-
-    if (commandValidation.expired) {
-      return {
-        errors,
-        disabledNext: caCertificate === undefined,
-      };
-    }
-
-    return {
-      errors,
-      disabledNext:
-        Object.keys(errors).length > 0 || caCertificate === undefined,
-    };
   }
 
   if (isOnPremise) {
