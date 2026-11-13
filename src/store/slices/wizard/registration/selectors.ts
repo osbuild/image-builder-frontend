@@ -16,12 +16,12 @@ export const selectProxy = (state: RootState) => {
 
 export const selectRhc = (state: RootState) => {
   if (!state.wizard.registration.options) return false;
-  return state.wizard.registration.options.rhc;
+  return Boolean(state.wizard.registration.options.rhc);
 };
 
 export const selectInsights = (state: RootState) => {
   if (!state.wizard.registration.options) return false;
-  return state.wizard.registration.options.insights;
+  return Boolean(state.wizard.registration.options.insights);
 };
 
 export const selectRegistrationType = (state: RootState) => {

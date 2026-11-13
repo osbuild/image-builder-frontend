@@ -67,11 +67,13 @@ import {
   selectImageSourceType,
   selectImageTypes,
   selectIsImageMode,
+  selectRegistrationSlice,
   selectSystem,
   selectTimezone,
   selectUsersSlice,
   validateCloudSlice,
   validateFilesystemSlice,
+  validateRegistrationSlice,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
@@ -184,6 +186,12 @@ const CreateImageWizard = () => {
     restrictions.users.shouldHide,
   );
 
+  const registration = useAppSelector(selectRegistrationSlice);
+  const { errors: registrationErrors } = validateRegistrationSlice(
+    registration,
+    restrictions.registration.shouldHide,
+  );
+
   // The "Local images" source is a fake door: it only shows a coming-soon
   // note, so the wizard must not proceed past base settings.
   const localImageSourceSelected =
@@ -196,6 +204,7 @@ const CreateImageWizard = () => {
     detailsValidation.disabledNext ||
     activationKeyStatus !== 'VALID' ||
     registrationValidation.disabledNext ||
+    registrationErrors.length > 0 ||
     aapValidation.disabledNext ||
     snapshotValidation.disabledNext ||
     imagePullValidation.disabledNext;
