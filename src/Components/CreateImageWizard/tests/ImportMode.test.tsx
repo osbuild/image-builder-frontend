@@ -10,6 +10,7 @@ import {
   clickWithWait,
   composeHandlers,
   createArchitecturesHandler,
+  createBlueprintsHandler,
   createUser,
   typeWithWait,
 } from '@/test/testUtils';
@@ -32,6 +33,7 @@ describe('ImportMode', () => {
     fetchMock.mockResponse(
       composeHandlers(
         createArchitecturesHandler({ architectures: mockArchitectures }),
+        createBlueprintsHandler(),
         createDefaultFetchHandler(),
       ),
     );
@@ -145,7 +147,9 @@ describe('ImportMode', () => {
 
     // File system configuration
     expect(
-      await screen.findByText(/The Wizard only supports MiB or GiB/),
+      await screen.findByText(
+        'The Wizard only supports MiB or GiB. Adjust or keep the current value.',
+      ),
     ).toBeInTheDocument();
 
     // Timezone

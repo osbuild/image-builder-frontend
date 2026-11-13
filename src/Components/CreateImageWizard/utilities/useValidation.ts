@@ -1,7 +1,3 @@
-import { useState } from 'react';
-
-import { jwtDecode } from 'jwt-decode';
-
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -37,9 +33,6 @@ import {
   selectIsOfficialImage,
   selectIsoPayloadReference,
   selectRegistrationSlice,
-  selectRegistrationType,
-  selectSatelliteCaCertificates,
-  selectSatelliteRegistrationCommand,
   selectSnapshotDate,
   selectSystem,
   selectTemplate,
@@ -152,71 +145,6 @@ export function useBlueprintValidation(): BlueprintValidation {
 
 export function useIsBlueprintValid(): boolean {
   return useBlueprintValidation().isValid;
-}
-
-export function useRegistrationValidation(): StepValidation {
-  const registrationType = useAppSelector(selectRegistrationType);
-  const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand,
-  );
-  const caCertificates = useAppSelector(selectSatelliteCaCertificates);
-  const [currentTimeSeconds] = useState(() => Date.now() / 1000);
-
-  if (registrationType !== 'register-satellite') {
-    return { errors: {}, disabledNext: false };
-  }
-
-  const errors: Record<string, string> = {};
-  const commandTrimmed =
-    typeof registrationCommand === 'string' ? registrationCommand.trim() : '';
-
-  if (caCertificates?.length) {
-    const validation = validateMultipleCertificates(caCertificates.join('\n'));
-    if (validation.errors.length > 0) {
-      errors.certificate = validation.errors.join(' ');
-    } else if (validation.validCertificates.length === 0) {
-      errors.certificate = 'No valid certificates found in the input.';
-    }
-  }
-
-  if (commandTrimmed === '') {
-    Object.assign(errors, {
-      command: 'No registration command for Satellite registration',
-    });
-  } else {
-    const bearerJwtRegex = /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/;
-    const match = commandTrimmed.match(bearerJwtRegex);
-    if (!match) {
-      Object.assign(errors, { command: 'Invalid or missing token' });
-    } else {
-      try {
-        const token = match[1];
-        const decoded = jwtDecode(token);
-        if (decoded.exp) {
-          const dayInSeconds = 86400;
-          if (decoded.exp < currentTimeSeconds + dayInSeconds) {
-            const expirationDate = new Date(decoded.exp * 1000);
-            Object.assign(errors, {
-              expired:
-                'The token is already expired or will expire by next day. Expiration date: ' +
-                expirationDate,
-            });
-            return {
-              errors,
-              disabledNext: true,
-            };
-          }
-        }
-      } catch {
-        Object.assign(errors, { command: 'Invalid or missing token' });
-      }
-    }
-  }
-
-  return {
-    errors,
-    disabledNext: Object.keys(errors).length > 0,
-  };
 }
 
 export function useAAPValidation(): StepValidation {

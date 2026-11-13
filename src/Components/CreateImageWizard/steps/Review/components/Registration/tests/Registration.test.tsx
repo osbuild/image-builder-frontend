@@ -229,6 +229,7 @@ describe('Registration', () => {
       );
 
       expect(screen.getByText('Registration method')).toBeInTheDocument();
+      expect(screen.getByText('Register with satellite')).toBeInTheDocument();
     });
   });
 

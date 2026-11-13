@@ -1,38 +1,3 @@
-import { jwtDecode } from 'jwt-decode';
-
-export const validateSatelliteCommand = (
-  command: string | undefined,
-  currentTimeSeconds: number,
-): { command?: string; expired?: string } => {
-  const commandTrimmed = typeof command === 'string' ? command.trim() : '';
-
-  if (!commandTrimmed) {
-    return { command: 'No registration command for Satellite registration' };
-  }
-
-  const bearerJwtRegex = /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/;
-  const match = commandTrimmed.match(bearerJwtRegex);
-  if (!match) {
-    return { command: 'Invalid or missing token' };
-  }
-
-  try {
-    const decoded = jwtDecode(match[1]);
-    if (decoded.exp && decoded.exp < currentTimeSeconds + 86400) {
-      const expirationDate = new Date(decoded.exp * 1000);
-      return {
-        expired:
-          'The token is already expired or will expire by next day. Expiration date: ' +
-          expirationDate,
-      };
-    }
-  } catch {
-    return { command: 'Invalid or missing token' };
-  }
-
-  return {};
-};
-
 export const isBlueprintNameValid = (blueprintName: string) =>
   blueprintName.length >= 2 &&
   blueprintName.length <= 100 &&

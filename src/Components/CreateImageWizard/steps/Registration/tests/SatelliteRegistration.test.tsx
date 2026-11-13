@@ -1,7 +1,17 @@
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
-import { emptySatelliteState, initialState } from '@/store/slices/wizard';
-import { createUser } from '@/test/testUtils';
+import {
+  emptySatelliteState,
+  initialState,
+  setForceShowErrors,
+} from '@/store/slices/wizard';
+import {
+  clearWithWait,
+  clickWithWait,
+  createUser,
+  tabWithWait,
+  typeWithWait,
+} from '@/test/testUtils';
 
 import { renderRegistrationStep, selectSatelliteRegistration } from './helpers';
 import { VALID_CERTIFICATE, VALID_SATELLITE_COMMAND } from './mocks';
@@ -34,23 +44,36 @@ describe('Satellite Registration', () => {
   });
 
   describe('Certificate Upload', () => {
-    test('displays certificate upload field', async () => {
-      renderRegistrationStep({
+    test('shows a required certificate error when wizard validation is triggered', async () => {
+      const { store } = renderRegistrationStep({
         registration: {
-          ...initialState.registration,
           type: 'register-satellite',
+          satellite: {
+            ...emptySatelliteState,
+            command: VALID_SATELLITE_COMMAND,
+          },
         },
+      });
+      const certificateInput = await screen.findByRole('textbox', {
+        name: /file upload/i,
       });
 
       expect(
-        await screen.findByRole('button', { name: /upload/i }),
-      ).toBeInTheDocument();
-      expect(
         screen.getByText(/upload a certificate file/i),
       ).toBeInTheDocument();
+      expect(certificateInput).not.toHaveAttribute('aria-invalid', 'true');
+
+      act(() => {
+        store.dispatch(setForceShowErrors());
+      });
+
+      expect(
+        screen.getByText(/valid certificate must be present/i),
+      ).toBeInTheDocument();
+      expect(certificateInput).toHaveAttribute('aria-invalid', 'true');
     });
 
-    test('shows success message when certificate is uploaded', async () => {
+    test('shows loaded certificate when certificate exists in state', async () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
@@ -63,11 +86,86 @@ describe('Satellite Registration', () => {
       });
 
       expect(
-        await screen.findByText(/certificate was uploaded/i),
+        await screen.findByText(/CA certificate loaded/i),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('textbox', { name: /read only filename/i }),
       ).toHaveValue('CA detected');
+    });
+
+    test('stores a valid certificate entered into the empty editor', async () => {
+      const { store } = renderRegistrationStep({
+        registration: {
+          ...initialState.registration,
+          type: 'register-satellite',
+          satellite: {
+            ...emptySatelliteState,
+            command: VALID_SATELLITE_COMMAND,
+          },
+        },
+      });
+      const user = createUser();
+      const certificateInput = screen.getByRole('textbox', {
+        name: /file upload/i,
+      });
+
+      await clickWithWait(user, certificateInput);
+      await typeWithWait(user, certificateInput, VALID_CERTIFICATE);
+      await tabWithWait(user);
+
+      const caCerts = store.getState().wizard.registration.satellite?.caCerts;
+      expect(caCerts).toHaveLength(1);
+      expect(caCerts?.[0]).toContain(VALID_CERTIFICATE.split('\n')[1]);
+    });
+
+    test('keeps invalid edits pending until a valid certificate is entered', async () => {
+      const { store } = renderRegistrationStep({
+        registration: {
+          ...initialState.registration,
+          type: 'register-satellite',
+          satellite: {
+            ...emptySatelliteState,
+            command: VALID_SATELLITE_COMMAND,
+            caCerts: [VALID_CERTIFICATE],
+          },
+        },
+      });
+      const user = createUser();
+      const certificateInput = screen.getByRole('textbox', {
+        name: /file upload/i,
+      });
+
+      await clickWithWait(user, certificateInput);
+      await clearWithWait(user, certificateInput);
+      await typeWithWait(user, certificateInput, 'invalid certificate');
+
+      expect(
+        screen.queryByText(/No valid certificate format found/i),
+      ).not.toBeInTheDocument();
+
+      await tabWithWait(user);
+
+      expect(
+        await screen.findByText(/No valid certificate format found/i),
+      ).toBeInTheDocument();
+      expect(certificateInput).toHaveValue('invalid certificate');
+      expect(store.getState().wizard.registration.satellite?.caCerts).toEqual([
+        VALID_CERTIFICATE,
+      ]);
+      expect(store.getState().wizard.validation.pendingInputs).toHaveLength(1);
+
+      await clickWithWait(user, certificateInput);
+      await clearWithWait(user, certificateInput);
+      await typeWithWait(user, certificateInput, VALID_CERTIFICATE);
+      await tabWithWait(user);
+
+      expect(
+        await screen.findByText('CA certificate loaded'),
+      ).toBeInTheDocument();
+      expect(store.getState().wizard.validation.pendingInputs).toHaveLength(0);
+      expect(
+        store.getState().wizard.registration.satellite?.caCerts,
+      ).toHaveLength(1);
     });
   });
 
