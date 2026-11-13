@@ -63,7 +63,7 @@ describe('Satellite Registration', () => {
       });
 
       expect(
-        await screen.findByText(/certificate was uploaded/i),
+        await screen.findByText(/certificate was successfully uploaded/i),
       ).toBeInTheDocument();
       expect(
         screen.getByRole('textbox', { name: /read only filename/i }),

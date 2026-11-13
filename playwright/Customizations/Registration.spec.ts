@@ -348,7 +348,7 @@ registrationModes.forEach(
             );
             await expect(
               frame.getByText(
-                'The token is already expired or will expire by next day.',
+                /The token is already expired or will expire within 24 hours/,
               ),
             ).toBeVisible();
             await expect(
@@ -364,12 +364,13 @@ registrationModes.forEach(
             ).toBeHidden();
             await expect(
               frame.getByText(
-                'The token is already expired or will expire by next day.',
+                /The token is already expired or will expire within 24 hours/,
               ),
             ).toBeHidden();
 
             // Test valid command with standard token
             await registrationCommandInput.fill(SATELLITE_COMMAND);
+            await registrationCommandInput.blur();
             await expect(
               frame.getByText('Invalid or missing token'),
             ).toBeHidden();
