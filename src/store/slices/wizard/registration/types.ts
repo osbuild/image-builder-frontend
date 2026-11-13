@@ -1,14 +1,14 @@
-import { REGISTER_NOW_TYPES } from './constants';
+import z from 'zod';
 
-export type RegisterNowType = (typeof REGISTER_NOW_TYPES)[number];
+import {
+  registerNowLiterals,
+  registrationLiterals,
+  registrationOptionsSchema,
+  registrationSliceSchema,
+} from './schemas';
 
-export type RegistrationType =
-  | 'register-later'
-  | 'register-now'
-  | 'register-now-insights'
-  | 'register-now-rhc'
-  | 'register-satellite'
-  | 'register-aap';
+export type RegisterNowType = z.infer<typeof registerNowLiterals>;
+export type RegistrationType = z.infer<typeof registrationLiterals>;
 
 export type AapRegistration = {
   callbackUrl: string;
@@ -22,17 +22,9 @@ export type SatelliteRegistration = {
   caCert?: string | undefined;
 };
 
-export type RegistrationOptions = {
-  serverUrl: string;
-  baseUrl: string;
-  proxy?: string | undefined;
-  activationKey?: string | undefined;
-  orgId?: string | undefined;
-};
+export type RegistrationOptions = z.infer<typeof registrationOptionsSchema>;
 
-export type RegistrationSlice = {
-  type: RegistrationType;
-  options?: RegistrationOptions | undefined;
+export type RegistrationSlice = z.input<typeof registrationSliceSchema> & {
   satellite?: SatelliteRegistration | undefined;
   aap?: AapRegistration | undefined;
 };

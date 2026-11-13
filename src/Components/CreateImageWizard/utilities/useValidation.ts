@@ -35,7 +35,7 @@ import {
   selectIsImageMode,
   selectIsOfficialImage,
   selectIsoPayloadReference,
-  selectOrgId,
+  selectRegistrationSlice,
   selectRegistrationType,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
@@ -46,6 +46,7 @@ import {
   selectUsersSlice,
   validateCloudSlice,
   validateFilesystemSlice,
+  validateRegistrationSlice,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
@@ -109,6 +110,12 @@ export function useBlueprintValidation(): BlueprintValidation {
     restrictions.users.shouldHide,
   );
 
+  const registrationSlice = useAppSelector(selectRegistrationSlice);
+  const { errors: registrationErrors } = validateRegistrationSlice(
+    registrationSlice,
+    restrictions.registration.shouldHide,
+  );
+
   const hasPendingInputs = useAppSelector(selectHasPendingInputs);
 
   const baseSettingsInvalid =
@@ -118,6 +125,7 @@ export function useBlueprintValidation(): BlueprintValidation {
     details.disabledNext ||
     details.isPending ||
     registration.disabledNext ||
+    registrationErrors.length > 0 ||
     snapshot.disabledNext ||
     imagePull.disabledNext ||
     cloudErrors.length > 0 ||
@@ -148,7 +156,6 @@ export function useIsBlueprintValid(): boolean {
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
-  const orgId = useAppSelector(selectOrgId);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand,
@@ -165,47 +172,6 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType === 'register-later') {
     return { errors: {}, disabledNext: false };
-  }
-
-  if (isOnPremise && registrationType !== 'register-satellite') {
-    const errors: Record<string, string> = {};
-    let disabledNext = false;
-
-    if (!activationKey?.trim()) {
-      errors.activationKey = 'Activation Key not set';
-      disabledNext = true;
-    }
-
-    if (!orgId?.trim()) {
-      errors.orgId = 'Organization ID not set';
-      disabledNext = true;
-    } else if (!/^\d+$/.test(orgId.trim())) {
-      errors.orgId = 'Organization ID should be a numeric value';
-      disabledNext = true;
-    }
-
-    if (Object.keys(errors).length > 0) {
-      return { errors, disabledNext };
-    }
-  }
-
-  if (registrationType !== 'register-satellite' && !activationKey) {
-    return {
-      errors: { activationKey: 'Missing activation key' },
-      disabledNext: true,
-    };
-  }
-
-  if (
-    registrationType !== 'register-satellite' &&
-    activationKey &&
-    isErrorKeyInfo &&
-    !isOnPremise
-  ) {
-    return {
-      errors: { activationKey: 'Invalid activation key' },
-      disabledNext: true,
-    };
   }
 
   if (registrationType === 'register-satellite') {
@@ -233,6 +199,17 @@ export function useRegistrationValidation(): StepValidation {
       errors,
       disabledNext:
         Object.keys(errors).length > 0 || caCertificate === undefined,
+    };
+  }
+
+  if (isOnPremise) {
+    return { errors: {}, disabledNext: false };
+  }
+
+  if (activationKey && isErrorKeyInfo) {
+    return {
+      errors: { activationKey: 'Invalid activation key' },
+      disabledNext: true,
     };
   }
 
