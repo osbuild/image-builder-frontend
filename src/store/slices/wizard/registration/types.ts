@@ -5,6 +5,7 @@ import {
   registrationLiterals,
   registrationOptionsSchema,
   registrationSliceSchema,
+  satelliteRegistrationSchema,
 } from './schemas';
 
 export type RegisterNowType = z.infer<typeof registerNowLiterals>;
@@ -17,14 +18,9 @@ export type AapRegistration = {
   skipTlsVerification?: boolean | undefined;
 };
 
-export type SatelliteRegistration = {
-  command: string;
-  caCert?: string | undefined;
-};
-
+export type SatelliteRegistration = z.input<typeof satelliteRegistrationSchema>;
 export type RegistrationOptions = z.infer<typeof registrationOptionsSchema>;
 
 export type RegistrationSlice = z.input<typeof registrationSliceSchema> & {
-  satellite?: SatelliteRegistration | undefined;
   aap?: AapRegistration | undefined;
 };
