@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   FormGroup,
@@ -8,8 +8,7 @@ import {
 } from '@patternfly/react-core';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
-import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
-import { ValidatedInputAndTextArea } from '@/Components/ValidatedInputs';
+import { ValidatedTextArea } from '@/Components/ValidatedInputs';
 import { REGISTRATION_DOCS_URL, SATELLITE_SERVICE } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -17,34 +16,38 @@ import {
   changeSatelliteRegistrationCommand,
   removeEnabledService,
   selectSatelliteRegistrationCommand,
+  validateSatelliteCommand,
 } from '@/store/slices/wizard';
 
 const SatelliteRegistrationCommand = () => {
   const dispatch = useAppDispatch();
-  const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand,
-  );
-  const stepValidation = useRegistrationValidation();
+  const command = useAppSelector(selectSatelliteRegistrationCommand);
+  const [draft, setDraft] = useState(command ?? '');
 
-  const handleChange = (e: React.FormEvent, value: string) => {
-    if (!registrationCommand && !!value) {
-      dispatch(addEnabledService(SATELLITE_SERVICE));
-    } else if (!!registrationCommand && !value) {
-      dispatch(removeEnabledService(SATELLITE_SERVICE));
-    }
-    dispatch(changeSatelliteRegistrationCommand(value));
-  };
+  useEffect(() => {
+    // Reset local drafts when the command changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft(command ?? '');
+  }, [command]);
 
   return (
     <FormGroup label='Satellite registration command' isRequired>
-      <ValidatedInputAndTextArea
-        inputType={'textArea'}
+      <ValidatedTextArea
+        id='command'
         ariaLabel='registration command'
-        value={registrationCommand || ''}
-        onChange={handleChange}
-        stepValidation={stepValidation}
-        fieldName='command'
-        warning={stepValidation.errors.expired}
+        value={draft}
+        onChange={(_, value) => setDraft(value)}
+        validator={(value) => validateSatelliteCommand(value)}
+        onCommit={(candidate) => {
+          if (!candidate) return;
+
+          dispatch(addEnabledService(SATELLITE_SERVICE));
+          dispatch(changeSatelliteRegistrationCommand(candidate));
+        }}
+        onClear={() => {
+          dispatch(removeEnabledService(SATELLITE_SERVICE));
+          dispatch(changeSatelliteRegistrationCommand(''));
+        }}
       />
       <FormHelperText>
         <HelperText>

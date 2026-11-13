@@ -12,6 +12,7 @@ import {
 } from '@/store/slices/wizard/tests/mockWizardState';
 
 import { clearUnsupportedRegistration } from '../listeners';
+import { emptyAapState } from '../registration/state';
 
 const createState = (
   mode: 'image' | 'package',
@@ -41,7 +42,7 @@ describe('clearUnsupportedRegistration', () => {
   it('disables AAP registration when switching to image mode', () => {
     const listenerApi = createListenerApi(
       createState('image', {
-        aap: { ...initialState.registration.aap, enabled: true },
+        aap: emptyAapState,
       }),
     );
 
@@ -54,7 +55,7 @@ describe('clearUnsupportedRegistration', () => {
     const listenerApi = createListenerApi(
       createState('package', {
         type: 'register-satellite',
-        aap: { ...initialState.registration.aap, enabled: true },
+        aap: emptyAapState,
       }),
     );
 

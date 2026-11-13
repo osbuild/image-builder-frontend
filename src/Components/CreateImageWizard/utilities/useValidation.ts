@@ -1,7 +1,3 @@
-import { useState } from 'react';
-
-import { jwtDecode } from 'jwt-decode';
-
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -37,10 +33,8 @@ import {
   selectIsImageMode,
   selectIsOfficialImage,
   selectIsoPayloadReference,
-  selectOrgId,
+  selectRegistrationSlice,
   selectRegistrationType,
-  selectSatelliteCaCertificate,
-  selectSatelliteRegistrationCommand,
   selectSnapshotDate,
   selectSystem,
   selectTemplate,
@@ -48,6 +42,7 @@ import {
   selectUsersSlice,
   validateCloudSlice,
   validateFilesystemSlice,
+  validateRegistrationSlice,
   validateSystemSlice,
   validateUsersSlice,
 } from '@/store/slices/wizard';
@@ -110,6 +105,12 @@ export function useBlueprintValidation(): BlueprintValidation {
     restrictions.users.shouldHide,
   );
 
+  const registrationSlice = useAppSelector(selectRegistrationSlice);
+  const { errors: registrationErrors } = validateRegistrationSlice(
+    registrationSlice,
+    restrictions.registration.shouldHide,
+  );
+
   const hasPendingInputs = useAppSelector(selectHasPendingInputs);
 
   const baseSettingsInvalid =
@@ -119,6 +120,7 @@ export function useBlueprintValidation(): BlueprintValidation {
     details.disabledNext ||
     details.isPending ||
     registration.disabledNext ||
+    registrationErrors.length > 0 ||
     snapshot.disabledNext ||
     imagePull.disabledNext ||
     cloudErrors.length > 0 ||
@@ -149,13 +151,7 @@ export function useIsBlueprintValid(): boolean {
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
-  const orgId = useAppSelector(selectOrgId);
   const isOnPremise = useAppSelector(selectIsOnPremise);
-  const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand,
-  );
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
-  const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
   const { isError: isErrorKeyInfo } = useShowActivationKeyQuery(
     { name: activationKey! },
@@ -164,101 +160,21 @@ export function useRegistrationValidation(): StepValidation {
     },
   );
 
-  if (registrationType === 'register-later') {
+  if (
+    registrationType === 'register-later' ||
+    registrationType === 'register-satellite'
+  ) {
     return { errors: {}, disabledNext: false };
   }
 
-  if (isOnPremise && registrationType !== 'register-satellite') {
-    const errors: Record<string, string> = {};
-    let disabledNext = false;
-
-    if (!activationKey?.trim()) {
-      errors.activationKey = 'Activation Key not set';
-      disabledNext = true;
-    }
-
-    if (!orgId?.trim()) {
-      errors.orgId = 'Organization ID not set';
-      disabledNext = true;
-    } else if (!/^\d+$/.test(orgId.trim())) {
-      errors.orgId = 'Organization ID should be a numeric value';
-      disabledNext = true;
-    }
-
-    if (Object.keys(errors).length > 0) {
-      return { errors, disabledNext };
-    }
+  if (isOnPremise) {
+    return { errors: {}, disabledNext: false };
   }
 
-  if (registrationType !== 'register-satellite' && !activationKey) {
-    return {
-      errors: { activationKey: 'Missing activation key' },
-      disabledNext: true,
-    };
-  }
-
-  if (
-    registrationType !== 'register-satellite' &&
-    activationKey &&
-    isErrorKeyInfo &&
-    !isOnPremise
-  ) {
+  if (activationKey && isErrorKeyInfo) {
     return {
       errors: { activationKey: 'Invalid activation key' },
       disabledNext: true,
-    };
-  }
-
-  if (registrationType === 'register-satellite') {
-    const errors: Record<string, string> = {};
-    const commandTrimmed =
-      typeof registrationCommand === 'string' ? registrationCommand.trim() : '';
-
-    if (caCertificate === '') {
-      Object.assign(errors, {
-        certificate:
-          'Valid certificate must be present if you are registering Satellite',
-      });
-    }
-
-    if (commandTrimmed === '') {
-      Object.assign(errors, {
-        command: 'No registration command for Satellite registration',
-      });
-    } else {
-      const bearerJwtRegex = /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/;
-      const match = commandTrimmed.match(bearerJwtRegex);
-      if (!match) {
-        Object.assign(errors, { command: 'Invalid or missing token' });
-      } else {
-        try {
-          const token = match[1];
-          const decoded = jwtDecode(token);
-          if (decoded.exp) {
-            const dayInSeconds = 86400;
-            if (decoded.exp < currentTimeSeconds + dayInSeconds) {
-              const expirationDate = new Date(decoded.exp * 1000);
-              Object.assign(errors, {
-                expired:
-                  'The token is already expired or will expire by next day. Expiration date: ' +
-                  expirationDate,
-              });
-              return {
-                errors: errors,
-                disabledNext: caCertificate === undefined,
-              };
-            }
-          }
-        } catch {
-          Object.assign(errors, { command: 'Invalid or missing token' });
-        }
-      }
-    }
-
-    return {
-      errors: errors,
-      disabledNext:
-        Object.keys(errors).length > 0 || caCertificate === undefined,
     };
   }
 

@@ -1,33 +1,26 @@
-import { ActivationKeys } from '@/store/api/rhsm';
+import z from 'zod';
 
-import { REGISTER_NOW_TYPES } from './constants';
+import {
+  registerNowLiterals,
+  registrationLiterals,
+  registrationOptionsSchema,
+  registrationSliceSchema,
+  satelliteRegistrationSchema,
+} from './schemas';
 
-export type RegisterNowType = (typeof REGISTER_NOW_TYPES)[number];
+export type RegisterNowType = z.infer<typeof registerNowLiterals>;
+export type RegistrationType = z.infer<typeof registrationLiterals>;
 
-export type RegistrationType =
-  | 'register-later'
-  | 'register-now'
-  | 'register-now-insights'
-  | 'register-now-rhc'
-  | 'register-satellite'
-  | 'register-aap';
+export type AapRegistration = {
+  callbackUrl: string;
+  hostConfigKey: string;
+  tlsCertificateAuthority?: string | undefined;
+  skipTlsVerification?: boolean | undefined;
+};
 
-export type RegistrationSlice = {
-  serverUrl: string;
-  baseUrl: string;
-  proxy: string | undefined;
-  type: RegistrationType;
-  activationKey: ActivationKeys['name'];
-  orgId: string | undefined;
-  satelliteRegistration: {
-    command: string | undefined;
-    caCert: string | undefined;
-  };
-  aap: {
-    enabled: boolean;
-    callbackUrl: string | undefined;
-    hostConfigKey: string | undefined;
-    tlsCertificateAuthority: string | undefined;
-    skipTlsVerification: boolean | undefined;
-  };
+export type SatelliteRegistration = z.input<typeof satelliteRegistrationSchema>;
+export type RegistrationOptions = z.infer<typeof registrationOptionsSchema>;
+
+export type RegistrationSlice = z.input<typeof registrationSliceSchema> & {
+  aap?: AapRegistration | undefined;
 };

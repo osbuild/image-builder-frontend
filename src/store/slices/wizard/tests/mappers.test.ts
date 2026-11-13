@@ -34,7 +34,7 @@ describe('mapFileCustomizations', () => {
       registration: {
         ...initialState.registration,
         type: 'register-satellite',
-        satelliteRegistration: {
+        satellite: {
           command: 'satellite-register --org=123',
           caCert: undefined,
         },
@@ -54,7 +54,7 @@ describe('mapFileCustomizations', () => {
       registration: {
         ...initialState.registration,
         type: 'register-satellite',
-        satelliteRegistration: {
+        satellite: {
           command: 'satellite-register --org=123',
           caCert: undefined,
         },
@@ -70,7 +70,7 @@ describe('mapFileCustomizations', () => {
       registration: {
         ...initialState.registration,
         type: 'register-now-rhc',
-        satelliteRegistration: {
+        satellite: {
           command: 'satellite-register --org=123',
           caCert: undefined,
         },
