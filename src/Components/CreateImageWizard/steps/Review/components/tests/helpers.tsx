@@ -1,8 +1,8 @@
-import type {
-  CustomizationType,
-  RestrictionStrategy,
+import {
+  ALL_CUSTOMIZATIONS,
+  type CustomizationType,
+  type RestrictionStrategy,
 } from '@/store/api/distributions';
-import { ALL_CUSTOMIZATIONS } from '@/store/api/distributions/constants';
 
 export const createDefaultRestrictions = (
   overrides: Partial<
