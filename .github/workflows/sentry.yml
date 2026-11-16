@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         env:
-          ENABLE_SENTRY:  ${{ secrets.ENABLE_SENTRY }}
+          ENABLE_SENTRY:  ${{ vars.ENABLE_SENTRY }}
           SENTRY_RELEASE: ${{ github.event.inputs.commit_hash && github.event.inputs.commit_hash }}
           SENTRY_AUTH_TOKEN: ${{ github.event.inputs.commit_hash && secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
