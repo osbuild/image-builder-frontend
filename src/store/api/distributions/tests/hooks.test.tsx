@@ -4,7 +4,6 @@ import {
   computeImageTypeCustomizationSupport,
   computeRestrictions,
   CustomizationType,
-  DISTRO_DETAILS,
   isCustomizationSupported,
   RestrictionStrategy,
   SupportContext,
@@ -19,6 +18,8 @@ import {
   defaultContext,
   mockImageTypes,
 } from './mocks';
+
+import { DISTRO_DETAILS } from '../constants';
 
 describe('useCustomizationRestrictions hook logic', () => {
   describe('default behavior (package mode, not on-premise)', () => {
