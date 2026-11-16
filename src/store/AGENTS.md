@@ -20,6 +20,12 @@ Paths below are relative to `src/store/` unless prefixed with `@/` or described 
 
 Host command execution and filesystem access are intentional Cockpit capabilities. Do not flag an authenticated operator's ability to perform operations already available through their terminal as a vulnerability, or apply hosted multi-tenant assumptions to local operations. Security findings must identify a concrete trust-boundary violation or harm—not merely the presence of command execution. Still consider externally supplied data triggering unintended operations, unauthorized privilege use, credential exposure, and accidental data loss.
 
+## Distribution capabilities
+
+- `api/distributions/` abstracts capability data originally introduced as a temporary stand-in for an upcoming endpoint. Hosted now queries `useGetDistributionQuery`; on-prem still uses the static fallback in `constants.ts`.
+- Consumers must use `useCustomizationRestrictions` or `useImageTypeCustomizationSupport` from `@/store/api/distributions`, not read the fallback table. These hooks apply environment and image-mode rules and let us replace the backing data without rewriting consumers.
+- Keep `DISTRO_DETAILS` private to the module; do not re-export it. Only the implementation and its tests should import `constants.ts` locally. `ALL_CUSTOMIZATIONS` remains publicly available for fixtures, but is not evidence that a customization is supported.
+
 ## Wizard state and request conversion
 
 - `slices/wizard/` is split by domain (content, output, registration, etc.), combined in `slices/wizard/slice.ts`. Keep domain state, reducers, selectors, and conversion logic together; add only the files the behavior needs.
