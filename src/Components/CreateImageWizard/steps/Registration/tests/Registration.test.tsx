@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import { initialState } from '@/store/slices/wizard';
+import { emptyRegistrationState, initialState } from '@/store/slices/wizard';
 import { clearWithWait, clickWithWait, createUser } from '@/test/testUtils';
 
 import {
@@ -312,7 +312,10 @@ describe('Registration Component', () => {
         {
           registration: {
             ...initialState.registration,
-            orgId: 'abc123',
+            options: {
+              ...emptyRegistrationState,
+              orgId: 'abc123',
+            },
           },
         },
         { preloadedState: { env: { isOnPremise: true } } },

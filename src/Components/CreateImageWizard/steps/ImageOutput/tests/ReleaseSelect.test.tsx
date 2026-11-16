@@ -170,12 +170,6 @@ describe('ReleaseSelect', () => {
         registration: {
           ...initialState.registration,
           type: 'register-later',
-          activationKey: undefined,
-          orgId: undefined,
-          satelliteRegistration: {
-            command: undefined,
-            caCert: undefined,
-          },
         },
       });
 

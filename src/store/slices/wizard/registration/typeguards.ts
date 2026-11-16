@@ -1,8 +1,7 @@
 import { SATELLITE_PATH } from '@/constants';
 import type { Customizations, Subscription } from '@/store/api/backend';
 
-import { REGISTER_NOW_TYPES } from './constants';
-import type { RegisterNowType, RegistrationType } from './types';
+import type { RegistrationSlice } from './types';
 
 export const hasSubscription = (
   customizations: Customizations,
@@ -20,7 +19,11 @@ export const hasSatelliteCommand = (
 };
 
 export const isRegisterNowType = (
-  type: RegistrationType,
-): type is RegisterNowType => {
-  return REGISTER_NOW_TYPES.includes(type as RegisterNowType);
+  registration: RegistrationSlice,
+): registration is RegistrationSlice => {
+  return (
+    registration.type === 'register-now' ||
+    registration.type === 'register-now-insights' ||
+    registration.type === 'register-now-rhc'
+  );
 };
