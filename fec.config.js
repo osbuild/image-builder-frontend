@@ -57,7 +57,7 @@ if (process.env.NODE_ENV) {
   );
 }
 
-if (process.env.ENABLE_SENTRY) {
+if (process.env.ENABLE_SENTRY === 'true') {
   plugins.push(
     sentryWebpackPlugin({
       ...(process.env.SENTRY_AUTH_TOKEN && {
