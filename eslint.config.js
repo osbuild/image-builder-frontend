@@ -122,6 +122,14 @@ module.exports = defineConfig([
             },
             {
               group: [
+                '**/distributions/constants',
+                '**/distributions/constants.*',
+              ],
+              message:
+                'Use the hooks from @/store/api/distributions. Its constants are internal fallback data.',
+            },
+            {
+              group: [
                 '@/store/slices/wizard/cloud/*',
                 '@/store/slices/wizard/compliance/*',
                 '@/store/slices/wizard/content/*',
