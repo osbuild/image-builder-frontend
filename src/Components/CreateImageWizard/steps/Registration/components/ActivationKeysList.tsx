@@ -22,11 +22,11 @@ import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
-import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { ACTIVATION_KEYS_URL, CDN_PROD_URL, CDN_STAGE_URL } from '@/constants';
 import {
   useCreateActivationKeysMutation,
   useListActivationKeysQuery,
+  useVerifyActivationKey,
 } from '@/store/api/rhsm';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -53,7 +53,6 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
   const forceShowErrors = useAppSelector(selectForceShowErrors);
-  const stepValidation = useRegistrationValidation();
 
   const defaultActivationKeyName = crypto.randomUUID();
 
@@ -69,6 +68,8 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
     isError: isErrorActivationKeys,
     refetch,
   } = useListActivationKeysQuery();
+
+  const keyStatus = useVerifyActivationKey();
 
   useEffect(() => {
     onErrorChange(isErrorActivationKeys);
@@ -348,9 +349,9 @@ const ActivationKeysList = ({ onErrorChange }: RegistrationProps) => {
         </Flex>
         <FormHelperText>
           <HelperText>
-            {forceShowErrors && stepValidation.errors.activationKey ? (
+            {forceShowErrors && keyStatus !== 'VALID' ? (
               <HelperTextItem variant='error'>
-                {stepValidation.errors.activationKey}
+                {keyStatus === 'INVALID' && 'Invalid activation key'}
               </HelperTextItem>
             ) : (
               <HelperTextItem>

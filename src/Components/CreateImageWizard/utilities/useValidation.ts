@@ -16,7 +16,7 @@ import {
 } from '@/store/api/backend';
 import { IMAGE_REGISTRY_HOST } from '@/store/api/backend/onprem/constants';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
-import { useShowActivationKeyQuery } from '@/store/api/rhsm';
+import { useVerifyActivationKey } from '@/store/api/rhsm';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
@@ -82,9 +82,11 @@ export function useBlueprintValidation(): BlueprintValidation {
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
   const imagePull = useImagePullValidation();
+  const activationKeyStatus = useVerifyActivationKey();
   const targetEnvironments = useAppSelector(selectImageTypes);
   const isImageMode = useAppSelector(selectIsImageMode);
   const imageSource = useAppSelector(selectImageSource);
+
   const { restrictions } = useCustomizationRestrictions({
     selectedImageTypes: targetEnvironments,
   });
@@ -118,6 +120,7 @@ export function useBlueprintValidation(): BlueprintValidation {
     aap.disabledNext ||
     details.disabledNext ||
     details.isPending ||
+    activationKeyStatus !== 'VALID' ||
     registration.disabledNext ||
     snapshot.disabledNext ||
     imagePull.disabledNext ||
@@ -157,13 +160,6 @@ export function useRegistrationValidation(): StepValidation {
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
   const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
-  const { isError: isErrorKeyInfo } = useShowActivationKeyQuery(
-    { name: activationKey! },
-    {
-      skip: !activationKey || isOnPremise,
-    },
-  );
-
   if (registrationType === 'register-later') {
     return { errors: {}, disabledNext: false };
   }
@@ -193,18 +189,6 @@ export function useRegistrationValidation(): StepValidation {
   if (registrationType !== 'register-satellite' && !activationKey) {
     return {
       errors: { activationKey: 'Missing activation key' },
-      disabledNext: true,
-    };
-  }
-
-  if (
-    registrationType !== 'register-satellite' &&
-    activationKey &&
-    isErrorKeyInfo &&
-    !isOnPremise
-  ) {
-    return {
-      errors: { activationKey: 'Invalid activation key' },
       disabledNext: true,
     };
   }

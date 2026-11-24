@@ -37,6 +37,7 @@ import {
   useSecuritySummary,
 } from '@/store/api/backend';
 import { useCustomizationRestrictions } from '@/store/api/distributions/hooks';
+import { useVerifyActivationKey } from '@/store/api/rhsm';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectSelectedBlueprintId,
@@ -154,6 +155,7 @@ const CreateImageWizard = () => {
   const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const imagePullValidation = useImagePullValidation();
+  const activationKeyStatus = useVerifyActivationKey();
 
   const hasPendingInputs = useAppSelector(selectHasPendingInputs);
 
@@ -192,6 +194,7 @@ const CreateImageWizard = () => {
     (isImageMode && !imageSource) ||
     cloudErrors.length > 0 ||
     detailsValidation.disabledNext ||
+    activationKeyStatus !== 'VALID' ||
     registrationValidation.disabledNext ||
     aapValidation.disabledNext ||
     snapshotValidation.disabledNext ||
