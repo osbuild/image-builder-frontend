@@ -8,7 +8,11 @@ import { useGetUser } from '@/Hooks';
 import { useCustomizationRestrictions } from '@/store/api/distributions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
-import { changeOrgId, selectImageTypes } from '@/store/slices/wizard';
+import {
+  changeOrgId,
+  selectImageTypes,
+  selectRegistrationType,
+} from '@/store/slices/wizard';
 
 import AnsibleAutomationPlatform from './components/AnsibleAutomationPlatform';
 import Registration from './components/Registration';
@@ -17,6 +21,7 @@ const RegistrationStep = () => {
   const dispatch = useAppDispatch();
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
+  const registrationType = useAppSelector(selectRegistrationType);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const imageTypes = useAppSelector(selectImageTypes);
   const [showAlert, setShowAlert] = useState(false);
@@ -26,10 +31,11 @@ const RegistrationStep = () => {
   });
 
   useEffect(() => {
-    if (!isOnPremise && orgId) {
+    if (isOnPremise) return;
+    if (registrationType === 'register-now' && orgId) {
       dispatch(changeOrgId(orgId));
     }
-  }, [isOnPremise, orgId, dispatch]);
+  }, [isOnPremise, orgId, registrationType, dispatch]);
 
   return (
     <>

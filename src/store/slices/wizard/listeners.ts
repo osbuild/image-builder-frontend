@@ -1,3 +1,4 @@
+import { SATELLITE_SERVICE } from '@/constants';
 import { backendApi, type Distributions } from '@/store/api/backend';
 import { KNOWN_IMAGES } from '@/store/api/backend/onprem/constants';
 import type { WizardListenerEffect } from '@/store/middleware/types';
@@ -35,6 +36,7 @@ import {
   selectAapEnabled,
   selectRegistrationType,
 } from './registration';
+import { removeEnabledService } from './system';
 import { clearUsersAndGroups } from './users';
 
 export const filterImageTypes: WizardListenerEffect = (
@@ -150,6 +152,21 @@ export const registerLater: WizardListenerEffect = (_action, listenerApi) => {
   if (process.env.IS_ON_PREMISE && !isRhel(distribution)) {
     listenerApi.dispatch(changeRegistrationType('register-later'));
   }
+};
+
+export const clearSatelliteRegistrationService: WizardListenerEffect = (
+  _action,
+  listenerApi,
+) => {
+  if (
+    selectRegistrationType(listenerApi.getOriginalState()) !==
+      'register-satellite' ||
+    selectRegistrationType(listenerApi.getState()) === 'register-satellite'
+  ) {
+    return;
+  }
+
+  listenerApi.dispatch(removeEnabledService(SATELLITE_SERVICE));
 };
 
 // Satellite and Ansible Automation Platform registration are not supported
