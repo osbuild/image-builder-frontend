@@ -323,7 +323,7 @@ describe('Registration Component', () => {
       await clickWithWait(user, document.body);
 
       expect(
-        await screen.findByText(/the activation key cannot be empty/i),
+        await screen.findByText(/Activation key is required/i),
       ).toBeInTheDocument();
     });
 
@@ -346,7 +346,7 @@ describe('Registration Component', () => {
       await clickWithWait(user, document.body);
 
       expect(
-        await screen.findByText(/please enter a valid organization id/i),
+        await screen.findByText(/Organization ID must be numeric only/i),
       ).toBeInTheDocument();
     });
 
@@ -361,10 +361,13 @@ describe('Registration Component', () => {
       await enterOrgId(user, '12345');
 
       expect(
-        screen.queryByText(/the activation key cannot be empty/i),
+        screen.queryByText(/activation key is required/i),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByText(/please enter a valid organization id/i),
+        screen.queryByText(/organization id is required/i),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/organization id must be numeric only/i),
       ).not.toBeInTheDocument();
     });
   });
