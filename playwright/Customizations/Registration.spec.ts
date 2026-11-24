@@ -82,14 +82,14 @@ const registrationModes = [
         await activationKeyInput.fill(' ');
         await activationKeyInput.blur();
         await expect(
-          frame.getByText('The activation key cannot be empty'),
+          frame.getByText('Activation key is required'),
         ).toBeVisible();
         await activationKeyInput.fill('test-activation-key');
         if (isHosted()) {
           await expect(frame.getByText('12345')).toBeVisible(); // organization id from session
         }
         await expect(
-          frame.getByText('The activation key cannot be empty'),
+          frame.getByText('Activation key is required'),
         ).toBeHidden();
         const orgIdInput = frame.getByRole('textbox', {
           name: 'organization id',
@@ -97,7 +97,7 @@ const registrationModes = [
         await orgIdInput.fill('abcdefghijkl');
         await orgIdInput.blur();
         await expect(
-          frame.getByText('Please enter a valid Organization ID'),
+          frame.getByText('Organization ID must be numeric only'),
         ).toBeVisible();
         await orgIdInput.fill('12345');
       } else {

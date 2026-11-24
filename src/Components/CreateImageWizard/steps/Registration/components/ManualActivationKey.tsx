@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
-import { ValidatedInput } from '@/Components/ValidatedInputs';
+import { ValidatedTextInput } from '@/Components/ValidatedInputs';
 import { CDN_PROD_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -19,6 +19,8 @@ import {
   changeServerUrl,
   selectActivationKey,
   selectOrgId,
+  validateActivationKey,
+  validateOrgId,
 } from '@/store/slices/wizard';
 
 const ManualRegistrationPopover = () => {
@@ -57,11 +59,25 @@ export const ManualActivationKey = () => {
   const dispatch = useAppDispatch();
   const orgId = useAppSelector(selectOrgId);
   const activationKey = useAppSelector(selectActivationKey);
+  const [draftKey, setDraftKey] = useState(activationKey ?? '');
+  const [draftOrgId, setDraftOrgId] = useState(orgId ?? '');
 
   useEffect(() => {
     dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
     dispatch(changeBaseUrl(CDN_PROD_URL));
   }, [dispatch]);
+
+  useEffect(() => {
+    // Reset the local draft when the activation key changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraftKey(activationKey ?? '');
+  }, [activationKey]);
+
+  useEffect(() => {
+    // Reset the local draft when the organization ID changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraftOrgId(orgId ?? '');
+  }, [orgId]);
 
   return (
     <>
@@ -71,16 +87,21 @@ export const ManualActivationKey = () => {
         labelHelp={<ManualRegistrationPopover />}
         isRequired
       >
-        <ValidatedInput
+        <ValidatedTextInput
           placeholder='Activation key'
-          aria-label='Activation key'
-          value={activationKey || ''}
-          onChange={(_, value) => {
-            dispatch(changeActivationKey(value.trim()));
+          ariaLabel='Activation key'
+          value={draftKey}
+          onChange={(_, value) => setDraftKey(value)}
+          onCommit={(candidate) => {
+            if (!candidate) return;
+
+            dispatch(changeActivationKey(candidate));
           }}
-          validator={(v) => v !== undefined && v !== ''}
-          helperText='The activation key cannot be empty'
-          handleClear={() => dispatch(changeActivationKey(''))}
+          validator={validateActivationKey}
+          handleClear={() => {
+            setDraftKey('');
+            dispatch(changeActivationKey(''));
+          }}
         />
       </FormGroup>
       <FormGroup
@@ -88,21 +109,21 @@ export const ManualActivationKey = () => {
         labelHelp={<ManualRegistrationPopover />}
         isRequired
       >
-        <ValidatedInput
+        <ValidatedTextInput
           placeholder='Organization ID'
-          aria-label='Organization ID'
-          value={orgId || ''}
-          onChange={(_, value) => {
-            dispatch(changeOrgId(value.trim()));
+          ariaLabel='Organization ID'
+          value={draftOrgId}
+          onChange={(_, value) => setDraftOrgId(value)}
+          onCommit={(candidate) => {
+            if (!candidate) return;
+
+            dispatch(changeOrgId(candidate));
           }}
-          validator={(v) => {
-            if (v === undefined || v === '') {
-              return false;
-            }
-            return /^\d+$/.test(v.trim());
+          validator={validateOrgId}
+          handleClear={() => {
+            setDraftOrgId('');
+            dispatch(changeOrgId(''));
           }}
-          helperText='Please enter a valid Organization ID'
-          handleClear={() => dispatch(changeOrgId(''))}
         />
       </FormGroup>
     </>
