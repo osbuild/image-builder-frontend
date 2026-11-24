@@ -7,10 +7,12 @@ import {
   changeBlueprintMode,
   changeDistribution,
   changeImageTypes,
+  changeRegistrationType,
 } from '../slices/wizard';
 // export from slices/wizard/listeners rather than slices/wizard
 // this is needed to avoid circular dependencies
 import {
+  clearSatelliteRegistrationService,
   clearUnsupportedFilesystem,
   clearUnsupportedRegistration,
   clearUnsupportedUsersAndGroups,
@@ -40,6 +42,11 @@ startListening({
 startListening({
   actionCreator: changeDistribution,
   effect: registerLater,
+});
+
+startListening({
+  actionCreator: changeRegistrationType,
+  effect: clearSatelliteRegistrationService,
 });
 
 startListening({
