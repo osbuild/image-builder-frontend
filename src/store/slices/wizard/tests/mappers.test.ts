@@ -69,7 +69,6 @@ describe('mapFileCustomizations', () => {
     const state = createMockState({
       registration: {
         ...initialState.registration,
-        type: 'register-now-rhc',
         satelliteRegistration: {
           command: 'satellite-register --org=123',
           caCert: undefined,

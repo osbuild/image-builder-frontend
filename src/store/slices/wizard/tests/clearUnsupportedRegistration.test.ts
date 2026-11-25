@@ -65,7 +65,7 @@ describe('clearUnsupportedRegistration', () => {
 
   it('does not reset a supported registration in image mode', () => {
     const listenerApi = createListenerApi(
-      createState('image', { type: 'register-now-rhc' }),
+      createState('image', { type: 'register-now' }),
     );
 
     clearUnsupportedRegistration({} as never, listenerApi as never);

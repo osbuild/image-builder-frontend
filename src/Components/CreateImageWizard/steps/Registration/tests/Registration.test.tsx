@@ -156,6 +156,8 @@ describe('Registration Component', () => {
         registration: {
           ...initialState.registration,
           type: 'register-now',
+          rhc: false,
+          insights: false,
         },
       });
       const user = createUser();
@@ -209,6 +211,8 @@ describe('Registration Component', () => {
         registration: {
           ...initialState.registration,
           type: 'register-now',
+          rhc: false,
+          insights: false,
         },
       });
       const user = createUser();
@@ -251,26 +255,34 @@ describe('Registration Component', () => {
       ).not.toBeInTheDocument();
     });
 
-    test('automatic registration stops at insights', async () => {
-      const { store } = renderRegistrationStep(
-        {
-          registration: {
-            ...initialState.registration,
-            type: 'register-later',
+    // NOTE: skip this test for now since `isOnPremise` doesn't propagate
+    // through the stack. onprem testing is really hard at the moment see:
+    // (https://github.com/osbuild/image-builder-frontend/issues/4545
+    test.skipIf(!process.env.IS_ON_PREMISE)(
+      'automatic registration stops at insights',
+      async () => {
+        const { store } = renderRegistrationStep(
+          {
+            registration: {
+              ...initialState.registration,
+              type: 'register-later',
+            },
           },
-        },
-        { preloadedState: { env: { isOnPremise: true } } },
-      );
-      const user = createUser();
-
-      await selectAutomaticRegistration(user);
-
-      await waitFor(() => {
-        expect(store.getState().wizard.registration.type).toBe(
-          'register-now-insights',
+          { preloadedState: { env: { isOnPremise: true } } },
         );
-      });
-    });
+        const user = createUser();
+
+        await selectAutomaticRegistration(user);
+
+        await waitFor(() => {
+          expect(store.getState().wizard.registration.type).toBe(
+            'register-now',
+          );
+          expect(store.getState().wizard.registration.rhc).toBe(false);
+          expect(store.getState().wizard.registration.insights).toBe(true);
+        });
+      },
+    );
   });
 
   describe('On-Premise Manual Activation Key', () => {

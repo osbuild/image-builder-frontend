@@ -18,9 +18,11 @@ const createOnPremState = (overrides: Partial<RegistrationSlice> = {}) => ({
 
 describe('mapRegistrationCustomizations', () => {
   describe('subscription', () => {
-    it('returns subscription for register-now-rhc', () => {
+    it('returns subscription for rhc enabled', () => {
       const state = createState({
-        type: 'register-now-rhc',
+        type: 'register-now',
+        insights: true,
+        rhc: true,
         activationKey: 'my-key',
         orgId: '123',
         serverUrl: 'https://server.example.com',
@@ -39,7 +41,9 @@ describe('mapRegistrationCustomizations', () => {
 
     it('never sets rhc on-premises', () => {
       const state = createOnPremState({
-        type: 'register-now-rhc',
+        type: 'register-now',
+        insights: true,
+        rhc: true,
         activationKey: 'my-key',
         orgId: '123',
       });
@@ -52,9 +56,11 @@ describe('mapRegistrationCustomizations', () => {
       );
     });
 
-    it('returns subscription for register-now-insights', () => {
+    it('returns subscription for insights enabled', () => {
       const state = createState({
-        type: 'register-now-insights',
+        type: 'register-now',
+        insights: true,
+        rhc: false,
         activationKey: 'my-key',
         orgId: '456',
       });
@@ -70,6 +76,8 @@ describe('mapRegistrationCustomizations', () => {
     it('returns subscription for register-now', () => {
       const state = createState({
         type: 'register-now',
+        insights: false,
+        rhc: false,
         activationKey: 'my-key',
         orgId: '789',
       });
@@ -98,7 +106,9 @@ describe('mapRegistrationCustomizations', () => {
 
     it('omits subscription when orgId is missing', () => {
       const state = createState({
-        type: 'register-now-rhc',
+        type: 'register-now',
+        insights: true,
+        rhc: true,
         activationKey: 'my-key',
         orgId: undefined,
       });
@@ -109,7 +119,9 @@ describe('mapRegistrationCustomizations', () => {
 
     it('omits subscription when orgId is not numeric', () => {
       const state = createState({
-        type: 'register-now-rhc',
+        type: 'register-now',
+        insights: true,
+        rhc: true,
         activationKey: 'my-key',
         orgId: 'not-a-number',
       });
@@ -120,7 +132,9 @@ describe('mapRegistrationCustomizations', () => {
 
     it('throws when activation key is undefined for register-now type', () => {
       const state = createState({
-        type: 'register-now-rhc',
+        type: 'register-now',
+        insights: true,
+        rhc: true,
         activationKey: undefined,
         orgId: '123',
       });
@@ -241,7 +255,9 @@ describe('mapSatelliteFiles', () => {
 
   it('returns empty array when not satellite registration', () => {
     const state = createState({
-      type: 'register-now-rhc',
+      type: 'register-now',
+      insights: true,
+      rhc: true,
       satelliteRegistration: {
         command: 'satellite-register --org=123',
         caCert: undefined,

@@ -4,9 +4,9 @@ export const initialState: RegistrationSlice = {
   serverUrl: '',
   baseUrl: '',
   proxy: undefined,
-  type: process.env.IS_ON_PREMISE
-    ? 'register-now-insights'
-    : 'register-now-rhc',
+  type: 'register-now',
+  rhc: !process.env.IS_ON_PREMISE,
+  insights: true,
   activationKey: undefined,
   orgId: undefined,
   satelliteRegistration: {

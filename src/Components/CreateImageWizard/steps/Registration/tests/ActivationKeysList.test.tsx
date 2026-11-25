@@ -28,7 +28,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 
@@ -54,7 +53,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 
@@ -80,7 +78,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 
@@ -99,7 +96,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 
@@ -114,7 +110,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
       const user = createUser();
@@ -141,7 +136,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
       const user = createUser();
@@ -165,7 +159,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 
@@ -178,7 +171,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
       const user = createUser();
@@ -212,7 +204,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 
@@ -231,7 +222,6 @@ describe('Activation Keys List', () => {
       renderRegistrationStep({
         registration: {
           ...initialState.registration,
-          type: 'register-now-rhc',
         },
       });
 

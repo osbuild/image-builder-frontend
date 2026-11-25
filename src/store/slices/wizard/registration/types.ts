@@ -1,16 +1,7 @@
 import { ActivationKeys } from '@/store/api/rhsm';
 
-import { REGISTER_NOW_TYPES } from './constants';
-
-export type RegisterNowType = (typeof REGISTER_NOW_TYPES)[number];
-
 export type RegistrationType =
-  | 'register-later'
-  | 'register-now'
-  | 'register-now-insights'
-  | 'register-now-rhc'
-  | 'register-satellite'
-  | 'register-aap';
+  'register-later' | 'register-now' | 'register-satellite' | 'register-aap';
 
 export type RegistrationSlice = {
   serverUrl: string;
@@ -19,6 +10,8 @@ export type RegistrationSlice = {
   type: RegistrationType;
   activationKey: ActivationKeys['name'];
   orgId: string | undefined;
+  rhc: boolean;
+  insights: boolean;
   satelliteRegistration: {
     command: string | undefined;
     caCert: string | undefined;

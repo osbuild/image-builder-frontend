@@ -40,11 +40,7 @@ const parseRegistrationType = (
     return 'register-later';
   }
 
-  if (customizations.subscription.rhc) {
-    return 'register-now-rhc';
-  }
-
-  return 'register-now-insights';
+  return 'register-now';
 };
 
 const parseActivationKey = (
@@ -67,6 +63,24 @@ const parseOrgId = (
   }
 
   return String(customizations.subscription['organization']);
+};
+
+const parseRhc = (customizations: Customizations): boolean => {
+  if (!hasSubscription(customizations)) {
+    return false;
+  }
+
+  return Boolean(customizations.subscription.rhc);
+};
+
+const parseInsights = (customizations: Customizations): boolean => {
+  if (!hasSubscription(customizations)) {
+    return false;
+  }
+
+  return Boolean(
+    customizations.subscription.rhc || customizations.subscription.insights,
+  );
 };
 
 const parseSatellite = ({
@@ -104,6 +118,8 @@ const parseRegistrationRequest = ({
   customizations,
   distribution,
 }: RequestLike): RegistrationSlice => ({
+  rhc: parseRhc(customizations),
+  insights: parseInsights(customizations),
   serverUrl: parseServerUrl(customizations),
   baseUrl: parseBaseUrl(customizations),
   type: parseRegistrationType(customizations, distribution),

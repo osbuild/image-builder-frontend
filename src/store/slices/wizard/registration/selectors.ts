@@ -14,6 +14,14 @@ export const selectProxy = (state: RootState) => {
   return state.wizard.registration.proxy;
 };
 
+export const selectRhc = (state: RootState) => {
+  return state.wizard.registration.rhc;
+};
+
+export const selectInsights = (state: RootState) => {
+  return state.wizard.registration.insights;
+};
+
 export const selectRegistrationType = (state: RootState) => {
   return state.wizard.registration.type;
 };

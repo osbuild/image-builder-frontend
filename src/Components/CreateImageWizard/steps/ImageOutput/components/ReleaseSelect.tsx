@@ -27,7 +27,9 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
   changeDistribution,
+  changeInsights,
   changeRegistrationType,
+  changeRhc,
   isRhel,
   selectDistribution,
 } from '@/store/slices/wizard';
@@ -54,7 +56,9 @@ const ReleaseSelect = () => {
       if (!isRhel(selection as Distributions)) {
         dispatch(changeRegistrationType('register-later'));
       } else {
-        dispatch(changeRegistrationType('register-now-rhc'));
+        dispatch(changeRegistrationType('register-now'));
+        dispatch(changeInsights(true));
+        dispatch(changeRhc(!isOnPremise));
       }
       dispatch(changeDistribution(selection as Distributions));
       setIsOpen(false);

@@ -47,7 +47,7 @@ const createMinimalExport = (
 describe('parseRegistrationFromRequest', () => {
   describe('edit mode (BlueprintResponse)', () => {
     describe('registration type', () => {
-      it('returns register-now-rhc when subscription has rhc enabled', () => {
+      it('sets rhc & insights to true when subscription has rhc enabled', () => {
         const result = parseRegistrationFromRequest(
           createMinimalBlueprint({
             customizations: {
@@ -62,10 +62,12 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.type).toBe('register-now-rhc');
+        expect(result.type).toBe('register-now');
+        expect(result.rhc).toBe(true);
+        expect(result.insights).toBe(true);
       });
 
-      it('returns register-now-insights when subscription has no rhc', () => {
+      it('sets insights to true when subscription has no rhc', () => {
         const result = parseRegistrationFromRequest(
           createMinimalBlueprint({
             customizations: {
@@ -79,7 +81,9 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.type).toBe('register-now-insights');
+        expect(result.type).toBe('register-now');
+        expect(result.rhc).toBe(false);
+        expect(result.insights).toBe(true);
       });
 
       it('returns register-satellite when files contain satellite command', () => {

@@ -4,7 +4,6 @@ import { Card, CardBody } from '@patternfly/react-core';
 
 import { useAppSelector } from '@/store/hooks';
 import {
-  isRegisterNowType,
   selectAapEnabled,
   selectRegistrationType,
 } from '@/store/slices/wizard';
@@ -52,7 +51,7 @@ const Registration = ({ restrictions }: ReviewCardProps) => {
             registrationType={registrationType}
             shouldHide={
               restrictions.registration.shouldHide ||
-              !isRegisterNowType(registrationType)
+              registrationType !== 'register-now'
             }
           />
           <RegisterAAP
