@@ -123,7 +123,7 @@ describe('Registration', () => {
   });
 
   describe('Register now', () => {
-    test('displays RHSM registration for register-now', () => {
+    test('displays RHSM registration for register', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
@@ -133,7 +133,8 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            type: 'register-now',
+            rhc: false,
+            insights: false,
             activationKey: 'my-key',
             orgId: '12345',
             satelliteRegistration: {
@@ -153,7 +154,7 @@ describe('Registration', () => {
       expect(screen.getByText('my-key')).toBeInTheDocument();
     });
 
-    test('displays insights registration for register-now-insights', () => {
+    test('displays insights registration for insights enabled', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
@@ -163,7 +164,7 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            type: 'register-now-insights',
+            rhc: false,
             activationKey: 'insights-key',
             orgId: '67890',
             satelliteRegistration: {
@@ -181,7 +182,7 @@ describe('Registration', () => {
       ).toBeInTheDocument();
     });
 
-    test('displays rhc registration for register-now-rhc', () => {
+    test('displays rhc registration for rhc enabled', () => {
       renderWithRedux(
         <Registration restrictions={createDefaultRestrictions()} />,
         {
@@ -191,7 +192,6 @@ describe('Registration', () => {
           },
           registration: {
             ...initialState.registration,
-            type: 'register-now-rhc',
             activationKey: 'rhc-key',
             orgId: '11111',
             satelliteRegistration: {

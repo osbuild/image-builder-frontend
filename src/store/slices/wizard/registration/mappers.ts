@@ -16,9 +16,11 @@ import {
   selectAapTlsConfirmation,
   selectActivationKey,
   selectBaseUrl,
+  selectInsights,
   selectOrgId,
   selectProxy,
   selectRegistrationType,
+  selectRhc,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectServerUrl,
@@ -32,6 +34,8 @@ const mapSubscription = createSelector(
     selectServerUrl,
     selectBaseUrl,
     selectProxy,
+    selectInsights,
+    selectRhc,
     selectIsOnPremise,
   ],
   (
@@ -41,6 +45,8 @@ const mapSubscription = createSelector(
     serverUrl,
     baseUrl,
     proxy,
+    insights,
+    rhc,
     isOnPremise,
   ) => {
     if (
@@ -62,33 +68,17 @@ const mapSubscription = createSelector(
       return undefined;
     }
 
-    const subscription = {
-      'activation-key': activationKey,
-      organization: Number(orgId),
-      'server-url': serverUrl,
-      'base-url': baseUrl,
-      insights_client_proxy: proxy,
-      insights: false,
-      rhc: false,
+    return {
+      subscription: {
+        'activation-key': activationKey,
+        organization: Number(orgId),
+        'server-url': serverUrl,
+        'base-url': baseUrl,
+        insights_client_proxy: proxy,
+        rhc: rhc && !isOnPremise,
+        insights,
+      },
     };
-
-    if (registrationType === 'register-now') {
-      return { subscription };
-    }
-
-    if (registrationType === 'register-now-insights') {
-      return {
-        subscription: { ...subscription, insights: true },
-      };
-    }
-
-    if (registrationType === 'register-now-rhc') {
-      return {
-        subscription: { ...subscription, insights: true, rhc: !isOnPremise },
-      };
-    }
-
-    return undefined;
   },
 );
 

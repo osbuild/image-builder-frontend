@@ -4,7 +4,9 @@ import { CENTOS_9, RHEL_10, RHEL_8, RHEL_9 } from '@/constants';
 import {
   initialState,
   selectDistribution,
+  selectInsights,
   selectRegistrationType,
+  selectRhc,
 } from '@/store/slices/wizard';
 import { clickWithWait, createUser } from '@/test/testUtils';
 
@@ -163,7 +165,7 @@ describe('ReleaseSelect', () => {
       expect(selectRegistrationType(store.getState())).toBe('register-later');
     });
 
-    test('selecting RHEL sets registration type to register-now-rhc', async () => {
+    test('selecting RHEL sets registration type to rhc to true', async () => {
       const user = createUser();
       const { store } = renderReleaseSelect({
         output: { ...initialState.output, distribution: CENTOS_9 },
@@ -182,7 +184,9 @@ describe('ReleaseSelect', () => {
       await selectRelease(user, /Red Hat Enterprise Linux \(RHEL\) 10/i);
 
       expect(selectDistribution(store.getState())).toBe(RHEL_10);
-      expect(selectRegistrationType(store.getState())).toBe('register-now-rhc');
+      expect(selectRegistrationType(store.getState())).toBe('register-now');
+      expect(selectInsights(store.getState())).toBe(true);
+      expect(selectRhc(store.getState())).toBe(true);
     });
   });
 

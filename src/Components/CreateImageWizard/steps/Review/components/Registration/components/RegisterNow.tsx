@@ -9,16 +9,47 @@ import {
 import { Hideable } from '@/Components/CreateImageWizard/steps/Review/components/types';
 import { useAppSelector } from '@/store/hooks';
 import {
-  isRegisterNowType,
   RegistrationType,
   selectActivationKey,
+  selectInsights,
   selectOrgId,
+  selectRhc,
 } from '@/store/slices/wizard';
-
-import { REGISTER_NOW_FEATURES } from '../constants';
 
 type RegisterNowProps = Hideable & {
   registrationType: RegistrationType;
+};
+
+const Status = (props: { rhcEnabled: boolean; insightsEnabled: boolean }) => {
+  if (!props.rhcEnabled && !props.insightsEnabled)
+    return (
+      <Content component='p'>
+        <StatusItem>
+          Register with Red Hat Subscription Manager (RHSM)
+        </StatusItem>
+      </Content>
+    );
+
+  const LightspeedContent = (
+    <Content component='p'>
+      <StatusItem>
+        Enable predictive analytics and management capabilities
+      </StatusItem>
+    </Content>
+  );
+
+  if (!props.rhcEnabled) return LightspeedContent;
+
+  return (
+    <>
+      {LightspeedContent}
+      <Content component='p'>
+        <StatusItem>
+          Enable remote remediations and system management with automation
+        </StatusItem>
+      </Content>
+    </>
+  );
 };
 
 export const RegisterNow = ({
@@ -27,8 +58,10 @@ export const RegisterNow = ({
 }: RegisterNowProps) => {
   const activationKey = useAppSelector(selectActivationKey);
   const orgId = useAppSelector(selectOrgId);
+  const rhcEnabled = useAppSelector(selectRhc);
+  const insightsEnabled = useAppSelector(selectInsights);
 
-  if (shouldHide || !isRegisterNowType(registrationType)) {
+  if (shouldHide || registrationType !== 'register-now') {
     return null;
   }
 
@@ -37,16 +70,7 @@ export const RegisterNow = ({
       <ReviewGroup
         heading='Registration method'
         description={
-          // NOTE: a lookup is maybe slightly harder to read,
-          // but it reduces the complexity of all the if/else
-          // branching for the matrix of register now options
-          REGISTER_NOW_FEATURES[registrationType].map(
-            (registrationItem, index) => (
-              <Content key={`${registrationType}-${index}`} component='p'>
-                <StatusItem>{registrationItem}</StatusItem>
-              </Content>
-            ),
-          )
+          <Status rhcEnabled={rhcEnabled} insightsEnabled={insightsEnabled} />
         }
       />
       <ReviewGroup heading='Organization ID' description={orgId} />

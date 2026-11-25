@@ -5,9 +5,13 @@ import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsOnPremise } from '@/store/slices/env';
 import {
+  changeInsights,
   changeRegistrationType,
+  changeRhc,
+  selectInsights,
   selectIsImageMode,
   selectRegistrationType,
+  selectRhc,
 } from '@/store/slices/wizard';
 
 import ActivationKeysList from './ActivationKeysList';
@@ -19,6 +23,8 @@ import { RegistrationProps } from '../registrationTypes';
 const Registration = ({ onErrorChange }: RegistrationProps) => {
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
+  const rhcEnabled = useAppSelector(selectRhc);
+  const insightsEnabled = useAppSelector(selectInsights);
   const isOnPremise = useAppSelector(selectIsOnPremise);
   const isImageMode = useAppSelector(selectIsImageMode);
 
@@ -27,18 +33,10 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
       <Content className='pf-v6-u-pb-sm'>
         <Radio
           label='Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities.'
-          isChecked={
-            registrationType === 'register-now' ||
-            registrationType === 'register-now-insights' ||
-            registrationType === 'register-now-rhc'
-          }
+          isChecked={registrationType === 'register-now'}
           onChange={(_event, checked) => {
             if (checked) {
-              dispatch(
-                changeRegistrationType(
-                  isOnPremise ? 'register-now-insights' : 'register-now-rhc',
-                ),
-              );
+              dispatch(changeRegistrationType('register-now'));
             }
           }}
           id='register-system-now'
@@ -48,17 +46,8 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
               <Content className='pf-v6-u-pb-sm'>
                 <Switch
                   label='Enable predictive analytics and management capabilities'
-                  isChecked={
-                    registrationType === 'register-now-insights' ||
-                    registrationType === 'register-now-rhc'
-                  }
-                  onChange={(_event, checked) => {
-                    if (checked) {
-                      dispatch(changeRegistrationType('register-now-insights'));
-                    } else {
-                      dispatch(changeRegistrationType('register-now'));
-                    }
-                  }}
+                  isChecked={insightsEnabled}
+                  onChange={(_, checked) => dispatch(changeInsights(checked))}
                   id='register-system-now-insights'
                   name='register-system-insights'
                   hasCheckIcon
@@ -68,28 +57,20 @@ const Registration = ({ onErrorChange }: RegistrationProps) => {
                 <Content className='pf-v6-u-pb-sm'>
                   <Switch
                     label='Enable remote remediations and system management with automation'
-                    isChecked={registrationType === 'register-now-rhc'}
-                    onChange={(_event, checked) => {
-                      if (checked) {
-                        dispatch(changeRegistrationType('register-now-rhc'));
-                      } else {
-                        dispatch(
-                          changeRegistrationType('register-now-insights'),
-                        );
-                      }
-                    }}
+                    isChecked={rhcEnabled}
+                    onChange={(_, checked) => dispatch(changeRhc(checked))}
                     id='register-system-now-rhc'
                     name='register-system-rhc'
                     hasCheckIcon
                   />
                 </Content>
               )}
-              {!isOnPremise && registrationType.startsWith('register-now') && (
+              {!isOnPremise && registrationType === 'register-now' && (
                 <Content className='pf-v6-u-pb-sm'>
                   <ActivationKeysList onErrorChange={onErrorChange} />
                 </Content>
               )}
-              {isOnPremise && registrationType.startsWith('register-now') && (
+              {isOnPremise && registrationType === 'register-now' && (
                 <Content className='pf-v6-u-pb-sm'>
                   <ManualActivationKey />
                 </Content>

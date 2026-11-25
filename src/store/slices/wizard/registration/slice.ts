@@ -17,6 +17,22 @@ export const registrationSlice = createSlice({
     changeBaseUrl: (state, action: PayloadAction<string>) => {
       state.baseUrl = action.payload;
     },
+    changeRhc: (state, action: PayloadAction<boolean>) => {
+      state.rhc = action.payload;
+
+      if (action.payload) {
+        // NOTE: insights needs to be enabled for rhc to be enabled
+        state.insights = action.payload;
+      }
+    },
+    changeInsights: (state, action: PayloadAction<boolean>) => {
+      if (!action.payload) {
+        state.rhc = action.payload;
+      }
+
+      // NOTE: insights needs to be enabled for rhc to be enabled
+      state.insights = action.payload;
+    },
     changeProxy: (state, action: PayloadAction<string | undefined>) => {
       state.proxy = action.payload;
     },
@@ -25,6 +41,9 @@ export const registrationSlice = createSlice({
       action: PayloadAction<RegistrationType>,
     ) => {
       state.type = action.payload;
+      state.insights = action.payload === 'register-now';
+      state.rhc =
+        action.payload === 'register-now' && !process.env.IS_ON_PREMISE;
     },
     changeSatelliteRegistrationCommand: (
       state,
@@ -83,6 +102,8 @@ export const {
   changeServerUrl,
   changeBaseUrl,
   changeProxy,
+  changeRhc,
+  changeInsights,
   changeRegistrationType,
   changeActivationKey,
   changeOrgId,
