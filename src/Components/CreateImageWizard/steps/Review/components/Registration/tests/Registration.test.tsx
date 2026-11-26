@@ -222,7 +222,7 @@ describe('Registration', () => {
             type: 'register-satellite',
             satellite: {
               command: 'satellite-command',
-              caCert: 'ca-cert-content',
+              caCerts: ['ca-cert-content'],
             },
           },
         },

@@ -13,45 +13,46 @@ import {
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
 import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
+import { parseMultipleCertificates } from '@/Components/CreateImageWizard/validators';
 import { REGISTRATION_DOCS_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeSatelliteCaCertificate,
-  selectSatelliteCaCertificate,
+  selectSatelliteCaCertificates,
 } from '@/store/slices/wizard';
 
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
 const SatelliteRegistration = () => {
   const dispatch = useAppDispatch();
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
+  const caCertificates = useAppSelector(selectSatelliteCaCertificates);
   const [isRejected, setIsRejected] = useState(false);
   const stepValidation = useRegistrationValidation();
 
   const validated =
     'certificate' in stepValidation.errors
       ? 'error'
-      : caCertificate
+      : caCertificates
         ? 'success'
         : 'default';
 
   const handleClear = () => {
-    dispatch(changeSatelliteCaCertificate(''));
+    dispatch(changeSatelliteCaCertificate([]));
   };
 
   const handleTextChange = (
     _event: React.ChangeEvent<HTMLTextAreaElement>,
     value: string,
   ) => {
-    dispatch(changeSatelliteCaCertificate(value));
+    dispatch(changeSatelliteCaCertificate(parseMultipleCertificates(value)));
   };
 
   const handleDataChange = (_: DropEvent, value: string) => {
-    dispatch(changeSatelliteCaCertificate(value));
+    dispatch(changeSatelliteCaCertificate(parseMultipleCertificates(value)));
   };
 
   const handleFileRejected = () => {
-    dispatch(changeSatelliteCaCertificate(''));
+    dispatch(changeSatelliteCaCertificate([]));
     setIsRejected(true);
   };
 
@@ -65,8 +66,8 @@ const SatelliteRegistration = () => {
           <FileUpload
             id='text-file-with-restrictions-example'
             type='text'
-            value={caCertificate || ''}
-            filename={caCertificate ? 'CA detected' : ''}
+            value={(caCertificates || []).join('\n')}
+            filename={caCertificates ? 'CA detected' : ''}
             filenamePlaceholder='Drag and drop a file or upload'
             onDataChange={handleDataChange}
             onTextChange={handleTextChange}

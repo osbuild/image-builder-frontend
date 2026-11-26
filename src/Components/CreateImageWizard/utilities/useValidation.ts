@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { jwtDecode } from 'jwt-decode';
+
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -36,7 +38,7 @@ import {
   selectIsoPayloadReference,
   selectRegistrationSlice,
   selectRegistrationType,
-  selectSatelliteCaCertificate,
+  selectSatelliteCaCertificates,
   selectSatelliteRegistrationCommand,
   selectSnapshotDate,
   selectSystem,
@@ -56,7 +58,6 @@ import {
   isSnapshotValid,
   isValidUrl,
   validateMultipleCertificates,
-  validateSatelliteCommand,
 } from '../validators';
 
 export type StepValidation = {
@@ -160,7 +161,7 @@ export function useRegistrationValidation(): StepValidation {
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand,
   );
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
+  const caCertificates = useAppSelector(selectSatelliteCaCertificates);
   const [currentTimeSeconds] = useState(() => Date.now() / 1000);
 
   if (registrationType !== 'register-satellite') {
@@ -171,11 +172,13 @@ export function useRegistrationValidation(): StepValidation {
   const commandTrimmed =
     typeof registrationCommand === 'string' ? registrationCommand.trim() : '';
 
-  if (caCertificate === '') {
-    Object.assign(errors, {
-      certificate:
-        'Valid certificate must be present if you are registering Satellite',
-    });
+  if (caCertificates?.length) {
+    const validation = validateMultipleCertificates(caCertificates.join('\n'));
+    if (validation.errors.length > 0) {
+      errors.certificate = validation.errors.join(' ');
+    } else if (validation.validCertificates.length === 0) {
+      errors.certificate = 'No valid certificates found in the input.';
+    }
   }
 
   if (commandTrimmed === '') {
@@ -201,8 +204,8 @@ export function useRegistrationValidation(): StepValidation {
                 expirationDate,
             });
             return {
-              errors: errors,
-              disabledNext: caCertificate === undefined,
+              errors,
+              disabledNext: true,
             };
           }
         }
@@ -213,8 +216,8 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   return {
-    errors: errors,
-    disabledNext: Object.keys(errors).length > 0 || caCertificate === undefined,
+    errors,
+    disabledNext: Object.keys(errors).length > 0,
   };
 }
 

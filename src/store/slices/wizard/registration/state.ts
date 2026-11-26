@@ -12,6 +12,7 @@ export const emptyAapState: AapRegistration = {
 
 export const emptySatelliteState: SatelliteRegistration = {
   command: '',
+  caCerts: [],
 };
 
 export const emptyRegistrationState: RegistrationOptions = {

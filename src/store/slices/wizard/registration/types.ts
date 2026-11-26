@@ -17,7 +17,7 @@ export type AapRegistration = {
 
 export type SatelliteRegistration = {
   command: string;
-  caCert?: string | undefined;
+  caCerts: string[];
 };
 
 export type RegistrationOptions = z.infer<typeof registrationOptionsSchema>;

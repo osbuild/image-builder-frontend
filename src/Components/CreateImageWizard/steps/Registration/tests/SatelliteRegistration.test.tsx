@@ -57,7 +57,7 @@ describe('Satellite Registration', () => {
           type: 'register-satellite',
           satellite: {
             ...emptySatelliteState,
-            caCert: VALID_CERTIFICATE,
+            caCerts: [VALID_CERTIFICATE],
           },
         },
       });
