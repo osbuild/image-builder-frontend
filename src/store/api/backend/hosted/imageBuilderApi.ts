@@ -843,6 +843,8 @@ export type Filesystem = {
 };
 export type User = {
   name: string;
+  /** User id to use instead of the default */
+  uid?: number | undefined;
   /** List of groups to add the user to. The 'wheel' group should be added explicitly, as the
     default value is empty.
      */
