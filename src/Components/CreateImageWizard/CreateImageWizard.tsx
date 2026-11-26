@@ -112,7 +112,6 @@ import {
   useAAPValidation,
   useDetailsValidation,
   useImagePullValidation,
-  useRegistrationValidation,
   useSnapshotValidation,
 } from '../CreateImageWizard/utilities/useValidation';
 
@@ -154,7 +153,6 @@ const CreateImageWizard = () => {
   // Validation hooks
   const aapValidation = useAAPValidation();
   const detailsValidation = useDetailsValidation();
-  const registrationValidation = useRegistrationValidation();
   const snapshotValidation = useSnapshotValidation();
   const imagePullValidation = useImagePullValidation();
   const activationKeyStatus = useVerifyActivationKey();
@@ -203,11 +201,11 @@ const CreateImageWizard = () => {
     cloudErrors.length > 0 ||
     detailsValidation.disabledNext ||
     activationKeyStatus !== 'VALID' ||
-    registrationValidation.disabledNext ||
     registrationErrors.length > 0 ||
     aapValidation.disabledNext ||
     snapshotValidation.disabledNext ||
-    imagePullValidation.disabledNext;
+    imagePullValidation.disabledNext ||
+    hasPendingInputs;
 
   const baseSettingsIsPending = !!detailsValidation.isPending;
 

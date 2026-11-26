@@ -78,7 +78,6 @@ type BlueprintValidation = {
 export function useBlueprintValidation(): BlueprintValidation {
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const aap = useAAPValidation();
-  const registration = useRegistrationValidation();
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
   const imagePull = useImagePullValidation();
@@ -127,7 +126,6 @@ export function useBlueprintValidation(): BlueprintValidation {
     details.disabledNext ||
     details.isPending ||
     activationKeyStatus !== 'VALID' ||
-    registration.disabledNext ||
     registrationErrors.length > 0 ||
     snapshot.disabledNext ||
     imagePull.disabledNext ||
