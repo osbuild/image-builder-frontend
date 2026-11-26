@@ -418,6 +418,8 @@ export type User = {
     password.
      */
   password?: string | undefined;
+  /** User id to use instead of the default */
+  uid?: number | undefined;
 };
 export type CustomRepository = {
   id: string;
