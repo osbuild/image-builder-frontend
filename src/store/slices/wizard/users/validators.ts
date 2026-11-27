@@ -7,11 +7,23 @@ import {
   userSchema,
   usersSliceSchema,
   usersSliceWarningSchema,
+  userUidInputSchema,
 } from './schemas';
 import type { Group, GroupInput, User, UsersSlice } from './types';
 
 import type { ValidationResult } from '../types';
 import { validateList, validateSchema } from '../validators';
+
+export const validateUserUidInput = (
+  uid?: string,
+): ValidationResult<number> => {
+  const result = validateSchema(userUidInputSchema, uid);
+
+  return {
+    data: result.data,
+    errors: result.issues,
+  };
+};
 
 export const validateGroupGidInput = (
   gid?: string,

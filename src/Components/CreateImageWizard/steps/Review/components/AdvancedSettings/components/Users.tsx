@@ -28,6 +28,11 @@ export const Users = () => {
             items={users.map(({ name }) => name)}
           />
           <FlexColumn
+            heading='User ID'
+            labelKey='user-uid-review'
+            items={users.map(({ uid }) => uid ?? 'None')}
+          />
+          <FlexColumn
             heading='Password'
             labelKey='user-password-review'
             items={users.map((_) => '*****')}

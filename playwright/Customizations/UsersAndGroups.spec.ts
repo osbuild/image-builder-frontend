@@ -282,6 +282,11 @@ test('Create a blueprint with Users customization', async ({
         name: 'blueprint user name',
       })
       .nth(2);
+    const uidInput = frame
+      .getByRole('textbox', {
+        name: 'blueprint user ID',
+      })
+      .nth(2);
     const passwordInput = frame
       .getByRole('textbox', {
         name: 'blueprint user password',
@@ -292,6 +297,9 @@ test('Create a blueprint with Users customization', async ({
 
     // Tab through fields to test keyboard navigation
     await usernameInput.press('Tab');
+    await expect(uidInput).toBeFocused();
+
+    await uidInput.press('Tab');
     await expect(passwordInput).toBeFocused();
 
     await passwordInput.press('Tab');

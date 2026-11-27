@@ -19,6 +19,9 @@ const mapUsers = createSelector([selectUsers], (users) => {
       const result: ApiUser = {
         name: user.name,
       };
+      if (user.uid !== undefined) {
+        result.uid = user.uid;
+      }
       if (user.password) {
         result.password = user.password;
       }

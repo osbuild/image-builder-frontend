@@ -35,6 +35,49 @@ describe('mapUsersCustomizations', () => {
       ]);
     });
 
+    it('includes uid when set', () => {
+      const state = createState({
+        users: [
+          {
+            name: 'admin',
+            uid: 1001,
+            groups: [],
+            hasPassword: false,
+          },
+        ],
+      });
+      const result = mapUsersCustomizations(state);
+      expect(result.users![0].uid).toBe(1001);
+    });
+
+    it('preserves a zero uid', () => {
+      const state = createState({
+        users: [
+          {
+            name: 'root',
+            uid: 0,
+            groups: [],
+            hasPassword: false,
+          },
+        ],
+      });
+      expect(mapUsersCustomizations(state).users![0].uid).toBe(0);
+    });
+
+    it('omits uid when not set', () => {
+      const state = createState({
+        users: [
+          {
+            name: 'testuser',
+            groups: [],
+            hasPassword: false,
+          },
+        ],
+      });
+      const result = mapUsersCustomizations(state);
+      expect(result.users![0]).not.toHaveProperty('uid');
+    });
+
     it('omits empty password and ssh_key fields', () => {
       const state = createState({
         users: [

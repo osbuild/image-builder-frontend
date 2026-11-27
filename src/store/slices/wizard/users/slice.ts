@@ -52,6 +52,10 @@ export const usersSlice = createSlice({
         ssh_key: user.ssh_key ?? current.ssh_key,
         groups: user.groups ?? current.groups,
       };
+
+      if ('uid' in user && user.uid === undefined) {
+        delete state.users[index].uid;
+      }
     },
     upsertUserGroup: (
       state,

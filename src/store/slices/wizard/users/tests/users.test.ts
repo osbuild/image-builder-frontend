@@ -4,6 +4,7 @@ import {
   initialState,
   removeUser,
   removeUserGroup,
+  upsertUser,
   upsertUserGroup,
   type User,
   wizardReducer,
@@ -49,6 +50,21 @@ describe('user reducers', () => {
       const result = wizardReducer(state, removeUser(0));
 
       expect(result.users.users).toHaveLength(0);
+    });
+  });
+
+  describe('upsertUser', () => {
+    it('should clear uid when it is explicitly undefined', () => {
+      const state = createUserState([
+        createDefaultUser({ name: 'admin', uid: 1001 }),
+      ]);
+
+      const result = wizardReducer(
+        state,
+        upsertUser({ index: 0, user: { uid: undefined } }),
+      );
+
+      expect(result.users.users[0]).not.toHaveProperty('uid');
     });
   });
 });

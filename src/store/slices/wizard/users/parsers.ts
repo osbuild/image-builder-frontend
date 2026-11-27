@@ -12,6 +12,7 @@ const parseUsers = ({ users }: Customizations): UsersSlice['users'] => {
 
   return users.map((user) => ({
     name: user.name,
+    ...(user.uid !== undefined && { uid: user.uid }),
     password: '', // The image-builder API does not return the password.
     ssh_key: user.ssh_key || '',
     groups: user.groups || [],

@@ -1,6 +1,13 @@
 import z from 'zod';
 
-import { MAX_REGULAR_GID, MIN_REGULAR_GID, SYSTEM_GROUPS } from './constants';
+import {
+  MAX_ID,
+  MAX_REGULAR_GID,
+  MAX_REGULAR_UID,
+  MIN_REGULAR_GID,
+  MIN_REGULAR_UID,
+  SYSTEM_GROUPS,
+} from './constants';
 
 import { uniqueArray, uniqueBy } from '../utilities';
 
@@ -17,7 +24,7 @@ export const groupNameSchema = z
   .regex(/^[a-zA-Z0-9_-]*\$?$/, 'Group name contains invalid characters')
   .regex(/[a-zA-Z]+/, 'Group name must contain at least one letter');
 
-export const groupGidSchema = z.number().int().nonnegative();
+export const groupGidSchema = z.number().int().nonnegative().max(MAX_ID);
 
 export const groupGidInputSchema = z
   .string()
@@ -25,6 +32,10 @@ export const groupGidInputSchema = z
   .refine(
     (value) => value === '' || /^\d+$/.test(value),
     'Group ID must contain only digits',
+  )
+  .refine(
+    (value) => value === '' || Number(value) <= MAX_ID,
+    'Group ID is out of range',
   )
   .transform((value) => (value === '' ? undefined : Number(value)))
   .pipe(groupGidSchema.optional());
@@ -53,6 +64,22 @@ export const groupWarningSchema = z.object({
 });
 
 export const groupListWarningsSchema = z.array(groupWarningSchema);
+
+export const userUidSchema = z.number().int().nonnegative().max(MAX_ID);
+
+export const userUidInputSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value === '' || /^\d+$/.test(value),
+    'User ID must contain only digits',
+  )
+  .refine(
+    (value) => value === '' || Number(value) <= MAX_ID,
+    'User ID is out of range',
+  )
+  .transform((value) => (value === '' ? undefined : Number(value)))
+  .pipe(userUidSchema.optional());
 
 export const userNameSchema = z
   .string()
@@ -125,6 +152,7 @@ export const userGroupListSchema = z
 export const userSchema = z
   .object({
     name: userNameSchema,
+    uid: userUidSchema.optional(),
     password: passwordSchema.optional(),
     ssh_key: sshKeySchema.optional(),
     groups: userGroupListSchema,
@@ -142,10 +170,15 @@ export const userSchema = z
 
 export const userListSchema = z
   .array(userSchema)
-  .superRefine(uniqueBy('user names', 'name', (user) => user.name));
+  .superRefine(uniqueBy('user names', 'name', (user) => user.name))
+  .superRefine(uniqueBy('user ids', 'uid', (user) => user.uid));
 
 export const userWarningSchema = z.object({
   name: z.string().optional(),
+  uid: userUidSchema
+    .min(MIN_REGULAR_UID, `Standard UID should be above ${MIN_REGULAR_UID}`)
+    .max(MAX_REGULAR_UID, `Standard UID should be below ${MAX_REGULAR_UID}`)
+    .optional(),
   password: z.string().optional(),
   sshKey: z.string().optional(),
   hasPassword: z.boolean(),
