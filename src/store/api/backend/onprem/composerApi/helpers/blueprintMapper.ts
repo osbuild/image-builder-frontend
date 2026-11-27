@@ -90,6 +90,7 @@ export type CustomizationsOnPrem = {
 
 export type UserOnPrem = {
   name: string;
+  uid?: number;
   key: string;
   password: string;
   groups: string[];
@@ -110,6 +111,7 @@ export const mapOnPremToHosted = async (
 ): Promise<BlueprintExportResponse> => {
   const users = blueprint.customizations?.user?.map((u) => ({
     name: u.name,
+    uid: u.uid,
     ssh_key: u.key,
     groups: u.groups,
   }));
@@ -250,6 +252,7 @@ export const mapHostedToOnPrem = (
     result.customizations!.user = blueprint.customizations.users.map((u) => {
       return {
         name: u.name,
+        uid: u.uid,
         key: u.ssh_key || '',
         groups: u.groups || [],
         password: u.password || '',
