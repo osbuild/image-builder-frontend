@@ -55,7 +55,7 @@ const parseSatellite = ({
 
   return {
     command: atob(satelliteFile.data),
-    caCert: cacerts?.pem_certs[0],
+    caCerts: cacerts?.pem_certs ?? [],
   };
 };
 

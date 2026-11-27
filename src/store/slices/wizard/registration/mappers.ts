@@ -21,7 +21,7 @@ import {
   selectProxy,
   selectRegistrationType,
   selectRhc,
-  selectSatelliteCaCertificate,
+  selectSatelliteCaCertificates,
   selectSatelliteRegistrationCommand,
   selectServerUrl,
 } from './selectors';
@@ -118,19 +118,19 @@ const mapAap = createSelector(
 );
 
 const mapCaCerts = createSelector(
-  [selectRegistrationType, selectSatelliteCaCertificate],
-  (registrationType, cacert) => {
+  [selectRegistrationType, selectSatelliteCaCertificates],
+  (registrationType, cacerts) => {
     if (registrationType !== 'register-satellite') {
       return undefined;
     }
 
-    if (!cacert) {
+    if (!cacerts?.length) {
       return undefined;
     }
 
     return {
       cacerts: {
-        pem_certs: [cacert],
+        pem_certs: cacerts,
       },
     };
   },

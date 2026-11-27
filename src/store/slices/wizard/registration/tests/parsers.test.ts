@@ -298,7 +298,7 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satellite?.caCert).toBe(cert);
+        expect(result.satellite?.caCerts).toStrictEqual([cert]);
       });
 
       it('ignores cacerts when no satellite command is present', () => {
@@ -309,12 +309,12 @@ describe('parseRegistrationFromRequest', () => {
             },
           }),
         );
-        expect(result.satellite?.caCert).toBeUndefined();
+        expect(result.satellite?.caCerts).toBeUndefined();
       });
 
       it('leaves caCert undefined when cacerts not provided', () => {
         const result = parseRegistrationFromRequest(createMinimalBlueprint());
-        expect(result.satellite?.caCert).toBeUndefined();
+        expect(result.satellite?.caCerts).toBeUndefined();
       });
     });
 

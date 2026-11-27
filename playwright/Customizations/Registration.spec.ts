@@ -329,49 +329,62 @@ registrationModes.forEach(
             const registrationCommandInput = frame.getByRole('textbox', {
               name: 'registration command',
             });
+            const reviewImage = frame.getByRole('button', {
+              name: 'Review image',
+            });
+            const baseSettingsHeading = frame.getByRole('heading', {
+              name: 'Base settings',
+              exact: true,
+            });
 
             // Test invalid command (pressSequentially so React onChange fires in iframe)
             await registrationCommandInput.click();
             await registrationCommandInput.clear();
             await registrationCommandInput.pressSequentially('invalid-command');
             await registrationCommandInput.blur();
-            await expect(
-              frame.getByRole('button', { name: 'Review image' }),
-            ).toBeEnabled();
+            await reviewImage.click();
             await expect(
               frame.getByText('Invalid or missing token'),
             ).toBeVisible();
+            await expect(baseSettingsHeading).toBeVisible();
 
             // Test expired token command
             await registrationCommandInput.fill(
               SATELLITE_COMMAND_EXPIRED_TOKEN,
             );
+            await registrationCommandInput.blur();
+            await reviewImage.click();
             await expect(
               frame.getByText(
-                'The token is already expired or will expire by next day.',
+                /The token is already expired or will expire within 24 hours/,
               ),
             ).toBeVisible();
-            await expect(
-              frame.getByRole('button', { name: 'Review image' }),
-            ).toBeEnabled();
+            await expect(baseSettingsHeading).toBeVisible();
 
             // Test valid command with no expiration
             await registrationCommandInput.fill(
               SATELLITE_COMMAND_NO_EXPIRATION,
             );
+            await registrationCommandInput.blur();
             await expect(
               frame.getByText('Invalid or missing token'),
             ).toBeHidden();
             await expect(
               frame.getByText(
-                'The token is already expired or will expire by next day.',
+                /The token is already expired or will expire within 24 hours/,
               ),
             ).toBeHidden();
 
             // Test valid command with standard token
             await registrationCommandInput.fill(SATELLITE_COMMAND);
+            await registrationCommandInput.blur();
             await expect(
               frame.getByText('Invalid or missing token'),
+            ).toBeHidden();
+            await expect(
+              frame.getByText(
+                /The token is already expired or will expire within 24 hours/,
+              ),
             ).toBeHidden();
 
             await frame

@@ -40,8 +40,8 @@ export const selectSatelliteRegistrationCommand = (state: RootState) => {
   return state.wizard.registration.satellite?.command;
 };
 
-export const selectSatelliteCaCertificate = (state: RootState) => {
-  return state.wizard.registration.satellite?.caCert;
+export const selectSatelliteCaCertificates = (state: RootState) => {
+  return state.wizard.registration.satellite?.caCerts;
 };
 
 export const selectAapRegistration = (state: RootState) => {

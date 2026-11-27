@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 
 import {
   Content,
-  DropEvent,
   FileUpload,
   FileUploadHelperText,
   FormGroup,
@@ -12,47 +11,103 @@ import {
 } from '@patternfly/react-core';
 
 import ExternalLinkButton from '@/Components/CreateImageWizard/utilities/ExternalLinkButton';
-import { useRegistrationValidation } from '@/Components/CreateImageWizard/utilities/useValidation';
 import { REGISTRATION_DOCS_URL } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
+  addPendingInput,
   changeSatelliteCaCertificate,
-  selectSatelliteCaCertificate,
+  MAX_CERTIFICATE_BYTES,
+  removePendingInput,
+  selectForceShowErrors,
+  selectSatelliteCaCertificates,
+  validateSatelliteCert,
+  validateSatelliteCerts,
 } from '@/store/slices/wizard';
 
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
+type Status = {
+  status: 'default' | 'error' | 'success';
+  messages: string[];
+};
+
 const SatelliteRegistration = () => {
   const dispatch = useAppDispatch();
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
-  const [isRejected, setIsRejected] = useState(false);
-  const stepValidation = useRegistrationValidation();
+  const certificateInputId = useId();
+  const caCertificates = useAppSelector(selectSatelliteCaCertificates);
+  const forceShowErrors = useAppSelector(selectForceShowErrors);
+  const [draft, setDraft] = useState((caCertificates ?? []).join('\n'));
+  const [issues, setIssues] = useState<string[]>([]);
 
-  const validated =
-    'certificate' in stepValidation.errors
-      ? 'error'
-      : caCertificate
-        ? 'success'
-        : 'default';
+  useEffect(() => {
+    // Reset the local draft when the certificate changes externally.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft((caCertificates ?? []).join('\n'));
+  }, [caCertificates]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(removePendingInput(certificateInputId));
+    };
+  }, [dispatch, certificateInputId]);
+
+  const { status, messages } = useMemo<Status>(() => {
+    if (issues.length > 0) {
+      return {
+        status: 'error',
+        messages: issues,
+      };
+    }
+
+    if (!forceShowErrors && !caCertificates?.length) {
+      return {
+        status: 'default',
+        messages: ['Upload a certificate file'],
+      };
+    }
+
+    const { errors } = validateSatelliteCerts(caCertificates ?? []);
+    if (errors.length > 0) {
+      return {
+        status: 'error',
+        messages: errors.map((issue) => issue.message),
+      };
+    }
+
+    return {
+      status: 'success',
+      messages: ['CA certificate loaded'],
+    };
+  }, [caCertificates, forceShowErrors, issues]);
 
   const handleClear = () => {
-    dispatch(changeSatelliteCaCertificate(''));
+    setDraft('');
+    dispatch(changeSatelliteCaCertificate([]));
+    dispatch(removePendingInput(certificateInputId));
+    setIssues([]);
   };
 
-  const handleTextChange = (
-    _event: React.ChangeEvent<HTMLTextAreaElement>,
-    value: string,
-  ) => {
-    dispatch(changeSatelliteCaCertificate(value));
-  };
+  const validateCertificate = (cert: string) => {
+    const { data, errors } = validateSatelliteCert(cert);
+    if (errors.length > 0) {
+      setIssues(errors.map((issue) => issue.message));
+      return;
+    }
 
-  const handleDataChange = (_: DropEvent, value: string) => {
-    dispatch(changeSatelliteCaCertificate(value));
+    // this shouldn't really be possible if there were no errors
+    if (!data) return;
+
+    setDraft(data.join('\n'));
+    dispatch(changeSatelliteCaCertificate(data));
+    dispatch(removePendingInput(certificateInputId));
+    setIssues([]);
   };
 
   const handleFileRejected = () => {
-    dispatch(changeSatelliteCaCertificate(''));
-    setIsRejected(true);
+    setDraft('');
+    dispatch(changeSatelliteCaCertificate([]));
+    dispatch(removePendingInput(certificateInputId));
+    setIssues(['Must be a .PEM/.CER/.CRT file no larger than 512 KB']);
   };
 
   return (
@@ -65,50 +120,50 @@ const SatelliteRegistration = () => {
           <FileUpload
             id='text-file-with-restrictions-example'
             type='text'
-            value={caCertificate || ''}
-            filename={caCertificate ? 'CA detected' : ''}
+            value={draft}
+            filename={caCertificates?.length ? 'CA detected' : ''}
             filenamePlaceholder='Drag and drop a file or upload'
-            onDataChange={handleDataChange}
-            onTextChange={handleTextChange}
+            onDataChange={(_, value) => {
+              setDraft(value);
+              dispatch(addPendingInput(certificateInputId));
+              validateCertificate(value);
+            }}
+            onTextChange={(_, value) => {
+              setDraft(value);
+              dispatch(addPendingInput(certificateInputId));
+            }}
+            onTextAreaBlur={() => validateCertificate(draft)}
             onClearClick={handleClear}
             dropzoneProps={{
               accept: {
                 'application/x-pem-file': ['.pem'],
                 'application/x-x509-ca-cert': ['.cer', '.crt'],
-                'application/pkix-cert': ['.der'],
               },
-              maxSize: 512000,
+              maxSize: MAX_CERTIFICATE_BYTES,
               onDropRejected: handleFileRejected,
             }}
-            validated={isRejected ? 'error' : validated}
+            validated={status}
             browseButtonText='Upload'
             allowEditingUploadedText={true}
           >
             <FileUploadHelperText>
               <HelperText>
-                <HelperTextItem
-                  variant={
-                    isRejected || validated === 'error'
-                      ? 'error'
-                      : validated === 'success'
-                        ? 'success'
-                        : 'default'
-                  }
-                >
-                  {isRejected
-                    ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
-                    : validated === 'error'
-                      ? stepValidation.errors['certificate']
-                      : validated === 'success'
-                        ? 'Certificate was uploaded'
-                        : 'Upload a certificate file'}
+                <HelperTextItem>
+                  {messages.map((message, index) => (
+                    <HelperTextItem
+                      key={`${message}-${index}`}
+                      variant={status}
+                    >
+                      {message}
+                    </HelperTextItem>
+                  ))}
                 </HelperTextItem>
               </HelperText>
             </FileUploadHelperText>
           </FileUpload>
           <FormHelperText>
             <HelperText>
-              {(isRejected || validated !== 'success') && (
+              {status !== 'success' && (
                 <HelperTextItem>
                   To find the certificate follow this{' '}
                   <ExternalLinkButton

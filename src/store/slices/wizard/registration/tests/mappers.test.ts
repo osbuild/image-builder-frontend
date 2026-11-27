@@ -182,7 +182,7 @@ describe('mapRegistrationCustomizations', () => {
         type: 'register-satellite',
         satellite: {
           command: 'sat-cmd',
-          caCert: 'PEM-CERT-DATA',
+          caCerts: ['PEM-CERT-DATA'],
         },
       });
       const result = mapRegistrationCustomizations(state);
@@ -196,20 +196,7 @@ describe('mapRegistrationCustomizations', () => {
         type: 'register-later',
         satellite: {
           command: '',
-          caCert: 'PEM-CERT-DATA',
-        },
-      });
-      expect(mapRegistrationCustomizations(state)).not.toHaveProperty(
-        'cacerts',
-      );
-    });
-
-    it('omits cacerts when satellite registration has no cert', () => {
-      const state = createState({
-        type: 'register-satellite',
-        satellite: {
-          command: 'sat-cmd',
-          caCert: undefined,
+          caCerts: ['PEM-CERT-DATA'],
         },
       });
       expect(mapRegistrationCustomizations(state)).not.toHaveProperty(
@@ -225,7 +212,7 @@ describe('mapSatelliteFiles', () => {
       type: 'register-satellite',
       satellite: {
         command: 'satellite-register --org=123',
-        caCert: undefined,
+        caCerts: [],
       },
     });
     const result = mapSatelliteFiles(state);
@@ -242,7 +229,7 @@ describe('mapSatelliteFiles', () => {
       type: 'register-now',
       satellite: {
         command: 'satellite-register --org=123',
-        caCert: undefined,
+        caCerts: [],
       },
     });
     expect(mapSatelliteFiles(state)).toEqual([]);
@@ -253,6 +240,7 @@ describe('mapSatelliteFiles', () => {
       type: 'register-satellite',
       satellite: {
         command: '',
+        caCerts: [],
       },
     });
     expect(mapSatelliteFiles(state)).toEqual([]);

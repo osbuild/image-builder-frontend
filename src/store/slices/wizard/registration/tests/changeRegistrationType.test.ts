@@ -19,7 +19,7 @@ const populatedState: RegistrationSlice = {
   satellite: {
     ...emptySatelliteState,
     command: 'old-command',
-    caCert: 'old-certificate',
+    caCerts: ['old-certificate'],
   },
   aap: {
     ...emptyAapState,

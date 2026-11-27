@@ -74,7 +74,7 @@ export const registrationSlice = createSlice({
 
       if (action.payload === 'register-satellite') {
         state.options = undefined;
-        state.satellite = { command: '' };
+        state.satellite = emptySatelliteState;
         return;
       }
 
@@ -91,12 +91,12 @@ export const registrationSlice = createSlice({
       }
       state.satellite.command = action.payload;
     },
-    changeSatelliteCaCertificate: (state, action: PayloadAction<string>) => {
+    changeSatelliteCaCertificate: (state, action: PayloadAction<string[]>) => {
       if (!state.satellite) {
-        state.satellite = { ...emptySatelliteState, caCert: action.payload };
+        state.satellite = { ...emptySatelliteState, caCerts: action.payload };
         return;
       }
-      state.satellite.caCert = action.payload;
+      state.satellite.caCerts = action.payload;
     },
     changeAapEnabled: (state, action: PayloadAction<boolean>) => {
       if (!action.payload) {

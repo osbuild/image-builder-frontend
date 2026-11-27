@@ -222,13 +222,14 @@ describe('Registration', () => {
             type: 'register-satellite',
             satellite: {
               command: 'satellite-command',
-              caCert: 'ca-cert-content',
+              caCerts: ['ca-cert-content'],
             },
           },
         },
       );
 
       expect(screen.getByText('Registration method')).toBeInTheDocument();
+      expect(screen.getByText('Register with satellite')).toBeInTheDocument();
     });
   });
 

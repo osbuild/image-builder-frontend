@@ -1,7 +1,3 @@
-import { useState } from 'react';
-
-import { jwtDecode } from 'jwt-decode';
-
 import {
   UNIQUE_VALIDATION_DELAY,
   WIZARD_STEP_IDS,
@@ -37,9 +33,6 @@ import {
   selectIsOfficialImage,
   selectIsoPayloadReference,
   selectRegistrationSlice,
-  selectRegistrationType,
-  selectSatelliteCaCertificate,
-  selectSatelliteRegistrationCommand,
   selectSnapshotDate,
   selectSystem,
   selectTemplate,
@@ -78,7 +71,6 @@ type BlueprintValidation = {
 export function useBlueprintValidation(): BlueprintValidation {
   const blueprintMode = useAppSelector(selectBlueprintMode);
   const aap = useAAPValidation();
-  const registration = useRegistrationValidation();
   const snapshot = useSnapshotValidation();
   const details = useDetailsValidation();
   const imagePull = useImagePullValidation();
@@ -127,7 +119,6 @@ export function useBlueprintValidation(): BlueprintValidation {
     details.disabledNext ||
     details.isPending ||
     activationKeyStatus !== 'VALID' ||
-    registration.disabledNext ||
     registrationErrors.length > 0 ||
     snapshot.disabledNext ||
     imagePull.disabledNext ||
@@ -154,69 +145,6 @@ export function useBlueprintValidation(): BlueprintValidation {
 
 export function useIsBlueprintValid(): boolean {
   return useBlueprintValidation().isValid;
-}
-
-export function useRegistrationValidation(): StepValidation {
-  const registrationType = useAppSelector(selectRegistrationType);
-  const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand,
-  );
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
-  const [currentTimeSeconds] = useState(() => Date.now() / 1000);
-
-  if (registrationType !== 'register-satellite') {
-    return { errors: {}, disabledNext: false };
-  }
-
-  const errors: Record<string, string> = {};
-  const commandTrimmed =
-    typeof registrationCommand === 'string' ? registrationCommand.trim() : '';
-
-  if (caCertificate === '') {
-    Object.assign(errors, {
-      certificate:
-        'Valid certificate must be present if you are registering Satellite',
-    });
-  }
-
-  if (commandTrimmed === '') {
-    Object.assign(errors, {
-      command: 'No registration command for Satellite registration',
-    });
-  } else {
-    const bearerJwtRegex = /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/;
-    const match = commandTrimmed.match(bearerJwtRegex);
-    if (!match) {
-      Object.assign(errors, { command: 'Invalid or missing token' });
-    } else {
-      try {
-        const token = match[1];
-        const decoded = jwtDecode(token);
-        if (decoded.exp) {
-          const dayInSeconds = 86400;
-          if (decoded.exp < currentTimeSeconds + dayInSeconds) {
-            const expirationDate = new Date(decoded.exp * 1000);
-            Object.assign(errors, {
-              expired:
-                'The token is already expired or will expire by next day. Expiration date: ' +
-                expirationDate,
-            });
-            return {
-              errors: errors,
-              disabledNext: caCertificate === undefined,
-            };
-          }
-        }
-      } catch {
-        Object.assign(errors, { command: 'Invalid or missing token' });
-      }
-    }
-  }
-
-  return {
-    errors: errors,
-    disabledNext: Object.keys(errors).length > 0 || caCertificate === undefined,
-  };
 }
 
 export function useAAPValidation(): StepValidation {

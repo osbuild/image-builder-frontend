@@ -118,7 +118,7 @@ export const uploadCertificateFile = async (
     await fileInput.setInputFiles(tempCertPath);
 
     // Verify the certificate was uploaded successfully
-    await expect(scope.getByText('Certificate was uploaded')).toBeVisible();
+    await expect(scope.getByText('CA certificate loaded')).toBeVisible();
   } finally {
     // Clean up temporary file
     if (existsSync(tempCertPath)) {
