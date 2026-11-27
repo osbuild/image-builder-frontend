@@ -67,6 +67,21 @@ describe('user validation', () => {
         }),
       ]);
     });
+
+    it('rejects duplicate user ids', () => {
+      const { errors } = validateUserList(
+        [getUser('admin', { uid: 1001 }), getUser('deploy', { uid: 1001 })],
+        [],
+      );
+
+      expect(errors).toEqual([
+        expect.objectContaining({
+          kind: 'duplicate',
+          message: 'Duplicate user ids: 1001',
+          path: [1, 'uid'],
+        }),
+      ]);
+    });
   });
 
   describe('user groups', () => {

@@ -51,6 +51,27 @@ describe('parseUsersFromRequest', () => {
       expect(result.users[0].password).toBe('');
     });
 
+    it('maps uid when present', () => {
+      const result = parseUsersFromRequest(
+        withCustomizations({ users: [{ name: 'admin', uid: 1001 }] }),
+      );
+      expect(result.users[0].uid).toBe(1001);
+    });
+
+    it('preserves a zero uid', () => {
+      const result = parseUsersFromRequest(
+        withCustomizations({ users: [{ name: 'root', uid: 0 }] }),
+      );
+      expect(result.users[0].uid).toBe(0);
+    });
+
+    it('omits uid when undefined', () => {
+      const result = parseUsersFromRequest(
+        withCustomizations({ users: [{ name: 'admin' }] }),
+      );
+      expect(result.users[0]).not.toHaveProperty('uid');
+    });
+
     it('maps ssh_key, defaulting to empty string', () => {
       const result = parseUsersFromRequest(
         withCustomizations({
