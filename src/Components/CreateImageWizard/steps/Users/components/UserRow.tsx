@@ -11,6 +11,7 @@ import {
 import {
   User,
   validateUserInput,
+  validateUserUidInput,
   ValidationResult,
 } from '@/store/slices/wizard';
 
@@ -27,6 +28,7 @@ type UserRowProps = {
 
 type UserDraft = {
   name: string;
+  uid: string;
   password: string;
   ssh_key: string;
   groups: string[];
@@ -35,6 +37,7 @@ type UserDraft = {
 
 const createDraft = (user?: User): UserDraft => ({
   name: user?.name ?? emptyUser.name,
+  uid: String(user?.uid ?? ''),
   password: user?.password ?? emptyUser.password,
   ssh_key: user?.ssh_key ?? emptyUser.ssh_key,
   groups: user?.groups ?? emptyUser.groups,
@@ -74,10 +77,22 @@ const UserRow = ({
   };
 
   const validateUser = (
-    field: 'name' | 'password' | 'ssh_key' | 'groups',
+    field: 'name' | 'uid' | 'password' | 'ssh_key' | 'groups',
     groups: string[] = draft.groups,
   ) => {
-    const candidate = { ...draft, groups };
+    const uidParsed = validateUserUidInput(draft.uid);
+
+    if (field === 'uid' && uidParsed.errors.length > 0) {
+      return {
+        errors: uidParsed.errors,
+      };
+    }
+
+    const candidate = {
+      ...draft,
+      uid: uidParsed.errors.length > 0 ? user?.uid : uidParsed.data,
+      groups,
+    };
     const parsed = validateUserInput(candidate);
     const { errors, warnings } = validator(candidate);
 
@@ -86,9 +101,12 @@ const UserRow = ({
       errors: errors.filter(
         (issue) => issue.path?.[0] === index && issue.path[1] === field,
       ),
-      warnings: (warnings ?? []).filter(
-        (issue) => issue.path?.[0] === index && issue.path[1] === field,
-      ),
+      warnings: (warnings ?? []).filter((issue) => {
+        if (issue.path?.[0] === 'users') {
+          return issue.path[1] === index && issue.path[2] === field;
+        }
+        return issue.path?.[0] === index && issue.path[1] === field;
+      }),
     };
   };
 
@@ -111,6 +129,18 @@ const UserRow = ({
             onChange={(_, name) => setDraft({ ...draft, name })}
             validator={() => validateUser('name')}
             onCommit={(candidate) => onUpdate(candidate)}
+          />
+        </Td>
+        <Td>
+          <ValidatedTextInput
+            ariaLabel='blueprint user ID'
+            value={draft.uid}
+            placeholder='Set user ID'
+            inputProps={{ onKeyDown: handleKeyDown }}
+            onChange={(_, uid) => setDraft({ ...draft, uid })}
+            validator={() => validateUser('uid')}
+            onCommit={(candidate) => onUpdate(candidate)}
+            helperText='ID will be assigned automatically if left blank'
           />
         </Td>
         <Td>

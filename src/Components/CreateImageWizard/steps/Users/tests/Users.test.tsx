@@ -89,6 +89,31 @@ describe('Users Component', () => {
       expect(store.getState().wizard.users.users[0].name).toBe('testuser');
     });
 
+    test('typing a UID commits it to the store', async () => {
+      const { store } = renderWithRedux(<UsersStep />, {
+        users: {
+          ...initialState.users,
+          users: [
+            {
+              name: 'testuser',
+              password: '',
+              ssh_key: '',
+              groups: [],
+              hasPassword: false,
+            },
+          ],
+        },
+      });
+      const user = createUser();
+
+      const uidInput = await screen.findByRole('textbox', {
+        name: /user id/i,
+      });
+      await typeWithWait(user, uidInput, '1500{Enter}');
+
+      expect(store.getState().wizard.users.users[0].uid).toBe(1500);
+    });
+
     test('pressing Enter in password input does not trigger page reload', async () => {
       const { store } = renderWithRedux(<UsersStep />, {
         users: {

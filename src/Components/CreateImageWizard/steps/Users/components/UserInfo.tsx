@@ -78,9 +78,10 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
       <Table variant='compact' borders={false}>
         <Thead>
           <Tr>
-            <Th width={20}>Username</Th>
-            <Th width={20}>Password</Th>
-            <Th width={20}>SSH key</Th>
+            <Th width={15}>Username</Th>
+            <Th width={15}>User ID</Th>
+            <Th width={15}>Password</Th>
+            <Th width={15}>SSH key</Th>
             <Th width={20}>Groups</Th>
             <Th width={10}>Admin</Th>
             <Th width={10} aria-label='Remove user' />
@@ -110,6 +111,7 @@ const UserInfo = ({ attemptedNext = false }: UserInfoProps) => {
                   upsertUser({
                     user: {
                       name: user.name,
+                      ...(user.uid !== undefined && { uid: user.uid }),
                       ...(user.password && { password: user.password }),
                       ...(user.ssh_key && { ssh_key: user.ssh_key }),
                       groups: user.groups ?? [],
