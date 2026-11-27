@@ -1,6 +1,7 @@
 import z from 'zod';
 
 import {
+  MAX_ID,
   MAX_REGULAR_GID,
   MAX_REGULAR_UID,
   MIN_REGULAR_GID,
@@ -23,7 +24,7 @@ export const groupNameSchema = z
   .regex(/^[a-zA-Z0-9_-]*\$?$/, 'Group name contains invalid characters')
   .regex(/[a-zA-Z]+/, 'Group name must contain at least one letter');
 
-export const groupGidSchema = z.number().int().nonnegative();
+export const groupGidSchema = z.number().int().nonnegative().max(MAX_ID);
 
 export const groupGidInputSchema = z
   .string()
@@ -31,6 +32,10 @@ export const groupGidInputSchema = z
   .refine(
     (value) => value === '' || /^\d+$/.test(value),
     'Group ID must contain only digits',
+  )
+  .refine(
+    (value) => value === '' || Number(value) <= MAX_ID,
+    'Group ID is out of range',
   )
   .transform((value) => (value === '' ? undefined : Number(value)))
   .pipe(groupGidSchema.optional());
@@ -60,7 +65,7 @@ export const groupWarningSchema = z.object({
 
 export const groupListWarningsSchema = z.array(groupWarningSchema);
 
-export const userUidSchema = z.number().int().nonnegative();
+export const userUidSchema = z.number().int().nonnegative().max(MAX_ID);
 
 export const userUidInputSchema = z
   .string()
@@ -68,6 +73,10 @@ export const userUidInputSchema = z
   .refine(
     (value) => value === '' || /^\d+$/.test(value),
     'User ID must contain only digits',
+  )
+  .refine(
+    (value) => value === '' || Number(value) <= MAX_ID,
+    'User ID is out of range',
   )
   .transform((value) => (value === '' ? undefined : Number(value)))
   .pipe(userUidSchema.optional());
